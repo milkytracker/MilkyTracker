@@ -1,0 +1,49 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(MilkyTracker, 0.1, www.milkytracker.net)
+AC_CONFIG_SRCDIR(src)
+AM_INIT_AUTOMAKE(milkytracker,0.0.1)
+
+# Checks for programs.
+AC_PROG_CXX
+#AC_PROG_CC
+#AC_PROG_CPP
+AC_PROG_RANLIB
+
+# Checks for libraries.
+# AC_CHECK_LIB([SDL], SDL_Init,, AC_MSG_ERROR(Please install libSDL))
+# AC_CHECK_LIB([pthread], pthread_create,, AC_MSG_ERROR(pthread library required))
+# AC_CHECK_LIB([asound], snd_hwdep_info,,)
+AM_PATH_ALSA(,
+	RTMIDI="../midi/libmidi.a"
+	RTMIDI_DIR="midi"
+	AC_SUBST(RTMIDI)
+	AC_SUBST(RTMIDI_DIR),
+	AC_MSG_WARN([ALSA not found - midi support disabled]))
+SDL_VERSION=1.2.0
+AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
+LIBS="$LIBS $SDL_LIBS"
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS([memory.h stdlib.h string.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_CLOSEDIR_VOID
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_STAT
+AC_CHECK_FUNCS([floor getcwd memmove memset pow sqrt strcasecmp])
+
+AC_CONFIG_HEADER(config.h)
+AC_OUTPUT([Makefile src/Makefile src/midi/Makefile src/milkyplay/Makefile src/ppui/Makefile src/fx/Makefile src/tracker/Makefile src/compression/Makefile])
+
