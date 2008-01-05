@@ -89,13 +89,14 @@ void Tracker::startUp()
 		// restore keys from disk
 		settingsDatabaseCopy->serialize(f);	
 		
-		// apply ALL settings, not just the different ones
-		applySettings(settingsDatabaseCopy, NULL, true, false);
-		
+		// everything alright, delete old database and take new one
 		delete settingsDatabase;
 		settingsDatabase = settingsDatabaseCopy;
 		settingsDatabaseCopy = NULL;
 	}
+
+	// apply ALL settings, not just the different ones
+	applySettings(settingsDatabase, NULL, true, false);
 	
 	// update version information
 	settingsDatabase->store("VERSION", TrackerConfig::version);
