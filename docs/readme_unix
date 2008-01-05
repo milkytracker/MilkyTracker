@@ -1,0 +1,118 @@
+README for MilkyTracker SDL Versions
+====================================
+
+
+This file contains information that is specific to the SDL versions of
+MilkyTracker.  Please read this file in addition to README.TXT
+
+Currently the following operating systems and CPUs are supported:
+
+- Linux    x86
+           x86_64
+           powerpc
+           arm
+- Freebsd  x86
+- Solaris  sparc
+
+On most versions installation is simply a matter of unpacking the archive and
+executing the 'milkytracker' binary.  Any platform specific steps to be taken
+will be mentioned below.  It is advisable that you run MilkyTracker from the
+command line (at least the first time you run it) as it will output some
+messages informing you of what audio driver it is using as well as any errors
+that occurred.
+
+
+MIDI (Alsa only)
+================
+
+If available, MilkyTracker will detect Alsa and configure itself as a Midi
+receiver.  You can then link MilkyTracker up to a Midi sender in the normal
+manner.  You can enable midi velocity recording with the following command line
+argument:
+
+$ ./milkytracker -recvelocity
+
+Midi velocity recording only works in live record mode (pattern is playing).
+Midi support is currently only available on the Linux versions.
+
+
+Audio Driver
+============
+
+SDL *should* detect the best available audio driver on your system, however if
+this isn't the case you can set the environment variable 'SDL_AUDIODRIVER' to
+configure SDL to use the driver of your choice. Some known values to try are
+'alsa', 'dsp', 'arts', 'esd'.  For example:
+
+$ SDL_AUDIO_DRIVER=alsa ./milkytracker
+
+Note that due to weaknesses in some audio configurations we have had to force
+MilkyTracker to use 2^N audio buffer sizes.  This option can be disabled in the
+config menu and this is recommended if your audio driver will accept it.
+
+
+Video Driver
+============
+
+MilkyTracker should auto-detect your screen mode, however if it doesn't there
+are the following command line options:
+
+-bpp N        Set N to either 16 or 24
+-swap         Swaps the red and blue values in 24 BPP mode
+-orientation  Valid arguments are NORMAL|ROTATE90CCW|ROTATE90CW
+-fullscreen   Does what it says
+
+The screen size can be selected in the Config->Layout menu.  Fullscreen mode can
+be toggled using ALT+Return.  Note that these arguments are likely to be removed
+in the future - drop us a note if you actually need to use them.
+
+There have been some reports of very high CPU usage when using MilkyTracker on
+certain platforms (most notably some laptop chipsets).  Unfortunately there is
+nothing we can do about this, the fault appears to be in the SDL/X11 video
+driver.
+
+
+Crash Handler
+=============
+
+Hopefully you should never need to know this, but just in-case the unthinkable
+happens MilkyTracker has a crash handler which should intercept most crashes
+(but not freezes!).  If this does happen, a message will be outputted to stderr
+and MilkyTracker will attempt to save a backup of the song currently loaded.
+This will be named BACKUPxx.XM and saved in your home directory (where xx is a
+sequential number in the range 00 to 99).
+
+If MilkyTracker should crash, please attempt to reproduce the crash and then
+post details on the bug forum so we can attempt to fix whatever is causing it.
+
+
+GP2X Version
+============
+
+This version is currently incomplete - however the basics are working, and you
+should be able to load/play tunes (even compose - if you are patient!).  The
+following script (named milkytracker.gpu) can be used to load up MilkyTracker
+and return to the menu once it's exited:
+
+--- cut here ---
+#!/bin/sh
+# Start MilkyTracker:
+./milkytracker
+# Sync SD card:
+sync
+# Return to the menu screen after exiting MilkyTracker.
+cd /usr/gp2x
+exec /usr/gp2x/gp2xmenu
+--- cut here ---
+
+The mouse pointer can be controlled using the d-pad (it is accelerated with 3
+speeds).  Press the d-pad to click, or press the start button to begin playback.
+GP2X control is likely to be improved in future releases.
+
+
+
+Enjoy!
+
+
+
+- Christopher O'Neill (Deltafire) 19/8/2006

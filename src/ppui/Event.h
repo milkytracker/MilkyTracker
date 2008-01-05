@@ -1,0 +1,173 @@
+/////////////////////////////////////////////////////////////////
+//
+//	PPEvent classes
+//
+/////////////////////////////////////////////////////////////////
+#ifndef EVENT__H
+#define EVENT__H
+
+#include "Object.h"
+#include "BasicTypes.h"
+
+// key states
+enum KeyModifiers
+{
+	KeyModifierALT = 1,
+	KeyModifierSHIFT = 2,
+	KeyModifierCTRL = 4
+};
+
+struct TMouseWheelEventParams
+{
+	PPPoint pos;
+	pp_int32 delta;
+};
+
+void setKeyModifier(KeyModifiers eModifier);
+void clearKeyModifier(KeyModifiers eModifier);
+void setForceKeyModifier(KeyModifiers eModifier);
+void clearForceKeyModifier(KeyModifiers eModifier);
+pp_uint32 getKeyModifier();
+
+enum EEventDescriptor
+{
+	eInvalid = 0,
+	eLMouseDown,
+	eLMouseUp,
+	eLMouseDoubleClick,
+	eLMouseDrag,
+	eLMouseRepeat,
+	eRMouseDown,
+	eRMouseUp,
+	eRMouseDoubleClick,
+	eRMouseDrag,
+	eRMouseRepeat,
+	eMouseMoved,
+	eMouseEntered,
+	eMouseLeft,
+	eMouseWheelMoved,
+	eBarPosChanged,
+	eBarScrollUp,
+	eBarScrollDown,
+	eKeyDown,
+	eKeyChar,
+	eKeyUp,
+	eFileDragDropped,
+	eFileSystemChanged,
+	eFocusGained,
+	eFocusLost,
+	eFocusGainedNoRepaint,
+	eFocusLostNoRepaint,
+	eRemovedContextMenu,
+	eCommand,					// e.g. button pressed once
+	eCommandRight,				// e.g. right button pressed once
+	eCommandRepeat,				// e.g. button stays pressed
+	ePreSelection,				// e.g. list box selection is about to change
+	eSelection,					// e.g. list box selection has been made
+	eValueChanged,
+	eUpdated,					
+	eUpdateChanged,
+	eConfirmed,					// e.g. ok-press
+	eCanceled,					// e.g. cancel-press
+	eTimer,
+	eFullScreen,
+	eAppQuit
+};
+
+/////////////////////////////////////////////////////////////////
+//	Basic event class
+/////////////////////////////////////////////////////////////////
+class PPEvent : public PPObject
+{
+private:
+	EEventDescriptor ID;
+
+	unsigned char userData[256];
+	pp_int32 dataSize;
+	pp_int32 metaData;
+
+public:
+	PPEvent() :
+		ID(eInvalid),
+		dataSize(0),
+		metaData(0)
+	{
+	}
+
+	PPEvent(EEventDescriptor ID, pp_int32 theMetaData = 0) :
+		dataSize(0),
+		metaData(theMetaData)
+	{ 
+		this->ID = ID; 
+	}
+
+	PPEvent(EEventDescriptor ID, void* dataPtr, pp_int32 dSize, pp_int32 theMetaData = 0) :
+		dataSize(dSize),
+		metaData(theMetaData)
+	{ 
+		this->ID = ID; 
+		if (dSize <= (signed)sizeof(userData))
+			memcpy(userData, dataPtr, dataSize); 
+		else
+			exit(0);
+	}
+	
+	PPEvent(const PPEvent& event)
+	{
+		this->ID = event.ID;
+		this->dataSize = event.dataSize;
+		memcpy(this->userData, event.userData, event.dataSize);
+	}
+
+	EEventDescriptor getID() { return ID; }
+
+	void* getDataPtr() { return userData; }	
+	pp_int32 getDataSize() { return dataSize; }
+	
+	pp_int32 getMetaData() { return metaData; }
+	
+	void cancel() { ID = eInvalid; }
+};
+
+/////////////////////////////////////////////////////////////////
+//	Interface for EventListenerInterface
+/////////////////////////////////////////////////////////////////
+class EventListenerInterface : public PPObject
+{
+public:
+	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event) = 0;
+};
+
+enum
+{
+	PP_MESSAGEBOX_BUTTON_YES		= 31000,
+	PP_MESSAGEBOX_BUTTON_OK			= 31000,
+	PP_MESSAGEBOX_BUTTON_NO			= 31001,
+	PP_MESSAGEBOX_BUTTON_CANCEL		= 31002,
+	PP_MESSAGEBOX_BUTTON_USER1		= 31003,
+	PP_MESSAGEBOX_BUTTON_USER2		= 31004,
+	PP_MESSAGEBOX_BUTTON_USER3		= 31005,
+	PP_MESSAGEBOX_BUTTON_USER4		= 31006,
+	PP_MESSAGEBOX_BUTTON_USER5		= 31007,
+	PP_MESSAGEBOX_BUTTON_USER6		= 31008,
+	PP_MESSAGEBOX_BUTTON_USER7		= 31009,
+	PP_MESSAGEBOX_BUTTON_USER8		= 31010,
+	PP_MESSAGEBOX_BUTTON_USER9		= 31011,
+	PP_MESSAGEBOX_BUTTON_USER10		= 31012,
+
+	PP_DEFAULT_ID					= 0x12345678
+};
+
+class RespondListenerInterface
+{
+public:
+	virtual pp_int32 ActionOkay(PPObject* sender)	{ return 0; }
+	virtual pp_int32 ActionCancel(PPObject* sender) { return 0; }
+	virtual pp_int32 ActionNo(PPObject* sender)		{ return 0; }
+	virtual pp_int32 ActionUser1(PPObject* sender)	{ return 0; }
+	virtual pp_int32 ActionUser2(PPObject* sender)	{ return 0; }
+	virtual pp_int32 ActionUser3(PPObject* sender)	{ return 0; }
+	virtual pp_int32 ActionUser4(PPObject* sender)	{ return 0; }
+};
+
+#endif

@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Frequently Asked Questions about MilkyTracker</title>
+		<style type="text/css">
+			body
+			{
+				margin: 1em;
+				font-size: 10pt;
+				max-width: 52em;
+			}
+
+			h1, h2, h3, h4
+			{
+				text-decoration: underline;
+			}
+
+			p
+			{
+				margin: 0;
+				margin-bottom: 1em;
+				margin-left: 3em;
+			}
+
+			ul li
+			{
+				list-style-type: none;
+				margin-top: 1em;
+				margin-bottom: 1em;
+			}
+
+			ol li
+			{
+				list-style-position: outside;
+				margin-left: 1.5em;
+			}
+
+			a
+			{
+				text-decoration: underline;
+			}
+		</style>
+		<script type="text/javascript">
+			//<![CDATA[
+			function interActivate()
+			{
+				if (document.getElementsByTagName('h1'))
+				{
+					questions = document.getElementsByTagName('a');
+					answers = document.getElementsByTagName('ul');
+					for (i = 1; i <= questions.length; i++)
+					{
+						questions.item(i-1).id = "q"+i;
+						var question = questions.item(i-1).id;
+						document.getElementById(question).href="javascript:flip('a"+i+"')";
+					}
+					for (i = 1; i <= answers.length; i++)
+					{
+						answers.item(i-1).id = "a"+i;
+						var answer = answers.item(i-1).id;
+						document.getElementById(answer).style.display="none";
+					}
+				}
+			}
+
+			function flip(answerID)
+			{
+				var answer = document.getElementById(answerID);
+				if (answer.style.display=="none")
+				{
+					answer.style.display="block";
+				}
+				else
+				{
+					answer.style.display="none";
+				}
+			}
+			//]]>
+		</script>
+	</head>
+	<body onload="interActivate();">
+		<h1>Frequently Asked Questions about MilkyTracker</h1>
+		<p>
+			Here are some questions answered which get asked on the forum and on IRC from time to time.
+		</p>
+		<ol>
+
+			<li>
+				<a>Why does MilkyTracker look different from Fasttracker II?</a>
+				<ul>
+					<li>
+							The GUI of MilkyTracker has been adjusted to fit low resolution displays
+							with 320x240 pixels. Thus the screen can be more easily divided into
+							seperate pages.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Where are the extended Sample Editor functions (S.E.Ext.)?</a>
+				<ul>
+					<li>
+						In the sample context menu, just right-click / tap'n hold in the sample area.
+						The Pattern and Instrument Editors have their context menus too, you know.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Why does my .XM sound different from Ft2 in MilkyTracker?</a>
+				<ul>
+					<li>
+							MilkyTracker tries to play XMs as accurate as possible but there are still
+							known and unknown issues. Most of them are rare but if you find one, report
+							it to us and we'll try to fix it.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Why does my .XM sound different from ModPlug/Schism/WinAMP/xxx in MilkyTracker?</a>
+				<ul>
+					<li>
+							MilkyTracker aims to reproduce Ft2 playback as closely as possible while
+							other players/trackers don't do that, so if you think your track is being
+							messed up in MilkyTracker compare it to Ft2 first. If it still sounds
+							weird, see the question above.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Why doesn't MilkyTracker load my .XM (created in ModPlug)?</a>
+				<ul>
+					<li>
+						Unless the module is otherwise corrupt, it probably features more than 32
+						channels. In Fasttracker II, 32 is the maximum.
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a>Why does MilkyTracker play my IT/S3M/xxx module wrong?</a>
+				<ul>
+					<li>
+							Well, MilkyTracker is an XM tracker. It will play all other tunes (except
+							for .MOD) the way Ft2 would do it. Every feature from other modules not
+							being XM compatible will be thrown out when importing the song.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>What do the buttons SEQ, CLN, F, P and W do?</a>
+				<ul>
+					<li>
+						SEQ stands for sequence, the button inserts the next unused pattern in the
+						pattern order table.
+					</li>
+					<li>
+						CLN stands for clone, it does the same as SEQ but additionally it copies the
+						data from current pattern to the new one.
+					</li>
+					<li>
+						The F button toggles song following. Disabling it enables you to better edit the
+						song while it is playing.
+					</li>
+					<li>
+						The P button toggles prospective pattern view. When disabled, you see one
+						pattern at a time. When enabled, the patterns show as a continuous strip.
+					</li>
+					<li>
+						The W button toggles pattern wrapping. Basically it either allows you to freely
+						move from pattern to pattern while editing or helps you concentrate on one
+						pattern at a time.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>What are Jam channels?</a>
+				<ul>
+					<li>
+						Jam channels enable you to play notes live on your MIDI or computer keyboard
+						independent of the song channels. If disabled, note polyphony is restricted to
+						whatever number of channels the song has.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Does MilkyTracker support MIDI?</a>
+				<ul>
+					<li>
+						MilkyTracker supports some basic MIDI INPUT, which means you can use your MIDI
+						device to feed notes into MilkyTracker. See the documentation for instructions
+						on how to enable MIDI In on different platforms.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Where is the source code?</a>
+				<ul>
+					<li>
+						You can have it once I'm done working on MilkyTracker. This isn't to tease you,
+						let's just say the code is a bit shy and not ready for public yet.
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Can you port MilkyTracker to platform xxx?</a>
+				<ul>
+					<li>
+						Unfortunately my time is rather limited at the moment so first you need to know
+						some things about MilkyTracker:
+					</li>	
+					<li>
+						MilkyTracker is written in a platform independent fashion and uses a rather
+						primitive approach of software rendering to make porting as easy as possible. On
+						the downside this means MilkyTracker needs quite some CPU power. At the bottom
+						end of the desktop version MilkyTracker requires at least around 300Mhz to run
+						MilkyTracker in 640x480x16 bit color. This might seem quite a bit, but actually
+						it's nothing compared to nowadays computer speeds. MilkyTracker was never
+						written with old computer systems in mind. The low resolution version (320x240)
+						will probably run on systems offering 150Mhz or more but 320x240 is the only
+						supported low resolution mode. 
+					</li>
+					<li>
+						MilkyTracker is *heavily* mouse centered. And I really mean *heavy*. Controlling
+						MilkyTracker with a few buttons only will not be fun and totally useless and I'm
+						not going to waste time on a port for a device without a mouse equivalent (touch
+						screen etc.). Please understand that porting itself often requires quite an
+						amount of time and still doesn't guarentee MilkyTracker to be fully useable.					
+					</li>
+				</ul>
+			</li>
+
+			<li>
+				<a>Why isn't there a PSP/NDS port of MilkyTracker?</a>
+				<ul>
+					<li>
+						See question about porting above.
+					</li>
+				</ul>
+			</li>
+
+		</ol>
+	</body>
+</html>

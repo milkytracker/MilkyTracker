@@ -1,0 +1,140 @@
+/*
+ *  EnvelopeEditor.h
+ *  milkytracker_universal
+ *
+ *  Created by Peter Barth on 25.11.07.
+ *  Copyright 2007 __MyCompanyName__. All rights reserved.
+ *
+ */
+
+#ifndef __ENVELOPEEDITOR_H__
+#define __ENVELOPEEDITOR_H__
+
+#include "EditorBase.h"
+#include "Undo.h"
+
+struct TEnvelope;
+
+class FilterParameters;
+
+class EnvelopeEditor : public EditorBase
+{
+public:
+	enum EnvelopeTypes
+	{
+		EnvelopeTypeVolume = 0,
+		EnvelopeTypePanning = 1
+	};
+
+private:
+	class ClipBoard
+	{
+	private:
+		TEnvelope* envelopeCopy;
+		
+		static ClipBoard* instance;
+		
+		ClipBoard();
+
+	public:
+		~ClipBoard();
+
+		static ClipBoard* getInstance();
+		
+		void makeCopy(TEnvelope& envelope);
+		void paste(TEnvelope& envelope);
+		bool isEmpty() const { return envelopeCopy == NULL; }
+	};
+
+	TEnvelope* envelope;
+	
+	EnvelopeTypes envelopeType;
+
+	// selection
+	bool startSelection;
+	pp_int32 selectionIndex;
+
+	// undo/redo information
+	EnvelopeUndoStackEntry* before;
+	PPUndoStack<EnvelopeUndoStackEntry>* undoStack;	
+	UndoHistory<TEnvelope, EnvelopeUndoStackEntry>* undoHistory;
+	
+	void prepareUndo();
+	bool finishUndo();
+	
+	// revoke changes
+	void revoke(const EnvelopeUndoStackEntry* stackEntry);
+	
+public:
+	EnvelopeEditor();
+	virtual ~EnvelopeEditor();
+
+	void attachEnvelope(TEnvelope* envelope, XModule* module);
+	const TEnvelope* getEnvelope() const { return envelope; }
+
+	bool isValidEnvelope() const { return envelope != NULL; }
+	bool isEmptyEnvelope() const;
+	
+	void setEnvelopeType(EnvelopeTypes envelopeType) { this->envelopeType = envelopeType; }
+	EnvelopeTypes getEnvelopeType() const { return envelopeType; }
+	
+	void reset();
+	
+	void setSelectionIndex(pp_int32 selectionIndex) { this->selectionIndex = selectionIndex; }
+	pp_int32& getSelectionIndex() { return selectionIndex; }
+	void resetSelection() { selectionIndex = -1; }
+
+	// --- kinda clip board --------------------------------------------------
+	void makeCopy();
+	void pasteCopy();
+	void pasteOther(const TEnvelope& env);
+
+	bool canCopy() const;
+	bool canPaste() const { return !ClipBoard::getInstance()->isEmpty(); }
+
+	// --- Multilevel UNDO / REDO --------------------------------------------
+	// undo last changes
+	void undo();
+	// redo last changes
+	void redo();
+
+	bool canUndo() const { if (envelope && undoStack) return !undoStack->IsEmpty(); else return false; }
+	bool canRedo() const { if (envelope && undoStack) return !undoStack->IsTop(); else return false; }
+
+	void startSelectionDragging(pp_int32 index);
+	bool isSelectionDragging() const { return startSelection; }
+	void endSelectionDragging();
+	
+	pp_int32 getHorizontalExtent() const;
+
+	// --- manipulate envelope -----------------------------------------------
+	void setEnvelopePoint(pp_int32 index, pp_int32 x, pp_int32 y);
+
+	void enableEnvelope(bool b);
+	bool isEnvelopeEnabled() const;
+
+	void enableSustain(bool b);
+	bool isSustainEnabled() const;
+	pp_int32 getSustainPtIndex() const;
+
+	void enableLoop(bool b);
+	bool isLoopEnabled() const;
+	pp_int32 getLoopStartPtIndex() const;
+	pp_int32 getLoopEndPtIndex() const;
+
+	void selectNextSustainPoint();
+	void selectPreviousSustainPoint();
+	void selectNextLoopStartPoint();
+	void selectPreviousLoopStartPoint();
+	void selectNextLoopEndPoint();
+	void selectPreviousLoopEndPoint();
+
+	void deletePoint();
+	void addPoint();	
+
+	// filters (need the same signature)
+	void tool_xScaleEnvelope(const FilterParameters* par);
+	void tool_yScaleEnvelope(const FilterParameters* par);
+};
+
+#endif

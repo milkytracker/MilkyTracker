@@ -1,0 +1,152 @@
+{\rtf1\ansi\ansicpg10000\deff0{\fonttbl{\f0\froman\fprq2\fcharset77 Times New Roman;}{\f1\froman\fprq2\fcharset0 Times New Roman;}}
+{\*\generator Msftedit 5.41.15.1503;}\viewkind4\uc1\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\lang1033\f0\fs24 MilkyTracker ChangeLog:\par
+\par
+\lang1031\f1 02\lang1033\f0 /\lang1031\f1 14\lang1033\f0 /0\lang1031\f1 6\lang1033\f0  (\b v00.90.\lang1031\f1 3\lang1033\f0 0\b0 ), \lang1031\f1 Mainly bugfixes and minor additions\lang1033\f0 :\par
+\lang1031\ul\f1 Bugs fixed\ulnone :\par
+-\lang1033\f0  ProTracker modules using 'one shot'-looped samples seem to crash the replayer sometimes. \lang1031\f1 Fixed\lang1033\f0 .\par
+\lang1031\f1 -\lang1033\f0  There \lang1031\f1 was\lang1033\f0  a bug in the mod exporter when trying to export samples with a loopstart set to 0. \lang1031\f1 Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  The windows version \lang1031\f1 would\lang1033\f0  crash when inserting MANY points between two points in an envelope\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  The right-left combined mouse click on the scopes \lang1031\f1 didn't\lang1033\f0  work properly\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  switching between the loop types caus\lang1031\f1 ed\lang1033\f0  \lang1031\f1 crashes. Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Redo filter seems to crash/erase sample in the win32 version\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Retrig command \lang1031\f1 was\lang1033\f0  still a little bit buggy (when used in combination with delay note)\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Arpeggio \lang1031\f1 was\lang1033\f0  still a little bit buggy (won't be noticed when tickspeed%3 == 0)\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Putting a position jump inbetween a pattern loop will cause the song length estimator to hang in an infinite loop.\lang1031\f1  Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Trying to enable the volume envelope when it says 'none selected' in the envelope editor Milky \lang1031\f1 would\lang1033\f0  crash\lang1031\f1 . Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Block transpose up/down\lang1031\f1  was buggy. Fixed.\lang1033\f0\par
+\lang1031\f1 -\lang1033\f0  Pattern Len display isn't updated to reflect new length after block was pasted and pattern grew\lang1031\f1 . Fixed.\par
+- Scopes didn't update after loading samples/instruments\par
+- Dozens of other fixes...\par
+\ul Features added\ulnone :\par
+- Multichannel record/keyjazz/editing (like in FT2)\par
+- Disable pattern grow when pasting\par
+- Enable "by channel tabbing" (like in FT2)\par
+- Instrument quick select using numerical keypad\par
+- Select sample within instrument in FT2 edit mode (Shift+Alt+Up/Down)\par
+- Emulate insert key with Ctrl+Up in the OSX version (select from the OSX main menu under option "special")\par
+- Dragging files from the win-explorer/osx finder into the MilkyTracker window loads the file\par
+(works for modules, instruments, patterns, tracks, samples etc.)\par
+- Load/Save IFF samples\par
+- More WAV sample types recognized and loaded\par
+- Improved Protracker compatibility\par
+- More options on the replayer for improved module playback compatibility\par
+- Playmodes can now be saved to be the default playmode\par
+- Even more FT2 keyboard shortcuts (F9-F12, look in the doc for more info)\par
+- Even more customizing support, see config.\par
+- PocketPC: Added scopes as well\par
+- PocketPC: Jam page with extended keyboard or pattern\lang1033\f0\par
+\par
+11/29/05 (\b v00.90.00\b0 ), Lots of improvements, really can't remember them all:\par
+- Improved mixer, improved FT2 effect compatibility (especially tremolo, tremor, vibrato)\par
+- Scopes (finally) (only for Desktop versions)\par
+- Configurable colors (config->layout)\par
+- Disk writer (Ctrl+R)\par
+- FT2 like pattern follow: cursor line always in center center\par
+- Prospective mode and toggle follow song mode\par
+- Volume scale (Shift/Alt/Ctrl+V like FT2)\par
+- Load GUS patches (needs to be loaded as instrument)\par
+- Load every file as sample (good for making noise samples)\par
+- Dozens of sample filters\par
+- Reworked GUI (especially menus)\par
+- Sample offset can be shown in sample editor\par
+- Drawing samples (but remember to turn on looping, otherwise doesn't sound good ;))\par
+- Toggle Hex count for rows in pattern editor\par
+- Show zero effect as 00 instead of dots (see config->layout)\par
+- Improved Protracker 2.x, 3.x replay modes (see options)\par
+- Skip through song while it's playing (with cursor keys or scrollwheel)\par
+- Time length calculation/play time meter\par
+- Peak meters\par
+- Sequencer button (see order list)\par
+- Hold the Alt Key in the sample editor to move entire loop not only loop/end\par
+- Tons of other fixes...\par
+- More things to find out...\par
+\par
+10/07/05:\par
+- Fixed crash when saving .MODs\par
+- Implemented Lxx command (set envelope position)\par
+- New: Hold down Ctrl (Apple on OSX) to resize selection in sample editor\par
+- New: Zoom sample in/out by using the scroll wheel of your mouse\par
+- New: Swap channels (select source with cursor and swap with destination channel by menu)\par
+- New: Split track (spread notes from one channel across subsequent channels)\par
+- New: Use virtual channels when playing instruments (enable in config first)\par
+  (instruments played on virtual channels won\rquote t cut instruments used in song) \par
+- Other stuff (don't remember all of it)\par
+\par
+09/01/05:\par
+- Fixed lots of crashes =)\par
+- cut/copy/paste works in sample editor (hopefully, not much tested yet)\par
+- you\rquote re able to change default screen resolution but you need to restart MilkyTracker to apply\par
+- Save patterns/tracks in FT2 formats .XP/.XT\par
+- Save Protracker compatible mods \par
+- Fixed some small issues\par
+\par
+07/01/05:\par
+- Fixed lots of crashes\par
+- Undo/Redo in sample editor (cut/copy/paste is following soon)\par
+- Minor cosmetical changes\par
+- Vibrato volume command now works in pattern editor (press "v")\par
+- Vibrato speed volume command now works in pattern editor (press "s")\par
+- X command works in pattern editor\par
+- MOD loader now recognises 15 channel mods\par
+- Added "large" font for tracking <= 4 channel songs ;)\par
+- Del. key can be used for deleting note+ins./volume/effect\par
+\par
+06/22/05:\par
+- !! Fixed bug that caused MilkyTracker to crash when selecting empty samples (sorry for that one)\par
+- Fixed bug with ALT+F4 when using FT2 shortcuts and Windows =)\par
+- Paste of tracks and patterns always insert at row 0, not at cursor \par
+- Added possibility to expand orderlist listbox\par
+- Added predefined envelopes \par
+- Changed instrument color (one day it will be possible to select your own colors ;))\par
+- More minor fixes\par
+\par
+06/13/05:\par
+- Improved sample position markers\par
+- Added envelope position markers\par
+- Improved XM replayer (fixed FT2 note clipping when playing arpeggios)\par
+- Added more FT2 keyboard shortcuts (Ctrl+I, Ctrl +S, Ctrl +X etc.)\par
+- Minor fixes + Additions\par
+- Added support for mouse scrollwheel\par
+- PocketPC: "Full" onscreen keyboard (probably still buggy)\par
+\par
+05/27/05:\par
+- Right (1st) & Left click (2nd) on channel box cycles between solo channel/unmute all\par
+  (Alternatively hold ALT key and left click on channel box)\par
+- Del. now deletes note & instrument in FT2 mode\par
+- Pattern scrolling is now buffer independent on Win32/WinCE \par
+  (\b Not necessary\b0  under \b OSX\b0  because of much smaller buffer sizes =)) \par
+- Added another pattern scroll style (cursor scrolls to the center and keeps center until the last page)\par
+\par
+05/22/05:\par
+- Due to request MilkyTracker now features a FT2 compatibility mode\par
+  You can switch between MilkyTracker (modern ;)) and FT2 edit modes in the config screen.\par
+  (see MilkyTracker manual for details)\par
+  \b Note: \b0 Not all FT2 commands are implemented yet, but the most important ones for editing are included\par
+- Hopefully fixed some keyboard layout problems\par
+\par
+05/14/05:\par
+- Fixed some "focus" issues\par
+- Divided "save" option into "save" and "save as..." \par
+- Added value interpolation (available in the \ldblquote Advanced Editor\rdblquote )\par
+- Fixed an instrument load/save issue\par
+- PocketPC: Fixed bug, which prevented the progress bar from disappearing when saving instruments/samples.\par
+\par
+05/06/05:\par
+- Minor optimizations making the GUI more responsive\par
+- Toggle focus of pattern editor by pressing space\par
+- Play song from current order by pressing enter\par
+- Play pattern by pressing ctrl+enter\par
+- Play pattern from current position by pressing shift+enter\par
+- PocketPC: Explicit hiding of SIP (does this solve any problems?)\par
+- PocketPC: Minor facelifts\par
+\par
+04/29/05:\par
+- Added possibility to swap/copy samples from one instrument to another\par
+- Fixed major bug in XI loader\par
+- Increased button autorepeat delay\par
+- PocketPC version: GAPI is now properly shut down before opening the common file dialog\par
+\par
+04/25/05:\par
+\pard First "official" PocketPC pre-release\par
+}
+ 

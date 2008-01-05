@@ -1,0 +1,289 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "newres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Germany) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_KEYDIALOG DIALOG DISCARDABLE  0, 0, 143, 159
+STYLE WS_CHILD
+FONT 8, "System"
+BEGIN
+    EDITTEXT        IDC_KEYEDIT1,94,85,35,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Reset keys",IDC_KEYRESETALL,84,108,45,11
+    CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,3,2,126,75
+    LTEXT           "Current button mapping:",IDC_STATIC1,3,87,80,8
+    LTEXT           "Press button to assign a new mapping",IDC_STATIC2,3,97,
+                    126,8
+    LTEXT           "Double tap a function to assign button. Press OK when finished or Cancel to abort without saving.",
+                    IDC_STATIC3,3,79,126,26
+    LTEXT           "Static",IDC_KEY,3,78,126,8
+END
+
+IDD_OTHERDIALOG DIALOG DISCARDABLE  0, 0, 143, 159
+STYLE WS_CHILD
+FONT 8, "System"
+BEGIN
+    CONTROL         "Double Pixels",IDC_CHECKDOUBLEPIXELS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,65,58,10
+    CONTROL         "Hide Taskbar",IDC_CHECKHIDETASKBAR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,78,57,10
+    CONTROL         "Allow external keyboard events",IDC_CHECKALLOWVKEYS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,91,117,10
+    CONTROL         "Don't turn off device",IDC_DONTTURNOFFDEVICE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,105,82,10
+    GROUPBOX        "Other options",IDC_STATIC,3,54,126,65
+    CONTROL         "Right handed (90CW)",IDC_RADIO_ORIENTATION_90CW,"Button",
+                    BS_AUTORADIOBUTTON,8,17,108,10
+    CONTROL         "Left handed (90CCW)",IDC_RADIO_ORIENTATION_90CCW,"Button",
+                    BS_AUTORADIOBUTTON,8,28,108,10
+    CONTROL         "Normal (Portrait)",IDC_RADIO_ORIENTATION_NORMAL,"Button",
+                    BS_AUTORADIOBUTTON,8,39,108,10
+    GROUPBOX        "Orientation",IDC_STATIC,3,7,126,44
+END
+
+IDD_FILEASSOCIATIONDIALOG DIALOG DISCARDABLE  0, 0, 143, 159
+STYLE WS_CHILD
+FONT 8, "System"
+BEGIN
+    CONTROL         "List1",IDC_LIST2,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | 
+                    WS_TABSTOP,3,2,126,104
+    PUSHBUTTON      "Unmark all",IDC_DESELECT_ALL,38,108,43,11
+    PUSHBUTTON      "Mark all",IDC_SELECT_ALL,84,108,45,11
+END
+
+IDD_TABDIALOG DIALOG DISCARDABLE  0, 0, 138, 174
+STYLE WS_POPUP
+FONT 8, "System"
+BEGIN
+    CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",TCS_BOTTOM,1,0,136,137
+    DEFPUSHBUTTON   "OK",IDOK,66,140,31,11
+    PUSHBUTTON      "Cancel",IDCANCEL,101,140,31,11
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_KEYDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 129
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 153
+    END
+
+    IDD_OTHERDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 129
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 153
+    END
+
+    IDD_TABDIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 137
+        BOTTOMMARGIN, 173
+        HORZGUIDE, 11
+        HORZGUIDE, 21
+        HORZGUIDE, 31
+        HORZGUIDE, 40
+        HORZGUIDE, 49
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    DISCARDABLE     "icon1.ico"
+#endif    // German (Germany) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 140, 57
+STYLE WS_POPUP | WS_CAPTION
+EXSTYLE 0x80000000L
+CAPTION "About MilkyTracker config tool"
+FONT 8, "System"
+BEGIN
+    ICON            IDI_ICON1,IDC_STATIC,11,17,20,20
+    LTEXT           "MilkyTracker config tool",IDC_STATIC,39,10,76,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2005/2006",IDC_STATIC,39,25,81,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 133
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 50
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""newres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Data
+//
+
+IDM_MENU SHMENUBAR MOVEABLE PURE 
+BEGIN
+    IDM_MENU, 1,
+    I_IMAGENONE, IDM_MAIN_COMMAND1, TBSTATE_ENABLED, 
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE, IDS_HELP, 0, 0,
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menubar
+//
+
+IDM_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "Tools"
+    BEGIN
+        MENUITEM "About",                       IDM_HELP_ABOUT
+        MENUITEM "Exit",                        IDM_FILE_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_POCKETPCKEYCONFIG ACCELERATORS DISCARDABLE 
+BEGIN
+    "A",            IDM_HELP_ABOUT,         VIRTKEY, CONTROL, NOINVERT
+    "Q",            IDOK,                   VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_APP_TITLE           "MilkyTracker config"
+    IDC_POCKETPCKEYCONFIG   "POCKETPCKEYCONFIG"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_HELP                "Tools"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_COMMAND1            "Done "
+    IDS_WARNING_BUTTONMAPPINGINTERFERENCE 
+                            "The current button mapping might interfere with keys of your external keyboard.\nIf you're using an external keyboard and you're experiencing odd key pressing behaviour change/disable the current mapping."
+    IDS_WARNING_MILKYTRACKERAPPEXENOTFOUND 
+                            "MilkyTracker.exe can not be located in the current folder. Please run this program from the same folder as MilkyTracker.exe."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

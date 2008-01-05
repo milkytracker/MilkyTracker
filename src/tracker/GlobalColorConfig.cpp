@@ -1,0 +1,234 @@
+/*
+ *  GlobalColorConfig.cpp
+ *  MilkyTracker
+ *
+ *  Created by Peter Barth on 21.11.05.
+ *  Copyright (c) 2005 milkytracker.net, All rights reserved.
+ *
+ */
+
+#include "GlobalColorConfig.h"
+#include "TrackerConfig.h"
+#include "PPUIConfig.h"
+
+GlobalColorConfig* GlobalColorConfig::instance = NULL;
+
+GlobalColorConfig* GlobalColorConfig::getInstance()
+{
+	if (instance == NULL)
+		instance = new GlobalColorConfig();
+
+	return instance;
+}
+
+const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor)
+{
+	switch (whichColor)
+	{
+		// Pattern color identfiers
+		case ColorPatternNote:
+			return TrackerConfig::colorPatternEditorNote;
+		case ColorPatternInstrument:
+			return TrackerConfig::colorPatternEditorInstrument;
+		case ColorPatternVolume:
+			return TrackerConfig::colorPatternEditorVolume;
+		case ColorPatternEffect:
+			return TrackerConfig::colorPatternEditorEffect;
+		case ColorPatternOperand:
+			return TrackerConfig::colorPatternEditorOperand;
+		case ColorCursor:
+			return TrackerConfig::colorPatternEditorCursor;
+		// Cursor line
+		case ColorCursorLine:
+			return TrackerConfig::colorPatternEditorCursorLine;
+		// Cursor line in record mode
+		case ColorCursorLineHighlighted:
+			return TrackerConfig::colorPatternEditorCursorLineHighLight;
+		
+		// Theme color (= desktop in FT2)
+		case ColorTheme:
+			return TrackerConfig::colorThemeMain;
+		// Main text (= white?)
+		case ColorForegroundText:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
+		// PPButton colors
+		case ColorButtons:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButton);
+		// PPButton foreground text
+		case ColorButtonText:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText);
+		
+		// Various
+		case ColorSelection:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorSelection);
+
+		case ColorListBoxBackground:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground);
+			
+		case ColorPatternSelection:
+			return TrackerConfig::colorPatternEditorSelection;			
+		case ColorTextHighlited:
+			return TrackerConfig::colorHighLight_1;
+		case ColorTextHighlitedSecond:
+			return TrackerConfig::colorHighLight_2;
+
+		case ColorScopes:
+			return TrackerConfig::colorScopes;
+
+		case ColorRowHighlitedFirst:
+			return TrackerConfig::colorRowHighLight_1;
+		case ColorRowHighlitedSecond:
+			return TrackerConfig::colorRowHighLight_2;
+
+		default:
+			return dummy;
+	}
+}
+
+const char* GlobalColorConfig::getColorReadableDescription(GlobalColors whichColor)
+{
+	switch (whichColor)
+	{
+		// Pattern color identfiers
+		case ColorPatternNote:
+			return "Pattern:Note";
+		case ColorPatternInstrument:
+			return "Pattern:Instrument";
+		case ColorPatternVolume:
+			return "Pattern:Volume";
+		case ColorPatternEffect:
+			return "Pattern:Effect";
+		case ColorPatternOperand:
+			return "Pattern:Operand";
+		// Cursor line
+		case ColorCursor:
+			return "Pattern cursor";
+		// Cursor line
+		case ColorCursorLine:
+			return "Cursor line";
+		// Cursor line in record mode
+		case ColorCursorLineHighlighted:
+			return "Cursor line (FT2 rec.)";
+		
+		// Theme color (= desktop in FT2)
+		case ColorTheme:
+			return "Desktop";
+		// Main text (= white?)
+		case ColorForegroundText:
+			return "Foreground text";
+		// PPButton colors
+		case ColorButtons:
+			return "Buttons";
+		// PPButton foreground text
+		case ColorButtonText:
+			return "Button text";
+		
+		// Various
+		case ColorSelection:
+			return "Selections";
+		case ColorListBoxBackground:
+			return "Listbox background";
+		case ColorPatternSelection:
+			return "Pattern block";
+		case ColorTextHighlited:
+			return "Highlighted text";
+		case ColorTextHighlitedSecond:
+			return "Pattern:2nd highlight text";
+		case ColorScopes:
+			return "Scopes";
+
+		case ColorRowHighlitedFirst:
+			return "Pattern:1st row bg";
+		case ColorRowHighlitedSecond:
+			return "Pattern:2nd row bg";
+
+		default:
+			return NULL;
+	}
+}
+
+void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
+{
+	switch (whichColor)
+	{
+		// Pattern color identfiers
+		case ColorPatternNote:
+			TrackerConfig::colorPatternEditorNote = color;
+			break;
+		case ColorPatternInstrument:
+			TrackerConfig::colorPatternEditorInstrument = color;
+			break;
+		case ColorPatternVolume:
+			TrackerConfig::colorPatternEditorVolume = color;
+			break;
+		case ColorPatternEffect:
+			TrackerConfig::colorPatternEditorEffect = color;
+			break;
+		case ColorPatternOperand:
+			TrackerConfig::colorPatternEditorOperand = color;
+			break;
+		// Cursor line
+		case ColorCursor:
+			TrackerConfig::colorPatternEditorCursor = color;
+			break;
+		// Cursor line
+		case ColorCursorLine:
+			TrackerConfig::colorPatternEditorCursorLine = color;
+			break;
+		// Cursor line in record mode
+		case ColorCursorLineHighlighted:
+			TrackerConfig::colorPatternEditorCursorLineHighLight = color;
+			break;
+		
+		// Theme color (= desktop in FT2)
+		case ColorTheme:
+			TrackerConfig::colorThemeMain = color;
+			break;
+		// Main text (= white?)
+		case ColorForegroundText:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorStaticText, color);
+			break;
+		// PPButton colors
+		case ColorButtons:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorDefaultButton, color);
+			break;
+		// PPButton foreground text
+		case ColorButtonText:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorDefaultButtonText, color);
+			break;
+		
+		// Various
+		case ColorSelection:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorSelection, color);
+			break;
+
+		case ColorListBoxBackground:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorListBoxBackground, color);
+			break;
+			
+		case ColorPatternSelection:
+			TrackerConfig::colorPatternEditorSelection = color;
+			break;
+
+		case ColorTextHighlited:
+			TrackerConfig::colorHighLight_1 = color;
+			break;
+			
+		case ColorTextHighlitedSecond:
+			TrackerConfig::colorHighLight_2 = color;
+			break;
+
+		case ColorScopes:
+			TrackerConfig::colorScopes = color;
+			break;
+
+		case ColorRowHighlitedFirst:
+			TrackerConfig::colorRowHighLight_1 = color;
+			break;
+
+		case ColorRowHighlitedSecond:
+			TrackerConfig::colorRowHighLight_2 = color;
+			break;
+	}	
+}
+

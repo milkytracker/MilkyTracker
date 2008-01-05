@@ -1,0 +1,1053 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>MilkyTracker Documentation v0.90.60</title>
+		<style type="text/css">
+			body
+			{
+				margin: auto;
+				margin: 1em;
+				font-size: 10pt;
+				max-width: 52em;
+			}
+
+			h1, h2, h3, h4
+			{
+				text-decoration: underline;
+			}
+
+			h2
+			{
+				margin-top: 2em;
+			}
+
+			h3
+			{
+				margin-top: 2em;
+				margin-left: 1.5em;
+			}
+
+			h4
+			{
+				font-weight: normal;
+				margin: 0;
+				margin-left: 3em;
+			}
+
+			em
+			{
+				font-weight: bold;
+				font-style: normal;
+				text-decoration: none;
+			}
+
+			p, table
+			{
+				margin: 0;
+				margin-bottom: 1em;
+				margin-left: 3em;
+			}
+
+			table
+			{
+				border-collapse: collapse;
+			}
+
+			tr, td
+ 			{
+ 				vertical-align: top;
+ 			}
+ 			
+			td
+			{
+				padding-right: 2em;
+			}
+
+			ul
+			{
+				list-style-position: inside;
+			}
+
+			ol
+			{
+				list-style-position: outside;
+			}
+
+			ol ol
+			{
+				list-style-type: upper-roman;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>MilkyTracker Documentation	<span id="version" style="font-size: 10pt; font-weight: normal;">v0.90.60</span></h1>
+		<p>
+			Hello and welcome to MilkyTracker, a platform independent Fasttracker II compatible tracker. This
+			document is only meant to explain some MilkyTracker specific things and it's not a tracking manual.
+			If you want to learn more about tracking and how it's done, the Internet is your friend. We host some
+			resources on <a href="http://www.MilkyTracker.net/">MilkyTracker.net</a> as well.
+		</p>
+		<h4>Disclaimer:</h4>
+		<p>	
+			MilkyTracker is under development so use it at your own risk. I'm not responsible
+			for any loss of data and/or hardware damage caused by MilkyTracker.
+		</p>
+		<p>
+			Now, with the formalities taken care of, let's have a look at the&hellip;
+		</p>
+
+		<h2>Table of Contents</h2>
+		<ol>
+			<li><a href="#platforms">Supported platforms</a></li>
+			<li><a href="#overview">Overview</a></li>
+			<li><a href="#features">Features</a></li>
+			<li><a href="#formats">Imported and exported file formats</a>
+				<ol>
+					<li><a href="#modules">Modules</a></li>
+					<li><a href="#samples">Samples</a></li>
+					<li><a href="#instruments">Instruments</a></li>
+					<li><a href="#patsandtracks">Patterns and Tracks</a></li>
+				</ol>
+			</li>
+			<li><a href="#shortcuts">Keyboard shortcuts</a>
+				<ol>
+					<li><a href="#milkymode">MilkyTracker edit mode</a></li>
+					<li><a href="#ft2mode">Fasttracker II edit mode</a></li>
+				</ol>
+			</li>
+			<li><a href="#MIDI">MIDI support</a></li>
+			<li><a href="#issues">Known issues and bug reports</a></li>
+			<li><a href="#contact">Contact</a></li>
+			<li><a href="#donating">Donating</a></li>
+			<li><a href="#thanks">Thanks</a></li>
+		</ol>
+
+
+		
+		<h2><a id="platforms">1. Supported platforms</a></h2>
+		<p>
+			MilkyTracker currently runs on the following platforms:
+		</p>
+		<ul>
+			<li>FreeBSD (x86)</li>
+			<li>GNU/Linux (x86, x86_64, PowerPC, ARM, GP2X)</li>
+			<li>Mac OS X</li>
+			<li>Windows (ANSI) 9x/Me</li>
+			<li>Windows (Unicode) NT/2k/XP/2003/Vista</li>
+			<li>Windows CE (PocketPC, Handheld PC and the Gizmondo)</li>
+		</ul>
+		<p>
+			It has been known to run also on:
+		</p>
+		<ul>
+			<li>Amiga OS 4</li>
+			<li>GNU/Linux (XBOX)</li>
+			<li>Solaris 9 &amp; 10 (SPARC)</li>
+		</ul>
+		<p>
+			If you have questions about these ports or wish to run Milky on something else,
+			<a href="#contact">contact us</a> through our various channels.
+		</p>
+
+
+
+		<h2><a id="overview">2. Overview</a></h2>
+		<p>
+			MilkyTracker is a multiplatform music application, more specifically part of the tracker
+			family. It attempts to recreate the module replay and user experience of the popular DOS
+			tracker Fasttracker II, with special playback modes available for improved Amiga
+			ProTracker 2.x/3.x compatibility. MilkyTracker is not "another Windows tracker" which
+			should already be obvious by the plethora of supported desktop and portable platforms.
+			In fact it started as a project to bring tracking to the Pocket PC. When this milestone
+			was reached, the next one was creating a truly FT2 compatible
+			tracker for portable as well as modern desktop platforms.
+		</p>
+
+
+
+		<h2><a id="features">3. Features</a></h2>
+		<ul>
+			<li>Fasttracker II like, custom graphical user interface with context menus</li>
+			<li>Very accurate .XM replay compared to Ft2</li>
+			<li>ProTracker 2.x &amp; 3.x playback modes for playing and editing .MOD files</li>
+			<li>Supported on multiple platforms including hand-held devices</li>
+			<li>Alternative edit modes for new users and Ft2 veterans</li>
+			<li>Imports over 30 different module formats</li>
+			<li>Internal file browser option</li>
+			<li>Disk (.WAV) recorder</li>
+			<li>Module size optimizer</li>
+			<li>Possibility to edit songs live (during playback)</li>
+			<li>Powerful sample editor featuring waveform generators</li>
+			<li>Powerful instrument editor featuring envelope zooming and scaling</li>
+			<li>Prospective pattern view option</li>
+			<li>Low latency audio driver support</li>
+			<li>MIDI In support</li>
+			<li>Various font sizes for improved visibility of pattern data</li>
+		</ul>
+
+
+
+		<h2><a id="formats">4. Imported and exported file formats</a></h2>
+		<h3><a id="modules">I. Modules</a></h3>
+		<p>
+			MilkyTracker can import a wide range of tracker module formats but since Milky is a Ft2 clone,
+			modules are replayed in Ft2 environment which means not all features of different formats are supported.
+		</p>
+		<h4>Import:</h4>
+		<table>
+			<tr>
+				<td><em>.669</em></td><td>669 Composer/Unis669 (PC)</td>
+			</tr>
+			<tr>
+				<td rowspan="2"><em>.AMF</em></td><td>Asylum Music Format ("Crusader"ingame music) (PC)</td>
+			</tr>
+			<tr>
+				<td>Digital Sound and Music Interface (DSMI) library (PC)</td>
+			</tr>
+			<tr>
+				<td rowspan="2"><em>.AMS</em></td><td>Extreme Tracker (PC)</td>
+			</tr>
+			<tr>
+				<td>Velvet Studio (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.CBA</em></td><td>Chuck Biscuits+Black Artist module format (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.DBM</em></td><td>DigiBooster Pro (Amiga)</td>
+			</tr>
+			<tr>
+				<td><em>.DIGI</em></td><td>Digibooster 1.0-1.7 (Amiga)</td>
+			</tr>
+			<tr>
+				<td rowspan="2"><em>.DSM</em></td><td>Digisound Interface Kit (DSIK) library (PC)</td>
+			</tr>
+			<tr>
+				<td>Dynamic Studio (PC)</td>
+			</tr>
+			<tr>
+				<td rowspan="2"><em>.DTM</em></td><td>Digital Tracker (Atari)</td>
+			</tr>
+			<tr>
+				<td>DigiTrekker 3.0 (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.FAR</em></td><td>Farandole Composer (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.GDM</em></td><td>General Digimusic (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.GMC</em></td><td>Game Music Creator (Amiga)</td>
+			</tr>
+			<tr>
+				<td><em>.IMF</em></td><td>Imago Orpheus (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.IT</em></td><td>Impulse Tracker (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.MDL</em></td><td>DigiTrakker 1.0-3.0 (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.MOD</em></td><td>Sound-/ProTracker and variants (Amiga &amp; PC)</td>
+			</tr>
+			<tr>
+				<td><em>.MTM</em></td><td>MultiTracker (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.MXM</em></td><td>Cubic Tiny XM (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.OKT</em></td><td>Oktalyzer (Amiga)</td>
+			</tr>
+			<tr>
+				<td><em>.PLM</em></td><td>DisorderTracker II (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.PSM</em></td><td>Epic MegaGames MASI (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.PTM</em></td><td>PolyTracker (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.S3M</em></td><td>Scream Tracker 3.0 (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.SFX</em></td><td>SoundFX (Amiga)</td>
+			</tr>
+			<tr>
+				<td><em>.STM</em></td><td>Scream Tracker 2.0 (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.ULT</em></td><td>UltraTracker (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.UNI</em></td><td>MikMod (PC)</td>
+			</tr>
+			<tr>
+				<td><em>.XM</em></td><td>Fasttracker II (PC)</td>
+			</tr>
+		</table>
+		<p>
+			MilkyTracker's song export options are the same as Fasttracker II's but it is notable that unlike Ft2,
+			<em>Milky saves Amiga compatible 4-channel .MODs</em>. MilkyTracker
+			also features ProTracker 2.x and 3.x playback modes for .MODs.
+		</p>
+		<h4>Export:</h4>
+		<table>
+			<tr>
+				<td><em>.MOD</em></td><td>ProTracker boundaries, although can save 2&ndash;32 channels</td>
+			</tr>
+			<tr>
+				<td><em>.WAV</em></td><td>Microsoft/IBM PCM Waveform audio rendering</td>
+			</tr>
+			<tr>
+				<td><em>.XM</em></td><td>Fasttracker II compatible, not as common as one might think</td>
+			</tr>
+		</table>
+	
+	
+	
+		<h3><a id="samples">II. Samples</a></h3>
+		<p>
+			Milky can load practically anything as RAW PCM audio samples, one of Ft2's famous features.
+		</p>
+		<h4>Import:</h4>
+		<table>
+			<tr>
+				<td><em>.8SVX</em> / <em>.IFF</em></td><td>Compressed/uncompressed Interchange File Format</td>
+			</tr>
+			<tr>
+				<td><em>.AIF</em> / <em>.AIFF</em></td><td>Apple Audio Interchange File Format</td>
+			</tr>
+			<tr>
+				<td><em>.WAV</em></td><td>Microsoft/IBM uncompressed PCM Wavefrom audio</td>
+			</tr>
+			<tr>
+				<td><em>.*</em></td><td>RAW PCM audio</td>
+			</tr>
+		</table>
+		<h4>Export:</h4>
+		<table>
+			<tr>
+				<td><em>.IFF</em></td><td>Uncompressed Interchange File Format</td>
+			</tr>
+			<tr>
+				<td><em>.WAV</em></td><td>Microsoft/IBM uncompressed PCM Wavefrom audio</td>
+			</tr>
+		</table>
+
+
+
+		<h3><a id="instruments">III. Instruments</a></h3>
+		<p>
+			MilkyTracker can load and save Ft2's eXtended Instument (<em>.XI</em>) format
+			and additionally import Gravis Ultrasound GF1 Patch (<em>.PAT</em>) files.
+		</p>
+		
+
+		
+		<h3><a id="patsntracks">IV. Patterns and Tracks</a></h3>
+		<p>
+			MilkyTracker fully operates with Ft2's eXtended Pattern (<em>.XP</em>) and
+			eXtended Track (<em>.XT</em>) files.
+		</p>
+		
+		
+		
+		<h2><a id="shortcuts">5. Keyboard shortcuts</a></h2>
+		<p>
+			Due to request MilkyTracker features two edit modes. You can switch between these in the Config screen
+			(Misc. tab).
+		</p>
+		<h3><a id="milkymode">I. MilkyTracker edit mode</a></h3>
+		<p>
+			The MilkyTracker mode basically a bit more "modern" because you can focus on different parts
+			(e.g. Pattern Editor, Instrument Listbox, Sample Listbox etc.) and when you're pressing keys
+			they're routed to the focused control. Also keyboard shortcuts are more standard, you can
+			select by pressing the SHIFT key and navigating with the cursor keys, cut, copy &amp; paste
+			with using CTRL+X/C/V etc. I think users who are new to tracking will find this a bit more
+			intuitive.
+		</p>
+		<h4>Global:</h4>
+		<table>
+			<tr>
+				<td>2, 3, 5, 6&hellip;</td><td rowspan="4" style="vertical-align: middle;">Play / Insert notes (depending on whether edit mode is on)</td>
+			</tr>
+			<tr>
+				<td>Q, W, E, R&hellip;</td>
+			</tr>
+			<tr>
+				<td>S, D, F, G&hellip;</td>
+			</tr>
+			<tr>
+				<td>Z, X, C, V&hellip;</td>
+			</tr>
+			<tr>
+				<td>Space</td><td>Toggle pattern editor focus (edit mode on/off)</td>
+			</tr>
+			<tr>
+				<td>Enter</td><td>Play song from current order</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Enter</td><td>Play current pattern from beginning</td>
+			</tr>
+			<tr>
+				<td>Shift+Enter</td><td>Play current pattern from cursor position</td>
+			</tr>
+			<tr>
+				<td>Shift+F9</td><td>Play current pattern from beginning (same as Ctrl+Enter)</td>
+			</tr>
+			<tr>
+				<td>Shift+F10</td><td>Play current pattern from position after the first quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Shift+F11</td><td>Play current pattern from position after the second quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Shift+F12</td><td>Play current pattern from position after the third quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Alt+Space</td><td>Play song from current row (stop and return when keys are released)</td>
+			</tr>
+			<tr>
+				<td>Shift+Space</td><td>Play row by row</td>
+			</tr>
+			<tr>
+				<td>Esc</td><td>Stop</td>
+			</tr>
+			<tr>
+				<td>Ctrl+O</td><td>Load song</td>
+			</tr>
+			<tr>
+				<td>Ctrl+S</td><td>Save song</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Shift+S</td><td>Save song as&hellip;</td>
+			</tr>
+		</table>
+		<h4>Pattern Editor:</h4>
+		<table>
+			<tr>
+				<td>Cursor keys</td><td>Move around</td>
+			</tr>
+			<tr>
+				<td>Tab</td><td>Jump to next channel</td>
+			</tr>
+			<tr>
+				<td>PageUp</td><td>Jump 16 rows up</td>
+			</tr>
+			<tr>
+				<td>PageDown</td><td>Jump 16 rows down</td>
+			</tr>
+			<tr>
+				<td>Home</td><td>Jump to first row</td>
+			</tr>
+			<tr>
+				<td>End</td><td>Jump to last row</td>
+			</tr>
+			<tr>
+				<td>F1&hellip;F8</td><td>Choose octave</td>
+			</tr>
+			<tr>
+				<td>F9</td><td>Jump to beginning of the pattern</td>
+			</tr>
+			<tr>
+				<td>F10</td><td>Jump to position &frac14; through the pattern</td>
+			</tr>
+			<tr>
+				<td>F11</td><td>Jump to position halfway through the pattern</td>
+			</tr>
+			<tr>
+				<td>F12</td><td>Jump to position &frac34; through the pattern</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Z</td><td>Undo</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Y</td><td>Redo</td>
+			</tr>
+			<tr>
+				<td>Shift+Cursor keys</td><td>Select block</td>
+			</tr>
+			<tr>
+				<td>Shift+Alt+Cursor keys</td><td>Extend block</td>
+			</tr>
+			<tr>
+				<td>Ctrl+A</td><td>Select entire pattern</td>
+			</tr>
+			<tr>
+				<td>Ctrl+X</td><td>Cut</td>
+			</tr>
+			<tr>
+				<td>Ctrl+C</td><td>Copy</td>
+			</tr>
+			<tr>
+				<td>Ctrl+V</td><td>Paste</td>
+			</tr>
+			<tr>
+				<td>Shift+M</td><td>Mute current selected channel</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Shift+M</td><td>Invert current muting</td>
+			</tr>
+			<tr>
+				<td>Ctrl+I</td><td>Interpolate values</td>
+			</tr>
+			<tr>
+				<td>Delete</td><td>Delete note/instrument/volume/effect/operand</td>
+			</tr>
+			<tr>
+				<td>Shift+Del</td><td>Delete note, volume and effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Del</td><td>Delete volume and effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Alt+Delete</td><td>Delete effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Insert</td><td>Insert space on current track at cursor position</td>
+			</tr>
+			<tr>
+				<td>Shift+Insert</td><td>Insert row at cursor position</td>
+			</tr>
+			<tr>
+				<td>Backspace</td><td>Delete previous note</td>
+			</tr>
+			<tr>
+				<td>Shift+Backspace</td><td>Delete previous row</td>
+			</tr>
+			<tr>
+				<td>The key below ESC</td><td>Enter Keyoff-"note" (only works under Windows)</td>
+			</tr>
+			<tr>
+				<td>The key right of LShift</td><td>Enter Keyoff-"note" (only works under Windows)</td>
+			</tr>
+		</table>
+		<h4>Transpose:</h4>
+		<table>
+			<tr>
+				<td>Alt+F7</td><td>Transpose current instrument in block down</td>
+			</tr>
+			<tr>
+				<td>Alt+F8</td><td>Transpose current instrument in block up</td>
+			</tr>
+			<tr>
+				<td>Shift+F7</td><td>Transpose current instrument in track down</td>
+			</tr>
+			<tr>
+				<td>Shift+F8</td><td>Transpose current instrument in track up</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F7</td><td>Transpose current instrument in pattern down</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F8</td><td>Transpose current instrument in pattern up</td>
+			</tr>
+			<tr>
+				<td>Alt+F1</td><td>Transpose all instruments in block down</td>
+			</tr>
+			<tr>
+				<td>Alt+F2</td><td>Transpose all instruments in block up</td>
+			</tr>
+			<tr>
+				<td>Shift+F1</td><td>Transpose all instruments in track down</td>
+			</tr>
+			<tr>
+				<td>Shift+F2</td><td>Transpose all instruments in track up</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F1</td><td>Transpose all instruments in pattern down</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F2</td><td>Transpose all instruments in pattern up</td>
+			</tr>
+		</table>
+		<h4>Sample Editor:</h4>
+		<table>
+			<tr>
+				<td>Shift &amp; drag</td><td>Quick draw</td>
+			</tr>
+			<tr>
+				<td>Ctrl &amp; drag</td><td>Resize selection</td>
+			</tr>
+			<tr>
+				<td>Alt &amp; drag</td><td>Move selection or loop range</td>
+			</tr>
+		</table>
+		<p>
+			Try to play around with pressing other keys to find out what notes they're mapped to =)
+		</p>
+
+
+
+		<h3><a id="ft2mode">II. Fasttracker II edit mode</a></h3>
+		<p>
+			The Ft2 edit mode is for the die-hard Ft2 user and is propably not so intuitive to use, but I
+			think Ft2 users don't care about that. <em>Please note</em> that not all
+			Ft2 shortcuts are implemented yet and some may differ because of various reasons.
+			<em>Also note</em> that this edit mode is not working very well on a
+			PocketPC because of limited input devices.
+		</p>
+		<h4>Window switching:</h4>
+		<table>
+			<tr>
+				<td>Ctrl+</td><td> </td>
+			</tr>
+			<tr>
+				<td>A</td><td>Advanced edit</td>
+			</tr>
+			<tr>
+				<td>C</td><td>Configuration</td>
+			</tr>
+			<tr>
+				<td>D</td><td>Disk operations</td>
+			</tr>
+			<tr>
+				<td>I</td><td>Instrument editor</td>
+			</tr>
+			<tr>
+				<td>R</td><td>Disk recorder</td>
+			</tr>
+			<tr>
+				<td>S</td><td>Sample editor</td>
+			</tr>
+			<tr>
+				<td>T</td><td>Transpose</td>
+			</tr>
+			<tr>
+				<td>X</td><td>Main screen (almost alt+X)</td>
+			</tr>
+			<tr>
+				<td>Z</td><td>Show/Hide scopes</td>
+			</tr>
+		</table>
+		<h4>Global:</h4>
+		<table>
+			<tr>
+				<td>2, 3, 5, 6&hellip;</td><td rowspan="4" style="vertical-align: middle;">Play / Insert notes (depending on whether edit mode is on)</td>
+			</tr>
+			<tr>
+				<td>Q, W, E, R&hellip;</td>
+			</tr>
+			<tr>
+				<td>S, D, F, G&hellip;</td>
+			</tr>
+			<tr>
+				<td>Z, X, C, V&hellip;</td>
+			</tr>
+			<tr>
+				<td>F1&hellip;F8</td><td>Select octave</td>
+			</tr>
+			<tr>
+				<td>Right Ctrl</td><td>Play song from current order (only works under Windows)</td>
+			</tr>
+			<tr>
+				<td>Enter</td><td>Play song from current order</td>
+			</tr>
+			<tr>
+				<td>Right Alt</td><td>Play current pattern from beginning (only works under Windows)</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Enter</td><td>Play current pattern from beginning</td>
+			</tr>
+			<tr>
+				<td>Shift+Enter</td><td>Play current pattern from current row</td>
+			</tr>
+			<tr>
+				<td>Shift+F9</td><td>Play current pattern from beginning (same as Ctrl+Enter/Right Alt)</td>
+			</tr>
+			<tr>
+				<td>Shift+F10</td><td>Play current pattern from position after the first quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Shift+F11</td><td>Play current pattern from position after the second quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Shift+F12</td><td>Play current pattern from position after the third quarter of the pattern length</td>
+			</tr>
+			<tr>
+				<td>Alt+Space</td><td>Play song from current row (stop and return when keys are released)</td>
+			</tr>
+			<tr>
+				<td>Shift+Space</td><td>Play row by row</td>
+			</tr>
+			<tr>
+				<td>Space</td><td>Stop / Edit</td>
+			</tr>
+			<tr>
+				<td>Shift+Left</td><td>Increase song position</td>
+			</tr>
+			<tr>
+				<td>Shift+Right</td><td>Decrease song position</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Left</td><td>Increase current pattern number</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Right</td><td>Decrease current pattern number</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F</td><td>Toggle song following</td>
+			</tr>
+			<tr>
+				<td>Ctrl+P</td><td>Toggle prospective pattern view</td>
+			</tr>
+			<tr>
+				<td>Ctrl+W</td><td>Toggle pattern wrapping</td>
+			</tr>
+			<tr>
+				<td>ESC</td><td>Exit program</td>
+			</tr>
+		</table>
+		<h4>Pattern editor:</h4>
+		<table>
+			<tr>
+				<td>Cursor keys</td><td>Move around</td>
+			</tr>
+			<tr>
+				<td>PageUp</td><td>Jump 16 rows up</td>
+			</tr>
+			<tr>
+				<td>PageDown</td><td>Jump 16 rows down</td>
+			</tr>
+			<tr>
+				<td>Home</td><td>Jump to first row</td>
+			</tr>
+			<tr>
+				<td>End</td><td>Jump to last row</td>
+			</tr>
+			<tr>
+				<td>Tab</td><td>Jump to next track</td>
+			</tr>
+			<tr>
+				<td>Shift+Tab</td><td>Jump to previous track</td>
+			</tr>
+			<tr>
+				<td>Alt+Q&hellip;I</td><td>Jump to track (0&hellip;7) MOD N-Channels</td>
+			</tr>
+			<tr>
+				<td>Alt+A&hellip;K</td><td>Jump to track (8&hellip;15) MOD N-Channels</td>
+			</tr>
+			<tr>
+				<td>F9</td><td>Jump to beginning of the pattern</td>
+			</tr>
+			<tr>
+				<td>F10</td><td>Jump to position &frac14; through the pattern</td>
+			</tr>
+			<tr>
+				<td>F11</td><td>Jump to position halfway through the pattern</td>
+			</tr>
+			<tr>
+				<td>F12</td><td>Jump to position &frac34; through the pattern</td>
+			</tr>
+			<tr>
+				<td>Caps-Lock</td><td>Enter Keyoff-"note" (only works under Windows)</td>
+			</tr>
+			<tr>
+				<td>The key right of LShift</td><td>Enter Keyoff-"note" (only works under Windows)</td>
+			</tr>
+			<tr>
+				<td>Del</td><td>Delete note or volume column at cursor</td>
+			</tr>
+			<tr>
+				<td>Shift+Del</td><td>Delete note, volume and effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Del</td><td>Delete volume and effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Alt+Delete</td><td>Delete effect at cursor</td>
+			</tr>
+			<tr>
+				<td>Ins</td><td>Insert space on current track at cursor position</td>
+			</tr>
+			<tr>
+				<td>Shift+Ins</td><td>Insert row at cursor position</td>
+			</tr>
+			<tr>
+				<td>Backspace</td><td>Delete previous note</td>
+			</tr>
+			<tr>
+				<td>Shift+Backspace</td><td>Delete previous row</td>
+			</tr>
+		</table>
+		<h4>Clipboard operations:</h4>
+		<table>
+			<tr>
+				<td>Alt+Cursor keys</td><td>Select block</td>
+			</tr>
+			<tr>
+				<td>Shift+Alt+Cursor keys</td><td>Extend block</td>
+			</tr>
+			<tr>
+				<td>Alt+F3</td><td>Cut block</td>
+			</tr>
+			<tr>
+				<td>Alt+F4</td><td>Copy block (yes, even under Windows =)</td>
+			</tr>
+			<tr>
+				<td>Alt+F5</td><td>Paste block</td>
+			</tr>
+			<tr>
+				<td>Shift+F3</td><td>Cut track</td>
+			</tr>
+			<tr>
+				<td>Shift+F4</td><td>Copy track</td>
+			</tr>
+			<tr>
+				<td>Shift+F5</td><td>Paste track</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F3</td><td>Cut pattern</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F4</td><td>Copy pattern</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F5</td><td>Paste pattern</td>
+			</tr>
+		</table>
+		<h4>Additional shortcuts (not found in Ft2):</h4>
+		<table>
+			<tr>
+				<td>Ctrl+Alt+Z</td><td>Undo</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Alt+Y</td><td>Redo</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Alt+A</td><td>Select entire pattern</td>
+			</tr>
+			<tr>
+				<td>Shift+M</td><td>Mute current selected channel</td>
+			</tr>
+			<tr>
+				<td>Ctrl+Shift+M</td><td>Invert current muting</td>
+			</tr>
+			<tr>
+				<td>Shift+I</td><td>Interpolate values</td>
+			</tr>
+		</table>
+		<h4>Volume scaling:</h4>
+		<table>
+			<tr>
+				<td>Alt+V</td><td>Volume scale block</td>
+			</tr>
+			<tr>
+				<td>Shift+V</td><td>Volume scale track</td>
+			</tr>
+			<tr>
+				<td>Ctrl+V</td><td>Volume scale pattern</td>
+			</tr>
+		</table>
+		<h4>Command/Volume macro:</h4>
+		<table>
+			<tr>
+				<td>Shift+Alt+1&hellip;0</td><td>Read command/volume at cursor</td>
+			</tr>
+			<tr>
+				<td>Alt+1&hellip;0</td><td>Write command/volume at cursor</td>
+			</tr>
+		</table>
+		<h4>Transpose:</h4>
+		<table>
+			<tr>
+				<td>Alt+F7</td><td>Transpose current instrument in block down</td>
+			</tr>
+			<tr>
+				<td>Alt+F8</td><td>Transpose current instrument in block up</td>
+			</tr>
+			<tr>
+				<td>Shift+F7</td><td>Transpose current instrument in track down</td>
+			</tr>
+			<tr>
+				<td>Shift+F8</td><td>Transpose current instrument in track up</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F7</td><td>Transpose current instrument in pattern down</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F8</td><td>Transpose current instrument in pattern up</td>
+			</tr>
+			<tr>
+				<td>Alt+F1</td><td>Transpose all instruments in block down</td>
+			</tr>
+			<tr>
+				<td>Alt+F2</td><td>Transpose all instruments in block up</td>
+			</tr>
+			<tr>
+				<td>Shift+F1</td><td>Transpose all instruments in track down</td>
+			</tr>
+			<tr>
+				<td>Shift+F2</td><td>Transpose all instruments in track up</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F1</td><td>Transpose all instruments in pattern down</td>
+			</tr>
+			<tr>
+				<td>Ctrl+F2</td><td>Transpose all instruments in pattern up</td>
+			</tr>
+		</table>
+		<h4>Instrument selection:</h4>
+		<table>
+			<tr>
+				<td>Shift+Up</td><td>Select previous instrument</td>
+			</tr>
+			<tr>
+				<td>Shift+Down</td><td>Select next instrument</td>
+			</tr>
+			<tr>
+				<td>Shift+Ctrl+Up</td><td>Select previous sample</td>
+			</tr>
+			<tr>
+				<td>Shift+Ctrl+Down</td><td>Select next sample</td>
+			</tr>
+		</table>
+		<p>
+			You can also quick-type the hex-number of the instrument you want to select on the numeric
+			keypad, the layout is like this:
+		</p>
+		<table>
+			<tr>
+				<td colspan="2">Num 0&hellip;Num 9</td><td>Digit 0&hellip;9</td>
+			</tr>
+			<tr>
+				<td><em>PC</em></td><td colspan="2"><em>Mac</em></td>
+			</tr>
+			<tr>
+				<td>Num /</td><td>Num =</td><td>Digit A</td>
+			</tr>
+			<tr>
+				<td>Num *</td><td>Num /</td><td>Digit B</td>
+			</tr>
+			<tr>
+				<td>Num -</td><td>Num *</td><td>Digit C</td>
+			</tr>
+			<tr>
+				<td>Num +</td><td>Num -</td><td>Digit D</td>
+			</tr>
+			<tr>
+				<td>Num Enter</td><td>Num +</td><td>Digit E</td>
+			</tr>
+			<tr>
+				<td>Num ,</td><td>Num Enter</td><td>Digit F</td>
+			</tr>
+		</table>
+		<h4>Sample editor:</h4>
+		<table>
+			<tr>
+				<td>Shift &amp; drag</td><td>Quick draw</td>
+			</tr>
+			<tr>
+				<td>Ctrl &amp; drag</td><td>Resize selection</td>
+			</tr>
+			<tr>
+				<td>Alt &amp; drag</td><td>Move selection or loop range</td>
+			</tr>
+		</table>
+		<p>
+			<em>Please note that under Mac OS X the Command key is used instead of the Ctrl key.</em>
+		</p>
+
+
+
+		<h2><a id="MIDI">6. MIDI support</a></h2>
+		<p>
+			MilkyTracker supports basic MIDI input which means you can use your MIDI device to feed notes into MilkyTracker.
+			Since the MIDI support varies from platform to platform, here's a short list on how to enable MIDI input:
+		</p>
+		<table>
+			<tr>
+				<td><em>Windows:</em></td>
+				<td>Select Preferences from the system menu (top left corner of the window)</td>
+			</tr>
+			<tr>
+				<td><em>OSX:</em></td>
+				<td>Select Preferences from the MilkyTracker menu or press Command+,</td>
+			</tr>
+			<tr>
+				<td><em>Linux:</em></td>
+				<td>Enabled by default if available on the system. See the Linux readme for details.</td>
+			</tr>
+		</table>
+
+
+
+		<h2><a id="issues">7. Known issues and bug reports</a></h2>
+		<p>
+			Some things work different in MilkyTracker and some dialogs may look different. ;)
+			The GUI of MilkyTracker has been adjusted to fit low resolution displays with 320x240 pixels.
+			Thus the screen can be more easily divided into separate pages.
+		</p>
+		<p>
+			MilkyTracker aims for full Fasttracker II compatibility in its replay but this goal is easier
+			set than achieved. Some of the original effect implementations defy all documentation and logic.
+			Here's a list of current replay differences between Ft2 and Milky:
+		</p>
+		<ul>
+			<li><em>0xy</em> arpeggio when song speed is greater than or equal to 16</li>
+			<li><em>E3x</em> glissando control is not implemented</li>
+			<li><em>E4x</em> vibrato control is not implemented</li>
+			<li><em>E6x</em> pattern loop and <em>EEx</em> pattern delay on the same row</li>
+			<li><em>E7x</em> tremolo control is not implemamented</li>
+			<li><em>?x</em> volume column effects used in conjunction with <em>EDx</em> note delay</li>
+		</ul>
+		<p>
+			If you find more incompatibilities or if MilkyTracker crashes or does something really stupid we'd
+			really like to hear from you and it would be even cooler if you can reproduce the problem as
+			closely as possible. There's a section dedicated to bug reports on our web forum.
+		</p>
+
+
+
+		<h2><a id="contact">8. Contact</a></h2>
+		<p>
+			You can contact by email (<a href="mailto:support@milkytracker.net">support@milkytracker.net</a>)
+			or through the relatively active forum at
+			<a href="http://www.MilkyTracker.net/milkyboards/">http://www.MilkyTracker.net/milkyboards/</a>.
+			If you want to chat with the community live, you should connect to #MilkyTracker on
+			<a href="http://www.esper.net/">EsperNet</a> with your IRC client or via the Chat page on our website.
+		</p>
+
+
+
+		<h2><a id="donating">9. Donating</a></h2>
+		<p>
+			If you like MilkyTracker and you're looking for a way to support me developing it, why don't you
+			donate something using PayPal? My PayPal account is <em>donate@milkytracker.net</em>.
+			Any donation will be appreciated and it keeps me going. Also, when donating, your feature requests
+			will always be on top of my list, isn't that a neat offer?
+		</p>
+		<p>
+			Don't worry, MilkyTracker will always be free because I really enjoy working on it
+			but you should remember that Ft2 wasn't real freeware either.
+		</p>
+
+
+
+		<h2><a id="thanks">10. Thanks</a></h2>
+		<p>
+			Thanks to anyone who has contributed: Kenet for the amazing logos, Kmuland for always supporting me,
+			raina for the nice icons, Svenzzon for his nice example tune, Deltafire for the Linux SDL port and
+			various fixes, Strobe for his amazing video tutorials and Milkytracker dedication, Flasch, Setrodox,
+			Syphus for constructive criticism, Varthall and SpotUP for the Amiga port, Idc and Rez for the new
+			fonts, Alien^PDX for the website GFX and the entire Titan crew for supporting my work and everybody
+			else who dropped me a letter&hellip;
+		</p>
+		<p>
+			Special greetings to everyone at #MilkyTracker for making it a daily active channel.
+		</p>
+		<p>
+			Have fun&hellip;
+		</p>
+
+
+
+		<p style="font-style: italic;">
+			- pailes &amp; raina with help from everybuddies! :)
+		</p>
+	</body>
+</html>

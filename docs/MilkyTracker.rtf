@@ -1,0 +1,267 @@
+{\rtf1\ansi\ansicpg10000\deff0{\fonttbl{\f0\froman\fprq2\fcharset77 Times New Roman;}{\f1\froman\fprq2\fcharset0 Times New Roman;}}
+{\*\generator Msftedit 5.41.15.1503;}\viewkind4\uc1\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\lang1033\ul\b\f0\fs32 MilkyTracker Documentation\ulnone\fs40\par
+\fs48\par
+\b0\fs22 Hello and welcome to this very first version of MilkyTracker a platform independent FastTracker II "clone"\par
+\par
+Currently supported platforms are:\par
+- Windows\par
+- Mac OS X\par
+- PocketPC (Windows CE 3.0 and above)\par
+\par
+I'm also working on a pure SDL port which is supposed to run under Linux as well but it will take some more time.\par
+\par
+\b\fs24 Important:\b0\par
+\fs22 Right now MilkyTracker is under heavy development so use it at your own risk.\par
+I'm not responsible for any loss of data and or hardware damage caused by MilkyTracker.\par
+Lots of functionality is still\lang1031\f1  missing.\lang1033\f0\par
+\par
+\ul\b\fs24 Quick Overview:\par
+\ulnone\b0\fs22\par
+Due to request MilkyTracker features two edit modes:\par
+\par
+\ul\b I. MilkyTracker edit mode:\b0\par
+\ulnone The MilkyTracker mode basically a bit more "modern" because you can focus on different parts \par
+(e.g. Pattern Editor, Instrument Listbox, Sample Listbox etc.) and when you're pressing\par
+keys they're routed to the focused control.\par
+Also keyboard shortcuts are more standard, you can select by pressing the SHIFT key\par
+and navigating with the cursor keys, cut, copy & paste with using CTRL+X/C/V etc.\par
+I think users who are new to tracking will find this a bit more intuitive.\par
+The edit mode can be changed in the config screen (Misc. tab)\par
+\par
+Right now a few common keyboard shortcuts are supported in the \b MilkyTracker edit mode\b0 :\par
+\par
+\ul Global shortcuts:\par
+\ulnone Space: \tab\tab\tab Toggle pattern editor focus (edit mode on/off)\par
+Enter: \tab\tab\tab Play song from current order\par
+Ctrl+Enter:\tab\tab\tab Play current pattern from beginning\par
+Shift+Enter:\tab\tab\tab Play current pattern from cursor position\par
+Shift+F9\tab\tab\tab Play current pattern from beginning (same as Ctrl+Enter)\par
+Shift+F10\tab\tab\tab Play current pattern from position after the first quarter of the pattern length\par
+Shift+F11\tab\tab\tab Play current pattern from position after the second quarter of the pattern length\par
+Shift+F12\tab\tab\tab Play current pattern from position after the third quarter of the pattern length\par
+ESC: \tab\tab\tab\tab Stop playing\par
+Ctrl+O: \tab\tab\tab Load new song\par
+Ctrl+S: \tab\tab\tab Save song\par
+Ctrl+Shift+S: \tab\tab Save song under new filename\ul\par
+\ulnone\par
+\ul Transpose:\par
+\ulnone Shift+F7: \tab\tab\tab Transpose current instrument in track down\par
+Shift+F8: \tab\tab\tab Transpose current instrument in track up\par
+Ctrl+F7: \tab\tab\tab Transpose current instrument in pattern down\par
+Ctrl+F8: \tab\tab\tab Transpose current instrument in pattern up\par
+Alt+F7: \tab\tab\tab Transpose current instrument in block down\par
+Alt+F8: \tab\tab\tab Transpose current instrument in block up\par
+Shift+F1: \tab\tab\tab Transpose all instruments in track down\par
+Shift+F2: \tab\tab\tab Transpose all instruments in track up\par
+Ctrl+F1: \tab\tab\tab Transpose all instruments in pattern down\par
+Ctrl+F2:\tab\tab\tab Transpose all instruments in pattern up\par
+Alt+F1: \tab\tab\tab Transpose all instruments in block down\par
+Alt+F2: \tab\tab\tab Transpose all instruments in block up\par
+\par
+\ul Pattern Editor:\par
+\ulnone Cursor keys: \tab\tab Move around\par
+Tab: \tab\tab\tab\tab Jump to next channel\par
+PgUp/PgDn: \tab\tab 16 rows up/down\par
+Home/End\tab\tab\tab Guess what\par
+F1-F8: \tab\tab\tab choose octave\par
+F9\tab\tab\tab\tab Jump to position 0 in pattern\par
+F10\tab\tab\tab\tab Jump to position after the first quarter of the pattern length\par
+F11\tab\tab\tab\tab Jump to position after the second quarter of the pattern length\par
+F12\tab\tab\tab\tab Jump to position after the third quarter of the pattern length\par
+Ctrl-Z: \tab\tab\tab Undo\par
+Ctrl-Y: \tab\tab\tab Redo\par
+Ctrl-X: \tab\tab\tab Cut\par
+Ctrl-V: \tab\tab\tab Paste\par
+Ctrl+A: \tab\tab\tab Select entire pattern\par
+Shift-M: \tab\tab\tab Mute current selected channel\par
+Ctrl+Shift-M: \tab\tab Invert current muting\par
+Ctrl+I: \tab\tab\tab Interpolate values\par
+Delete: \tab\tab\tab Delete note/instrument/volume/effect/operand\par
+Sh+Del: \tab\tab\tab Delete note, volume and effect at cursor.\par
+Ctrl+Del: \tab\tab\tab Delete volume and effect at cursor.\par
+Alt+Delete: \tab\tab\tab Delete effect at cursor.\par
+Insert: \tab\tab\tab Insert a new note slot at current cursor position\par
+Shift-Insert: \tab\tab Insert an entire row at current cursor position\par
+Backspace: \tab\tab\tab Delete note slot before current cursor position\par
+Shift-Backspace: \tab\tab Delete entire row of notes before current cursor position\par
+\par
+Try to play around with pressing other keys to find out what notes they're mapped to =)\par
+\par
+\ul\b II. FastTracker 2 edit mode:\b0\par
+\ulnone The FT2 edit mode is for the die-hard FT2 user and is propably not so intuitive to use,\par
+but I think FT2 users don't care about that.\par
+\b Please note\b0  that not all FT2 shortcuts are implemented yet and some may differ because\par
+of various reasons.\par
+\b Also note \b0 that this edit mode is not working very well on a PocketPC because of limited\par
+input devices. \par
+\par
+Right now the following FT2 keyboard shortcuts are supported in the \b FastTracker edit mode\b0 :\par
+(copied straight out of FT2 manual ;))\par
+\par
+\pard\b 5.1 Cursor moves:\par
+\par
+\b0 PageUp \tab Jump 16-lines upwards.\par
+PageDown \tab Jump 16-lines downwards.\par
+Home\tab\tab Jump to line 0.\par
+End  \tab\tab Jump to last line.\par
+Tab  \tab\tab Jump to next track.\par
+Sh+Tab  \tab Jump to previous track.\par
+Alt+Q..I \tab Jump to track (0..7) MOD N-Channels.\par
+Alt+A..K \tab Jump to track (8..15) MOD N-Channels.\par
+\b\par
+5.2 Cut/Copy/Paste:\par
+\par
+\b0 Del\tab\tab Delete note or volume column at cursor.\par
+Sh+Del\tab\tab Delete note, volume and effect at cursor.\par
+Ctrl+Del\tab Delete volume and effect at cursor.\par
+Alt+Delete \tab Delete effect at cursor.\par
+Ins  \tab\tab Insert note at cursor.\par
+Sh+Ins  \tab Insert line at cursor.\par
+Backsp. \tab Delete previous note.\par
+Sh+Backsp\tab Delete previous line.\par
+Alt+Cursor\tab Mark block.\par
+Sh+F3 \tab\tab Cut track.\par
+Sh+F4 \tab\tab Copy track.\par
+Sh+F5 \tab\tab Paste track.\par
+Ctrl+F3 \tab Cut pattern.\par
+Ctrl+F4 \tab Copy pattern.\par
+Ctrl+F5 \tab Paste pattern.\par
+Alt+F3\tab\tab Cut block.\par
+Alt+F4 \tab\tab Copy block (yes even under windows =)).\par
+Alt+F5 \tab\tab Paste block.\par
+\b\par
+Additional shortcuts (not FT2):\par
+\pard\tx565\tx1133\tx1420\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\b0\i Ctrl-Alt+Z \tab\tab Undo\par
+Ctrl-Alt+Y \tab\tab Redo\par
+Ctrl+Alt+A \tab\tab Select entire pattern\par
+Shift-M \tab\tab Mute current selected channel\par
+Ctrl+Shift-M \tab Invert current muting\par
+Shift+I \tab\tab Interpolate values\par
+\pard\b\i0\par
+5.3 Miscellaneous:\par
+\par
+\pard\tx565\tx1133\tx1420\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\b0 Right Ctrl \tab\tab Play song from current order (\b only works under Windows\b0 )\par
+\pard\i Enter: \tab\tab Play song from current order\par
+\pard\tx565\tx1133\tx1420\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\i0 Right Alt \tab\tab Play current pattern from beginning (\b only works under Windows\b0 )\i\par
+Ctrl+Enter:\tab\tab Play current pattern from beginning\par
+\pard\tx565\tx1420\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802 Shift+Enter:\tab Play current pattern from cursor position\par
+\pard\tx565\tx1133\tx1420\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\i0 Space\tab\tab\tab Stop/Edit\par
+\i ESC\tab\tab\tab Stop all playing\par
+\i0 F1..F8 \tab\tab Select octave\par
+F9\tab\tab\tab Jump to position 0 in pattern\par
+F10\tab\tab\tab Jump to position after the first quarter of the pattern length\par
+F11\tab\tab\tab Jump to position after the second quarter of the pattern length\par
+F12\tab\tab\tab Jump to position after the third quarter of the pattern length\par
+\i Shift+F9\tab\tab Play current pattern from beginning (same as Ctrl+Enter/Right Alt)\par
+Shift+F10\tab\tab Play current pattern from position after the first quarter of the pattern length\par
+Shift+F11\tab\tab Play current pattern from position after the second quarter of the pattern length\par
+Shift+F12\tab\tab Play current pattern from position after the third quarter of the pattern length\i0\par
+Caps-Lock\tab\tab Enter Keyoff-"note" (\b only works under Windows\b0 )\par
+Sh+Left \tab\tab Increase song position\par
+Sh+Right \tab\tab Decrease song position\par
+Ctrl+Left \tab\tab Increase pattern number\par
+Ctrl+Right \tab\tab Decrease pattern number\par
+\pard\b\par
+\pard\fi-282\li282 Window switching:\par
+\pard\par
+\b0 Ctrl+\par
+A \tab\tab Advanced edit.\par
+C \tab\tab Configuration.\par
+D \tab\tab Disk operations.\par
+I \tab\tab Instrument editor.\par
+S \tab\tab Sample editor.\par
+T \tab\tab Transpose.\par
+X \tab\tab Main screen. (almost alt+X)\par
+Z \tab\tab Show/Hide scopes\par
+R\tab\tab Disk recorder\par
+\b\par
+5.5 Instrument select (Numeric keypad):\par
+\par
+\b0 Sh+Up \tab\tab Select previous instrument\par
+Sh+Down \tab Select next instrument\par
+Sh+\lang1031\f1 Alt+\lang1033\f0 Up \tab Select previous \lang1031\f1 sample\lang1033\f0\par
+Sh+\lang1031\f1 Alt+\lang1033\f0 Down \tab Select next \lang1031\f1 sample\lang1033\f0\par
+\par
+You can also quick-type the hex-number of the instrument you want to select\par
+on the numeric keypad, the layout is like this:\par
+\pard\fi-400\li400\par
+\pard\tx560 0..9 \tab = Digit 0..9\b\par
+\b0\par
+PC Keyboard:\par
+/ \tab = Digit A\par
+* \tab = Digit B\par
+- \tab = Digit C\par
++ \tab = Digit D\par
+Enter = Digit E\par
+, \tab = Digit F\par
+\par
+Mac Keyboard:\par
+= \tab = Digit A\par
+/ \tab = Digit B\par
+* \tab = Digit C\par
+- \tab = Digit D\par
+\lang1031\f1 +\lang1033\f0  \lang1031\f1\tab\lang1033\f0 = Digit E\par
+\lang1031\f1 Enter\lang1033\f0  \tab = Digit F\par
+\b\par
+\pard\par
+5.6 Command/Volume macro:\par
+\b0\par
+Alt+1..0 \tab Write command/volume at cursor.\par
+Sh+Alt+1..0 \tab Read command/volume at cursor.\par
+\par
+\b 5.7 Transpose:\par
+\par
+\b0 Sh+F7 \tab\tab Transpose current instrument in track down\par
+Sh+F8 \tab\tab Transpose current instrument in track up\par
+Ctrl+F7 \tab Transpose current instrument in pattern down\par
+Ctrl+F8 \tab Transpose current instrument in pattern up\par
+Alt+F7 \tab\tab Transpose current instrument in block down\par
+Alt+F8 \tab\tab Transpose current instrument in block up\par
+Sh+F1 \tab\tab Transpose all instruments in track down\par
+Sh+F2 \tab\tab Transpose all instruments in track up\par
+Ctrl+F1 \tab Transpose all instruments in pattern down\par
+Ctrl+F2\tab\tab Transpose all instruments in pattern up\par
+Alt+F1 \tab\tab Transpose all instruments in block down\par
+Alt+F2 \tab\tab Transpose all instruments in block up.\par
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\par
+\pard\b 5.8 Other:\par
+\par
+\b0 Ctrl+V \tab\tab Volume scale pattern\par
+Alt+V \tab\tab Volume scale block\par
+Shift+V \tab Volume scale track\par
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\par
+(\b please note that under Mac OS X the "Apple" key is used instead of the Ctrl key\b0 )\par
+\par
+If MilkyTracker crashes or does something really stupid I'd really like to hear from you\par
+and it would be even cooler if you can reproduce the problem as closely as possible.\par
+\par
+\b\fs24 Known issues:\b0\par
+\fs22 Some things work different in MilkyTracker and some dialogs may look different ;)\par
+\par
+Okay that's all for now, a more detailed explanations of all the functions will follow later.\par
+(In the meantime why don't you check out the official FastTracker 2 document?)\par
+\par
+\b\fs24 Donate:\b0\fs22\par
+If you like MilkyTracker and you're looking for a way to support me developing it, \par
+why don't you donate something using PayPal?\par
+My PayPal account: \b donate@milkytracker.net\b0\par
+Any donation will be appreciated and it keeps me going. Also, when donating, your\par
+feature requests will always be on top of my list, isn't that a neat offer? \par
+\par
+Don't worry MilkyTracker will always be free because I really enjoy working on it,\par
+but you should remember that FT2 wasn't real freeware either \par
+\par
+Contact me:\par
+\b support@milkytracker.net\par
+\b0 or visit\par
+\b http://www.milkytracker.net\par
+\par
+Thanks to anyone who has contributed:\par
+Kenet (for the amazing logos), Kmuland (for always supporting me), \par
+raina (for the nice icons), Svenzzon (for his nice example tune) \par
+\lang1031\f1 the entire Titan crew for supporting my work \lang1033\f0 and everybody else \par
+who dropped me a letter...\par
+\b0\par
+\pard Have fun...\fs20\par
+}
+ 
