@@ -90,13 +90,13 @@ XIInstrument::XIInstrument(const XIInstrument& source) :
 		{
 			if (src->type & 16)
 			{
-				dst->sample = (mp_sbyte*)(new mp_sbyte[src->samplen*2]);
-				memcpy(dst->sample, src->sample, src->samplen*2);
+				dst->sample = (mp_sbyte*)(TXMSample::allocPaddedMem(src->samplen*2));
+				TXMSample::copyPaddedMem(dst->sample, src->sample, src->samplen*2);
 			}
 			else
 			{
-				dst->sample = (mp_sbyte*)(new mp_sbyte[src->samplen]);
-				memcpy(dst->sample, src->sample, src->samplen);
+				dst->sample = (mp_sbyte*)(TXMSample::allocPaddedMem(src->samplen));
+				TXMSample::copyPaddedMem(dst->sample, src->sample, src->samplen);
 			}
 		}
 	}
@@ -110,10 +110,7 @@ XIInstrument::~XIInstrument()
 	if (owner)
 	{
 		for (mp_sint32 i = 0; i < numSamples; i++)
-		{
-			if (samples[i].sample)
-				delete[] samples[i].sample;
-		}
+			TXMSample::freePaddedMem((mp_ubyte*)samples[i].sample);
 	}
 }
 
@@ -246,7 +243,7 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 	{
 		if (!(smp[k].type&16) && smp[k].samplen) 
 		{
-			smp[k].sample = (mp_sbyte*)new mp_sbyte[smp[k].samplen];
+			smp[k].sample = (mp_sbyte*)TXMSample::allocPaddedMem(smp[k].samplen);
 			
 			if (smp[k].sample == NULL)
 			{
@@ -262,7 +259,7 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 		}
 		else if (smp[k].samplen)
 		{
-			smp[k].sample = (mp_sbyte*)new mp_sbyte[smp[k].samplen];
+			smp[k].sample = (mp_sbyte*)TXMSample::allocPaddedMem(smp[k].samplen);
 			
 			if (smp[k].sample == NULL)
 			{
@@ -499,7 +496,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 
 		if (!(smp[i].type&16) && smp[i].samplen) 
 		{
-			smp[i].sample = (mp_sbyte*)new mp_sbyte[smp[i].samplen+8];
+			smp[i].sample = (mp_sbyte*)TXMSample::allocPaddedMem(smp[i].samplen);
 			
 			if (smp[i].sample == NULL)
 			{
@@ -528,7 +525,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 		}
 		else if (smp[i].samplen)
 		{
-			smp[i].sample = (mp_sbyte*)new mp_sbyte[smp[i].samplen];
+			smp[i].sample = (mp_sbyte*)TXMSample::allocPaddedMem(smp[i].samplen);
 			
 			if (smp[i].sample == NULL)
 			{
@@ -657,13 +654,12 @@ mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
 		if ((smp[k].type&16) && smp[k].samplen && smp[k].sample) 
 		{
 			mp_sword* dst = new mp_sword[smp[k].samplen];
-			mp_sword* src = reinterpret_cast<mp_sword*>(smp[k].sample);
 			
 			mp_sword last = 0;
 			for (mp_uint32 i = 0; i < smp[k].samplen; i++)
 			{
-				dst[i] = src[i]-last;
-				last = src[i];
+				dst[i] = smp->getSampleValue(i)-last;
+				last = smp->getSampleValue(i);
 			}
 		
 			f.writeWords((mp_uword*)dst, smp[k].samplen);
@@ -673,13 +669,12 @@ mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
 		else if (smp[k].samplen && smp[k].sample)
 		{
 			mp_sbyte* dst = new mp_sbyte[smp[k].samplen];
-			mp_sbyte* src = reinterpret_cast<mp_sbyte*>(smp[k].sample);
 			
 			mp_sbyte last = 0;
 			for (mp_uint32 i = 0; i < smp[k].samplen; i++)
 			{
-				dst[i] = src[i]-last;
-				last = src[i];
+				dst[i] = smp->getSampleValue(i)-last;
+				last = smp->getSampleValue(i);
 			}
 
 			f.write(dst, 1, smp[k].samplen);
@@ -701,10 +696,7 @@ XIInstrument& XIInstrument::operator=(const XIInstrument& source)
 		{
 			mp_sint32 numSamples = sizeof(samples)/sizeof(TXMSample);
 			for (mp_sint32 i = 0; i < numSamples; i++)
-			{
-				if (samples[i].sample)
-					delete[] samples[i].sample;
-			}
+				TXMSample::freePaddedMem((mp_ubyte*)samples[i].sample);
 		}
 		
 		memset(&samples, 0, sizeof(samples));
@@ -767,13 +759,13 @@ XIInstrument& XIInstrument::operator=(const XIInstrument& source)
 			{
 				if (src->type & 16)
 				{
-					dst->sample = (mp_sbyte*)(new mp_sbyte[src->samplen*2]);
-					memcpy(dst->sample, src->sample, src->samplen*2);
+					dst->sample = (mp_sbyte*)(TXMSample::allocPaddedMem(src->samplen*2));
+					TXMSample::copyPaddedMem(dst->sample, src->sample, src->samplen*2);
 				}
 				else
 				{
-					dst->sample = (mp_sbyte*)(new mp_sbyte[src->samplen]);
-					memcpy(dst->sample, src->sample, src->samplen);
+					dst->sample = (mp_sbyte*)(TXMSample::allocPaddedMem(src->samplen));
+					TXMSample::copyPaddedMem(dst->sample, src->sample, src->samplen);
 				}
 			}
 		}	
