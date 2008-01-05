@@ -24,8 +24,7 @@ void CALLBACK AudioDriver_MMSYSTEM::waveOutProc(HWAVEOUT hwo,UINT uMsg,DWORD dwI
 		if (!audioDriver->deviceHasStarted)
 			return;
 
-		if (audioDriver->timeEmulation)
-			EnterCriticalSection(&audioDriver->cs);
+		EnterCriticalSection(&audioDriver->cs);
 
 		MasterMixer* mixer = audioDriver->mixer; 
 		audioDriver->sampleCounterTotal+=audioDriver->bufferSize>>1;
@@ -38,8 +37,7 @@ void CALLBACK AudioDriver_MMSYSTEM::waveOutProc(HWAVEOUT hwo,UINT uMsg,DWORD dwI
 
 		audioDriver->kick();
 
-		if (audioDriver->timeEmulation)
-			LeaveCriticalSection(&audioDriver->cs);
+		LeaveCriticalSection(&audioDriver->cs);
 	}
 }
 
@@ -53,8 +51,7 @@ AudioDriver_MMSYSTEM::AudioDriver_MMSYSTEM(bool timeEmulation/* = false*/) :
 {
 	memset(&mixbuff16, 0, sizeof(mixbuff16));
 	memset(&wavhdr, 0, sizeof(wavhdr));
-	if (timeEmulation)
-		InitializeCriticalSection(&cs);
+	InitializeCriticalSection(&cs);
 }
 
 AudioDriver_MMSYSTEM::~AudioDriver_MMSYSTEM() 
@@ -68,8 +65,7 @@ AudioDriver_MMSYSTEM::~AudioDriver_MMSYSTEM()
 			delete[] mixbuff16[NUMBUFFERS-1-c];
 	}
 	
-	if (timeEmulation)
-		DeleteCriticalSection(&cs);	
+	DeleteCriticalSection(&cs);	
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* pMixer)
@@ -330,6 +326,8 @@ mp_uint32 AudioDriver_MMSYSTEM::getNumPlayedSamples() const
 	}
 	else
 	{
+		EnterCriticalSection(&cs);
+
 		MMTIME mmtime;
 
 		mmtime.wType = TIME_SAMPLES;
@@ -338,8 +336,11 @@ mp_uint32 AudioDriver_MMSYSTEM::getNumPlayedSamples() const
 		{
 			if (mmtime.u.sample > lastSampleIndex)
 				lastSampleIndex = mmtime.u.sample;
+			LeaveCriticalSection(&cs);
 			return lastSampleIndex;
 		}
+
+		LeaveCriticalSection(&cs);
 
 		return lastSampleIndex;
 	}
@@ -349,7 +350,7 @@ mp_uint32 AudioDriver_MMSYSTEM::getBufferPos() const
 {
 	mp_sint32 smpPos = (mp_sint32)getNumPlayedSamples() - (mp_sint32)sampleCounterTotal;
 
-	mp_sint32 maxSize = bufferSize;
+	mp_sint32 maxSize = bufferSize >> 1;
 
 	if (smpPos < 0)
 		smpPos = 0;
