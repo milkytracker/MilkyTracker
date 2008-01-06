@@ -11,6 +11,7 @@
 #include "XModule.h"
 #include "ChannelMixer.h"
 #include "ResamplerFactory.h"
+#include <math.h>
 
 SampleEditorResampler::SampleEditorResampler(XModule& module, TXMSample& sample, ResamplerTypes type) :
 	module(module),
