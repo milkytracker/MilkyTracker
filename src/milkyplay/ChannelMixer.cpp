@@ -592,6 +592,8 @@ void ChannelMixer::resetChannelsWithoutMuting()
 		muteChannel(i, isMuted[i] == 1);
 	
 	delete[] isMuted;
+	
+	lastBeatRemainder = 0;
 }
 
 void ChannelMixer::resetChannelsFull()
@@ -604,6 +606,8 @@ void ChannelMixer::resetChannelsFull()
 		channel[i].cutoff = newChannel[i].cutoff = MP_INVALID_VALUE;
 		channel[i].resonance = newChannel[i].resonance = MP_INVALID_VALUE;
 	}
+
+	lastBeatRemainder = 0;
 }
 
 void ChannelMixer::setResamplerType(ResamplerTypes type) 

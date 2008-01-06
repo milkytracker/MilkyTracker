@@ -1776,7 +1776,7 @@ void SectionSettings::initPage_IV(PPContainer* container, pp_int32 x, pp_int32 y
 
 	y2+=14;
 
-	PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Auto-mixdown loaded samples", true);
+	PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", true);
 	statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	container->addControl(statict);
 	container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));

@@ -14,6 +14,7 @@
 #include "Equalizer.h"
 #include "EQConstants.h"
 #include "FilterParameters.h"
+#include "SampleEditorResampler.h"
 
 SampleEditor::ClipBoard* SampleEditor::ClipBoard::instance = NULL;
 
@@ -1818,16 +1819,7 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 		
-	pp_int32 sStart = 0;
-	pp_int32 sEnd = sample->samplen;
-	
 	preFilter(&SampleEditor::tool_resampleSample, par);
-	
-	mp_ubyte* buffer = new mp_ubyte[(sample->type & 16) ? sample->samplen*2 : sample->samplen];
-	if (!buffer)
-		return;
-
-	memcpy(buffer, sample->sample, (sample->type & 16) ? sample->samplen*2 : sample->samplen);
 	
 	prepareUndo();
 
@@ -1835,28 +1827,10 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 
 	float step = c4spd / par->getParameter(0);
 
-	module->freeSampleMem((mp_ubyte*)sample->sample);
-
-	sample->samplen = (mp_sint32)(sample->samplen / step);
-	sample->loopstart = (mp_sint32)(sample->loopstart / step); 
-	sample->looplen = (mp_sint32)(sample->looplen / step); 
-	sample->sample = (mp_sbyte*)module->allocSampleMem((sample->type & 16) ? sample->samplen*2 : sample->samplen);
-
-	float sp = 0.0f;
-	for (mp_sint32 i = 0; i < (signed)sample->samplen; i++)
-	{
-		float f1 = getFloatSampleFromWaveform((mp_sint32)sp, buffer, sEnd);
-		float f2 = getFloatSampleFromWaveform((mp_sint32)sp + 1, buffer, sEnd);
-		
-		float t = sp - (float)((mp_sint32)sp);
-		float f = (1.0f - t)*f1 + t*f2;
-		
-		setFloatSampleInWaveform(i, f);
-		sp+=step;
-	}
-
-	delete[] buffer;
+	SampleEditorResampler resampler(*module, *sample, SampleEditorResampler::ResamplerTypeFastSinc);
 	
+	resampler.resample(step);
+
 	pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
 	mp_sbyte rn, ft;
 	XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
@@ -2092,8 +2066,6 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 	
 	preFilter(&SampleEditor::tool_eqSample, par);
 	
-	mp_sint32 sLen = sEnd - sStart;
-	
 	prepareUndo();	
 	
 	float c4spd = getc4spd(sample->relnote, sample->finetune);
@@ -2270,8 +2242,6 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	}
 	
 	preFilter(&SampleEditor::tool_generateNoise, par);
-	
-	mp_sint32 sLen = sEnd - sStart;
 	
 	prepareUndo();	
 	

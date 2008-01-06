@@ -11,6 +11,7 @@
 #include "MasterMixer.h"
 #include "SimpleVector.h"
 #include "PlayerController.h"
+#include "PlayerCriticalSection.h"
 #include "AudioDriverManager.h"
 #include "PlayerSTD.h"
 
@@ -78,9 +79,9 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 	
 	if (resamplerType != oldResamplerType)
 	{
-		playerController.suspendPlayer(false);
+		playerController.getCriticalSection()->enter();
 		player->setResamplerType((ChannelMixer::ResamplerTypes)resamplerType);	
-		playerController.resumePlayer(true);
+		playerController.getCriticalSection()->leave();
 	}
 	
 	if (!player->isPlaying() && wasPlaying)

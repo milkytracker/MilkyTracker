@@ -14,6 +14,16 @@
 #include "PPSystem.h"
 #include "PlayerCriticalSection.h"
 
+void PlayerController::assureNotSuspended()
+{
+	if (mixer->isDevicePaused(player))
+	{
+		mixer->resumeDevice(player);
+		if (suspended)
+			suspended = false;
+	}
+}
+
 PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	mixer(mixer),
 	player(NULL),
@@ -115,6 +125,11 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 	if (!module->isModuleLoaded())
 		return;
 
+	assureNotSuspended();
+
+	if (!suspended)
+		criticalSection->enter(false);
+
 	readjustSpeed();
 
 	// reset internal player variables (effect memory) and looping information
@@ -137,6 +152,8 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 	patternPlay = false;
 	playRowOnly = false;
 	patternIndex = 0;
+
+	criticalSection->leave(false);
 }
 
 void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_sint32 rowPosition, mp_ubyte* muteChannels, bool playRowOnly/* = false*/)
@@ -149,6 +166,11 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 
 	if (!module->isModuleLoaded())
 		return;
+
+	assureNotSuspended();
+
+	if (!suspended)
+		criticalSection->enter(false);
 
 	readjustSpeed();
 	
@@ -180,6 +202,8 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 	patternPlay = true;
 	this->playRowOnly = playRowOnly;
 	patternIndex = index;
+
+	criticalSection->leave(false);
 }
 
 void PlayerController::setCurrentPatternIndex(mp_sint32 index)
@@ -195,6 +219,9 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 
 	if (!module)
 		return;
+
+	if (!suspended)
+		criticalSection->enter(false);
 
 	if (isPlaying() && !playRowOnly)
 	{
@@ -222,9 +249,16 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 	// reset internal variables	
 	if (bResetMainVolume)
 		resetMainVolume();	
+
+	criticalSection->leave(false);
 }
 
 void PlayerController::continuePlaying()
+{	
+	continuePlaying(true);
+}
+
+void PlayerController::continuePlaying(bool assureNotSuspended)
 {
 	if (lastPosition == -1 || lastRow == -1)
 		return;
@@ -237,6 +271,12 @@ void PlayerController::continuePlaying()
 
 	if (!module->isModuleLoaded())
 		return;
+		
+	if (assureNotSuspended)
+		this->assureNotSuspended();
+
+	if (!suspended)
+		criticalSection->enter(false);
 
 	readjustSpeed();
 	
@@ -252,7 +292,9 @@ void PlayerController::continuePlaying()
 	player->setIdle(false);
 
 	patternPlay = wasPlayingPattern;
-	playRowOnly = false;	
+	playRowOnly = false;
+	
+	criticalSection->leave(false);
 }
 
 void PlayerController::restartPlaying()
@@ -384,6 +426,8 @@ void PlayerController::playSample(TXMSample* smp, mp_sint32 currentSamplePlayNot
 	if (!player)
 		return;
 
+	assureNotSuspended();
+
 	if (player->isPlaying())
 	{
 		pp_int32 i = numPlayerChannels + numVirtualChannels + 1;
@@ -462,6 +506,8 @@ void PlayerController::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_si
 	if (!player)
 		return;
 		
+	assureNotSuspended();
+
 	player->playNote(chn, note, i, vol);
 }
 
@@ -486,7 +532,7 @@ void PlayerController::resumePlayer(bool continuePlaying)
 		return;
 
 	if (continuePlaying)
-		this->continuePlaying();
+		this->continuePlaying(!suspended);
 
 	if (suspended)
 	{

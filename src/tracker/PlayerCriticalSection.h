@@ -16,21 +16,29 @@ class PlayerCriticalSection
 {
 private:
 	PlayerController& playerController;
+	bool enabled;
 
 public:
 	PlayerCriticalSection(PlayerController& playerController) :
-		playerController(playerController)
+		playerController(playerController),
+		enabled(false)
 	{
 	}
 	
-	void enter()
+	void enter(bool stopPlaying = true)
 	{
-		playerController.suspendPlayer(false);
+		if (enabled)
+			return;
+		playerController.suspendPlayer(false, stopPlaying);
+		enabled = true;
 	}
 	
-	void leave()
+	void leave(bool continuePlaying = true)
 	{
-		playerController.resumePlayer(true);
+		if (!enabled)
+			return;
+		playerController.resumePlayer(continuePlaying);
+		enabled = false;
 	}
 };
 

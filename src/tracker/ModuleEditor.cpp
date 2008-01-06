@@ -93,7 +93,7 @@ ModuleEditor::ModuleEditor() :
 	currentSampleIndex(0),
 	enumerationIndex(-1)
 {
-	instruments = new TEditorInstrument[256];
+	instruments = new TEditorInstrument[MAX_INSTRUMENTS];
 
 	moduleFileName = TrackerConfig::untitledSong;
 
@@ -479,7 +479,7 @@ void ModuleEditor::buildInstrumentTable()
 {	
 	mp_sint32 i,j;
 
-	for (i = 0; i < 256; i++)
+	for (i = 0; i < MAX_INSTRUMENTS; i++)
 	{
 		instruments[i].instrument = NULL;
 		instruments[i].numUsedSamples = 0;
@@ -704,7 +704,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	{	
 		type = module->getType();
 	
-		mp_ubyte oneShotFlags[256];
+		mp_ubyte oneShotFlags[MAX_INSTRUMENTS];
 		// save flags for one shot PT style looping, it will be stripped out
 		// when exporting to XM
 		if (type == XModule::ModuleType_MOD)
@@ -755,6 +755,10 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		changed = false;
 		
 		buildInstrumentTable();
+		
+		// expand patterns to 32 channels width
+		for (mp_sint32 i = 0; i < module->header.patnum; i++)
+			getPattern(i);
 		
 		PPSystemString strFileName = preferredFileName ? preferredFileName : fileName;
 

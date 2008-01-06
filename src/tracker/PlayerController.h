@@ -67,11 +67,14 @@ private:
 	bool multiChannelKeyJazz;
 	bool multiChannelRecord;
 
-	// no construction outside
-	PlayerController(class MasterMixer* mixer, bool fakeScopes);
-	
 	mp_sint32 mixerDataCacheSize;
 	mp_sint32* mixerDataCache;
+
+	void assureNotSuspended();
+	void continuePlaying(bool assureNotSuspended);
+	
+	// no construction outside
+	PlayerController(class MasterMixer* mixer, bool fakeScopes);
 	
 public:
 	~PlayerController();

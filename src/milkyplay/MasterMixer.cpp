@@ -246,7 +246,10 @@ bool MasterMixer::removeDevice(Mixable* device, bool blocking/* = true*/)
 				
 				// timeout
 				if (time >= waitMillis && devices[i].mixable)
+				{
 					devices[i].mixable = 0;
+					devices[i].markedForRemoval = false;
+				}
 			}
 			
 			return true;
@@ -303,7 +306,10 @@ bool MasterMixer::pauseDevice(Mixable* device, bool blocking/* = true*/)
 				
 				// timeout
 				if (time >= waitMillis && !devices[i].paused)
+				{
 					devices[i].paused = true;
+					devices[i].markedForPause = false;
+				}
 			}
 
 			return true;
@@ -331,13 +337,13 @@ bool MasterMixer::isDevicePaused(Mixable* device)
 {
 	for (mp_uint32 i = 0; i < numDevices; i++)
 	{
-		if (devices[i].mixable == device && devices[i].paused)
+		if (devices[i].mixable == device)
 		{
-			return false;
+			return devices[i].paused;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 void MasterMixer::mixerHandler(mp_sword* buffer)
