@@ -1835,6 +1835,9 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 	
 	if (res)
 	{
+		sample->loopstart = (mp_sint32)(sample->loopstart/step);
+		sample->looplen = (mp_sint32)(sample->looplen/step);
+	
 		pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
 		mp_sbyte rn, ft;
 		XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
