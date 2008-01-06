@@ -1110,7 +1110,7 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 #endif
 
-	PPStaticText* staticText = new PPStaticText(1, NULL, NULL, PPPoint(x+size+myDx+4+3, y+dy), "Samples", true);
+	PPStaticText* staticText = new PPStaticText(STATICTEXT_SAMPLEHEADER, NULL, NULL, PPPoint(x+size+myDx+4+3, y+dy), "Samples", true);
 	container->addControl(staticText);
 
 	listBoxSamples = new PPListBox(LISTBOX_SAMPLES, screen, this, PPPoint(x+2 + size+4, y + 7 + dy + dy), PPSize(size,height-(10+2*dy)), true, true, true, true);

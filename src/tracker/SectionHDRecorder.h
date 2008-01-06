@@ -87,6 +87,9 @@ public:
 	void setCurrentFileName(const PPSystemString& fileName);
 	
 	void adjustOrders();
+	
+	void selectFileOutput() { recorderMode = RecorderModeToFile; }
+	void selectSampleOutput() { recorderMode = RecorderModeToSample; }
 
 private:
 	// Message box with list of resampler

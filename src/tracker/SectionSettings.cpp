@@ -1218,7 +1218,7 @@ void SectionSettings::initPage_I(PPContainer* container, pp_int32 x, pp_int32 y)
 	y2+=4;
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11), "Buffersize:", true));
-	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_BUFFERSIZE, NULL, NULL, PPPoint(x + 4 + 4, y2 + 2 + 11*2), "000ms(xx)", false));
+	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_BUFFERSIZE, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*2), "000ms(xx)", false));
 
 	PPSlider* slider = new PPSlider(SLIDER_SETTINGS_BUFFERSIZE, screen, this, PPPoint(x + 4 + 12*8 + 2, y2 + 2 + 11*2-1), 71-18, true);
 	slider->setMaxValue(511);

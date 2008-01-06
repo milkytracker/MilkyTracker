@@ -380,9 +380,33 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 	// Horizontal seperator above exit
 	container->addControl(new PPSeperator(0, screen, PPPoint(px+2, py + size.height - dy), size.width-5, container->getColor(), true));	
 
+#ifdef __LOWRES__
+	y-=2;
+	buttonHeight+=4;
+
+	PPButton* button = new PPButton(MAINMENU_SMPEDIT, screen, &tracker, PPPoint(x, y), PPSize(buttonWidth, buttonHeight/3));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Smp.Ed.");
+	container->addControl(button);
+	
+	y+=button->getSize().height+1;
+
+	button = new PPButton(MAINMENU_INSEDIT, screen, &tracker, PPPoint(x, y), PPSize(buttonWidth, buttonHeight/3));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Ins.Ed.");
+	container->addControl(button);
+
+	y+=button->getSize().height+1;
+
+	button = new PPButton(HDRECORD_BUTTON_EXIT, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight/3));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Exit");
+	container->addControl(button);
+#else
 	PPButton* button = new PPButton(HDRECORD_BUTTON_EXIT, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
 	button->setText("Exit");
 	container->addControl(button);
+#endif
 
 	// add frequencies
 	pp_int32 x2 = px;

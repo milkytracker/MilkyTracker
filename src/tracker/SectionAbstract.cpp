@@ -21,7 +21,7 @@ void SectionAbstract::replaceAndResizeInstrumentListContainer(pp_int32 listBoxCo
 	PPContainer* ctrl = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_INSTRUMENTLIST));
 
 	ctrl->getControlByID(BUTTON_INSTRUMENT)->setLocation(PPPoint(3,1));
-	ctrl->getControlByID(1)->setLocation(PPPoint(160+3,3));
+	ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->setLocation(PPPoint(160+3,3));
 	ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->setLocation(PPPoint(97,2));
 	ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->setLocation(PPPoint(97 + ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getSize().width+1,2));
 	
@@ -77,14 +77,14 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 		oldSampleListLocation = tracker.listBoxSamples->getLocation();
 
 		oldControlLocations[0] = ctrl->getControlByID(BUTTON_INSTRUMENT)->getLocation();
-		oldControlLocations[1] = ctrl->getControlByID(1)->getLocation();
+		oldControlLocations[1] = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->getLocation();
 		oldControlLocations[2] = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getLocation();
 		oldControlLocations[3] = ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->getLocation();
 
 		visibility[0] = ctrl->getControlByID(LISTBOX_INSTRUMENTS)->isHidden();
 		visibility[1] = ctrl->getControlByID(LISTBOX_SAMPLES)->isHidden();
 		visibility[2] = ctrl->getControlByID(BUTTON_INSTRUMENT)->isHidden();
-		visibility[3] = ctrl->getControlByID(1)->isHidden();
+		visibility[3] = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->isHidden();
 		visibility[4] = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->isHidden();
 		visibility[5] = ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->isHidden();
 		visibility[6] = ctrl->getControlByID(STATICTEXT_INSTRUMENTS_ALTERNATIVEHEADER)->isHidden();
@@ -105,13 +105,37 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 
 		// instrument button always visible
 		ctrl->getControlByID(BUTTON_INSTRUMENT)->hide(false);
-		ctrl->getControlByID(1)->hide(false);
+		ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->hide(false);
 		// instrument "+" visible
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->hide(false);
 		// instrument "-" visible
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->hide(false);
 		// listbox is always visible
 		tracker.listBoxInstruments->hide(false);
+		
+		// add another button
+		if (ctrl->getControlByID(BUTTON_SAMPLES_INVOKEHDRECORDER) == NULL)
+		{
+			PPPoint p = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->getLocation();
+			p.y = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getLocation().y;
+			pp_int32 width = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->getSize().width;
+			pp_int32 height = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getSize().height;
+			PPButton* button = new PPButton(BUTTON_SAMPLES_INVOKEHDRECORDER, screen, &tracker, PPPoint(p.x + width + 2, p.y), PPSize(7*5, height));
+			button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+			button->setText("Render");
+			ctrl->addControl(button);		
+		}
+		else
+		{
+			PPPoint p = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->getLocation();
+			p.y = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getLocation().y;
+			pp_int32 width = ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->getSize().width;
+			pp_int32 height = ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->getSize().height;
+			PPButton* button = static_cast<PPButton*>(ctrl->getControlByID(BUTTON_SAMPLES_INVOKEHDRECORDER));
+			button->setLocation(PPPoint(p.x + width + 2, p.y));
+			button->setSize(PPSize(7*5, height));
+			button->hide(false);
+		}
 	}
 	else
 	{
@@ -128,7 +152,7 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 		ctrl->setLocation(oldInstrumentListContainerLocation);
 		
 		ctrl->getControlByID(BUTTON_INSTRUMENT)->setLocation(oldControlLocations[0]);
-		ctrl->getControlByID(1)->setLocation(oldControlLocations[1]);
+		ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->setLocation(oldControlLocations[1]);
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->setLocation(oldControlLocations[2]);
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->setLocation(oldControlLocations[3]);
 
@@ -139,13 +163,17 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 		ctrl->getControlByID(LISTBOX_INSTRUMENTS)->hide(visibility[0]);
 		ctrl->getControlByID(LISTBOX_SAMPLES)->hide(visibility[1]);
 		ctrl->getControlByID(BUTTON_INSTRUMENT)->hide(visibility[2]);
-		ctrl->getControlByID(1)->hide(visibility[3]);
+		ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->hide(visibility[3]);
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->hide(visibility[4]);
 		ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->hide(visibility[5]);
 		ctrl->getControlByID(STATICTEXT_INSTRUMENTS_ALTERNATIVEHEADER)->hide(visibility[6]);
 		ctrl->getControlByID(STATICTEXT_INSTRUMENTS_ALTERNATIVEHEADER2)->hide(visibility[7]);
 		ctrl->getControlByID(BUTTON_JAMMENU_NEXTINSTRUMENT)->hide(visibility[8]);
 		ctrl->getControlByID(BUTTON_JAMMENU_PREVINSTRUMENT)->hide(visibility[9]);
+		
+		PPControl* dummy = ctrl->getControlByID(BUTTON_SAMPLES_INVOKEHDRECORDER);
+		if (dummy)
+			ctrl->hide(true);
 	}
 }
 #endif

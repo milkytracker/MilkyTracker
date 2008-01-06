@@ -604,7 +604,7 @@ void Tracker::flipInstrumentListBoxes()
 	ctrl->getControlByID(STATICTEXT_INSTRUMENTS_ALTERNATIVEHEADER2)->hide(b);
 
 	ctrl->getControlByID(BUTTON_INSTRUMENT)->hide(!b);
-	ctrl->getControlByID(1)->hide(!b);
+	ctrl->getControlByID(STATICTEXT_SAMPLEHEADER)->hide(!b);
 	ctrl->getControlByID(BUTTON_INSTRUMENTS_PLUS)->hide(!b);
 	ctrl->getControlByID(BUTTON_INSTRUMENTS_MINUS)->hide(!b);
 
@@ -1049,6 +1049,27 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				eventKeyDownBinding_InvokeSectionAbout();
 				break;
 			}
+			
+#ifdef __LOWRES__
+			case BUTTON_SAMPLES_INVOKEHDRECORDER:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				// The bottom section fills up the entire screen 
+				// so we first need to hide the entire section before we can show 
+				// the HD recorder section
+				screen->pauseUpdate(true);
+				if (bottomSection != ActiveBottomSectionNone)
+					showBottomSection(ActiveBottomSectionNone, false);
+
+				sectionHDRecorder->selectSampleOutput();
+				eventKeyDownBinding_InvokeSectionHDRecorder();
+				screen->pauseUpdate(false);
+				screen->paint();
+				break;
+			}
+#endif
 			
 			case BUTTON_ORDERLIST_SONGLENGTH_PLUS:
 				moduleEditor->increaseSongLength();
