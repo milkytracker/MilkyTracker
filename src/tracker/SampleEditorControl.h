@@ -352,6 +352,8 @@ private:
 		bool hasEQ10BandValues;
 		float EQ10BandValues[10];
 		
+		pp_int32 lastResampleInterpolationType;
+		
 		static float invalidFloatValue() 
 		{
 			return -12345678.0f;
@@ -373,6 +375,7 @@ private:
 			waveFormVolume = invalidFloatValue();
 			waveFormNumPeriods = invalidFloatValue();
 			hasEQ3BandValues = hasEQ10BandValues = false;
+			lastResampleInterpolationType = invalidIntValue();
 		}
 	};
 	

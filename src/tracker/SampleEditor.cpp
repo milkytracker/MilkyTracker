@@ -1827,16 +1827,21 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 
 	float step = c4spd / par->getParameter(0);
 
-	SampleEditorResampler resampler(*module, *sample, SampleEditorResampler::ResamplerTypeFastSinc);
+	pp_int32 resamplerType = (pp_int32)par->getParameter(1);
+
+	SampleEditorResampler resampler(*module, *sample, (SampleEditorResampler::ResamplerTypes)resamplerType);
 	
-	resampler.resample(step);
-
-	pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
-	mp_sbyte rn, ft;
-	XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
-	sample->relnote = rn;
-	sample->finetune = ft;
-
+	bool res = resampler.resample(step);
+	
+	if (res)
+	{
+		pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
+		mp_sbyte rn, ft;
+		XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
+		sample->relnote = rn;
+		sample->finetune = ft;
+	}
+	
 	lastOperation = OperationCut;
 	finishUndo();	
 	

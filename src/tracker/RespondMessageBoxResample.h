@@ -22,6 +22,7 @@ private:
 	pp_uint32 count;
 	float c4spd;
 	float originalc4spd;
+	pp_int32 interpolationType;
 
 public:
 	RespondMessageBoxResample(PPScreen* screen, 
@@ -37,9 +38,12 @@ public:
 	void setC4Speed(float c4spd);
 	void setSize(pp_uint32 size);
 	
-	float getC4Speed() { return c4spd; }
-	pp_int32 getRelNote() { return relnote; }
-	pp_int32 getFineTune() { return finetune; }
+	float getC4Speed() const { return c4spd; }
+	pp_int32 getRelNote() const { return relnote; }
+	pp_int32 getFineTune() const { return finetune; }
+	
+	void setInterpolationType(pp_int32 interpolationType) { this->interpolationType = interpolationType; }
+	pp_int32 getInterpolationType() const { return interpolationType; }
 	
 private:
 	void listBoxEnterEditState(pp_int32 id);

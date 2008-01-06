@@ -10,12 +10,23 @@
 #include "RespondMessageBoxResample.h"
 #include "Screen.h"
 #include "StaticText.h"
+#include "PPUIConfig.h"
 #include "MessageBoxContainer.h"
 #include "Font.h"
 #include "ListBox.h"
 #include "Seperator.h"
 #include "ControlIDs.h"
 #include "XModule.h"
+
+static const char* interpolationTypeNames[] =
+{
+	"None",
+	"Linear",
+	"Lagrange",
+	"Spline",
+	"Fast Sinc",
+	"Precise Sinc"
+};
 
 float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 {
@@ -67,7 +78,8 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 					  RespondListenerInterface* responder,
 					  pp_int32 id) :
 	RespondMessageBox(),
-	count(0)
+	count(0),
+	interpolationType(1)
 {
 #ifdef __LOWRES__
 	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20, 26+15, "Ok", "Cancel");
@@ -86,7 +98,7 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 
 	PPButton* button;
 
-	y2 +=20;
+	y2 +=16;
 	
 	// enter edit field 1
 	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
@@ -109,7 +121,7 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	button->setText("-");
 	messageBoxContainerGeneric->addControl(button);
 
-	y2+=20;
+	y2+=16;
 
 	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
 	
@@ -131,7 +143,7 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	button->setText("-");
 	messageBoxContainerGeneric->addControl(button);
 
-	y2+=20;
+	y2+=16;
 
 	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
 	
@@ -153,11 +165,26 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	button->setText("-");
 	messageBoxContainerGeneric->addControl(button);
 
-	y2+=20;
+	y2+=16;
 	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
-	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "New size", true));	
-	x2+=16*8;
+	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "New size:", true));	
+	x2+=18*8;
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_USER1, screen, this, PPPoint(x2, y2+2), "XXXXXXXX"));	
+
+	y2+=16;
+
+	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
+	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "Interpolation:", true));	
+	
+	x2+=15*8;
+	button = new PPButton(MESSAGEBOX_CONTROL_USER1, screen, this, PPPoint(x2, y2), PPSize(button->getLocation().x + button->getSize().width - x2, 11), false);
+	button->setText(interpolationTypeNames[interpolationType]);
+	button->setColor(messageBoxContainerGeneric->getColor());
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+
+	messageBoxContainerGeneric->addControl(button);
+
+	y2+=16;
 
 #ifdef __LOWRES__
 		const char buttonTexts[] = {'1','2','3','4','5','6','7','8','9','0','+','-','.','<','>'};
@@ -202,6 +229,10 @@ void RespondMessageBoxResample::show()
 	currentSelectedListBox = 0;
 	updateListBoxes();
 	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
+	
+	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
+	button->setText(interpolationTypeNames[interpolationType]);
+	
 	RespondMessageBox::show();	
 }
 
@@ -285,6 +316,19 @@ pp_int32 RespondMessageBoxResample::handleEvent(PPObject* sender, PPEvent* event
 				parentScreen->paintControl(messageBoxContainerGeneric);
 				break;
 			}
+			
+			case MESSAGEBOX_CONTROL_USER1:
+			{	
+				if (event->getID() != eCommand)
+					break;
+				
+				interpolationType = (interpolationType + 1) % (sizeof(interpolationTypeNames) / sizeof(const char*));
+				
+				PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
+				button->setText(interpolationTypeNames[interpolationType]);
+				parentScreen->paintControl(messageBoxContainerGeneric);							
+				break;
+			}
 		}
 	}
 	else if (event->getID() == eValueChanged)
@@ -333,7 +377,7 @@ void RespondMessageBoxResample::updateListBoxes()
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_THREE, (float)c4spd, 2);
 
 	PPStaticText* staticText = static_cast<PPStaticText*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_USER1));
-	staticText->setHexValue(finalSize, 8);
+	staticText->setHexValue(finalSize, 8);	
 }
 
 void RespondMessageBoxResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)

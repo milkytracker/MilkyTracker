@@ -65,6 +65,9 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			respondMessageBox = new RespondMessageBoxResample(parentScreen, toolHandlerResponder, PP_DEFAULT_ID);
 			if (sampleEditor->isValidSample())
 			{
+				if (lastValues.lastResampleInterpolationType != TLastValues::invalidIntValue()) 
+					static_cast<RespondMessageBoxResample*>(respondMessageBox)->setInterpolationType(lastValues.lastResampleInterpolationType);
+
 				static_cast<RespondMessageBoxResample*>(respondMessageBox)->setRelNote(sampleEditor->getRelNoteNum());
 				static_cast<RespondMessageBoxResample*>(respondMessageBox)->setFineTune(sampleEditor->getFinetune());
 				static_cast<RespondMessageBoxResample*>(respondMessageBox)->setSize(sampleEditor->getSampleLen());
@@ -182,8 +185,11 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeResample:
 		{
-			FilterParameters par(1);
+			lastValues.lastResampleInterpolationType = static_cast<RespondMessageBoxResample*>(respondMessageBox)->getInterpolationType();
+
+			FilterParameters par(2);
 			par.setParameter(0, static_cast<RespondMessageBoxResample*>(respondMessageBox)->getC4Speed());
+			par.setParameter(1, lastValues.lastResampleInterpolationType);
 			sampleEditor->tool_resampleSample(&par);
 			break;
 		}
