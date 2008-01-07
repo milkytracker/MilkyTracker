@@ -981,7 +981,7 @@ bool PlayerController::isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32
 
 	PlayerSTD::TModuleChannel* chnInf = &player->chninfo[channel];
 	
-	if ((player->channel[channel].flags&MP_SAMPLE_PLAY))
+	if ((player->channel[channel].flags&ChannelMixer::MP_SAMPLE_PLAY))
 	{
 		if (chnInf->ins == ins && chnInf->keyon && chnInf->note)
 		{
@@ -1035,7 +1035,7 @@ void PlayerController::grabSampleData(mp_uint32 chnIndex, mp_sint32 count, mp_si
 	
 	pp_int32 j = getCurrentBeatIndex();
 
-	if (chn->flags & MP_SAMPLE_PLAY)
+	if (chn->flags & ChannelMixer::MP_SAMPLE_PLAY)
 	{
 		// this is critical
 		// it might be that the audio thread modifies the data as we are
@@ -1062,8 +1062,8 @@ void PlayerController::grabSampleData(mp_uint32 chnIndex, mp_sint32 count, mp_si
 		channel.vol = chn->timeLUT[j].volPan & 0xFFFF;
 		channel.pan = chn->timeLUT[j].volPan >> 16;
 		channel.fixedtimefrac = chn->timeLUT[j].fixedtimefrac;
-		channel.cutoff = MP_INVALID_VALUE;
-		channel.resonance = MP_INVALID_VALUE;
+		channel.cutoff = ChannelMixer::MP_INVALID_VALUE;
+		channel.resonance = ChannelMixer::MP_INVALID_VALUE;
 		
 		channel.smpadd = (channel.smpadd*fMul) / (!count ? 1 : count);		
 		chn = &channel;
@@ -1110,5 +1110,5 @@ bool PlayerController::hasSampleData(mp_uint32 chnIndex)
 
 	pp_int32 j = getCurrentBeatIndex();
 
-	return ((chn->timeLUT[j].flags & MP_SAMPLE_PLAY) && (chn->timeLUT[j].volPan & 0xFFFF));
+	return ((chn->timeLUT[j].flags & ChannelMixer::MP_SAMPLE_PLAY) && (chn->timeLUT[j].volPan & 0xFFFF));
 }

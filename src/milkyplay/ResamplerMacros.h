@@ -202,7 +202,7 @@
 	\
 	sd1 =((sd1<<12)+((posfixed>>4)&0xfff)*(sd2-sd1))>>12; \
 	\
-	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> MP_FILTERPRECISION; \
+	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> ChannelMixer::MP_FILTERPRECISION; \
 	prevsample = currsample; \
 	currsample = sd1; \
 	\
@@ -222,7 +222,7 @@
 	\
 	sd1 =((sd1<<12)+((posfixed>>4)&0xfff)*(sd2-sd1))>>12; \
 	\
-	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> MP_FILTERPRECISION; \
+	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> ChannelMixer::MP_FILTERPRECISION; \
 	prevsample = currsample; \
 	currsample = sd1; \
 	\
@@ -261,8 +261,8 @@
 	if (!(flags&4)) \
 	{ \
 		\
-		if (((((flags&3) == 0 || (flags&3) == 1)) && !(flags&MP_SAMPLE_BACKWARD)) || \
-			((flags&3) == 2 && (flags&MP_SAMPLE_BACKWARD) == 0)) \
+		if (((((flags&3) == 0 || (flags&3) == 1)) && !(flags&ChannelMixer::MP_SAMPLE_BACKWARD)) || \
+			((flags&3) == 2 && (flags&ChannelMixer::MP_SAMPLE_BACKWARD) == 0)) \
 		{ \
 			\
 			while (count) \
@@ -274,9 +274,9 @@
 				{ \
 					if ((flags & 3) == 0) \
 					{ \
-						if (flags & MP_SAMPLE_ONESHOT) \
+						if (flags & ChannelMixer::MP_SAMPLE_ONESHOT) \
 						{ \
-							flags &= ~MP_SAMPLE_ONESHOT; \
+							flags &= ~ChannelMixer::MP_SAMPLE_ONESHOT; \
 							flags |= 1; \
 							chn->loopend = chn->loopendcopy; \
 							loopend = chn->loopend; \
@@ -285,7 +285,7 @@
 						} \
 						else \
 						{ \
-							flags&=~MP_SAMPLE_PLAY; \
+							flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 							break; \
 						} \
 					} \
@@ -300,7 +300,7 @@
 					} \
 					else \
 					{ \
-						flags|=MP_SAMPLE_BACKWARD; \
+						flags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
 						BIDIR_REPOSITION(FRACBITS, smppos, smpposfrac, loopstart, loopend) \
 						/*ASSERT(smppos >= loopstart && smppos <= loopend);*/ \
 						goto continueWithBiDir8_## LABELNO; \
@@ -326,7 +326,7 @@ continueWithNormalDir8_## LABELNO: \
 				{ \
 					if ((flags & 3) == 0) \
 					{ \
-						flags&=~MP_SAMPLE_PLAY; \
+						flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 						break; \
 					} \
 					else if ((flags & 3) == 1) \
@@ -335,7 +335,7 @@ continueWithNormalDir8_## LABELNO: \
 					} \
 					else \
 					{ \
-						flags&=~MP_SAMPLE_BACKWARD; \
+						flags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
 						BIDIR_REPOSITION(FRACBITS, smppos, smpposfrac, loopstart, loopend) \
 						/*ASSERT(smppos >= loopstart && smppos <= loopend);*/ \
 						goto continueWithNormalDir8_## LABELNO; \
@@ -354,8 +354,8 @@ continueWithBiDir8_## LABELNO: \
 	else \
 	{ \
 		\
-		if (((((flags&3) == 0 || (flags&3) == 1)) && !(flags&MP_SAMPLE_BACKWARD)) || \
-			((flags&3) == 2 && (flags&MP_SAMPLE_BACKWARD) == 0)) \
+		if (((((flags&3) == 0 || (flags&3) == 1)) && !(flags&ChannelMixer::MP_SAMPLE_BACKWARD)) || \
+			((flags&3) == 2 && (flags&ChannelMixer::MP_SAMPLE_BACKWARD) == 0)) \
 		{ \
 		\
 			while (count) \
@@ -367,9 +367,9 @@ continueWithBiDir8_## LABELNO: \
 				{ \
 					if ((flags & 3) == 0) \
 					{ \
-						if (flags & MP_SAMPLE_ONESHOT) \
+						if (flags & ChannelMixer::MP_SAMPLE_ONESHOT) \
 						{ \
-							flags &= ~MP_SAMPLE_ONESHOT; \
+							flags &= ~ChannelMixer::MP_SAMPLE_ONESHOT; \
 							flags |= 1; \
 							chn->loopend = chn->loopendcopy; \
 							loopend = chn->loopend; \
@@ -377,7 +377,7 @@ continueWithBiDir8_## LABELNO: \
 						} \
 						else \
 						{ \
-							flags&=~MP_SAMPLE_PLAY; \
+							flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 							break; \
 						} \
 					} \
@@ -391,7 +391,7 @@ continueWithBiDir8_## LABELNO: \
 					} \
 					else \
 					{ \
-						flags|=MP_SAMPLE_BACKWARD; \
+						flags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
 						BIDIR_REPOSITION(FRACBITS, smppos, smpposfrac, loopstart, loopend) \
 						/*ASSERT(smppos >= loopstart && smppos <= loopend);*/ \
 						goto continueWithBiDir16_## LABELNO; \
@@ -417,7 +417,7 @@ continueWithNormalDir16_## LABELNO: \
 				{ \
 					if ((flags & 3) == 0) \
 					{ \
-						flags&=~MP_SAMPLE_PLAY; \
+						flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 						break; \
 					} \
 					else if ((flags & 3) == 1) \
@@ -426,7 +426,7 @@ continueWithNormalDir16_## LABELNO: \
 					} \
 					else \
 					{ \
-						flags&=~MP_SAMPLE_BACKWARD; \
+						flags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
 						BIDIR_REPOSITION(FRACBITS, smppos, smpposfrac, loopstart, loopend) \
 						/*ASSERT(smppos >= loopstart && smppos <= loopend);*/ \
 						goto continueWithNormalDir16_## LABELNO; \
@@ -570,7 +570,7 @@ continueWithBiDir16_## LABELNO: \
 	\
 	sd1 =((sd1<<12)+((smpposfrac>>4)&0xfff)*(sd2-sd1))>>12; \
 	\
-	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> MP_FILTERPRECISION; \
+	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> ChannelMixer::MP_FILTERPRECISION; \
 	prevsample = currsample; \
 	currsample = sd1; \
 	\
@@ -590,7 +590,7 @@ continueWithBiDir16_## LABELNO: \
 	\
 	sd1 =((sd1<<12)+((smpposfrac>>4)&0xfff)*(sd2-sd1))>>12; \
 	\
-	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> MP_FILTERPRECISION; \
+	sd1 = (MP_FP_MUL(sd1, a) + MP_FP_MUL(currsample, b) + MP_FP_MUL(prevsample, c)) >> ChannelMixer::MP_FILTERPRECISION; \
 	prevsample = currsample; \
 	currsample = sd1; \
 	\

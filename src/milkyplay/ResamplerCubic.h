@@ -38,7 +38,7 @@
 // http://www.student.oulu.fi/~oniemita/DSP/INDEX.HTM
 /////////////////////////////////////////////////////////
 #define __DEIP__
-#define fpmul ChannelMixer::fixedmul
+#define fpmul MP_FP_MUL
 
 enum CubicResamplers
 {
@@ -142,7 +142,7 @@ public:
 		
 		mp_sint32 smppos = chn->smppos;
 		mp_sint32 smpposfrac = chn->smpposfrac;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		
 		mp_sint32 fp = smpadd*count;
 		MP_INCREASESMPPOS(chn->smppos,chn->smpposfrac,fp,16);

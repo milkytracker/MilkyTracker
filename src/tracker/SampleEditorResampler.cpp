@@ -109,7 +109,7 @@ bool SampleEditorResampler::resample(float factor)
 	
 	channel.sample = (mp_sbyte*)buffer;
 	channel.smplen = sample.samplen;
-	channel.flags = MP_SAMPLE_PLAY | ((sample.type & 16) ? 4 : 0);
+	channel.flags = ChannelMixer::MP_SAMPLE_PLAY | ((sample.type & 16) ? 4 : 0);
 	channel.smppos = 0;
 	channel.smpposfrac = 0;
 	channel.fixedtimefrac = 0;
@@ -118,8 +118,8 @@ bool SampleEditorResampler::resample(float factor)
 	channel.loopstart = 0;
 	channel.vol = 512;
 	channel.pan = 128;
-	channel.cutoff = MP_INVALID_VALUE;
-	channel.resonance = MP_INVALID_VALUE;
+	channel.cutoff = ChannelMixer::MP_INVALID_VALUE;
+	channel.resonance = ChannelMixer::MP_INVALID_VALUE;
 	
 	channel.rsmpadd = (mp_sint32)((1.0f / factor) * 65536.0f);
 	

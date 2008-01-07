@@ -56,7 +56,7 @@ public:
 		mp_sint32 volr = chn->finalvolr;
 
 		mp_sint32 smppos = chn->smppos;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		const mp_sint32 basepos = smppos;
 		mp_sint32 posfixed = chn->smpposfrac;
 
@@ -111,7 +111,7 @@ public:
 		mp_sint32 rampFromVolStepR = chn->rampFromVolStepR;		
 
 		mp_sint32 smppos = chn->smppos;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		const mp_sint32 basepos = smppos;
 		mp_sint32 posfixed = chn->smpposfrac;
 
@@ -159,7 +159,7 @@ public:
 		mp_sint32 volr = chn->finalvolr;
 
 		mp_sint32 smppos = chn->smppos;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		const mp_sint32 basepos = smppos;
 		mp_sint32 posfixed = chn->smpposfrac;
 
@@ -192,7 +192,7 @@ public:
 		mp_sint32 rampFromVolStepL = chn->rampFromVolStepL;
 		mp_sint32 rampFromVolStepR = chn->rampFromVolStepR;		
 		
-		if (chn->cutoff != MP_INVALID_VALUE && chn->resonance != MP_INVALID_VALUE)
+		if (chn->cutoff != ChannelMixer::MP_INVALID_VALUE && chn->resonance != ChannelMixer::MP_INVALID_VALUE)
 		{
 			const mp_sint32 a = chn->a;
 			const mp_sint32 b = chn->b;
@@ -238,7 +238,7 @@ public:
 		mp_sint32 rampFromVolStepR = chn->rampFromVolStepR;		
 		
 		mp_sint32 smppos = chn->smppos;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		const mp_sint32 basepos = smppos;
 		mp_sint32 posfixed = chn->smpposfrac;
 		
@@ -247,7 +247,7 @@ public:
 		
 		mp_sint32 sd1,sd2;
 		
-		if (chn->cutoff != MP_INVALID_VALUE && chn->resonance != MP_INVALID_VALUE)
+		if (chn->cutoff != ChannelMixer::MP_INVALID_VALUE && chn->resonance != ChannelMixer::MP_INVALID_VALUE)
 		{
 			const mp_sint32 a = chn->a;
 			const mp_sint32 b = chn->b;
@@ -309,7 +309,7 @@ public:
 		
 		mp_sint32 smppos = chn->smppos;
 		mp_sint32 smpposfrac = chn->smpposfrac;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		
 		mp_sint32 sd1,sd2;
 

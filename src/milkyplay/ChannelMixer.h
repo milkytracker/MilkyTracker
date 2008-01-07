@@ -40,22 +40,6 @@
 #define MP_FP_CEIL(x)			(((x)+65535)>>16)
 #define MP_FP_MUL(a, b)			((mp_sint32)(((mp_int64)(a)*(mp_int64)(b))>>16))
 
-// This is the basis for timing & mixing
-#define MP_TIMERFREQ			250
-#define MP_BEATLENGTH			(44100/MP_TIMERFREQ)
-
-#define MP_SAMPLE_FILTERLP		65536
-#define MP_SAMPLE_MUTE			32768
-#define MP_SAMPLE_ONESHOT		8192
-#define MP_SAMPLE_FADEOFF		4096
-#define MP_SAMPLE_FADEOUT		2048
-#define MP_SAMPLE_FADEIN		1024
-#define MP_SAMPLE_PLAY			256
-#define MP_SAMPLE_BACKWARD		128
-
-#define MP_INVALID_VALUE		0x7FFFFFFF
-#define MP_FILTERPRECISION		8
-
 #define MP_INCREASESMPPOS(intpart, fracpart, fp, fractbits)	\
 	intpart+=((fp)>>(fractbits)); \
 	fracpart+=((fp)&(1<<(fractbits))-1); \
@@ -111,9 +95,26 @@ public:
 class ChannelMixer : public MixerSettings, public Mixable
 {
 public:
+// This is the basis for timing & mixing
+
 	enum
 	{
-		TIMESAMPLEBUFFERSIZE = 128
+		TIMESAMPLEBUFFERSIZE = 128,
+
+		MP_TIMERFREQ		 = 250,
+		MP_BEATLENGTH		 = (44100/MP_TIMERFREQ),
+		
+		MP_SAMPLE_FILTERLP	 = 65536,
+		MP_SAMPLE_MUTE		 = 32768,
+		MP_SAMPLE_ONESHOT	 = 8192,
+		MP_SAMPLE_FADEOFF	 = 4096,
+		MP_SAMPLE_FADEOUT	 = 2048,
+		MP_SAMPLE_FADEIN	 = 1024,
+		MP_SAMPLE_PLAY		 = 256,
+		MP_SAMPLE_BACKWARD	 = 128,
+		
+		MP_INVALID_VALUE	 = 0x7FFFFFFF,
+		MP_FILTERPRECISION	 = 8		
 	};
 
 	static inline mp_sint32 fixedmul(mp_sint32 a,mp_sint32 b) { return MP_FP_MUL(a,b); }

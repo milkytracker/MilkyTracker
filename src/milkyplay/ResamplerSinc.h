@@ -38,11 +38,11 @@
 #define M_PI 3.14159265358979323846 
 #endif
 
-#define fpmul ChannelMixer::fixedmul
+#define fpmul MP_FP_MUL
 
 #define advancePos(CHN) \
-	if (((((CHN.flags&3) == 0 || (CHN.flags&3) == 1)) && !(CHN.flags&MP_SAMPLE_BACKWARD)) || \
-		((CHN.flags&3) == 2 && (CHN.flags&MP_SAMPLE_BACKWARD) == 0)) \
+	if (((((CHN.flags&3) == 0 || (CHN.flags&3) == 1)) && !(CHN.flags&ChannelMixer::MP_SAMPLE_BACKWARD)) || \
+		((CHN.flags&3) == 2 && (CHN.flags&ChannelMixer::MP_SAMPLE_BACKWARD) == 0)) \
 	{ \
 		CHN.smppos++; \
 		/* stop playing if necessary */ \
@@ -50,16 +50,16 @@
 		{ \
 			if ((CHN.flags & 3) == 0) \
 			{ \
-				if (CHN.flags & MP_SAMPLE_ONESHOT) \
+				if (CHN.flags & ChannelMixer::MP_SAMPLE_ONESHOT) \
 				{ \
-					CHN.flags &= ~MP_SAMPLE_ONESHOT; \
+					CHN.flags &= ~ChannelMixer::MP_SAMPLE_ONESHOT; \
 					CHN.flags |= 1; \
 					CHN.loopend = CHN.loopendcopy; \
 					CHN.smppos = CHN.loopstart; \
 				} \
 				else \
 				{ \
-					CHN.flags&=~MP_SAMPLE_PLAY; \
+					CHN.flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 				} \
 			} \
 			else if ((CHN.flags & 3) == 1) \
@@ -68,7 +68,7 @@
 			} \
 			else \
 			{ \
-				CHN.flags|=MP_SAMPLE_BACKWARD; \
+				CHN.flags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
 			} \
 		}\
 	} \
@@ -80,7 +80,7 @@
 		{ \
 			if ((CHN.flags & 3) == 0) \
 			{ \
-				CHN.flags&=~MP_SAMPLE_PLAY; \
+				CHN.flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 			} \
 			else if ((CHN.flags & 3) == 1) \
 			{ \
@@ -88,7 +88,7 @@
 			} \
 			else \
 			{ \
-				CHN.flags&=~MP_SAMPLE_BACKWARD; \
+				CHN.flags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
 			} \
 		} \
 	} 
@@ -128,7 +128,7 @@ public:
 		
 		mp_sint32 smppos = chn->smppos;
 		mp_sint32 smpposfrac = chn->smpposfrac;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		
 		const mp_sint32 flags = chn->flags;
 		const mp_sint32 loopstart = chn->loopstart;
@@ -141,7 +141,7 @@ public:
 	
 		while (count--)
 		{
-			double temp1 = 0;
+			double result = 0;
 			
 			ChannelMixer::TMixerChannel pos;
 			const double time_now = fixedtimefrac * (1.0 / 65536.0);
@@ -152,7 +152,7 @@ public:
 				pos.loopstart = loopstart;
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
 				{
 					pos.loopstart = 0;
@@ -167,16 +167,16 @@ public:
 				{
 					//double w = 0.42 - 0.5 * cos(2.0*M_PI*(WIDTH-1-j)/(WIDTH*2)) + 0.08*cos(4.0*M_PI*(WIDTH-1-j)/(WIDTH*2));
 				
-					temp1 += (sample[pos.smppos]) * sinc(time);											
+					result += (sample[pos.smppos]) * sinc(time);											
 
 					time++;
 					advancePos(pos);
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 
 				time = time_now;
 
@@ -186,10 +186,10 @@ public:
 
 					advancePos(pos);
 					time--;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 
-					temp1 += (sample[pos.smppos]) * sinc(time);				
+					result += (sample[pos.smppos]) * sinc(time);				
 				}
 			}
 			else 
@@ -201,7 +201,7 @@ public:
 				pos.loopstart = loopstart;
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
 				{
 					pos.loopstart = 0;
@@ -216,16 +216,16 @@ public:
 				{
 					//double w = 0.42 - 0.5 * cos(2.0*M_PI*(WIDTH-1-j)/(WIDTH*2)) + 0.08*cos(4.0*M_PI*(WIDTH-1-j)/(WIDTH*2));
 				
-					temp1 += (sample[pos.smppos]) * one_over_factor * sinc(one_over_factor * time);											
+					result += (sample[pos.smppos]) * one_over_factor * sinc(one_over_factor * time);											
 
 					advancePos(pos);
 					time++;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD);
+				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
 
 				time = time_now;
 
@@ -235,15 +235,15 @@ public:
 
 					advancePos(pos);
 					time--;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 
-					temp1 += (sample[pos.smppos]) * one_over_factor * sinc(one_over_factor * time);					
+					result += (sample[pos.smppos]) * one_over_factor * sinc(one_over_factor * time);					
 				}
 			}
 			
 			
-			mp_sint32 final = (mp_sint32)(temp1*(1 << (16-shift)));
+			mp_sint32 final = (mp_sint32)(result*(1 << (16-shift)));
 			
 			(*buffer++)+=((final*(voll>>15))>>15); 
 			(*buffer++)+=((final*(volr>>15))>>15); 
@@ -363,7 +363,7 @@ public:
 		
 		mp_sint32 smppos = chn->smppos;
 		mp_sint32 smpposfrac = chn->smpposfrac;
-		const mp_sint32 smpadd = (chn->flags&MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
+		const mp_sint32 smpadd = (chn->flags&ChannelMixer::MP_SAMPLE_BACKWARD) ? -chn->smpadd : chn->smpadd;
 		const mp_sint32 rsmpadd = chn->rsmpadd;
 		
 		const mp_sint32 flags = chn->flags;
@@ -387,7 +387,7 @@ public:
 				pos.loopstart = loopstart;
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
 				{
 					pos.loopstart = 0;
@@ -404,12 +404,12 @@ public:
 
 					time+=65536;
 					advancePos(pos);
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 
 				time = fixedtimefrac;
 
@@ -417,7 +417,7 @@ public:
 				{							
 					advancePos(pos);
 					time-=65536;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 
 					result += (sample[pos.smppos] * SINC(time)) >> shift;
@@ -429,7 +429,7 @@ public:
 				pos.loopstart = loopstart;
 				pos.loopend = loopend+1;
 				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD); 
+				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
 				{
 					pos.loopstart = 0;
@@ -446,12 +446,12 @@ public:
 				
 					advancePos(pos);
 					time+=rsmpadd;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~MP_SAMPLE_BACKWARD) : ((flags & ~MP_SAMPLE_BACKWARD) | MP_SAMPLE_BACKWARD);
+				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
 
 				time = fpmul(fixedtimefrac, rsmpadd);
 
@@ -459,7 +459,7 @@ public:
 				{							
 					advancePos(pos);
 					time-=rsmpadd;
-					if (!(pos.flags & MP_SAMPLE_PLAY))
+					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 
 					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;				
