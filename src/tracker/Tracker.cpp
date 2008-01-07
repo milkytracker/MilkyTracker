@@ -838,17 +838,23 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case PP_MESSAGEBOX_BUTTON_USER3:
 			case PP_MESSAGEBOX_BUTTON_USER4:
 			case PP_MESSAGEBOX_BUTTON_USER5:
-			// little hack, user buttons below PP_MESSAGEBOX_BUTTON_USER6
-			// are not allowed to send repeatable pressed down events
-				if (event->getID() != eCommand)
-					break;
 			case PP_MESSAGEBOX_BUTTON_USER6:
 			case PP_MESSAGEBOX_BUTTON_USER7:
 			case PP_MESSAGEBOX_BUTTON_USER8:
 			case PP_MESSAGEBOX_BUTTON_USER9:
+			// little hack, user buttons below PP_MESSAGEBOX_BUTTON_USER10
+			// are not allowed to send repeatable pressed down events
+				if (event->getID() != eCommand)
+					break;
 			case PP_MESSAGEBOX_BUTTON_USER10:
+			case PP_MESSAGEBOX_BUTTON_USER11:
+			case PP_MESSAGEBOX_BUTTON_USER12:
+			case PP_MESSAGEBOX_BUTTON_USER13:
+			case PP_MESSAGEBOX_BUTTON_USER14:
+			case PP_MESSAGEBOX_BUTTON_USER15:
 			{
-				bool res = messageBoxEventListener(screen->getModalControl()->getID(), reinterpret_cast<PPControl*>(sender)->getID());
+				bool res = messageBoxEventListener(screen->getModalControl()->getID(), 
+												   reinterpret_cast<PPControl*>(sender)->getID());
 				
 				if (res)
 					screen->setModalControl(NULL);  // repaints
@@ -1890,7 +1896,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 ///////////////////////////////////////////////////////////////////////////////
 // remember:
-// user buttons below ID PP_MESSAGEBOX_BUTTON_USER6
+// user buttons below ID PP_MESSAGEBOX_BUTTON_USER10
 // are not allowed to send repeatable pressed down events
 ///////////////////////////////////////////////////////////////////////////////
 bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButtonID)
@@ -1999,31 +2005,55 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 		}
 
 		// one more instrument in the source module
-		case PP_MESSAGEBOX_BUTTON_USER6:
+		case PP_MESSAGEBOX_BUTTON_USER10:
 		{
 			src->allocateInstrument();
 			break;
 		}
 
 		// delete one instrument in the source module
-		case PP_MESSAGEBOX_BUTTON_USER7:
+		case PP_MESSAGEBOX_BUTTON_USER11:
 		{
 			src->freeInstrument();
 			break;
 		}
 
 		// one more instrument in the destination module
-		case PP_MESSAGEBOX_BUTTON_USER8:
+		case PP_MESSAGEBOX_BUTTON_USER12:
 		{
 			dst->allocateInstrument();
 			break;
 		}
 
 		// delete one instrument in the destination module
-		case PP_MESSAGEBOX_BUTTON_USER9:
+		case PP_MESSAGEBOX_BUTTON_USER13:
 		{
 			dst->freeInstrument();
 			break;
+		}
+		
+		case PP_MESSAGEBOX_BUTTON_USER6:
+		{	
+			// play source
+			SamplePlayer samplePlayer(*src, *playerController);
+			PPListBox* listBoxSrcSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
+
+			samplePlayer.playSample(listBoxSrc->getSelectedIndex(),
+									listBoxSrcSmp->getSelectedIndex(), 
+									sectionSamples->getCurrentSamplePlayNote());
+			return true;
+		}
+
+		case PP_MESSAGEBOX_BUTTON_USER7:
+		{
+			// play dest
+			SamplePlayer samplePlayer(*dst, *playerController);
+			PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
+
+			samplePlayer.playSample(listBoxDst->getSelectedIndex(),
+									listBoxDstSmp->getSelectedIndex(), 
+									sectionSamples->getCurrentSamplePlayNote());
+			return true;
 		}
 		
 		default:

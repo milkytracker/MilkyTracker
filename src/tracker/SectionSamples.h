@@ -94,6 +94,8 @@ public:
 	pp_uint32 getOffsetFormat() const { return offsetFormat; }
 	void toggleOffsetFormat();
 
+	pp_int32 getCurrentSamplePlayNote() const { return currentSamplePlayNote; }
+
 	bool isVisible() const { return visible; }
 
 	void setOffsetText(pp_uint32 ID, pp_uint32 offset);

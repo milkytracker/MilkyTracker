@@ -1373,22 +1373,22 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 		
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER6, screen, this, 
-										PPPoint(x2 + 9*8+4, y2-1),
-										PPSize(14, 10));
-
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER10, screen, this, 
+							  PPPoint(x2 + 9*8+4, y2-1),
+							  PPSize(14, 10));
+		
 		button->setText("+");
 		container->addControl(button);		
-
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER7, screen, this, 
-										PPPoint(x2 + 9*8+4 + 14 + 1, y2-1),
-										PPSize(14, 10));
-
+		
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER11, screen, this, 
+							  PPPoint(x2 + 9*8+4 + 14 + 1, y2-1),
+							  PPSize(14, 10));
+		
 		button->setText("-");
 		container->addControl(button);		
-		
+
 		listBoxInstrumentsSrc = new PPListBox(INSTRUMENT_CHOOSER_LIST_SRC, screen, this, 
-														 PPPoint(x2-2, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
+											  PPPoint(x2-2, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
 		listBoxInstrumentsSrc->setShowIndex(true);
 		
 		fillInstrumentListBox(listBoxInstrumentsSrc, 
@@ -1404,6 +1404,14 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		str = "From Smp:";
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
+		
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER6, screen, this, 
+							  PPPoint(x2 + 9*8+4, y2-1),
+							  PPSize(24, 10));
+		
+		button->setText("Play");
+		container->addControl(button);		
+
 		
 		listBoxSamplesSrc = new PPListBox(INSTRUMENT_CHOOSER_LIST_SRC2, screen, this, 
 													 PPPoint(x2-2, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
@@ -1426,14 +1434,14 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 
-		PPButton* button = new PPButton(PP_MESSAGEBOX_BUTTON_USER6, screen, this, 
+		PPButton* button = new PPButton(PP_MESSAGEBOX_BUTTON_USER10, screen, this, 
 										PPPoint(x2 + 9*8+4, y2-1),
 										PPSize(14, 10));
 
 		button->setText("+");
 		container->addControl(button);		
 
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER7, screen, this, 
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER11, screen, this, 
 										PPPoint(x2 + 9*8+4 + 14 + 1, y2-1),
 										PPSize(14, 10));
 
@@ -1459,6 +1467,13 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		x2+=3+(width-10)/2+2;
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 		
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER6, screen, this, 
+							  PPPoint(x2 + 9*8+4, y2-1),
+							  PPSize(24, 10));
+		
+		button->setText("Play");
+		container->addControl(button);		
+
 		listBoxSamplesSrc = new PPListBox(INSTRUMENT_CHOOSER_LIST_SRC2, screen, this, 
 													 PPPoint(x+3+(width-10)/2+4, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
 		listBoxSamplesSrc->setShowIndex(true);
@@ -1533,14 +1548,14 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER8, screen, this, 
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER12, screen, this, 
 										PPPoint(x2 + 7*8+4, y2-1),
 										PPSize(14, 10));
 
 		button->setText("+");
 		container->addControl(button);		
 
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER9, screen, this, 
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER13, screen, this, 
 										PPPoint(x2 + 7*8+4 + 14 + 1, y2-1),
 										PPSize(14, 10));
 
@@ -1562,6 +1577,13 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 		
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER7, screen, this, 
+							  PPPoint(x2 + 7*8+4, y2-1),
+							  PPSize(24, 10));
+		
+		button->setText("Play");
+		container->addControl(button);		
+
 		listBoxSamplesDst = new PPListBox(INSTRUMENT_CHOOSER_LIST_DST2, screen, this, 
 													 PPPoint(x2-2, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
 		listBoxSamplesDst->setShowIndex(true);
@@ -1578,14 +1600,14 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 
-		PPButton* button = new PPButton(PP_MESSAGEBOX_BUTTON_USER8, screen, this, 
+		PPButton* button = new PPButton(PP_MESSAGEBOX_BUTTON_USER12, screen, this, 
 										PPPoint(x2 + 7*8+4, y2-1),
 										PPSize(14, 10));
 
 		button->setText("+");
 		container->addControl(button);		
 
-		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER9, screen, this, 
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER13, screen, this, 
 										PPPoint(x2 + 7*8+4 + 14 + 1, y2-1),
 										PPSize(14, 10));
 
@@ -1612,6 +1634,13 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 		x2+=3+(width-10)/2+2;
 		container->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2), str, true));
 		
+		button = new PPButton(PP_MESSAGEBOX_BUTTON_USER7, screen, this, 
+							  PPPoint(x2 + 7*8+4, y2-1),
+							  PPSize(24, 10));
+		
+		button->setText("Play");
+		container->addControl(button);		
+
 		listBoxSamplesDst = new PPListBox(INSTRUMENT_CHOOSER_LIST_DST2, screen, this, 
 													 PPPoint(x+3+(width-10)/2+4, y2 + 10), PPSize((width-10)/2-1,lBoxHeight), true, false, true, true);
 		listBoxSamplesDst->setShowIndex(true);
