@@ -1,10 +1,31 @@
 /*
+ *  milkyplay/PlayerIT.cpp
+ *
+ *  Copyright 2008 Peter Barth
+ *
+ *  This file is part of Milkytracker.
+ *
+ *  Milkytracker is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Milkytracker is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
  *  PlayerIT.cpp
  *  MilkyPlay IT player. Note that this evolved out of the standard player which
  *  aims at correct XM replay, so many things might still be not correct for
  *  impulse tracker. So this code is subject to change. 
  *
- *  This code is copyright 1998 by Peter Barth (bape0016@hs-karlsruhe.de)
  *
  */
 #include "PlayerIT.h"

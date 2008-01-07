@@ -1,3 +1,25 @@
+/*
+ *  tracker/carbon/iGetKeys.cpp
+ *
+ *  Copyright 2008 Peter Barth
+ *
+ *  This file is part of Milkytracker.
+ *
+ *  Milkytracker is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Milkytracker is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 
 /*
     File: iGetKeys.c
@@ -6,8 +28,6 @@
        Internationally Savy GetKeys test type routines for your entertainment
        and enjoyment.
 
-    Copyright:
-        © Copyright 2001 Apple Computer, Inc. All rights reserved.
     
     Disclaimer:
         IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
@@ -18,7 +38,6 @@
 
         In consideration of your agreement to abide by the following terms, and subject
         to these terms, Apple grants you a personal, non-exclusive license, under AppleÍs
-        copyrights in this original Apple software (the "Apple Software"), to use,
         reproduce, modify and redistribute the Apple Software, with or without
         modifications, in source and/or binary forms; provided that if you redistribute
         the Apple Software in its entirety and without modifications, you must retain

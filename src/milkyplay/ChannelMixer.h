@@ -1,9 +1,30 @@
 /*
+ *  milkyplay/ChannelMixer.h
+ *
+ *  Copyright 2008 Peter Barth
+ *
+ *  This file is part of Milkytracker.
+ *
+ *  Milkytracker is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Milkytracker is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
  *  ChannelMixer.h
  *  MilkyPlay core
  *
  *  Created by Peter Barth on Tue Oct 19 2004.
- *  Copyright (c) 2004 milkytracker.net, All rights reserved.
  *
  *  This class is pretty much emulating a Gravis Ultrasound with a timer set to 250Hz
  *  i.e. mixerHandler() will call a timer routine 250 times per second while mixing 

@@ -1,3 +1,25 @@
+/*
+ *  milkyplay/drivers/generic/rtaudio/asio/iasiothiscallresolver.h
+ *
+ *  Copyright 2008 Peter Barth
+ *
+ *  This file is part of Milkytracker.
+ *
+ *  Milkytracker is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Milkytracker is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 // ****************************************************************************
 //
 // Changed:         I have modified this file slightly (includes) to work  with
@@ -75,7 +97,6 @@
 //					expressed or implied, including but not limited to the
 //					implied warranties of merchantability and fitness for a
 //					particular purpose. You assume all responsibility and agree
-//					to hold no entity, copyright holder or distributors liable
 //					for any loss of data or inaccurate representations of data
 //					as a result of using IASIOThiscallResolver.
 // Version:         1.4 Added separate macro CALL_THISCALL_1_DOUBLE from
