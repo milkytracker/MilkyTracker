@@ -1874,7 +1874,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			}
 		}
 	}
-	// Frontend layer sends PPEvent::eFullScreen when the APP is going fullscreen
+	// Front end layer sends PPEvent::eFullScreen when the APP is going fullscreen
 	else if (event->getID() == eFullScreen)
 	{
 		TrackerSettingsDatabase* settingsDatabaseCopySecond = new TrackerSettingsDatabase(*settingsDatabase);
