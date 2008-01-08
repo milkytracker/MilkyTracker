@@ -88,22 +88,22 @@ public:
 	
 	enum
 	{
-		BUFFERSIZE_DEFAULT	= 16384
+		// pretty large buffer for most systems
+		BUFFERSIZE_DEFAULT	= 8192
 	};
 };
 
 class ChannelMixer : public MixerSettings, public Mixable
 {
 public:
-// This is the basis for timing & mixing
-
 	enum
 	{
-		TIMESAMPLEBUFFERSIZE = 128,
-
-		MP_TIMERFREQ		 = 250,
+		// This is the basis for timing & mixing
+		// 250hz timer
+		MP_TIMERFREQ		 = 250,	
+		// period in samples for 44,1khz
 		MP_BEATLENGTH		 = (44100/MP_TIMERFREQ),
-		
+		// mixer state flags
 		MP_SAMPLE_FILTERLP	 = 65536,
 		MP_SAMPLE_MUTE		 = 32768,
 		MP_SAMPLE_ONESHOT	 = 8192,
@@ -120,6 +120,9 @@ public:
 	static inline mp_sint32 fixedmul(mp_sint32 a,mp_sint32 b) { return MP_FP_MUL(a,b); }
 	static inline mp_sint32 fixeddiv(mp_sint32 a,mp_sint32 b) { return ((mp_sint32)(((mp_int64)(a)*65536/(mp_int64)(b)))); }
 
+	// this is a subset of the channel state which is stored along
+	// with the time progress, so you can do a look up of the state
+	// even with large buffer sizes 
 	struct TTimeRecord
 	{
 		mp_uint32			flags;					// bit 8 = sample played
@@ -137,6 +140,20 @@ public:
 		mp_sint32			loopend;
 		mp_sint32			loopstart;
 		mp_sint32			fixedtimefrac;			// for sinc interpolation (running time fraction)
+		
+		TTimeRecord() :
+			flags(0),
+			sample(NULL),
+			smppos(0),
+			volPan(0),
+			smplen(0),
+			smpposfrac(0),
+			smpadd(0),
+			loopend(0),
+			loopstart(0),
+			fixedtimefrac(0)
+		{
+		}
 	};
 
 	struct TMixerChannel 
@@ -175,9 +192,62 @@ public:
 
 		mp_sint32			fixedtimefrac;			// for sinc interpolation (running time fraction)
 
-#if defined(MILKYTRACKER) || defined (__MPTIMETRACKING__)
-		TTimeRecord			timeLUT[TIMESAMPLEBUFFERSIZE];
-#endif
+		mp_uint32			timeLUTSize;
+		TTimeRecord*		timeLUT;
+
+		TMixerChannel() :
+			timeLUTSize(0),
+			timeLUT(NULL)
+		{
+			clear();
+		}
+		
+		~TMixerChannel()
+		{
+			delete[] timeLUT;
+		}
+
+		void clear()
+		{
+			flags				= 0;
+			sample				= NULL;
+			smplen				= 0;
+			smppos				= 0;
+			smpposfrac			= 0;
+			smpadd				= 0;
+			rsmpadd				= 0;
+			loopend				= 0;
+			loopendcopy			= 0;
+			loopstart			= 0;
+			
+			finalvolr			= 0;
+			finalvoll			= 0;
+			
+			vol					= 0;
+			pan					= 128;
+			
+			rampFromVolStepR	= 0;
+			rampFromVolStepL	= 0;
+			
+			a = b = c			= 0;
+			currsample			= 0;
+			prevsample			= 0;
+			
+			cutoff				= MP_INVALID_VALUE;
+			resonance			= MP_INVALID_VALUE;
+			
+			fixedtimefrac		= 0;
+			
+			if (timeLUT)
+				memset(timeLUT, 0, sizeof(TTimeRecord) * timeLUTSize);
+		}
+		
+		void reallocTimeRecord(mp_uint32 size)
+		{
+			delete[] timeLUT;
+			timeLUTSize = size;
+			timeLUT = new TTimeRecord[size];
+		}
 	};
 	
 	class ResamplerBase
@@ -223,6 +293,7 @@ public:
 private:	
 	mp_uint32	mixerNumAllocatedChannels;	// Number of channels to be allocated by mixer
 	mp_uint32	mixerNumActiveChannels;		// Number of channels to be mixed
+	mp_uint32	mixerLastNumAllocatedChannels;
 	
 	mp_uint32	mixFrequency;				// Mixing frequency
 	mp_uint32	rMixFrequency;				// 0x7FFFFFFF/mixFrequency
@@ -260,12 +331,15 @@ private:
 	
 	inline void		timer(mp_uint32 beatIndex)
 	{
-		timerHandler(beatIndex <= TIMESAMPLEBUFFERSIZE ? beatIndex : TIMESAMPLEBUFFERSIZE-1);
+		timerHandler(beatIndex <= getNumBeatPackets() ? beatIndex : getNumBeatPackets());
 	}
+	
+	void			reallocChannels();
+	void			clearChannels();
 
 public:
 					ChannelMixer(mp_uint32 numChannels, 
-										mp_uint32 frequency);				
+								 mp_uint32 frequency);				
 	
 	virtual			~ChannelMixer();
 	
@@ -292,11 +366,11 @@ public:
 	ResamplerTypes	getResamplerType() const { return resamplerType; }
 	bool			isRamping()  const { return resamplerTable[resamplerType]->isRamping(); }
 	
-	mp_sint32		adjustFrequency(mp_uint32 frequency);
+	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
 	mp_sint32		getMixFrequency() { return mixFrequency; }
 	
 	static mp_sint32 beatPacketsToBufferSize(mp_uint32 mixFrequency, mp_uint32 numBeats);	
-	mp_sint32		setBufferSize(mp_uint32 bufferSize);
+	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);
 	
 	mp_uint32		getBeatPacketSize() const { return beatPacketSize; }
 	mp_uint32		getNumBeatPackets() const { return mixBufferSize / beatPacketSize; } 

@@ -114,7 +114,28 @@ private:
 		}
 	};
 
-	TimeRecord		timeRecordTable[TIMESAMPLEBUFFERSIZE];
+	TimeRecord*		timeRecordTable;
+
+	void reallocTimeRecord()
+	{
+		delete[] timeRecordTable;
+		timeRecordTable = new TimeRecord[getNumBeatPackets()+1];
+		
+		updateTimeRecord();
+	}
+
+	void updateTimeRecord()
+	{
+		for (mp_uint32 i = 0; i < getNumBeatPackets()+1; i++)
+		{
+			timeRecordTable[i] = TimeRecord(poscnt, 
+											rowcnt, 
+											bpm, 
+											tickSpeed, 
+											mainVolume, 
+											ticker);
+		}
+	}	
 	
 public:
 	enum PlayerTypes
@@ -155,30 +176,19 @@ protected:
 
 	mp_sint32		patternIndexToPlay;		// Play special pattern, -1 = Play entire song
 
-protected:
 	mp_sint32		kick();
 
 	virtual mp_sint32 allocateStructures() { return 0; }
 
 	virtual void clearEffectMemory() {}	
 
-	void updateTimeRecord()
-	{
-		for (mp_uint32 i = 0; i < TIMESAMPLEBUFFERSIZE; i++)
-		{
-			timeRecordTable[i] = TimeRecord(poscnt, 
-											rowcnt, 
-											bpm, 
-											tickSpeed, 
-											mainVolume, 
-											ticker);
-		}
-	}
-	
 public:
 	PlayerBase(mp_uint32 frequency);
 
 	virtual ~PlayerBase();
+	
+	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
+	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);	
 	
 	void setPlayMode(PlayModes mode) { playMode = mode; }
 

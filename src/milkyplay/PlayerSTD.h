@@ -44,13 +44,51 @@ private:
 
 	struct TPrEnv 
 	{
-		TEnvelope	*envstruc;
+		TEnvelope*	envstruc;
 		mp_sint32   a,b,step;
 		mp_uint32	bpmCounter, bpmAdder;
-#ifdef MILKYTRACKER
-		mp_sword	posLUT[TIMESAMPLEBUFFERSIZE];
-		TEnvelope*	envstrucLUT[TIMESAMPLEBUFFERSIZE];
-#endif
+
+		mp_uint32	timeTrackSize;
+		mp_sword*	posLUT;
+		TEnvelope**	envstrucLUT;
+		
+		TPrEnv() :
+			timeTrackSize(0),
+			posLUT(0),
+			envstrucLUT(0)
+		{
+		}
+		
+		~TPrEnv()
+		{
+			delete[] posLUT;
+			delete[] envstrucLUT;
+		}
+		
+		void clear()
+		{
+			envstruc	= 0;
+			a = b = step = 0;
+			bpmCounter = bpmAdder = 0;
+			
+			if (timeTrackSize)
+			{
+				if (posLUT)
+					memset(posLUT, 0, sizeof(mp_sword)*timeTrackSize);
+
+				if (envstrucLUT)
+					memset(envstrucLUT, 0, sizeof(TEnvelope*)*timeTrackSize);
+			}
+		}
+		
+		void reallocTimeRecord(mp_uint32 size)
+		{
+			timeTrackSize = size;
+			delete[] posLUT;
+			posLUT = new mp_sword[size];
+			delete[] envstrucLUT;
+			envstrucLUT = new TEnvelope*[size];
+		}
 	};
 
 	struct TLastOperands
@@ -125,6 +163,69 @@ private:
 		mp_ubyte		avibcnt;
 		mp_ubyte		avibsweep;
 		mp_ubyte		avibswcnt;
+	
+		void clear()
+		{
+			flags = 0;
+			ins = 0;
+			smp = 0;
+			hasSetVolume = 0;
+			vol = tremoloVol = finalTremoloVol = tremorVol = 0;
+			hasTremolo = false;
+			masterVol = 0;
+			pan = 0;
+			per = finalVibratoPer = destper = 0;
+			hasVibrato = 0;
+			currentnote = relnote = 0;
+			finetune = 0;
+			freqadjust = 0;
+			note = destnote = lastnoportanote = 0;
+			validnote = false;
+			memset(&eff, 0, sizeof(eff));
+			memset(&eop, 0, sizeof(eop));
+			memset(&old, 0, sizeof(old));
+
+			loopstart = 0;
+			execloop = 0;
+			loopcounter = 0;
+			isLooping = false;
+			loopingValidPosition = 0;
+
+			memset(&vibdepth, 0, sizeof(vibdepth));
+			memset(&vibpos, 0, sizeof(vibpos));
+			memset(&trmdepth, 0, sizeof(trmdepth));
+			memset(&trmspeed, 0, sizeof(trmspeed));
+			memset(&trmpos, 0, sizeof(trmpos));
+			memset(&tremorcnt, 0, sizeof(tremorcnt));
+			memset(&retrigcounterE9x, 0, sizeof(retrigcounterE9x));
+			
+			memset(&retrigmaxE9x, 0, sizeof(retrigmaxE9x));
+			memset(&retrigcounterRxx, 0, sizeof(retrigcounterRxx));
+			memset(&retrigmaxRxx, 0, sizeof(retrigmaxRxx));
+			
+			keyon = false;
+			venv.clear();
+			penv.clear();
+			fenv.clear();
+			vibenv.clear();
+
+			fadevolstart = 0;
+			fadevolstep = 0;
+			avibused = 0;
+			avibspd = 0;
+			avibdepth = 0;
+			avibcnt = 0;
+			avibsweep = 0;
+			avibswcnt = 0;
+		}
+		
+		void reallocTimeRecord(mp_uint32 size)
+		{
+			venv.reallocTimeRecord(size);
+			penv.reallocTimeRecord(size);
+			fenv.reallocTimeRecord(size);
+			vibenv.reallocTimeRecord(size);			
+		}
 	};
 	
 private:
@@ -133,10 +234,11 @@ private:
 	static const mp_uword	lintab[769];
 	static const mp_uint32	logtab[];
 	
-	TModuleChannel	*chninfo;				// our channel information
+	TModuleChannel*	chninfo;				// our channel information
+	mp_sint32		lastNumAllocatedChannels;
 	
-	mp_uint32		*smpoffs;	
-	mp_ubyte		*attick;
+	mp_uint32*		smpoffs;	
+	mp_ubyte*		attick;
 	
 	mp_sint32		patternIndex;			// holds current pattern index
 	mp_sint32		numEffects;				// current number of effects
@@ -317,6 +419,9 @@ public:
 	virtual			~PlayerSTD();
 	
 	virtual PlayerTypes getType() const { return PlayerType_Generic; }
+
+	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
+	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);	
 	
 	// virtual from mixer class, perform playing here
 	virtual void	timerHandler(mp_sint32 currentBeatPacket);

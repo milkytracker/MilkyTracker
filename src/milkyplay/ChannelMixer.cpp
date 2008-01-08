@@ -321,8 +321,8 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 
 void ChannelMixer::ResamplerBase::addChannels(ChannelMixer* mixer, mp_uint32 numChannels, mp_sint32* buffer32,mp_sint32 beatNum, mp_sint32 beatlength)
 {
-	if (beatNum >= TIMESAMPLEBUFFERSIZE)
-		beatNum = TIMESAMPLEBUFFERSIZE-1;
+	if (beatNum >= (signed)mixer->getNumBeatPackets())
+		beatNum = mixer->getNumBeatPackets();
 
 	if (isRamping())
 		addChannelsRamping(mixer, numChannels, buffer32, beatNum, beatlength);
@@ -531,15 +531,53 @@ void ChannelMixer::setFrequency(mp_sint32 frequency)
 	}
 	
 	mixbuffBeatPacket = new mp_sint32[beatPacketSize*MP_NUMCHANNELS];
+	
+	// channels contain information based on beatPacketSize so this might
+	// have been changed
+	reallocChannels();
+}
+
+void ChannelMixer::reallocChannels()
+{
+	// optimization in case we already have the allocated number of channels
+	if (mixerNumAllocatedChannels != mixerLastNumAllocatedChannels)
+	{
+		delete[] channel;
+		channel = new TMixerChannel[mixerNumAllocatedChannels];	
+		
+		delete[] newChannel;
+		newChannel = new TMixerChannel[mixerNumAllocatedChannels];
+		
+		clearChannels();
+	}
+	
+#if defined(MILKYTRACKER) || defined (__MPTIMETRACKING__)
+	for (mp_uint32 i = 0; i < mixerNumAllocatedChannels; i++)
+		channel[i].reallocTimeRecord(getNumBeatPackets()+1);
+#endif	
+	
+	mixerLastNumAllocatedChannels = mixerNumAllocatedChannels;
+}
+
+void ChannelMixer::clearChannels()
+{
+	for (mp_uint32 i = 0; i < mixerNumAllocatedChannels; i++)
+	{
+		channel[i].clear();
+		newChannel[i].clear();
+	}
 }
 
 ChannelMixer::ChannelMixer(mp_uint32 numChannels,
 						   mp_uint32 frequency) :
 	mixerNumAllocatedChannels(numChannels),
 	mixerNumActiveChannels(numChannels),
+	mixerLastNumAllocatedChannels(0),
 	mixFrequency(0),
 	mixbuffBeatPacket(NULL),
 	mixBufferSize(0),
+	channel(NULL),
+	newChannel(NULL),
 	paused(false),
 	disableMixing(false),
 	allowFilters(false),
@@ -562,13 +600,7 @@ ChannelMixer::ChannelMixer(mp_uint32 numChannels,
 
 	setResamplerType(MIXER_NORMAL);
 
-	// allocate channels BEFORE setting the buffer size
-	channel = new TMixerChannel[numChannels];	
-	newChannel = new TMixerChannel[numChannels];
-
 	setBufferSize(BUFFERSIZE_DEFAULT);
-
-	resetChannelsFull();
 }
 
 ChannelMixer::~ChannelMixer()
@@ -600,14 +632,7 @@ void ChannelMixer::resetChannelsWithoutMuting()
 	for (i = 0; i < mixerNumAllocatedChannels; i++)
 		isMuted[i] = (mp_ubyte)isChannelMuted(i);
 	
-	memset(channel,0,sizeof(TMixerChannel)*mixerNumAllocatedChannels);
-	memset(newChannel,0,sizeof(TMixerChannel)*mixerNumAllocatedChannels);
-	for (i = 0; i < mixerNumAllocatedChannels; i++)
-	{
-		channel[i].pan = newChannel[i].pan = 128;
-		channel[i].cutoff = newChannel[i].cutoff = MP_INVALID_VALUE;
-		channel[i].resonance = newChannel[i].resonance = MP_INVALID_VALUE;
-	}
+	clearChannels();
 
 	for (i = 0; i < mixerNumAllocatedChannels; i++)
 		muteChannel(i, isMuted[i] == 1);
@@ -619,14 +644,7 @@ void ChannelMixer::resetChannelsWithoutMuting()
 
 void ChannelMixer::resetChannelsFull()
 {	
-	memset(channel,0,sizeof(TMixerChannel)*mixerNumAllocatedChannels);
-	memset(newChannel,0,sizeof(TMixerChannel)*mixerNumAllocatedChannels);
-	for (mp_uint32 i = 0; i < mixerNumAllocatedChannels; i++)
-	{
-		channel[i].pan = newChannel[i].pan = 128;
-		channel[i].cutoff = newChannel[i].cutoff = MP_INVALID_VALUE;
-		channel[i].resonance = newChannel[i].resonance = MP_INVALID_VALUE;
-	}
+	clearChannels();
 
 	lastBeatRemainder = 0;
 }
@@ -641,20 +659,11 @@ void ChannelMixer::setResamplerType(ResamplerTypes type)
 
 void ChannelMixer::setNumChannels(mp_uint32 num)
 {
-
 	if (num > mixerNumAllocatedChannels)
 	{
-		if (channel) 
-			delete[] channel;
-	
-		if (newChannel) 
-			delete[] newChannel;
-
 		mixerNumAllocatedChannels = num;
 
-		channel = new TMixerChannel[num];	
-		newChannel = new TMixerChannel[num];
-	
+		reallocChannels();
 		resetChannelsFull();
 	}
 	else
@@ -668,17 +677,9 @@ void ChannelMixer::setActiveChannels(mp_uint32 num)
 { 
 	if (num > mixerNumAllocatedChannels)
 	{
-		if (channel) 
-			delete[] channel;
-	
-		if (newChannel) 
-			delete[] newChannel;
-		
 		mixerNumAllocatedChannels = num;
 		
-		channel = new TMixerChannel[num];	
-		newChannel = new TMixerChannel[num];
-
+		reallocChannels();
 		resetChannelsFull();
 	}
 
@@ -1021,37 +1022,39 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
 					{
-
 						ChannelMixer::TMixerChannel* chn = &channel[c];
 
 						if (!(chn->flags & MP_SAMPLE_PLAY))
-#if defined(MILKYTRACKER) || defined (__MPTIMETRACKING__)
 						{
-							chn->timeLUT[nb].flags = chn->flags;
-							chn->timeLUT[nb].sample = NULL;
-							chn->timeLUT[nb].volPan = 128 << 16;
-							chn->timeLUT[nb].smppos = -1;
+							if (chn->timeLUT)
+							{
+								chn->timeLUT[nb].flags = chn->flags;
+								chn->timeLUT[nb].sample = NULL;
+								chn->timeLUT[nb].volPan = 128 << 16;
+								chn->timeLUT[nb].smppos = -1;
+							}
 							continue;
 						}
 						else
 						{
-							chn->timeLUT[nb].flags = chn->flags;
-							chn->timeLUT[nb].sample = chn->sample;
-							chn->timeLUT[nb].smppos = chn->smppos;
-							chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
-							chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
-							chn->timeLUT[nb].smpadd = chn->smpadd;
-							chn->timeLUT[nb].smplen = chn->smplen;
-							if (chn->flags & MP_SAMPLE_ONESHOT)
-								chn->timeLUT[nb].loopend = chn->loopendcopy;
-							else
-								chn->timeLUT[nb].loopend = chn->loopend;
-							chn->timeLUT[nb].loopstart = chn->loopstart;
-							chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
+							if (chn->timeLUT)
+							{
+								chn->timeLUT[nb].flags = chn->flags;
+								chn->timeLUT[nb].sample = chn->sample;
+								chn->timeLUT[nb].smppos = chn->smppos;
+								chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
+								chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
+								chn->timeLUT[nb].smpadd = chn->smpadd;
+								chn->timeLUT[nb].smplen = chn->smplen;
+								if (chn->flags & MP_SAMPLE_ONESHOT)
+									chn->timeLUT[nb].loopend = chn->loopendcopy;
+								else
+									chn->timeLUT[nb].loopend = chn->loopend;
+								chn->timeLUT[nb].loopstart = chn->loopstart;
+								chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
+							}
 						}
-#else
-						continue;
-#endif
+
 					}	
 
 					mixBeatPacket(mixerNumActiveChannels, buffer+nb*beatLength*MP_NUMCHANNELS, nb, beatLength);	
@@ -1107,37 +1110,39 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
 					{
-
 						ChannelMixer::TMixerChannel* chn = &channel[c];
 
 						if (!(chn->flags & MP_SAMPLE_PLAY))
-#if defined(MILKYTRACKER) || defined (__MPTIMETRACKING__)
 						{
-							chn->timeLUT[nb].flags = chn->flags;
-							chn->timeLUT[nb].sample = NULL;
-							chn->timeLUT[nb].volPan = 128 << 16;
-							chn->timeLUT[nb].smppos = -1;
+							if (chn->timeLUT)
+							{
+								chn->timeLUT[nb].flags = chn->flags;
+								chn->timeLUT[nb].sample = NULL;
+								chn->timeLUT[nb].volPan = 128 << 16;
+								chn->timeLUT[nb].smppos = -1;
+							}
 							continue;
 						}
 						else
 						{
-							chn->timeLUT[nb].flags = chn->flags;
-							chn->timeLUT[nb].sample = chn->sample;
-							chn->timeLUT[nb].smppos = chn->smppos;
-							chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
-							chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
-							chn->timeLUT[nb].smpadd = chn->smpadd;
-							chn->timeLUT[nb].smplen = chn->smplen;
-							if (chn->flags & MP_SAMPLE_ONESHOT)
-								chn->timeLUT[nb].loopend = chn->loopendcopy;
-							else
-								chn->timeLUT[nb].loopend = chn->loopend;
-							chn->timeLUT[nb].loopstart = chn->loopstart;
-							chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
+							if (chn->timeLUT)
+							{
+								chn->timeLUT[nb].flags = chn->flags;
+								chn->timeLUT[nb].sample = chn->sample;
+								chn->timeLUT[nb].smppos = chn->smppos;
+								chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
+								chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
+								chn->timeLUT[nb].smpadd = chn->smpadd;
+								chn->timeLUT[nb].smplen = chn->smplen;
+								if (chn->flags & MP_SAMPLE_ONESHOT)
+									chn->timeLUT[nb].loopend = chn->loopendcopy;
+								else
+									chn->timeLUT[nb].loopend = chn->loopend;
+								chn->timeLUT[nb].loopstart = chn->loopstart;
+								chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
+							}
 						}
-#else
-						continue;
-#endif
+
 					}	
 
 					mixBeatPacket(mixerNumActiveChannels, mixbuffBeatPacket, numbeats, beatLength);	
@@ -1162,24 +1167,6 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 
 mp_sint32 ChannelMixer::initDevice()
 {	
-	/*mp_sint32 res = audioDriver->initDevice(mixBufferSize*MP_NUMCHANNELS, mixFrequency, this);
-
-	if (res < 0)
-		return res;
-		
-	// take a look at the buffer size we got from the audio driver
-	if (res > 0)
-	{
-		// this should be the new buffer size
-		mp_uint32 newBufferSize = (res / MP_NUMCHANNELS);
-		// what comes from the audio driver needs to be taken for sure
-		// no 2^n buffer compensation please
-		bool compensate = this->compensateBufferFlag;
-		compensateBufferFlag = false;
-		setBufferSize(newBufferSize);
-		compensateBufferFlag = compensate;
-	}*/
-
 	resetChannelsWithoutMuting();
 
 	initialized = true;
@@ -1253,29 +1240,24 @@ mp_sint32 ChannelMixer::setBufferSize(mp_uint32 bufferSize)
 	if (this->mixBufferSize == bufferSize)
 		return 0;
 
-	// remember this one
-	mp_uint32 mixBufferSize = bufferSize;
-		
-	mp_sint32 numBeats = mixBufferSize/beatPacketSize;
-	
-	// this is the largest buffer size we accept
-	if (numBeats > TIMESAMPLEBUFFERSIZE)
-		return -6;
-
-	mp_sint32 err = 0;
 	if (initialized)
 	{
-		err = closeDevice();
+		mp_sint32 err = closeDevice();
+		if (err != 0)
+			return err;
 	}
 	
-	this->mixBufferSize = mixBufferSize;
+	this->mixBufferSize = bufferSize;
 	
-	return err;
+	// channels contain information depending up the buffer size
+	// update those too
+	reallocChannels();
+	
+	return 0;
 }
 
 mp_sint32 ChannelMixer::getNumActiveChannels()
-{
-	
+{	
 	mp_sint32 i = 0;
 
 	for (mp_uint32 j = 0; j < mixerNumActiveChannels; j++)

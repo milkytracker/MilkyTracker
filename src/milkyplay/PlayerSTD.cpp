@@ -42,6 +42,7 @@
 	{ \
 		delete[] chninfo; \
 		chninfo = NULL; \
+		lastNumAllocatedChannels = -1; \
 	} \
 	if (smpoffs) \
 	{ \
@@ -219,15 +220,14 @@ mp_sint32	PlayerSTD::getlogperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 fin
 
 
 PlayerSTD::PlayerSTD(mp_uint32 frequency) : 
-	PlayerBase(frequency)
+	PlayerBase(frequency),
+	chninfo(NULL),
+	lastNumAllocatedChannels(-1)
 {
-	//beatPacketSize = (BEATLENGTH*frequency)/44100;	
-	
-	chninfo = NULL;
 	smpoffs = NULL;
 	attick	= NULL;	
-	// fill in some default values, don't know if this is necessary
 
+	// fill in some default values, don't know if this is necessary
 	tickSpeed		= 6;				// our tickspeed
 	bpm				= 125;				// BPM speed
 	ticker			= tickSpeed-1;		// runs from 0 to tickspeed-1
@@ -235,8 +235,6 @@ PlayerSTD::PlayerSTD(mp_uint32 frequency) :
 	numEffects		= 0;				// current number of effects
 	numChannels		= 0;				// current number of channels
 	
-	//loopstart = execloop = loopcounter=0;
-
 	patDelay = false;
 	patDelayCount = 0;
 	haltFlag = false;
@@ -249,6 +247,42 @@ PlayerSTD::PlayerSTD(mp_uint32 frequency) :
 PlayerSTD::~PlayerSTD()
 {
 	FREEMEMORY();
+}
+
+mp_sint32 PlayerSTD::adjustFrequency(mp_uint32 frequency)
+{
+	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
+
+	mp_sint32 res = PlayerBase::adjustFrequency(frequency);
+	
+	if (res < 0)
+		return res;
+		
+	// nothing has changed
+	if (lastNumBeatPackets == getNumBeatPackets()+1)
+		return 0;
+
+	res = allocateStructures();
+	
+	return res;
+}
+
+mp_sint32 PlayerSTD::setBufferSize(mp_uint32 bufferSize)
+{
+	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
+
+	mp_sint32 res = PlayerBase::setBufferSize(bufferSize);
+	
+	if (res < 0)
+		return res;
+		
+	// nothing has changed
+	if (lastNumBeatPackets == getNumBeatPackets()+1)
+		return 0;
+
+	res = allocateStructures();
+	
+	return res;
 }
 
 void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
@@ -368,7 +402,9 @@ void PlayerSTD::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 
 
 void PlayerSTD::reset()
 {
-	memset(chninfo, 0, sizeof(TModuleChannel)*initialNumChannels);
+	for (mp_sint32 i = 0; i < initialNumChannels; i++)
+		chninfo[i].clear();
+
 	RESET_ALL_LOOPING
 }
 
@@ -383,19 +419,31 @@ void PlayerSTD::resetAllSpeed()
 
 mp_sint32 PlayerSTD::allocateStructures() 
 {
-	FREEMEMORY();
-
-	chninfo			= new TModuleChannel[initialNumChannels];
-	smpoffs			= new mp_uint32[initialNumChannels];
-	attick			= new mp_ubyte[initialNumChannels];
-
-	if (chninfo==NULL||
-		smpoffs==NULL||
-		attick==NULL) 
+	if (lastNumAllocatedChannels != initialNumChannels)
 	{
 		FREEMEMORY();
-		return -7;
+		
+		chninfo			= new TModuleChannel[initialNumChannels];
+		
+		smpoffs			= new mp_uint32[initialNumChannels];
+		attick			= new mp_ubyte[initialNumChannels];
+		
+		if (chninfo==NULL||
+			smpoffs==NULL||
+			attick==NULL) 
+		{
+			FREEMEMORY();
+			return -7;
+		}
+		
+		lastNumAllocatedChannels = initialNumChannels;
 	}
+	
+#ifdef MILKYTRACKER
+	for (mp_sint32 i = 0; i < initialNumChannels; i++)
+		chninfo[i].reallocTimeRecord(getNumBeatPackets()+1);
+#endif	
+	
 	return 0;
 }
 

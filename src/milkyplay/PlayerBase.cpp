@@ -70,7 +70,8 @@ mp_sint32 PlayerBase::kick()
 }
 
 PlayerBase::PlayerBase(mp_uint32 frequency) : 
-	ChannelMixer(32, frequency)
+	ChannelMixer(32, frequency),
+	timeRecordTable(NULL)
 {
 	module = NULL;
 	
@@ -95,6 +96,8 @@ PlayerBase::PlayerBase(mp_uint32 frequency) :
 	patternIndexToPlay = -1;
 	
 	playMode = PlayMode_Auto;	
+	
+	reallocTimeRecord();
 }
 
 PlayerBase::~PlayerBase()
@@ -103,6 +106,42 @@ PlayerBase::~PlayerBase()
 	//	stopPlaying();
 	
 	ChannelMixer::closeDevice(); 
+}
+
+mp_sint32 PlayerBase::adjustFrequency(mp_uint32 frequency)
+{
+	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
+
+	mp_sint32 res = ChannelMixer::adjustFrequency(frequency);
+	
+	if (res < 0)
+		return res;
+	
+	// nothing has changed
+	if (lastNumBeatPackets == getNumBeatPackets()+1)
+		return 0;
+				
+	reallocTimeRecord();
+	
+	return 0;
+}
+
+mp_sint32 PlayerBase::setBufferSize(mp_uint32 bufferSize)
+{
+	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
+
+	mp_sint32 res = ChannelMixer::setBufferSize(bufferSize);
+	
+	if (res < 0)
+		return res;
+		
+	// nothing has changed
+	if (lastNumBeatPackets == getNumBeatPackets()+1)
+		return 0;
+
+	reallocTimeRecord();
+	
+	return 0;
 }
 
 void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 0*/, bool resetMixer/* = true*/, const mp_ubyte* customPanningTable/* = NULL*/, bool playOneRowOnly /* = false*/)
@@ -131,15 +170,7 @@ void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* =
 		mainVolume = module->header.mainvol;
 
 	// Clear position/speed lookup tables
-	for (mp_uint32 i = 0; i < TIMESAMPLEBUFFERSIZE; i++)
-	{
-		timeRecordTable[i] = TimeRecord(poscnt, 
-										rowcnt, 
-										bpm, 
-										tickSpeed, 
-										mainVolume, 
-										ticker);
-	}
+	updateTimeRecord();
 }
 
 //////////////////////////////////////////////////////
@@ -170,7 +201,7 @@ mp_sint32 PlayerBase::startPlaying(XModule *module,
 	else
 		initialNumChannels = numChannels;
 
-	ChannelMixer::setNumChannels(initialNumChannels);
+	ChannelMixer::setNumChannels(initialNumChannels);	
 
 	this->idle = idle;
 	this->repeat = repeat;
