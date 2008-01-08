@@ -320,16 +320,16 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 		{
 			if (env->step < env->envstruc->env[env->envstruc->num-1][0])
 			{
-				env->posLUT[currentBeatPacket] = env->step;
-				env->envstrucLUT[currentBeatPacket] = env->envstruc;
+				env->timeRecord[currentBeatPacket].pos = env->step;
+				env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
 			}
 			else goto bah1;
 		}
 		else
 		{
 bah1:
-			env->posLUT[currentBeatPacket] = 0;
-			env->envstrucLUT[currentBeatPacket] = NULL;
+			env->timeRecord[currentBeatPacket].pos = 0;
+			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
 
 		env = &chnInf->penv;
@@ -338,16 +338,16 @@ bah1:
 		{
 			if (env->step < env->envstruc->env[env->envstruc->num-1][0])
 			{
-				env->posLUT[currentBeatPacket] = env->step;
-				env->envstrucLUT[currentBeatPacket] = env->envstruc;
+				env->timeRecord[currentBeatPacket].pos = env->step;
+				env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
 			}
 			else goto bah2;
 		}
 		else
 		{
 bah2:
-			env->posLUT[currentBeatPacket] = 0;
-			env->envstrucLUT[currentBeatPacket] = NULL;
+			env->timeRecord[currentBeatPacket].pos = 0;
+			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
 								
 		chnInf++;

@@ -114,12 +114,12 @@ private:
 		}
 	};
 
-	TimeRecord*		timeRecordTable;
+	TimeRecord*		timeRecord;
 
 	void reallocTimeRecord()
 	{
-		delete[] timeRecordTable;
-		timeRecordTable = new TimeRecord[getNumBeatPackets()+1];
+		delete[] timeRecord;
+		timeRecord = new TimeRecord[getNumBeatPackets()+1];
 		
 		updateTimeRecord();
 	}
@@ -128,12 +128,12 @@ private:
 	{
 		for (mp_uint32 i = 0; i < getNumBeatPackets()+1; i++)
 		{
-			timeRecordTable[i] = TimeRecord(poscnt, 
-											rowcnt, 
-											bpm, 
-											tickSpeed, 
-											mainVolume, 
-											ticker);
+			timeRecord[i] = TimeRecord(poscnt, 
+									   rowcnt, 
+									   bpm, 
+									   tickSpeed, 
+									   mainVolume, 
+									   ticker);
 		}
 	}	
 	
@@ -253,7 +253,7 @@ public:
 	void			setSongMainVolume(mp_ubyte volume) { mainVolume = volume; }
 	mp_sint32		getSongMainVolume(mp_uint32 i = 0) const
 	{
-		return (timeRecordTable[i].mainVolumeTicker >> TimeRecord::BITPOS_MAINVOL) & 255;
+		return (timeRecord[i].mainVolumeTicker >> TimeRecord::BITPOS_MAINVOL) & 255;
 	}
 	
 	// Reset sound mixer on song stop
@@ -263,27 +263,27 @@ public:
 	
 	virtual mp_sint32		getOrder(mp_uint32 i = 0) const
 	{ 
-		return (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
+		return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
 	}
 	
 	virtual mp_sint32		getRow(mp_uint32 i = 0) const
 	{ 
-		return (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
+		return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
 	}
 
 	virtual void		getPosition(mp_sint32& order, mp_sint32& row, mp_uint32 i = 0) const
 	{ 
-		order = (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
-		row = (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
+		order = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
+		row = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
 	}
 
 	virtual mp_sint32	getLastUnvisitedPosition() const { return lastUnvisitedPos; }
 
 	virtual void		getPosition(mp_sint32& order, mp_sint32& row, mp_sint32& ticker, mp_uint32 i = 0) const
 	{ 
-		order = (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
-		row = (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
-		ticker = (timeRecordTable[i].mainVolumeTicker >> TimeRecord::BITPOS_TICKER) & 255;
+		order = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
+		row = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
+		ticker = (timeRecord[i].mainVolumeTicker >> TimeRecord::BITPOS_TICKER) & 255;
 	}
 	
 	virtual mp_int64		getSyncCount() const { return synccnt; }
@@ -313,7 +313,7 @@ public:
 	{ 
 		if (isPlaying() && !isIdle())
 		{
-			return (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_TEMPO) & 255;
+			return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_TEMPO) & 255;
 		}
 		return bpm;
 	}
@@ -322,7 +322,7 @@ public:
 	{ 
 		if (isPlaying() && !isIdle())
 		{
-			return (timeRecordTable[i].posRowTempoSpeed >> TimeRecord::BITPOS_SPEED) & 255;;
+			return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_SPEED) & 255;;
 		}
 		return tickSpeed;
 	}

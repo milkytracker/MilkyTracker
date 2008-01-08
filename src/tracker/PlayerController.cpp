@@ -921,14 +921,14 @@ bool PlayerController::isSamplePlaying(const TXMSample* smp, mp_sint32 channel, 
 	// maybe someday this entire decision should go into the
 	// player or mixer class itself, so I don't need to access it here
 	pp_int32 j = getCurrentBeatIndex();
-	pos = mixer->channel[channel].timeLUT[j].smppos;
+	pos = mixer->channel[channel].timeRecord[j].smppos;
 	
 	// compare sample from sample editor against sample from current mixer channel
 	if (pos >= 0 && 
-		(void*)mixer->channel[channel].timeLUT[j].sample == (void*)smp->sample)
+		(void*)mixer->channel[channel].timeRecord[j].sample == (void*)smp->sample)
 	{
-		vol = (mixer->channel[channel].timeLUT[j].volPan & 0xFFFF) >> 1;
-		pan = (mixer->channel[channel].timeLUT[j].volPan) >> 16;
+		vol = (mixer->channel[channel].timeRecord[j].volPan & 0xFFFF) >> 1;
+		pan = (mixer->channel[channel].timeRecord[j].volPan) >> 16;
 		return true;
 	}
 	
@@ -955,15 +955,15 @@ bool PlayerController::isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 en
 	}
 	
 	pp_int32 j = getCurrentBeatIndex();
-	pos = env->posLUT[j];
+	pos = env->timeRecord[j].pos;
 	
-	if (env && env->envstrucLUT[j] && env->envstrucLUT[j] == envelope)
+	if (env && env->timeRecord[j].envstruc && env->timeRecord[j].envstruc == envelope)
 	{
 		
-		if ((env->envstrucLUT[j]->num && 
-			 !(env->envstrucLUT[j]->type & 4) &&
-			 pos >= env->envstrucLUT[j]->env[env->envstrucLUT[j]->num-1][0]) ||
-			!(mixer->channel[channel].timeLUT[j].volPan & 0xFFFF))
+		if ((env->timeRecord[j].envstruc->num && 
+			 !(env->timeRecord[j].envstruc->type & 4) &&
+			 pos >= env->timeRecord[j].envstruc->env[env->timeRecord[j].envstruc->num-1][0]) ||
+			!(mixer->channel[channel].timeRecord[j].volPan & 0xFFFF))
 		{
 			pos = -1;
 		}
@@ -1045,23 +1045,23 @@ void PlayerController::grabSampleData(mp_uint32 chnIndex, mp_sint32 count, mp_si
 		// BUT it's important that we only access sample data
 		// within the range of the current sample we have
 		ChannelMixer::TMixerChannel channel;	
-		channel.sample = chn->timeLUT[j].sample;
+		channel.sample = chn->timeRecord[j].sample;
 		
 		if (channel.sample == NULL)
 			goto resort;
 		
 		channel.smplen = TXMSample::getSampleSizeInSamples((mp_ubyte*)channel.sample);
-		channel.flags = chn->timeLUT[j].flags;
-		channel.smppos = chn->timeLUT[j].smppos % channel.smplen;
-		channel.smpposfrac = chn->timeLUT[j].smpposfrac;
-		channel.smpadd = chn->timeLUT[j].smpadd;
-		channel.loopend = channel.loopendcopy = chn->timeLUT[j].loopend % (channel.smplen+1);
-		channel.loopstart = chn->timeLUT[j].loopstart % (channel.smplen+1);
+		channel.flags = chn->timeRecord[j].flags;
+		channel.smppos = chn->timeRecord[j].smppos % channel.smplen;
+		channel.smpposfrac = chn->timeRecord[j].smpposfrac;
+		channel.smpadd = chn->timeRecord[j].smpadd;
+		channel.loopend = channel.loopendcopy = chn->timeRecord[j].loopend % (channel.smplen+1);
+		channel.loopstart = chn->timeRecord[j].loopstart % (channel.smplen+1);
 		if (channel.loopstart >= channel.loopend)
 			channel.flags &= ~3;
-		channel.vol = chn->timeLUT[j].volPan & 0xFFFF;
-		channel.pan = chn->timeLUT[j].volPan >> 16;
-		channel.fixedtimefrac = chn->timeLUT[j].fixedtimefrac;
+		channel.vol = chn->timeRecord[j].volPan & 0xFFFF;
+		channel.pan = chn->timeRecord[j].volPan >> 16;
+		channel.fixedtimefrac = chn->timeRecord[j].fixedtimefrac;
 		channel.cutoff = ChannelMixer::MP_INVALID_VALUE;
 		channel.resonance = ChannelMixer::MP_INVALID_VALUE;
 		
@@ -1110,5 +1110,5 @@ bool PlayerController::hasSampleData(mp_uint32 chnIndex)
 
 	pp_int32 j = getCurrentBeatIndex();
 
-	return ((chn->timeLUT[j].flags & ChannelMixer::MP_SAMPLE_PLAY) && (chn->timeLUT[j].volPan & 0xFFFF));
+	return ((chn->timeRecord[j].flags & ChannelMixer::MP_SAMPLE_PLAY) && (chn->timeRecord[j].volPan & 0xFFFF));
 }

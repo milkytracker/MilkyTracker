@@ -921,6 +921,39 @@ void ChannelMixer::playSample(mp_sint32 c, // channel
 	
 }
 
+static inline void storeTimeRecordData(mp_sint32 nb, ChannelMixer::TMixerChannel* chn)
+{
+	if (!(chn->flags & ChannelMixer::MP_SAMPLE_PLAY))
+	{
+		if (chn->timeRecord)
+		{
+			chn->timeRecord[nb].flags = chn->flags;
+			chn->timeRecord[nb].sample = NULL;
+			chn->timeRecord[nb].volPan = 128 << 16;
+			chn->timeRecord[nb].smppos = -1;
+		}
+	}
+	else
+	{
+		if (chn->timeRecord)
+		{
+			chn->timeRecord[nb].flags = chn->flags;
+			chn->timeRecord[nb].sample = chn->sample;
+			chn->timeRecord[nb].smppos = chn->smppos;
+			chn->timeRecord[nb].volPan = chn->vol + (chn->pan << 16);
+			chn->timeRecord[nb].smpposfrac = chn->smpposfrac;
+			chn->timeRecord[nb].smpadd = chn->smpadd;
+			chn->timeRecord[nb].smplen = chn->smplen;
+			if (chn->flags & ChannelMixer::MP_SAMPLE_ONESHOT)
+				chn->timeRecord[nb].loopend = chn->loopendcopy;
+			else
+				chn->timeRecord[nb].loopend = chn->loopend;
+			chn->timeRecord[nb].loopstart = chn->loopstart;
+			chn->timeRecord[nb].fixedtimefrac = chn->fixedtimefrac;
+		}
+	}
+}
+
 void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 {
 	updateSampleCounter(bufferSize);
@@ -1021,41 +1054,7 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 					// do some inbetween state recording 
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
-					{
-						ChannelMixer::TMixerChannel* chn = &channel[c];
-
-						if (!(chn->flags & MP_SAMPLE_PLAY))
-						{
-							if (chn->timeLUT)
-							{
-								chn->timeLUT[nb].flags = chn->flags;
-								chn->timeLUT[nb].sample = NULL;
-								chn->timeLUT[nb].volPan = 128 << 16;
-								chn->timeLUT[nb].smppos = -1;
-							}
-							continue;
-						}
-						else
-						{
-							if (chn->timeLUT)
-							{
-								chn->timeLUT[nb].flags = chn->flags;
-								chn->timeLUT[nb].sample = chn->sample;
-								chn->timeLUT[nb].smppos = chn->smppos;
-								chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
-								chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
-								chn->timeLUT[nb].smpadd = chn->smpadd;
-								chn->timeLUT[nb].smplen = chn->smplen;
-								if (chn->flags & MP_SAMPLE_ONESHOT)
-									chn->timeLUT[nb].loopend = chn->loopendcopy;
-								else
-									chn->timeLUT[nb].loopend = chn->loopend;
-								chn->timeLUT[nb].loopstart = chn->loopstart;
-								chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
-							}
-						}
-
-					}	
+						storeTimeRecordData(nb, &channel[c]);
 
 					mixBeatPacket(mixerNumActiveChannels, buffer+nb*beatLength*MP_NUMCHANNELS, nb, beatLength);	
 				}
@@ -1109,41 +1108,7 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 					// do some inbetween state recording 
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
-					{
-						ChannelMixer::TMixerChannel* chn = &channel[c];
-
-						if (!(chn->flags & MP_SAMPLE_PLAY))
-						{
-							if (chn->timeLUT)
-							{
-								chn->timeLUT[nb].flags = chn->flags;
-								chn->timeLUT[nb].sample = NULL;
-								chn->timeLUT[nb].volPan = 128 << 16;
-								chn->timeLUT[nb].smppos = -1;
-							}
-							continue;
-						}
-						else
-						{
-							if (chn->timeLUT)
-							{
-								chn->timeLUT[nb].flags = chn->flags;
-								chn->timeLUT[nb].sample = chn->sample;
-								chn->timeLUT[nb].smppos = chn->smppos;
-								chn->timeLUT[nb].volPan = chn->vol + (chn->pan << 16);
-								chn->timeLUT[nb].smpposfrac = chn->smpposfrac;
-								chn->timeLUT[nb].smpadd = chn->smpadd;
-								chn->timeLUT[nb].smplen = chn->smplen;
-								if (chn->flags & MP_SAMPLE_ONESHOT)
-									chn->timeLUT[nb].loopend = chn->loopendcopy;
-								else
-									chn->timeLUT[nb].loopend = chn->loopend;
-								chn->timeLUT[nb].loopstart = chn->loopstart;
-								chn->timeLUT[nb].fixedtimefrac = chn->fixedtimefrac;
-							}
-						}
-
-					}	
+						storeTimeRecordData(nb, &channel[c]);
 
 					mixBeatPacket(mixerNumActiveChannels, mixbuffBeatPacket, numbeats, beatLength);	
 				}

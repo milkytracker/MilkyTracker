@@ -193,18 +193,18 @@ public:
 		mp_sint32			fixedtimefrac;			// for sinc interpolation (running time fraction)
 
 		mp_uint32			timeLUTSize;
-		TTimeRecord*		timeLUT;
+		TTimeRecord*		timeRecord;
 
 		TMixerChannel() :
 			timeLUTSize(0),
-			timeLUT(NULL)
+			timeRecord(NULL)
 		{
 			clear();
 		}
 		
 		~TMixerChannel()
 		{
-			delete[] timeLUT;
+			delete[] timeRecord;
 		}
 
 		void clear()
@@ -238,15 +238,15 @@ public:
 			
 			fixedtimefrac		= 0;
 			
-			if (timeLUT)
-				memset(timeLUT, 0, sizeof(TTimeRecord) * timeLUTSize);
+			if (timeRecord)
+				memset(timeRecord, 0, sizeof(TTimeRecord) * timeLUTSize);
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)
 		{
-			delete[] timeLUT;
+			delete[] timeRecord;
 			timeLUTSize = size;
-			timeLUT = new TTimeRecord[size];
+			timeRecord = new TTimeRecord[size];
 		}
 	};
 	

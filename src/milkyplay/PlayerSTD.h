@@ -49,20 +49,24 @@ private:
 		mp_uint32	bpmCounter, bpmAdder;
 
 		mp_uint32	timeTrackSize;
-		mp_sword*	posLUT;
-		TEnvelope**	envstrucLUT;
+		
+		struct TTimeRecord
+		{
+			mp_sword pos;
+			TEnvelope* envstruc;
+		};
+		
+		TTimeRecord* timeRecord;
 		
 		TPrEnv() :
 			timeTrackSize(0),
-			posLUT(0),
-			envstrucLUT(0)
+			timeRecord(NULL)
 		{
 		}
 		
 		~TPrEnv()
 		{
-			delete[] posLUT;
-			delete[] envstrucLUT;
+			delete[] timeRecord;
 		}
 		
 		void clear()
@@ -71,23 +75,15 @@ private:
 			a = b = step = 0;
 			bpmCounter = bpmAdder = 0;
 			
-			if (timeTrackSize)
-			{
-				if (posLUT)
-					memset(posLUT, 0, sizeof(mp_sword)*timeTrackSize);
-
-				if (envstrucLUT)
-					memset(envstrucLUT, 0, sizeof(TEnvelope*)*timeTrackSize);
-			}
+			if (timeTrackSize && timeRecord)
+				memset(timeRecord, 0, sizeof(TTimeRecord)*timeTrackSize);
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)
 		{
 			timeTrackSize = size;
-			delete[] posLUT;
-			posLUT = new mp_sword[size];
-			delete[] envstrucLUT;
-			envstrucLUT = new TEnvelope*[size];
+			delete[] timeRecord;
+			timeRecord = new TTimeRecord[size];
 		}
 	};
 

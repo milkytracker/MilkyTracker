@@ -71,7 +71,7 @@ mp_sint32 PlayerBase::kick()
 
 PlayerBase::PlayerBase(mp_uint32 frequency) : 
 	ChannelMixer(32, frequency),
-	timeRecordTable(NULL)
+	timeRecord(NULL)
 {
 	module = NULL;
 	
@@ -331,10 +331,10 @@ void PlayerBase::setPatternPos(mp_uint32 pos, mp_uint32 row/* = 0*/, bool resetC
 
 void PlayerBase::timerHandler(mp_sint32 currentBeatPacket)
 {
-	timeRecordTable[currentBeatPacket] = TimeRecord(poscnt, 
-													rowcnt, 
-													bpm, 
-													tickSpeed, 
-													mainVolume,
-													ticker);
+	timeRecord[currentBeatPacket] = TimeRecord(poscnt, 
+											   rowcnt, 
+											   bpm, 
+											   tickSpeed, 
+											   mainVolume,
+											   ticker);
 }
