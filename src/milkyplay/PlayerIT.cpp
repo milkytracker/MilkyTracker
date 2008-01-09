@@ -47,23 +47,6 @@ PlayerIT::TChnState& PlayerIT::TVirtualChannel::chnstat()
 
 //#define MINPERIOD (113*4)
 
-#define FREEMEMORY() \
-	if (chninfo) \
-	{ \
-		delete[] chninfo; \
-		chninfo = NULL; \
-	} \
-	if (vchninfo) \
-	{ \
-		delete[] vchninfo; \
-		vchninfo = NULL; \
-	} \
-	if (attick) \
-	{ \
-		delete[] attick; \
-		attick = NULL; \
-	}
-
 // must be called after the poscnt has been properly set
 #define RESETLOOPING \
 { \
@@ -293,8 +276,6 @@ mp_sint32	PlayerIT::getlogperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 fine
 PlayerIT::PlayerIT(mp_uint32 frequency) : 
 	PlayerBase(frequency)
 {
-	//beatPacketSize = (BEATLENGTH*frequency)/44100;	
-	
 	chninfo		= NULL;
 	vchninfo	= NULL;
 	attick		= NULL;	
@@ -321,7 +302,7 @@ PlayerIT::PlayerIT(mp_uint32 frequency) :
 
 PlayerIT::~PlayerIT()
 {
-	FREEMEMORY();
+	freeMemory();
 }
 
 #define MYMAX(a, b) (mp_sint32)((a) > (b) ? (a) : (b))
@@ -451,20 +432,31 @@ void PlayerIT::resetAllSpeed()
 
 mp_sint32 PlayerIT::allocateStructures() 
 {
-	FREEMEMORY();
+	freeMemory();
 
 	chninfo			= new TModuleChannel[numModuleChannels];
 	vchninfo		= new TVirtualChannel[numVirtualChannels];
 	attick			= new mp_ubyte[numModuleChannels];
-
-	if (chninfo==NULL||
-		vchninfo==NULL||
-		attick==NULL) 
-	{
-		FREEMEMORY();
-		return -7;
-	}
 	return 0;
+}
+
+void PlayerIT::freeMemory() 
+{
+	if (chninfo) 
+	{ 
+		delete[] chninfo; 
+		chninfo = NULL; 
+	} 
+	if (vchninfo) \
+	{ 
+		delete[] vchninfo; 
+		vchninfo = NULL; 
+	} 
+	if (attick) 
+	{ 
+		delete[] attick; 
+		attick = NULL; 
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

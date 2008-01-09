@@ -37,23 +37,7 @@
 
 //#define MINPERIOD (113*4)
 
-#define FREEMEMORY() \
-	if (chninfo) \
-	{ \
-		delete[] chninfo; \
-		chninfo = NULL; \
-		lastNumAllocatedChannels = -1; \
-	} \
-	if (smpoffs) \
-	{ \
-		delete[] smpoffs; \
-		smpoffs = NULL; \
-	} \
-	if (attick) \
-	{ \
-		delete[] attick; \
-		attick = NULL; \
-	}
+#define FREEMEMORY \
 
 #define CLEAROLDOPERANDS \
 { \
@@ -246,7 +230,7 @@ PlayerSTD::PlayerSTD(mp_uint32 frequency) :
 
 PlayerSTD::~PlayerSTD()
 {
-	FREEMEMORY();
+	freeMemory();
 }
 
 mp_sint32 PlayerSTD::adjustFrequency(mp_uint32 frequency)
@@ -421,20 +405,12 @@ mp_sint32 PlayerSTD::allocateStructures()
 {
 	if (lastNumAllocatedChannels != initialNumChannels)
 	{
-		FREEMEMORY();
+		freeMemory();
 		
 		chninfo			= new TModuleChannel[initialNumChannels];
 		
 		smpoffs			= new mp_uint32[initialNumChannels];
 		attick			= new mp_ubyte[initialNumChannels];
-		
-		if (chninfo==NULL||
-			smpoffs==NULL||
-			attick==NULL) 
-		{
-			FREEMEMORY();
-			return -7;
-		}
 		
 		lastNumAllocatedChannels = initialNumChannels;
 	}
@@ -445,6 +421,26 @@ mp_sint32 PlayerSTD::allocateStructures()
 #endif	
 	
 	return 0;
+}
+
+void PlayerSTD::freeMemory() 
+{
+	if (chninfo) 
+	{ 
+		delete[] chninfo; 
+		chninfo = NULL; 
+		lastNumAllocatedChannels = -1; 
+	} 
+	if (smpoffs) 
+	{ 
+		delete[] smpoffs; 
+		smpoffs = NULL; 
+	} 
+	if (attick) 
+	{ 
+		delete[] attick; 
+		attick = NULL; 
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

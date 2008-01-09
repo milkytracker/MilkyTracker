@@ -100,21 +100,22 @@ public:
 	{
 		// This is the basis for timing & mixing
 		// 250hz timer
-		MP_TIMERFREQ		 = 250,	
-		// period in samples for 44,1khz
-		MP_BEATLENGTH		 = (44100/MP_TIMERFREQ),
+		MP_TIMERFREQ		= 250,	
+		MP_BASEFREQ			= 48000,	// is chosen because (48000 % 250) == 0
+		// period in samples for MP_TIMERFREQ
+		MP_BEATLENGTH		= (MP_BASEFREQ/MP_TIMERFREQ),
 		// mixer state flags
-		MP_SAMPLE_FILTERLP	 = 65536,
-		MP_SAMPLE_MUTE		 = 32768,
-		MP_SAMPLE_ONESHOT	 = 8192,
-		MP_SAMPLE_FADEOFF	 = 4096,
-		MP_SAMPLE_FADEOUT	 = 2048,
-		MP_SAMPLE_FADEIN	 = 1024,
-		MP_SAMPLE_PLAY		 = 256,
-		MP_SAMPLE_BACKWARD	 = 128,
+		MP_SAMPLE_FILTERLP	= 65536,
+		MP_SAMPLE_MUTE		= 32768,
+		MP_SAMPLE_ONESHOT	= 8192,
+		MP_SAMPLE_FADEOFF	= 4096,
+		MP_SAMPLE_FADEOUT	= 2048,
+		MP_SAMPLE_FADEIN	= 1024,
+		MP_SAMPLE_PLAY		= 256,
+		MP_SAMPLE_BACKWARD	= 128,
 		
-		MP_INVALID_VALUE	 = 0x7FFFFFFF,
-		MP_FILTERPRECISION	 = 8		
+		MP_INVALID_VALUE	= 0x7FFFFFFF,
+		MP_FILTERPRECISION	= 8		
 	};
 
 	static inline mp_sint32 fixedmul(mp_sint32 a,mp_sint32 b) { return MP_FP_MUL(a,b); }

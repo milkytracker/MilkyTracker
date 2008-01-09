@@ -522,7 +522,7 @@ void ChannelMixer::setFrequency(mp_sint32 frequency)
 	mixFrequency = frequency;
 	rMixFrequency = 0x7FFFFFFF / frequency;
 
-	beatPacketSize = (MP_BEATLENGTH*frequency)/44100;	
+	beatPacketSize = (MP_BEATLENGTH*frequency)/MP_BASEFREQ;	
 	
 	if (mixbuffBeatPacket)
 	{
@@ -1196,7 +1196,7 @@ mp_sint32 ChannelMixer::adjustFrequency(mp_uint32 frequency)
 
 mp_sint32 ChannelMixer::beatPacketsToBufferSize(mp_uint32 mixFrequency, mp_uint32 numBeats)
 {
-	mp_uint32 beatPacketSize = (MP_BEATLENGTH*mixFrequency)/44100;
+	mp_uint32 beatPacketSize = (MP_BEATLENGTH*mixFrequency)/MP_BASEFREQ;
 	return numBeats * beatPacketSize;
 }
 

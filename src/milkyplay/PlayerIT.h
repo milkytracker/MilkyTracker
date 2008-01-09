@@ -550,7 +550,7 @@ private:
 		
 		mp_int64 t = ((mp_int64)realCiaTempo)<<(32+2);
 		
-		const mp_uint32 timerBase = (mp_uint32)(5.0f*500.0f*(MP_BEATLENGTH*MP_TIMERFREQ / 44100.0f));
+		const mp_uint32 timerBase = (mp_uint32)(5.0f*500.0f*(MP_BEATLENGTH*MP_TIMERFREQ / (float)MP_BASEFREQ));
 		
 		return (mp_uint32)(t/timerBase);
 	}
@@ -690,6 +690,7 @@ private:
 	void			tickhandler();
 	
 	mp_sint32		allocateStructures();
+	void			freeMemory();
 	
 	// stop song by setting flag and setting speed to zero
 	void			halt();
