@@ -184,9 +184,6 @@ void PatternEditor::attachPattern(TXMPattern* pattern, XModule* module)
 	if (this->pattern == pattern && this->module == module)
 		return;
 
-	this->pattern = pattern; 
-	attachModule(module);
-	
 	// --------- update undo history information --------------------	
 	if (undoStack)
 	{	
@@ -204,6 +201,9 @@ void PatternEditor::attachPattern(TXMPattern* pattern, XModule* module)
 			undoStack = undoHistory->getUndoStack(pattern, NULL, NULL);
 		}
 	}
+
+	attachModule(module);	
+	this->pattern = pattern; 
 	
 	// couldn't get any from history, create new one
 	if (!undoStack)

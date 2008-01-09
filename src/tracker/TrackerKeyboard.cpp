@@ -85,8 +85,8 @@ void Tracker::initKeyBindings()
 
 	// Key-down bindings for MilkyTracker
 	// tabbing stuff
-	eventKeyDownBindingsMilkyTracker->addBinding('N', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_OpenTab);
-	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_CloseTab);
+	eventKeyDownBindingsMilkyTracker->addBinding('T', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_OpenTab);
+	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CloseTab);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToPreviousTab);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToNextTab);	
 
@@ -131,9 +131,9 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('O', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_InvokeSectionQuickOptions);	
 	eventKeyDownBindingsMilkyTracker->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &Tracker::eventKeyDownBinding_ToggleScopes);	
 	// handy toggle shortcuts
-	eventKeyDownBindingsMilkyTracker->addBinding('F', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
-	eventKeyDownBindingsMilkyTracker->addBinding('P', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
-	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
+	eventKeyDownBindingsMilkyTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
+	eventKeyDownBindingsMilkyTracker->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
+	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
 
 	// Transpose stuff like FT2
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
@@ -169,8 +169,8 @@ void Tracker::initKeyBindings()
 
 	// Key-down bindings for Fasttracker
 	// tab stuff
-	eventKeyDownBindingsFastTracker->addBinding('N', KeyModifierCTRL, &Tracker::eventKeyDownBinding_OpenTab);
-	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_CloseTab);
+	eventKeyDownBindingsFastTracker->addBinding('T', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_OpenTab);
+	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CloseTab);
 	eventKeyDownBindingsFastTracker->addBinding(VK_LEFT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToPreviousTab);
 	eventKeyDownBindingsFastTracker->addBinding(VK_RIGHT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToNextTab);	
 
@@ -218,9 +218,9 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleScopes);	
 
 	// Handy toggle functions
-	eventKeyDownBindingsFastTracker->addBinding('F', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
-	eventKeyDownBindingsFastTracker->addBinding('P', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
-	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
+	eventKeyDownBindingsFastTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
+	eventKeyDownBindingsFastTracker->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
+	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
 
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokePatternToolVolumeScalePattern);	
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternToolVolumeScaleTrack);	
