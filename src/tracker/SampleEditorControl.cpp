@@ -1604,7 +1604,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		
 		// redo
 		case MenuCommandIDRedo:
-			sampleEditor->undo();
+			sampleEditor->redo();
 			break;
 
 		// range (=select) all
