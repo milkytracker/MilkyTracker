@@ -21,21 +21,15 @@
  */
 
 /* Implementation of Antti Lankila's Amiga sound model, see:
-* http://bel.fi/~alankila/modguide/interpolate.txt
-
-***  ACHTUNG!!!! ***
-
-This is a work-in-progress, I have still to implement volume ramping and some other little bits.
-
-- Chris (Deltafire) 13/1/2008
-
-	*/
+ * http://bel.fi/~alankila/modguide/interpolate.txt
+ *
+ * Chris (Deltafire) 13/1/2008
+ */
 
 // Amiiiiiiiiiiiiigaaaaaaaaa
 
 #include "computed-blep.h"
 
-template<bool ramping>
 class ResamplerAmiga : public ChannelMixer::ResamplerBase
 {
 private:
@@ -46,8 +40,8 @@ private:
 		MAX_CHANNELS = 33,	// Extra channel is used for 'scopes
 		MAX_BLEPS = 32,
 		MAX_AGE = 2048,
+		PAULA_FREQ = 3546895,
 		filterTable = 0, // TODO: Make this user selectable (see computed-blep.h)
-		paulaAdvance = 74// TODO: This needs to be calculated from mixer freq
 	};
 	
 	// the structure that holds data of bleps
@@ -61,6 +55,7 @@ private:
 	blepState_t bleps[MAX_CHANNELS][MAX_BLEPS];
 	mp_uint32 currentLevel[MAX_CHANNELS];
 	mp_sint32 activeBleps[MAX_CHANNELS];
+	static mp_sint32 paulaAdvance;
 	
 public:
 	ResamplerAmiga()
@@ -68,6 +63,11 @@ public:
 		memset(bleps, 0, sizeof(bleps));
 		memset(currentLevel, 0, sizeof(currentLevel));
 		memset(activeBleps, 0, sizeof(activeBleps));
+	}
+
+	void setFrequency(mp_sint32 frequency)
+	{
+		paulaAdvance = PAULA_FREQ / frequency;
 	}
 	
 	inline mp_sint32 interpolate_amiga_8bit(const mp_sint32 sample,
@@ -144,7 +144,7 @@ public:
 		return  s;
 	}
 
-	virtual bool isRamping() { return ramping; }
+	virtual bool isRamping() { return false; }
 	virtual bool supportsFullChecking() { return false; }
 	virtual bool supportsNoChecking() { return true; }
 	
@@ -153,9 +153,6 @@ public:
 		// adding some local variables, will be faster to access than attributes of chn
 		mp_sint32 voll = chn->finalvoll;
 		mp_sint32 volr = chn->finalvolr;
-		
-		const mp_sint32 rampFromVolStepL = ramping ? chn->rampFromVolStepL : 0;
-		const mp_sint32 rampFromVolStepR = ramping ? chn->rampFromVolStepR : 0;
 		
 		mp_sint32 smppos = chn->smppos;
 		mp_sint32 smpposfrac = chn->smpposfrac;
@@ -179,14 +176,6 @@ public:
 				(*buffer++)+=(s*(voll>>15))>>15; 
 				(*buffer++)+=(s*(volr>>15))>>15; 
 				
-				// ramping is a template parameter
-				// see explanation above
-				if (ramping)
-				{
-					voll+=rampFromVolStepL; 
-					volr+=rampFromVolStepR; 
-				}
-				
 				smppos+=smpadd;
 			}
 		} 
@@ -206,23 +195,10 @@ public:
 				(*buffer++)+=(s*(voll>>15))>>15;
 				(*buffer++)+=(s*(volr>>15))>>15;
 				
-				// ramping is a template parameter
-				// see explanation above
-				if (ramping)
-				{
-					voll+=rampFromVolStepL; 
-					volr+=rampFromVolStepR; 
-				}
-				
 				smppos+=smpadd;
 			}
-			
-		}
-		
-		if (ramping)
-		{
-			chn->finalvoll = voll;
-			chn->finalvolr = volr;	
 		}
 	}
 };
+
+mp_sint32 ResamplerAmiga::paulaAdvance = 74; // default value for 48khz

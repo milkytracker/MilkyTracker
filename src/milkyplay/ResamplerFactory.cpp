@@ -75,10 +75,10 @@ ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes ty
 			return new ResamplerSinc<true, 128>();
 
 		case MIXER_AMIGA:
-			return new ResamplerAmiga<false>();
+			return new ResamplerAmiga();
 
 		case MIXER_AMIGA_RAMPING:
-			return new ResamplerAmiga<true>();
+			return new ResamplerAmiga();
 
 		case MIXER_DUMMY:
 			return new ResamplerDummy();
