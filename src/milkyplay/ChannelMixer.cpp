@@ -1384,16 +1384,16 @@ void ChannelMixer::mixData(mp_sint32 c,
 	const ChannelMixer::TMixerChannel* tempchn = &channel[c];
 	ChannelMixer::TMixerChannel channel;
 	
-	channel.flags = tempchn->timeLUT[packetIndex].flags;
-	channel.sample = tempchn->timeLUT[packetIndex].sample;
-	channel.smppos = tempchn->timeLUT[packetIndex].smppos;
-	channel.smpposfrac = tempchn->timeLUT[packetIndex].smpposfrac;
-	channel.smpadd = tempchn->timeLUT[packetIndex].smpadd;
-	channel.smplen = tempchn->timeLUT[packetIndex].smplen;
-	channel.loopend = channel.loopendcopy = tempchn->timeLUT[packetIndex].loopend;
-	channel.loopstart = tempchn->timeLUT[packetIndex].loopstart;
-	channel.vol = tempchn->timeLUT[packetIndex].volPan & 0xFFFF;
-	channel.pan = tempchn->timeLUT[packetIndex].volPan >> 16;
+	channel.flags = tempchn->timeRecord[packetIndex].flags;
+	channel.sample = tempchn->timeRecord[packetIndex].sample;
+	channel.smppos = tempchn->timeRecord[packetIndex].smppos;
+	channel.smpposfrac = tempchn->timeRecord[packetIndex].smpposfrac;
+	channel.smpadd = tempchn->timeRecord[packetIndex].smpadd;
+	channel.smplen = tempchn->timeRecord[packetIndex].smplen;
+	channel.loopend = channel.loopendcopy = tempchn->timeRecord[packetIndex].loopend;
+	channel.loopstart = tempchn->timeRecord[packetIndex].loopstart;
+	channel.vol = tempchn->timeRecord[packetIndex].volPan & 0xFFFF;
+	channel.pan = tempchn->timeRecord[packetIndex].volPan >> 16;
 	
 	ChannelMixer::TMixerChannel* chn = &channel;
 	
