@@ -1064,6 +1064,7 @@ void PlayerController::grabSampleData(mp_uint32 chnIndex, mp_sint32 count, mp_si
 		channel.fixedtimefrac = chn->timeRecord[j].fixedtimefrac;
 		channel.cutoff = ChannelMixer::MP_INVALID_VALUE;
 		channel.resonance = ChannelMixer::MP_INVALID_VALUE;
+		channel.index = chnIndex;
 		
 		channel.smpadd = (channel.smpadd*fMul) / (!count ? 1 : count);		
 		chn = &channel;

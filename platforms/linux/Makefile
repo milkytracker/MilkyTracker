@@ -109,6 +109,7 @@ FILES = \
 "../../src/tracker/SampleEditor.cpp" \
 "../../src/tracker/SampleEditorControl.cpp" \
 "../../src/tracker/SampleEditorControlToolHandler.cpp" \
+"../../src/tracker/SampleEditorResampler.cpp" \
 "../../src/tracker/SampleLoadChannelSelectionHandler.cpp" \
 "../../src/tracker/SamplePlayer.cpp" \
 "../../src/tracker/ScopesControl.cpp" \

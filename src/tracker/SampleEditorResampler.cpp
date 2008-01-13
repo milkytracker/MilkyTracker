@@ -126,7 +126,9 @@ bool SampleEditorResampler::resample(float factor)
 	// we only need the left channel as no panning is involved
 	channel.finalvoll = (channel.vol*128*256)<<6; 
 	channel.finalvolr = 0;
-	channel.rampFromVolStepL = channel.rampFromVolStepR = 0;		
+	channel.rampFromVolStepL = channel.rampFromVolStepR = 0;	
+	
+	channel.index = 0;
 	
 	ChannelMixer::ResamplerBase* resampler = NULL;
 	
