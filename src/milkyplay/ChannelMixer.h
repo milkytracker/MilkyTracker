@@ -291,13 +291,16 @@ public:
 		// see above, you will need to implement at least one of the following
 		virtual void addBlockNoCheck(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count) 
 		{
-			assert(0);
+			ASSERT(false);
 		}
 		// see above
 		virtual void addBlockFull(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count)
 		{
-			assert(0);	// I wasted an hour wondering why i was getting no output..
+			ASSERT(false);	// I wasted an hour wondering why i was getting no output..
 		}
+		
+		// in case the resampler needs to get hold of the current mixing frequency
+		virtual void setFrequency(mp_sint32 frequency) { }
 	};
 
 	friend class ChannelMixer::ResamplerBase;

@@ -537,6 +537,8 @@ void ChannelMixer::setFrequency(mp_sint32 frequency)
 	// channels contain information based on beatPacketSize so this might
 	// have been changed
 	reallocChannels();
+	
+	resamplerTable[resamplerType]->setFrequency(frequency);
 }
 
 void ChannelMixer::reallocChannels()
@@ -655,7 +657,9 @@ void ChannelMixer::setResamplerType(ResamplerTypes type)
 {
 	if (resamplerTable[type] == NULL)
 		resamplerTable[type] = ResamplerFactory::createResampler(type);
-		
+	
+	resamplerTable[type]->setFrequency(mixFrequency);
+				
 	resamplerType = type; 
 }
 
