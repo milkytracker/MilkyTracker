@@ -538,7 +538,8 @@ void ChannelMixer::setFrequency(mp_sint32 frequency)
 	// have been changed
 	reallocChannels();
 	
-	resamplerTable[resamplerType]->setFrequency(frequency);
+	if (resamplerType != MIXER_INVALID && resamplerTable[resamplerType])
+		resamplerTable[resamplerType]->setFrequency(frequency);
 }
 
 void ChannelMixer::reallocChannels()
@@ -582,6 +583,7 @@ ChannelMixer::ChannelMixer(mp_uint32 numChannels,
 	mixBufferSize(0),
 	channel(NULL),
 	newChannel(NULL),
+	resamplerType(MIXER_INVALID),
 	paused(false),
 	disableMixing(false),
 	allowFilters(false),
@@ -658,7 +660,8 @@ void ChannelMixer::setResamplerType(ResamplerTypes type)
 	if (resamplerTable[type] == NULL)
 		resamplerTable[type] = ResamplerFactory::createResampler(type);
 	
-	resamplerTable[type]->setFrequency(mixFrequency);
+	if (resamplerType != MIXER_INVALID && resamplerTable[resamplerType])
+		resamplerTable[resamplerType]->setFrequency(mixFrequency);
 				
 	resamplerType = type; 
 }
