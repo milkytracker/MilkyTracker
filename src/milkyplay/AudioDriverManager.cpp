@@ -124,7 +124,7 @@ AudioDriverManager::AudioDriverManager() :
 #include "AudioDriver_JACK.h"
 
 AudioDriverManager::AudioDriverManager() :
-	defaultDriverIndex(1)
+	defaultDriverIndex(0)
 {
 	ALLOC_DRIVERLIST(2);
 	driverList[0] = new AudioDriver_SDL();

@@ -34,7 +34,6 @@ This is a work-in-progress, I have still to implement volume ramping and some ot
 // Amiiiiiiiiiiiiigaaaaaaaaa
 
 #include "computed-blep.h"
-bool blepInit = false;
 
 template<bool ramping>
 class ResamplerAmiga : public ChannelMixer::ResamplerBase
@@ -44,10 +43,9 @@ private:
 	enum 
 	{
 		BLEP_SCALE = 17,
-		MAX_CHANNELS = 33,
+		MAX_CHANNELS = 33,	// Extra channel is used for 'scopes
 		MAX_BLEPS = 32,
 		MAX_AGE = 2048,
-		MAX_POWER = 32,
 		filterTable = 0, // TODO: Make this user selectable (see computed-blep.h)
 		paulaAdvance = 74// TODO: This needs to be calculated from mixer freq
 	};
@@ -70,17 +68,9 @@ public:
 		memset(bleps, 0, sizeof(bleps));
 		memset(currentLevel, 0, sizeof(currentLevel));
 		memset(activeBleps, 0, sizeof(activeBleps));
-		
-		// The computed blep table is 3 bits too large.. fix it here
-		if(!blepInit)
-		{
-			for(mp_sint32 i = 0; i < 5 * MAX_AGE; i++)
-				winsinc_integral[0][i] >>= 3;
-			blepInit = true;
-		}
 	}
 	
-	inline mp_sint32 interpolate_amiga(const mp_sint32 sample,
+	inline mp_sint32 interpolate_amiga_8bit(const mp_sint32 sample,
 									   const mp_sint32 smppos,
 									   const ChannelMixer::TMixerChannel* chn)
 	{
@@ -109,13 +99,51 @@ public:
 				activeBleps[channel]  = i; // It died of old age :(
 		}
 		
-		s >>= BLEP_SCALE;
+		s >>= (BLEP_SCALE - 8);
+		
+		s += sample << 8;
+		
+		return  s;
+	}
+
+	// Due to 32-bit limitations the 16-bit resampler is less precise
+	// PS, copy & paste is quicker than messing around with templates ;)
+	inline mp_sint32 interpolate_amiga_16bit(const mp_sint32 sample,
+											const mp_sint32 smppos,
+		   									const ChannelMixer::TMixerChannel* chn)
+	{
+		const mp_sint32 channel = chn->index;
+		if(sample != currentLevel[channel])
+		{
+			// We have a newborn blep!
+			// Make room for it
+			memmove(&bleps[channel][1], &bleps[channel][0], sizeof(blepState_t) * activeBleps[channel]);
+			if(++activeBleps[channel] == MAX_BLEPS)
+			{
+				fprintf(stderr, "AMIGA: Blep list truncated!\n");
+				activeBleps[channel]--;
+			}
+			bleps[channel][0].level = sample - currentLevel[channel];
+			bleps[channel][0].age = ((chn->fixedtimefrac + (chn->smppos & 0xffff))  * paulaAdvance) >> 16;
+			currentLevel[channel] = sample;
+		}
+		
+		mp_sint32 s = 0;
+		// Age teh bleps!
+		for(mp_sint32 i = 0; i < activeBleps[channel]; i++)
+		{
+			s -= (winsinc_integral[filterTable][bleps[channel][i].age]>>3) * bleps[channel][i].level;
+			if((bleps[channel][i].age += paulaAdvance) >= MAX_AGE)
+				activeBleps[channel]  = i; // It died of old age :(
+		}
+		
+		s >>= BLEP_SCALE - 3;
 		
 		s += sample;
 		
 		return  s;
 	}
-	
+
 	virtual bool isRamping() { return ramping; }
 	virtual bool supportsFullChecking() { return false; }
 	virtual bool supportsNoChecking() { return true; }
@@ -146,7 +174,7 @@ public:
 			{
 				mp_sint32 s = sample[smppos>>16];
 				
-				s = interpolate_amiga(s, smppos, chn);
+				s = interpolate_amiga_16bit(s, smppos, chn);
 				
 				(*buffer++)+=(s*(voll>>15))>>15; 
 				(*buffer++)+=(s*(volr>>15))>>15; 
@@ -170,9 +198,9 @@ public:
 			
 			while (count--)
 			{
-				mp_sint32 s = sample[smppos>>16] << 8;
+				mp_sint32 s = sample[smppos>>16];
 				
-				s = interpolate_amiga(s, smppos, chn);
+				s = interpolate_amiga_8bit(s, smppos, chn);
 				
 				// Really, the volume should be applied before the interpolation
 				(*buffer++)+=(s*(voll>>15))>>15;
