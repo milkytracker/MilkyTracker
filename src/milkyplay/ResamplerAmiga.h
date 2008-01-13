@@ -30,6 +30,7 @@
 
 #include "computed-blep.h"
 
+template<mp_sint32 filterTable>
 class ResamplerAmiga : public ChannelMixer::ResamplerBase
 {
 private:
@@ -40,8 +41,7 @@ private:
 		MAX_CHANNELS = 33,	// Extra channel is used for 'scopes
 		MAX_BLEPS = 32,
 		MAX_AGE = 2048,
-		PAULA_FREQ = 3546895,
-		filterTable = 0, // TODO: Make this user selectable (see computed-blep.h)
+		PAULA_FREQ = 3546895
 	};
 	
 	// the structure that holds data of bleps
@@ -55,16 +55,17 @@ private:
 	blepState_t bleps[MAX_CHANNELS][MAX_BLEPS];
 	mp_uint32 currentLevel[MAX_CHANNELS];
 	mp_sint32 activeBleps[MAX_CHANNELS];
-	static mp_sint32 paulaAdvance;
+	mp_sint32 paulaAdvance;
 	
 public:
-	ResamplerAmiga()
+	ResamplerAmiga() : paulaAdvance(74)
 	{
 		memset(bleps, 0, sizeof(bleps));
 		memset(currentLevel, 0, sizeof(currentLevel));
 		memset(activeBleps, 0, sizeof(activeBleps));
 	}
 
+	// FIXME: setFrequency isn't being called at intialisation
 	void setFrequency(mp_sint32 frequency)
 	{
 		paulaAdvance = PAULA_FREQ / frequency;
@@ -200,5 +201,3 @@ public:
 		}
 	}
 };
-
-mp_sint32 ResamplerAmiga::paulaAdvance = 74; // default value for 48khz

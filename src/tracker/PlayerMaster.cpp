@@ -350,7 +350,7 @@ const char* PlayerMaster::getCurrentDriverName() const
 
 pp_uint32 PlayerMaster::getNumResamplers() const
 {
-	return 7;
+	return 10;
 }
 
 const char* PlayerMaster::getResamplerShortName(pp_uint32 resampler) const
@@ -363,7 +363,10 @@ const char* PlayerMaster::getResamplerShortName(pp_uint32 resampler) const
 		"Spline (cubic)",
 		"Fast Sinc (wsize=16)",
 		"Precise Sinc (wsize=128)",
-		"Amiga 500"
+		"Amiga 500",
+		"Amiga 500LED",
+		"Amiga 1200",
+		"Amiga 1200LED"
 	};
 	
 	if (resampler >= sizeof(resamplerNames) / sizeof(const char*))

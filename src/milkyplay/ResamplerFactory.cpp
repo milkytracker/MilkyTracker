@@ -74,11 +74,34 @@ ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes ty
 		case MIXER_SINC_RAMPING:
 			return new ResamplerSinc<true, 128>();
 
-		case MIXER_AMIGA:
-			return new ResamplerAmiga();
+		case MIXER_AMIGA500:
+			return new ResamplerAmiga<0>();
 
-		case MIXER_AMIGA_RAMPING:
-			return new ResamplerAmiga();
+		case MIXER_AMIGA500_RAMPING:
+			return new ResamplerAmiga<0>();
+
+		case MIXER_AMIGA500LED:
+			return new ResamplerAmiga<1>();
+
+		case MIXER_AMIGA500LED_RAMPING:
+			return new ResamplerAmiga<1>();
+
+		case MIXER_AMIGA1200:
+			return new ResamplerAmiga<2>();
+
+		case MIXER_AMIGA1200_RAMPING:
+			return new ResamplerAmiga<2>();
+
+		case MIXER_AMIGA1200LED:
+			return new ResamplerAmiga<3>();
+
+		case MIXER_AMIGA1200LED_RAMPING:
+			return new ResamplerAmiga<3>();
+
+		/*	There is also ResamplerAmiga<5> which is a generic 22khz LP filter, it still
+			emulates Paula's pulse chain but does not emulate any of the Amiga's internal
+			filter circuitry. Already we have many options here so it's probably not worth
+			including. */
 
 		case MIXER_DUMMY:
 			return new ResamplerDummy();

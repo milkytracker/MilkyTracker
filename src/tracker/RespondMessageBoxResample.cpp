@@ -47,7 +47,10 @@ static const char* interpolationTypeNames[] =
 	"Spline",
 	"Fast Sinc",
 	"Precise Sinc",
-	"Amiga 500"
+	"Amiga 500",
+	"Amiga 500 LED",
+	"Amiga 1200",
+	"Amiga 1200LED"
 };
 
 float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
