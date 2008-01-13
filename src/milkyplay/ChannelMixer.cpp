@@ -57,6 +57,7 @@ void ChannelMixer::ResamplerBase::addChannelsNormal(ChannelMixer* mixer, mp_uint
 	for (mp_uint32 c=0;c<numChannels;c++) 
 	{
 		ChannelMixer::TMixerChannel* chn = &channel[c];
+		chn->index = c;		// For Amiga resampler
 
 		if (!(chn->flags & MP_SAMPLE_PLAY))
 			continue;
@@ -75,7 +76,7 @@ void ChannelMixer::ResamplerBase::addChannelsNormal(ChannelMixer* mixer, mp_uint
 				chn->smplen = newChannel[c].smplen;
 				chn->loopstart = newChannel[c].loopstart;
 				chn->loopend = newChannel[c].loopend;
-				chn->smppos = newChannel[c].smppos;				
+				chn->smppos = newChannel[c].smppos;
 				chn->smpposfrac = newChannel[c].smpposfrac;
 				chn->flags = newChannel[c].flags;
 				chn->loopendcopy = newChannel[c].loopendcopy;
@@ -124,6 +125,7 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 	for (mp_uint32 c=0;c<numChannels;c++) 
 	{	
 		ChannelMixer::TMixerChannel* chn = &channel[c];
+		chn->index = c;		// For Amiga resampler
 		
 		if (!(chn->flags & MP_SAMPLE_PLAY))
 			continue;

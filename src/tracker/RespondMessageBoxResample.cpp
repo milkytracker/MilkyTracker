@@ -46,7 +46,8 @@ static const char* interpolationTypeNames[] =
 	"Lagrange",
 	"Spline",
 	"Fast Sinc",
-	"Precise Sinc"
+	"Precise Sinc",
+	"Amiga 500"
 };
 
 float getc4spd(mp_sint32 relnote,mp_sint32 finetune)

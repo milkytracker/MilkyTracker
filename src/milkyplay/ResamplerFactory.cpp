@@ -32,6 +32,7 @@
 #include "ResamplerCubic.h"
 #include "ResamplerFast.h"
 #include "ResamplerSinc.h"
+#include "ResamplerAmiga.h"
 
 ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes type)
 {
@@ -72,6 +73,12 @@ ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes ty
 
 		case MIXER_SINC_RAMPING:
 			return new ResamplerSinc<true, 128>();
+
+		case MIXER_AMIGA:
+			return new ResamplerAmiga<false>();
+
+		case MIXER_AMIGA_RAMPING:
+			return new ResamplerAmiga<true>();
 
 		case MIXER_DUMMY:
 			return new ResamplerDummy();

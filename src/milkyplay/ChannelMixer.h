@@ -57,7 +57,7 @@ class MixerSettings
 protected:
 	enum
 	{
-		NUMRESAMPLERTYPES = 13,
+		NUMRESAMPLERTYPES = 15,
 	};
 
 public:
@@ -82,6 +82,9 @@ public:
 
 		MIXER_SINC,
 		MIXER_SINC_RAMPING,
+
+		MIXER_AMIGA,
+		MIXER_AMIGA_RAMPING,
 
 		MIXER_DUMMY
 	};
@@ -195,6 +198,7 @@ public:
 
 		mp_uint32			timeLUTSize;
 		TTimeRecord*		timeRecord;
+		mp_uint32			index;					// For Amiga resampler
 
 		TMixerChannel() :
 			timeLUTSize(0),
@@ -238,6 +242,7 @@ public:
 			resonance			= MP_INVALID_VALUE;
 			
 			fixedtimefrac		= 0;
+			index				= 32;		// Ensure scopes don't interfere with playback audio
 			
 			if (timeRecord)
 				memset(timeRecord, 0, sizeof(TTimeRecord) * timeLUTSize);
@@ -284,9 +289,15 @@ public:
 		virtual bool supportsFullChecking() = 0;
 		
 		// see above, you will need to implement at least one of the following
-		virtual void addBlockNoCheck(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count) { }
+		virtual void addBlockNoCheck(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count) 
+		{
+			assert(0);
+		}
 		// see above
-		virtual void addBlockFull(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count) { }
+		virtual void addBlockFull(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count)
+		{
+			assert(0);	// I wasted an hour wondering why i was getting no output..
+		}
 	};
 
 	friend class ChannelMixer::ResamplerBase;
