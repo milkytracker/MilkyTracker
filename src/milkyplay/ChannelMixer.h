@@ -86,7 +86,9 @@ public:
 		MIXER_AMIGA,
 		MIXER_AMIGA_RAMPING,
 
-		MIXER_DUMMY
+		MIXER_DUMMY,
+		
+		MIXER_INVALID
 	};
 	
 	enum
