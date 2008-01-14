@@ -1846,14 +1846,14 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 
 	float c4spd = getc4spd(sample->relnote, sample->finetune);
 
-	float step = c4spd / par->getParameter(0);
-
 	pp_int32 resamplerType = (pp_int32)par->getParameter(1);
 
 	SampleEditorResampler resampler(*module, *sample, (SampleEditorResampler::ResamplerTypes)resamplerType);
 	
-	bool res = resampler.resample(step);
+	bool res = resampler.resample(c4spd, par->getParameter(0));
 	
+	float step = c4spd / par->getParameter(0);
+
 	if (res)
 	{
 		sample->loopstart = (mp_sint32)(sample->loopstart/step);

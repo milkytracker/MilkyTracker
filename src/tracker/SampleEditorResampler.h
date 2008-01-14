@@ -60,7 +60,7 @@ public:
 	SampleEditorResampler(XModule& module, TXMSample& sample, ResamplerTypes type);
 	virtual ~SampleEditorResampler();
 
-	bool resample(float factor);
+	bool resample(float oldRate, float newRate);
 };
 
 #endif

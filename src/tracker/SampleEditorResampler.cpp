@@ -49,8 +49,10 @@ SampleEditorResampler::~SampleEditorResampler()
 // Problem here is, we need to build up some temporary channel structure 
 // PLUS the resampler only deals with stereo channels, so basically we're 
 // resampling stereo data (left channel = full, right channel = empty)
-bool SampleEditorResampler::resample(float factor)
+bool SampleEditorResampler::resample(float oldRate, float newRate)
 {
+	float factor = oldRate / newRate;
+
 	mp_ubyte* buffer = TXMSample::allocPaddedMem(sample.samplen * ((sample.type & 16) ? 2 : 1));
 
 	if (buffer == NULL)
@@ -107,6 +109,7 @@ bool SampleEditorResampler::resample(float factor)
 
 	ChannelMixer::TMixerChannel channel;	
 	
+
 	channel.sample = (mp_sbyte*)buffer;
 	channel.smplen = sample.samplen;
 	channel.flags = ChannelMixer::MP_SAMPLE_PLAY | ((sample.type & 16) ? 4 : 0);
@@ -127,7 +130,6 @@ bool SampleEditorResampler::resample(float factor)
 	channel.finalvoll = (channel.vol*128*256)<<6; 
 	channel.finalvolr = 0;
 	channel.rampFromVolStepL = channel.rampFromVolStepR = 0;	
-	
 	channel.index = 0;
 	
 	ChannelMixer::ResamplerBase* resampler = NULL;
@@ -156,13 +158,13 @@ bool SampleEditorResampler::resample(float factor)
 			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
 			break;
 		case ResamplerTypeAmiga500LED:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500LED);
 			break;
 		case ResamplerTypeAmiga1200:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA1200);
 			break;
 		case ResamplerTypeAmiga1200LED:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA1200LED);
 			break;
 	}
 
@@ -172,7 +174,9 @@ bool SampleEditorResampler::resample(float factor)
 		delete[] dst;
 		return false;
 	}
-					
+	
+	resampler->setNumChannels(1);
+	resampler->setFrequency((mp_sint32)newRate);
 	resampler->addChannel(&channel, dst, finalSize+1, 1);
 					
 	delete resampler;
