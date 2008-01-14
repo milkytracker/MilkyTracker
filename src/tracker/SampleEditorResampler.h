@@ -43,7 +43,12 @@ public:
 		ResamplerTypeLagrange,
 		ResamplerTypeSpline,
 		ResamplerTypeFastSinc,
-		ResamplerTypePreciseSinc
+		ResamplerTypePreciseSinc,
+		ResamplerTypeAmiga500,
+		ResamplerTypeAmiga500LED,
+		ResamplerTypeAmiga1200,
+		ResamplerTypeAmiga1200LED,
+		// It's amazing how many files that need modifing when adding a new resampler ;)
 	};
 
 private:

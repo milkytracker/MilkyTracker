@@ -152,6 +152,18 @@ bool SampleEditorResampler::resample(float factor)
 		case ResamplerTypePreciseSinc:
 			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_SINC);
 			break;
+		case ResamplerTypeAmiga500:
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			break;
+		case ResamplerTypeAmiga500LED:
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			break;
+		case ResamplerTypeAmiga1200:
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			break;
+		case ResamplerTypeAmiga1200LED:
+			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
+			break;
 	}
 
 	if (resampler == NULL)
