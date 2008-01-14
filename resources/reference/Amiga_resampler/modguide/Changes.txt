@@ -1,0 +1,21 @@
+pre-release 2006-07-02  alankila
+
+    * Christopher O'Neill (Deltafire from ircnet's #amigaexotic, and one of the
+      authors of milkytracker) tried to implement the blep approach. He made an
+      excellent point that convinced me to separate the aging function from the
+      function that adds new bleps. The function is now known as input_sample, and
+      the aging function is called clock().
+
+    * Christopher also found out the hard way a silly bug of mine: sampleclip
+      routine had the comparison operators the wrong way. :-(
+
+
+pre-release 2006-06-27  alankila
+
+    * LED filter cutoff is at 3.2, not at 1.6. Duh. This was due to a bug in Butterworth
+      filter computation routine, noticing as I reimplemented it from BLT.
+
+    * LED filter on genuine Amiga appears to perform slightly suboptimally with about
+      0.3 dB lowered resonance from theoretical. Perhaps component tolerances are at
+      issue? Additionally, the filtering slope appears slightly different from
+      expected.

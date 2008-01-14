@@ -22,6 +22,9 @@
 
 /* Implementation of Antti Lankila's Amiga sound model, see:
  * http://bel.fi/~alankila/modguide/interpolate.txt
+ * (a copy can be found in the resources/reference/Amiga_resampler)
+ *
+ * TODO: filter volume changes (maybe), add dithering on the output
  *
  * Chris (Deltafire) 13/1/2008
  */
@@ -94,8 +97,7 @@ public:
 		numChannels(0),
 		bleps(NULL),
 		currentLevel(NULL),
-		activeBleps(NULL),
-		paulaAdvance(74)
+		activeBleps(NULL)
 	{
 	}
 	
@@ -104,7 +106,6 @@ public:
 		cleanUp(numChannels);
 	}
 
-	// FIXME: setFrequency isn't being called at intialisation
 	virtual void setFrequency(mp_sint32 frequency)
 	{
 		paulaAdvance = PAULA_FREQ / frequency;

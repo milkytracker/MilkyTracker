@@ -1,0 +1,179 @@
+Subject: Milkytracker - computed bleps update
+   From: Christopher O'Neill <chris@chrisoneill.co.uk>
+     To: alankila@bel.fi
+   Date: 14/1/2008 00:27:37
+   
+Hi Antti,
+
+I don't know whether you remember or not, but we spoke on IRC over a year ago, 
+when I produced an experimental version of Milkytracker with Amiga sound 
+simultation using your guide.
+
+Anyway, at the time it was a dirty hack to get Milyktracker to use it, but 
+since then the code base has been cleaned up and we've been able to 
+incorporate the filters (along with some other resamplers).
+
+We are due to release a new version in the coming weeks, but in the meantime 
+I've attatched a beta version (linux/i586) for you to play around with.  I 
+would be very grateful if you could try it out and comment on the accuracy of 
+the Amiga resampling modes.  To enable it, select 'Config' and then click 
+on 'Resampling' - volume ramping is not needed so can be disabled - ensure 
+you are using 48khz mixer resolution also, as there's a slight bug with the 
+other rates at the moment.
+
+PS - Milkytracker will be going open source in the near future, under the GPL.
+
+
+- Chris (Deltafire/df)
+
+
+====
+
+
+Subject: Re: Milkytracker - computed bleps update
+    From: "Antti S. Lankila" <alankila@bel.fi>
+      To: Christopher O'Neill <chris@chrisoneill.co.uk>
+    Date: 14/1/2008 10:12:26
+   
+Christopher O'Neill wrote:
+
+> I don't know whether you remember or not, but we spoke on IRC over a year ago, 
+> when I produced an experimental version of Milkytracker with Amiga sound 
+> simultation using your guide.
+>   
+
+Of course I do.
+
+> We are due to release a new version in the coming weeks, but in the meantime 
+> I've attatched a beta version (linux/i586) for you to play around with.  I 
+> would be very grateful if you could try it out and comment on the accuracy of 
+> the Amiga resampling modes.  To enable it, select 'Config' and then click 
+> on 'Resampling' - volume ramping is not needed so can be disabled - ensure 
+> you are using 48khz mixer resolution also, as there's a slight bug with the 
+> other rates at the moment.
+>   
+
+Yeah, my blep tables are not compatible with sampling rates less than 
+about 44.1 kHz in any case... The aliasing prevention is tuned for about 
+20 kHz and if that's greater than (or too close to) the nyquist 
+frequency, it's not going to work so well.
+
+I have forgot how to sample songs using milkytracker. I looked around in 
+the gui but could not figure it out. I suppose I might use jack to 
+record audio data, but is there some easier way to get it done? I can 
+say that by ear milkytracker's output is good, but I'd like to compare 
+against modern uade123 just in case.
+
+Comparison is slightly hampered by the fact that uade emulates more of 
+Amiga hardware than milkytracker does. I can tell that you still do not 
+have the amiga period limitation at about 112-113 maximum, which makes 
+some songs sound rather funny as the sound jumps up instead of 
+distorting like it used to. You should probably support the Amiga-style 
+playback model separately, so that the protracker command for turning 
+the filter on and off could also be supported.
+
+> PS - Milkytracker will be going open source in the near future, under the GPL.
+>   
+
+I'm sure shd will be pleased.
+
+> Was just looking through your webspace and noticed the computed-blep.h file is 
+> different to the one I was using in Milkytracker.  I've replaced it with the 
+> newer (at least I'm assuming it's newer) version.
+>   
+
+Yeah, I may have done some nearly inconsequential updates to it.
+
+There are no significant changes between the versions, apart from 
+slightly improved quality or slightly cleaner cutoff at 20 kHz or so. 
+The best reference to track for the bleptable is currently uade source 
+tree, which I updated a few months ago. I think I reduced filter 
+bandwidth slightly to ensure a cleaner cutoff or something. I guess I'm 
+becoming more conservative, even when the only thing that can show the 
+difference is FFT plots.
+
+I still have a long-term annoyance with the blep table which is that its 
+SNR is slightly less than 84 dB. If only I had 33 bit wide integers I 
+could allocate the one extra bit and ensure that the noise level is 
+always less than the signal. For 16-bit music that milkytracker is 
+theoretically capable of producing, I should calculate a new table with 
+at least 100 dB SNR. (Hello, floating point arithmetic!) But on the 
+other hand, who cares about PC music played with amiga hardware limitations?
+
+I do worry about the fact that you may not be dithering the output or 
+doing noise shaping for it. How do you do it at the moment? I think 
+there are real situations in mod music where correlated quantization 
+noise could be heard, especially with lots of channels and consequently 
+quiet output levels.
+
+-- 
+Antti
+
+
+====
+
+
+Subject: Re: Milkytracker - computed bleps update
+   From: Christopher O'Neill <chris@chrisoneill.co.uk>
+     To: "Antti S. Lankila" <alankila@bel.fi>
+   Date: Today 10:44:11
+   
+Hi Antti, thanks for the reply.
+
+On Monday 14 January 2008 10:12:26 you wrote:
+> I have forgot how to sample songs using milkytracker. I looked around in
+> the gui but could not figure it out. I suppose I might use jack to
+> record audio data, but is there some easier way to get it done? I can
+> say that by ear milkytracker's output is good, but I'd like to compare
+> against modern uade123 just in case.
+
+'Disk Op' -> underneath 'Song' select .wav and click 'Save As', check the 
+quality settings before recording.
+
+> Comparison is slightly hampered by the fact that uade emulates more of
+> Amiga hardware than milkytracker does. I can tell that you still do not
+> have the amiga period limitation at about 112-113 maximum, which makes
+> some songs sound rather funny as the sound jumps up instead of
+> distorting like it used to. You should probably support the Amiga-style
+> playback model separately, so that the protracker command for turning
+> the filter on and off could also be supported.
+
+I guess this could be emulated in the resampler - what should I do with the 
+samples if the period is less than 112-113, just ignore them or delay them?
+
+> I still have a long-term annoyance with the blep table which is that its
+> SNR is slightly less than 84 dB. If only I had 33 bit wide integers I
+> could allocate the one extra bit and ensure that the noise level is
+> always less than the signal. For 16-bit music that milkytracker is
+> theoretically capable of producing, I should calculate a new table with
+> at least 100 dB SNR. (Hello, floating point arithmetic!) 
+
+Milkytracker uses integer mathmatic in its mixer, 32-bit ints (the reason 
+being that many of the target platforms do not support floating point). For 
+8-bit samples, there is still some room for extra precision in the blep table 
+(currently 8+17 = 25 bits, so 5 spare). However, for 16-bit samples there is 
+not enough space to use the 17-bit table, therefore i've had to reduce the 
+precision (by 3 to reduce overflows, so 14 bits only). So basically 16-bit 
+samples will be noisy - but it's that or nothing.
+
+> But on the
+> other hand, who cares about PC music played with amiga hardware
+> limitations?
+
+Well.. Some of the users of Milkytracker prefer the sound using the Amiga 
+resamper than the other modes - especially for chips. Still, these are using 
+8-bit samples anyway so everything is working as it should.
+
+>> I do worry about the fact that you may not be dithering the output or
+> doing noise shaping for it. How do you do it at the moment? I think
+> there are real situations in mod music where correlated quantization
+> noise could be heard, especially with lots of channels and consequently
+> quiet output levels.
+
+Well, we did speak briefly about differing the output (after noticing that 
+modplug does this), but at the moment it remains on the todo list. Saying 
+that, I don't think it's a big job to implment - basic differing anyway, I 
+don't know about noise shaping..
+
+
+- Chris
