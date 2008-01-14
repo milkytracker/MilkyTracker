@@ -80,6 +80,7 @@ void ChannelMixer::ResamplerBase::addChannelsNormal(ChannelMixer* mixer, mp_uint
 				chn->smpposfrac = newChannel[c].smpposfrac;
 				chn->flags = newChannel[c].flags;
 				chn->loopendcopy = newChannel[c].loopendcopy;
+				chn->fixedtime = newChannel[c].fixedtimefrac;
 				chn->fixedtimefrac = newChannel[c].fixedtimefrac;
 				// break is missing here intentionally!!!
 			}
@@ -247,6 +248,7 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 				chn->smpposfrac = newChannel[c].smpposfrac;
 				chn->flags = newChannel[c].flags;
 				chn->loopendcopy = newChannel[c].loopendcopy;
+				chn->fixedtime = newChannel[c].fixedtimefrac;
 				chn->fixedtimefrac = newChannel[c].fixedtimefrac;
 
 				beatl = (!(chn->flags & 3)) ? (ChannelMixer::fixedmul(chn->loopend,chn->rsmpadd) >> 1) : maxramp; 
@@ -562,6 +564,9 @@ void ChannelMixer::reallocChannels()
 #endif	
 	
 	mixerLastNumAllocatedChannels = mixerNumAllocatedChannels;
+
+	if (resamplerType != MIXER_INVALID && resamplerTable[resamplerType])
+		resamplerTable[resamplerType]->setNumChannels(mixerNumAllocatedChannels);
 }
 
 void ChannelMixer::clearChannels()
@@ -660,10 +665,13 @@ void ChannelMixer::setResamplerType(ResamplerTypes type)
 	if (resamplerTable[type] == NULL)
 		resamplerTable[type] = ResamplerFactory::createResampler(type);
 	
-	if (resamplerType != MIXER_INVALID && resamplerTable[resamplerType])
-		resamplerTable[resamplerType]->setFrequency(mixFrequency);
-				
 	resamplerType = type; 
+
+	if (resamplerType != MIXER_INVALID && resamplerTable[resamplerType])
+	{
+		resamplerTable[resamplerType]->setFrequency(mixFrequency);				
+		resamplerTable[resamplerType]->setNumChannels(mixerNumAllocatedChannels);
+	}
 }
 
 void ChannelMixer::setNumChannels(mp_uint32 num)
@@ -755,15 +763,15 @@ void ChannelMixer::setFilterAttributes(mp_sint32 chn, mp_sint32 cutoff, mp_sint3
 }
 
 void ChannelMixer::playSample(mp_sint32 c, // channel
-					   mp_sbyte* smp, // sample buffer
-					   mp_sint32 smplen, // sample size
-					   mp_sint32 smpoffs, // sample offset 
-					   mp_sint32 smpoffsfrac,
-					   bool smpOffsetWrap,
-					   mp_sint32 lstart, // loop start
-					   mp_sint32 len, // loop end
-					   mp_sint32 flags,
-					   bool ramp/* = true*/) 
+							  mp_sbyte* smp, // sample buffer
+							  mp_sint32 smplen, // sample size
+							  mp_sint32 smpoffs, // sample offset 
+							  mp_sint32 smpoffsfrac,
+							  bool smpOffsetWrap,
+							  mp_sint32 lstart, // loop start
+							  mp_sint32 len, // loop end
+							  mp_sint32 flags,
+							  bool ramp/* = true*/) 
 {
 	// doesn't play
 	if (smp == NULL)
@@ -840,6 +848,7 @@ void ChannelMixer::playSample(mp_sint32 c, // channel
 
 		channel[c].currsample = channel[c].prevsample = 0;
 		
+		channel[c].fixedtime = 0;
 		channel[c].fixedtimefrac = smpoffsfrac;
 	}
 	// currently no sample playing on that channel
@@ -882,6 +891,7 @@ void ChannelMixer::playSample(mp_sint32 c, // channel
 	
 		channel[c].currsample = channel[c].prevsample = 0;
 		
+		channel[c].fixedtime = 0;
 		channel[c].fixedtimefrac = smpoffsfrac;
 	}
 	// there is a sample playing on that channel, ramp volume of current sample down
@@ -903,6 +913,8 @@ void ChannelMixer::playSample(mp_sint32 c, // channel
 		// if a new sample is played, its volume is ramped from zero to current volume
 		newChannel[c].finalvoll = newChannel[c].finalvolr = 0;
 		newChannel[c].currsample = newChannel[c].prevsample = 0;
+
+		newChannel[c].fixedtime = 0;
 		newChannel[c].fixedtimefrac = smpoffsfrac;
 		
 		// "fade off" current sample
@@ -958,6 +970,7 @@ static inline void storeTimeRecordData(mp_sint32 nb, ChannelMixer::TMixerChannel
 			else
 				chn->timeRecord[nb].loopend = chn->loopend;
 			chn->timeRecord[nb].loopstart = chn->loopstart;
+			chn->timeRecord[nb].fixedtime = chn->fixedtime;			
 			chn->timeRecord[nb].fixedtimefrac = chn->fixedtimefrac;
 		}
 	}

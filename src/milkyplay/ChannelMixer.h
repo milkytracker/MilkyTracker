@@ -154,7 +154,8 @@ public:
 		mp_sint32			smpadd;					// 16:16 fixedpoint increment
 		mp_sint32			loopend;
 		mp_sint32			loopstart;
-		mp_sint32			fixedtimefrac;			// for sinc interpolation (running time fraction)
+		mp_sint32			fixedtime;				// for amiga resampler (running time)
+		mp_sint32			fixedtimefrac;			// for sinc/amiga resamplers (running time fraction)
 		
 		TTimeRecord() :
 			flags(0),
@@ -166,6 +167,7 @@ public:
 			smpadd(0),
 			loopend(0),
 			loopstart(0),
+			fixedtime(0),
 			fixedtimefrac(0)
 		{
 		}
@@ -205,14 +207,15 @@ public:
 		mp_sint32			cutoff;
 		mp_sint32			resonance;
 
-		mp_sint32			fixedtimefrac;			// for sinc interpolation (running time fraction)
+		mp_sint32			fixedtime;				// for amiga resampler (running time)
+		mp_sint32			fixedtimefrac;			// for sinc/amiga resamplers (running time fraction)
 
-		mp_uint32			timeLUTSize;
+		mp_uint32			timeRecordSize;
 		TTimeRecord*		timeRecord;
-		mp_uint32			index;					// For Amiga resampler
+		mp_sint32			index;					// For Amiga resampler
 
 		TMixerChannel() :
-			timeLUTSize(0),
+			timeRecordSize(0),
 			timeRecord(NULL)
 		{
 			clear();
@@ -252,17 +255,18 @@ public:
 			cutoff				= MP_INVALID_VALUE;
 			resonance			= MP_INVALID_VALUE;
 			
+			fixedtime			= 0;
 			fixedtimefrac		= 0;
-			index				= 32;		// Ensure scopes don't interfere with playback audio
+			index				= -1;		// Ensure scopes don't interfere with playback audio
 			
 			if (timeRecord)
-				memset(timeRecord, 0, sizeof(TTimeRecord) * timeLUTSize);
+				memset(timeRecord, 0, sizeof(TTimeRecord) * timeRecordSize);
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)
 		{
 			delete[] timeRecord;
-			timeLUTSize = size;
+			timeRecordSize = size;
 			timeRecord = new TTimeRecord[size];
 		}
 	};
@@ -312,6 +316,9 @@ public:
 		
 		// in case the resampler needs to get hold of the current mixing frequency
 		virtual void setFrequency(mp_sint32 frequency) { }
+
+		// in case the resampler needs to get hold of the current number of channels
+		virtual void setNumChannels(mp_sint32 num) { }
 	};
 
 	friend class ChannelMixer::ResamplerBase;
