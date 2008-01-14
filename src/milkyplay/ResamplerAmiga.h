@@ -130,7 +130,9 @@ public:
 			memmove(&bleps[channel][1], &bleps[channel][0], sizeof(blepState_t) * activeBleps[channel]);
 			if(++activeBleps[channel] == MAX_BLEPS)
 			{
+#ifndef WIN32
 				fprintf(stderr, "AMIGA: Blep list truncated!\n");
+#endif
 				activeBleps[channel]--;
 			}
 			bleps[channel][0].level = sample - currentLevel[channel];
@@ -167,7 +169,9 @@ public:
 			memmove(&bleps[channel][1], &bleps[channel][0], sizeof(blepState_t) * activeBleps[channel]);
 			if(++activeBleps[channel] == MAX_BLEPS)
 			{
+#ifndef WIN32
 				fprintf(stderr, "AMIGA: Blep list truncated!\n");
+#endif
 				activeBleps[channel]--;
 			}
 			bleps[channel][0].level = sample - currentLevel[channel];
