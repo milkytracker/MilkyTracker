@@ -1238,12 +1238,14 @@ void SectionSettings::initPage_I(PPContainer* container, pp_int32 x, pp_int32 y)
 
 	y2+=4;
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11), "Buffersize:", true));
-	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_BUFFERSIZE, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*2), "000ms(xx)", false));
+	PPStaticText* text = new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11), "Buffer:", true);
+	//text->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	container->addControl(text);
+	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_BUFFERSIZE, NULL, NULL, PPPoint(x + 4 + 7*8, y2 + 2 + 11), "000ms(xx)", false));
 
-	PPSlider* slider = new PPSlider(SLIDER_SETTINGS_BUFFERSIZE, screen, this, PPPoint(x + 4 + 12*8 + 2, y2 + 2 + 11*2-1), 71-18, true);
+	PPSlider* slider = new PPSlider(SLIDER_SETTINGS_BUFFERSIZE, screen, this, PPPoint(x + 4, y2 + 2 + 11*2-1), 151, true);
 	slider->setMaxValue(511);
-	slider->setBarSize(16384);
+	slider->setBarSize(8192);
 	container->addControl(slider);
 
 	y2++;
@@ -1254,11 +1256,11 @@ void SectionSettings::initPage_I(PPContainer* container, pp_int32 x, pp_int32 y)
 	y2+=12;
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*3), "Mixervol:", true));
-	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MIXERVOL, NULL, NULL, PPPoint(x + 4 + 5*8, y2 + 2 + 11*4), "100%", false));
+	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MIXERVOL, NULL, NULL, PPPoint(x + 4 + 8*8, y2 + 2 + 11*3), "100%", false));
 
-	slider = new PPSlider(SLIDER_SETTINGS_MIXERVOL, screen, this, PPPoint(x + 4 + 10*8, y2 + 2 + 11*4-1), 71, true);
+	slider = new PPSlider(SLIDER_SETTINGS_MIXERVOL, screen, this, PPPoint(x + 4, y2 + 2 + 11*4-1), 151, true);
 	slider->setMaxValue(256);
-	slider->setBarSize(16384);
+	slider->setBarSize(8192);
 	container->addControl(slider);
 
 	y2-=1;
