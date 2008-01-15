@@ -177,3 +177,122 @@ don't know about noise shaping..
 
 
 - Chris
+
+
+====
+
+
+Subject: Re: Milkytracker - computed bleps update
+    From: "Antti S. Lankila" <alankila@bel.fi>
+      To: Christopher O'Neill <chris@chrisoneill.co.uk>
+    Date: Yesterday 13:15:42
+   
+Christopher O'Neill wrote:
+> Hi Antti, thanks for the reply.
+>
+> On Monday 14 January 2008 10:12:26 you wrote:
+>   
+>> I have forgot how to sample songs using milkytracker. I looked around in
+>> the gui but could not figure it out. I suppose I might use jack to
+>> record audio data, but is there some easier way to get it done? I can
+>> say that by ear milkytracker's output is good, but I'd like to compare
+>> against modern uade123 just in case.
+>>     
+>
+> 'Disk Op' -> underneath 'Song' select .wav and click 'Save As', check the 
+> quality settings before recording.
+>   
+
+Ah yes. I was looking around that but I must have missed it. I just did 
+the A500 plot:
+
+http://bel.fi/~alankila/uade-vs-milky.png
+http://bel.fi/~alankila/uade-vs-milky-detail.png
+http://bel.fi/~alankila/uade-vs-milky-detail2.png
+
+Overall: good agreement, correct overall shape.
+
+Milkytracker has slightly incorrect synthesis frequency for 48 kHz 
+output, probably result of quantization of the period values to integer 
+approximations. (UADE uses floating point math to ensure the output 
+periods are exact.) Milkytracker also has about 3-4 dB higher noise 
+level, perhaps due to the way final mixing is done. Maybe you quantize 
+the channels to final output level before adding them together. You 
+could set every channel to maybe 24-bit resolution, and then sum all of 
+them together, scale by volume level, and then dither, shift and clip to 
+16-bits. Overall, the synthesis seems adequate, and the differences must 
+be due to this type of trivial variations in the implementation.
+
+> I guess this could be emulated in the resampler - what should I do with the 
+> samples if the period is less than 112-113, just ignore them or delay them?
+>   
+
+Good question, heh.
+
+The simplest strategy is to just clamp it to 113, because no matter what 
+Amiga could not fetch words from RAM faster than at the horizontal line 
+switch rate, which apparently alternates between 113*2 and 114*2 clocks. 
+(This works because Paula gets 16 bits at time, so it can play two 
+samples in the time one rasterline changes.) This deals with the most 
+noticeable problem which is the sound jumping up octave or half in mods, 
+when in real Amiga you just get distortion.
+
+Unfortunately the sound chip did its thing even if it could not get data 
+from RAM fast enough, so it is not so easy to do it right: when Paula 
+sends the low 8 bits to the D/A output, it pulls a data request line to 
+Agnus, which will issues a DMA read from RAM at the start of next raster 
+line. If Agnus could not satisfy Paula's data request in time, Paula'd 
+simply replay the data it had. Based on reading UADE code, it seems that 
+Paula will "splice" the data words together so that if at start of next 
+16-bit word there was no new data available, it'd reissue the upper 8 
+bits again, but then play the lower 8 bits from the next word, 
+effectively skipping the upper 8 bits of the next word due to this 
+timing glitch.
+
+Amiga hardware additionally produced some type of timing-related 
+distortion for period values less than 122 or 123. This causes replay of 
+the previous sample word, too. I suppose it's related to some delay 
+inherent in the interaction between Paula and Agnus regarding the 
+request for next data word from memory. So the problem I described above 
+happens a bit earlier than it should, based on the above analysis.
+
+> Milkytracker uses integer mathmatic in its mixer, 32-bit ints (the reason 
+> being that many of the target platforms do not support floating point). For 
+> 8-bit samples, there is still some room for extra precision in the blep table 
+> (currently 8+17 = 25 bits, so 5 spare). However, for 16-bit samples there is 
+> not enough space to use the 17-bit table, therefore i've had to reduce the 
+> precision (by 3 to reduce overflows, so 14 bits only). So basically 16-bit 
+> samples will be noisy - but it's that or nothing.
+>   
+
+True. UADE itself promotes the samples to 14-bit by multiplying the 
+8-bit sample with the 6-bit volume register, and the blep table is 
+calculated for this. If I delayed the multiplication with volume I could 
+improve the SNR.
+
+>>> I do worry about the fact that you may not be dithering the output or
+>>>       
+>> doing noise shaping for it. How do you do it at the moment? I think
+>> there are real situations in mod music where correlated quantization
+>> noise could be heard, especially with lots of channels and consequently
+>> quiet output levels.
+>>     
+>
+> Well, we did speak briefly about differing the output (after noticing that 
+> modplug does this), but at the moment it remains on the todo list. Saying 
+> that, I don't think it's a big job to implment - basic differing anyway, I 
+> don't know about noise shaping..
+>   
+
+I think triangular PRNG noise shaping may be the easiest, and it has 
+quite attractive spectrum, practically most energy > 10 kHz. I 
+implemented it for a toy project, but was unable to detect any audible 
+difference. I think the amiga output modes at least are noisy enough as 
+they come and there might be no need for additional dithering before 
+modest 1-2 bit quantization.
+
+Full noise shaping is fancy but not really worth the trouble. People who 
+care about that sort of thing can use JACK to get it.
+
+-- 
+Antti
