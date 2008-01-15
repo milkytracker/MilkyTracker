@@ -3,7 +3,6 @@
  *  MilkyPlayer
  *
  *  Created by Peter Barth on 31.01.07.
- *  Copyright 2007 __MyCompanyName__. All rights reserved.
  *
  */
  

@@ -25,7 +25,6 @@
  *  milkytracker
  *
  *  Created by Peter Barth on 15.01.08.
- *  Copyright 2008 Peter Barth. All rights reserved.
  *
  */
 
