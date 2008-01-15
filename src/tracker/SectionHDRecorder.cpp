@@ -36,6 +36,7 @@
 #include "ModuleServices.h"
 #include "PlayerController.h"
 #include "PlayerMaster.h"
+#include "ResamplerHelper.h"
 
 #include "PPUIConfig.h"
 #include "CheckBox.h"
@@ -950,8 +951,10 @@ void SectionHDRecorder::showResamplerMessageBox()
 													 true);
 	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
 
-	for (pp_uint32 i = 0; i < tracker.playerMaster->getNumResamplers(); i++)
-		listBox->addItem(tracker.playerMaster->getResamplerShortName(i));	
+	ResamplerHelper resamplerHelper;
+
+	for (pp_uint32 i = 0; i < resamplerHelper.getNumResamplers(); i++)
+		listBox->addItem(resamplerHelper.getResamplerName(i));	
 
 	listBox->setSelectedIndex(resampler, false);
 

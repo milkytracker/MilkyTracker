@@ -173,9 +173,6 @@ public:
 	const char* getCurrentDriverName() const;
 	bool setCurrentDriverByName(const char* name);
 	
-	pp_uint32 getNumResamplers() const;
-	const char* getResamplerShortName(pp_uint32 resampler) const;
-
 	// this will be delegated to all playercontrollers
 	void reallocateChannels(pp_int32 moduleChannels = 32, pp_int32 virtualChannels = 0);
 	void setUseVirtualChannels(bool useVirtualChannels);

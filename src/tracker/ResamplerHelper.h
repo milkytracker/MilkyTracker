@@ -1,5 +1,5 @@
 /*
- *  tracker/SampleEditorResampler.h
+ *  tracker/ResamplerHelper.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,30 +21,34 @@
  */
 
 /*
- *  SampleEditorResampler.h
- *  MilkyTracker
+ *  ResamplerHelper.h
+ *  milkytracker
  *
- *  Created by Peter Barth on 06.01.08.
+ *  Created by Peter Barth on 15.01.08.
+ *  Copyright 2008 Peter Barth. All rights reserved.
  *
  */
 
-#ifndef __SAMPLEEDITORRESAMPLER_H__
-#define __SAMPLEEDITORRESAMPLER_H__
+#ifndef __RESAMPLERHELPER_H__
+#define __RESAMPLERHELPER_H__
 
 #include "BasicTypes.h"
+#include "ResamplerFactory.h"
 
-class SampleEditorResampler
+class ResamplerHelper
 {
 private:
-	class XModule& module;
-	struct TXMSample& sample;
-	pp_uint32 type;
-
+	static const char* resamplerNames[];
+	static const char* resamplerNamesShort[];
+	
 public:
-	SampleEditorResampler(XModule& module, TXMSample& sample, pp_uint32 type);
-	virtual ~SampleEditorResampler();
-
-	bool resample(float oldRate, float newRate);
+	pp_uint32 getNumResamplers();
+	
+	const char* getResamplerName(pp_uint32 index, bool shortName = false);
+	
+	ChannelMixer::ResamplerBase* createResamplerFromIndex(pp_uint32 index);
+	
+	ChannelMixer::ResamplerTypes getResamplerType(pp_uint32 index, bool ramping);
 };
 
 #endif

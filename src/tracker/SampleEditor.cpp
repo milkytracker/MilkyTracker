@@ -1846,9 +1846,9 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 
 	float c4spd = getc4spd(sample->relnote, sample->finetune);
 
-	pp_int32 resamplerType = (pp_int32)par->getParameter(1);
+	pp_uint32 resamplerType = (pp_int32)par->getParameter(1);
 
-	SampleEditorResampler resampler(*module, *sample, (SampleEditorResampler::ResamplerTypes)resamplerType);
+	SampleEditorResampler resampler(*module, *sample, resamplerType);
 	
 	bool res = resampler.resample(c4spd, par->getParameter(0));
 	

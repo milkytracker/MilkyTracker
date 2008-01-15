@@ -38,20 +38,7 @@
 #include "Seperator.h"
 #include "ControlIDs.h"
 #include "XModule.h"
-
-static const char* interpolationTypeNames[] =
-{
-	"None",
-	"Linear",
-	"Lagrange",
-	"Spline",
-	"Fast Sinc",
-	"Precise Sinc",
-	"Amiga 500",
-	"Amiga 500 LED",
-	"Amiga 1200",
-	"Amiga 1200LED"
-};
+#include "ResamplerHelper.h"
 
 float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 {
@@ -100,10 +87,11 @@ float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 }
 
 RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen, 
-					  RespondListenerInterface* responder,
-					  pp_int32 id) :
+													 RespondListenerInterface* responder,
+													 pp_int32 id) :
 	RespondMessageBox(),
 	count(0),
+	resamplerHelper(new ResamplerHelper()),
 	interpolationType(1)
 {
 #ifdef __LOWRES__
@@ -203,7 +191,7 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	
 	x2+=15*8;
 	button = new PPButton(MESSAGEBOX_CONTROL_USER1, screen, this, PPPoint(x2, y2), PPSize(button->getLocation().x + button->getSize().width - x2, 11), false);
-	button->setText(interpolationTypeNames[interpolationType]);
+	button->setText(resamplerHelper->getResamplerName(interpolationType, true));
 	button->setColor(messageBoxContainerGeneric->getColor());
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 
@@ -249,6 +237,11 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	c4spd = 0.0f;
 }
 
+RespondMessageBoxResample::~RespondMessageBoxResample()
+{
+	delete resamplerHelper;
+}
+
 void RespondMessageBoxResample::show()
 {
 	currentSelectedListBox = 0;
@@ -256,7 +249,7 @@ void RespondMessageBoxResample::show()
 	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
 	
 	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
-	button->setText(interpolationTypeNames[interpolationType]);
+	button->setText(resamplerHelper->getResamplerName(interpolationType, true));
 	
 	RespondMessageBox::show();	
 }
@@ -347,10 +340,10 @@ pp_int32 RespondMessageBoxResample::handleEvent(PPObject* sender, PPEvent* event
 				if (event->getID() != eCommand)
 					break;
 				
-				interpolationType = (interpolationType + 1) % (sizeof(interpolationTypeNames) / sizeof(const char*));
+				interpolationType = (interpolationType + 1) % resamplerHelper->getNumResamplers();
 				
 				PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
-				button->setText(interpolationTypeNames[interpolationType]);
+				button->setText(resamplerHelper->getResamplerName(interpolationType, true));
 				parentScreen->paintControl(messageBoxContainerGeneric);							
 				break;
 			}

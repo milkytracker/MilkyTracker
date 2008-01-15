@@ -31,10 +31,10 @@
 #include "SampleEditorResampler.h"
 #include "XModule.h"
 #include "ChannelMixer.h"
-#include "ResamplerFactory.h"
+#include "ResamplerHelper.h"
 #include <math.h>
 
-SampleEditorResampler::SampleEditorResampler(XModule& module, TXMSample& sample, ResamplerTypes type) :
+SampleEditorResampler::SampleEditorResampler(XModule& module, TXMSample& sample, pp_uint32 type) :
 	module(module),
 	sample(sample),
 	type(type)
@@ -132,41 +132,8 @@ bool SampleEditorResampler::resample(float oldRate, float newRate)
 	channel.rampFromVolStepL = channel.rampFromVolStepR = 0;	
 	channel.index = 0;
 	
-	ChannelMixer::ResamplerBase* resampler = NULL;
-	
-	switch (type)
-	{
-		case ResamplerTypeNone:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_NORMAL);
-			break;
-		case ResamplerTypeLinear:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_LERPING);
-			break;
-		case ResamplerTypeLagrange:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_LAGRANGE);
-			break;
-		case ResamplerTypeSpline:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_SPLINE);
-			break;
-		case ResamplerTypeFastSinc:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_SINCTABLE);
-			break;
-		case ResamplerTypePreciseSinc:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_SINC);
-			break;
-		case ResamplerTypeAmiga500:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500);
-			break;
-		case ResamplerTypeAmiga500LED:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA500LED);
-			break;
-		case ResamplerTypeAmiga1200:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA1200);
-			break;
-		case ResamplerTypeAmiga1200LED:
-			resampler = ResamplerFactory::createResampler(ResamplerFactory::MIXER_AMIGA1200LED);
-			break;
-	}
+	ResamplerHelper resamplerHelper;
+	ChannelMixer::ResamplerBase* resampler = resamplerHelper.createResamplerFromIndex(type);
 
 	if (resampler == NULL)
 	{

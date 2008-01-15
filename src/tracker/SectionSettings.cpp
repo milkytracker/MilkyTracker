@@ -33,6 +33,7 @@
 #include "TrackerConfig.h"
 #include "ModuleEditor.h"
 #include "PlayerMaster.h"
+#include "ResamplerHelper.h"
 #include "PlayerController.h"
 #include "SystemMessage.h"
 
@@ -2746,8 +2747,9 @@ void SectionSettings::showResamplerMessageBox()
 													 true);
 	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
 
-	for (pp_uint32 i = 0; i < tracker.playerMaster->getNumResamplers(); i++)
-		listBox->addItem(tracker.playerMaster->getResamplerShortName(i));	
+	ResamplerHelper resamplerHelper;
+	for (pp_uint32 i = 0; i < resamplerHelper.getNumResamplers(); i++)
+		listBox->addItem(resamplerHelper.getResamplerName(i));	
 
 	listBox->setSelectedIndex(tracker.settingsDatabase->restore("INTERPOLATION")->getIntValue(), false);
 

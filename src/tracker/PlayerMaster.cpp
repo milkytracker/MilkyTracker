@@ -35,6 +35,7 @@
 #include "PlayerCriticalSection.h"
 #include "AudioDriverManager.h"
 #include "PlayerSTD.h"
+#include "ResamplerHelper.h"
 
 class MasterMixerNotificationListener : public MasterMixer::MasterMixerNotificationListener
 {
@@ -86,18 +87,27 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 
 	if (settings.ramping >= 0)
 	{
+		// ramping flag is stored in the LSB of the resampler type
 		if (settings.ramping != 0)
 			resamplerType |= 1;
 		else
 			resamplerType &= ~1;			
 	}
 	
+	// remember if ramping needs to be set
+	bool ramping = (resamplerType & 1) != 0;
+	
+	// now check if the resampler has changed at all
 	if (settings.resampler >= 0)
 	{
-		resamplerType &= 1;
-		resamplerType |= (settings.resampler << 1);
+		// we have a class that translates the resampler index (which maps to a
+		// human readable name of the resampler) back to an enum that can be
+		// set on the ChannelMixer class
+		ResamplerHelper resamplerHelper;
+		resamplerType = resamplerHelper.getResamplerType(settings.resampler, ramping);
 	}
 	
+	// now let's see if something has changed at all
 	if (resamplerType != oldResamplerType)
 	{
 		playerController.getCriticalSection()->enter();
@@ -346,33 +356,6 @@ const char* PlayerMaster::getNextDriverName() const
 const char* PlayerMaster::getCurrentDriverName() const
 {
 	return mixer->getCurrentAudioDriverName();
-}
-
-static const char* resamplerNames[] =
-{
-	"No interpolation",
-	"Linear interpolation",
-	"Cubic Lagrange",
-	"Cubic Spline",
-	"Fast Sinc",
-	"Precise Sinc",
-	"Amiga 500",
-	"Amiga 500LED",
-	"Amiga 1200",
-	"Amiga 1200LED"
-};
-
-pp_uint32 PlayerMaster::getNumResamplers() const
-{
-	return sizeof(resamplerNames) / sizeof(const char*);
-}
-
-const char* PlayerMaster::getResamplerShortName(pp_uint32 resampler) const
-{
-	if (resampler >= getNumResamplers())
-		return NULL;
-	
-	return resamplerNames[resampler];
 }
 
 void PlayerMaster::reallocateChannels(mp_sint32 moduleChannels/* = 32*/, mp_sint32 virtualChannels/* = 0*/)

@@ -43,12 +43,16 @@ private:
 	pp_uint32 count;
 	float c4spd;
 	float originalc4spd;
+	
+	class ResamplerHelper* resamplerHelper;
 	pp_int32 interpolationType;
 
 public:
 	RespondMessageBoxResample(PPScreen* screen, 
 							  RespondListenerInterface* responder,
 							  pp_int32 id);
+
+	virtual ~RespondMessageBoxResample();
 
 	virtual void show();
 
