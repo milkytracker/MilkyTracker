@@ -40,9 +40,9 @@ const char* ResamplerHelper::resamplerNames[] =
 	"Fast Sinc",
 	"Precise Sinc",
 	"Amiga 500",
-	"Amiga 500LED",
+	"Amiga 500 LED",
 	"Amiga 1200",
-	"Amiga 1200LED"
+	"Amiga 1200 LED"
 };
 
 const char* ResamplerHelper::resamplerNamesShort[] =
@@ -53,10 +53,10 @@ const char* ResamplerHelper::resamplerNamesShort[] =
 	"Spline",
 	"Fast Sinc",
 	"Precise Sinc",
-	"Amiga 500",
-	"Amiga 500 LED",
-	"Amiga 1200",
-	"Amiga 1200LED"
+	"A500",
+	"A500LED",
+	"A1200",
+	"A1200LED"
 };
 
 pp_uint32 ResamplerHelper::getNumResamplers()
