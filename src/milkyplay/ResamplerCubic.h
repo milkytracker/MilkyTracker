@@ -28,15 +28,17 @@
  *
  */
 
-/////////////////////////////////////////////////////////
-//  cubic 4 Point 3rd order polynomial                 //
-/////////////////////////////////////////////////////////
-// Formulas from:
-// Polynomial Interpolators for High-Quality Resampling 
-// of Oversampled Audio by 
-// Olli Niemitalo ollinie@freenet.hut.fi 
-// http://www.student.oulu.fi/~oniemita/DSP/INDEX.HTM
-/////////////////////////////////////////////////////////
+/*
+ * Cubic 4 Point 3rd order polynomial interpolation resampler                 
+ *
+ * Formulas from:
+ * Polynomial Interpolators for High-Quality Resampling of Oversampled Audio by 
+ * Olli Niemitalo ollinie@freenet.hut.fi 
+ *
+ * Website: http://www.student.oulu.fi/~oniemita/DSP/INDEX.HTM
+ *
+ */
+ 
 #define __DEIP__
 #define fpmul MP_FP_MUL
 

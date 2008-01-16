@@ -306,12 +306,14 @@ public:
 		// see above, you will need to implement at least one of the following
 		virtual void addBlockNoCheck(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count) 
 		{
+			// if this is called your own derived resampler is not properly working
 			ASSERT(false);
 		}
-		// see above
+		
+		// see above for comments
 		virtual void addBlockFull(mp_sint32* buffer, TMixerChannel* chn, mp_uint32 count)
 		{
-			ASSERT(false);	// I wasted an hour wondering why i was getting no output..
+			ASSERT(false);	
 		}
 		
 		// in case the resampler needs to get hold of the current mixing frequency

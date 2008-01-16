@@ -26,6 +26,9 @@
  *
  *  Created by Peter Barth on 08.11.07.
  *
+ *  The goal of the resamplers in this file is to be as fast as possible.
+ *  No compromises have been made for readability nor maintainability.
+ *  (hence the use of some evil macro templates)
  */
 
 #ifndef __RESAMPLERFAST_H__
@@ -33,9 +36,9 @@
 
 #include "ResamplerMacros.h"
 
-/////////////////////////////////////////////////////////
-//		SIMPLE MIXER, NO INTERPOLATION, NO RAMPING     //
-/////////////////////////////////////////////////////////
+/*
+ * Resampler without interpolation or ramping
+ */
 class ResamplerSimple : public ChannelMixer::ResamplerBase
 {
 public:
@@ -47,7 +50,7 @@ public:
 	{
 		mp_sint32 voll = chn->finalvoll;
 		mp_sint32 volr = chn->finalvolr;
-		FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL,FULLMIXER_16BIT_NORMAL,16, 0);
+		FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL, FULLMIXER_16BIT_NORMAL, 16, 0);
 	}
 	
 	virtual void addBlockNoCheck(mp_sint32* buffer, ChannelMixer::TMixerChannel* chn, mp_uint32 count)
@@ -67,13 +70,13 @@ public:
 		
 		mp_sint32 sd1,sd2;
 		
-		NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL,NOCHECKMIXER_16BIT_NORMAL);
+		NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL, NOCHECKMIXER_16BIT_NORMAL);
 	}
 };
 
-/////////////////////////////////////////////////////////
-//			NO INTERPOLATION BUT VOLUME RAMPING		   //
-/////////////////////////////////////////////////////////
+/*
+ * Resampler without interpolation but with ramping.
+ */
 class ResamplerSimpleRamp : public ChannelMixer::ResamplerBase
 {
 public:
@@ -91,11 +94,11 @@ public:
 
 		if (rampFromVolStepL || rampFromVolStepR)
 		{
-			FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL_RAMP(true),FULLMIXER_16BIT_NORMAL_RAMP(true), 16, 0);
+			FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL_RAMP(true), FULLMIXER_16BIT_NORMAL_RAMP(true), 16, 0);
 		}
 		else
 		{
-			FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL_RAMP(false),FULLMIXER_16BIT_NORMAL_RAMP(false), 16, 1);
+			FULLMIXER_TEMPLATE(FULLMIXER_8BIT_NORMAL_RAMP(false), FULLMIXER_16BIT_NORMAL_RAMP(false), 16, 1);
 		}
 			
 		chn->finalvoll = voll;
@@ -116,7 +119,7 @@ public:
 		mp_sint32 posfixed = chn->smpposfrac;
 
 		mp_sint32 fp = smpadd*count;
-		MP_INCREASESMPPOS(chn->smppos,chn->smpposfrac,fp,16);
+		MP_INCREASESMPPOS(chn->smppos,chn->smpposfrac, fp, 16);
 
 		if ((voll == 0 && rampFromVolStepL == 0) && (volr == 0 && rampFromVolStepR == 0)) return;
 		
@@ -124,11 +127,11 @@ public:
 		
 		if (rampFromVolStepL || rampFromVolStepR)
 		{
-			NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL_RAMP(true),NOCHECKMIXER_16BIT_NORMAL_RAMP(true));
+			NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL_RAMP(true), NOCHECKMIXER_16BIT_NORMAL_RAMP(true));
 		}
 		else
 		{
-			NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL_RAMP(false),NOCHECKMIXER_16BIT_NORMAL_RAMP(false));
+			NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_NORMAL_RAMP(false), NOCHECKMIXER_16BIT_NORMAL_RAMP(false));
 		}
 		
 		chn->finalvoll = voll;
@@ -136,9 +139,9 @@ public:
 	}
 };
 
-/////////////////////////////////////////////////////////
-//			INTERPOLATION AND NO VOLUME RAMPING		   //
-/////////////////////////////////////////////////////////
+/*
+ * Resampler using linear interpolation but without ramping.
+ */
 class ResamplerLerp : public ChannelMixer::ResamplerBase
 {
 public:
@@ -150,7 +153,7 @@ public:
 	{
 		mp_sint32 voll = chn->finalvoll;
 		mp_sint32 volr = chn->finalvolr;
-		FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP,FULLMIXER_16BIT_LERP, 16, 0);
+		FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP, FULLMIXER_16BIT_LERP, 16, 0);
 	}
 	
 	virtual void addBlockNoCheck(mp_sint32* buffer, ChannelMixer::TMixerChannel* chn, mp_uint32 count)
@@ -164,7 +167,7 @@ public:
 		mp_sint32 posfixed = chn->smpposfrac;
 
 		mp_sint32 fp = smpadd*count;
-		MP_INCREASESMPPOS(chn->smppos,chn->smpposfrac,fp,16);
+		MP_INCREASESMPPOS(chn->smppos, chn->smpposfrac, fp, 16);
 
 		if ((voll == 0) && (volr == 0)) return;
 		
@@ -174,9 +177,10 @@ public:
 	}
 };
 
-/////////////////////////////////////////////////////////
-//  INTERPOLATION, VOLUME RAMPING AND LOW PASS FILTER  //
-/////////////////////////////////////////////////////////
+/*
+ * Resampler using linear interpolation and ramping.
+ * Also supports the low pass filter used by Impulse Tracker
+ */
 class ResamplerLerpRampFilter : public ChannelMixer::ResamplerBase
 {
 public:
@@ -192,6 +196,7 @@ public:
 		mp_sint32 rampFromVolStepL = chn->rampFromVolStepL;
 		mp_sint32 rampFromVolStepR = chn->rampFromVolStepR;		
 		
+		// filter in use?
 		if (chn->cutoff != ChannelMixer::MP_INVALID_VALUE && chn->resonance != ChannelMixer::MP_INVALID_VALUE)
 		{
 			const mp_sint32 a = chn->a;
@@ -203,25 +208,26 @@ public:
 			
 			if (rampFromVolStepL || rampFromVolStepR)
 			{
-				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP_FILTER(true),FULLMIXER_16BIT_LERP_RAMP_FILTER(true), 16, 0);
+				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP_FILTER(true), FULLMIXER_16BIT_LERP_RAMP_FILTER(true), 16, 0);
 			}
 			else
 			{
-				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP_FILTER(false),FULLMIXER_16BIT_LERP_RAMP_FILTER(false), 16, 1);
+				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP_FILTER(false), FULLMIXER_16BIT_LERP_RAMP_FILTER(false), 16, 1);
 			}
 
 			chn->currsample = currsample;
 			chn->prevsample = prevsample;
 		}
+		// no filter
 		else
 		{
 			if (rampFromVolStepL || rampFromVolStepR)
 			{
-				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP(true),FULLMIXER_16BIT_LERP_RAMP(true), 16, 2);
+				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP(true), FULLMIXER_16BIT_LERP_RAMP(true), 16, 2);
 			}
 			else
 			{
-				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP(false),FULLMIXER_16BIT_LERP_RAMP(false), 16, 3);
+				FULLMIXER_TEMPLATE(FULLMIXER_8BIT_LERP_RAMP(false), FULLMIXER_16BIT_LERP_RAMP(false), 16, 3);
 			}
 		}
 		
@@ -243,10 +249,11 @@ public:
 		mp_sint32 posfixed = chn->smpposfrac;
 		
 		mp_sint32 fp = smpadd*count;
-		MP_INCREASESMPPOS(chn->smppos,chn->smpposfrac,fp,16);
+		MP_INCREASESMPPOS(chn->smppos, chn->smpposfrac, fp, 16);
 		
 		mp_sint32 sd1,sd2;
 		
+		// filter in use?
 		if (chn->cutoff != ChannelMixer::MP_INVALID_VALUE && chn->resonance != ChannelMixer::MP_INVALID_VALUE)
 		{
 			const mp_sint32 a = chn->a;
@@ -259,16 +266,17 @@ public:
 			// check if ramping has to be performed
 			if (rampFromVolStepL || rampFromVolStepR)
 			{
-				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP_FILTER(true),NOCHECKMIXER_16BIT_LERP_RAMP_FILTER(true));
+				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP_FILTER(true), NOCHECKMIXER_16BIT_LERP_RAMP_FILTER(true));
 			}
 			else
 			{
-				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP_FILTER(false),NOCHECKMIXER_16BIT_LERP_RAMP_FILTER(false));
+				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP_FILTER(false), NOCHECKMIXER_16BIT_LERP_RAMP_FILTER(false));
 			}
 			
 			chn->currsample = currsample;
 			chn->prevsample = prevsample;
 		}
+		// no filter
 		else
 		{
 			if ((voll == 0 && rampFromVolStepL == 0) && (volr == 0 && rampFromVolStepR == 0)) return;
@@ -276,11 +284,11 @@ public:
 			// check if ramping has to be performed
 			if (rampFromVolStepL || rampFromVolStepR)
 			{
-				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP(true),NOCHECKMIXER_16BIT_LERP_RAMP(true));
+				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP(true), NOCHECKMIXER_16BIT_LERP_RAMP(true));
 			}
 			else
 			{
-				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP(false),NOCHECKMIXER_16BIT_LERP_RAMP(false));
+				NOCHECKMIXER_TEMPLATE(NOCHECKMIXER_8BIT_LERP_RAMP(false), NOCHECKMIXER_16BIT_LERP_RAMP(false));
 			}
 		}
 		
@@ -289,9 +297,10 @@ public:
 	}
 };
 
-/////////////////////////////////////////////////////////
-//  Testing purposes                                   //
-/////////////////////////////////////////////////////////
+/*
+ * only for testing purpose, some dummy resampler that can be used to 
+ * play around etc.
+ */ 
 class ResamplerDummy : public ChannelMixer::ResamplerBase
 {
 public:

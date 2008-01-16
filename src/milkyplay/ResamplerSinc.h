@@ -30,10 +30,12 @@
 
 #include <math.h>
 
-///////////////////////////////////////////////////////////////////////////////////////
-// sinc resamplers based on:                                                         //
-// http://www.cs.princeton.edu/courses/archive/spr07/cos325/src/TimeStuf/srconvrt.c  //
-///////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Sinc resamplers based on:                                                        
+ * http://www.cs.princeton.edu/courses/archive/spr07/cos325/src/TimeStuf/srconvrt.c  
+ *
+ */
+ 
 #ifndef M_PI 
 #define M_PI 3.14159265358979323846 
 #endif
