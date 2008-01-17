@@ -71,6 +71,7 @@
 			else \
 			{ \
 				CHN.flags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
+				CHN.smppos = CHN.loopend-1; \
 			} \
 		}\
 	} \
@@ -78,7 +79,7 @@
 	else \
 	{ \
 		CHN.smppos--; \
-		if (CHN.loopstart>=CHN.smppos) \
+		if (CHN.loopstart>CHN.smppos) \
 		{ \
 			if ((CHN.flags & 3) == 0) \
 			{ \
@@ -86,11 +87,12 @@
 			} \
 			else if ((CHN.flags & 3) == 1) \
 			{ \
-				CHN.smppos = CHN.loopend; \
+				CHN.smppos = CHN.loopend-1; \
 			} \
 			else \
 			{ \
 				CHN.flags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
+				CHN.smppos = CHN.loopstart; \
 			} \
 		} \
 	} 
@@ -103,10 +105,11 @@ class SincResamplerDummy
 private:
 	static inline double sinc(double x)
 	{
-		double temp;
-		if (x==0.0) return 1.0;
-		else {
-			temp = M_PI * x;
+		if (x==0.0) 
+			return 1.0;
+		else 
+		{
+			double temp = M_PI * x;
 			return sin(temp) / (temp);
 		}
 	}
@@ -141,11 +144,12 @@ public:
 		mp_sint32 fixedtimefrac = chn->fixedtimefrac;
 		const mp_sint32 timeadd = chn->smpadd;
 	
+		ChannelMixer::TMixerChannel pos(true);
+
 		while (count--)
 		{
 			double result = 0;
 			
-			ChannelMixer::TMixerChannel pos;
 			const double time_now = fixedtimefrac * (1.0 / 65536.0);
 		
 			if (abs(smpadd)<65536) 
@@ -155,7 +159,10 @@ public:
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
+				// check whether we are outside loop points
+				// if that's the case we're treating the sample as a normal finite signal
+				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				if (outSideLoop)
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
@@ -163,6 +170,8 @@ public:
 				}
 																								
 				double time = time_now;
+				if (!fixedtimefrac && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 1.0;
 			
 				mp_sint32 j;				
 				for (j = 0; j<WIDTH; j++)
@@ -179,8 +188,12 @@ public:
 
 				pos.smppos = smppos; 
 				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
+				if (outSideLoop)
+					pos.flags &= ~3;
 
 				time = time_now;
+				if (!fixedtimefrac && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 1.0;
 
 				for (j = 1; j<WIDTH; j++)
 				{							
@@ -204,7 +217,10 @@ public:
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
+				// check whether we are outside loop points
+				// if that's the case we're treating the sample as a normal finite signal
+				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				if (outSideLoop)
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
@@ -212,6 +228,8 @@ public:
 				}
 									
 				double time = time_now;
+				if (!fixedtimefrac && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 1.0;
 			
 				mp_sint32 j;				
 				for (j = 0; j<WIDTH; j++)
@@ -228,8 +246,12 @@ public:
 
 				pos.smppos = smppos; 
 				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
+				if (outSideLoop)
+					pos.flags &= ~3;
 
 				time = time_now;
+				if (!fixedtimefrac && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 1.0;
 
 				for (j = 1; j<WIDTH; j++)
 				{							
@@ -295,6 +317,7 @@ public:
 
 // fixed point sinc with almost hamming window
 
+// you like that, eh?
 #define SINC(x) \
 	((abs(x)>>16)>=(ResamplerSincTableBase<windowSize>::WIDTH-1) ? 0 : \
 	(ResamplerSincTableBase<windowSize>::sinc_table[abs(x) >> (16-ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT)] + \
@@ -377,20 +400,26 @@ public:
 		mp_sint32 fixedtimefrac = chn->fixedtimefrac;
 		const mp_sint32 timeadd = chn->smpadd;
 	
+		const mp_sint32 negflags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
+		const mp_sint32 posflags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
+		
 		if (timeadd < 65536)
 		{
+			ChannelMixer::TMixerChannel pos(true);
+			pos.loopendcopy = loopendcopy;				
+			
 			while (count--)
 			{
 				mp_sint32 result = 0;
 				
-				ChannelMixer::TMixerChannel pos;
-				
 				pos.smppos = smppos; 
 				pos.loopstart = loopstart;
 				pos.loopend = loopend;
-				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos < loopend)))
+				pos.flags = negflags; 
+				// check whether we are outside loop points
+				// if that's the case we're treating the sample as a normal finite signal
+				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				if (outSideLoop)
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
@@ -398,6 +427,8 @@ public:
 				}
 				
 				mp_sint32 time = fixedtimefrac;
+				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 65536;
 				
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
@@ -411,9 +442,13 @@ public:
 				}
 				
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
+				pos.flags = posflags; 
+				if (outSideLoop)
+					pos.flags &= ~3;
 				
 				time = fixedtimefrac;
+				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 65536;
 				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
@@ -441,6 +476,9 @@ public:
 		}
 		else
 		{
+			ChannelMixer::TMixerChannel pos(true);
+			pos.loopendcopy = loopendcopy;				
+
 			while (count--)
 			{
 				mp_sint32 result = 0;
@@ -449,10 +487,12 @@ public:
 				
 				pos.smppos = smppos; 
 				pos.loopstart = loopstart;
-				pos.loopend = loopend+1;
-				pos.loopendcopy = loopendcopy;
-				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos < loopend)))
+				pos.loopend = loopend;
+				pos.flags = negflags; 
+				// check whether we are outside loop points
+				// if that's the case we're treating the sample as a normal finite signal
+				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				if (outSideLoop)
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
@@ -460,6 +500,8 @@ public:
 				}
 				
 				mp_sint32 time = fpmul(fixedtimefrac, rsmpadd);
+				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 65536;
 				
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
@@ -473,9 +515,13 @@ public:
 				}
 				
 				pos.smppos = smppos; 
-				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
+				pos.flags = posflags;
+				if (outSideLoop)
+					pos.flags &= ~3;
 				
 				time = fpmul(fixedtimefrac, rsmpadd);
+				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
+					time = 65536;
 				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
@@ -486,8 +532,7 @@ public:
 					
 					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;				
 				}
-				
-				
+								
 				(*buffer++)+=(((result)*(voll>>15))>>15); 
 				(*buffer++)+=(((result)*(volr>>15))>>15); 
 				

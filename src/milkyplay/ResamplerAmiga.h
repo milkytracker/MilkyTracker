@@ -101,7 +101,7 @@ public:
 	{
 	}
 	
-	~ResamplerAmiga()
+	virtual ~ResamplerAmiga()
 	{
 		cleanUp(numChannels);
 	}

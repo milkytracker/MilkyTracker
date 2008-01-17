@@ -91,7 +91,7 @@ void TXMSample::postProcessSamples(bool heavy)
 			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
 		}
 		
-		if ((!(type&3))||((type&3)==2))
+		if (!(type&3)) 
 		{
 			bu[-1]=bu[0];
 			bu[-2]=bu[1];
@@ -103,23 +103,47 @@ void TXMSample::postProcessSamples(bool heavy)
 			bu[samplen+3]=bu[samplen-3];
 			bu[samplen+4]=bu[samplen-4];
 		}
-		else if ((type&3) == 1 && 
+		else if ((type&3) && 
 				 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
 		{ 
-			// padding start
-			bu[-1] = bu[loopstart+looplen-1];
-			bu[-2] = bu[loopstart+looplen-2];
-			bu[-3] = bu[loopstart+looplen-3];
-			bu[-4] = bu[loopstart+looplen-4];
+			// forward loop
+			if ((type&3) == 1)
+			{
+				// padding start
+				bu[-1] = bu[loopstart+looplen-1];
+				bu[-2] = bu[loopstart+looplen-2];
+				bu[-3] = bu[loopstart+looplen-3];
+				bu[-4] = bu[loopstart+looplen-4];
+				
+				// save portions after loopend, gets overwritten now
+				memcpy(originalSample, bu+loopstart+looplen, saveLen);
+				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
+				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->lastloopend = loopstart+looplen;
+				
+				memcpy(buffer, bu+loopstart, saveLen);
+				memcpy(bu+loopstart+looplen, buffer, saveLen);	
+			}
+			else if ((type&3) == 2)
+			{
+				bu[-1] = bu[0];
+				bu[-2] = bu[1];
+				bu[-3] = bu[2];
+				bu[-4] = bu[3];
 
-			// save portions after loopend, gets overwritten now
-			memcpy(originalSample, bu+loopstart+looplen, saveLen);
-			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-			loopBufferProps->state[1] = type & importantFlags;			
-			loopBufferProps->lastloopend = loopstart+looplen;
+				mp_sint32 loopend = loopstart+looplen;
 
-			memcpy(buffer, bu+loopstart, saveLen);
-			memcpy(bu+loopstart+looplen, buffer, saveLen);				
+				// save portions after loopend, gets overwritten now
+				memcpy(originalSample, sample+loopend, saveLen);
+				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
+				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->lastloopend = loopend;
+				
+				bu[loopend] = bu[loopend-1];
+				bu[loopend+1] = bu[loopend-2];
+				bu[loopend+2] = bu[loopend-3];
+				bu[loopend+3] = bu[loopend-4];				
+			}			
 		}			
 	}
 	// 8 bit sample
@@ -142,7 +166,7 @@ void TXMSample::postProcessSamples(bool heavy)
 			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
 		}
 
-		if ((!(type&3))||((type&3)==2)) 
+		if (!(type&3)) 
 		{
 			sample[-1] = sample[0];
 			sample[-2] = sample[1];
@@ -154,75 +178,100 @@ void TXMSample::postProcessSamples(bool heavy)
 			sample[samplen+2] = sample[samplen-3];
 			sample[samplen+3] = sample[samplen-4];
 		}
-		else if ((type&3) == 1 && 
+		else if ((type&3) && 
 				 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
 		{
-			// leading padding
-			sample[-1] = sample[loopstart+looplen-1];
-			sample[-2] = sample[loopstart+looplen-2];
-			sample[-3] = sample[loopstart+looplen-3];
-			sample[-4] = sample[loopstart+looplen-4];
-			
-			// save portions after loopend, gets overwritten now
-			memcpy(originalSample, sample+loopstart+looplen, saveLen);
-			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-			loopBufferProps->state[1] = type & importantFlags;			
-			loopBufferProps->lastloopend = loopstart+looplen;
-
-			memcpy(buffer, sample+loopstart, saveLen);
-			memcpy(sample+loopstart+looplen, buffer, saveLen);
-
-			// heavy processing removes some of the nasty clicks found
-			// in 669 and PLM songs (found in 8 bit samples only)
-			if (heavy && 
-				samplen > 1024 && 
-				looplen > 32)
+			// forward loop
+			if ((type&3) == 1)
 			{
-				const mp_sint32 blockSize = 8;
+				// leading padding
+				sample[-1] = sample[loopstart+looplen-1];
+				sample[-2] = sample[loopstart+looplen-2];
+				sample[-3] = sample[loopstart+looplen-3];
+				sample[-4] = sample[loopstart+looplen-4];
 				
-				mp_sint32 max,t;
+				// save portions after loopend, gets overwritten now
+				memcpy(originalSample, sample+loopstart+looplen, saveLen);
+				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
+				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->lastloopend = loopstart+looplen;
 				
-				float v1 = sample[loopstart];
-				float v2 = sample[loopstart+looplen];
+				memcpy(buffer, sample+loopstart, saveLen);
+				memcpy(sample+loopstart+looplen, buffer, saveLen);
 				
-				float avg = (v1+v2)*0.5f;
-				
-				// step 1: Fade to avg from what's coming before loopstart
-				max = loopstart;
-				if (max > blockSize) max = blockSize;
-				for (t = 0; t < max; t++)
+				// heavy processing removes some of the nasty clicks found
+				// in 669 and PLM songs (found in 8 bit samples only)
+				if (heavy && 
+					samplen > 1024 && 
+					looplen > 32)
 				{
-					float ft = (float)t/(float)max;
-					mp_sint32 index = loopstart - max + t;					
-					mp_sint32 src = sample[index];
-					float final = src * (1.0f - ft) + (avg * ft);
-					sample[index] = (mp_sbyte)final;
-				}
-				
-				// step 2: Fade from avg into what's coming after loopstart
-				max = blockSize;
-				for (t = 0; t < max; t++)
-				{
-					float ft = (float)t/(float)max;
-					mp_sint32 index = loopstart + t;					
-					mp_sint32 dst = sample[index];
-					float final = avg * (1.0f - ft) + (dst * ft);
-					sample[index] = (mp_sbyte)final;
-				}
-				
-				// step 3
-				for (t = 0; t < blockSize; t++)
-				{
-					mp_sint32 index = loopstart+looplen - blockSize + t;
+					const mp_sint32 blockSize = 8;
 					
-					mp_sint32 src = sample[index];
+					mp_sint32 max,t;
 					
-					float ft = (float)t/(float)blockSize;
-					float final = src * (1.0f - ft) + (avg * ft);
-					sample[index] = (mp_sbyte)final;
-				}
+					float v1 = sample[loopstart];
+					float v2 = sample[loopstart+looplen];
+					
+					float avg = (v1+v2)*0.5f;
+					
+					// step 1: Fade to avg from what's coming before loopstart
+					max = loopstart;
+					if (max > blockSize) max = blockSize;
+					for (t = 0; t < max; t++)
+					{
+						float ft = (float)t/(float)max;
+						mp_sint32 index = loopstart - max + t;					
+						mp_sint32 src = sample[index];
+						float final = src * (1.0f - ft) + (avg * ft);
+						sample[index] = (mp_sbyte)final;
+					}
+					
+					// step 2: Fade from avg into what's coming after loopstart
+					max = blockSize;
+					for (t = 0; t < max; t++)
+					{
+						float ft = (float)t/(float)max;
+						mp_sint32 index = loopstart + t;					
+						mp_sint32 dst = sample[index];
+						float final = avg * (1.0f - ft) + (dst * ft);
+						sample[index] = (mp_sbyte)final;
+					}
+					
+					// step 3
+					for (t = 0; t < blockSize; t++)
+					{
+						mp_sint32 index = loopstart+looplen - blockSize + t;
+						
+						mp_sint32 src = sample[index];
+						
+						float ft = (float)t/(float)blockSize;
+						float final = src * (1.0f - ft) + (avg * ft);
+						sample[index] = (mp_sbyte)final;
+					}
+					
+				}				
+			}
+			// bidi loop
+			else if ((type&3) == 2)
+			{
+				sample[-1] = sample[0];
+				sample[-2] = sample[1];
+				sample[-3] = sample[2];
+				sample[-4] = sample[3];
+
+				mp_sint32 loopend = loopstart+looplen;
+
+				// save portions after loopend, gets overwritten now
+				memcpy(originalSample, sample+loopend, saveLen);
+				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
+				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->lastloopend = loopend;
 				
-			}				
+				sample[loopend] = sample[loopend-1];
+				sample[loopend+1] = sample[loopend-2];
+				sample[loopend+2] = sample[loopend-3];
+				sample[loopend+3] = sample[loopend-4];				
+			}
 		}
 	}
 }

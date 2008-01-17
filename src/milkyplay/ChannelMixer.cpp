@@ -489,14 +489,8 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 						else if (chn->smppos >= chn->loopend)
 						{ 						
 							chn->flags|=MP_SAMPLE_BACKWARD;
-							do 
-							{ 
-								if (chn->smppos >= chn->loopend) 
-									chn->smppos=chn->loopend-(chn->smppos-chn->loopend+1); 
-								else if (chn->smppos < chn->loopstart) 
-									chn->smppos = chn->loopstart + (chn->loopstart - chn->smppos-1); 
-								chn->smpposfrac = ((1<<16) - chn->smpposfrac) & ((1<<16)-1); 
-							} while (!(chn->smppos >= chn->loopstart && chn->smppos <= chn->loopend));
+							// Invert
+							BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
 						} 
 						tempBuffer32+=length*MP_NUMCHANNELS; 
 						todo-=length; 

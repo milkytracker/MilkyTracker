@@ -233,7 +233,7 @@ public:
 	{
 		if (type & 16)
 		{
-			if ((type & 3) == 1 && index >= loopstart+looplen && 
+			if ((type & 3) && index >= loopstart+looplen && 
 				index < loopstart+looplen+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -248,7 +248,7 @@ public:
 		}
 		else
 		{
-			if ((type & 3) == 1 && index >= loopstart+looplen && 
+			if ((type & 3) && index >= loopstart+looplen && 
 				index < loopstart+looplen+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -275,7 +275,7 @@ public:
 	{
 		if (type & 16)
 		{
-			if ((type & 3) == 1 && index >= loopstart+looplen && 
+			if ((type & 3) && index >= loopstart+looplen && 
 				index < loopstart+looplen+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -290,7 +290,7 @@ public:
 				
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
 			}
-			else if ((type & 3) == 1 && index >= loopstart && 
+			else if ((type & 3) && index >= loopstart && 
 					 index < loopstart+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -304,7 +304,7 @@ public:
 		}
 		else
 		{
-			if ((type & 3) == 1 && index >= loopstart+looplen && 
+			if ((type & 3) && index >= loopstart+looplen && 
 				index < loopstart+looplen+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -319,7 +319,7 @@ public:
 
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
 			}
-			else if ((type & 3) == 1 && index >= loopstart && 
+			else if ((type & 3) && index >= loopstart && 
 					 index < loopstart+LoopAreaBackupSize)
 			{
 				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);

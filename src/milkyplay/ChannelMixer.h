@@ -220,6 +220,12 @@ public:
 		{
 			clear();
 		}
+
+		TMixerChannel(bool fast) :
+			timeRecordSize(0),
+			timeRecord(NULL)
+		{
+		}
 		
 		~TMixerChannel()
 		{
