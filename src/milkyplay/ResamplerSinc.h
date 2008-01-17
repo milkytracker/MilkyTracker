@@ -377,111 +377,131 @@ public:
 		mp_sint32 fixedtimefrac = chn->fixedtimefrac;
 		const mp_sint32 timeadd = chn->smpadd;
 	
-		while (count--)
+		if (timeadd < 65536)
 		{
-			mp_sint32 result = 0;
-			
-			ChannelMixer::TMixerChannel pos;
-		
-			if (abs(smpadd) < 65536) 
+			while (count--)
 			{
+				mp_sint32 result = 0;
+				
+				ChannelMixer::TMixerChannel pos;
+				
 				pos.smppos = smppos; 
 				pos.loopstart = loopstart;
 				pos.loopend = loopend;
 				pos.loopendcopy = loopendcopy;
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
+				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos < loopend)))
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
 					pos.flags &= ~3;
 				}
-																								
+				
 				mp_sint32 time = fixedtimefrac;
-			
+				
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{
 					result += (sample[pos.smppos] * SINC(time)) >> shift;
-
+					
 					time+=65536;
 					advancePos(pos);
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
-
+				
 				pos.smppos = smppos; 
 				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-
+				
 				time = fixedtimefrac;
-
+				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
 					advancePos(pos);
 					time-=65536;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
-
+					
 					result += (sample[pos.smppos] * SINC(time)) >> shift;
 				}					
+				
+				
+				(*buffer++)+=(((result)*(voll>>15))>>15); 
+				(*buffer++)+=(((result)*(volr>>15))>>15); 
+				
+				if (ramping)
+				{
+					voll+=rampFromVolStepL; 
+					volr+=rampFromVolStepR; 
+				}
+				
+				MP_INCREASESMPPOS(smppos, smpposfrac, smpadd, 16);
+				fixedtimefrac=(fixedtimefrac+timeadd) & 65535;
 			}
-			else 
-			{					
+		}
+		else
+		{
+			while (count--)
+			{
+				mp_sint32 result = 0;
+				
+				ChannelMixer::TMixerChannel pos;
+				
 				pos.smppos = smppos; 
 				pos.loopstart = loopstart;
 				pos.loopend = loopend+1;
 				pos.loopendcopy = loopendcopy;
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
-				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos< loopend)))
+				if (!(((flags & 3) && pos.smppos > loopstart && pos.smppos < loopend)))
 				{
 					pos.loopstart = 0;
 					pos.loopend = smplen;
 					pos.flags &= ~3;
 				}
-									
+				
 				mp_sint32 time = fpmul(fixedtimefrac, rsmpadd);
-			
+				
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{
 					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;
-				
+					
 					advancePos(pos);
 					time+=rsmpadd;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
-
+				
 				pos.smppos = smppos; 
 				pos.flags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
-
+				
 				time = fpmul(fixedtimefrac, rsmpadd);
-
+				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
 					advancePos(pos);
 					time-=rsmpadd;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
-
+					
 					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;				
 				}
+				
+				
+				(*buffer++)+=(((result)*(voll>>15))>>15); 
+				(*buffer++)+=(((result)*(volr>>15))>>15); 
+				
+				if (ramping)
+				{
+					voll+=rampFromVolStepL; 
+					volr+=rampFromVolStepR; 
+				}
+				
+				MP_INCREASESMPPOS(smppos, smpposfrac, smpadd, 16);
+				fixedtimefrac=(fixedtimefrac+timeadd) & 65535;
 			}
-			
-			
-			(*buffer++)+=(((result)*(voll>>15))>>15); 
-			(*buffer++)+=(((result)*(volr>>15))>>15); 
-
-			if (ramping)
-			{
-				voll+=rampFromVolStepL; 
-				volr+=rampFromVolStepR; 
-			}
-			
-			MP_INCREASESMPPOS(smppos, smpposfrac, smpadd, 16);
-			fixedtimefrac=(fixedtimefrac+timeadd) & 65535;
 		}
-
+		
 		chn->smppos = smppos;
 		chn->smpposfrac = smpposfrac;
 
