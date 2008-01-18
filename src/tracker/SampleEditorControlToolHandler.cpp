@@ -52,7 +52,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Create new sample"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterOneValue);
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter size in samples:");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(3, 1024*1024*10-1, 0); 
-			if (lastValues.newSampleSize != TLastValues::invalidIntValue())
+			if (lastValues.newSampleSize != SampleEditorControlLastValues::invalidIntValue())
 				static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne((float)lastValues.newSampleSize);
 			else
 				static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(100.0f);
@@ -62,7 +62,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Boost sample volume"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterOneValue);
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter new volume in percent:");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(-10000.0f, 10000.0f, 2); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.boostSampleVolume != TLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeFade:
@@ -71,22 +71,22 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoCaption("Enter end volume in percent:");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(-10000.0f, 10000.0f, 2); 
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoRange(-10000.0f, 10000.0f, 2); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.fadeSampleVolumeStart != TLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f);
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo(lastValues.fadeSampleVolumeEnd != TLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
 			break;
 			
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
 			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterOneValue);
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter offset in percent [-100..100]");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(-100, 100.0f, 2); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.DCOffset != TLastValues::invalidFloatValue() ? lastValues.DCOffset : 0.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.DCOffset != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.DCOffset : 0.0f);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeResample:
 			respondMessageBox = new RespondMessageBoxResample(parentScreen, toolHandlerResponder, PP_DEFAULT_ID);
 			if (sampleEditor->isValidSample())
 			{
-				if (lastValues.lastResampleInterpolationType != TLastValues::invalidIntValue()) 
+				if (lastValues.lastResampleInterpolationType != SampleEditorControlLastValues::invalidIntValue()) 
 					static_cast<RespondMessageBoxResample*>(respondMessageBox)->setInterpolationType(lastValues.lastResampleInterpolationType);
 
 				static_cast<RespondMessageBoxResample*>(respondMessageBox)->setRelNote(sampleEditor->getRelNoteNum());
@@ -117,7 +117,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Insert silence"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterOneValue);
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter size in samples:");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(3, 1024*1024*10-1, 0); 
-			if (lastValues.silenceSize != TLastValues::invalidIntValue())
+			if (lastValues.silenceSize != SampleEditorControlLastValues::invalidIntValue())
 				static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne((float)lastValues.silenceSize);
 			else
 				static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(100.0f);
@@ -149,8 +149,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoCaption("Number of periods:");
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(-1000.0f, 1000.0f, 2); 
 			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoRange(0.0f, 1000.0f, 1); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.waveFormVolume != TLastValues::invalidFloatValue() ? lastValues.waveFormVolume : 100.0f);
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo(lastValues.waveFormNumPeriods != TLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.waveFormVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormVolume : 100.0f);
+			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
 			break;
 		}
 

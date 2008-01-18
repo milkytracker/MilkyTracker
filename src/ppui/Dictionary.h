@@ -57,7 +57,6 @@ public:
 	PPDictionary& operator=(const PPDictionary& source);
 	
 	void store(const PPString& key, const PPString& value);
-
 	void store(const PPString& key, const pp_uint32 value);
 	
 	PPDictionaryKey* restore(const PPString& key);
@@ -67,6 +66,13 @@ public:
 	PPDictionaryKey* getFirstKey();
 	PPDictionaryKey* getNextKey();
 	void stopEnumeration();
+	
+	PPString serializeToString();
+	
+	static PPDictionary* createFromString(const PPString& string);
+	
+	static pp_uint32 convertFloatToIntNonLossy(float value);
+	static float convertIntToFloatNonLossy(pp_uint32 value);
 };
 
 #endif

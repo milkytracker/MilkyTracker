@@ -37,7 +37,7 @@
 #include "PlayerController.h"
 #include "PlayerLogic.h"
 #include "TabManager.h"
-#include "DictionaryKey.h"
+#include "Dictionary.h"
 #include "PatternEditorControl.h"
 #include "SampleEditorControl.h"
 #include "EnvelopeEditorControl.h"
@@ -188,6 +188,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("ROWINSERTADD", 1);
 	// show title field
 	settingsDatabase->store("TITLEPAGE", TitlePageTitle);
+	// sample editor last settings
+	settingsDatabase->store("SAMPLEEDITORLASTVALUES", "");
 	// no virtual channels for instrument playback
 	settingsDatabase->store("VIRTUALCHANNELS", 0);
 	// enable multichn recording by default
@@ -252,6 +254,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	PatternEditorControl* patternEditorCtrl = getPatternEditorControl();
 	PatternEditor* patternEditor = moduleEditor->getPatternEditor();
 	SampleEditor* sampleEditor = moduleEditor->getSampleEditor();
+	SampleEditorControl* sampleEditorControl = sectionSamples->getSampleEditorControl();
 
 	pp_int32 v2 = theKey->getIntValue();
 
@@ -462,6 +465,17 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		if (sectionSamples)
 			sectionSamples->setOffsetFormat(v2);					
+	}
+	else if (theKey->getKey().compareTo("SAMPLEEDITORLASTVALUES") == 0)
+	{
+		if (sampleEditorControl)
+		{
+			PPDictionary* dict = PPDictionary::createFromString(theKey->getStringValue());
+			if (dict)
+				sampleEditorControl->getLastValues().restoreFromDictionary(*dict);
+				
+			delete dict;
+		}
 	}
 	else if (theKey->getKey().compareTo("INTERNALDISKBROWSER") == 0)
 	{

@@ -161,6 +161,7 @@ public:
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
+				// note that this is still not totally correct treatment
 				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
 				if (outSideLoop)
 				{
@@ -219,6 +220,7 @@ public:
 				pos.flags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD); 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
+				// note that this is still not totally correct treatment
 				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
 				if (outSideLoop)
 				{
@@ -418,6 +420,7 @@ public:
 				pos.flags = negflags; 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
+				// note that this is still not totally correct treatment
 				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
 				if (outSideLoop)
 				{
@@ -491,6 +494,7 @@ public:
 				pos.flags = negflags; 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
+				// note that this is still not totally correct treatment
 				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
 				if (outSideLoop)
 				{

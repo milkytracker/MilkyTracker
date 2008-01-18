@@ -1257,7 +1257,7 @@ void SectionSettings::initPage_I(PPContainer* container, pp_int32 x, pp_int32 y)
 	y2+=12;
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*3), "Mixervol:", true));
-	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MIXERVOL, NULL, NULL, PPPoint(x + 4 + 8*8, y2 + 2 + 11*3), "100%", false));
+	container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MIXERVOL, NULL, NULL, PPPoint(x + 4 + 8*9, y2 + 2 + 11*3), "100%", false));
 
 	slider = new PPSlider(SLIDER_SETTINGS_MIXERVOL, screen, this, PPPoint(x + 4, y2 + 2 + 11*4-1), 151, true);
 	slider->setMaxValue(256);

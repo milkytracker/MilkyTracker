@@ -221,7 +221,7 @@ public:
 			clear();
 		}
 
-		TMixerChannel(bool fast) :
+		TMixerChannel(bool fastContruction) :
 			timeRecordSize(0),
 			timeRecord(NULL)
 		{
@@ -229,7 +229,8 @@ public:
 		
 		~TMixerChannel()
 		{
-			delete[] timeRecord;
+			if (timeRecord)
+				delete[] timeRecord;
 		}
 
 		void clear()
@@ -263,7 +264,7 @@ public:
 			
 			fixedtime			= 0;
 			fixedtimefrac		= 0;
-			index				= -1;		// Ensure scopes don't interfere with playback audio
+			index				= -1;		// is filled during runtime
 			
 			if (timeRecord)
 				memset(timeRecord, 0, sizeof(TTimeRecord) * timeRecordSize);

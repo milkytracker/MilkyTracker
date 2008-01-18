@@ -27,6 +27,7 @@
 #include "Control.h"
 #include "Event.h"
 #include "SampleEditor.h"
+#include "SampleEditorControlLastValues.h"
 
 // Forwards
 class PPGraphicsAbstract;
@@ -355,58 +356,16 @@ private:
 	
 	bool invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypes type);
 	bool invokeTool(ToolHandlerResponder::SampleToolTypes type);
-
-	// Last values
-	struct TLastValues
-	{
-		pp_int32 newSampleSize;
-		float boostSampleVolume;
-		float fadeSampleVolumeStart;
-		float fadeSampleVolumeEnd;
-		float DCOffset;
-		pp_int32 silenceSize;
-		float waveFormVolume;
-		float waveFormNumPeriods;
-		
-		bool hasEQ3BandValues;
-		float EQ3BandValues[3];
-		
-		bool hasEQ10BandValues;
-		float EQ10BandValues[10];
-		
-		pp_int32 lastResampleInterpolationType;
-		
-		static float invalidFloatValue() 
-		{
-			return -12345678.0f;
-		}
-
-		static int invalidIntValue() 
-		{
-			return -12345678;
-		}
 	
-		void reset()
-		{
-			newSampleSize = invalidIntValue();
-			boostSampleVolume = invalidFloatValue();
-			fadeSampleVolumeStart = invalidFloatValue();
-			fadeSampleVolumeEnd = invalidFloatValue();
-			DCOffset = invalidFloatValue();
-			silenceSize = invalidIntValue();
-			waveFormVolume = invalidFloatValue();
-			waveFormNumPeriods = invalidFloatValue();
-			hasEQ3BandValues = hasEQ10BandValues = false;
-			lastResampleInterpolationType = invalidIntValue();
-		}
-	};
-	
-	TLastValues lastValues;
+	SampleEditorControlLastValues lastValues;
 	
 	void resetLastValues()
 	{
 		lastValues.reset();
 	}	
+	
+public:
+	SampleEditorControlLastValues& getLastValues() { return lastValues; }
 };
 
 #endif

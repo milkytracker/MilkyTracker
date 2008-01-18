@@ -42,6 +42,7 @@
 #include "SectionInstruments.h"
 #include "PatternEditorControl.h"
 #include "EnvelopeEditorControl.h"
+#include "SampleEditorControl.h"
 #include "SectionDiskMenu.h"
 #include "SectionHDRecorder.h"
 #include "SectionOptimize.h"
@@ -168,6 +169,10 @@ bool Tracker::shutDown()
 	
 	// sample editor
 	settingsDatabase->store("SAMPLEEDITORDECIMALOFFSETS", sectionSamples->getOffsetFormat());
+	// Sample editor contol will store last used values here
+	PPDictionary dictonary = sectionSamples->getSampleEditorControl()->getLastValues().convertToDictionary();
+	PPString lastValues = dictonary.serializeToString();
+	settingsDatabase->store("SAMPLEEDITORLASTVALUES", lastValues);
 
 	// Optimizer
 	for (i = 0; i < (signed)SectionOptimize::getNumFlagGroups(); i++)
