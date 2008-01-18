@@ -171,6 +171,10 @@ void Tracker::initKeyBindings()
 	// tab stuff
 	eventKeyDownBindingsFastTracker->addBinding('T', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_OpenTab);
 	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CloseTab);
+	// some more milkytracker specific short cuts in FT2 mode
+	eventKeyDownBindingsFastTracker->addBinding('L', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_Open);
+	eventKeyDownBindingsFastTracker->addBinding('S', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_Save);
+
 	eventKeyDownBindingsFastTracker->addBinding(VK_LEFT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToPreviousTab);
 	eventKeyDownBindingsFastTracker->addBinding(VK_RIGHT, KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_SwitchToNextTab);	
 
