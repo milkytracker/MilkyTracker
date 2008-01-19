@@ -42,57 +42,57 @@
 
 #define fpmul MP_FP_MUL
 
-#define advancePos(CHN) \
-	if (((((CHN.flags&3) == 0 || (CHN.flags&3) == 1)) && !(CHN.flags&ChannelMixer::MP_SAMPLE_BACKWARD)) || \
-		((CHN.flags&3) == 2 && (CHN.flags&ChannelMixer::MP_SAMPLE_BACKWARD) == 0)) \
+#define advancePos(CHNsmppos, CHNflags, CHNloopstart, CHNloopend, CHNloopendcopy) \
+	if (((((CHNflags&3) == 0 || (CHNflags&3) == 1)) && !(CHNflags&ChannelMixer::MP_SAMPLE_BACKWARD)) || \
+		((CHNflags&3) == 2 && (CHNflags&ChannelMixer::MP_SAMPLE_BACKWARD) == 0)) \
 	{ \
-		CHN.smppos++; \
+		CHNsmppos++; \
 		/* stop playing if necessary */ \
-		if (CHN.smppos>=CHN.loopend) \
+		if (CHNsmppos>=CHNloopend) \
 		{ \
-			if ((CHN.flags & 3) == 0) \
+			if ((CHNflags & 3) == 0) \
 			{ \
-				if (CHN.flags & ChannelMixer::MP_SAMPLE_ONESHOT) \
+				if (CHNflags & ChannelMixer::MP_SAMPLE_ONESHOT) \
 				{ \
-					CHN.flags &= ~ChannelMixer::MP_SAMPLE_ONESHOT; \
-					CHN.flags |= 1; \
-					CHN.loopend = CHN.loopendcopy; \
-					CHN.smppos = CHN.loopstart; \
+					CHNflags &= ~ChannelMixer::MP_SAMPLE_ONESHOT; \
+					CHNflags |= 1; \
+					CHNloopend = CHNloopendcopy; \
+					CHNsmppos = CHNloopstart; \
 				} \
 				else \
 				{ \
-					CHN.flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
+					CHNflags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 				} \
 			} \
-			else if ((CHN.flags & 3) == 1) \
+			else if ((CHNflags & 3) == 1) \
 			{ \
-				CHN.smppos = CHN.loopstart; \
+				CHNsmppos = CHNloopstart; \
 			} \
 			else \
 			{ \
-				CHN.flags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
-				CHN.smppos = CHN.loopend-1; \
+				CHNflags|=ChannelMixer::MP_SAMPLE_BACKWARD; \
+				CHNsmppos = CHNloopend-1; \
 			} \
 		}\
 	} \
 	/* bi-dir loop */ \
 	else \
 	{ \
-		CHN.smppos--; \
-		if (CHN.loopstart>CHN.smppos) \
+		CHNsmppos--; \
+		if (CHNloopstart>CHNsmppos) \
 		{ \
-			if ((CHN.flags & 3) == 0) \
+			if ((CHNflags & 3) == 0) \
 			{ \
-				CHN.flags&=~ChannelMixer::MP_SAMPLE_PLAY; \
+				CHNflags&=~ChannelMixer::MP_SAMPLE_PLAY; \
 			} \
-			else if ((CHN.flags & 3) == 1) \
+			else if ((CHNflags & 3) == 1) \
 			{ \
-				CHN.smppos = CHN.loopend-1; \
+				CHNsmppos = CHNloopend-1; \
 			} \
 			else \
 			{ \
-				CHN.flags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
-				CHN.smppos = CHN.loopstart; \
+				CHNflags&=~ChannelMixer::MP_SAMPLE_BACKWARD; \
+				CHNsmppos = CHNloopstart; \
 			} \
 		} \
 	} 
@@ -182,7 +182,7 @@ public:
 					result += (sample[pos.smppos]) * sinc(time);											
 
 					time++;
-					advancePos(pos);
+					advancePos(pos.smppos, pos.flags, pos.loopstart, pos.loopend, pos.loopendcopy);
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
@@ -200,7 +200,7 @@ public:
 				{							
 					//double w = 0.42 - 0.5 * cos(2.0*M_PI*(j-1+WIDTH)/(WIDTH*2)) + 0.08*cos(4.0*M_PI*(j-1+WIDTH)/(WIDTH*2));
 
-					advancePos(pos);
+					advancePos(pos.smppos, pos.flags, pos.loopstart, pos.loopend, pos.loopendcopy);
 					time--;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
@@ -240,7 +240,7 @@ public:
 				
 					result += (sample[pos.smppos]) * one_over_factor * sinc(one_over_factor * time);											
 
-					advancePos(pos);
+					advancePos(pos.smppos, pos.flags, pos.loopstart, pos.loopend, pos.loopendcopy);
 					time++;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
@@ -259,7 +259,7 @@ public:
 				{							
 					//double w = 0.42 - 0.5 * cos(2.0*M_PI*(j-1+WIDTH)/(WIDTH*2)) + 0.08*cos(4.0*M_PI*(j-1+WIDTH)/(WIDTH*2));
 
-					advancePos(pos);
+					advancePos(pos.smppos, pos.flags, pos.loopstart, pos.loopend, pos.loopendcopy);
 					time--;
 					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
@@ -320,12 +320,16 @@ public:
 // fixed point sinc with almost hamming window
 
 // you like that, eh?
+#define SINCTAB ResamplerSincTableBase<windowSize>::sinc_table
+#define WSIZE ResamplerSincTableBase<windowSize>::WIDTH
+#define SPZCSHIFT ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT
+
 #define SINC(x) \
-	((abs(x)>>16)>=(ResamplerSincTableBase<windowSize>::WIDTH-1) ? 0 : \
-	(ResamplerSincTableBase<windowSize>::sinc_table[abs(x) >> (16-ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT)] + \
-	fpmul((ResamplerSincTableBase<windowSize>::sinc_table[(abs(x) >> (16-ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT)) + 1] - \
-	ResamplerSincTableBase<windowSize>::sinc_table[abs(x) >> (16-ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT)]), \
-	(abs(x) >> (16-ResamplerSincTableBase<windowSize>::SAMPLES_PER_ZERO_CROSSING_SHIFT)) & 65535)))
+	((abs(x)>>16)>=(WSIZE-1) ? 0 : \
+	(SINCTAB[abs(x) >> (16-SPZCSHIFT)] + \
+	fpmul((SINCTAB[(abs(x) >> (16-SPZCSHIFT)) + 1] - \
+	SINCTAB[abs(x) >> (16-SPZCSHIFT)]), \
+	(abs(x) >> (16-SPZCSHIFT)) & 65535)))
 	
 // share sinc lookup table
 template<mp_sint32 windowSize>
@@ -405,28 +409,30 @@ public:
 		const mp_sint32 negflags = smpadd < 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
 		const mp_sint32 posflags = smpadd > 0 ? (flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) : ((flags & ~ChannelMixer::MP_SAMPLE_BACKWARD) | ChannelMixer::MP_SAMPLE_BACKWARD);
 		
+		mp_sint32 tmpsmppos;
+		mp_sint32 tmpflags;
+		mp_sint32 tmploopstart;
+		mp_sint32 tmploopend;
+		
 		if (timeadd < 65536)
 		{
-			ChannelMixer::TMixerChannel pos(true);
-			pos.loopendcopy = loopendcopy;				
-			
 			while (count--)
 			{
 				mp_sint32 result = 0;
 				
-				pos.smppos = smppos; 
-				pos.loopstart = loopstart;
-				pos.loopend = loopend;
-				pos.flags = negflags; 
+				tmpsmppos = smppos; 
+				tmploopstart = loopstart;
+				tmploopend = loopend;
+				tmpflags = negflags; 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
 				// note that this is still not totally correct treatment
-				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				const bool outSideLoop = !(((flags & 3) && tmpsmppos >= loopstart && tmpsmppos < loopend));
 				if (outSideLoop)
 				{
-					pos.loopstart = 0;
-					pos.loopend = smplen;
-					pos.flags &= ~3;
+					tmploopstart = 0;
+					tmploopend = smplen;
+					tmpflags &= ~3;
 				}
 				
 				mp_sint32 time = fixedtimefrac;
@@ -436,18 +442,18 @@ public:
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{
-					result += (sample[pos.smppos] * SINC(time)) >> shift;
+					result += (sample[tmpsmppos] * SINC(time)) >> shift;
 					
 					time+=65536;
-					advancePos(pos);
-					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
+					advancePos(tmpsmppos, tmpflags, tmploopstart, tmploopend, loopendcopy);
+					if (!(tmpflags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 				
-				pos.smppos = smppos; 
-				pos.flags = posflags; 
+				tmpsmppos = smppos; 
+				tmpflags = posflags; 
 				if (outSideLoop)
-					pos.flags &= ~3;
+					tmpflags &= ~3;
 				
 				time = fixedtimefrac;
 				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
@@ -455,12 +461,12 @@ public:
 				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
-					advancePos(pos);
+					advancePos(tmpsmppos, tmpflags, tmploopstart, tmploopend, loopendcopy);
 					time-=65536;
-					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
+					if (!(tmpflags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 					
-					result += (sample[pos.smppos] * SINC(time)) >> shift;
+					result += (sample[tmpsmppos] * SINC(time)) >> shift;
 				}					
 				
 				
@@ -479,28 +485,23 @@ public:
 		}
 		else
 		{
-			ChannelMixer::TMixerChannel pos(true);
-			pos.loopendcopy = loopendcopy;				
-
 			while (count--)
 			{
 				mp_sint32 result = 0;
 				
-				ChannelMixer::TMixerChannel pos;
-				
-				pos.smppos = smppos; 
-				pos.loopstart = loopstart;
-				pos.loopend = loopend;
-				pos.flags = negflags; 
+				tmpsmppos = smppos; 
+				tmploopstart = loopstart;
+				tmploopend = loopend;
+				tmpflags = negflags; 
 				// check whether we are outside loop points
 				// if that's the case we're treating the sample as a normal finite signal
 				// note that this is still not totally correct treatment
-				const bool outSideLoop = !(((flags & 3) && pos.smppos >= loopstart && pos.smppos < loopend));
+				const bool outSideLoop = !(((flags & 3) && tmpsmppos >= loopstart && tmpsmppos < loopend));
 				if (outSideLoop)
 				{
-					pos.loopstart = 0;
-					pos.loopend = smplen;
-					pos.flags &= ~3;
+					tmploopstart = 0;
+					tmploopend = smplen;
+					tmpflags &= ~3;
 				}
 				
 				mp_sint32 time = fpmul(fixedtimefrac, rsmpadd);
@@ -510,18 +511,18 @@ public:
 				mp_sint32 j;				
 				for (j = 0; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{
-					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;
+					result += (sample[tmpsmppos] * fpmul(SINC(time), rsmpadd)) >> shift;
 					
-					advancePos(pos);
+					advancePos(tmpsmppos, tmpflags, tmploopstart, tmploopend, loopendcopy);
 					time+=rsmpadd;
-					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
+					if (!(tmpflags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 				}
 				
-				pos.smppos = smppos; 
-				pos.flags = posflags;
+				tmpsmppos = smppos; 
+				tmpflags = posflags;
 				if (outSideLoop)
-					pos.flags &= ~3;
+					tmpflags &= ~3;
 				
 				time = fpmul(fixedtimefrac, rsmpadd);
 				if (!time && (flags & ChannelMixer::MP_SAMPLE_BACKWARD)) 
@@ -529,12 +530,12 @@ public:
 				
 				for (j = 1; j<ResamplerSincTableBase<windowSize>::WIDTH; j++)
 				{							
-					advancePos(pos);
+					advancePos(tmpsmppos, tmpflags, tmploopstart, tmploopend, loopendcopy);
 					time-=rsmpadd;
-					if (!(pos.flags & ChannelMixer::MP_SAMPLE_PLAY))
+					if (!(tmpflags & ChannelMixer::MP_SAMPLE_PLAY))
 						break;
 					
-					result += (sample[pos.smppos] * fpmul(SINC(time), rsmpadd)) >> shift;				
+					result += (sample[tmpsmppos] * fpmul(SINC(time), rsmpadd)) >> shift;				
 				}
 								
 				(*buffer++)+=(((result)*(voll>>15))>>15); 
@@ -585,5 +586,11 @@ public:
 			SincTableResamplerDummy<ramping, windowSize, mp_sbyte, 8>::addBlock(buffer, chn, count);
 	}
 };
+
+#undef SINC
+
+#undef SPZCSHIFT
+#undef WSIZE
+#undef SINCTAB
 
 #undef fpmul

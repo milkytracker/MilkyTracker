@@ -23,7 +23,9 @@
 #include "AudioDriverManager.h"
 #include "AudioDriverBase.h"
 #include "MilkyPlayCommon.h"
+#ifdef DRIVER_UNIX
 #include "config.h"
+#endif
 
 #define ALLOC_DRIVERLIST(NUMDRIVERS) \
 	enumerationIndex = -1; \
