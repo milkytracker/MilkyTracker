@@ -74,26 +74,29 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 	// Some soundcard drivers modify the wanted structure, so we copy it here
 	memcpy(&saved, &wanted, sizeof(wanted));
 
-	if(SDL_OpenAudio(&wanted, &obtained) < 0) {
+	if(SDL_OpenAudio(&wanted, &obtained) < 0)
+	{
 		memcpy(&wanted, &saved, sizeof(wanted));
-		fprintf(stderr, "Failed to open audio device! (buffer = %d bytes)..\n", saved.samples*4);
-		fprintf(stderr, "Try setting \"Force 2^n sizes\" in the config menu and restarting.\n");
+		fprintf(stderr, "SDL: Failed to open audio device! (buffer = %d bytes)..\n", saved.samples*4);
+		fprintf(stderr, "SDL: Try setting \"Force 2^n sizes\" in the config menu and restarting.\n");
 		return -1;
 	}
 
-	printf("Using audio driver: %s\n", SDL_AudioDriverName(name, 32));
+	printf("SDL: Using audio driver: %s\n", SDL_AudioDriverName(name, 32));
 
-	if(wanted.format != obtained.format) {
-		fprintf(stderr, "Audio driver doesn't support 16-bit signed samples!\n");
+	if(wanted.format != obtained.format)
+	{
+		fprintf(stderr, "SDL: Audio driver doesn't support 16-bit signed samples!\n");
 		return -1;
 	}
-	if(wanted.freq != obtained.freq || wanted.channels != obtained.channels) {
-		fprintf(stderr, "Failed to obtain requested audio format.  Suggested format:\n");
-		fprintf(stderr, "Frequency: %d\nChannels: %d\n");
+	if(wanted.freq != obtained.freq || wanted.channels != obtained.channels)
+	{
+		fprintf(stderr, "SDL: Failed to obtain requested audio format.  Suggested format:\n");
+		fprintf(stderr, "SDL: Frequency: %d\nChannels: %d\n");
 		return -1;
 	}
 
-	printf("Audio buffer: Wanted %d bytes, got %d\n", finalWantedSize / wanted.channels * 4, obtained.samples * 4);
+	printf("SDL: Buffer size = %i samples (requested %i)\n", obtained.samples, finalWantedSize / wanted.channels);
 
 	// If we got what we requested, return 0,
 	// otherwise return the actual number of samples * number of channels

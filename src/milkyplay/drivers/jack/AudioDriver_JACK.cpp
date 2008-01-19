@@ -139,7 +139,7 @@ mp_sint32 AudioDriver_JACK::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mi
 	//delete[] rawStream; // pailes: make sure this isn't allocated yet
 	assert(!rawStream);		// If it is allocated, something went wrong and we need to know about it
 	rawStream = new mp_sword[bufferSize];
-	printf("JACK: Latency: %i frames\n", jackFrames);
+	printf("JACK: Latency = %i frames\n", jackFrames);
 	return bufferSize;
 }
 

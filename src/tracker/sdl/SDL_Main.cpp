@@ -41,7 +41,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <config.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -62,6 +61,7 @@
 #include "PPMutex.h"
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
+#include "config.h"
 #ifdef HAVE_LIBASOUND
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif

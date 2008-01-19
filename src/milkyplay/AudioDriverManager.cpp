@@ -23,6 +23,7 @@
 #include "AudioDriverManager.h"
 #include "AudioDriverBase.h"
 #include "MilkyPlayCommon.h"
+#include "config.h"
 
 #define ALLOC_DRIVERLIST(NUMDRIVERS) \
 	enumerationIndex = -1; \
@@ -121,16 +122,22 @@ AudioDriverManager::AudioDriverManager() :
 //////////////////////////////////////////////////////////////////
 #include "AudioDriver_SDL.h"
 // #include "AudioDriver_RTAUDIO.h"
+#include "drivers/alsa/AudioDriver_ALSA.h"
 #include "AudioDriver_JACK.h"
 
 AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
 {
+#ifdef HAVE_LIBASOUND
+	ALLOC_DRIVERLIST(3);
+	driverList[0] = new AudioDriver_SDL();
+	driverList[1] = new AudioDriver_ALSA();
+	driverList[2] = new AudioDriver_JACK();
+#else
 	ALLOC_DRIVERLIST(2);
 	driverList[0] = new AudioDriver_SDL();
-	/*driverList[1] = new AudioDriver_RTAUDIO(RtAudio::LINUX_ALSA);
-	driverList[2] = new AudioDriver_RTAUDIO(RtAudio::UNIX_JACK);*/
 	driverList[1] = new AudioDriver_JACK();
+#endif	
 }
 
 #elif defined(DRIVER_SDL)
@@ -210,7 +217,3 @@ mp_sint32 AudioDriverManager::getPreferredAudioDriverBufferSize() const
 {
 	return driverList[defaultDriverIndex]->getPreferredBufferSize();
 }
-
-
-
-
