@@ -418,9 +418,15 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 						// Check if we went out of ping-pong loop bounds
 						else if (chn->smppos < chn->loopstart)
 						{ 
-							chn->flags&=~MP_SAMPLE_BACKWARD; 							
 							// Invert
-							BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
+							chn->flags&=~MP_SAMPLE_BACKWARD; 
+							// chn->smpposfrac == 0 means we exactly hit the 
+							// sample loop boundary, in this case we don't adjust
+							// backwards
+							if (chn->smpposfrac > 0)
+							{
+								BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
+							}
 						} 
 						tempBuffer32+=length*MP_NUMCHANNELS; 
 						todo-=length; 
@@ -488,9 +494,15 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 						} 
 						else if (chn->smppos >= chn->loopend)
 						{ 						
-							chn->flags|=MP_SAMPLE_BACKWARD;
 							// Invert
-							BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
+							chn->flags|=MP_SAMPLE_BACKWARD;
+							// chn->smpposfrac == 0 means we exactly hit the 
+							// sample loop boundary, in this case we don't adjust
+							// backwards
+							if (chn->smpposfrac > 0)
+							{
+								BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
+							}
 						} 
 						tempBuffer32+=length*MP_NUMCHANNELS; 
 						todo-=length; 
