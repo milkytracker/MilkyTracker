@@ -420,13 +420,7 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 						{ 
 							// Invert
 							chn->flags&=~MP_SAMPLE_BACKWARD; 
-							// chn->smpposfrac == 0 means we exactly hit the 
-							// sample loop boundary, in this case we don't adjust
-							// backwards
-							if (chn->smpposfrac > 0)
-							{
-								BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
-							}
+							BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
 						} 
 						tempBuffer32+=length*MP_NUMCHANNELS; 
 						todo-=length; 
@@ -496,13 +490,7 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 						{ 						
 							// Invert
 							chn->flags|=MP_SAMPLE_BACKWARD;
-							// chn->smpposfrac == 0 means we exactly hit the 
-							// sample loop boundary, in this case we don't adjust
-							// backwards
-							if (chn->smpposfrac > 0)
-							{
-								BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
-							}
+							BIDIR_REPOSITION(16, chn->smppos, chn->smpposfrac, chn->loopstart, chn->loopend);
 						} 
 						tempBuffer32+=length*MP_NUMCHANNELS; 
 						todo-=length; 
