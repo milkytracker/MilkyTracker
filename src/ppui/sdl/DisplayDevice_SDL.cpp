@@ -1,7 +1,7 @@
 /*
  *  ppui/sdl/DisplayDevice_SDL.cpp
  *
- *  Copyright 2008 Peter Barth
+ *  Copyright 2008 Peter Barth, Christopher O'Neill
  *
  *  This file is part of Milkytracker.
  *

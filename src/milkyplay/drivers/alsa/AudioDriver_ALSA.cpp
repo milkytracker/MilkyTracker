@@ -73,7 +73,10 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uin
 {
 	AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
 	snd_pcm_uframes_t buffer_size;
+	snd_pcm_sw_params_t *swparams;
 	int err;
+
+	snd_pcm_sw_params_alloca(&swparams);
 
 	if ((err = snd_pcm_open(&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		fprintf(stderr, "ALSA: Failed to open device 'default' (%s)\n", snd_strerror(err));
@@ -93,7 +96,23 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uin
 	}
 	snd_pcm_get_params(pcm, &buffer_size, &period_size);
 	stream = new char[period_size * 4];
-	printf("ALSA: Buffer size = %i samples (requested %i)\n", period_size, bufferSizeInWords / 2);
+	printf("ALSA: Buffer size = %i samples (requested %i) (buffer size = %i)\n", period_size, bufferSizeInWords / 2, buffer_size);
+
+	/* get the current swparams */
+	err = snd_pcm_sw_params_current(pcm, swparams);
+	if (err < 0) {
+		fprintf(stderr, "ALSA: Unable to determine current swparams for playback: %s\n", snd_strerror(err));
+		return -1;
+	}
+	/* start the transfer when the buffer is almost full: */
+	/* (buffer_size / avail_min) * avail_min */
+	err = snd_pcm_sw_params_set_start_threshold(pcm, swparams, (buffer_size / period_size) * period_size);
+	if (err < 0) {
+		fprintf(stderr, "ALSA: Unable to set start threshold mode for playback: %s\n", snd_strerror(err));
+		return -1;
+	}
+
+
 	return period_size * 2;		// 2 = number of channels
 }
 

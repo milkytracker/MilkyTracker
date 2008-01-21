@@ -5,5 +5,8 @@ AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}
 INCLUDES = -I$(top_srcdir)/src/${RTMIDI_DIR} -I$(top_srcdir)/src/compression \
 	-I$(top_srcdir)/src/fx -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 	-I$(top_srcdir)/src/tracker -I../midi/posix -I../midi/rtmidi -I../ppui/osinterface \
-	-I../ppui/osinterface/posix -I../ppui/osinterface/sdl -I../ppui/sdl -Isdl
-milkytracker_LDADD = ../milkyplay/libmilkyplay.a ${RTMIDI} ../ppui/libppui.a ../fx/libfx.a ../compression/libcompression.a -ldl
+	-I../ppui/osinterface/sdl -I../ppui/osinterface/posix -I../ppui/sdl -Isdl
+milkytracker_LDADD = ../milkyplay/libmilkyplay.a ${RTMIDI} ../ppui/libppui.a ../fx/libfx.a ../compression/libcompression.a
+if JACK
+	milkytracker_LDADD += -ldl
+endif

@@ -28,6 +28,9 @@
  *
  *
  */
+
+#include "config.h"
+#ifdef HAVE_LIBJACK
 #include <dlfcn.h>
 #include<stdio.h>
 #include<string.h>
@@ -178,3 +181,4 @@ mp_sint32 AudioDriver_JACK::resume()
 	paused = false;
 	return 0;
 }
+#endif

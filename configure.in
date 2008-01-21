@@ -22,6 +22,8 @@ AM_PATH_ALSA(,
 	AC_SUBST(RTMIDI)
 	AC_SUBST(RTMIDI_DIR),
 	AC_MSG_WARN([ALSA not found - midi support disabled]))
+AC_CHECK_LIB([jack], jack_client_new,, AC_MSG_WARN(JACK support disabled))
+AM_CONDITIONAL([JACK], [test x$HAVE_LIBJACK = xtrue])
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 LIBS="$LIBS $SDL_LIBS"

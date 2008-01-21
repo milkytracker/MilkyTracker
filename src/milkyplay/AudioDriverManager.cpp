@@ -23,9 +23,7 @@
 #include "AudioDriverManager.h"
 #include "AudioDriverBase.h"
 #include "MilkyPlayCommon.h"
-#ifdef DRIVER_UNIX
 #include "config.h"
-#endif
 
 #define ALLOC_DRIVERLIST(NUMDRIVERS) \
 	enumerationIndex = -1; \
@@ -124,22 +122,32 @@ AudioDriverManager::AudioDriverManager() :
 //////////////////////////////////////////////////////////////////
 #include "AudioDriver_SDL.h"
 // #include "AudioDriver_RTAUDIO.h"
+#ifdef HAVE_LIBASOUND
 #include "drivers/alsa/AudioDriver_ALSA.h"
+#endif
+#ifdef HAVE_LIBJACK
 #include "AudioDriver_JACK.h"
+#endif
 
 AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
 {
+	int count = 1;
 #ifdef HAVE_LIBASOUND
-	ALLOC_DRIVERLIST(3);
-	driverList[0] = new AudioDriver_SDL();
-	driverList[1] = new AudioDriver_ALSA();
-	driverList[2] = new AudioDriver_JACK();
-#else
-	ALLOC_DRIVERLIST(2);
-	driverList[0] = new AudioDriver_SDL();
-	driverList[1] = new AudioDriver_JACK();
-#endif	
+	count++;
+#endif
+#ifdef HAVE_LIBJACK
+	count++;
+#endif
+	ALLOC_DRIVERLIST(count);
+	count = 0;
+	driverList[count++] = new AudioDriver_SDL();
+#ifdef HAVE_LIBASOUND
+	driverList[count++] = new AudioDriver_ALSA();
+#endif
+#if HAVE_LIBJACK
+	driverList[count++] = new AudioDriver_JACK();
+#endif
 }
 
 #elif defined(DRIVER_SDL)

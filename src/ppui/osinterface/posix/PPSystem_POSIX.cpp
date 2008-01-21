@@ -35,6 +35,11 @@
 #include <unistd.h>
 #include <limits.h>
 
+#ifdef __PSP__
+#include <pspkernel.h>
+#include <sys/syslimits.h>
+#endif
+
 SYSCHAR System::buffer[PATH_MAX+1];
 
 const SYSCHAR* System::getTempFileName()
@@ -58,8 +63,12 @@ const SYSCHAR* System::getTempFileName()
 
 const SYSCHAR* System::getConfigFileName()
 {
+#ifdef __PSP__
+	strcat(buffer, "milkytracker_config");
+#else
 	strcpy(buffer, getenv("HOME"));	
 	strcat(buffer, "/.milkytracker_config");
+#endif
 	
 	return buffer;
 }
@@ -68,5 +77,9 @@ void System::msleep(int msecs)
 {
 	if (msecs < 0)
 		return;
+#ifdef __PSP__
+	sceKernelDelayThreadCB(msecs*1000);
+#else
 	usleep(msecs*1000);
+#endif
 }

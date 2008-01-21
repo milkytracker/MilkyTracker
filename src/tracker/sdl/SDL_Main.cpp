@@ -870,7 +870,11 @@ void SendFile(char *file)
 	RaiseEventSerialized(&event);		
 }
 
+#if defined(__PSP__)
+extern "C" int SDL_main(int argc, char *argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
 	Uint32 videoflags;	
 	SDL_Event event;

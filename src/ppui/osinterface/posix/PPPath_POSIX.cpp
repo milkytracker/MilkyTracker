@@ -32,6 +32,11 @@
 #include <sys/stat.h>
 #include <limits.h>
 
+#ifdef __PSP__
+// Needed for PATH_MAX
+#include <sys/syslimits.h>
+#endif
+
 #define PPMAX_DIR_PATH PATH_MAX
 
 void PPPathEntry_POSIX::create(const PPSystemString& path, const PPSystemString& name)
