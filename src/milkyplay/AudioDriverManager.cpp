@@ -23,7 +23,7 @@
 #include "AudioDriverManager.h"
 #include "AudioDriverBase.h"
 #include "MilkyPlayCommon.h"
-#ifdef HAVE_CONFIG
+#ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 

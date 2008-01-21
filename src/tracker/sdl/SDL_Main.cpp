@@ -62,7 +62,7 @@
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
 
-#ifdef HAVE_CONFIG
+#ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
