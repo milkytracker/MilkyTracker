@@ -61,7 +61,11 @@
 #include "PPMutex.h"
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
+
+#ifdef HAVE_CONFIG
 #include "config.h"
+#endif
+
 #ifdef HAVE_LIBASOUND
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif

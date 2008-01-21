@@ -28,7 +28,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG
 #include "config.h"
+#endif
+
 #ifdef HAVE_LIBASOUND
 #include "AudioDriver_ALSA.h"
 
@@ -174,4 +177,5 @@ mp_sint32 AudioDriver_ALSA::resume()
 	snd_pcm_pause(pcm, false);
 	return 0;
 }
+
 #endif
