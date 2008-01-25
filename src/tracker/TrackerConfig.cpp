@@ -23,7 +23,7 @@
 #include "TrackerConfig.h"
 
 #define MILKYTRACKER_HIVER ((0 << 8) + (0))
-#define MILKYTRACKER_LOVER ((0x90 << 8) + (0x71))
+#define MILKYTRACKER_LOVER ((0x90 << 8) + (0x80))
 
 const PPString TrackerConfig::stringButtonPlus("+");
 const PPString TrackerConfig::stringButtonMinus("-");

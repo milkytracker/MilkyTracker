@@ -15,7 +15,7 @@
                                      Titan
                                    Presents:
 
-                             MilkyTracker v0.90.60
+                             MilkyTracker v0.90.80
 
                    - The multiplatform Fasttracker II clone -
 
@@ -26,7 +26,7 @@
            ---------------------------------------------------------
 
                            Code.........: pailes
-                           SDL port.....: Deltafire
+                           Linux port...: Deltafire
                            GFX..........: kenet
                                           raina
                            Demo songs...: svenzzon
