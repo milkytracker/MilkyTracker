@@ -40,6 +40,10 @@
 #include <sys/syslimits.h>
 #endif
 
+#ifdef __AMIGA__
+#include <sys/syslimits.h>
+#endif
+
 SYSCHAR System::buffer[PATH_MAX+1];
 
 const SYSCHAR* System::getTempFileName()

@@ -28,7 +28,7 @@
  *
  */
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "SDL_ModalLoop.h"
 #include "Event.h"
 #include "Screen.h"

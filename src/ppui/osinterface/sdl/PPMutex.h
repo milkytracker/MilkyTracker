@@ -31,7 +31,7 @@
 #ifndef PPMUTEX__H
 #define PPMUTEX__H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 class PPMutex
 {

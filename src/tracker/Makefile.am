@@ -4,9 +4,10 @@ noinst_HEADERS = AnimatedFXControl.h ColorPaletteContainer.h Decompressor.h EQCo
 AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}
 INCLUDES = -I$(top_srcdir)/src/${RTMIDI_DIR} -I$(top_srcdir)/src/compression \
 	-I$(top_srcdir)/src/fx -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
-	-I$(top_srcdir)/src/tracker -I../midi/posix -I../midi/rtmidi -I../ppui/osinterface \
-	-I../ppui/osinterface/sdl -I../ppui/osinterface/posix -I../ppui/sdl -Isdl
-milkytracker_LDADD = ../milkyplay/libmilkyplay.a ${RTMIDI} ../ppui/libppui.a ../fx/libfx.a ../compression/libcompression.a
-if JACK
-	milkytracker_LDADD += -ldl
-endif
+	-I$(top_srcdir)/src/tracker -I$(top_srcdir)/src/midi/posix -I../midi/rtmidi \
+	-I$(top_srcdir)/src/ppui/osinterface -I$(top_srcdir)/src/ppui/osinterface/sdl \
+	-I$(top_srcdir)/src/ppui/osinterface/posix -I$(top_srcdir)/src/ppui/sdl -Isdl
+milkytracker_LDADD = $(top_builddir)/src/milkyplay/libmilkyplay.a $(top_builddir)/src/ppui/libppui.a $(top_builddir)/src/fx/libfx.a $(top_builddir)/src/compression/libcompression.a $(RTMIDI) $(SDL_LIBS)
+# if JACK
+# 	milkytracker_LDADD += -ldl
+# endif

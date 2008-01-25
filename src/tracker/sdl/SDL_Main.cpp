@@ -36,6 +36,9 @@
  * 
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,9 +51,11 @@
 
 #define SPLASH_WAIT_TIME	0
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #ifndef __QTOPIA__
-#include <SDL/SDL_syswm.h>
+#ifdef HAVE_X11_X_H
+#include <SDL_syswm.h>
+#endif
 #endif
 #include "SDL_KeyTranslation.h"
 // ---------------------------- Tracker includes ----------------------------
@@ -61,10 +66,6 @@
 #include "PPMutex.h"
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #ifdef HAVE_LIBASOUND
 #include "../midi/posix/MidiReceiver_pthread.h"
@@ -749,10 +750,12 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	sigaction(SIGSEGV, &act, &oldAct);
 	
 #ifndef __QTOPIA__
+#ifdef HAVE_X11_X_H
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWMInfo(&info) && info.subsystem == SDL_SYSWM_X11)
 		isX11 = true;	// Used in SDL_KeyTranslation.cpp
+#endif
 #endif
 
 #endif
