@@ -728,7 +728,7 @@ void Tracker::eventKeyDownBinding_ToggleRecordKeyOff()
 void Tracker::eventKeyDownBinding_ToggleScopes()
 {
 #ifndef __LOWRES__
-	showScopes(scopesControl->isHidden(), settingsDatabase->restore("SCOPES")->getIntValue() > 1);
+	showScopes(scopesControl->isHidden(), settingsDatabase->restore("SCOPES")->getIntValue() >> 1);
 #endif
 }
 
