@@ -134,7 +134,7 @@ void TXMSample::postProcessSamples(bool heavy)
 				mp_sint32 loopend = loopstart+looplen;
 
 				// save portions after loopend, gets overwritten now
-				memcpy(originalSample, sample+loopend, saveLen);
+				memcpy(originalSample, bu+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;			
 				loopBufferProps->lastloopend = loopend;
@@ -142,7 +142,7 @@ void TXMSample::postProcessSamples(bool heavy)
 				bu[loopend] = bu[loopend-1];
 				bu[loopend+1] = bu[loopend-2];
 				bu[loopend+2] = bu[loopend-3];
-				bu[loopend+3] = bu[loopend-4];				
+				bu[loopend+3] = bu[loopend-4];			
 			}			
 		}			
 	}
