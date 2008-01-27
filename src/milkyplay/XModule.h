@@ -142,6 +142,8 @@ private:
 		PaddingSpace = LeadingPadding+TrailingPadding
 	};
 
+	void restoreLoopArea();
+
 public:
 	mp_uint32	samplen;
 	mp_uint32	loopstart;
@@ -223,125 +225,18 @@ public:
 		TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr(mem);
 		return (loopBufferProps->state[1] & 16) ? (loopBufferProps->samplesize >> 1) : loopBufferProps->samplesize;
 	}
-	
-	void postProcessSamples(bool heavy);
+
+	void smoothLooping();
+	void restoreOriginalState();
+	void postProcessSamples();
 
 	// get sample value
 	// values range from [-32768,32767] in case of a 16 bit sample
 	// or from [-128,127] in case of an 8 bit sample
-	mp_sint32 getSampleValue(mp_uint32 index)
-	{
-		if (type & 16)
-		{
-			if ((type & 3) && index >= loopstart+looplen && 
-				index < loopstart+looplen+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
-					return *(((mp_sword*)sample)+index);
-				
-				mp_sword* buff = (mp_sword*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
-				return *(buff + (index - (loopstart+looplen)));
-			}
-			else
-				return *(((mp_sword*)sample)+index);
-		}
-		else
-		{
-			if ((type & 3) && index >= loopstart+looplen && 
-				index < loopstart+looplen+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
-					return *(sample+index);
-
-				mp_sbyte* buff = (mp_sbyte*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
-				return *(buff + (index - (loopstart+looplen)));
-			}
-			else
-				return *(sample+index);
-		}
-	}
-
-	mp_sint32 getSampleValue(mp_ubyte* sample, mp_uint32 index)
-	{
-		if (type & 16)
-			return *(((mp_sword*)sample)+index);
-		else
-			return *(sample+index);
-	}
-
-	void setSampleValue(mp_uint32 index, mp_sint32 value)
-	{
-		if (type & 16)
-		{
-			if ((type & 3) && index >= loopstart+looplen && 
-				index < loopstart+looplen+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
-				{
-					*(((mp_sword*)sample)+index) = (mp_sword)value;
-					return;
-				}
-
-				mp_sword* buff = (mp_sword*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
-				*(buff + (index - (loopstart+looplen))) = (mp_sword)value;
-				
-				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
-			}
-			else if ((type & 3) && index >= loopstart && 
-					 index < loopstart+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed)
-					loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
-				
-				*(((mp_sword*)sample)+index) = (mp_sword)value;
-			}
-			else
-				*(((mp_sword*)sample)+index) = (mp_sword)value;
-		}
-		else
-		{
-			if ((type & 3) && index >= loopstart+looplen && 
-				index < loopstart+looplen+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
-				{
-					*(sample+index) = (mp_sbyte)value;
-					return;
-				}
-
-				mp_sbyte* buff = (mp_sbyte*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
-				*(buff + (index - (loopstart+looplen))) = (mp_sbyte)value;
-
-				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
-			}
-			else if ((type & 3) && index >= loopstart && 
-					 index < loopstart+LoopAreaBackupSize)
-			{
-				TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-				if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed)
-					loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
-				
-				*(sample+index) = (mp_sbyte)value;
-			}
-			else
-				*(sample+index) = (mp_sbyte)value;
-		}
-	}
-	
-	void setSampleValue(mp_ubyte* sample, mp_uint32 index, mp_sint32 value)
-	{
-		if (type & 16)
-		{
-			*(((mp_sword*)sample)+index) = (mp_sword)value;
-		}
-		else
-			*(sample+index) = (mp_sbyte)value;
-	}
+	mp_sint32 getSampleValue(mp_uint32 index);
+	mp_sint32 getSampleValue(mp_ubyte* sample, mp_uint32 index);
+	void setSampleValue(mp_uint32 index, mp_sint32 value);
+	void setSampleValue(mp_ubyte* sample, mp_uint32 index, mp_sint32 value);
 	
 #ifdef MILKYTRACKER
 	bool equals(const TXMSample& sample) const
@@ -550,7 +445,8 @@ public:
 	bool			cleanUp();
 
 	///////////////////////////////////////////////////////
-	// scan through samples and try to remove clicks	 //
+	// scan through samples and post process to avoid    //
+	// interpolation clicks                              //
 	///////////////////////////////////////////////////////
 	void			postProcessSamples(bool heavy = false);
 

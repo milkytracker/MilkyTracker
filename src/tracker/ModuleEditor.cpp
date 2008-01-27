@@ -1141,7 +1141,7 @@ mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 
 void ModuleEditor::finishSamples()
 {
-	module->postProcessSamples(false);
+	module->postProcessSamples();
 }
 
 mp_sint32 ModuleEditor::allocateInstrument()

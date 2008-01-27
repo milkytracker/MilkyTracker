@@ -794,6 +794,9 @@ pp_int32 SampleEditor::getPanning() const
 
 void SampleEditor::startDrawing()
 {
+	if (sample)
+		sample->restoreOriginalState();
+
 	drawing = true;
 	lastSamplePos = -1;
 	prepareUndo();
@@ -829,8 +832,7 @@ void SampleEditor::drawSample(pp_int32 sampleIndex, float s)
 	{
 		setFloatSampleInWaveform(si, froms);
 		froms+=step;
-	}
-	
+	}	
 }
 
 void SampleEditor::endDrawing()

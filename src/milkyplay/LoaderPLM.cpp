@@ -27,7 +27,8 @@
  *  --------------------------------
  *			Version History:
  *  --------------------------------
- *  02/24/05: Added a flag in the sample field (bit 2 = 4) to take the sample volume as channel mastervolume (see PlayerSTD.h)
+ *  02/24/05: Added a flag in the sample field (bit 2 = 4) to take the sample 
+ *            volume as channel mastervolume (see PlayerSTD.h)
  *  11/22/04: Position jump (tested) & pattern break (untested) support
  *  11/21/04: Overlapping patterns
  *  11/19/04: First work
@@ -299,9 +300,14 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 				module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen>>1, XModule::ST_UNSIGNED);
 				smp[i].samplen>>=1;
 			}
-			else
+			else 
 			{
-				module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, XModule::ST_UNSIGNED);
+				module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, XModule::ST_UNSIGNED);				
+				// due to some bug in DT2 it seems all samples are starting with
+				// signed byte -47
+				// we're trying to apply some correction to that
+				if (smp[i].samplen)
+					smp[i].sample[0] = smp[i].sample[1];
 			}
 
 		}
@@ -604,7 +610,6 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 						
 			}
 								
-
 			rowCnt++;
 		}
 		

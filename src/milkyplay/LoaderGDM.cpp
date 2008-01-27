@@ -399,7 +399,7 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 	
 	module->setDefaultPanning();
 	
-	module->postProcessSamples(true);
+	module->postProcessSamples();
 	
 	return 0;	
 
