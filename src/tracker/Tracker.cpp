@@ -647,6 +647,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 	if (event->getID() == eFileDragDropped)
 	{
+		if (screen->getModalControl())
+			return 0;
 		PPSystemString* str = *(reinterpret_cast<PPSystemString**>(event->getDataPtr()));
 		loadGenericFileType(*str);
 		event->cancel();

@@ -144,7 +144,20 @@ bool SampleEditorResampler::resample(float oldRate, float newRate)
 	
 	resampler->setNumChannels(1);
 	resampler->setFrequency((mp_sint32)newRate);
-	resampler->addChannel(&channel, dst, finalSize+1, 1);
+	
+	// the resampler is used to process small blocks
+	// so we feed in small blocks as well
+	mp_sint32 numBlocks = (finalSize+1) >> 6;
+	mp_sint32 lastBlock = (finalSize+1) & 63;
+	
+	mp_sint32* dsttmp = dst;
+	for (mp_sint32 k = 0; k < numBlocks; k++)
+	{
+		resampler->addChannel(&channel, dsttmp, 64, 1);
+		dsttmp+=64*2;
+	}
+	if (lastBlock)
+		resampler->addChannel(&channel, dsttmp, lastBlock, 1);
 					
 	delete resampler;
 	TXMSample::freePaddedMem(buffer);
