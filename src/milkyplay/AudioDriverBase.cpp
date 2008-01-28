@@ -45,6 +45,10 @@ void AudioDriverBase::msleep(mp_uint32 msecs)
 	::Sleep(msecs);
 #elif defined(__PSP__)
 	sceKernelDelayThreadCB(msecs*1000);
+#elif defined(__AROS__)
+	// usleep is not implemented on AROS
+	if(msecs < 1000) msecs = 1000;
+	sleep(msecs/1000);
 #else
 	usleep(msecs*1000);
 #endif

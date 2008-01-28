@@ -735,7 +735,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 
 #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
     (!defined(DISABLE_X11) && !defined(__CYGWIN32__) && !defined(ENABLE_NANOX) && \
-     !defined(__QNXNTO__))
+     !defined(__QNXNTO__) && !defined(__AROS__))
 
 	// Initialise crash handler
 	struct sigaction act;

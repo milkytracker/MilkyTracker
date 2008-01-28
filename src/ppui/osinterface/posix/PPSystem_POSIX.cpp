@@ -83,6 +83,10 @@ void System::msleep(int msecs)
 		return;
 #ifdef __PSP__
 	sceKernelDelayThreadCB(msecs*1000);
+#elif defined(__AROS__)
+	// usleep is not implemented on AROS
+	if(msecs < 1000) msecs = 1000;
+	sleep(msecs/1000);
 #else
 	usleep(msecs*1000);
 #endif
