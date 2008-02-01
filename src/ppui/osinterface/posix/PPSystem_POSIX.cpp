@@ -59,21 +59,29 @@ const SYSCHAR* System::getTempFileName()
 	// create something that "might" work out
 	if (buffer == NULL)
 	{
-		strcpy(buffer, getenv("HOME"));	
-		strcat(buffer, "/.milkytracker_temp");
+		char *home = getenv("HOME");
+		if(home)
+		{
+			strcpy(buffer, home);
+			strcat(buffer, "/.milkytracker_temp");
+		}
+		else
+			strcpy(buffer, "milkytracker_temp");
 	}
 	return buffer;
 }
 
 const SYSCHAR* System::getConfigFileName()
 {
-#ifdef __PSP__
-	strcat(buffer, "milkytracker_config");
-#else
-	strcpy(buffer, getenv("HOME"));	
-	strcat(buffer, "/.milkytracker_config");
-#endif
-	
+	char *home = getenv("HOME");
+	if(home)
+	{
+		strcpy(buffer, home);
+		strcat(buffer, "/.milkytracker_config");
+	}
+	else
+		strcpy(buffer, "milkytracker_config");
+
 	return buffer;
 }
 
@@ -85,8 +93,7 @@ void System::msleep(int msecs)
 	sceKernelDelayThreadCB(msecs*1000);
 #elif defined(__AROS__)
 	// usleep is not implemented on AROS
-	if(msecs < 1000) msecs = 1000;
-	sleep(msecs/1000);
+	sleep(msecs < 1000 ? 1 : msecs/1000);
 #else
 	usleep(msecs*1000);
 #endif

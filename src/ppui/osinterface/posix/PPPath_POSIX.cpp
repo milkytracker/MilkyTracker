@@ -38,8 +38,7 @@
 #endif
 
 #ifdef __AMIGA__
-// guess
-#define PATH_MAX 128
+#define PATH_MAX 1024
 #endif
 
 #define PPMAX_DIR_PATH PATH_MAX
