@@ -442,7 +442,34 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 		}
 	}
 	
-	// loop markers above range text
+	if (sample->type & 3)
+	{
+		float myxScale = xScale/*(xScale*sample->samplen) / (float)(sample->samplen-1)*/;
+
+		pp_int32 loopstart = getRepeatStart();
+		pp_int32 looplen = getRepeatLength();
+
+		pp_int32 x = (pp_int32)(loopstart/myxScale)-startPos;
+		pp_int32 x2 = (pp_int32)((loopstart+looplen)/myxScale)-startPos/* - 1*/;
+
+		g->setColor(255, 128, 64);
+		g->drawVLine(yOffset - (visibleHeight>>1), yOffset + (visibleHeight>>1)-2, xOffset+x); 
+
+		if (x2 < x)
+			x2 = x;
+
+		// if the loop marker is exactly on the border of this client area
+		// it's better to make it visible
+		if (xOffset+x2 >= location.x + size.width-2 && xOffset+x2 <= location.x + size.width)
+			x2 = visibleWidth-1;
+
+		g->drawVLine(yOffset - (visibleHeight>>1), yOffset + (visibleHeight>>1)-2, xOffset+x2); 
+
+		drawLoopMarker(g, xOffset+x - 6, yOffset - (visibleHeight>>1), true, 6);
+		drawLoopMarker(g, xOffset+x2 - 6, yOffset + (visibleHeight>>1) - 9, false, 6);		
+	}
+
+	// loop markers beneath range text
 	char buffer[32];
 	
 	if (offsetFormat == OffsetFormatHex)
@@ -481,33 +508,6 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 	g->drawString(buffer, location.x + 3 + visibleWidth - font->getStrWidth(buffer), location.y + 3);
 	g->setColor(255, 0, 255);
 	g->drawString(buffer, location.x + 2 + visibleWidth - font->getStrWidth(buffer), location.y + 2);
-
-	if (sample->type & 3)
-	{
-		float myxScale = xScale/*(xScale*sample->samplen) / (float)(sample->samplen-1)*/;
-
-		pp_int32 loopstart = getRepeatStart();
-		pp_int32 looplen = getRepeatLength();
-
-		pp_int32 x = (pp_int32)(loopstart/myxScale)-startPos;
-		pp_int32 x2 = (pp_int32)((loopstart+looplen)/myxScale)-startPos/* - 1*/;
-
-		g->setColor(255, 128, 64);
-		g->drawVLine(yOffset - (visibleHeight>>1), yOffset + (visibleHeight>>1)-2, xOffset+x); 
-
-		if (x2 < x)
-			x2 = x;
-
-		// if the loop marker is exactly on the border of this client area
-		// it's better to make it visible
-		if (xOffset+x2 >= location.x + size.width-2 && xOffset+x2 <= location.x + size.width)
-			x2 = visibleWidth-1;
-
-		g->drawVLine(yOffset - (visibleHeight>>1), yOffset + (visibleHeight>>1)-2, xOffset+x2); 
-
-		drawLoopMarker(g, xOffset+x - 6, yOffset - (visibleHeight>>1), true, 6);
-		drawLoopMarker(g, xOffset+x2 - 6, yOffset + (visibleHeight>>1) - 9, false, 6);		
-	}
 	
 }
 

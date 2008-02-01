@@ -65,6 +65,8 @@ public:
 		const pp_uint8* muting;
 		const pp_uint8* panning;
 		
+		bool multiTrack;
+		
 		WAVWriterParameters() :
 			sampleRate(0),
 			resamplerType(0),
@@ -74,7 +76,8 @@ public:
 			fromOrder(0),
 			toOrder(0),
 			muting(NULL),
-			panning(NULL)
+			panning(NULL),
+			multiTrack(false)
 		{
 		}
 	};
@@ -84,7 +87,7 @@ public:
 								 
 	pp_int32 estimateWaveLengthInSamples(WAVWriterParameters& parameters);
 
-	pp_int32 exportToWAV(const SYSCHAR* fileName, WAVWriterParameters& parameters);
+	pp_int32 exportToWAV(const PPSystemString& fileName, WAVWriterParameters& parameters);
 	
 	pp_int32 exportToBuffer16Bit(WAVWriterParameters& parameters, pp_int16* buffer, 
 								 pp_uint32 bufferSize, bool mono = true);

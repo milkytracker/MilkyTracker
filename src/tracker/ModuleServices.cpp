@@ -99,7 +99,7 @@ pp_int32 ModuleServices::estimateWaveLengthInSamples(WAVWriterParameters& parame
 	return res;
 }
 
-pp_int32 ModuleServices::exportToWAV(const SYSCHAR* fileName, WAVWriterParameters& parameters)
+pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterParameters& parameters)
 {
 	PlayerGeneric* player = new PlayerGeneric(parameters.sampleRate);
 
@@ -108,13 +108,49 @@ pp_int32 ModuleServices::exportToWAV(const SYSCHAR* fileName, WAVWriterParameter
 	player->setResamplerType((ChannelMixer::ResamplerTypes)parameters.resamplerType);
 	player->setSampleShift(parameters.mixerShift);
 	player->setMasterVolume(parameters.mixerVolume);
-
-	pp_int32 res = player->exportToWAV(fileName, &module, 
-									   parameters.fromOrder, parameters.toOrder, 
-									   parameters.muting, 
-									   module.header.channum, 
-									   parameters.panning);
 	
+	pp_int32 res;
+	
+	if (parameters.multiTrack)
+	{
+		mp_ubyte* muting = new mp_ubyte[module.header.channum];
+		
+		PPSystemString baseName = fileName.stripExtension();
+		PPSystemString extension = fileName.getExtension();
+		
+		for (pp_uint32 i = 0; i < module.header.channum; i++)
+		{
+			PPSystemString fileName = baseName;
+			
+			char infix[80];
+			sprintf(infix, "_%02d", i+1);
+			
+			fileName.append(infix);
+			fileName.append(extension);
+		
+			if (!parameters.muting[i])
+			{
+				memset(muting, 1, module.header.channum);				
+				muting[i] = 0;				
+				res = player->exportToWAV(fileName, &module, 
+										  parameters.fromOrder, parameters.toOrder, 
+										  muting, 
+										  module.header.channum, 
+										  parameters.panning);
+			}
+		}
+		
+		delete[] muting;
+	}
+	else
+	{
+		res = player->exportToWAV(fileName, &module, 
+								  parameters.fromOrder, parameters.toOrder, 
+								  parameters.muting, 
+								  module.header.channum, 
+								  parameters.panning);
+	}
+		
 	delete player;	
 	return res;
 }
