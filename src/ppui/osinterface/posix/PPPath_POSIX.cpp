@@ -164,17 +164,18 @@ const PPPathEntry* PPPath_POSIX::getNextEntry()
 
 bool PPPath_POSIX::canGotoHome()
 {
-	return true;
+	// FIXME: the home btn still appears even after returning false
+	return getenv("HOME") ? true : false;
 }
 
 void PPPath_POSIX::gotoHome()
 {
-	char home[PPMAX_DIR_PATH+1];
-
-	strcpy(home, getenv("HOME"));	
-	
-	change(home);
-	updatePath();
+	char *home = getenv("HOME");
+	if(home)
+	{
+		change(home);
+		updatePath();
+	}
 }
 
 bool PPPath_POSIX::canGotoRoot()
