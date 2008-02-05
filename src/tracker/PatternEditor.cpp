@@ -430,8 +430,6 @@ void PatternEditor::paste(ClipBoard& clipBoard, bool transparent/* = false*/, pp
 
 	prepareUndo();
 
-	enterCriticalSection();
-
 	if (autoResize && cursor.row + clipBoard.getNumRows() > pattern->rows)
 	{
 		pp_int32 newLen = cursor.row + clipBoard.getNumRows();
@@ -444,8 +442,6 @@ void PatternEditor::paste(ClipBoard& clipBoard, bool transparent/* = false*/, pp
 		clipBoard.paste(*pattern, cursor.channel, cursor.row, transparent);
 	else
 		clipBoard.paste(*pattern, fromChannel, cursor.row, transparent);
-	
-	leaveCriticalSection();
 	
 	finishUndo(LastChangePaste);
 }
@@ -475,6 +471,9 @@ bool PatternEditor::resizePattern(pp_int32 newRowNum, bool withUndo /*= true*/)
 	
 	if (pattern->patternData == NULL)
 		return false;
+
+	if (newRowNum == pattern->rows)
+		return true;
 
 	enterCriticalSection();
 
