@@ -1503,28 +1503,56 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 				mp_sword usedSamples[256];
 				memset(usedSamples, 0, sizeof(usedSamples));
 				mp_sint32 numUsedSamples = 0;
-				
-				for (j = 0; j < 96; j++)
+
+#ifdef MILKYTRACKER	
+				if (type == ModuleType_XM && header.smpnum == header.insnum*16)
 				{
-					mp_sword s = instr[i].snum[j];
+					// save all samples within an instrument rather than the
+					// used ones (referenced by note mapping)
+					for (j = 0; j < 16; j++)
+						usedSamples[j] = i*16+j;
 					
-					if (s == -1)
-						continue;
+					numUsedSamples = 0;
 					
-					bool used = false;
-					for (k = 0; k < numUsedSamples; k++)
+					// find last used sample in instrument
+					for (j = 15; j >= 0; j--)
 					{
-						if (usedSamples[k] == s)
+						mp_sint32 index = usedSamples[j];
+						char buffer[MP_MAXTEXT+1];
+						convertStr(buffer, reinterpret_cast<char*>(smp[index].name), MP_MAXTEXT);
+						if (strlen(buffer) || smp[index].samplen)
 						{
-							used = true;
+							numUsedSamples = j+1;
 							break;
 						}
 					}
-					if (!used && smp[s].sample && smp[s].samplen)
-						usedSamples[numUsedSamples++] = s;
 				}
-				
-				sort(usedSamples, 0, numUsedSamples-1);
+				else
+#endif
+				{
+					// find referenced samples in instrument and save those
+					for (j = 0; j < 96; j++)
+					{
+						mp_sword s = instr[i].snum[j];
+						
+						if (s == -1)
+							continue;
+						
+						bool used = false;
+						for (k = 0; k < numUsedSamples; k++)
+						{
+							if (usedSamples[k] == s)
+							{
+								used = true;
+								break;
+							}
+						}
+						if (!used && smp[s].sample && smp[s].samplen)
+							usedSamples[numUsedSamples++] = s;
+					}
+					
+					sort(usedSamples, 0, numUsedSamples-1);
+				}
 				
 				f.writeDword(numUsedSamples > 0 ? 263 : 29);
 				f.write(&instr[i].name,1,22);		
