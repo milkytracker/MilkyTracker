@@ -2677,6 +2677,7 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 				smp[i].vol = 0xff;
 				smp[i].pan = 0x80;
 				smp[i].flags = 3;
+				smp[i].volfade = 65535;
 			}
 		}
 		
