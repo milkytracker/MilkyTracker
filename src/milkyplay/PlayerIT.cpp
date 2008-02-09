@@ -2198,19 +2198,6 @@ void PlayerIT::doEffect(TModuleChannel* chnInf, mp_sint32 effcnt)
 								env->b = i+1;
 								env->step = eop;
 								
-								// check if we set envelope position to a loop end point
-								// in that case wrap to the loop start, otherwise the loop
-								// end is skipped and the envelope will roll out without 
-								// looping
-								if ((env->envstruc->type & 4) && 
-									env->step == env->envstruc->env[env->envstruc->loope][0])
-								{
-									env->a=env->envstruc->loops;
-									env->b=env->envstruc->loops+1;
-									env->step=env->envstruc->env[env->a][0];
-								}
-									
-								
 								bSet = true;
 								break;
 							}
@@ -2223,6 +2210,17 @@ void PlayerIT::doEffect(TModuleChannel* chnInf, mp_sint32 effcnt)
 							env->step = env->envstruc->env[env->envstruc->num-1][0];
 						}
 						
+						// check if we set envelope position to a loop end point
+						// in that case wrap to the loop start, otherwise the loop
+						// end is skipped and the envelope will roll out without 
+						// looping
+						if ((env->envstruc->type & 4) && 
+							env->step == env->envstruc->env[env->envstruc->loope][0])
+						{
+							env->a=env->envstruc->loops;
+							env->b=env->envstruc->loops+1;
+							env->step=env->envstruc->env[env->a][0];
+						}												
 						break;
 					}
 		// set BPM

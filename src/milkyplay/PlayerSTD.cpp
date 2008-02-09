@@ -1692,21 +1692,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							{
 								chnInf->venv.a = i;
 								chnInf->venv.b = i+1;
-								chnInf->venv.step = eop;
-								
-								// check if we set envelope position to a loop end point
-								// in that case wrap to the loop start, otherwise the loop
-								// end is skipped and the envelope will roll out without 
-								// looping
-								if ((chnInf->venv.envstruc->type & 4) && 
-									chnInf->venv.step == chnInf->venv.envstruc->env[chnInf->venv.envstruc->loope][0])
-								{
-									chnInf->venv.a=chnInf->venv.envstruc->loops;
-									chnInf->venv.b=chnInf->venv.envstruc->loops+1;
-									chnInf->venv.step=chnInf->venv.envstruc->env[chnInf->venv.a][0];
-								}
-									
-								
+								chnInf->venv.step = eop;								
 								bSet = true;
 								break;
 							}
@@ -1718,7 +1704,18 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							chnInf->venv.b = chnInf->venv.envstruc->num;
 							chnInf->venv.step = chnInf->venv.envstruc->env[chnInf->venv.envstruc->num-1][0];
 						}
-						
+
+						// check if we set envelope position to a loop end point
+						// in that case wrap to the loop start, otherwise the loop
+						// end is skipped and the envelope will roll out without 
+						// looping
+						if ((chnInf->venv.envstruc->type & 4) && 
+							chnInf->venv.step == chnInf->venv.envstruc->env[chnInf->venv.envstruc->loope][0])
+						{
+							chnInf->venv.a=chnInf->venv.envstruc->loops;
+							chnInf->venv.b=chnInf->venv.envstruc->loops+1;
+							chnInf->venv.step=chnInf->venv.envstruc->env[chnInf->venv.a][0];
+						}						
 						break;
 					}
 		// set BPM
