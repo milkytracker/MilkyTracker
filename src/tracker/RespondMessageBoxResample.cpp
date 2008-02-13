@@ -31,6 +31,7 @@
 #include "RespondMessageBoxResample.h"
 #include "Screen.h"
 #include "StaticText.h"
+#include "CheckBox.h"
 #include "PPUIConfig.h"
 #include "MessageBoxContainer.h"
 #include "Font.h"
@@ -92,12 +93,13 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	RespondMessageBox(),
 	count(0),
 	resamplerHelper(new ResamplerHelper()),
-	interpolationType(1)
+	interpolationType(1),
+	adjustFtAndRelnote(true)
 {
 #ifdef __LOWRES__
-	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20, 26+15, "Ok", "Cancel");
+	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
 #else
-	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20, 26, "Ok", "Cancel");
+	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
@@ -196,6 +198,16 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 
 	messageBoxContainerGeneric->addControl(button);
+
+	y2+=16;
+
+	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
+	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "Adjust Ft/Rel.Note:", true));	
+	x2+= 21*8;
+	
+	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER2, screen, this, PPPoint(x2, y2+1));
+	checkBox->checkIt(adjustFtAndRelnote);
+	messageBoxContainerGeneric->addControl(checkBox);
 
 	y2+=16;
 
@@ -347,6 +359,16 @@ pp_int32 RespondMessageBoxResample::handleEvent(PPObject* sender, PPEvent* event
 				parentScreen->paintControl(messageBoxContainerGeneric);							
 				break;
 			}
+
+			case MESSAGEBOX_CONTROL_USER2:
+			{
+				if (event->getID() != eCommand)
+					break;
+					
+				this->adjustFtAndRelnote = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+				break;
+			}
+
 		}
 	}
 	else if (event->getID() == eValueChanged)
@@ -396,6 +418,8 @@ void RespondMessageBoxResample::updateListBoxes()
 
 	PPStaticText* staticText = static_cast<PPStaticText*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_USER1));
 	staticText->setHexValue(finalSize, 8);	
+
+	checkBox->checkIt(adjustFtAndRelnote);
 }
 
 void RespondMessageBoxResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)

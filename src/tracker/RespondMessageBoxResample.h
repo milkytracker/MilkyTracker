@@ -37,6 +37,7 @@ class RespondMessageBoxResample : public RespondMessageBox
 {
 private:
 	class PPListBox* listBoxes[3];
+	class PPCheckBox* checkBox;
 	pp_int32 currentSelectedListBox;
 	pp_int32 relnote, finetune;
 	pp_uint32 size, finalSize;
@@ -46,6 +47,7 @@ private:
 	
 	class ResamplerHelper* resamplerHelper;
 	pp_int32 interpolationType;
+	bool adjustFtAndRelnote;
 
 public:
 	RespondMessageBoxResample(PPScreen* screen, 
@@ -69,6 +71,9 @@ public:
 	
 	void setInterpolationType(pp_int32 interpolationType) { this->interpolationType = interpolationType; }
 	pp_int32 getInterpolationType() const { return interpolationType; }
+
+	void setAdjustFtAndRelnote(bool adjustFtAndRelnote) { this->adjustFtAndRelnote = adjustFtAndRelnote; }
+	bool getAdjustFtAndRelnote() const { return adjustFtAndRelnote; }
 	
 private:
 	void listBoxEnterEditState(pp_int32 id);

@@ -31,7 +31,8 @@ struct SampleEditorControlLastValues
 	bool hasEQ10BandValues;
 	float EQ10BandValues[10];
 	
-	pp_int32 lastResampleInterpolationType;
+	pp_int32 resampleInterpolationType;
+	bool adjustFtAndRelnote;
 	
 	static float invalidFloatValue() 
 	{
@@ -54,7 +55,8 @@ struct SampleEditorControlLastValues
 		waveFormVolume = invalidFloatValue();
 		waveFormNumPeriods = invalidFloatValue();
 		hasEQ3BandValues = hasEQ10BandValues = false;
-		lastResampleInterpolationType = invalidIntValue();
+		resampleInterpolationType = invalidIntValue();
+		adjustFtAndRelnote = true;
 	}
 		
 	PPDictionary convertToDictionary()
@@ -75,7 +77,9 @@ struct SampleEditorControlLastValues
 		result.store("waveFormVolume", PPDictionary::convertFloatToIntNonLossy(waveFormVolume));
 		result.store("waveFormNumPeriods", PPDictionary::convertFloatToIntNonLossy(waveFormNumPeriods));
 
-		result.store("lastResampleInterpolationType", lastResampleInterpolationType);
+		result.store("resampleInterpolationType", resampleInterpolationType);
+		
+		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
 		return result;
 	}
 	
@@ -116,9 +120,13 @@ struct SampleEditorControlLastValues
 			{
 				waveFormNumPeriods = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
 			}
-			else if (key->getKey().compareToNoCase("lastResampleInterpolationType") == 0)
+			else if (key->getKey().compareToNoCase("resampleInterpolationType") == 0)
 			{
-				lastResampleInterpolationType = key->getIntValue();
+				resampleInterpolationType = key->getIntValue();
+			}
+			else if (key->getKey().compareToNoCase("adjustFtAndRelnote") == 0)
+			{
+				adjustFtAndRelnote = key->getBoolValue();
 			}
 		
 			key = dictionary.getNextKey();

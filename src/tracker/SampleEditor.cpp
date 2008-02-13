@@ -1861,11 +1861,14 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 		sample->loopstart = (mp_sint32)(sample->loopstart/step);
 		sample->looplen = (mp_sint32)(sample->looplen/step);
 	
-		pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
-		mp_sbyte rn, ft;
-		XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
-		sample->relnote = rn;
-		sample->finetune = ft;
+		if ((pp_int32)par->getParameter(2))
+		{
+			pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
+			mp_sbyte rn, ft;
+			XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
+			sample->relnote = rn;
+			sample->finetune = ft;
+		}
 	}
 	
 	lastOperation = OperationCut;
