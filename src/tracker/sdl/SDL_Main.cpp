@@ -25,6 +25,7 @@
  *  MilkyTracker SDL front end
  *
  *  Created by Peter Barth on 19.11.05.
+ *
  * 15/2/08 - Peter Barth
  *  This code needs major clean up, there are too many workarounds going on
  *  for different platforms/configurations (MIDI, GP2X etc.)
