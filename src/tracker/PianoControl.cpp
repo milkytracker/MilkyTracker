@@ -184,8 +184,8 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 	// for white piano keys
 	PPColor colCorrect2(TrackerConfig::colorThemeMain);
 	colCorrect2.scale(1.5f, 1.5f, 1.6f);
-	PPColor colCorrect4(TrackerConfig::colorThemeMain);
-	colCorrect4.scale(4.0f, 4.0f, 4.2f);
+	pp_int32 avg = (colCorrect2.b+colCorrect2.g+colCorrect2.r) / 3;
+	PPColor colCorrect4(avg, avg, avg);
 	
 	pp_int32 PIANO_LUT_WIDTH = pianoBitmap->getBitmapLUTWidth();
 	const pp_uint8* PIANO_LUT = pianoBitmap->getBitmapLUT();
@@ -235,7 +235,7 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 					if (keyState[note].muted)
 					{
 						if (colors[c].r)
-							g->setSafeColor((PIANO[sx]+(colCorrect.r>>2)), (PIANO[sx]+(colCorrect.g>>2)), (PIANO[sx]+(colCorrect.b>>2)));
+							g->setSafeColor((PIANO[sx]+(colCorrect4.r>>2)), (PIANO[sx]+(colCorrect4.g>>2)), (PIANO[sx]+(colCorrect4.b>>2)));
 						else
 							g->setSafeColor((PIANO[sx]*colCorrect4.r)>>8, (PIANO[sx]*colCorrect4.g)>>8, (PIANO[sx]*colCorrect4.b)>>8);
 					}
