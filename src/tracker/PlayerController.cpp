@@ -45,6 +45,18 @@ void PlayerController::assureNotSuspended()
 	}
 }
 
+void PlayerController::reset()
+{
+	if (!player)
+		return;
+
+	// reset internal player variables (effect memory) and looping information
+	player->BPMCounter = 0;
+	player->reset();
+	// reset mixer channels (stop playing channels)
+	player->resetChannelsFull();
+}
+
 PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	mixer(mixer),
 	player(NULL),
@@ -153,11 +165,8 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 
 	readjustSpeed();
 
-	// reset internal player variables (effect memory) and looping information
-	player->reset();
-	// reset mixer channels (stop playing channels)
-	player->resetChannelsFull();
-	
+	reset();
+
 	player->setPattern(-1);
 
 	// muting has been reset, restore it
@@ -195,10 +204,7 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 
 	readjustSpeed();
 	
-	// reset internal player variables (effect memory) and looping information
-	player->reset();
-	// reset mixer channels (stop playing channels)
-	player->resetChannelsFull();
+	reset();
 
 	setCurrentPatternIndex(index);
 
@@ -263,8 +269,7 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 	readjustSpeed();
 
 	player->setIdle(true);
-	player->reset();
-	player->resetChannelsFull();
+	reset();
 	player->restart(0, 0, true, panning);
 
 	// reset internal variables	

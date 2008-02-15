@@ -96,6 +96,8 @@ private:
 	
 	// no construction outside
 	PlayerController(class MasterMixer* mixer, bool fakeScopes);
+
+	void reset();
 	
 public:
 	~PlayerController();
