@@ -164,7 +164,6 @@ const PPPathEntry* PPPath_POSIX::getNextEntry()
 
 bool PPPath_POSIX::canGotoHome()
 {
-	// FIXME: the home btn still appears even after returning false
 	return getenv("HOME") ? true : false;
 }
 

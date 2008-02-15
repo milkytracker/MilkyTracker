@@ -22,9 +22,13 @@
 
 /*
  *  SDL_Main.cpp
- *  PPUI SDL
+ *  MilkyTracker SDL front end
  *
  *  Created by Peter Barth on 19.11.05.
+ * 15/2/08 - Peter Barth
+ *  This code needs major clean up, there are too many workarounds going on
+ *  for different platforms/configurations (MIDI, GP2X etc.)
+ *  Please do not further pollute this single source code when possible
  *
  * 14/8/06 - Christopher O'Neill
  *  Ok, there are so many changes in this file that I've lost track...
@@ -77,8 +81,6 @@ SDL_Surface *screen = NULL;
 SDL_TimerID	timer;
 
 // Tracker globals
-static int				localMouseX,localMouseY;
-
 static PPScreen*			myTrackerScreen		= NULL;
 static Tracker*				myTracker			= NULL;
 static PPDisplayDevice*		myDisplayDevice		= NULL;
@@ -106,18 +108,16 @@ static bool			rMouseDown				= false;
 static pp_uint32	rButtonDownStartTime;
 
 static pp_uint32	timerTicker				= 0;
-static pp_int32		keyTimerTicker			= 0;
-static pp_uint32	lastModifierKeyState	= 0;
 
 static PPPoint p;
 
-static pp_uint32	keyModifiers = 0;
-
+// This needs to be visible from outside 
 pp_uint32 PPGetTickCount()
 {
 	return SDL_GetTicks();
 }
 
+// Same as above
 void QueryKeyModifiers()
 {
 	pp_uint32 mod = SDL_GetModState();
@@ -149,11 +149,12 @@ static void RaiseEventSerialized(PPEvent* event)
 }
 
 #ifdef __GP2X__
-struct {
+struct
+{
 	bool up, down, left, right, upLeft, upRight, downLeft, downRight;
-	int x, y;
-	int ticks;
-	int button;
+	pp_int32 x, y;
+	pp_int32 ticks;
+	pp_int32 button;
 } mouse;
 
 void gp2xMouseEvent(const SDL_Event& event)
@@ -201,12 +202,15 @@ void gp2xMouseEvent(const SDL_Event& event)
 		case 18:	// Click
 		case 12:
 			SDL_Event myEvent;
-			if(buttonPressed) {
+			if (buttonPressed) 
+			{
 				myEvent.type = SDL_MOUSEBUTTONDOWN;
 				myEvent.button.type = SDL_MOUSEBUTTONDOWN;
 				myEvent.button.state = SDL_PRESSED;
 				mouse.button = 1;
-			} else {
+			} 
+			else 
+			{
 				myEvent.type = SDL_MOUSEBUTTONUP;
 				myEvent.button.type = SDL_MOUSEBUTTONUP;
 				myEvent.button.state = SDL_RELEASED;
@@ -216,10 +220,10 @@ void gp2xMouseEvent(const SDL_Event& event)
 			myEvent.button.y = mouse.y;
 			myEvent.button.button = SDL_BUTTON_LEFT;
 			SDL_PushEvent(&myEvent);
-		break;
+			break;
 		
 		case 8:		// Start
-			if(!buttonPressed) 
+			if (!buttonPressed) 
 			{
 				pp_uint16 chr[3] = {VK_RETURN, 0, 0};
 				PPEvent event(eKeyDown, &chr, sizeof(chr));
@@ -327,13 +331,6 @@ void StartMidiRecording(unsigned int devID)
 
 void InitMidi()
 {
-// 	if (!preferencesDialog)
-// 		return;
-// 
-// 	if (preferencesDialog->getUseMidiDeviceFlag())
-// 		StartMidiRecording(preferencesDialog->getSelectedMidiDeviceID());
-// 	else
-// 		StopMidiRecording();
 	StartMidiRecording(0);
 }
 #endif
@@ -576,7 +573,8 @@ void translateKeyDownEvent(const SDL_Event& event)
 	SDL_keysym keysym = event.key.keysym;
 
 	// ALT+RETURN = Fullscreen toggle
-	if(keysym.sym == SDLK_RETURN && (keysym.mod & KMOD_LALT)) {
+	if (keysym.sym == SDLK_RETURN && (keysym.mod & KMOD_LALT)) 
+	{
 		PPEvent myEvent(eFullScreen);
 		RaiseEventSerialized(&myEvent);
 		return;
@@ -590,10 +588,11 @@ void translateKeyDownEvent(const SDL_Event& event)
 
 #ifndef NOT_PC_KB
 	// Hack for azerty keyboards (num keys are shifted, so we use the scancodes)
-	if(stdKb) {
-		if(chr[1] >= 2 && chr[1] <= 10)
+	if (stdKb) 
+	{
+		if (chr[1] >= 2 && chr[1] <= 10)
 			chr[0] = chr[1] + 47;	// 1-9
-		else if(chr[1] == 11)
+		else if (chr[1] == 11)
 			chr[0] = 48;			// 0
 	}
 #endif
@@ -621,7 +620,8 @@ void translateKeyUpEvent(const SDL_Event& event)
 	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), character};
 
 #ifndef NOT_PC_KB
-	if(stdKb) {
+	if (stdKb) 
+	{
 		if(chr[1] >= 2 && chr[1] <= 10)
 			chr[0] = chr[1] + 47;
 		else if(chr[1] == 11)
@@ -680,7 +680,8 @@ void processSDLEvents(const SDL_Event& event)
 }
 
 #ifdef __unix__
-void crashHandler(int signum) {
+void crashHandler(int signum) 
+{
 	// Save backup.xm
 	static char buffer[1024]; // Should be enough :p
 	strncpy(buffer, getenv("HOME"), 1010);
@@ -690,15 +691,22 @@ void crashHandler(int signum) {
 	while(stat(buffer, &statBuf) == 0 && num <= 100)
 		snprintf(buffer, sizeof(buffer), "%s/BACKUP%02i.XM", getenv("HOME"), num++);
 
-	if(signum == 15) {
+	if (signum == 15) 
+	{
 		fprintf(stderr, "\nTERM signal received.\n");
 		SDL_Quit();
 		return;
-	} else
+	} 
+	else
+	{
 		fprintf(stderr, "\nCrashed with signal %i\n"
-				"Please submit a bug report stating exactly what you were doing at the time of the crash, as well as the above signal number.  Also note if it is possible to reproduce this crash.\n", signum);
+				"Please submit a bug report stating exactly what you were doing "
+				"at the time of the crash, as well as the above signal number. "
+				"Also note if it is possible to reproduce this crash.\n", signum);
+	}
 
-	if(num != 100) {
+	if (num != 100) 
+	{
 		myTracker->saveModule(buffer);
 		fprintf(stderr, "\nA backup has been saved to %s\n\n", buffer);
 	}
@@ -711,14 +719,16 @@ void crashHandler(int signum) {
 void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool swapRedBlue, bool fullScreen, bool noSplash)
 {
 	/* Initialize SDL */
-	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) {
+	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) 
+	{
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		exit(1);
 	}
 	atexit(SDL_Quit);
 
 #ifdef __GP2X__
-	if ( SDL_Init(SDL_INIT_JOYSTICK) < 0 || !SDL_JoystickOpen(0)) {
+	if ( SDL_Init(SDL_INIT_JOYSTICK) < 0 || !SDL_JoystickOpen(0)) 
+	{
 		fprintf(stderr, "Couldn't initialize SDL Joystick: %s\n",SDL_GetError());
 		exit(1);
 	}
@@ -775,11 +785,6 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	myDisplayDevice = new PPDisplayDevice(screen, windowSize.width, windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
 
 	myDisplayDevice->init();
-
-	//myDisplayDevice->setSize(windowSize);
-
- 	//if (fullScreen)
- 	//	myDisplayDevice->goFullScreen(fullScreen);
 
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
@@ -846,7 +851,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	timerMutex->unlock();
 }
 
-int    done;
+static bool done;
 
 void exitSDLEventLoop(bool serializedEventInvoked/* = true*/)
 {
@@ -854,7 +859,7 @@ void exitSDLEventLoop(bool serializedEventInvoked/* = true*/)
 	RaiseEventSerialized(&event);
 	
 	// it's necessary to make this mutex lock because the SDL modal event loop
-	// used in for the modal dialogs expects modal dialogs to be invoked by
+	// used in the modal dialogs expects modal dialogs to be invoked by
 	// events within these mutex lock calls
 	if (!serializedEventInvoked)
 		globalMutex->lock();
@@ -961,12 +966,13 @@ unrecognizedCommandLineSwitch:
 	globalMutex->unlock();
 
 #ifdef HAVE_LIBASOUND
-	if(myMidiReceiver && recVelocity){
+	if (myMidiReceiver && recVelocity)
+	{
 		myMidiReceiver->setRecordVelocity(true);
 	}
 #endif
 
-	if(loadFile) 
+	if (loadFile) 
 	{
 		PPSystemString newCwd = path.getCurrent();
 		path.change(oldCwd);
@@ -1009,7 +1015,7 @@ unrecognizedCommandLineSwitch:
 	}
 
 #ifdef __GP2X__
-SDL_JoystickClose(0);
+	SDL_JoystickClose(0);
 #endif
 
 	timerMutex->lock();

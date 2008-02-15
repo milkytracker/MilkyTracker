@@ -320,18 +320,23 @@ void RespondMessageBoxFileSelector::setCurrentEditFileName(const PPSystemString&
 
 void RespondMessageBoxFileSelector::updateButtonStates(bool repaint/* = true*/)
 {
+	// Get home button
+	PPButton* buttonHome = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER1));
+	buttonHome->setClickable(listBoxFiles->canGotoHome());
+
 	// Get previous button
-	PPButton* button1 = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER4));
-	button1->setClickable(listBoxFiles->canPrev());
+	PPButton* buttonPrev = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER4));
+	buttonPrev->setClickable(listBoxFiles->canPrev());
 
 	// Get next button
-	PPButton* button2 = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER5));
-	button2->setClickable(listBoxFiles->canNext());
+	PPButton* buttonNext = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER5));
+	buttonNext->setClickable(listBoxFiles->canNext());
 
 	if (repaint)
 	{
-		parentScreen->paintControl(button1);
-		parentScreen->paintControl(button2);
+		parentScreen->paintControl(buttonHome);
+		parentScreen->paintControl(buttonPrev);
+		parentScreen->paintControl(buttonNext);
 	}
 
 	{
