@@ -272,6 +272,13 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 	reset();
 	player->restart(0, 0, true, panning);
 
+	// muting has been reset, restore it
+	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
+	{
+		player->muteChannel(i, muteChannels[i]);
+		this->muteChannels[i] = muteChannels[i];
+	}
+
 	// reset internal variables	
 	if (bResetMainVolume)
 		resetMainVolume();	
@@ -979,17 +986,18 @@ bool PlayerController::isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 en
 	return false;
 }
 
-bool PlayerController::isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32& note)
+bool PlayerController::isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32& note, bool& muted)
 {
 	if (!player)
 		return false;
 
 	PlayerSTD::TModuleChannel* chnInf = &player->chninfo[channel];
 	
-	if ((player->channel[channel].flags&ChannelMixer::MP_SAMPLE_PLAY))
+	if (player->channel[channel].flags&ChannelMixer::MP_SAMPLE_PLAY)
 	{
 		if (chnInf->ins == ins && chnInf->keyon && chnInf->note)
 		{
+			muted = (player->channel[channel].flags & ChannelMixer::MP_SAMPLE_MUTE) != 0;
 			note = chnInf->note;
 			return true;
 		}

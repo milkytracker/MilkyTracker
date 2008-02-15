@@ -67,7 +67,19 @@ private:
 
 	pp_uint8* nbu;
 
-	bool* pressed;
+	struct KeyState
+	{
+		bool pressed;
+		bool muted;
+		
+		KeyState() :
+			pressed(false),
+			muted(false)
+		{
+		}
+	};
+	
+	KeyState* keyState;
 
 	Modes mode;
 	pp_int32 currentSelectedNote;
@@ -106,7 +118,7 @@ public:
 
 	void setSampleIndex(pp_int32 index) { sampleIndex = index; }
 
-	void pressNote(pp_int32 note, bool pressed);
+	void pressNote(pp_int32 note, bool pressed, bool muted = false);
 
 	bool getNoteState(pp_int32 note);
 

@@ -88,8 +88,9 @@ bool Tracker::updatePianoControl(PianoControl* pianoControl)
 	for (i = 0; i < playerController->getPlayerNumPlayingChannels(); i++)
 	{
 		pp_int32 note;
-		if (playerController->isNotePlaying(ins, i, note))
-			pianoControl->pressNote(note - 1, true);
+		bool muted = false;
+		if (playerController->isNotePlaying(ins, i, note, muted))
+			pianoControl->pressNote(note - 1, true, muted);
 	}
 
 	bool update = false;

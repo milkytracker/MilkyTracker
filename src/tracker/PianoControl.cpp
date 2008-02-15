@@ -140,8 +140,7 @@ PianoControl::PianoControl(pp_int32 id,
 	nbu = new pp_uint8[NUMNOTES];
 	memset(nbu, 0, NUMNOTES);
 
-	pressed = new bool[NUMNOTES];
-	memset(pressed, 0, NUMNOTES*sizeof(bool));
+	keyState = new KeyState[NUMNOTES];
 
 	sampleIndex = 0;
 }
@@ -152,7 +151,7 @@ PianoControl::~PianoControl()
 
 	delete[] nbu;
 	
-	delete[] pressed;
+	delete[] keyState;
 }
 
 void PianoControl::paint(PPGraphicsAbstract* g)
@@ -179,10 +178,14 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 	
 	pp_int32 oy = location.y + 1;
 	
+	// for black piano keys
 	PPColor colCorrect(TrackerConfig::colorThemeMain);
 	colCorrect.r<<=1; colCorrect.g<<=1; colCorrect.b<<=1;
+	// for white piano keys
 	PPColor colCorrect2(TrackerConfig::colorThemeMain);
 	colCorrect2.scale(1.5f, 1.5f, 1.6f);
+	PPColor colCorrect4(TrackerConfig::colorThemeMain);
+	colCorrect4.scale(4.0f, 4.0f, 4.2f);
 	
 	pp_int32 PIANO_LUT_WIDTH = pianoBitmap->getBitmapLUTWidth();
 	const pp_uint8* PIANO_LUT = pianoBitmap->getBitmapLUT();
@@ -227,12 +230,22 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 			
 				pp_int32 note = divLutPtr[sx] + c;
 			
-				if (pressed[note])
+				if (keyState[note].pressed)
 				{
-					if (colors[c].r)
-						g->setSafeColor((PIANO[sx]+colCorrect.r)>>1, (PIANO[sx]+colCorrect.g)>>1, (PIANO[sx]+colCorrect.b)>>1);
+					if (keyState[note].muted)
+					{
+						if (colors[c].r)
+							g->setSafeColor((PIANO[sx]+(colCorrect.r>>2)), (PIANO[sx]+(colCorrect.g>>2)), (PIANO[sx]+(colCorrect.b>>2)));
+						else
+							g->setSafeColor((PIANO[sx]*colCorrect4.r)>>8, (PIANO[sx]*colCorrect4.g)>>8, (PIANO[sx]*colCorrect4.b)>>8);
+					}
 					else
-						g->setSafeColor((PIANO[sx]*colCorrect2.r)>>8, (PIANO[sx]*colCorrect2.g)>>8, (PIANO[sx]*colCorrect2.b)>>8);
+					{
+						if (colors[c].r)
+							g->setSafeColor((PIANO[sx]+(colCorrect.r>>1)), (PIANO[sx]+(colCorrect.g>>1)), (PIANO[sx]+(colCorrect.b>>1)));
+						else
+							g->setSafeColor((PIANO[sx]*colCorrect2.r)>>8, (PIANO[sx]*colCorrect2.g)>>8, (PIANO[sx]*colCorrect2.b)>>8);
+					}
 				}
 				else
 					g->setColor(PIANO[sx], PIANO[sx], PIANO[sx]);
@@ -700,18 +713,19 @@ void PianoControl::setSampleTable(const pp_uint8* nbu)
 	memcpy(this->nbu, nbu, NUMNOTES);
 }
 
-void PianoControl::pressNote(pp_int32 note, bool pressed)
+void PianoControl::pressNote(pp_int32 note, bool pressed, bool muted/* = false*/)
 {
 	if (note >= 0 && note < NUMNOTES)
 	{
-		this->pressed[note] = pressed;
+		keyState[note].pressed = pressed;
+		keyState[note].muted = muted;
 	}
 }
 
 bool PianoControl::getNoteState(pp_int32 note)
 {
 	if (note >= 0 && note < NUMNOTES)
-		return pressed[note];
+		return keyState[note].pressed;
 	return false;
 }
 

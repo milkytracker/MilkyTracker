@@ -195,7 +195,7 @@ private:
 public:
 	bool isSamplePlaying(const TXMSample* smp, mp_sint32 channel, mp_sint32& pos, mp_sint32& vol, mp_sint32& pan);
 	bool isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 envelopeType, mp_sint32 channel, mp_sint32& pos);
-	bool isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32& note);
+	bool isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32& note, bool& muted);
 	
 	class SampleDataFetcher
 	{
