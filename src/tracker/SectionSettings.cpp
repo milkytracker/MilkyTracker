@@ -48,6 +48,7 @@
 #include "PatternEditorControl.h"
 #include "RespondMessageBoxWithValues.h"
 #include "RespondMessageBoxListBox.h"
+#include "Graphics.h"
 
 #include "PatternTools.h"
 #include "TrackerSettingsDatabase.h"
@@ -62,6 +63,41 @@
 #define SECTIONHEIGHT		118
 #endif
 #define UPPERFRAMEHEIGHT	118
+
+// small custom button class which will be used to show a color preview
+class PPColPrevButton : public PPButton
+{
+public:
+	PPColPrevButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size) :
+		PPButton(id, parentScreen, eventListener, location, size, false, false, false)
+	{
+	}
+
+	virtual void paint(PPGraphicsAbstract* g)
+	{		
+		PPButton::paint(g);
+	
+		PPFont* font = PPFont::getFont(PPFont::FONT_TINY);
+		g->setFont(font);
+		
+		PPPoint p = this->getLocation();
+		p.x+=1;
+		p.y+=2;
+		
+		g->setColor(255^getColor()->r, 255^getColor()->g, 255^getColor()->b);
+
+		char buffer[100];
+
+		sprintf(buffer, "R:%02X", getColor()->r);
+		g->drawString(buffer, p.x, p.y, false);
+		p.y+=font->getCharHeight();
+		sprintf(buffer, "G:%02X", getColor()->g);
+		g->drawString(buffer, p.x, p.y, false);
+		p.y+=font->getCharHeight();
+		sprintf(buffer, "B:%02X", getColor()->b);		
+		g->drawString(buffer, p.x, p.y, false);
+	}
+};
 
 // settings
 enum ControlIDs
@@ -1508,7 +1544,7 @@ void SectionSettings::initPage_II(PPContainer* container, pp_int32 x, pp_int32 y
 #endif
 	container->addControl(listBoxColors);
 
-	button = new PPButton(BUTTON_COLOR, screen, this, PPPoint(x2 + 88, y2 + 1), PPSize(31, 34), false, false, false);
+	button = new PPColPrevButton(BUTTON_COLOR, screen, this, PPPoint(x2 + 88, y2 + 1), PPSize(31, 34));
 	button->setFlat(true);
 	button->setColor(currentColor);
 	container->addControl(button);	
