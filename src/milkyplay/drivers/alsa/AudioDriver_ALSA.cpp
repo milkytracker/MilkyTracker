@@ -210,7 +210,7 @@ void AudioDriver_ALSA::start()
 			if (my_areas->step != 32 && my_areas->first != 0)
 				fprintf(stderr, "ALSA: Unsupported audio format.\n");
 				
-			memset(my_areas->addr, 0, frames * 4);
+			memset(static_cast<char*> (my_areas->addr) + offset*4, 0, frames * 4);
 			int commitres = snd_pcm_mmap_commit(pcm, offset, frames);
 			if (err < 0 || (snd_pcm_uframes_t)commitres != frames) {
 				if ((err = snd_pcm_recover(pcm, commitres >= 0 ? -EPIPE : commitres, 0)) < 0) {
