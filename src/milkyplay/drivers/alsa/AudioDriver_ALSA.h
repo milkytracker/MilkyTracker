@@ -39,8 +39,7 @@ private:
 	snd_pcm_t *pcm;
 	char *stream;
 	snd_pcm_uframes_t period_size;
-	snd_pcm_uframes_t buffer_size;
-	
+
 	static void async_direct_callback(snd_async_handler_t *ahandler);
 
 public:
@@ -48,7 +47,7 @@ public:
 
 	virtual		~AudioDriver_ALSA();
 			
-	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
+	virtual     mp_sint32   initDevice(mp_sint32 periodSizeAsSamples, mp_uint32 mixFrequency, MasterMixer* mixer);
 	virtual     mp_sint32   closeDevice();
 
 	virtual     void		start();
