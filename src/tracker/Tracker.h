@@ -27,8 +27,8 @@
 #include "Event.h"
 #include "EditModes.h"
 
-#define INPUTCONTAINERHEIGHT_DEFAULT			(25+SCROLLBUTTONSIZE+4)
-#define INPUTCONTAINERHEIGHT_EXTENDED			(25+SCROLLBUTTONSIZE+4+13)
+#define INPUTCONTAINERHEIGHT_DEFAULT	(25+SCROLLBUTTONSIZE+4)
+#define INPUTCONTAINERHEIGHT_EXTENDED	(25+SCROLLBUTTONSIZE+4+13)
 
 template<class Type>
 class PPSimpleVector;
@@ -159,7 +159,7 @@ private:
 	ScopesControl* scopesControl;
 	PPStaticText* playTimeText;
 	
-	// ----------------------- Sections ----------------------- 
+	// - Sections --------------------------------------------------------------
 	PPSimpleVector<SectionAbstract>* sections;
 	SectionTranspose* sectionTranspose;
 	SectionAdvancedEdit* sectionAdvancedEdit;
@@ -188,7 +188,7 @@ private:
 	PPSystemString currentFileName;
 	bool lastState;
 
-	// - Tracker mode ------------------------------------------------------------------------
+	// - Tracker mode ----------------------------------------------------------
 	EditModes editMode;
 	bool recordMode;
 	bool recordKeyOff;
@@ -198,13 +198,12 @@ private:
 	bool caughtMouseInUpperLeftCorner;
 	
 	bool useClassicBrowser;
-	// - Keyboard bindings -------------------------------------------------------------------
+	// - Keyboard bindings -----------------------------------------------------
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindings;
-
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsMilkyTracker;
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsFastTracker;
 
-	// - settings ----------------------------------------------------------------------------
+	// - settings --------------------------------------------------------------
 	void buildDefaultSettings();
 	void applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& settings, pp_uint32 version);
 
@@ -216,21 +215,21 @@ private:
 					   bool applyMixerSettings = true,
 					   bool allowMixerRestart = true);
 	
-	// - global controls ---------------------------------------------------------------------
+	// - global controls -------------------------------------------------------
 	PPListBox* listBoxOrderList;
 	PPListBox* listBoxInstruments;
 	PPListBox* listBoxSamples;
 
 	void estimateSongLength(bool signalWait = false);
 
-	// - build UI parts ----------------------------------------------------------------------
+	// - build UI parts --------------------------------------------------------
 	void initSectionOrderlist(pp_int32 x, pp_int32 y);
 	void initSectionSpeed(pp_int32 x, pp_int32 y);
 	void initSectionPattern(pp_int32 x, pp_int32 y);
 	void initSectionMainOptions(pp_int32 x, pp_int32 y);
 	void initListboxesSection(pp_int32 x, pp_int32 y);
 	
-	// - instrument selector dialog ----------------------------------------------------------
+	// - instrument selector dialog --------------------------------------------
 	void initAdvEdit();
 
 	void initInstrumentChooser(pp_int32 id, const PPString& buttonText, const PPString& buttonText2, const PPString& caption, 
@@ -240,7 +239,7 @@ private:
 
 	PPMessageBoxContainer* instrumentChooser;
 
-	// - message boxes (all centered) --------------------------------------------------------
+	// - message boxes ---------------------------------------------------------
 	PPMessageBoxContainer* messageBoxContainerZAP;
 	PPMessageBoxContainer* messageBoxContainerGeneric;
 
@@ -256,6 +255,7 @@ private:
 	void showMessageBoxSized(pp_int32 id, const PPString& caption, MessageBoxTypes type, pp_int32 width = -1, pp_int32 height = -1, bool update = true);
 	void showQuitMessageBox(const char* caption, const char* cpationOk, const char* captionCancel);
 
+	// - software input panel --------------------------------------------------
 	PPContainer* inputContainerCurrent;
 	PPContainer* inputContainerDefault;
 	PPContainer* inputContainerExtended;
@@ -269,8 +269,9 @@ private:
 	};
 	void setInputControl(SIPs sip);
 	void moveInputControls(pp_uint32 deltay);
+	void hideInputControl(bool bHide = true);
 
-	// - GUI refreshing ----------------------------------------------------------------------
+	// - GUI refreshing --------------------------------------------------------
 	void updateSubMenusButtons(bool repaint = true);
 
 	void updateSongTitle(bool repaint = true);
@@ -309,7 +310,7 @@ private:
 	void updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingPattern);
 	void updateAfterTabSwitch();
 
-	// - show hide GUI sections ---------------------------------------------------------------
+	// - show hide GUI sections ------------------------------------------------
 	// General bottom sections show/hide
 	void showBottomSection(ActiveBottomSections section, bool paint = true);
 	void showUpperSection(SectionAbstract* section, bool hideSIP = true);
@@ -344,10 +345,8 @@ private:
 	void setPeakControlHeadingColor(const PPColor& color, bool update = true);
 	bool isPeakControlVisible();
 
-	void hideInputControl(bool bHide = true);
-
 	void showScopes(bool visible, pp_uint32 style);
-	// - misc. --------------------------------------------------------------------------------
+	// - misc. -----------------------------------------------------------------
 	pp_int32 lastPos, lastRow;
 	pp_int32 lastSpeed, lastBPM, lastMainVol;
 	void resetStateMemories()
@@ -437,7 +436,7 @@ private:
 		FileTypeSampleIFF
 	};
 
-	// - Save panels -------------------------------------------------------------------------
+	// - Save panels -----------------------------------------------------------
 	FileTypes currentSaveFileType;
 	PPSavePanel* savePanel;
 	EventListenerInterface* fileSystemChangedListener;
@@ -552,7 +551,7 @@ private:
 	
 	void processShortcutsFastTracker(PPEvent* event);
 
-	// - Keyboard bindings -------------------------------------------------------------------
+	// - Keyboard bindings -----------------------------------------------------
 	pp_int16 currentKeyCode;
 	
 	bool executeBinding(const PPKeyBindings<TTrackerKeyBindingHandler>* bindings, pp_uint16 keyCode);
@@ -642,8 +641,7 @@ private:
 	void eventKeyDownBinding_ExitApplication();
 
 private:
-	// - friend classes ----------------------------------------------------------------------
-	// Hey, we're a tracker... We won't use those classes anywhere else!!!
+	// - friend classes --------------------------------------------------------
 	friend class SectionAbstract;
 	friend class SectionUpperLeft;
 	friend class SectionSettings;

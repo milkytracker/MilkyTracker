@@ -2096,3 +2096,15 @@ void Tracker::moveInputControls(pp_uint32 deltay)
 
 	rearrangePatternEditorControlOrInstrumentContainer();
 }
+
+void Tracker::hideInputControl(bool bHide/* = true*/)
+{
+	if (inputContainerCurrent && bHide)
+	{
+		inputContainerCurrent->show(false);
+	}
+	else if (inputContainerCurrent)
+	{
+		inputContainerCurrent->show(true);
+	}
+}

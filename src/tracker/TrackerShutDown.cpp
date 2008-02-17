@@ -238,6 +238,10 @@ bool Tracker::shutDown()
 	return true;
 }
 
+// this is used when the tracker crashes
+// The os dependent layer can call this and it will save a backup of the current
+// module
+// TO-DO: Doesn't handle tabs properly yet, will only save the current tab
 void Tracker::saveModule(const PPSystemString& fileName)
 {
 	moduleEditor->saveBackup(fileName);

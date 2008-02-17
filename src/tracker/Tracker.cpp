@@ -2673,18 +2673,6 @@ bool Tracker::isPeakControlVisible()
 	return !peakLevelControl->isHidden();
 }
 
-void Tracker::hideInputControl(bool bHide/* = true*/)
-{
-	if (inputContainerCurrent && bHide)
-	{
-		inputContainerCurrent->show(false);
-	}
-	else if (inputContainerCurrent)
-	{
-		inputContainerCurrent->show(true);
-	}
-}
-
 void Tracker::showScopes(bool visible, pp_uint32 style)
 {
 	if (!scopesControl)

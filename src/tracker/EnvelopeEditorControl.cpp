@@ -543,7 +543,7 @@ pp_int32 EnvelopeEditorControl::callEventListener(PPEvent* event)
 				caughtControl = hScrollbar;
 				caughtControl->callEventListener(event);
 			}
-			// Clicked on text -> select text
+			// Clicked in client area
 			else
 			{
 				

@@ -247,7 +247,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 				caughtControl = vRightScrollbar;
 				caughtControl->callEventListener(event);				
 			}
-			// Clicked on text -> select text
+			// Clicked in client area
 			else
 			{
 				PPPoint cp = *p;
