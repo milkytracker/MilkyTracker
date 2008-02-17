@@ -127,7 +127,7 @@ AudioDriverManager::AudioDriverManager() :
 #ifdef HAVE_LIBASOUND
 #include "drivers/alsa/AudioDriver_ALSA.h"
 #endif
-#ifdef HAVE_LIBJACK
+#ifdef HAVE_JACK_JACK_H
 #include "AudioDriver_JACK.h"
 #endif
 
@@ -138,7 +138,7 @@ AudioDriverManager::AudioDriverManager() :
 #ifdef HAVE_LIBASOUND
 	count++;
 #endif
-#ifdef HAVE_LIBJACK
+#ifdef HAVE_JACK_JACK_H
 	count++;
 #endif
 	ALLOC_DRIVERLIST(count);
@@ -147,7 +147,7 @@ AudioDriverManager::AudioDriverManager() :
 #ifdef HAVE_LIBASOUND
 	driverList[count++] = new AudioDriver_ALSA();
 #endif
-#if HAVE_LIBJACK
+#if HAVE_JACK_JACK_H
 	driverList[count++] = new AudioDriver_JACK();
 #endif
 }

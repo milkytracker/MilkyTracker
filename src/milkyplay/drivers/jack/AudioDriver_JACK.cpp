@@ -29,12 +29,17 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
-#ifdef HAVE_LIBJACK
+#endif
+
+// Hack to simplify build scripts
+#ifdef HAVE_JACK_JACK_H
+
 #include <dlfcn.h>
-#include<stdio.h>
-#include<string.h>
-#include<assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
 #include "AudioDriver_JACK.h"
 
 int AudioDriver_JACK::jackProcess(jack_nframes_t nframes, void *arg)

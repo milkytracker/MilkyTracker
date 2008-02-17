@@ -199,6 +199,10 @@ void AudioDriver_ALSA::start()
 					fprintf(stderr, "ALSA: MMAP begin error: %s\n", snd_strerror(err));
 				}
 			}
+			// Sanity check
+			if (my_areas->step != 32 && my_areas->first != 0)
+				fprintf(stderr, "ALSA: Unsupported audio format.\n");
+				
 			memset(my_areas->addr, 0, buffer_size * 4);
 			int commitres = snd_pcm_mmap_commit(pcm, offset, frames);
 			if (err < 0 || (snd_pcm_uframes_t)commitres != frames) {
