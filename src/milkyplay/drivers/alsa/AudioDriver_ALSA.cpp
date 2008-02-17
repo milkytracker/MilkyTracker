@@ -32,31 +32,76 @@
 #include "config.h"
 #endif
 
+// Hack to simplify build scripts
 #ifdef HAVE_LIBASOUND
 #include "AudioDriver_ALSA.h"
 
 void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 {
-	// TODO: use mmap access for efficiency
+	snd_pcm_t *handle = snd_async_handler_get_pcm(ahandler);
 	AudioDriver_ALSA* audioDriver = (AudioDriver_ALSA*) snd_async_handler_get_callback_private(ahandler);
-	snd_pcm_t *pcm = audioDriver->pcm;
-	snd_pcm_sframes_t avail;
-	int err;
-	const snd_pcm_uframes_t period_size = audioDriver->period_size;
-	char *stream = audioDriver->stream;
-
-	avail = snd_pcm_avail_update(pcm);
-	while (avail >= period_size) {
-		audioDriver->fillAudioWithCompensation(stream, period_size * 4);
-		err = snd_pcm_writei(pcm, (void *) stream, period_size);
-		if (err < 0)
-		{
-			fprintf(stderr, "ALSA: Write error (%s)\n", snd_strerror(err));
-			break;
+	const snd_pcm_channel_area_t *my_areas;
+	snd_pcm_uframes_t offset, frames, size;
+	snd_pcm_sframes_t avail, commitres;
+	snd_pcm_state_t state;
+	int first = 0, err;
+	
+	while (1) {
+		state = snd_pcm_state(handle);
+		if (state == SND_PCM_STATE_XRUN) {
+			err = snd_pcm_recover(handle, -EPIPE, 0);
+			if (err < 0) {
+				fprintf(stderr, "ALSA: XRUN recovery failed: %s\n", snd_strerror(err));
+			}
+			first = 1;
+		} else if (state == SND_PCM_STATE_SUSPENDED) {
+			err = snd_pcm_recover(handle, ESTRPIPE, 0);
+			if (err < 0) {
+				fprintf(stderr, "ALSA: SUSPEND recovery failed: %s\n", snd_strerror(err));
+			}
 		}
-		else if (err != period_size)
-			fprintf(stderr, "ALSA: Write error: written %i expected %li\n", err, period_size);
-		avail = snd_pcm_avail_update(pcm);
+		avail = snd_pcm_avail_update(handle);
+		if (avail < 0) {
+			err = snd_pcm_recover(handle, avail, 0);
+			if (err < 0) {
+				fprintf(stderr, "ALSA: avail update failed: %s\n", snd_strerror(err));
+			}
+			first = 1;
+			continue;
+		}
+		if (avail < audioDriver->period_size) {
+			if (first) {
+				first = 0;
+				err = snd_pcm_start(handle);
+				if (err < 0) {
+					fprintf(stderr, "ALSA: Start error: %s\n", snd_strerror(err));
+				}
+			} else {
+				break;
+			}
+			continue;
+		}
+		size = audioDriver->period_size;
+		while (size > 0) {
+			frames = size;
+			err = snd_pcm_mmap_begin(handle, &my_areas, &offset, &frames);
+			if (err < 0) {
+				if ((err = snd_pcm_recover(handle, err, 0)) < 0) {
+					fprintf(stderr, "ALSA: MMAP begin avail error: %s\n", snd_strerror(err));
+				}
+				first = 1;
+			}
+			//generate_sine(my_areas, offset, frames, &data->phase);
+			audioDriver->fillAudioWithCompensation(static_cast<char*> (my_areas->addr) + offset*4, frames * 2);
+			commitres = snd_pcm_mmap_commit(handle, offset, frames);
+			if (commitres < 0 || (snd_pcm_uframes_t)commitres != frames) {
+				if ((err = snd_pcm_recover(handle, commitres >= 0 ? -EPIPE : commitres, 0)) < 0) {
+					fprintf(stderr, "ALSA: MMAP commit error: %s\n", snd_strerror(err));
+				}
+				first = 1;
+			}
+			size -= frames;
+		}
 	}
 }
 
@@ -75,7 +120,6 @@ AudioDriver_ALSA::~AudioDriver_ALSA()
 mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uint32 mixFrequency, MasterMixer* mixer)
 {
 	AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
-	snd_pcm_uframes_t buffer_size;
 	snd_pcm_sw_params_t *swparams;
 	int err;
 
@@ -88,7 +132,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uin
 	
 	if ((err = snd_pcm_set_params(pcm,
 		SND_PCM_FORMAT_S16,
-		SND_PCM_ACCESS_RW_INTERLEAVED,
+		SND_PCM_ACCESS_MMAP_INTERLEAVED,
 		2, // channels
 		mixFrequency,
 		1, // allow soft resampling
@@ -99,7 +143,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uin
 	}
 	snd_pcm_get_params(pcm, &buffer_size, &period_size);
 	stream = new char[period_size * 4];
-	printf("ALSA: Buffer size = %i samples (requested %i) (buffer size = %i)\n", period_size, bufferSizeInWords / 2, buffer_size);
+	printf("ALSA: Period size = %i frames (requested %i), buffer size = %i frames\n", period_size, bufferSizeInWords / 2, buffer_size);
 
 	/* get the current swparams */
 	err = snd_pcm_sw_params_current(pcm, swparams);
@@ -109,12 +153,11 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 bufferSizeInWords, const mp_uin
 	}
 	/* start the transfer when the buffer is almost full: */
 	/* (buffer_size / avail_min) * avail_min */
-	err = snd_pcm_sw_params_set_start_threshold(pcm, swparams, (buffer_size / period_size) * period_size);
+/*	err = snd_pcm_sw_params_set_start_threshold(pcm, swparams, (buffer_size / period_size) * period_size);
 	if (err < 0) {
 		fprintf(stderr, "ALSA: Unable to set start threshold mode for playback: %s\n", snd_strerror(err));
 		return -1;
-	}
-
+	}*/
 
 	return period_size * 2;		// 2 = number of channels
 }
@@ -137,28 +180,39 @@ mp_sint32 AudioDriver_ALSA::closeDevice()
 
 void AudioDriver_ALSA::start()
 {
+	const snd_pcm_channel_area_t *my_areas;
+	snd_pcm_uframes_t offset, frames, size;
 	snd_async_handler_t *ahandler;
 	int err;
-
 	err = snd_async_add_pcm_handler(&ahandler, pcm, async_direct_callback, this);
-	if(err < 0)
-	{
-		fprintf(stderr, "ALSA: Could not add PCM hander (%s)\n", snd_strerror(err));
+	if (err < 0) {
+		fprintf(stderr, "ALSA: Unable to register async handler (%s)\n", snd_strerror(err));
 	}
 
-	memset(stream, 0, period_size * 4);
- 	for (mp_sint32 count = 0; count < 2; count++)
- 	{
-		err = snd_pcm_writei(pcm, stream, period_size);
-		if(err < 0)
-			fprintf(stderr, "ALSA: Initial write error (%s)\n", snd_strerror(err));
-		if(err != period_size)
-			fprintf(stderr, "ALSA: Initial write error (written %i expected %li)\n", err, period_size);
+	for (int count = 0; count < 2; count++) {
+		size = period_size;
+		while (size > 0) {
+			frames = size;
+			err = snd_pcm_mmap_begin(pcm, &my_areas, &offset, &frames);
+			if (err < 0) {
+				if ((err = snd_pcm_recover(pcm, err, 0)) < 0) {
+					fprintf(stderr, "ALSA: MMAP begin error: %s\n", snd_strerror(err));
+				}
+			}
+			memset(my_areas->addr, 0, buffer_size * 4);
+			int commitres = snd_pcm_mmap_commit(pcm, offset, frames);
+			if (err < 0 || (snd_pcm_uframes_t)commitres != frames) {
+				if ((err = snd_pcm_recover(pcm, commitres >= 0 ? -EPIPE : commitres, 0)) < 0) {
+					fprintf(stderr, "ALSA: MMAP commit error: %s\n", snd_strerror(err));
+				}
+			}
+			size -= frames;
+		}
 	}
 
 
 	err = snd_pcm_start(pcm);
-	if(err < 0)
+	if (err < 0)
 	{
 		fprintf(stderr, "ALSA: Could not start PCM device (%s)\n", snd_strerror(err));
 	}

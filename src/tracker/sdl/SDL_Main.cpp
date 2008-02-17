@@ -760,13 +760,11 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	sigaction(SIGFPE, &act, &oldAct);
 	sigaction(SIGSEGV, &act, &oldAct);
 	
-#ifndef __QTOPIA__
-#ifdef HAVE_X11_X_H
+#if defined(HAVE_X11_X_H) && !defined(__QTOPIA__)
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWMInfo(&info) && info.subsystem == SDL_SYSWM_X11)
 		isX11 = true;	// Used in SDL_KeyTranslation.cpp
-#endif
 #endif
 
 #endif

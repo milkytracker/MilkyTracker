@@ -39,6 +39,7 @@ private:
 	snd_pcm_t *pcm;
 	char *stream;
 	snd_pcm_uframes_t period_size;
+	snd_pcm_uframes_t buffer_size;
 	
 	static void async_direct_callback(snd_async_handler_t *ahandler);
 
