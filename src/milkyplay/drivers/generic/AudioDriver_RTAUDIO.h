@@ -59,7 +59,7 @@ public:
 	virtual     mp_sint32   resume();
 
 	virtual		const char* getDriverID() { return driverNames[selectedAudioApi]; }
-	virtual		mp_sint32	getPreferredBufferSize();
+	virtual		mp_sint32	getPreferredBufferSize() const;
 };
 
 #endif

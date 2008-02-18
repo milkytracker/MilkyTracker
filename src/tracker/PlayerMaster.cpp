@@ -119,9 +119,20 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 		player->resumePlaying(false);	
 }
 
+const char* PlayerMaster::getPreferredAudioDriverID()
+{
+	AudioDriverManager audioDriverManager;
+	return audioDriverManager.getPreferredAudioDriver()->getDriverID();
+}
+
+pp_uint32 PlayerMaster::getPreferredSampleRate()
+{
+	AudioDriverManager audioDriverManager;
+	return audioDriverManager.getPreferredAudioDriverSampleRate();
+}
+
 pp_uint32 PlayerMaster::getPreferredBufferSize()
 {
-	PlayerSTD player(44100);
 	AudioDriverManager audioDriverManager;
 	return audioDriverManager.getPreferredAudioDriverBufferSize();
 }

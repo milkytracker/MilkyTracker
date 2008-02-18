@@ -74,7 +74,7 @@ public:
 	virtual		mp_uint32	getNumPlayedSamples() const { return sampleCounter; }
 	
 	virtual		const char* getDriverID() { return "CoreAudio"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 1024; }		
+	virtual		mp_sint32	getPreferredBufferSize() const { return 1024; }		
 };
 
 #endif

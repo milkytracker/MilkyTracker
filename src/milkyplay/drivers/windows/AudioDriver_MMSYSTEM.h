@@ -92,7 +92,9 @@ public:
 	virtual		bool		supportsTimeQuery() { return true; }
 
 	virtual		const char* getDriverID() { return timeEmulation ? "WaveOut (Vista)" : "WaveOut (old)"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 8192; }
+
+	virtual		mp_sint32	getPreferredSampleRate() const { return 44100; }
+	virtual		mp_sint32	getPreferredBufferSize() const { return 8192; }
 };
 
 #endif

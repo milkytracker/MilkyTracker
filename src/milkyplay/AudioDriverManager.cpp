@@ -225,6 +225,11 @@ const char* AudioDriverManager::getNextDriverName() const
 	return driverList[enumerationIndex]->getDriverID();
 }
 
+mp_sint32 AudioDriverManager::getPreferredAudioDriverSampleRate() const
+{
+	return driverList[defaultDriverIndex]->getPreferredSampleRate();
+}
+
 mp_sint32 AudioDriverManager::getPreferredAudioDriverBufferSize() const
 {
 	return driverList[defaultDriverIndex]->getPreferredBufferSize();

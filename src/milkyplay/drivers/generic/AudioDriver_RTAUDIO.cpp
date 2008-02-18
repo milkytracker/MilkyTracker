@@ -51,7 +51,7 @@ const char*	AudioDriver_RTAUDIO::driverNames[] =
 	"Dummy"
 };
 
-mp_sint32 AudioDriver_RTAUDIO::getPreferredBufferSize() 
+mp_sint32 AudioDriver_RTAUDIO::getPreferredBufferSize() const
 { 
 	switch (selectedAudioApi)
 	{

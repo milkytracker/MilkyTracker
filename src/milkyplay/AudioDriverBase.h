@@ -127,8 +127,11 @@ public:
 	// required by wav/null drivers, ignore if you're not writing a wav writer
 	virtual		void		advance() { }
 
-	// should return preferred buffer size for 44.1khz
-	virtual		mp_sint32	getPreferredBufferSize() = 0;
+	// return preferred sample rate here
+	virtual		mp_sint32	getPreferredSampleRate() const { return 48000; }
+	
+	// should return preferred buffer size for preferred sample rate (see above)
+	virtual		mp_sint32	getPreferredBufferSize() const = 0;
 	
 	virtual		void		msleep(mp_uint32 msecs);
 	virtual		bool		isMixerActive();	

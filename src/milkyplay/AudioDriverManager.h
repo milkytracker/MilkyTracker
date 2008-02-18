@@ -59,6 +59,7 @@ public:
 	const char* getFirstDriverName() const;
 	const char* getNextDriverName() const;
 	
+	mp_sint32 getPreferredAudioDriverSampleRate() const;
 	mp_sint32 getPreferredAudioDriverBufferSize() const;
 };
 

@@ -80,7 +80,7 @@ public:
 	virtual		bool		supportsPowerOfTwoCompensation() { return true; }
 
 	virtual		const char* getDriverID() { return "JACK"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 2048; }
+	virtual		mp_sint32	getPreferredBufferSize() const { return 2048; }
 	
 };
 

@@ -109,7 +109,7 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 	player->setSampleShift(parameters.mixerShift);
 	player->setMasterVolume(parameters.mixerVolume);
 	
-	pp_int32 res;
+	pp_int32 res = 0;
 	
 	if (parameters.multiTrack)
 	{

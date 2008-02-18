@@ -32,7 +32,6 @@
 #include "ModuleEditor.h"
 #include "TrackerSettingsDatabase.h"
 #include "MilkyPlay.h"
-#include "AudioDriverManager.h"
 #include "PlayerMaster.h"
 #include "PlayerController.h"
 #include "PlayerLogic.h"
@@ -74,19 +73,14 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("MIXERSHIFT", 1);
 	settingsDatabase->store("RAMPING", 1);
 	settingsDatabase->store("INTERPOLATION", 1);
-	settingsDatabase->store("MIXERFREQ", 48000);	// Most (all?) PC cards run at 48khz internally..
-		// .. will this cause a problem for portable devices? I don't know..
-		// The reason I've changed this to 48khz is because it seems some drivers are buggy at 44.1khz
-		// (see Audiodriver_ALSA.cpp)
-		// - Chris
+	settingsDatabase->store("MIXERFREQ", PlayerMaster::getPreferredSampleRate());
 #ifdef __FORCEPOWEROFTWOBUFFERSIZE__
 	settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 1);
 #else
 	settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 0);
 #endif
 	// Store audio driver
-	AudioDriverManager audioDriverManager;
-	settingsDatabase->store("AUDIODRIVER", audioDriverManager.getPreferredAudioDriver()->getDriverID());
+	settingsDatabase->store("AUDIODRIVER", PlayerMaster::getPreferredAudioDriverID());
 
 	// the first key HAS TO BE PLAYMODEKEEPSETTINGS
 	settingsDatabase->store("PLAYMODEKEEPSETTINGS", 0);

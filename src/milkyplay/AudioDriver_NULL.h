@@ -57,7 +57,7 @@ public:
 	virtual		mp_uint32	getNumPlayedSamples() const { return numSamplesWritten; };
 
 	virtual		const char* getDriverID() { return "NULL"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 0; }
+	virtual		mp_sint32	getPreferredBufferSize() const { return 0; }
 
 	virtual		void		advance();
 

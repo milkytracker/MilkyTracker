@@ -55,7 +55,9 @@ public:
 	virtual     mp_sint32   resume();
 
 	virtual	    const char* getDriverID() { return "PSPAudio"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 2048; }	
+
+	virtual		mp_sint32	getPreferredSampleRate() const { return 44100; }
+	virtual		mp_sint32	getPreferredBufferSize() const { return 1024; }	
 };
 
 #endif /* __AUDIODRIVER_PSP_H__ */

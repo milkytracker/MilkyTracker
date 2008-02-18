@@ -63,7 +63,7 @@ public:
 	virtual     mp_sint32   resume();
 	
 	virtual		const char* getDriverID() { return "SDLAudio"; }
-	virtual		mp_sint32	getPreferredBufferSize() { return 2048; }	
+	virtual		mp_sint32	getPreferredBufferSize() const { return 2048; }	
 };
 
 #endif
