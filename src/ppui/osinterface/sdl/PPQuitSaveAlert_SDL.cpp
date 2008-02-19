@@ -31,16 +31,16 @@
 #include "PPQuitSaveAlert.h"
 #include <SDL/SDL.h>
 #include "SDL_ModalLoop.h"
-#include "RespondMessageBoxFileSelector.h"
+#include "DialogFileSelector.h"
 
 PPQuitSaveAlert::ReturnCodes PPQuitSaveAlert::runModal()
 {
 	// Create a message box (the message box will invoke the responder)
-	RespondMessageBox* respondMessageBox = new RespondMessageBox(screen, NULL, PP_DEFAULT_ID, "Save current changes?", RespondMessageBox::MessageBox_YESNOCANCEL);
+	PPDialogBase* dialog = new PPDialogBase(screen, NULL, PP_DEFAULT_ID, "Save current changes?", PPDialogBase::MessageBox_YESNOCANCEL);
 
-	ReturnCodes result = SDL_runModalLoop(screen, respondMessageBox);
+	ReturnCodes result = SDL_runModalLoop(screen, dialog);
 	
-	delete respondMessageBox;
+	delete dialog;
 	
 	return result;
 }

@@ -57,7 +57,7 @@ public:
 	
 };
 
-class ModalLoopResponder : public RespondListenerInterface
+class ModalLoopResponder : public DialogResponder
 {
 private:
 	bool& exitModalLoop;
@@ -95,8 +95,8 @@ public:
 };
 
 class PPScreen;
-class RespondMessageBox;
+class PPDialogBase;
 
-PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, RespondMessageBox* respondMessageBox);
+PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dialog);
 
 #endif

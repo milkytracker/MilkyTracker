@@ -32,7 +32,7 @@
 #include "SDL_ModalLoop.h"
 #include "Event.h"
 #include "Screen.h"
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 #include "PPMutex.h"
 
 void processSDLEvents(const SDL_Event& event);
@@ -53,14 +53,14 @@ extern PPMutex* globalMutex;
 // after...
 //
 /////////////////////////////////////////////////////////////////
-PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, RespondMessageBox* respondMessageBox)
+PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dialog)
 {
 	bool exitModalLoop = false;
 	SDL_Event event;
 	// This is the responder for buttons invoked by the modal dialog
 	ModalLoopResponder modalLoopResponder(exitModalLoop);
 
-	respondMessageBox->setResponder(&modalLoopResponder);
+	dialog->setResponder(&modalLoopResponder);
 
 	// Detach the event listener from the screen, this will actually detach the entire tracker from the screen
 	EventListenerInterface* eventListener = screen->detachEventListener();
@@ -72,7 +72,7 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, RespondMessageBox*
 	screen->attachEventListener(&customEventListener);
 
 	// Show it
-	respondMessageBox->show();
+	dialog->show();
 
 	// Now to the tricky part, since a modal dialog has been invoked through a OS event, globalMutex is in locked state
 	// so to allow further event processing we must unlock the mutex first

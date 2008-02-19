@@ -31,7 +31,7 @@
 #include "PPMessageBox.h"
 #include <SDL/SDL.h>
 #include "SDL_ModalLoop.h"
-#include "RespondMessageBoxFileSelector.h"
+#include "DialogFileSelector.h"
 
 PPMessageBox::ReturnCodes PPMessageBox::runModal()
 {
@@ -44,11 +44,11 @@ PPMessageBox::ReturnCodes PPMessageBox::runModal()
 	delete[] contentASCIIZ;
 
 	// Create a message box (the message box will invoke the responder)
-	RespondMessageBox* respondMessageBox = new RespondMessageBox(screen, NULL, PP_DEFAULT_ID, caption, content);
+	PPDialogBase* dialog = new PPDialogBase(screen, NULL, PP_DEFAULT_ID, caption, content);
 
-	ReturnCodes result = SDL_runModalLoop(screen, respondMessageBox);
+	ReturnCodes result = SDL_runModalLoop(screen, dialog);
 	
-	delete respondMessageBox;
+	delete dialog;
 	
 	return result;
 }

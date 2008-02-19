@@ -31,27 +31,27 @@
 #include "PPSavePanel.h"
 #include <SDL/SDL.h>
 #include "SDL_ModalLoop.h"
-#include "RespondMessageBoxFileSelector.h"
+#include "DialogFileSelector.h"
 
 PPSavePanel::ReturnCodes PPSavePanel::runModal()
 {
 	// Create a message box (the message box will invoke the responder)
-	RespondMessageBoxFileSelector* respondMessageBox = new RespondMessageBoxFileSelector(screen, NULL, PP_DEFAULT_ID, this->caption, true, true);
-	respondMessageBox->setCurrentEditFileName(defaultFileName);
+	DialogFileSelector* dialog = new DialogFileSelector(screen, NULL, PP_DEFAULT_ID, this->caption, true, true);
+	dialog->setCurrentEditFileName(defaultFileName);
 
 	for (pp_int32 i = 0; i < items.size(); i++)
 	{
 		PPSystemString ext(items.get(i)->extension);
 		PPSystemString desc(items.get(i)->description);
-		respondMessageBox->addExtension(ext, desc);
+		dialog->addExtension(ext, desc);
 	}
 
-	ReturnCodes result = SDL_runModalLoop(screen, respondMessageBox);
+	ReturnCodes result = SDL_runModalLoop(screen, dialog);
 
-	PPSystemString pathEntry(respondMessageBox->getSelectedPathFull());
+	PPSystemString pathEntry(dialog->getSelectedPathFull());
 	
 	// this is no longer needed
-	delete respondMessageBox;
+	delete dialog;
 	
 	fileName = ((result == ReturnCodeOK) ? pathEntry : ""); 
 	
