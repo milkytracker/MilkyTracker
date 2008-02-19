@@ -92,7 +92,6 @@ void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 		}
 
 		if(frames != audioDriver->period_size)
-		{
 			fprintf(stderr, "ALSA: Invalid buffer size: %i (should be %i), skipping..\n", frames, audioDriver->period_size);
 			// Certain audio drivers will periodically request buffers of less than one period when
 			// soft-resampling (ie, not running at native frequency).  Milkytracker can't handle this,
@@ -100,7 +99,7 @@ void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 			// PS - I've disabled soft-resampling for now (see below) so this shouldn't happen.
 			// PPS - The downside is that if the user has the wrong mixer rate, they will get an error
 			//       dialog - hopefully they'll read the message on stderr...
-		} else
+		else
 			audioDriver->fillAudioWithCompensation(static_cast<char*> (my_areas->addr) + offset*4, frames * 2);
 
 		commitres = snd_pcm_mmap_commit(handle, offset, frames);

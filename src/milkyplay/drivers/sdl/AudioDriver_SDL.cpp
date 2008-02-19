@@ -37,8 +37,12 @@
 void AudioDriver_SDL::fill_audio(void *udata, Uint8 *stream, int length) 
 {
 	AudioDriver_SDL* audioDriver = (AudioDriver_SDL*)udata;
-	
-	audioDriver->fillAudioWithCompensation((char*)stream, length);
+
+	if(length>>2 != audioDriver->periodSize)
+		fprintf(stderr, "SDL: Invalid buffer size: %i (should be %i), skipping..\n", length >> 2, audioDriver->periodSize);
+		// See comment in AudioDriver_ALSA.cpp
+	else
+		audioDriver->fillAudioWithCompensation((char*)stream, length);
 }
 
 AudioDriver_SDL::AudioDriver_SDL() :
@@ -98,6 +102,7 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 
 	printf("SDL: Buffer size = %i samples (requested %i)\n", obtained.samples, finalWantedSize / wanted.channels);
 
+	periodSize = obtained.samples;
 	// If we got what we requested, return 0,
 	// otherwise return the actual number of samples * number of channels
 	return (bufferSizeInWords / wanted.channels == obtained.samples) ? 0 : obtained.samples * obtained.channels;

@@ -44,7 +44,7 @@
 class AudioDriver_SDL : public AudioDriver_COMPENSATE
 {
 private:
-	SDL_AudioSpec	wanted; 
+	mp_uint32	periodSize;
 	
 	static void fill_audio(void *udata, Uint8 *stream, int len); 
 									 
