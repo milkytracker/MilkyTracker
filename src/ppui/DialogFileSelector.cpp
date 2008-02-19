@@ -1,5 +1,5 @@
 /*
- *  ppui/RespondMessageBoxFileSelector.cpp
+ *  ppui/DialogFileSelector.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxFileSelector.cpp
+ *  DialogFileSelector.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxFileSelector.h"
+#include "DialogFileSelector.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -48,34 +48,34 @@ enum ControlIDs
 	DISKMENU_BUTTON_SORTORDER,
 };
 
-pp_int32 RespondMessageBoxFileSelector::OverwritePromptResponder::ActionOkay(PPObject* sender)
+pp_int32 DialogFileSelector::OverwritePromptResponder::ActionOkay(PPObject* sender)
 {
 	PPEvent event(eCommand);
-	return respondMessageBoxFileSelector.baseClassHandleEvent(respondMessageBoxFileSelector.getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_OK), &event);
+	return dialogFileSelector.baseClassHandleEvent(dialogFileSelector.getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_OK), &event);
 }
 		
-pp_int32 RespondMessageBoxFileSelector::OverwritePromptResponder::ActionCancel(PPObject* sender)
+pp_int32 DialogFileSelector::OverwritePromptResponder::ActionCancel(PPObject* sender)
 {
-	respondMessageBoxFileSelector.show();
+	dialogFileSelector.show();
 	// avoid removal of modal dialog box after we're out of here
 	return 1;
 }
 
 
-RespondMessageBoxFileSelector::RespondMessageBoxFileSelector(PPScreen* screen, 
-															 RespondListenerInterface* responder,
+DialogFileSelector::DialogFileSelector(PPScreen* screen, 
+															 DialogResponder* responder,
 															 pp_int32 id,
 															 const PPString& caption,
 															 bool editfileName/* = false*/,
 															 bool overwritePrompt/* = false*/,
 															 bool selectDirectories/* = false*/) :
-	RespondMessageBox(),
+	PPDialogBase(),
 	doOverwritePrompt(overwritePrompt),
 	allowSelectDirectories(selectDirectories),
 	allowEditFileName(editfileName),
 	sortAscending(true)
 {
-	initRespondMessageBox(screen, responder, id, caption, 310, 230, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, caption, 310, 230, 26, "Ok", "Cancel");
 
 	PPControl* text = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION);
 	text->setLocation(PPPoint(text->getLocation().x, text->getLocation().y - 4));
@@ -173,20 +173,20 @@ RespondMessageBoxFileSelector::RespondMessageBoxFileSelector(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(editFieldCurrentFile);	
 
 	overwritePrompResponder = new OverwritePromptResponder(*this);
-	overwritePromptMessageBox = new RespondMessageBox(screen, overwritePrompResponder, PP_DEFAULT_ID, "Overwrite existing file?");
+	overwritePromptMessageBox = new PPDialogBase(screen, overwritePrompResponder, PP_DEFAULT_ID, "Overwrite existing file?");
 
 	fileFullPath = new PPSystemString();
 	initialPath = new PPSystemString(listBoxFiles->getCurrentPathAsString());
 }
 
-RespondMessageBoxFileSelector::~RespondMessageBoxFileSelector()
+DialogFileSelector::~DialogFileSelector()
 {
 	delete initialPath;
 	delete fileFullPath;
 	delete overwritePromptMessageBox;
 }
 
-pp_int32 RespondMessageBoxFileSelector::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogFileSelector::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eKeyDown ||
 		event->getID() == eKeyUp ||
@@ -249,7 +249,7 @@ pp_int32 RespondMessageBoxFileSelector::handleEvent(PPObject* sender, PPEvent* e
 				break;
 
 			default:
-				return RespondMessageBox::handleEvent(sender, event);
+				return PPDialogBase::handleEvent(sender, event);
 		}
 	}
 	else if (reinterpret_cast<PPControl*>(sender) == listBoxFiles && event->getID() == eConfirmed)
@@ -261,7 +261,7 @@ pp_int32 RespondMessageBoxFileSelector::handleEvent(PPObject* sender, PPEvent* e
 	else if (reinterpret_cast<PPControl*>(sender) == listBoxFiles && event->getID() == eSelection)
 	{
 		updateSelection(*((pp_int32*)event->getDataPtr()));
-		return RespondMessageBox::handleEvent(sender, event);
+		return PPDialogBase::handleEvent(sender, event);
 	}
 	else if (event->getID() == eValueChanged)
 	{
@@ -278,21 +278,21 @@ pp_int32 RespondMessageBoxFileSelector::handleEvent(PPObject* sender, PPEvent* e
 		}
 	}
 	else
-		return RespondMessageBox::handleEvent(sender, event);
+		return PPDialogBase::handleEvent(sender, event);
 		
 	return 0;
 }
 
-void RespondMessageBoxFileSelector::show()
+void DialogFileSelector::show()
 {
 	refreshExtensions();
 
 	refresh(false);
 	
-	RespondMessageBox::show();
+	PPDialogBase::show();
 }
 
-const PPSystemString& RespondMessageBoxFileSelector::getSelectedPathFull() 
+const PPSystemString& DialogFileSelector::getSelectedPathFull() 
 { 
 	editFieldCurrentFile->commitChanges();
 
@@ -304,7 +304,7 @@ const PPSystemString& RespondMessageBoxFileSelector::getSelectedPathFull()
 	return *fileFullPath; 
 }
 
-void RespondMessageBoxFileSelector::setCurrentEditFileName(const PPSystemString& name)
+void DialogFileSelector::setCurrentEditFileName(const PPSystemString& name)
 {
 	editFieldCurrentFile->clear();
 	
@@ -317,7 +317,7 @@ void RespondMessageBoxFileSelector::setCurrentEditFileName(const PPSystemString&
 	fileFullPath->append(name);			
 }
 
-void RespondMessageBoxFileSelector::updateButtonStates(bool repaint/* = true*/)
+void DialogFileSelector::updateButtonStates(bool repaint/* = true*/)
 {
 	// Get home button
 	PPButton* buttonHome = static_cast<PPButton*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_USER1));
@@ -362,12 +362,12 @@ void RespondMessageBoxFileSelector::updateButtonStates(bool repaint/* = true*/)
 	}
 }
 
-pp_int32 RespondMessageBoxFileSelector::baseClassHandleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogFileSelector::baseClassHandleEvent(PPObject* sender, PPEvent* event)
 {
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
-pp_int32 RespondMessageBoxFileSelector::processKeys(PPObject* sender, PPEvent* event)
+pp_int32 DialogFileSelector::processKeys(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eKeyDown)
 	{
@@ -401,7 +401,7 @@ callBaseClass:
 	return baseClassHandleEvent(sender, event);
 }
 
-pp_int32 RespondMessageBoxFileSelector::confirm()
+pp_int32 DialogFileSelector::confirm()
 {
 	pp_int32 i = listBoxFiles->getSelectedIndex();
 	
@@ -423,7 +423,7 @@ pp_int32 RespondMessageBoxFileSelector::confirm()
 	return res;
 }
 
-pp_int32 RespondMessageBoxFileSelector::confirm(const PPPathEntry& entry)
+pp_int32 DialogFileSelector::confirm(const PPPathEntry& entry)
 {
 	if (!allowSelectDirectories && entry.isDirectory())
 	{
@@ -440,17 +440,17 @@ pp_int32 RespondMessageBoxFileSelector::confirm(const PPPathEntry& entry)
 	
 	// fake OK press
 	PPEvent event(eCommand);
-	return RespondMessageBox::handleEvent(reinterpret_cast<PPObject*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_OK)), &event);
+	return PPDialogBase::handleEvent(reinterpret_cast<PPObject*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_OK)), &event);
 }
 
-pp_int32 RespondMessageBoxFileSelector::discard()
+pp_int32 DialogFileSelector::discard()
 {
 	// fake cancel button press
 	PPEvent event(eCommand);
-	return RespondMessageBox::handleEvent(reinterpret_cast<PPObject*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_CANCEL)), &event);
+	return PPDialogBase::handleEvent(reinterpret_cast<PPObject*>(getMessageBoxContainer()->getControlByID(PP_MESSAGEBOX_BUTTON_CANCEL)), &event);
 }
 
-void RespondMessageBoxFileSelector::refresh(bool repaint/* = true*/)
+void DialogFileSelector::refresh(bool repaint/* = true*/)
 {
 	listBoxFiles->refreshFiles();
 	
@@ -462,7 +462,7 @@ void RespondMessageBoxFileSelector::refresh(bool repaint/* = true*/)
 		parentScreen->paintControl(messageBoxContainerGeneric);
 }
 
-void RespondMessageBoxFileSelector::refreshCurrentFileEditField(bool repaint/* = true*/)
+void DialogFileSelector::refreshCurrentFileEditField(bool repaint/* = true*/)
 {
 	const PPPathEntry* entry = listBoxFiles->getCurrentSelectedPathEntry();
 
@@ -480,35 +480,35 @@ void RespondMessageBoxFileSelector::refreshCurrentFileEditField(bool repaint/* =
 		parentScreen->paintControl(editFieldCurrentFile);
 }
 
-void RespondMessageBoxFileSelector::updateSelection(pp_int32 index, bool repaint/* = true*/)
+void DialogFileSelector::updateSelection(pp_int32 index, bool repaint/* = true*/)
 {
 	refreshCurrentFileEditField(repaint);		
 	*fileFullPath = listBoxFiles->getCurrentPathAsString();
 	fileFullPath->append(listBoxFiles->getPathEntry(index)->getName());			
 }
 
-void RespondMessageBoxFileSelector::gotoHome()
+void DialogFileSelector::gotoHome()
 {
 	listBoxFiles->gotoHome();
 	
 	refresh();
 }
 
-void RespondMessageBoxFileSelector::gotoRoot()
+void DialogFileSelector::gotoRoot()
 {
 	listBoxFiles->gotoRoot();
 
 	refresh();
 }
 
-void RespondMessageBoxFileSelector::gotoParent()
+void DialogFileSelector::gotoParent()
 {
 	listBoxFiles->gotoParent();
 	
 	refresh();
 }
 
-bool RespondMessageBoxFileSelector::stepInto(const PPPathEntry& entry)
+bool DialogFileSelector::stepInto(const PPPathEntry& entry)
 {
 	if (listBoxFiles->stepInto(entry))
 	{
@@ -519,7 +519,7 @@ bool RespondMessageBoxFileSelector::stepInto(const PPPathEntry& entry)
 	return false;
 }
 
-void RespondMessageBoxFileSelector::gotoPath(const PPSystemString& path)
+void DialogFileSelector::gotoPath(const PPSystemString& path)
 {
 	listBoxFiles->gotoPath(path);
 	
@@ -527,7 +527,7 @@ void RespondMessageBoxFileSelector::gotoPath(const PPSystemString& path)
 }
 
 // undo last changes
-void RespondMessageBoxFileSelector::prev()
+void DialogFileSelector::prev()
 {
 	listBoxFiles->prev();
 	
@@ -535,19 +535,19 @@ void RespondMessageBoxFileSelector::prev()
 }
 
 // redo last changes
-void RespondMessageBoxFileSelector::next()
+void DialogFileSelector::next()
 {
 	listBoxFiles->next();
 	
 	refresh();
 }
 
-void RespondMessageBoxFileSelector::addExtension(const PPSystemString& ext, const PPSystemString& desc)
+void DialogFileSelector::addExtension(const PPSystemString& ext, const PPSystemString& desc)
 {
 	extensions.add(new Descriptor(ext, desc));
 }
 
-void RespondMessageBoxFileSelector::refreshExtensions()
+void DialogFileSelector::refreshExtensions()
 {
 	listBoxFiles->clearExtensions();
 
@@ -556,7 +556,7 @@ void RespondMessageBoxFileSelector::refreshExtensions()
 		
 }
 
-void RespondMessageBoxFileSelector::updateFilter()
+void DialogFileSelector::updateFilter()
 {
 	listBoxFiles->clearExtensions();
 	

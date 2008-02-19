@@ -1,5 +1,5 @@
 /*
- *  ppui/RespondMessageBox.h
+ *  ppui/DialogBase.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,15 +21,15 @@
  */
 
 /*
- *  RespondMessageBox.h
+ *  DialogBase.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 06.10.05.
  *
  */
 
-#ifndef RESPONDMESSAGEBOX__H
-#define RESPONDMESSAGEBOX__H
+#ifndef __DIALOGBASE_H__
+#define __DIALOGBASE_H__
 
 #include "BasicTypes.h"
 #include "Event.h"
@@ -37,7 +37,7 @@
 class PPScreen;
 class PPMessageBoxContainer;
 
-class RespondMessageBox : public EventListenerInterface
+class PPDialogBase : public EventListenerInterface
 {
 public:
 	enum MessageBoxTypes
@@ -48,7 +48,7 @@ public:
 	};
 
 private:
-	RespondListenerInterface* respondListener;
+	DialogResponder* respondListener;
 	pp_int16 keyDownInvokeKeyCode;
 	
 protected:
@@ -82,16 +82,16 @@ protected:
 		MESSAGEBOX_BUTTON_KEYS_BASE				=	1000
 	};
 
-	void initRespondMessageBox(PPScreen* screen, 
-							   RespondListenerInterface* responder,
+	void initDialog(PPScreen* screen, 
+							   DialogResponder* responder,
 							   pp_int32 id,
 							   const PPString& caption,
 							   const PPString& message,
 							   pp_int32 captionOffset,
 							   const PPString& buttonYesCaption);
 
-	void initRespondMessageBox(PPScreen* screen, 
-							   RespondListenerInterface* responder,
+	void initDialog(PPScreen* screen, 
+							   DialogResponder* responder,
 							   pp_int32 id,
 							   const PPString& caption,
 							   pp_int32 width,
@@ -99,8 +99,8 @@ protected:
 							   pp_int32 captionOffset,
 							   const PPString& buttonYesCaption);
 
-	void initRespondMessageBox(PPScreen* screen, 
-							   RespondListenerInterface* responder,
+	void initDialog(PPScreen* screen, 
+							   DialogResponder* responder,
 							   pp_int32 id,
 							   const PPString& caption,
 							   pp_int32 width,
@@ -109,8 +109,8 @@ protected:
 							   const PPString& buttonYesCaption,
 							   const PPString& buttonCancelCaption);
 
-	void initRespondMessageBox(PPScreen* screen, 
-							   RespondListenerInterface* responder,
+	void initDialog(PPScreen* screen, 
+							   DialogResponder* responder,
 							   pp_int32 id,
 							   const PPString& caption,
 							   pp_int32 width,
@@ -121,27 +121,27 @@ protected:
 							   const PPString& buttonCancelCaption);
 
 protected:
-	RespondMessageBox() :
+	PPDialogBase() :
 		keyDownInvokeKeyCode(-1)
 	{ 
 	}
 		
 public:
-	RespondMessageBox(PPScreen* screen, 
-					  RespondListenerInterface* responder,
+	PPDialogBase(PPScreen* screen, 
+					  DialogResponder* responder,
 					  pp_int32 id,
 					  const PPString& caption,
 					  MessageBoxTypes type = MessageBox_OKCANCEL);
 
-	RespondMessageBox(PPScreen* screen, 
-					  RespondListenerInterface* responder,
+	PPDialogBase(PPScreen* screen, 
+					  DialogResponder* responder,
 					  pp_int32 id, 
 					  const PPString& caption,
 					  const PPString& message);
 	
-	virtual ~RespondMessageBox();
+	virtual ~PPDialogBase();
 	
-	void setResponder(RespondListenerInterface* responder) { respondListener = responder; }
+	void setResponder(DialogResponder* responder) { respondListener = responder; }
 	
 	PPMessageBoxContainer* getMessageBoxContainer() const { return messageBoxContainerGeneric; }
 	
@@ -157,7 +157,7 @@ public:
 		
 private:
 	void initCommon(PPScreen* screen, 
-					RespondListenerInterface* responder,
+					DialogResponder* responder,
 					pp_int32 id, 
 					const PPString& caption, 
 					pp_int32 width, 

@@ -185,7 +185,7 @@ enum
 	PP_DEFAULT_ID					= 0x12345678
 };
 
-class RespondListenerInterface
+class DialogResponder
 {
 public:
 	virtual pp_int32 ActionOkay(PPObject* sender)	{ return 0; }

@@ -1,5 +1,5 @@
 /*
- *  ppui/RespondMessageBoxFileSelector.h
+ *  ppui/DialogFileSelector.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,17 +21,17 @@
  */
 
 /*
- *  RespondMessageBoxFileSelector.h
+ *  DialogFileSelector.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 08.03.06.
  *
  */
 
-#ifndef __RESPONDMESSAGEBOXFILESELECTOR_H__
-#define __RESPONDMESSAGEBOXFILESELECTOR_H__
+#ifndef __DIALOGFILESELECTOR_H__
+#define __DIALOGFILESELECTOR_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 #include "SimpleVector.h"
 //#include "UndoStack.h"
 
@@ -42,7 +42,7 @@ class PPPath;
 class PPPathEntry;
 class PPSystemString;
 
-class RespondMessageBoxFileSelector : public RespondMessageBox
+class DialogFileSelector : public PPDialogBase
 {
 private:
 	PPListBoxFileBrowser* listBoxFiles;
@@ -50,21 +50,21 @@ private:
 	PPSystemString* initialPath;
 	PPSystemString* fileFullPath;
 	
-	RespondMessageBox* overwritePromptMessageBox;
+	PPDialogBase* overwritePromptMessageBox;
 
 	bool doOverwritePrompt;
 	bool allowSelectDirectories;
 	bool allowEditFileName;
 	bool sortAscending;
 
-	class OverwritePromptResponder : public RespondListenerInterface
+	class OverwritePromptResponder : public DialogResponder
 	{
 	private:
-		RespondMessageBoxFileSelector& respondMessageBoxFileSelector;
+		DialogFileSelector& dialogFileSelector;
 		
 	public:
-		OverwritePromptResponder(RespondMessageBoxFileSelector& responder) :
-			respondMessageBoxFileSelector(responder)
+		OverwritePromptResponder(DialogFileSelector& responder) :
+			dialogFileSelector(responder)
 		{
 		}		
 		
@@ -87,15 +87,15 @@ private:
 	PPSimpleVector<Descriptor> extensions;
 	
 public:
-	RespondMessageBoxFileSelector(PPScreen* screen, 
-								  RespondListenerInterface* responder,
+	DialogFileSelector(PPScreen* screen, 
+								  DialogResponder* responder,
 								  pp_int32 id,
 								  const PPString& caption,
 								  bool editfileName = false,
 								  bool overwritePrompt = false,
 								  bool selectDirectories = false);
 
-	~RespondMessageBoxFileSelector();
+	~DialogFileSelector();
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 

@@ -1,5 +1,5 @@
 /*
- *  ppui/RespondMessageBox.cpp
+ *  ppui/DialogBase.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBox.cpp
+ *  DialogBase.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 06.10.05.
  *
  */
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -72,8 +72,8 @@ static void wrapString(PPSimpleVector<PPString>& stringParts, PPFont& f, const P
 	}
 }
 
-void RespondMessageBox::initCommon(PPScreen* screen, 
-								   RespondListenerInterface* responder,
+void PPDialogBase::initCommon(PPScreen* screen, 
+								   DialogResponder* responder,
 								   pp_int32 id, 
 								   const PPString& caption, 
 								   pp_int32 width, 
@@ -99,8 +99,8 @@ void RespondMessageBox::initCommon(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_MAIN_CAPTION, screen, this, PPPoint(x2, y2), caption, true));	
 }	
 
-void RespondMessageBox::initRespondMessageBox(PPScreen* screen, 
-											  RespondListenerInterface* responder,
+void PPDialogBase::initDialog(PPScreen* screen, 
+											  DialogResponder* responder,
 											  pp_int32 id,
 											  const PPString& caption,
 											  const PPString& message,
@@ -153,8 +153,8 @@ void RespondMessageBox::initRespondMessageBox(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(button);
 }
 
-void RespondMessageBox::initRespondMessageBox(PPScreen* screen, 
-											  RespondListenerInterface* responder,
+void PPDialogBase::initDialog(PPScreen* screen, 
+											  DialogResponder* responder,
 											  pp_int32 id,
 											  const PPString& caption,
 											  pp_int32 width,
@@ -179,8 +179,8 @@ void RespondMessageBox::initRespondMessageBox(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(button);
 }
 
-void RespondMessageBox::initRespondMessageBox(PPScreen* screen, 
-											  RespondListenerInterface* responder,
+void PPDialogBase::initDialog(PPScreen* screen, 
+											  DialogResponder* responder,
 											  pp_int32 id,
 											  const PPString& caption,
 											  pp_int32 width,
@@ -210,8 +210,8 @@ void RespondMessageBox::initRespondMessageBox(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(button);
 }
 
-void RespondMessageBox::initRespondMessageBox(PPScreen* screen, 
-											  RespondListenerInterface* responder,
+void PPDialogBase::initDialog(PPScreen* screen, 
+											  DialogResponder* responder,
 											  pp_int32 id,
 											  const PPString& caption,
 											  pp_int32 width,
@@ -246,8 +246,8 @@ void RespondMessageBox::initRespondMessageBox(PPScreen* screen,
 	messageBoxContainerGeneric->addControl(button);
 }
 
-RespondMessageBox::RespondMessageBox(PPScreen* screen, 
-									 RespondListenerInterface* responder,
+PPDialogBase::PPDialogBase(PPScreen* screen, 
+									 DialogResponder* responder,
 									 pp_int32 id, 
 									 const PPString& caption,
 									 MessageBoxTypes type/* = MessageBox_OKCANCEL*/) :
@@ -256,38 +256,38 @@ RespondMessageBox::RespondMessageBox(PPScreen* screen,
 	switch (type)
 	{
 		case MessageBox_OK:
-			initRespondMessageBox(screen, responder, id, "System Request", caption, 26, "Okay");
+			initDialog(screen, responder, id, "System Request", caption, 26, "Okay");
 			break;
 		case MessageBox_OKCANCEL:
-			initRespondMessageBox(screen, responder, id, caption, 290, 74, 26, "Yes", "No");
+			initDialog(screen, responder, id, caption, 290, 74, 26, "Yes", "No");
 			break;
 		case MessageBox_YESNOCANCEL:
-			initRespondMessageBox(screen, responder, id, caption, 290, 74, 26, "Yes", "No", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 74, 26, "Yes", "No", "Cancel");
 			break;
 	}
 }
 
-RespondMessageBox::RespondMessageBox(PPScreen* screen, 
-									 RespondListenerInterface* responder,
+PPDialogBase::PPDialogBase(PPScreen* screen, 
+									 DialogResponder* responder,
 									 pp_int32 id, 
 									 const PPString& caption,
 									 const PPString& message) :
 	keyDownInvokeKeyCode(-1)
 {
-	initRespondMessageBox(screen, responder, id, caption, message, 26, "Okay");
+	initDialog(screen, responder, id, caption, message, 26, "Okay");
 }
 
-RespondMessageBox::~RespondMessageBox()
+PPDialogBase::~PPDialogBase()
 {
 	delete messageBoxContainerGeneric;
 }
 
-void RespondMessageBox::show()
+void PPDialogBase::show()
 {
 	parentScreen->setModalControl(messageBoxContainerGeneric, true);
 }
 
-void RespondMessageBox::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, pp_uint16 chr)
+void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, pp_uint16 chr)
 {
 	if (event == eKeyDown || event == eKeyUp)
 	{
@@ -311,7 +311,7 @@ void RespondMessageBox::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 
 	}
 }
 
-pp_int32 RespondMessageBox::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 PPDialogBase::handleEvent(PPObject* sender, PPEvent* event)
 {
 #ifdef __LOWRES__
 	static const pp_uint16 scanCodesNumbers[] = {SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, SC_0, SC_PLUS, SC_MINUS, SC_PERIOD, 0, 0, 0, 0};
@@ -429,7 +429,7 @@ pp_int32 RespondMessageBox::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void RespondMessageBox::setUserButtonText(pp_int32 index, const PPString& caption)
+void PPDialogBase::setUserButtonText(pp_int32 index, const PPString& caption)
 {
 	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_USER1+index));
 	if (button)
@@ -437,7 +437,7 @@ void RespondMessageBox::setUserButtonText(pp_int32 index, const PPString& captio
 }
 
 
-pp_int32 RespondMessageBox::getID()
+pp_int32 PPDialogBase::getID()
 {
 	if (messageBoxContainerGeneric)
 		return messageBoxContainerGeneric->getID();
