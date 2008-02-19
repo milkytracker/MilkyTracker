@@ -174,7 +174,7 @@ public:
 
 private:
 	// --- envelope tool responder
-	class ToolHandlerResponder : public RespondListenerInterface
+	class ToolHandlerResponder : public DialogResponder
 	{
 	
 	private:
@@ -193,7 +193,7 @@ private:
 
 	friend class ToolHandlerResponder;
 
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 	ToolHandlerResponder* toolHandlerResponder;
 	
 	bool invokeTool(EnvelopeToolTypes type);

@@ -59,7 +59,7 @@ private:
 	
 	PPSystemString currentFileName;
 
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 
 	bool getSettingsRamping();
 	void setSettingsRamping(bool b);

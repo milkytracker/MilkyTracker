@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxWithValues.cpp
+ *  tracker/DialogWithValues.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxWithValues.cpp
+ *  DialogWithValues.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxWithValues.h"
+#include "DialogWithValues.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -37,12 +37,12 @@
 #include "Seperator.h"
 #include "ControlIDs.h"
 
-RespondMessageBoxWithValues::RespondMessageBoxWithValues(PPScreen* screen, 
-					  RespondListenerInterface* responder,
+DialogWithValues::DialogWithValues(PPScreen* screen, 
+					  DialogResponder* responder,
 					  pp_int32 id,
 					  const PPString& caption,
 					  ValueStyles style) :
-	RespondMessageBox()
+	PPDialogBase()
 {
 	valueOne = 0;
 	valueTwo = 0;
@@ -59,17 +59,17 @@ RespondMessageBoxWithValues::RespondMessageBoxWithValues(PPScreen* screen,
 	{
 		case ValueStyleEnterOneValue:
 #ifdef __LOWRES__
-			initRespondMessageBox(screen, responder, id, caption, 290, 110+15, 26+15, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 110+15, 26+15, "Ok", "Cancel");
 #else
-			initRespondMessageBox(screen, responder, id, caption, 290, 110, 26, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 110, 26, "Ok", "Cancel");
 #endif
 			break;
 			
 		case ValueStyleEnterTwoValues:
 #ifdef __LOWRES__
-			initRespondMessageBox(screen, responder, id, caption, 290, 142+15, 26+15, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 142+15, 26+15, "Ok", "Cancel");
 #else
-			initRespondMessageBox(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");
 #endif
 			break;
 	}
@@ -170,7 +170,7 @@ RespondMessageBoxWithValues::RespondMessageBoxWithValues(PPScreen* screen,
 	updateListBoxes();
 }
 
-void RespondMessageBoxWithValues::setValueOneCaption(const PPString& caption)
+void DialogWithValues::setValueOneCaption(const PPString& caption)
 {
 	PPControl* ctrl = messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_VALUE_ONE_CAPTION);
 	if (ctrl)
@@ -188,7 +188,7 @@ void RespondMessageBoxWithValues::setValueOneCaption(const PPString& caption)
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_VALUE_ONE_CAPTION, parentScreen, this, PPPoint(x, y), caption, true));
 }
 
-void RespondMessageBoxWithValues::setValueTwoCaption(const PPString& caption)
+void DialogWithValues::setValueTwoCaption(const PPString& caption)
 {
 	PPControl* ctrl = messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_VALUE_TWO_CAPTION);
 	if (ctrl)
@@ -206,13 +206,13 @@ void RespondMessageBoxWithValues::setValueTwoCaption(const PPString& caption)
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_VALUE_TWO_CAPTION, parentScreen, this, PPPoint(x, y), caption, true));
 }
 
-void RespondMessageBoxWithValues::show()
+void DialogWithValues::show()
 {
 	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
-	RespondMessageBox::show();	
+	PPDialogBase::show();	
 }
 
-pp_int32 RespondMessageBoxWithValues::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogWithValues::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eKeyDown)
 	{
@@ -284,29 +284,29 @@ pp_int32 RespondMessageBoxWithValues::handleEvent(PPObject* sender, PPEvent* eve
 		}
 	}
 	
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
-void RespondMessageBoxWithValues::setValueOneRange(float start, float end, pp_int32 numDecimals)
+void DialogWithValues::setValueOneRange(float start, float end, pp_int32 numDecimals)
 { 
 	valueOneRangeStart = start; valueOneRangeEnd = end;  numValueOneDecimals = numDecimals;
 	fitListBoxes();
 	setValueOne(valueOne);
 }
-void RespondMessageBoxWithValues::setValueTwoRange(float start, float end, pp_int32 numDecimals) 
+void DialogWithValues::setValueTwoRange(float start, float end, pp_int32 numDecimals) 
 { 
 	valueTwoRangeStart = start; valueTwoRangeEnd = end; numValueTwoDecimals = numDecimals;
 	fitListBoxes();
 	setValueTwo(valueTwo);
 }
 
-void RespondMessageBoxWithValues::fitListBoxes()
+void DialogWithValues::fitListBoxes()
 {
 	fitListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, valueOneRangeStart, valueOneRangeEnd, numValueOneDecimals);
 	fitListBox(MESSAGEBOX_LISTBOX_VALUE_TWO, valueTwoRangeStart, valueTwoRangeEnd, numValueTwoDecimals);
 }
 	
-void RespondMessageBoxWithValues::fitListBox(pp_int32 id, float valueOneRangeStart, float valueOneRangeEnd, pp_int32 numDecimals)
+void DialogWithValues::fitListBox(pp_int32 id, float valueOneRangeStart, float valueOneRangeEnd, pp_int32 numDecimals)
 {
 	pp_int32 width = messageBoxContainerGeneric->getSize().width;
 	pp_int32 x = messageBoxContainerGeneric->getLocation().x;
@@ -344,13 +344,13 @@ void RespondMessageBoxWithValues::fitListBox(pp_int32 id, float valueOneRangeSta
 	}
 }
 
-void RespondMessageBoxWithValues::updateListBoxes()
+void DialogWithValues::updateListBoxes()
 {
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, valueOne, numValueOneDecimals);
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_TWO, valueTwo, numValueTwoDecimals);
 }
 
-void RespondMessageBoxWithValues::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)
+void DialogWithValues::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)
 {
 	char buffer1[100];
 	char buffer2[100];
@@ -366,7 +366,7 @@ void RespondMessageBoxWithValues::updateListBox(pp_int32 id, float val, pp_int32
 	}
 }
 
-void RespondMessageBoxWithValues::commitChanges()
+void DialogWithValues::commitChanges()
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_LISTBOX_VALUE_ONE));
 	if (listBox)
@@ -377,14 +377,14 @@ void RespondMessageBoxWithValues::commitChanges()
 		listBox->commitChanges();
 }
 
-void RespondMessageBoxWithValues::listBoxEnterEditState(pp_int32 id)
+void DialogWithValues::listBoxEnterEditState(pp_int32 id)
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(id));
 	if (listBox)
 		listBox->placeCursorAtEnd();
 }
 
-void RespondMessageBoxWithValues::switchListBox()
+void DialogWithValues::switchListBox()
 {
 	if (messageBoxContainerGeneric->getControlByID(MESSAGEBOX_LISTBOX_VALUE_TWO) == NULL)
 		return;

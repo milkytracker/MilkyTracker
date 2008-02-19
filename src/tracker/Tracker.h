@@ -74,7 +74,7 @@ class SectionAbout;
 
 class PatternEditorControl;
 class InputControlListener;
-class RespondMessageBox;
+class PPDialogBase;
 class SampleLoadChannelSelectionHandler;
 class ToolInvokeHelper;
 
@@ -177,7 +177,7 @@ private:
 	InputControlListener* inputControlListener;
 	
 	SampleLoadChannelSelectionHandler* sampleLoadChannelSelectionHandler;
-	RespondMessageBox* respondMessageBox;
+	PPDialogBase* dialog;
 	ToolInvokeHelper* toolInvokeHelper;
 	
 	PPScreen* screen;

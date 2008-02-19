@@ -41,7 +41,7 @@
 #include "Container.h"
 #include "CheckBox.h"
 #include "Font.h"
-#include "RespondMessageBoxListBox.h"
+#include "DialogListBox.h"
 #include "ListBox.h"
 
 #include "ControlIDs.h"
@@ -191,20 +191,20 @@ void SectionOptimize::refresh()
 
 void SectionOptimize::optimize(bool evaluate/* = false*/)
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 
 	PPContainer* container = static_cast<PPContainer*>(sectionContainer);
 
-	respondMessageBox = new RespondMessageBoxListBox(tracker.screen, 
+	dialog = new DialogListBox(tracker.screen, 
 													 NULL, 
 													 PP_DEFAULT_ID, 
 													 "Result Log");
 
-	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
+	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 	listBox->setShowIndex(false);
 
 	if (!evaluate)
@@ -266,7 +266,7 @@ void SectionOptimize::optimize(bool evaluate/* = false*/)
 
 	if (listBox->getNumItems())
 	{
-		respondMessageBox->show();
+		dialog->show();
 		if (!evaluate)
 			refresh();
 	}
@@ -412,13 +412,13 @@ SectionOptimize::OptimizeSamplesResult SectionOptimize::optimizeSamples(bool con
 
 SectionOptimize::SectionOptimize(Tracker& theTracker) :
 	SectionUpperLeft(theTracker),
-	respondMessageBox(NULL)
+	dialog(NULL)
 {
 }
 
 SectionOptimize::~SectionOptimize()
 {
-	delete respondMessageBox;
+	delete dialog;
 }
 
 pp_int32 SectionOptimize::handleEvent(PPObject* sender, PPEvent* event)

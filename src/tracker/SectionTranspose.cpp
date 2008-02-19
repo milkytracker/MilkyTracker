@@ -39,7 +39,7 @@
 #include "Container.h"
 #include "PatternEditorControl.h"
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 #include "PatternTools.h"
 #include "Tools.h"
@@ -82,7 +82,7 @@ enum ControlIDs
 };
 
 // Class which responds to message box clicks
-class TransposeMessageBoxResponder : public RespondListenerInterface
+class TransposeMessageBoxResponder : public DialogResponder
 {
 private:
 	SectionTranspose& section;
@@ -95,7 +95,7 @@ public:
 	
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
-		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case MESSAGEBOX_TRANSPOSEPROCEED:
 				section.transposeSong();
@@ -107,7 +107,7 @@ public:
 
 SectionTranspose::SectionTranspose(Tracker& theTracker) :
 	SectionUpperLeft(theTracker),
-	respondMessageBox(NULL),
+	dialog(NULL),
 	messageBoxResponder(new TransposeMessageBoxResponder(*this))		
 {
 	currentInstrumentRangeStart = 0;
@@ -120,7 +120,7 @@ SectionTranspose::SectionTranspose(Tracker& theTracker) :
 SectionTranspose::~SectionTranspose()
 {
 	delete messageBoxResponder;
-	delete respondMessageBox;
+	delete dialog;
 }
 
 void SectionTranspose::setCurrentInstrument(pp_int32 instrument, bool redraw/* = true*/) 
@@ -824,19 +824,19 @@ void SectionTranspose::update(bool repaint/* = true*/)
 
 void SectionTranspose::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 
-	respondMessageBox = new RespondMessageBox(tracker.screen, messageBoxResponder, 
+	dialog = new PPDialogBase(tracker.screen, messageBoxResponder, 
 											  id, text, 
 											  yesnocancel ? 
-											  RespondMessageBox::MessageBox_YESNOCANCEL :
-											  RespondMessageBox::MessageBox_OKCANCEL); 	
+											  PPDialogBase::MessageBox_YESNOCANCEL :
+											  PPDialogBase::MessageBox_OKCANCEL); 	
 											  
-	respondMessageBox->show();
+	dialog->show();
 }
 
 void SectionTranspose::handleTransposeSong()

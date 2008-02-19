@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxChannelSelector.cpp
+ *  tracker/DialogListBox.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxChannelSelector.cpp
+ *  DialogListBox.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxChannelSelector.h"
+#include "DialogListBox.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -36,13 +36,17 @@
 #include "ListBox.h"
 #include "ControlIDs.h"
 
-RespondMessageBoxChannelSelector::RespondMessageBoxChannelSelector(PPScreen* screen, 
-																   RespondListenerInterface* responder,
-																   pp_int32 id,
-																   const PPString& caption) :
-	RespondMessageBox()
+DialogListBox::DialogListBox(PPScreen* screen, 
+												   DialogResponder* responder,
+												   pp_int32 id,
+												   const PPString& caption,
+												   bool okCancel/* = false*/) :
+	PPDialogBase()
 {
-	initRespondMessageBox(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");
+	if (okCancel)
+		initDialog(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");	
+	else
+		initDialog(screen, responder, id, caption, 290, 142, 26, "Okay");
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
 	
@@ -51,20 +55,11 @@ RespondMessageBoxChannelSelector::RespondMessageBoxChannelSelector(PPScreen* scr
 	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_YES));	
 	pp_int32 y2 = button->getLocation().y;
 	pp_int32 x2 = x + width / 2 - 30;
-	button->setLocation(PPPoint(x2+5,y2));
-
-	button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_CANCEL));
-	x2 = x + width / 2 + 40;
-	button->setLocation(PPPoint(x2+5,y2));
-	
-	button = new PPButton(PP_MESSAGEBOX_BUTTON_USER1, screen, this, PPPoint(x+width/2-100-10, y2), PPSize(60, 11));
-	button->setText("Mix");
-	messageBoxContainerGeneric->addControl(button);
 	
 	y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
-	x2 = x + width / 2 - 50;
+	x2 = x + width / 2 - 120;
 
-	listBox	= new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x2, y2), PPSize(100,4 + 7*8), true, false, true, true);
+	listBox	= new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x2, y2), PPSize(240,4 + 7*8), true, false, true, true);
 	listBox->setShowIndex(true);
 	messageBoxContainerGeneric->addControl(listBox);
 }

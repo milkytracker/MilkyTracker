@@ -30,7 +30,7 @@
 #include "Tools.h"
 #include "TrackerConfig.h"
 #include "PlayerController.h"
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 #include <math.h>
 
@@ -164,7 +164,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
-	respondMessageBox = NULL;	
+	dialog = NULL;	
 	
 	resetLastValues();
 }
@@ -174,7 +174,7 @@ SampleEditorControl::~SampleEditorControl()
 	if (sampleEditor)
 		sampleEditor->removeNotificationListener(this);
 
-	delete respondMessageBox;
+	delete dialog;
 		
 	delete toolHandlerResponder;
 

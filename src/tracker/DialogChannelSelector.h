@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxChannelSelector.h
+ *  tracker/DialogChannelSelector.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,26 +21,26 @@
  */
 
 /*
- *  RespondMessageBoxChannelSelector.h
+ *  DialogChannelSelector.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef RESPONDMESSAGEBOXCHANNELSELECTOR__H
-#define RESPONDMESSAGEBOXCHANNELSELECTOR__H
+#ifndef __DIALOGCHANNELSELECTOR_H__
+#define __DIALOGCHANNELSELECTOR_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class RespondMessageBoxChannelSelector : public RespondMessageBox
+class DialogChannelSelector : public PPDialogBase
 {
 private:
 	class PPListBox* listBox;
 
 public:
-	RespondMessageBoxChannelSelector(PPScreen* screen, 
-									 RespondListenerInterface* responder,
+	DialogChannelSelector(PPScreen* screen, 
+									 DialogResponder* responder,
 									 pp_int32 id,
 									 const PPString& caption);
 

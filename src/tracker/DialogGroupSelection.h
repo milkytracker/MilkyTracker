@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxEQ.h
+ *  tracker/DialogGroupSelection.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,48 +21,37 @@
  */
 
 /*
- *  RespondMessageBoxEQ.h
+ *  DialogGroupSelection.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on 03.04.07.
+ *  Created by Peter Barth on 23.06.06.
  *
  */
 
-#ifndef __RESPONDMESSAGEBOXEQ_H__
-#define __RESPONDMESSAGEBOXEQ_H__
+#ifndef __DIALOGGROUPSELECTION_H__
+#define __DIALOGGROUPSELECTION_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class RespondMessageBoxEQ : public RespondMessageBox
+class PPString;
+template <class T> class PPSimpleVector; 
+
+class DialogGroupSelection : public PPDialogBase
 {
-public:
-	enum EQNumBands
-	{
-		EQ3Bands,
-		EQ10Bands
-	};
-
 private:
-	EQNumBands numBands;
-	pp_uint32 numSliders;
+	pp_uint32 selection;
+
+public:
+	DialogGroupSelection(PPScreen* screen, 
+						   DialogResponder* responder,
+						   pp_int32 id,
+						   const PPString& caption,
+						   const PPSimpleVector<PPString>& choices);
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
-	
-	void resetSliders();
-	void update();
 
-public:
-	RespondMessageBoxEQ(PPScreen* screen, 
-						RespondListenerInterface* responder,
-						pp_int32 id,
-						EQNumBands numBands);
-
-	void setBandParam(pp_uint32 index, float param);
-	float getBandParam(pp_uint32 index) const;
-	
-	EQNumBands getNumBands() const { return numBands; }
-	pp_uint32 getNumBandsAsInt() const { return numSliders; }
+	pp_uint32 getSelection() { return selection; }
 };
 
-
 #endif
+

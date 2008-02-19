@@ -76,7 +76,7 @@ private:
 	PPPoint radioGroupLocations[5];
 	
 	// respond listener
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 	class MessageBoxResponderDisk* messageBoxResponder;
 
 	PPSystemString* file;

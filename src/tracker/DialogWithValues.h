@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxWithValues.h
+ *  tracker/DialogWithValues.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,19 +21,19 @@
  */
 
 /*
- *  RespondMessageBoxWithValues.h
+ *  DialogWithValues.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef RESPONDMESSAGEBOXWITHVALUES__H
-#define RESPONDMESSAGEBOXWITHVALUES__H
+#ifndef __DIALOGWITHVALUES_H__
+#define __DIALOGWITHVALUES_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class RespondMessageBoxWithValues : public RespondMessageBox
+class DialogWithValues : public PPDialogBase
 {
 public:
 	enum ValueStyles
@@ -49,8 +49,8 @@ private:
 	pp_int32 numValueOneDecimals, numValueTwoDecimals;
 	
 public:
-	RespondMessageBoxWithValues(PPScreen* screen, 
-								RespondListenerInterface* responder,
+	DialogWithValues(PPScreen* screen, 
+								DialogResponder* responder,
 							    pp_int32 id,
 								const PPString& caption,
 								ValueStyles style);

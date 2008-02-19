@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxHandlers.h
+ *  tracker/DialogHandlers.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,21 +21,21 @@
  */
 
 /*
- *  RespondMessageBoxHandlers.h
+ *  DialogHandlers.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef __RESPONDMESSAGEBOXHANDLERS_H__
-#define __RESPONDMESSAGEBOXHANDLERS_H__
+#ifndef __DIALOGHANDLERS_H__
+#define __DIALOGHANDLERS_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 class Tracker;
 
-class SampleLoadChannelSelectionHandler : public RespondListenerInterface
+class SampleLoadChannelSelectionHandler : public DialogResponder
 {
 private:
 	Tracker& tracker;

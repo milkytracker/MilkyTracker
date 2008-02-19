@@ -61,8 +61,8 @@
 #include "InputControlListener.h"
 
 // Some helper messageboxes & button handlers
-#include "RespondMessageBoxHandlers.h"
-#include "RespondMessageBoxChannelSelector.h"
+#include "DialogHandlers.h"
+#include "DialogChannelSelector.h"
 // Helper class to invoke tools which need parameters
 #include "ToolInvokeHelper.h"
 // Panning settings container modal dialog
@@ -135,7 +135,7 @@ Tracker::Tracker() :
 	currentUpperSection(NULL),
 	messageBoxContainerZAP(NULL),
 	messageBoxContainerGeneric(NULL),
-	respondMessageBox(NULL),
+	dialog(NULL),
 	playTimeText(NULL),
 	instrumentChooser(NULL),
 	inputContainerCurrent(NULL),
@@ -3081,14 +3081,14 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			else if (numSampleChannels > 1 && 
 					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
-				if (respondMessageBox)
-					delete respondMessageBox;
+				if (dialog)
+					delete dialog;
 				
-				respondMessageBox = new RespondMessageBoxChannelSelector(screen, sampleLoadChannelSelectionHandler, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
+				dialog = new DialogChannelSelector(screen, sampleLoadChannelSelectionHandler, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
 				
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
-					static_cast<RespondMessageBoxChannelSelector*>(respondMessageBox)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
+					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
 				
 				sampleLoadChannelSelectionHandler->setCurrentFileName(loadingParameters.filename);
 				sampleLoadChannelSelectionHandler->setPreferredFileName(loadingParameters.preferredFilename);
@@ -3096,7 +3096,7 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 				
 				signalWaitState(false);
 				
-				respondMessageBox->show();
+				dialog->show();
 				return true;
 			}
 			else if (numSampleChannels > 1 && 

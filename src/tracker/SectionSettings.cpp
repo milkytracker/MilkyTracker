@@ -46,8 +46,8 @@
 #include "StaticText.h"
 #include "TransparentContainer.h"
 #include "PatternEditorControl.h"
-#include "RespondMessageBoxWithValues.h"
-#include "RespondMessageBoxListBox.h"
+#include "DialogWithValues.h"
+#include "DialogListBox.h"
 #include "Graphics.h"
 
 #include "PatternTools.h"
@@ -258,7 +258,7 @@ static TScreenRes resolutions[NUMRESOLUTIONS] =
 };
 
 // Class which responds to message box clicks
-class SettingsMessageBoxResponder : public RespondListenerInterface
+class SettingsMessageBoxResponder : public DialogResponder
 {
 private:
 	SectionSettings& section;
@@ -271,7 +271,7 @@ public:
 	
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
-		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case RESPONDMESSAGEBOX_CUSTOMRESOLUTION:
 			{
@@ -285,14 +285,14 @@ public:
 
 			case RESPONDMESSAGEBOX_SELECTAUDIODRV:
 			{
-				PPListBox* listBox = reinterpret_cast<RespondMessageBoxListBox*>(sender)->getListBox();
+				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
 				section.storeAudioDriver(listBox->getItem(listBox->getSelectedIndex()));
 				break;
 			}
 			
 			case RESPONDMESSAGEBOX_SELECTRESAMPLER:
 			{
-				PPListBox* listBox = reinterpret_cast<RespondMessageBoxListBox*>(sender)->getListBox();
+				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
 				section.storeResampler(listBox->getSelectedIndex());
 				break;
 			}
@@ -313,7 +313,7 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 	palette(NULL),
 	storePalette(false),
 	colorCopy(NULL),
-	respondMessageBox(NULL)
+	dialog(NULL)
 {
 	pp_int32 i;
 
@@ -392,7 +392,7 @@ SectionSettings::~SectionSettings()
 	delete palette;
 	delete mixerSettings;
 	delete colorCopy;
-	delete respondMessageBox;
+	delete dialog;
 	delete messageBoxResponder;
 }
 
@@ -2673,63 +2673,63 @@ void SectionSettings::restoreCurrentMixerSettings()
 
 void SectionSettings::showCustomResolutionMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
-	respondMessageBox = new RespondMessageBoxWithValues(tracker.screen, 
+	dialog = new DialogWithValues(tracker.screen, 
 														messageBoxResponder, 
 														RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
 														"Enter custom resolution"PPSTR_PERIODS, 
-														RespondMessageBoxWithValues::ValueStyleEnterTwoValues);
+														DialogWithValues::ValueStyleEnterTwoValues);
 														
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Width in pixels:");
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoCaption("Height in pixels:");
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(MINWIDTH, 10000.0f, 0); 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoRange(MINHEIGHT, 10000.0f, 0);
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneIncreaseStep(1.0f);
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoIncreaseStep(1.0f);
+	static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Width in pixels:");
+	static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Height in pixels:");
+	static_cast<DialogWithValues*>(dialog)->setValueOneRange(MINWIDTH, 10000.0f, 0); 
+	static_cast<DialogWithValues*>(dialog)->setValueTwoRange(MINHEIGHT, 10000.0f, 0);
+	static_cast<DialogWithValues*>(dialog)->setValueOneIncreaseStep(1.0f);
+	static_cast<DialogWithValues*>(dialog)->setValueTwoIncreaseStep(1.0f);
 	 
 	pp_int32 width = tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue();
 	pp_int32 height = tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue();
 	 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne((float)width);
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo((float)height);
+	static_cast<DialogWithValues*>(dialog)->setValueOne((float)width);
+	static_cast<DialogWithValues*>(dialog)->setValueTwo((float)height);
 	
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionSettings::showRestorePaletteMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
-	respondMessageBox = new RespondMessageBox(tracker.screen, 
+	dialog = new PPDialogBase(tracker.screen, 
 											  messageBoxResponder, 
 											  RESPONDMESSAGEBOX_RESTOREPALETTES, 
 											  "Restore all default palettes?");
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionSettings::showSelectDriverMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
-	respondMessageBox = new RespondMessageBoxListBox(tracker.screen, 
+	dialog = new DialogListBox(tracker.screen, 
 													 messageBoxResponder, 
 													 RESPONDMESSAGEBOX_SELECTAUDIODRV, 
 													 "Select audio driver",
 													 true);
-	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
+	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	mp_sint32 i = 0;
 	mp_sint32 selectedIndex = -1;
@@ -2750,23 +2750,23 @@ void SectionSettings::showSelectDriverMessageBox()
 	if (selectedIndex != -1)
 		listBox->setSelectedIndex(selectedIndex, false);
 
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionSettings::showResamplerMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 
-	respondMessageBox = new RespondMessageBoxListBox(tracker.screen, 
+	dialog = new DialogListBox(tracker.screen, 
 													 messageBoxResponder, 
 													 RESPONDMESSAGEBOX_SELECTRESAMPLER, 
 													 "Select Resampler",
 													 true);
-	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
+	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	ResamplerHelper resamplerHelper;
 	for (pp_uint32 i = 0; i < resamplerHelper.getNumResamplers(); i++)
@@ -2774,7 +2774,7 @@ void SectionSettings::showResamplerMessageBox()
 
 	listBox->setSelectedIndex(tracker.settingsDatabase->restore("INTERPOLATION")->getIntValue(), false);
 
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionSettings::storeAudioDriver(const char* driverName)
@@ -2823,8 +2823,8 @@ void SectionSettings::enumerateFontFacesInListBox(pp_uint32 fontID)
 
 void SectionSettings::storeCustomResolution()
 {
-	pp_int32 width = (pp_int32)static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
-	pp_int32 height = (pp_int32)static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueTwo();
+	pp_int32 width = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueOne();
+	pp_int32 height = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueTwo();
 
 	if (width < MINWIDTH)
 		width = MINWIDTH;

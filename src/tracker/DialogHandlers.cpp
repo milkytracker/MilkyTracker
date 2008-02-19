@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxHandlers.cpp
+ *  tracker/DialogHandlers.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,16 +21,16 @@
  */
 
 /*
- *  RespondMessageBoxHandlers.cpp
+ *  DialogHandlers.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxHandlers.h"
+#include "DialogHandlers.h"
 #include "Tracker.h"
-#include "RespondMessageBoxChannelSelector.h"
+#include "DialogChannelSelector.h"
 #include "ListBox.h"
 #include "ModuleEditor.h"
 #include "PlayerController.h"
@@ -41,7 +41,7 @@
 // Load either left or right sample from a list of choices
 pp_int32 SampleLoadChannelSelectionHandler::ActionOkay(PPObject* sender)
 {
-	PPListBox* listBox = static_cast<RespondMessageBoxChannelSelector*>(tracker.respondMessageBox)->getListBox();
+	PPListBox* listBox = static_cast<DialogChannelSelector*>(tracker.dialog)->getListBox();
 	
 	tracker.signalWaitState(true);
 

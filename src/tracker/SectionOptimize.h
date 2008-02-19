@@ -38,12 +38,12 @@
 
 class PPControl;
 class Tracker;
-class RespondMessageBoxListBox;
+class DialogListBox;
 
 class SectionOptimize : public SectionUpperLeft
 {
 private:
-	RespondMessageBoxListBox* respondMessageBox;
+	DialogListBox* dialog;
 	
 	void refresh();
 

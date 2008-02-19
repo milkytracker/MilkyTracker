@@ -29,21 +29,21 @@
  */
 
 #include "PatternEditorControl.h"
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 void PatternEditorControl::showNoteTransposeWarningMessageBox(pp_int32 fuckups)
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
 	char buffer[100];
 	sprintf(buffer, "%i notes will be erased, continue?", fuckups);
 	
-	respondMessageBox = new RespondMessageBox(parentScreen, transposeHandlerResponder, PP_DEFAULT_ID, buffer);
-	respondMessageBox->show();
+	dialog = new PPDialogBase(parentScreen, transposeHandlerResponder, PP_DEFAULT_ID, buffer);
+	dialog->show();
 }
 
 pp_int32 PatternEditorControl::noteTransposeTrack(const PatternEditorTools::TransposeParameters& transposeParameters)

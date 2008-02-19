@@ -32,19 +32,19 @@
 #include "Tracker.h"
 #include "ListBox.h"
 #include "PatternEditorControl.h"
-#include "RespondMessageBoxWithValues.h"
-#include "RespondMessageBoxQuickChooseInstrument.h"
+#include "DialogWithValues.h"
+#include "DialogQuickChooseInstrument.h"
 
 ToolInvokeHelper::ToolInvokeHelper(Tracker& theTracker) :
 	tracker(theTracker),
-	respondMessageBox(NULL)
+	dialog(NULL)
 {
 	resetLastValues();
 }
 
 ToolInvokeHelper::~ToolInvokeHelper()
 {
-	delete respondMessageBox;
+	delete dialog;
 }
 
 void ToolInvokeHelper::resetLastValues()
@@ -57,34 +57,34 @@ bool ToolInvokeHelper::invokeTool(ToolTypes toolType, pp_int16 keyDownKeyCode/* 
 {
 	lastToolType = toolType;
 
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
 	switch (toolType)
 	{
 		case ToolTypePatternVolumeScale:
-			respondMessageBox = new RespondMessageBoxWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale pattern"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale pattern"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeTrackVolumeScale:
-			respondMessageBox = new RespondMessageBoxWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale track"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale track"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeSelectionVolumeScale:
-			respondMessageBox = new RespondMessageBoxWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale block"PPSTR_PERIODS, RespondMessageBoxWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale block"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeQuickChooseInstrument:
 		{
-			respondMessageBox = new RespondMessageBoxQuickChooseInstrument(tracker.screen, this, PP_DEFAULT_ID, "Choose instrument"PPSTR_PERIODS);
-			static_cast<RespondMessageBoxQuickChooseInstrument*>(respondMessageBox)->setValueCaption("Enter hex value:");
-			pp_uint16 value = static_cast<RespondMessageBoxQuickChooseInstrument*>(respondMessageBox)->numPadKeyToValue(keyDownKeyCode);
-			static_cast<RespondMessageBoxQuickChooseInstrument*>(respondMessageBox)->setValue(value);
-			respondMessageBox->setKeyDownInvokeKeyCode(keyDownKeyCode);
-			respondMessageBox->show();
+			dialog = new DialogQuickChooseInstrument(tracker.screen, this, PP_DEFAULT_ID, "Choose instrument"PPSTR_PERIODS);
+			static_cast<DialogQuickChooseInstrument*>(dialog)->setValueCaption("Enter hex value:");
+			pp_uint16 value = static_cast<DialogQuickChooseInstrument*>(dialog)->numPadKeyToValue(keyDownKeyCode);
+			static_cast<DialogQuickChooseInstrument*>(dialog)->setValue(value);
+			dialog->setKeyDownInvokeKeyCode(keyDownKeyCode);
+			dialog->show();
 			return true;
 			break;
 		}
@@ -93,18 +93,18 @@ bool ToolInvokeHelper::invokeTool(ToolTypes toolType, pp_int16 keyDownKeyCode/* 
 			return false;
 	}
 	
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter start scale:");
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoCaption("Enter end scale:");
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(0, 100.0f, 2); 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoRange(0, 100.0f, 2); 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneIncreaseStep(0.01f); 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwoIncreaseStep(0.01f); 
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.volumeScaleStart != -1.0f ? lastValues.volumeScaleStart : 1.0f);
-	static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueTwo(lastValues.volumeScaleEnd != -1.0f ? lastValues.volumeScaleEnd : 1.0f);
+	static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter start scale:");
+	static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Enter end scale:");
+	static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 100.0f, 2); 
+	static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0, 100.0f, 2); 
+	static_cast<DialogWithValues*>(dialog)->setValueOneIncreaseStep(0.01f); 
+	static_cast<DialogWithValues*>(dialog)->setValueTwoIncreaseStep(0.01f); 
+	static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.volumeScaleStart != -1.0f ? lastValues.volumeScaleStart : 1.0f);
+	static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.volumeScaleEnd != -1.0f ? lastValues.volumeScaleEnd : 1.0f);
 	
-	respondMessageBox->setKeyDownInvokeKeyCode(keyDownKeyCode);
+	dialog->setKeyDownInvokeKeyCode(keyDownKeyCode);
 	
-	respondMessageBox->show();
+	dialog->show();
 
 	return true;
 }
@@ -114,26 +114,26 @@ pp_int32 ToolInvokeHelper::ActionOkay(PPObject* sender)
 	switch (lastToolType)
 	{
 		case ToolTypePatternVolumeScale:
-			lastValues.volumeScaleStart = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
-			lastValues.volumeScaleEnd = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueTwo();
+			lastValues.volumeScaleStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.volumeScaleEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			tracker.getPatternEditor()->scaleVolumePattern(lastValues.volumeScaleStart, lastValues.volumeScaleEnd);
 			break;
 
 		case ToolTypeTrackVolumeScale:
-			lastValues.volumeScaleStart = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
-			lastValues.volumeScaleEnd = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueTwo();
+			lastValues.volumeScaleStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.volumeScaleEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			tracker.getPatternEditor()->scaleVolumeTrack(lastValues.volumeScaleStart, lastValues.volumeScaleEnd);
 			break;
 
 		case ToolTypeSelectionVolumeScale:
-			lastValues.volumeScaleStart = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
-			lastValues.volumeScaleEnd = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueTwo();
+			lastValues.volumeScaleStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.volumeScaleEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			tracker.getPatternEditor()->scaleVolumeSelection(lastValues.volumeScaleStart, lastValues.volumeScaleEnd);
 			break;
 			
 		case ToolTypeQuickChooseInstrument:
 		{
-			pp_int32 value = static_cast<RespondMessageBoxQuickChooseInstrument*>(respondMessageBox)->getValue();
+			pp_int32 value = static_cast<DialogQuickChooseInstrument*>(dialog)->getValue();
 			if (value == 0)
 				tracker.enableInstrument(false);
 			else

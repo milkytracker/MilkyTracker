@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxGroupSelection.h
+ *  tracker/DialogListBox.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,37 +21,32 @@
  */
 
 /*
- *  RespondMessageBoxGroupSelection.h
+ *  DialogListBox.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on 23.06.06.
+ *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef __RESPONDMESSAGEBOXGROUPSELECTION_H__
-#define __RESPONDMESSAGEBOXGROUPSELECTION_H__
+#ifndef __DIALOGLISTBOX_H__
+#define __DIALOGLISTBOX_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class PPString;
-template <class T> class PPSimpleVector; 
-
-class RespondMessageBoxGroupSelection : public RespondMessageBox
+class DialogListBox : public PPDialogBase
 {
 private:
-	pp_uint32 selection;
+	class PPListBox* listBox;
 
 public:
-	RespondMessageBoxGroupSelection(PPScreen* screen, 
-						   RespondListenerInterface* responder,
-						   pp_int32 id,
-						   const PPString& caption,
-						   const PPSimpleVector<PPString>& choices);
+	DialogListBox(PPScreen* screen, 
+							 DialogResponder* responder,
+							 pp_int32 id,
+							 const PPString& caption,
+							 bool okCancel = false);
+	
+	PPListBox* getListBox() { return listBox; }
 
-	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
-
-	pp_uint32 getSelection() { return selection; }
 };
 
 #endif
-

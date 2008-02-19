@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxEQ.cpp
+ *  tracker/DialogEQ.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxEQ.cpp
+ *  DialogEQ.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 03.04.07.
  *
  */
 
-#include "RespondMessageBoxEQ.h"
+#include "DialogEQ.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -39,11 +39,11 @@
 #include "Seperator.h"
 #include "EQConstants.h"
 
-RespondMessageBoxEQ::RespondMessageBoxEQ(PPScreen* screen, 
-										 RespondListenerInterface* responder,
+DialogEQ::DialogEQ(PPScreen* screen, 
+										 DialogResponder* responder,
 										 pp_int32 id,
 										 EQNumBands numBands) :
-	RespondMessageBox(),
+	PPDialogBase(),
 	numBands(numBands)
 {
 	numSliders = 3;
@@ -59,7 +59,7 @@ RespondMessageBoxEQ::RespondMessageBoxEQ(PPScreen* screen,
 	
 	sprintf(dummy, "%i Band Equalizer"PPSTR_PERIODS, numSliders);
 	
-	initRespondMessageBox(screen, responder, id, dummy, 300, 230, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, dummy, 300, 230, 26, "Ok", "Cancel");
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
 	pp_int32 y = getMessageBoxContainer()->getLocation().y;
@@ -144,7 +144,7 @@ RespondMessageBoxEQ::RespondMessageBoxEQ(PPScreen* screen,
 }
 
 
-void RespondMessageBoxEQ::resetSliders()
+void DialogEQ::resetSliders()
 {
 	for (pp_uint32 i = 0; i < numSliders; i++)
 	{
@@ -153,12 +153,12 @@ void RespondMessageBoxEQ::resetSliders()
 	}
 }
 
-void RespondMessageBoxEQ::update()
+void DialogEQ::update()
 {
 	parentScreen->paintControl(messageBoxContainerGeneric);
 }
 
-pp_int32 RespondMessageBoxEQ::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogEQ::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eCommand)
 	{
@@ -174,10 +174,10 @@ pp_int32 RespondMessageBoxEQ::handleEvent(PPObject* sender, PPEvent* event)
 		}
 	}
 
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
-void RespondMessageBoxEQ::setBandParam(pp_uint32 index, float param)
+void DialogEQ::setBandParam(pp_uint32 index, float param)
 {
 	if (index >= numSliders)
 		return;
@@ -189,7 +189,7 @@ void RespondMessageBoxEQ::setBandParam(pp_uint32 index, float param)
 	slider->setCurrentValue(value);
 }
 
-float RespondMessageBoxEQ::getBandParam(pp_uint32 index) const
+float DialogEQ::getBandParam(pp_uint32 index) const
 {
 	if (index >= numSliders)
 		return 0.0f;

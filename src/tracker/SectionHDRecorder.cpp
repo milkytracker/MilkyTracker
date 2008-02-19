@@ -46,7 +46,7 @@
 #include "StaticText.h"
 #include "ListBox.h"
 #include "PatternEditorControl.h"
-#include "RespondMessageBoxListBox.h"
+#include "DialogListBox.h"
 
 #include "SampleEditor.h"
 
@@ -86,7 +86,7 @@ enum ControlIDs
 };
 
 // Class which responds to the message box clicks
-class MessageBoxResponderHDRec : public RespondListenerInterface
+class MessageBoxResponderHDRec : public DialogResponder
 {
 private:
 	SectionHDRecorder& section;
@@ -99,11 +99,11 @@ public:
 	
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
-		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case RESPONDMESSAGEBOX_SELECTRESAMPLER:
 			{
-				PPListBox* listBox = reinterpret_cast<RespondMessageBoxListBox*>(sender)->getListBox();
+				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
 				section.storeResampler(listBox->getSelectedIndex());
 				break;
 			}
@@ -138,7 +138,7 @@ SectionHDRecorder::SectionHDRecorder(Tracker& tracker) :
 	resampler(1),
 	insIndex(0), smpIndex(0),
 	currentFileName(TrackerConfig::untitledSong),
-	respondMessageBox(NULL)
+	dialog(NULL)
 {
 	messageBoxResponder = new MessageBoxResponderHDRec(*this);
 }
@@ -147,10 +147,10 @@ SectionHDRecorder::~SectionHDRecorder()
 {
 	delete messageBoxResponder;
 	
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 }
 
@@ -936,18 +936,18 @@ void SectionHDRecorder::adjustOrders()
 
 void SectionHDRecorder::showResamplerMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 
-	respondMessageBox = new RespondMessageBoxListBox(tracker.screen, 
+	dialog = new DialogListBox(tracker.screen, 
 													 messageBoxResponder, 
 													 RESPONDMESSAGEBOX_SELECTRESAMPLER, 
 													 "Select Resampler",
 													 true);
-	PPListBox* listBox = static_cast<RespondMessageBoxListBox*>(respondMessageBox)->getListBox();
+	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	ResamplerHelper resamplerHelper;
 
@@ -956,7 +956,7 @@ void SectionHDRecorder::showResamplerMessageBox()
 
 	listBox->setSelectedIndex(resampler, false);
 
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionHDRecorder::storeResampler(pp_uint32 resampler)

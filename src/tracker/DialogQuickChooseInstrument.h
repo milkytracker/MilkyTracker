@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxQuickChooseInstrument.h
+ *  tracker/DialogQuickChooseInstrument.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,27 +21,27 @@
  */
 
 /*
- *  RespondMessageBoxQuickChooseInstrument.h
+ *  DialogQuickChooseInstrument.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef RESPONDMESSAGEBOXQUICKCHOOSEINSTRUMENT__H
-#define RESPONDMESSAGEBOXQUICKCHOOSEINSTRUMENT__H
+#ifndef __DIALOGQUICKCHOOSEINSTRUMENT_H__
+#define __DIALOGQUICKCHOOSEINSTRUMENT_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class RespondMessageBoxQuickChooseInstrument : public RespondMessageBox
+class DialogQuickChooseInstrument : public PPDialogBase
 {
 private:
 	pp_int32 value;
 	pp_int32 valueRangeStart, valueRangeEnd, valueIncreaseStep;
 	
 public:
-	RespondMessageBoxQuickChooseInstrument(PPScreen* screen, 
-										   RespondListenerInterface* responder,
+	DialogQuickChooseInstrument(PPScreen* screen, 
+										   DialogResponder* responder,
 										   pp_int32 id,
 										   const PPString& caption);
 

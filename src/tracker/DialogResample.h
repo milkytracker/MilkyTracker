@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxResample.h
+ *  tracker/DialogResample.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,19 +21,19 @@
  */
 
 /*
- *  RespondMessageBoxResample.h
+ *  DialogResample.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#ifndef RESPONDMESSAGEBOXRESAMPLE__H
-#define RESPONDMESSAGEBOXRESAMPLE__H
+#ifndef __DIALOGRESAMPLE_H__
+#define __DIALOGRESAMPLE_H__
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
-class RespondMessageBoxResample : public RespondMessageBox
+class DialogResample : public PPDialogBase
 {
 private:
 	class PPListBox* listBoxes[3];
@@ -50,11 +50,11 @@ private:
 	bool adjustFtAndRelnote;
 
 public:
-	RespondMessageBoxResample(PPScreen* screen, 
-							  RespondListenerInterface* responder,
+	DialogResample(PPScreen* screen, 
+							  DialogResponder* responder,
 							  pp_int32 id);
 
-	virtual ~RespondMessageBoxResample();
+	virtual ~DialogResample();
 
 	virtual void show();
 

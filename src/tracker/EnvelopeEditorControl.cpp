@@ -29,7 +29,7 @@
 #include "ContextMenu.h"
 #include "XModule.h"
 #include "TrackerConfig.h"
-#include "RespondMessageBoxWithValues.h"
+#include "DialogWithValues.h"
 #include "Tools.h"
 #include "FilterParameters.h"
 
@@ -102,7 +102,7 @@ EnvelopeEditorControl::EnvelopeEditorControl(pp_int32 id,
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
-	respondMessageBox = NULL;	
+	dialog = NULL;	
 	
 	resetLastValues();
 }
@@ -113,7 +113,7 @@ EnvelopeEditorControl::~EnvelopeEditorControl()
 		envelopeEditor->removeNotificationListener(this);
 
 	delete toolHandlerResponder;
-	delete respondMessageBox;	
+	delete dialog;	
 
 	delete hScrollbar;
 	
@@ -1001,10 +1001,10 @@ void EnvelopeEditorControl::executeMenuCommand(pp_int32 commandId)
 // ----- some tools for modifying envelopes ----------------------------------
 bool EnvelopeEditorControl::invokeToolParameterDialog(EnvelopeEditorControl::EnvelopeToolTypes type)
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
 	toolHandlerResponder->setEnvelopeToolType(type);
@@ -1012,21 +1012,21 @@ bool EnvelopeEditorControl::invokeToolParameterDialog(EnvelopeEditorControl::Env
 	switch (type)
 	{
 		case EnvelopeToolTypeScaleX:
-			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Scale envelope along x-axis", RespondMessageBoxWithValues::ValueStyleEnterOneValue);
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter scale in percent:");
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(0, 10000.0f, 2); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.scaleEnvelope != -1.0f ? lastValues.scaleEnvelope : 100.0f);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Scale envelope along x-axis", DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter scale in percent:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 10000.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.scaleEnvelope != -1.0f ? lastValues.scaleEnvelope : 100.0f);
 			break;
 
 		case EnvelopeToolTypeScaleY:
-			respondMessageBox = new RespondMessageBoxWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Scale envelope along y-axis", RespondMessageBoxWithValues::ValueStyleEnterOneValue);
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneCaption("Enter scale in percent:");
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOneRange(0, 10000.0f, 2); 
-			static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->setValueOne(lastValues.scaleEnvelope != -1.0f ? lastValues.scaleEnvelope : 100.0f);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Scale envelope along y-axis", DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter scale in percent:");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, 10000.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.scaleEnvelope != -1.0f ? lastValues.scaleEnvelope : 100.0f);
 			break;
 	}
 	
-	respondMessageBox->show();
+	dialog->show();
 	
 	return true;
 }
@@ -1041,7 +1041,7 @@ bool EnvelopeEditorControl::invokeTool(EnvelopeToolTypes type)
 	{
 		case EnvelopeToolTypeScaleX:
 		{
-			lastValues.scaleEnvelope = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
+			lastValues.scaleEnvelope = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(1);
 			par.setParameter(0, lastValues.scaleEnvelope / 100.0f);
 			envelopeEditor->tool_xScaleEnvelope(&par);
@@ -1050,7 +1050,7 @@ bool EnvelopeEditorControl::invokeTool(EnvelopeToolTypes type)
 
 		case EnvelopeToolTypeScaleY:
 		{
-			lastValues.scaleEnvelope = static_cast<RespondMessageBoxWithValues*>(respondMessageBox)->getValueOne();
+			lastValues.scaleEnvelope = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(1);
 			par.setParameter(0, lastValues.scaleEnvelope / 100.0f);
 			envelopeEditor->tool_yScaleEnvelope(&par);

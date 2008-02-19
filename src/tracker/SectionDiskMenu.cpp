@@ -49,7 +49,7 @@
 
 #include "SectionHDRecorder.h"
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 #include "PatternTools.h"
 #include "Tools.h"
@@ -130,7 +130,7 @@ enum ControlIDs
 #define INDEXTORADIOGROUP(INDEX) ((INDEX) + DISKMENU_NORMAL_RADIOGROUP_SONGTYPE)
 
 // Class which responds to the above message box clicks
-class MessageBoxResponderDisk : public RespondListenerInterface
+class MessageBoxResponderDisk : public DialogResponder
 {
 private:
 	SectionDiskMenu& section;
@@ -143,12 +143,12 @@ public:
 	
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
-		if (reinterpret_cast<RespondMessageBox*>(sender)->getID() == RESPONDMESSAGEBOX_OVERWRITE)
+		if (reinterpret_cast<PPDialogBase*>(sender)->getID() == RESPONDMESSAGEBOX_OVERWRITE)
 		{
 			section.saveCurrent();
 			return 1;
 		}
-		else if (reinterpret_cast<RespondMessageBox*>(sender)->getID() == RESPONDMESSAGEBOX_DELETE)
+		else if (reinterpret_cast<PPDialogBase*>(sender)->getID() == RESPONDMESSAGEBOX_DELETE)
 		{
 			section.deleteCurrent();
 		}
@@ -225,7 +225,7 @@ SectionDiskMenu::SectionDiskMenu(Tracker& theTracker) :
 
 	lastFocusedControl = NULL;
 
-	respondMessageBox = NULL;
+	dialog = NULL;
 
 #ifdef __LOWRES__
 	lastSIPOffsetMove = 0;
@@ -241,7 +241,7 @@ SectionDiskMenu::~SectionDiskMenu()
 	delete fileFullPath;
 	delete file;
 	
-	delete respondMessageBox;
+	delete dialog;
 	delete messageBoxResponder;
 
 	delete normalViewControls;
@@ -1478,17 +1478,17 @@ void SectionDiskMenu::loadCurrentSelectedFile()
 
 void SectionDiskMenu::showOverwriteMessageBox()
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
-	respondMessageBox = new RespondMessageBox(tracker.screen, 
+	dialog = new PPDialogBase(tracker.screen, 
 											  messageBoxResponder, 
 											  RESPONDMESSAGEBOX_OVERWRITE, 
 											  "Overwrite existing file?");
-	respondMessageBox->show();	
+	dialog->show();	
 }
 	
 void SectionDiskMenu::prepareSave()
@@ -1548,8 +1548,8 @@ void SectionDiskMenu::saveCurrent()
 				{
 					tracker.sectionHDRecorder->setCurrentFileName(fileFullPath);
 					tracker.showUpperSection(tracker.sectionHDRecorder);
-					if (respondMessageBox &&
-						tracker.screen->getModalControl() == respondMessageBox->getMessageBoxContainer())
+					if (dialog &&
+						tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
 					{
 						tracker.screen->setModalControl(NULL);
 					}
@@ -1603,8 +1603,8 @@ void SectionDiskMenu::saveCurrent()
 		tracker.fileSystemChangedListener = this;
 	}
 	
-	if (respondMessageBox &&
-		tracker.screen->getModalControl() == respondMessageBox->getMessageBoxContainer())
+	if (dialog &&
+		tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
 	{
 		tracker.screen->setModalControl(NULL);
 	}
@@ -1616,17 +1616,17 @@ void SectionDiskMenu::showDeleteMessageBox()
 	if (!listBoxFiles->currentSelectionIsFile())
 		return;
 
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 	
-	respondMessageBox = new RespondMessageBox(tracker.screen, 
+	dialog = new PPDialogBase(tracker.screen, 
 											  messageBoxResponder, 
 											  RESPONDMESSAGEBOX_DELETE, 
 											  "Delete selected file?");
-	respondMessageBox->show();	
+	dialog->show();	
 }
 
 void SectionDiskMenu::deleteCurrent()

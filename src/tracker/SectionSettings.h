@@ -177,7 +177,7 @@ private:
 	void storeAudioDriver(const char* driverName);
 	void storeResampler(pp_uint32 resampler);
 
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 	class SettingsMessageBoxResponder* messageBoxResponder;
 	// Responder should be friend
 	friend class SettingsMessageBoxResponder;	

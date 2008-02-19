@@ -36,7 +36,7 @@ class PPScrollbar;
 class PPControl;
 class PPContextMenu;
 class FilterParameters;
-class RespondMessageBox;
+class PPDialogBase;
 
 class SampleEditorControl : public PPControl, public EventListenerInterface, public EditorBase::EditorNotificationListener
 {
@@ -305,7 +305,7 @@ public:
 	
 	// --- Sample tool responder
 private:
-	class ToolHandlerResponder : public RespondListenerInterface
+	class ToolHandlerResponder : public DialogResponder
 	{
 	public:
 		enum SampleToolTypes
@@ -351,7 +351,7 @@ private:
 
 	friend class ToolHandlerResponder;
 
-	RespondMessageBox* respondMessageBox;
+	PPDialogBase* dialog;
 	ToolHandlerResponder* toolHandlerResponder;
 	
 	bool invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypes type);

@@ -39,7 +39,7 @@
 #include "PatternEditorControl.h"	
 #include "SampleEditorControl.h"
 #include "SectionInstruments.h"
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 // OS Interface
 #include "PPOpenPanel.h"
@@ -61,7 +61,7 @@ enum ControlIDs
 };
 
 // Class which responds to message box clicks
-class SampleMessageBoxResponder : public RespondListenerInterface
+class SampleMessageBoxResponder : public DialogResponder
 {
 private:
 	SectionSamples& section;
@@ -74,7 +74,7 @@ public:
 	
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
-		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case MESSAGEBOX_CLEARSAMPLE:
 				section.getSampleEditorControl()->getSampleEditor()->tool_clearSample();
@@ -98,7 +98,7 @@ public:
 	
 	virtual pp_int32 ActionNo(PPObject* sender)
 	{
-		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case MESSAGEBOX_CONVERTSAMPLE:
 				section.getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(false);
@@ -117,7 +117,7 @@ SectionSamples::SectionSamples(Tracker& theTracker) :
 	currentSamplePlayNote(ModuleEditor::MAX_NOTE/2),
 	showRangeOffsets(false),
 	offsetFormat(0),
-	respondMessageBox(NULL),
+	dialog(NULL),
 	messageBoxResponder(new SampleMessageBoxResponder(*this))	
 {
 }
@@ -125,7 +125,7 @@ SectionSamples::SectionSamples(Tracker& theTracker) :
 SectionSamples::~SectionSamples()
 {
 	delete messageBoxResponder;
-	delete respondMessageBox;
+	delete dialog;
 }
 
 pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
@@ -1332,19 +1332,19 @@ void SectionSamples::setOffsetText(pp_uint32 ID, pp_uint32 offset)
 
 void SectionSamples::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
 {
-	if (respondMessageBox)
+	if (dialog)
 	{
-		delete respondMessageBox;
-		respondMessageBox = NULL;
+		delete dialog;
+		dialog = NULL;
 	}
 
-	respondMessageBox = new RespondMessageBox(tracker.screen, messageBoxResponder, 
+	dialog = new PPDialogBase(tracker.screen, messageBoxResponder, 
 											  id, text, 
 											  yesnocancel ? 
-											  RespondMessageBox::MessageBox_YESNOCANCEL :
-											  RespondMessageBox::MessageBox_OKCANCEL); 	
+											  PPDialogBase::MessageBox_YESNOCANCEL :
+											  PPDialogBase::MessageBox_OKCANCEL); 	
 											  
-	respondMessageBox->show();
+	dialog->show();
 }
 
 void SectionSamples::handleClearSample()

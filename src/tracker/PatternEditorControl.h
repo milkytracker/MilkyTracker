@@ -41,7 +41,7 @@
 class PPScrollbar;
 class PPFont;
 class PPContextMenu;
-class RespondMessageBox;
+class PPDialogBase;
 
 class PatternEditorControl;
 typedef void (PatternEditorControl::*TPatternEditorKeyBindingHandler)();
@@ -303,7 +303,7 @@ public:
 	
 private:
 	// --- Transpose handler
-	class TransposeHandlerResponder : public RespondListenerInterface
+	class TransposeHandlerResponder : public DialogResponder
 	{
 	private:
 		PatternEditorControl& patternEditorControl;
@@ -322,7 +322,7 @@ private:
 
 	friend class TransposeHandlerResponder;
 
-	RespondMessageBox* respondMessageBox;
+	PPDialogBase* dialog;
 	TransposeHandlerResponder* transposeHandlerResponder;
 
 private:

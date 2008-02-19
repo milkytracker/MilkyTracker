@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxResample.cpp
+ *  tracker/DialogResample.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxResample.cpp
+ *  DialogResample.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxResample.h"
+#include "DialogResample.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "CheckBox.h"
@@ -87,19 +87,19 @@ float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 	return f * (table[(mp_ubyte)xmfine+12]*(1.0f/65536.0f));
 }
 
-RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen, 
-													 RespondListenerInterface* responder,
+DialogResample::DialogResample(PPScreen* screen, 
+													 DialogResponder* responder,
 													 pp_int32 id) :
-	RespondMessageBox(),
+	PPDialogBase(),
 	count(0),
 	resamplerHelper(new ResamplerHelper()),
 	interpolationType(1),
 	adjustFtAndRelnote(true)
 {
 #ifdef __LOWRES__
-	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
 #else
-	initRespondMessageBox(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
@@ -250,12 +250,12 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	c4spd = 0.0f;
 }
 
-RespondMessageBoxResample::~RespondMessageBoxResample()
+DialogResample::~DialogResample()
 {
 	delete resamplerHelper;
 }
 
-void RespondMessageBoxResample::show()
+void DialogResample::show()
 {
 	currentSelectedListBox = 0;
 	updateListBoxes();
@@ -264,10 +264,10 @@ void RespondMessageBoxResample::show()
 	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
 	button->setText(resamplerHelper->getResamplerName(interpolationType, true));
 	
-	RespondMessageBox::show();	
+	PPDialogBase::show();	
 }
 
-pp_int32 RespondMessageBoxResample::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eKeyDown)
 	{
@@ -408,10 +408,10 @@ pp_int32 RespondMessageBoxResample::handleEvent(PPObject* sender, PPEvent* event
 		}
 	}
 	
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
-void RespondMessageBoxResample::updateListBoxes()
+void DialogResample::updateListBoxes()
 {
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, (float)relnote, 0);
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_TWO, (float)finetune, 0);
@@ -423,7 +423,7 @@ void RespondMessageBoxResample::updateListBoxes()
 	checkBox->checkIt(adjustFtAndRelnote);
 }
 
-void RespondMessageBoxResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)
+void DialogResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)
 {
 	char buffer1[100];
 	char buffer2[100];
@@ -439,7 +439,7 @@ void RespondMessageBoxResample::updateListBox(pp_int32 id, float val, pp_int32 n
 	}
 }
 
-void RespondMessageBoxResample::commitChanges()
+void DialogResample::commitChanges()
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_LISTBOX_VALUE_ONE));
 	if (listBox)
@@ -450,14 +450,14 @@ void RespondMessageBoxResample::commitChanges()
 		listBox->commitChanges();
 }
 
-void RespondMessageBoxResample::listBoxEnterEditState(pp_int32 id)
+void DialogResample::listBoxEnterEditState(pp_int32 id)
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(id));
 	if (listBox)
 		listBox->placeCursorAtEnd();
 }
 
-void RespondMessageBoxResample::switchListBox()
+void DialogResample::switchListBox()
 {
 	if (listBoxes[currentSelectedListBox]->isEditing())
 		listBoxes[currentSelectedListBox]->commitChanges();
@@ -469,7 +469,7 @@ void RespondMessageBoxResample::switchListBox()
 	parentScreen->paintControl(messageBoxContainerGeneric);
 }
 
-void RespondMessageBoxResample::setRelNote(pp_int32 note)
+void DialogResample::setRelNote(pp_int32 note)
 {
 	relnote = note;
 	toC4Speed();
@@ -482,7 +482,7 @@ void RespondMessageBoxResample::setRelNote(pp_int32 note)
 	}
 }
 
-void RespondMessageBoxResample::setFineTune(pp_int32 ft)
+void DialogResample::setFineTune(pp_int32 ft)
 {
 	finetune = ft;
 	toC4Speed();
@@ -495,27 +495,27 @@ void RespondMessageBoxResample::setFineTune(pp_int32 ft)
 	}
 }
 
-void RespondMessageBoxResample::setC4Speed(float c4spd)
+void DialogResample::setC4Speed(float c4spd)
 {
 	this->c4spd = c4spd;
 	fromC4Speed();
 }
 
-void RespondMessageBoxResample::setSize(pp_uint32 size)
+void DialogResample::setSize(pp_uint32 size)
 {
 	this->size = size;
 
 	calcSize();
 }
 
-void RespondMessageBoxResample::toC4Speed()
+void DialogResample::toC4Speed()
 {
 	validate();
 	c4spd = getc4spd(relnote, finetune);
 	validate();
 }
 
-void RespondMessageBoxResample::fromC4Speed()
+void DialogResample::fromC4Speed()
 {
 	validate();
 	mp_sbyte rn, ft;
@@ -525,7 +525,7 @@ void RespondMessageBoxResample::fromC4Speed()
 	validate();
 }
 
-void RespondMessageBoxResample::calcSize()
+void DialogResample::calcSize()
 {
 	float c4spd = getc4spd(relnote, finetune);
 	float step = originalc4spd / c4spd;
@@ -533,7 +533,7 @@ void RespondMessageBoxResample::calcSize()
 	finalSize = (mp_uint32)(size / step);
 }
 
-void RespondMessageBoxResample::validate()
+void DialogResample::validate()
 {
 	if (relnote > 48)
 		relnote = 48;

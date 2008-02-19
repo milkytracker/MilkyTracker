@@ -107,7 +107,7 @@ private:
 	void handleMinimizeSample();
 	void handleConvertSampleResolution();
 
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 	class SampleMessageBoxResponder* messageBoxResponder;
 	// Responder should be friend
 	friend class SampleMessageBoxResponder;	

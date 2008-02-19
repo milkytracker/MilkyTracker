@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxQuickChooseInstrument.cpp
+ *  tracker/DialogQuickChooseInstrument.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxWithValues.cpp
+ *  DialogWithValues.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 25.10.05.
  *
  */
 
-#include "RespondMessageBoxQuickChooseInstrument.h"
+#include "DialogQuickChooseInstrument.h"
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
@@ -37,11 +37,11 @@
 #include "Seperator.h"
 #include "ControlIDs.h"
 
-RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(PPScreen* screen, 
-					  RespondListenerInterface* responder,
+DialogQuickChooseInstrument::DialogQuickChooseInstrument(PPScreen* screen, 
+					  DialogResponder* responder,
 					  pp_int32 id,
 					  const PPString& caption) :
-	RespondMessageBox()
+	PPDialogBase()
 {
 	value = 0;
 	valueRangeStart = 0;
@@ -49,9 +49,9 @@ RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(P
 	valueIncreaseStep = 1;
 
 #ifdef __LOWRES__
-	initRespondMessageBox(screen, responder, id, caption, 290, 110+15, 26+15, "Ok", "Cancel");
+	initDialog(screen, responder, id, caption, 290, 110+15, 26+15, "Ok", "Cancel");
 #else
-	initRespondMessageBox(screen, responder, id, caption, 290, 110, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, caption, 290, 110, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
@@ -123,7 +123,7 @@ RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(P
 	updateListBoxes();
 }
 
-void RespondMessageBoxQuickChooseInstrument::setValueCaption(const PPString& caption)
+void DialogQuickChooseInstrument::setValueCaption(const PPString& caption)
 {
 	PPControl* ctrl = messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_VALUE_ONE_CAPTION);
 	if (ctrl)
@@ -141,13 +141,13 @@ void RespondMessageBoxQuickChooseInstrument::setValueCaption(const PPString& cap
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_VALUE_ONE_CAPTION, parentScreen, this, PPPoint(x, y), caption, true));
 }
 
-void RespondMessageBoxQuickChooseInstrument::show()
+void DialogQuickChooseInstrument::show()
 {
 	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
-	RespondMessageBox::show();	
+	PPDialogBase::show();	
 }
 
-pp_uint16 RespondMessageBoxQuickChooseInstrument::numPadKeyToValue(pp_uint16 keyCode)
+pp_uint16 DialogQuickChooseInstrument::numPadKeyToValue(pp_uint16 keyCode)
 {
 	switch (keyCode)
 	{
@@ -205,7 +205,7 @@ static pp_uint8 getByte(const char* str)
 	return (getNibble(str)<<4) + getNibble(str+1);
 }
 
-pp_int32 RespondMessageBoxQuickChooseInstrument::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogQuickChooseInstrument::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eKeyChar)
 	{
@@ -213,7 +213,7 @@ pp_int32 RespondMessageBoxQuickChooseInstrument::handleEvent(PPObject* sender, P
 	}
 	else if (event->getID() == eKeyDown)
 	{
-		RespondMessageBox::handleEvent(sender, event);
+		PPDialogBase::handleEvent(sender, event);
 		
 		if (event->getID() == eInvalid)
 			return 0;
@@ -239,7 +239,7 @@ pp_int32 RespondMessageBoxQuickChooseInstrument::handleEvent(PPObject* sender, P
 				if (button)
 				{
 					PPEvent event(eCommand);
-					RespondMessageBox::handleEvent(reinterpret_cast<PPObject*>(button), &event);
+					PPDialogBase::handleEvent(reinterpret_cast<PPObject*>(button), &event);
 				}
 			}
 				
@@ -287,15 +287,15 @@ pp_int32 RespondMessageBoxQuickChooseInstrument::handleEvent(PPObject* sender, P
 		}
 	}
 	
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
-void RespondMessageBoxQuickChooseInstrument::fitListBoxes()
+void DialogQuickChooseInstrument::fitListBoxes()
 {
 	fitListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, valueRangeStart, valueRangeEnd);
 }
 	
-void RespondMessageBoxQuickChooseInstrument::fitListBox(pp_int32 id, pp_int32 valueOneRangeStart, pp_int32 valueOneRangeEnd)
+void DialogQuickChooseInstrument::fitListBox(pp_int32 id, pp_int32 valueOneRangeStart, pp_int32 valueOneRangeEnd)
 {
 	pp_int32 width = messageBoxContainerGeneric->getSize().width;
 	pp_int32 x = messageBoxContainerGeneric->getLocation().x;
@@ -333,12 +333,12 @@ void RespondMessageBoxQuickChooseInstrument::fitListBox(pp_int32 id, pp_int32 va
 	}
 }
 
-void RespondMessageBoxQuickChooseInstrument::updateListBoxes()
+void DialogQuickChooseInstrument::updateListBoxes()
 {
 	updateListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, value);
 }
 
-void RespondMessageBoxQuickChooseInstrument::updateListBox(pp_int32 id, pp_int32 val)
+void DialogQuickChooseInstrument::updateListBox(pp_int32 id, pp_int32 val)
 {
 	char buffer1[100];
 	char buffer2[100];
@@ -354,14 +354,14 @@ void RespondMessageBoxQuickChooseInstrument::updateListBox(pp_int32 id, pp_int32
 	}
 }
 
-void RespondMessageBoxQuickChooseInstrument::commitChanges()
+void DialogQuickChooseInstrument::commitChanges()
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_LISTBOX_VALUE_ONE));
 	if (listBox)
 		listBox->commitChanges();
 }
 
-void RespondMessageBoxQuickChooseInstrument::listBoxEnterEditState(pp_int32 id)
+void DialogQuickChooseInstrument::listBoxEnterEditState(pp_int32 id)
 {
 	PPListBox* listBox = static_cast<PPListBox*>(messageBoxContainerGeneric->getControlByID(id));
 	if (listBox)

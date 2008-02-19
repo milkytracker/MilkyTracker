@@ -75,7 +75,7 @@ private:
 	void handleTransposeSong();
 	void transposeSong();
 
-	class RespondMessageBox* respondMessageBox;
+	class PPDialogBase* dialog;
 	class TransposeMessageBoxResponder* messageBoxResponder;
 	// Responder should be friend
 	friend class TransposeMessageBoxResponder;	

@@ -30,7 +30,7 @@
 #include "Undo.h"
 #include "ContextMenu.h"
 #include "KeyBindings.h"
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 #include "PPUIConfig.h"
 
 #include "TrackerConfig.h"
@@ -111,7 +111,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	setRecordMode(false);
 	
 	transposeHandlerResponder = new TransposeHandlerResponder(*this);
-	respondMessageBox = NULL;
+	dialog = NULL;
 }
 
 PatternEditorControl::~PatternEditorControl()
@@ -132,7 +132,7 @@ PatternEditorControl::~PatternEditorControl()
 	delete scanCodeBindingsFastTracker;
 
 	delete transposeHandlerResponder;
-	delete respondMessageBox;
+	delete dialog;
 }
 
 void PatternEditorControl::setFont(PPFont* font)

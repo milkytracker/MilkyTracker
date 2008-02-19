@@ -31,11 +31,11 @@
 #ifndef TOOLINVOKEHELPER__H
 #define TOOLINVOKEHELPER__H
 
-#include "RespondMessageBox.h"
+#include "DialogBase.h"
 
 class Tracker;
 
-class ToolInvokeHelper : public RespondListenerInterface
+class ToolInvokeHelper : public DialogResponder
 {
 public:
 	enum ToolTypes
@@ -56,7 +56,7 @@ private:
 	Tracker& tracker;
 	TLastValues lastValues;
 	ToolTypes lastToolType;
-	RespondMessageBox* respondMessageBox;
+	PPDialogBase* dialog;
 		
 public:
 	ToolInvokeHelper(Tracker& theTracker);

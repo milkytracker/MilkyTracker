@@ -1,5 +1,5 @@
 /*
- *  tracker/RespondMessageBoxGroupSelection.cpp
+ *  tracker/DialogGroupSelection.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  RespondMessageBoxGroupSelection.cpp
+ *  DialogGroupSelection.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 23.06.06.
  *
  */
 
-#include "RespondMessageBoxGroupSelection.h"
+#include "DialogGroupSelection.h"
 #include "SimpleVector.h"
 #include "Screen.h"
 #include "StaticText.h"
@@ -39,16 +39,16 @@
 #include "Seperator.h"
 #include "ControlIDs.h"
 
-RespondMessageBoxGroupSelection::RespondMessageBoxGroupSelection(PPScreen* screen, 
-					  RespondListenerInterface* responder,
+DialogGroupSelection::DialogGroupSelection(PPScreen* screen, 
+					  DialogResponder* responder,
 					  pp_int32 id,
 					  const PPString& caption,
 					  const PPSimpleVector<PPString>& choices) :
-	RespondMessageBox()
+	PPDialogBase()
 {
 	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
 
-	initRespondMessageBox(screen, responder, id, caption, 290, 74 + choices.size()*(font->getCharHeight() + PPRadioGroup::eDefaultSpacerHeight + 1), 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, caption, 290, 74 + choices.size()*(font->getCharHeight() + PPRadioGroup::eDefaultSpacerHeight + 1), 26, "Ok", "Cancel");
 
 	pp_int32 i, j = 0;
 	
@@ -79,7 +79,7 @@ RespondMessageBoxGroupSelection::RespondMessageBoxGroupSelection(PPScreen* scree
 	selection = 0;
 }
 
-pp_int32 RespondMessageBoxGroupSelection::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 DialogGroupSelection::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eSelection)
 	{
@@ -91,6 +91,6 @@ pp_int32 RespondMessageBoxGroupSelection::handleEvent(PPObject* sender, PPEvent*
 		}
 	}
 	
-	return RespondMessageBox::handleEvent(sender, event);
+	return PPDialogBase::handleEvent(sender, event);
 }
 
