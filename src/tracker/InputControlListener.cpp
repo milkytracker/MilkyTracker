@@ -103,8 +103,6 @@ void InputControlListener::sendNote(pp_int32 v, pp_int32 volume/* = -1*/)
 
 pp_int32 InputControlListener::handleEvent(PPObject* sender, PPEvent* event)
 {
-	PPScreen* screen = tracker.screen;
-
 	if (event->getID() == eCommand || event->getID() == eCommandRepeat)
 	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())

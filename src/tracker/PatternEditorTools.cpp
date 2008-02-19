@@ -670,8 +670,6 @@ pp_int32 PatternEditorTools::interpolateValuesInSelection(const PatternEditorToo
 	mp_sint32 slotSize = pattern->effnum * 2 + 2;
 	mp_sint32 rowSizeSrc = slotSize*pattern->channum;
 
-	pp_int32 resCnt = 0;
-	
 	pp_int32 numValues;
 	pp_int32 vTab[256];
 	pp_int32 vPosTab[256];
@@ -1881,9 +1879,6 @@ void PatternEditorTools::normalize()
 	pp_int32 selectionHeight = pattern->rows;
 
 	mp_sint32 slotSize = pattern->effnum * 2 + 2;
-	mp_sint32 rowSizeSrc = slotSize*pattern->channum;
-
-	pp_int32 result = 0;
 
 	mp_ubyte* src = pattern->patternData;		
 	for (pp_int32 i = 0; i < selectionHeight; i++)

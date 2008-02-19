@@ -209,7 +209,7 @@ public:
 				break;
 
 			case ScopesControl::AppearanceTypeLines:
-				if (!(counter & 1) || (counter == count-1))
+				if (!(counter & 1) || (counter == (signed)count-1))
 				{
 					if (lastx == -1)
 					{

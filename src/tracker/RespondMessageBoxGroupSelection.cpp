@@ -60,10 +60,8 @@ RespondMessageBoxGroupSelection::RespondMessageBoxGroupSelection(PPScreen* scree
 	}
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	pp_int32 y = getMessageBoxContainer()->getLocation().y;
 	
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
-	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	
 	pp_int32 x2 = x + (width / 2) - (j / 2);
 	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;

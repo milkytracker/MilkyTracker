@@ -313,8 +313,10 @@ void RespondMessageBox::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 
 
 pp_int32 RespondMessageBox::handleEvent(PPObject* sender, PPEvent* event)
 {
+#ifdef __LOWRES__
 	static const pp_uint16 scanCodesNumbers[] = {SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, SC_0, SC_PLUS, SC_MINUS, SC_PERIOD, 0, 0, 0, 0};
 	static const pp_uint16 asciiCodesNumbers[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '.', VK_LEFT, VK_RIGHT, VK_DELETE, VK_BACK};
+#endif
 
 	if (event->getID() == eKeyDown && keyDownInvokeKeyCode > 0 && *(((pp_int16*)event->getDataPtr())) == keyDownInvokeKeyCode)
 	{

@@ -370,8 +370,6 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 
 	g->drawHLine(location.x + xOffset, location.x + xOffset + visibleWidth, location.y + xOffset + (visibleHeight>>1));
 
-	pp_int32 width = visibleWidth;
-
 	if (!sampleEditor->isEditableSample())
 		return;
 

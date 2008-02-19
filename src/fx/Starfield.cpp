@@ -62,8 +62,6 @@ void Starfield::render(pp_uint8* buffer)
 
 	MatrixFP m;
 	
-	static float phi = 0.0f;
-	
 	for (pp_int32 i = 0; i < numStars; i++)
 	{
 		VectorFP f = stars[i];

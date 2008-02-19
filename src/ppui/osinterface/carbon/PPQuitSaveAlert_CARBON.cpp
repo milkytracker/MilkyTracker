@@ -54,8 +54,6 @@ PPQuitSaveAlert::ReturnCodes PPQuitSaveAlert::runModal()
 		{
 			err = NavDialogRun(theOpenDialog);
 			
-			NavReplyRecord reply;
-			
 			NavUserAction action = NavDialogGetUserAction (theOpenDialog);
 			
 			switch (action)

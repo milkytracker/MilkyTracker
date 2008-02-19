@@ -241,8 +241,6 @@ void SectionHDRecorder::setSettingsMixerShift(pp_int32 shift)
 
 pp_int32 SectionHDRecorder::handleEvent(PPObject* sender, PPEvent* event)
 {
-	PPScreen* screen = tracker.screen;
-
 	if (event->getID() == eCommand || event->getID() == eCommandRepeat)
 	{
 

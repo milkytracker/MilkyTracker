@@ -55,10 +55,8 @@ RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(P
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	pp_int32 y = getMessageBoxContainer()->getLocation().y;
 	
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
-	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	
 	pp_int32 x2 = x;
 	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
@@ -86,6 +84,9 @@ RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(P
 	messageBoxContainerGeneric->addControl(button);
 	
 #ifdef __LOWRES__
+	pp_int32 height = getMessageBoxContainer()->getSize().height;
+	pp_int32 y = getMessageBoxContainer()->getLocation().y;
+
 	const char buttonTexts[] = {'1','2','3','4','5','6','7','8','9','0','+','-','.','<','>'};
 	
 	pp_int32 bWidth = (width - 22*2 - 2*3) / sizeof(buttonTexts);
@@ -95,7 +96,7 @@ RespondMessageBoxQuickChooseInstrument::RespondMessageBoxQuickChooseInstrument(P
 	
 	messageBoxContainerGeneric->addControl(new PPSeperator(0, screen, PPPoint(x2_2-1, y2_2-3), width-2*3, messageBoxContainerGeneric->getColor(), true));
 	
-	pp_int32 i = 0;
+	pp_uint32 i = 0;
 	for (i = 0; i < sizeof(buttonTexts); i++)
 	{
 		button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1, 13));
@@ -129,7 +130,6 @@ void RespondMessageBoxQuickChooseInstrument::setValueCaption(const PPString& cap
 		messageBoxContainerGeneric->removeControl(ctrl);
 
 	pp_int32 width = messageBoxContainerGeneric->getSize().width;
-	pp_int32 height = messageBoxContainerGeneric->getSize().height;
 
 	pp_int32 x = messageBoxContainerGeneric->getLocation().x;
 	pp_int32 y = messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
@@ -340,9 +340,6 @@ void RespondMessageBoxQuickChooseInstrument::updateListBoxes()
 
 void RespondMessageBoxQuickChooseInstrument::updateListBox(pp_int32 id, pp_int32 val)
 {
-	pp_int32 width = messageBoxContainerGeneric->getSize().width;
-	pp_int32 x = messageBoxContainerGeneric->getLocation().x;
-
 	char buffer1[100];
 	char buffer2[100];
 

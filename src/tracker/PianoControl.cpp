@@ -195,7 +195,6 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 	const pp_int32* MODLUT = pianoBitmap->getMODLUT(); 
 	
 	const pp_int32 XMAX = this->XMAX();
-	const pp_int32 YMAX = this->YMAX();
 	
 	for (pp_int32 y = 0; y < visibleHeight; y++)
 	{

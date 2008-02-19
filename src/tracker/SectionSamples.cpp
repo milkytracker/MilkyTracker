@@ -451,14 +451,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 
 void SectionSamples::init()
 {
-	//PPScreen* screen = tracker.screen;
-	//init(0, screen->getHeight()-SAMPLESECTIONDEFAULTHEIGHT);
-	PPScreen* screen = tracker.screen;
-//#ifndef __LOWRES__
 	init(0, tracker.MAXEDITORHEIGHT()-tracker.SAMPLESECTIONDEFAULTHEIGHT());
-//#else
-//	init(0, 0);
-//#endif
 }
 
 void SectionSamples::init(pp_int32 x, pp_int32 y)
@@ -1047,9 +1040,8 @@ void SectionSamples::realign()
 
 void SectionSamples::show(bool bShow)
 {
-	PPScreen* screen = tracker.screen;
-
 #ifdef __LOWRES__
+	PPScreen* screen = tracker.screen;
 	screen->pauseUpdate(true);
 #endif
 	SectionAbstract::show(bShow);

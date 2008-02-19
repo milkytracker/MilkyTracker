@@ -79,8 +79,6 @@ SectionQuickOptions::~SectionQuickOptions()
 
 pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 {
-	PPScreen* screen = tracker.screen;
-
 	bool b;
 
 	if (event->getID() == eCommand || event->getID() == eCommandRepeat)

@@ -423,8 +423,6 @@ SectionOptimize::~SectionOptimize()
 
 pp_int32 SectionOptimize::handleEvent(PPObject* sender, PPEvent* event)
 {
-	PPScreen* screen = tracker.screen;
-
 	if (event->getID() == eCommand)
 	{
 

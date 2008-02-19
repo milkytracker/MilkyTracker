@@ -531,12 +531,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 
 void SectionInstruments::init()
 {
-	PPScreen* screen = tracker.screen;
-//#ifndef __LOWRES__
 	init(0, tracker.MAXEDITORHEIGHT()-tracker.INSTRUMENTSECTIONDEFAULTHEIGHT());
-//#else
-//	init(0, 0);
-//#endif
 }
 
 void SectionInstruments::init(pp_int32 x, pp_int32 y)
@@ -736,8 +731,6 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEnvelopes->addControl(button);	
 
 	// ----------------- instrument info ----------------- 
-	pp_int32 y2 = y;
-	
 	//y+=containerEnvelopes->getSize().height;
 	x+=containerEnvelopes->getSize().width;
 	
@@ -770,7 +763,6 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	pp_int32 width = container->getSize().width;
 	pp_int32 height = container->getSize().height;
 
 	// exit 'n stuff
@@ -1067,8 +1059,6 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEnvelopes->addControl(button);
 
 	// --------------- instrument info --------------- 
-	pp_int32 y2 = y;
-	
 	y+=containerEnvelopes->getSize().height;
 	
 	PPContainer* container = new PPContainer(CONTAINER_INSTRUMENTS_INFO1, screen, this, PPPoint(x, y), PPSize(116,34+4), false);
@@ -1311,9 +1301,8 @@ void SectionInstruments::realign()
 
 void SectionInstruments::show(bool bShow)
 {
-	PPScreen* screen = tracker.screen;
-
 #ifdef __LOWRES__
+	PPScreen* screen = tracker.screen;
 	screen->pauseUpdate(true);
 #endif
 	SectionAbstract::show(bShow);

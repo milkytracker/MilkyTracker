@@ -47,9 +47,6 @@ void ParticleFX::drawSprite(unsigned short *buffer, int XMAX, int YMAX, int PITC
 	int tx = spr->tx;
 	int ty = spr->ty;
 
-	int shade = spr->shade;
-	int zval = spr->zval;
-
 	if (xsize == 0) return;
 	if (ysize == 0) return;
 

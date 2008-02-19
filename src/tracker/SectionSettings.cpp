@@ -1367,7 +1367,6 @@ void SectionSettings::initPage_I_2(PPContainer* container, pp_int32 x, pp_int32 
 {
 	PPScreen* screen = tracker.screen;
 
-	pp_int32 x2 = x+2;
 	pp_int32 y2 = y;
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Instrument Playback", true, true));
@@ -1907,8 +1906,6 @@ void SectionSettings::initPage_IV_2(PPContainer* container, pp_int32 x, pp_int32
 
 void SectionSettings::initPage_V(PPContainer* container, pp_int32 x, pp_int32 y)
 {
-	const char* name = NULL;
-
 	PPScreen* screen = tracker.screen;
 
 	pp_int32 x2 = x+2;
@@ -2136,7 +2133,6 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 
 void SectionSettings::updatePage_I()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 	PPContainer* container = static_cast<PPContainer*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_I));
@@ -2245,7 +2241,6 @@ void SectionSettings::updatePage_I()
 
 void SectionSettings::updatePage_I_2()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 #ifdef __LOWRES__
@@ -2281,7 +2276,6 @@ void SectionSettings::updatePage_I_2()
 
 void SectionSettings::updatePage_II()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 	PPContainer* container = static_cast<PPContainer*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_II));
@@ -2374,7 +2368,6 @@ void SectionSettings::updatePage_II()
 
 void SectionSettings::updatePage_III()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 	PPContainer* container = static_cast<PPContainer*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_III));
@@ -2388,7 +2381,6 @@ void SectionSettings::updatePage_III()
 
 void SectionSettings::updatePage_IV()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 	PPContainer* container = static_cast<PPContainer*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_IV));
@@ -2433,7 +2425,6 @@ void SectionSettings::updatePage_IV()
 
 void SectionSettings::updatePage_IV_2()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 #ifdef __LOWRES__
@@ -2462,7 +2453,6 @@ void SectionSettings::updatePage_IV_2()
 
 void SectionSettings::updatePage_V()
 {
-	PPScreen* screen = tracker.screen;
 	TrackerSettingsDatabase* settingsDatabase = tracker.settingsDatabase;
 
 	PPContainer* container = static_cast<PPContainer*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_V));

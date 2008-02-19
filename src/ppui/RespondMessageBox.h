@@ -119,13 +119,14 @@ protected:
 							   const PPString& buttonYesCaption,
 							   const PPString& buttonNoCaption,
 							   const PPString& buttonCancelCaption);
-	
-public:
+
+protected:
 	RespondMessageBox() :
 		keyDownInvokeKeyCode(-1)
 	{ 
 	}
-	
+		
+public:
 	RespondMessageBox(PPScreen* screen, 
 					  RespondListenerInterface* responder,
 					  pp_int32 id,

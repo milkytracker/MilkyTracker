@@ -81,7 +81,6 @@ RespondMessageBoxFileSelector::RespondMessageBoxFileSelector(PPScreen* screen,
 	text->setLocation(PPPoint(text->getLocation().x, text->getLocation().y - 4));
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	pp_int32 y = getMessageBoxContainer()->getLocation().y;
 	
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
@@ -373,7 +372,7 @@ pp_int32 RespondMessageBoxFileSelector::processKeys(PPObject* sender, PPEvent* e
 	if (event->getID() == eKeyDown)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
+		//pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
 		
 		switch (keyCode)
 		{
@@ -396,8 +395,6 @@ callBaseClass:
 	}
 	else if (event->getID() == eKeyUp)
 	{
-		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
 		return baseClassHandleEvent(sender, event);
 	}
 	

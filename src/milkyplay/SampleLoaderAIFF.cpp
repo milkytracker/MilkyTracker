@@ -222,7 +222,7 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 			case 0x434F4D4D:	// 'COMM'
 			{
 				hasCOMM = true;
-				mp_uint32 pos = f.pos();
+				//mp_uint32 pos = f.pos();
 				
 				mp_ubyte* temp = new mp_ubyte[chunkLen];
 				

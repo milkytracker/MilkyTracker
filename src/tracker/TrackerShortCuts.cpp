@@ -752,7 +752,7 @@ processOthers:
 	else if (event->getID() == eKeyUp)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
+		//pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
 	
 		switch (keyCode)
 		{

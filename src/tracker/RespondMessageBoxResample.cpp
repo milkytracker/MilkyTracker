@@ -103,10 +103,8 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	pp_int32 y = getMessageBoxContainer()->getLocation().y;
 	
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
-	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	
 	pp_int32 x2 = x;
 	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
@@ -212,36 +210,39 @@ RespondMessageBoxResample::RespondMessageBoxResample(PPScreen* screen,
 	y2+=16;
 
 #ifdef __LOWRES__
-		const char buttonTexts[] = {'1','2','3','4','5','6','7','8','9','0','+','-','.','<','>'};
-		
-		pp_int32 bWidth = (width - 22*2 - 2*3) / sizeof(buttonTexts);
-		pp_int32 x2_2 = x+4;
-		
-		pp_int32 y2_2 = y+height - 4 - 13;
-		
-		messageBoxContainerGeneric->addControl(new PPSeperator(0, screen, PPPoint(x2_2-1, y2_2-3), width-2*3, messageBoxContainerGeneric->getColor(), true));
-		
-		pp_int32 i = 0;
-		for (i = 0; i < sizeof(buttonTexts); i++)
-		{
-			button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1, 13));
-			button->setText(buttonTexts[i]);
-			messageBoxContainerGeneric->addControl(button);
-			x2_2+=bWidth;
-		}
-		
-		bWidth = 22;
-		
-		button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1-3, 13));
-		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Del");
-		messageBoxContainerGeneric->addControl(button);
-		x2_2+=bWidth-3;
-		i++;
+	pp_int32 height = getMessageBoxContainer()->getSize().height;
+	pp_int32 y = getMessageBoxContainer()->getLocation().y;
+
+	const char buttonTexts[] = {'1','2','3','4','5','6','7','8','9','0','+','-','.','<','>'};
+	
+	pp_int32 bWidth = (width - 22*2 - 2*3) / sizeof(buttonTexts);
+	pp_int32 x2_2 = x+4;
+	
+	pp_int32 y2_2 = y+height - 4 - 13;
+	
+	messageBoxContainerGeneric->addControl(new PPSeperator(0, screen, PPPoint(x2_2-1, y2_2-3), width-2*3, messageBoxContainerGeneric->getColor(), true));
+	
+	pp_uint32 i = 0;
+	for (i = 0; i < sizeof(buttonTexts); i++)
+	{
 		button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1, 13));
-		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Back");
+		button->setText(buttonTexts[i]);
 		messageBoxContainerGeneric->addControl(button);
+		x2_2+=bWidth;
+	}
+	
+	bWidth = 22;
+	
+	button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1-3, 13));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Del");
+	messageBoxContainerGeneric->addControl(button);
+	x2_2+=bWidth-3;
+	i++;
+	button = new PPButton(MESSAGEBOX_BUTTON_KEYS_BASE+i, screen, this, PPPoint(x2_2, y2_2), PPSize(bWidth+1, 13));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Back");
+	messageBoxContainerGeneric->addControl(button);
 #endif
 
 	currentSelectedListBox = 0;
@@ -424,9 +425,6 @@ void RespondMessageBoxResample::updateListBoxes()
 
 void RespondMessageBoxResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)
 {
-	pp_int32 width = messageBoxContainerGeneric->getSize().width;
-	pp_int32 x = messageBoxContainerGeneric->getLocation().x;
-
 	char buffer1[100];
 	char buffer2[100];
 

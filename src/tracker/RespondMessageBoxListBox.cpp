@@ -49,10 +49,8 @@ RespondMessageBoxListBox::RespondMessageBoxListBox(PPScreen* screen,
 		initRespondMessageBox(screen, responder, id, caption, 290, 142, 26, "Okay");
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	pp_int32 y = getMessageBoxContainer()->getLocation().y;
 	
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
-	pp_int32 height = getMessageBoxContainer()->getSize().height;
 
 	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_YES));	
 	pp_int32 y2 = button->getLocation().y;

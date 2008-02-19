@@ -264,7 +264,7 @@ pp_int32 AnimatedFXControl::callEventListener(PPEvent* event)
 		case eRMouseUp:
 		{
 			PPEvent e(eCommand);
-			pp_int32 res = eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 
+			eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 
 			break;
 		}
 	}

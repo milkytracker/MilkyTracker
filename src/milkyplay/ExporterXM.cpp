@@ -2188,7 +2188,7 @@ bool TXMPattern::loadExtendedPattern(const SYSCHAR* fileName)
 	
 	mp_ubyte* slot = srcPattern;
 	
-	mp_sint32 pc = 0, bc = 0;
+	mp_sint32 bc = 0;
 	for (mp_sint32 r=0;r<rows;r++) {
 		for (mp_sint32 c=0;c<channum;c++) {
 			
@@ -2260,7 +2260,7 @@ bool TXMPattern::loadExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel)
 	// throw away old pattern
 	mp_ubyte* slot = srcPattern;
 	
-	mp_sint32 pc = 0, bc = 0, r;
+	mp_sint32 bc = 0, r;
 	for (r=0;r<rows;r++) 
 	{
 		bc = r*this->channum*(this->effnum*2+2) + channel*(this->effnum*2+2);

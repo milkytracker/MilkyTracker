@@ -53,8 +53,6 @@ SectionAbout::~SectionAbout()
 
 pp_int32 SectionAbout::handleEvent(PPObject* sender, PPEvent* event)
 {
-	PPScreen* screen = tracker.screen;
-
 	if (event->getID() == eCommand || event->getID() == eCommandRepeat)
 	{
 

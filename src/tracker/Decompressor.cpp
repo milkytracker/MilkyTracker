@@ -220,7 +220,6 @@ Decompressor::Decompressor(const PPSystemString& fileName) :
 	
 bool Decompressor::identify(XMFile& f)
 {
-	bool result = false;
 	for (pp_int32 i = 0; i < decompressorList.size(); i++)
 	{
 		if (decompressorList.get(i)->identify(f))
