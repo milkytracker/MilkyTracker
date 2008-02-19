@@ -70,6 +70,16 @@ public:
 	virtual void show(bool bShow);
 	virtual void update(bool repaint = true);
 	
+private:
+	void showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel = false);
+	void handleTransposeSong();
+	void transposeSong();
+
+	class RespondMessageBox* respondMessageBox;
+	class TransposeMessageBoxResponder* messageBoxResponder;
+	// Responder should be friend
+	friend class TransposeMessageBoxResponder;	
+
 	friend class Tracker;
 };
 

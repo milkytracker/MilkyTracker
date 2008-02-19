@@ -60,8 +60,8 @@
 
 #include "InputControlListener.h"
 
-// Some helper messageboxes
-#include "SampleLoadChannelSelectionHandler.h"
+// Some helper messageboxes & button handlers
+#include "RespondMessageBoxHandlers.h"
 #include "RespondMessageBoxChannelSelector.h"
 // Helper class to invoke tools which need parameters
 #include "ToolInvokeHelper.h"
@@ -135,7 +135,7 @@ Tracker::Tracker() :
 	currentUpperSection(NULL),
 	messageBoxContainerZAP(NULL),
 	messageBoxContainerGeneric(NULL),
-	sampleLoadRespondMessageBox(NULL),
+	respondMessageBox(NULL),
 	playTimeText(NULL),
 	instrumentChooser(NULL),
 	inputContainerCurrent(NULL),
@@ -1597,7 +1597,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			// song title
-			case LISTBOX_0:
+			case LISTBOX_SONGTITLE:
 			{
 				moduleEditor->setTitle(**(reinterpret_cast<PPString**>(event->getDataPtr())), ModuleEditor::MAX_TITLETEXT);
 				break;
@@ -2101,72 +2101,6 @@ bool Tracker::messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBox
 			break;
 		}
 
-		case MESSAGEBOX_CONVERTSAMPLE:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					sectionSamples->getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(true);
-					sectionSamples->getSampleEditorControl()->showAll();
-					break;
-				}
-				case PP_MESSAGEBOX_BUTTON_NO:
-				{
-					sectionSamples->getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(false);
-					sectionSamples->getSampleEditorControl()->showAll();
-					break;
-				}
-				
-				case PP_MESSAGEBOX_BUTTON_CANCEL:
-				{
-					sectionSamples->realUpdate(true, true, false);
-					break;
-				}
-				
-			}
-			break;
-		}
-
-		case MESSAGEBOX_CLEARSAMPLE:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					sectionSamples->getSampleEditorControl()->getSampleEditor()->tool_clearSample();
-					break;
-				}				
-			}
-			break;
-		}
-		
-		case MESSAGEBOX_MINIMISESAMPLE:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					sectionSamples->getSampleEditorControl()->getSampleEditor()->tool_minimizeSample();
-					break;
-				}
-			}
-			break;
-		}
-
-		case MESSAGEBOX_CROPSAMPLE:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					sectionSamples->getSampleEditorControl()->getSampleEditor()->tool_cropSample();
-					break;
-				}
-			}
-			break;
-		}
-
 		case INSTRUMENT_CHOOSER_COPY:
 		case INSTRUMENT_CHOOSER_SWAP:
 		{
@@ -2288,7 +2222,7 @@ bool Tracker::isActiveEditing()
 {
 	// check for focus of song title edit field
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_0));
+	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE));
 	
 	if (screen->hasFocus(container) && listBox->isEditing())							
 		return true;
@@ -2569,7 +2503,7 @@ void Tracker::showSongTitleEditField(bool update/* = true*/)
 	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
 	ASSERT(text2);
 	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_0))->hide(false);
+	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(false);
 	peakLevelControl->hide(true);
 	text2->hide(true);
 	buttonTimeEstimate->hide(true);
@@ -2605,7 +2539,7 @@ void Tracker::showTimeCounter(bool update/* = true*/)
 	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
 	ASSERT(text2);
 	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_0))->hide(true);
+	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(true);
 	peakLevelControl->hide(true);
 	text2->hide(false);
 	buttonTimeEstimate->hide(false);
@@ -2637,7 +2571,7 @@ void Tracker::showPeakControl(bool update/* = true*/)
 	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
 	ASSERT(text2);
 	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_0))->hide(true);
+	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(true);
 	peakLevelControl->hide(false);
 	text2->hide(true);
 	buttonTimeEstimate->hide(true);
@@ -3147,14 +3081,14 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			else if (numSampleChannels > 1 && 
 					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
-				if (sampleLoadRespondMessageBox)
-					delete sampleLoadRespondMessageBox;
+				if (respondMessageBox)
+					delete respondMessageBox;
 				
-				sampleLoadRespondMessageBox = new RespondMessageBoxChannelSelector(screen, sampleLoadChannelSelectionHandler, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
+				respondMessageBox = new RespondMessageBoxChannelSelector(screen, sampleLoadChannelSelectionHandler, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
 				
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
-					sampleLoadRespondMessageBox->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
+					static_cast<RespondMessageBoxChannelSelector*>(respondMessageBox)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
 				
 				sampleLoadChannelSelectionHandler->setCurrentFileName(loadingParameters.filename);
 				sampleLoadChannelSelectionHandler->setPreferredFileName(loadingParameters.preferredFilename);
@@ -3162,7 +3096,7 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 				
 				signalWaitState(false);
 				
-				sampleLoadRespondMessageBox->show();
+				respondMessageBox->show();
 				return true;
 			}
 			else if (numSampleChannels > 1 && 

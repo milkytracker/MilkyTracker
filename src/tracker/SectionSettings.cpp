@@ -257,14 +257,14 @@ static TScreenRes resolutions[NUMRESOLUTIONS] =
 	{-1, -1, "<Custom>"}
 };
 
-// Class which responds to the above message box clicks
-class MessageBoxResponder : public RespondListenerInterface
+// Class which responds to message box clicks
+class SettingsMessageBoxResponder : public RespondListenerInterface
 {
 private:
 	SectionSettings& section;
 	
 public:
-	MessageBoxResponder(SectionSettings& section) :
+	SettingsMessageBoxResponder(SectionSettings& section) :
 		section(section)
 	{
 	}
@@ -297,11 +297,6 @@ public:
 				break;
 			}
 		}
-		return 0;
-	}
-	
-	virtual pp_int32 ActionCancel(PPObject* sender)
-	{
 		return 0;
 	}
 };
@@ -361,7 +356,7 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 		predefinedColorPalettes->store(i, ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[i]));
 	}
 	
-	messageBoxResponder = new MessageBoxResponder(*this);
+	messageBoxResponder = new SettingsMessageBoxResponder(*this);
 
 	for (i = 0; i < GlobalColorConfig::ColorLast; i++)
 		colorMapping[i] = GlobalColorConfig::ColorLast-1;

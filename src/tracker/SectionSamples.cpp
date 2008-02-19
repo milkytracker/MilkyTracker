@@ -39,6 +39,7 @@
 #include "PatternEditorControl.h"	
 #include "SampleEditorControl.h"
 #include "SectionInstruments.h"
+#include "RespondMessageBox.h"
 
 // OS Interface
 #include "PPOpenPanel.h"
@@ -59,6 +60,55 @@ enum ControlIDs
 	BUTTON_SHOWCONTEXTMENU
 };
 
+// Class which responds to message box clicks
+class SampleMessageBoxResponder : public RespondListenerInterface
+{
+private:
+	SectionSamples& section;
+	
+public:
+	SampleMessageBoxResponder(SectionSamples& section) :
+		section(section)
+	{
+	}
+	
+	virtual pp_int32 ActionOkay(PPObject* sender)
+	{
+		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		{
+			case MESSAGEBOX_CLEARSAMPLE:
+				section.getSampleEditorControl()->getSampleEditor()->tool_clearSample();
+				break;
+
+			case MESSAGEBOX_CROPSAMPLE:
+				section.getSampleEditorControl()->getSampleEditor()->tool_cropSample();
+				break;
+				
+			case MESSAGEBOX_MINIMIZESAMPLE:
+				section.getSampleEditorControl()->getSampleEditor()->tool_minimizeSample();
+				break;
+				
+			case MESSAGEBOX_CONVERTSAMPLE:
+				section.getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(true);
+				section.getSampleEditorControl()->showAll();
+				break;
+		}
+		return 0;
+	}
+	
+	virtual pp_int32 ActionNo(PPObject* sender)
+	{
+		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		{
+			case MESSAGEBOX_CONVERTSAMPLE:
+				section.getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(false);
+				section.getSampleEditorControl()->showAll();
+				break;
+		}
+		return 0;
+	}	
+};
+
 SectionSamples::SectionSamples(Tracker& theTracker) :
 	SectionAbstract(theTracker),
 	containerEntire(NULL),
@@ -66,12 +116,16 @@ SectionSamples::SectionSamples(Tracker& theTracker) :
 	sampleEditorControl(NULL),
 	currentSamplePlayNote(ModuleEditor::MAX_NOTE/2),
 	showRangeOffsets(false),
-	offsetFormat(0)
+	offsetFormat(0),
+	respondMessageBox(NULL),
+	messageBoxResponder(new SampleMessageBoxResponder(*this))	
 {
 }
 
 SectionSamples::~SectionSamples()
 {
+	delete messageBoxResponder;
+	delete respondMessageBox;
 }
 
 pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
@@ -198,29 +252,6 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				sampleEditor->tool_applyLastFilter();
 				break;
 
-			case BUTTON_SAMPLE_EDIT_CLEAR:
-			{
-				if (event->getID() != eCommand)
-					break;
-
-				if (sampleEditor->isEditableSample())
-				{
-					if (sampleEditor->isUndoStackEnabled())
-					{
-						sampleEditor->tool_clearSample();					
-					}
-					else
-					{
-						tracker.showMessageBox(MESSAGEBOX_CLEARSAMPLE, "Clear sample?", Tracker::MessageBox_YESNO);
-					}
-				}
-				else
-				{
-					update();
-				}
-				break;
-			}
-
 			case BUTTON_SAMPLE_UNDO:
 				if (event->getID() != eCommand)
 					break;
@@ -296,26 +327,21 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 					sampleEditor->decreaseRepeatLength();
 				break;
 
-			case BUTTON_SAMPLE_EDIT_MINIMISE:
+			case BUTTON_SAMPLE_EDIT_CLEAR:
 			{
 				if (event->getID() != eCommand)
 					break;
 
-				if (sampleEditor->canMinimize())
-				{
-					if (sampleEditor->isUndoStackEnabled())
-					{
-						sampleEditor->tool_minimizeSample();
-					}
-					else
-					{
-						tracker.showMessageBox(MESSAGEBOX_MINIMISESAMPLE, "Minimise sample?", Tracker::MessageBox_YESNO);
-					}
-				}
-				else
-				{
-					update();
-				}
+				handleClearSample();
+				break;
+			}
+
+			case BUTTON_SAMPLE_EDIT_MINIMIZE:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				handleMinimizeSample();
 				break;
 			}
 
@@ -324,21 +350,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				if (sampleEditor->isEditableSample() && sampleEditorControl->hasValidSelection())
-				{
-					if (sampleEditor->isUndoStackEnabled())
-					{
-						sampleEditor->tool_cropSample();
-					}
-					else
-					{
-						tracker.showMessageBox(MESSAGEBOX_CROPSAMPLE, "Crop sample?", Tracker::MessageBox_YESNO);
-					}
-				}
-				else
-				{
-					update();
-				}
+				handleCropSample();
 				break;
 			}
 			
@@ -406,28 +418,18 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 		
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
+			case RADIOGROUP_SAMPLE_RESTYPE:
+			{
+				handleConvertSampleResolution();
+				break;
+			}
+						
 			case RADIOGROUP_SAMPLE_LOOPTYPE:
 			{
 				sampleEditor->setLoopType((mp_ubyte)((reinterpret_cast<PPRadioGroup*>(sender)->getChoice())&3));
 				refresh();
 				break;
 			}
-
-			case RADIOGROUP_SAMPLE_RESTYPE:
-			{
-				if (sampleEditor->isEditableSample())
-				{
-					tracker.showMessageBox(MESSAGEBOX_CONVERTSAMPLE, "Convert sample data?", Tracker::MessageBox_YESNOCANCEL);
-				}
-				else
-				{
-					sampleEditor->tool_convertSampleResolution(false);				
-					update();
-				}
-				
-				break;
-			}
-						
 		}
 
 	}
@@ -704,7 +706,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button->setText("Clear");
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_SAMPLE_EDIT_MINIMISE, screen, this, PPPoint(x2, y2+2+13), PPSize(29, 12));
+	button = new PPButton(BUTTON_SAMPLE_EDIT_MINIMIZE, screen, this, PPPoint(x2, y2+2+13), PPSize(29, 12));
 	button->setText("Min");
 	container->addControl(button);
 
@@ -969,7 +971,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button->setText("Clear");
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_SAMPLE_EDIT_MINIMISE, screen, this, PPPoint(x2+126, y2+2+12), PPSize(27, 11));
+	button = new PPButton(BUTTON_SAMPLE_EDIT_MINIMIZE, screen, this, PPPoint(x2+126, y2+2+12), PPSize(27, 11));
 	button->setText("Min");
 	container->addControl(button);
 
@@ -1333,5 +1335,96 @@ void SectionSamples::setOffsetText(pp_uint32 ID, pp_uint32 offset)
 			static_cast<PPStaticText*>(containerEntire->getControlByID(ID))->setText(buffer2);
 			break;
 		}
+	}
+}
+
+void SectionSamples::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
+{
+	if (respondMessageBox)
+	{
+		delete respondMessageBox;
+		respondMessageBox = NULL;
+	}
+
+	respondMessageBox = new RespondMessageBox(tracker.screen, messageBoxResponder, 
+											  id, text, 
+											  yesnocancel ? 
+											  RespondMessageBox::MessageBox_YESNOCANCEL :
+											  RespondMessageBox::MessageBox_OKCANCEL); 	
+											  
+	respondMessageBox->show();
+}
+
+void SectionSamples::handleClearSample()
+{
+	SampleEditor* sampleEditor = sampleEditorControl->getSampleEditor();
+	if (sampleEditor->isEditableSample())
+	{
+		if (sampleEditor->isUndoStackEnabled())
+		{
+			sampleEditor->tool_clearSample();					
+		}
+		else
+		{
+			showMessageBox(MESSAGEBOX_CLEARSAMPLE, "Clear sample?");
+		}
+	}
+	else
+	{
+		update();
+	}
+}
+
+void SectionSamples::handleCropSample()
+{
+	SampleEditor* sampleEditor = sampleEditorControl->getSampleEditor();
+	if (sampleEditor->isEditableSample() && sampleEditorControl->hasValidSelection())
+	{
+		if (sampleEditor->isUndoStackEnabled())
+		{
+			sampleEditor->tool_cropSample();
+		}
+		else
+		{
+			showMessageBox(MESSAGEBOX_CROPSAMPLE, "Crop sample?");
+		}
+	}
+	else
+	{
+		update();
+	}
+}
+
+void SectionSamples::handleMinimizeSample()
+{
+	SampleEditor* sampleEditor = sampleEditorControl->getSampleEditor();
+	if (sampleEditor->canMinimize())
+	{
+		if (sampleEditor->isUndoStackEnabled())
+		{
+			sampleEditor->tool_minimizeSample();
+		}
+		else
+		{
+			showMessageBox(MESSAGEBOX_MINIMIZESAMPLE, "Minimize sample?");
+		}
+	}
+	else
+	{
+		update();
+	}
+}
+
+void SectionSamples::handleConvertSampleResolution()
+{
+	SampleEditor* sampleEditor = sampleEditorControl->getSampleEditor();
+	if (sampleEditor->isEditableSample())
+	{
+		showMessageBox(MESSAGEBOX_CONVERTSAMPLE, "Convert sample data?", true);
+	}
+	else
+	{
+		sampleEditor->tool_convertSampleResolution(false);				
+		update();
 	}
 }

@@ -251,7 +251,7 @@ void Tracker::updateSongTitle(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 	
-	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_0));
+	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE));
 	
 	listBox->clear();
 	char str[MP_MAXTEXT+1];

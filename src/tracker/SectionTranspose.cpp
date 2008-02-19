@@ -39,6 +39,8 @@
 #include "Container.h"
 #include "PatternEditorControl.h"
 
+#include "RespondMessageBox.h"
+
 #include "PatternTools.h"
 #include "Tools.h"
 #include "ControlIDs.h"
@@ -79,8 +81,34 @@ enum ControlIDs
 	TRANSPOSE_TEXT_AMOUNT2
 };
 
+// Class which responds to message box clicks
+class TransposeMessageBoxResponder : public RespondListenerInterface
+{
+private:
+	SectionTranspose& section;
+	
+public:
+	TransposeMessageBoxResponder(SectionTranspose& section) :
+		section(section)
+	{
+	}
+	
+	virtual pp_int32 ActionOkay(PPObject* sender)
+	{
+		switch (reinterpret_cast<RespondMessageBox*>(sender)->getID())
+		{
+			case MESSAGEBOX_TRANSPOSEPROCEED:
+				section.transposeSong();
+				break;
+		}
+		return 0;
+	}
+};
+
 SectionTranspose::SectionTranspose(Tracker& theTracker) :
-	SectionUpperLeft(theTracker)
+	SectionUpperLeft(theTracker),
+	respondMessageBox(NULL),
+	messageBoxResponder(new TransposeMessageBoxResponder(*this))		
 {
 	currentInstrumentRangeStart = 0;
 	currentInstrumentRangeEnd = 0;
@@ -91,6 +119,8 @@ SectionTranspose::SectionTranspose(Tracker& theTracker) :
 
 SectionTranspose::~SectionTranspose()
 {
+	delete messageBoxResponder;
+	delete respondMessageBox;
 }
 
 void SectionTranspose::setCurrentInstrument(pp_int32 instrument, bool redraw/* = true*/) 
@@ -371,15 +401,7 @@ pp_int32 SectionTranspose::handleEvent(PPObject* sender, PPEvent* event)
 						break;
 					case TRANSPOSE_BUTTON_USER3:
 					{
-						pp_int32 fuckups = tracker.moduleEditor->noteTransposeSong(tp, true);
-						if (!fuckups)
-							res = tracker.moduleEditor->noteTransposeSong(tp);
-						else
-						{
-							char buffer[100];
-							sprintf(buffer, "%i notes will be erased, continue?", fuckups);
-							tracker.showMessageBox(MESSAGEBOX_TRANSPOSEPROCEED, buffer, Tracker::MessageBox_YESNO);
-						}
+						handleTransposeSong();
 						break;
 					}					
 					case TRANSPOSE_BUTTON_USER4:
@@ -798,4 +820,40 @@ void SectionTranspose::update(bool repaint/* = true*/)
 	text->setText(currentTransposeAmount < 0 ? "note(s)" : "note(s)");
 	
 	tracker.screen->paintControl(container);
+}
+
+void SectionTranspose::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
+{
+	if (respondMessageBox)
+	{
+		delete respondMessageBox;
+		respondMessageBox = NULL;
+	}
+
+	respondMessageBox = new RespondMessageBox(tracker.screen, messageBoxResponder, 
+											  id, text, 
+											  yesnocancel ? 
+											  RespondMessageBox::MessageBox_YESNOCANCEL :
+											  RespondMessageBox::MessageBox_OKCANCEL); 	
+											  
+	respondMessageBox->show();
+}
+
+void SectionTranspose::handleTransposeSong()
+{
+	pp_int32 fuckups = tracker.moduleEditor->noteTransposeSong(tp, true);
+	if (!fuckups)
+		tracker.moduleEditor->noteTransposeSong(tp);
+	else
+	{
+		char buffer[100];
+		sprintf(buffer, "%i notes will be erased, continue?", fuckups);
+		showMessageBox(MESSAGEBOX_TRANSPOSEPROCEED, buffer);
+	}
+}
+
+void SectionTranspose::transposeSong()
+{
+	tracker.moduleEditor->noteTransposeSong(getTransposeParameters());
+	tracker.screen->paint();				
 }

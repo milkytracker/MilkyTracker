@@ -811,7 +811,7 @@ void Tracker::switchEditMode(EditModes mode)
 			sectionDiskMenu->setCycleFilenames(true);
 			container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 			ASSERT(container);
-			static_cast<PPListBox*>(container->getControlByID(LISTBOX_0))->setShowFocus(true);
+			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(true);
 			
 			screen->setFocus(listBoxInstruments, false);			
 			break;
@@ -833,7 +833,7 @@ void Tracker::switchEditMode(EditModes mode)
 			sectionDiskMenu->setFileBrowserShowFocus(false);
 			container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 			ASSERT(container);
-			static_cast<PPListBox*>(container->getControlByID(LISTBOX_0))->setShowFocus(false);
+			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(false);
 			
 			recordMode = true;
 			eventKeyDownBinding_ToggleFT2Edit();

@@ -31,7 +31,6 @@
 #include "Tracker.h"
 #include "ModuleEditor.h"
 #include "TrackerSettingsDatabase.h"
-#include "MilkyPlay.h"
 #include "PlayerMaster.h"
 #include "PlayerController.h"
 #include "PlayerLogic.h"
@@ -304,7 +303,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 		if (str.compareTo("PROTRACKER2") == 0)
 		{
 			playerController->switchPlayMode(PlayerController::PlayMode_ProTracker2, false);
-			// we set default to 4 channels so people will immediately be able to check
+			// we set default to 4 channels so people will immediately be able to see
 			// which playmode is the active one 
 			setModuleNumChannels(4);
 		}

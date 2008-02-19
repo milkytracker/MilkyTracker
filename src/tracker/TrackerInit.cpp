@@ -73,7 +73,7 @@ void Tracker::initUI()
 	containerAbout->setColor(TrackerConfig::colorThemeMain);
 
 	// Song title edit field
-	PPListBox* listBox = new PPListBox(LISTBOX_0, screen, this, PPPoint(116-2+2, height2+2+8), PPSize(200+2,12), true, true, false);
+	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, height2+2+8), PPSize(200+2,12), true, true, false);
 	listBox->showSelection(false);
 	listBox->setSingleButtonClickEdit(true);
 	listBox->setBorderColor(TrackerConfig::colorThemeMain);
@@ -256,7 +256,7 @@ void Tracker::initUI()
 	containerAbout->setColor(TrackerConfig::colorThemeMain);
 
 	// Song title edit field
-	PPListBox* listBox = new PPListBox(LISTBOX_0, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
+	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
 	listBox->showSelection(false);
 	listBox->setSingleButtonClickEdit(true);
 	listBox->setBorderColor(TrackerConfig::colorThemeMain);

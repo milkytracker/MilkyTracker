@@ -161,8 +161,6 @@ private:
 	// Custom resolution
 	void storeCustomResolution();
 	
-	class RespondMessageBox* respondMessageBox;
-
 	// Show message box with custom resolutions
 	void showCustomResolutionMessageBox();
 
@@ -179,9 +177,10 @@ private:
 	void storeAudioDriver(const char* driverName);
 	void storeResampler(pp_uint32 resampler);
 
-	class MessageBoxResponder* messageBoxResponder;
+	class RespondMessageBox* respondMessageBox;
+	class SettingsMessageBoxResponder* messageBoxResponder;
 	// Responder should be friend
-	friend class MessageBoxResponder;	
+	friend class SettingsMessageBoxResponder;	
 
 	friend class Tracker;
 };

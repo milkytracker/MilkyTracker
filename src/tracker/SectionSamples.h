@@ -100,6 +100,18 @@ public:
 
 	void setOffsetText(pp_uint32 ID, pp_uint32 offset);
 
+private:
+	void showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel = false);
+	void handleClearSample();
+	void handleCropSample();
+	void handleMinimizeSample();
+	void handleConvertSampleResolution();
+
+	class RespondMessageBox* respondMessageBox;
+	class SampleMessageBoxResponder* messageBoxResponder;
+	// Responder should be friend
+	friend class SampleMessageBoxResponder;	
+
 	friend class Tracker;
 };
 
