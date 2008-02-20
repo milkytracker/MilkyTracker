@@ -224,10 +224,11 @@ void SampleEditor::finishUndo()
 				undoStack->Push(after); 
 				undoStack->Pop(); 
 			} 
-			// we're done, client might want to refresh the screen or whatever
-			notifyListener(NotificationChanges);			
 		} 
 	} 
+	
+	// we're done, client might want to refresh the screen or whatever
+	notifyListener(NotificationChanges);			
 }
 	
 bool SampleEditor::revoke(const SampleUndoStackEntry* stackEntry)
