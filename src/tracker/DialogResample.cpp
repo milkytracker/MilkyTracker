@@ -37,7 +37,6 @@
 #include "Font.h"
 #include "ListBox.h"
 #include "Seperator.h"
-#include "ControlIDs.h"
 #include "XModule.h"
 #include "ResamplerHelper.h"
 

@@ -30,14 +30,10 @@
 
 #include "DialogGroupSelection.h"
 #include "SimpleVector.h"
-#include "Screen.h"
-#include "StaticText.h"
-#include "MessageBoxContainer.h"
 #include "Font.h"
+#include "MessageBoxContainer.h"
 #include "ListBox.h"
 #include "RadioGroup.h"
-#include "Seperator.h"
-#include "ControlIDs.h"
 
 DialogGroupSelection::DialogGroupSelection(PPScreen* screen, 
 										   DialogResponder* responder,

@@ -29,12 +29,8 @@
  */
 
 #include "DialogChannelSelector.h"
-#include "Screen.h"
-#include "StaticText.h"
 #include "MessageBoxContainer.h"
-#include "Font.h"
 #include "ListBox.h"
-#include "ControlIDs.h"
 
 DialogChannelSelector::DialogChannelSelector(PPScreen* screen, 
 											 DialogResponder* responder,

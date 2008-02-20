@@ -35,7 +35,6 @@
 #include "Font.h"
 #include "ListBox.h"
 #include "Seperator.h"
-#include "ControlIDs.h"
 
 DialogQuickChooseInstrument::DialogQuickChooseInstrument(PPScreen* screen, 
 														 DialogResponder* responder,

@@ -32,8 +32,6 @@
 #include "Screen.h"
 #include "StaticText.h"
 #include "MessageBoxContainer.h"
-#include "Font.h"
-#include "ControlIDs.h"
 #include "ScrollBar.h"
 #include "Slider.h"
 #include "Seperator.h"

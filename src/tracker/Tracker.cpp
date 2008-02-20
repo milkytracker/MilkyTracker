@@ -1557,10 +1557,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 	}
 	else if (event->getID() == eValueChanged)
 	{
-
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
-			// song title
 			case LISTBOX_SONGTITLE:
 			{
 				moduleEditor->setTitle(**(reinterpret_cast<PPString**>(event->getDataPtr())), ModuleEditor::MAX_TITLETEXT);
@@ -1581,10 +1579,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 			
-			// channels have been muted/unmuted in patterneditor
+			// channels have been muted/unmuted in pattern editor
 			case PATTERN_EDITOR:
 			{
-				pp_uint8* muteChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
+				const pp_uint8* muteChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
 				
 				for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				{
@@ -1599,14 +1597,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 			
-			// channels have been muted/unmuted in patterneditor
+			// channels have been muted/unmuted in scopes
 			case SCOPES_CONTROL:
 			{
 				switch (event->getMetaData())
 				{
 					case ScopesControl::ChangeValueMuting:
 					{
-						pp_uint8* muteChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
+						const pp_uint8* muteChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
@@ -1626,7 +1624,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					
 					case ScopesControl::ChangeValueRecording:
 					{
-						pp_uint8* recordChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
+						const pp_uint8* recordChannelsPtr = reinterpret_cast<pp_uint8*>(event->getDataPtr());				
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
@@ -2792,22 +2790,23 @@ void Tracker::flipSpeedSection()
 void Tracker::enableInstrument(bool b)
 {
 	getPatternEditorControl()->enableInstrument(b);
-	
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_INSTRUMENTLIST));
-
 	ASSERT(container);
-
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_INSTRUMENT));	
-
 	ASSERT(button);
-	
 	button->setPressed(b);
-	
 	listBoxInstruments->setOnlyShowIndexSelection(!b);
-	
 	screen->paintControl(listBoxInstruments);
-	
 	screen->paintControl(button);
+}
+
+void Tracker::commitListBoxChanges()
+{
+	if (listBoxInstruments->isEditing())
+		listBoxInstruments->commitChanges();
+	
+	if (listBoxSamples->isEditing())
+		listBoxSamples->commitChanges();
 }
 
 Tracker::FileTypes Tracker::getCurrentSelectedSampleSaveType()
@@ -3397,15 +3396,6 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 	
 	
 	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318);	
-}
-
-void Tracker::commitListBoxChanges()
-{
-	if (listBoxInstruments->isEditing())
-		listBoxInstruments->commitChanges();
-	
-	if (listBoxSamples->isEditing())
-		listBoxSamples->commitChanges();
 }
 
 void Tracker::showSplash()

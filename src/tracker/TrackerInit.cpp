@@ -157,11 +157,7 @@ void Tracker::initUI()
 
 	initSectionPattern(116-4+99,24+height2);
 
-	// message boxes
-	initMessageBoxZAP();
-	
 	// Main options
-
 	initSectionMainOptions(0, 0+height2);
 	initListboxesSection(0, 0+height2);
 

@@ -29,12 +29,8 @@
  */
 
 #include "DialogListBox.h"
-#include "Screen.h"
-#include "StaticText.h"
 #include "MessageBoxContainer.h"
-#include "Font.h"
 #include "ListBox.h"
-#include "ControlIDs.h"
 
 DialogListBox::DialogListBox(PPScreen* screen, 
 							 DialogResponder* responder,

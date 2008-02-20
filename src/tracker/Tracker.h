@@ -59,7 +59,7 @@ class PPFont;
 class PPSavePanel;
 class PPOpenPanel;
 
-// Section-forwards
+// Section forwards
 class SectionAbstract;
 class SectionTranspose;
 class SectionAdvancedEdit;
@@ -82,7 +82,7 @@ struct TXMPattern;
 struct TXMSample;
 struct TMixerSettings;
 
-// Key-binding forwards
+// Key binding forwards
 class Tracker;
 typedef void (Tracker::*TTrackerKeyBindingHandler)();
 
@@ -415,9 +415,12 @@ private:
 	
 	void enableInstrument(bool b);
 
+	void commitListBoxChanges();	
+
 	// Signal waitstate
 	void signalWaitState(bool b);
 	
+	// - Save panels -----------------------------------------------------------
 	enum FileTypes
 	{
 		FileTypeSongAllModules,
@@ -433,7 +436,6 @@ private:
 		FileTypeSampleIFF
 	};
 
-	// - Save panels -----------------------------------------------------------
 	FileTypes currentSaveFileType;
 	PPSavePanel* savePanel;
 	EventListenerInterface* fileSystemChangedListener;
@@ -492,8 +494,6 @@ private:
 	void saveType(FileTypes eType);
 	void buildMODSaveErrorWarning(pp_int32 error);
 
-	void commitListBoxChanges();
-	
 public:
 	Tracker();
 
