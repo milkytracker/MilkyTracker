@@ -83,61 +83,64 @@ protected:
 	};
 
 	void initDialog(PPScreen* screen, 
-							   DialogResponder* responder,
-							   pp_int32 id,
-							   const PPString& caption,
-							   const PPString& message,
-							   pp_int32 captionOffset,
-							   const PPString& buttonYesCaption);
-
+					DialogResponder* responder,
+					pp_int32 id,
+					const PPString& caption,
+					const PPString& message,
+					pp_int32 captionOffset,
+					const PPString& buttonYesCaption);
+	
 	void initDialog(PPScreen* screen, 
-							   DialogResponder* responder,
-							   pp_int32 id,
-							   const PPString& caption,
-							   pp_int32 width,
-							   pp_int32 height,
-							   pp_int32 captionOffset,
-							   const PPString& buttonYesCaption);
-
+					DialogResponder* responder,
+					pp_int32 id,
+					const PPString& caption,
+					pp_int32 width,
+					pp_int32 height,
+					pp_int32 captionOffset,
+					const PPString& buttonYesCaption);
+	
 	void initDialog(PPScreen* screen, 
-							   DialogResponder* responder,
-							   pp_int32 id,
-							   const PPString& caption,
-							   pp_int32 width,
-							   pp_int32 height,
-							   pp_int32 captionOffset,
-							   const PPString& buttonYesCaption,
-							   const PPString& buttonCancelCaption);
-
+					DialogResponder* responder,
+					pp_int32 id,
+					const PPString& caption,
+					pp_int32 width,
+					pp_int32 height,
+					pp_int32 captionOffset,
+					const PPString& buttonYesCaption,
+					const PPString& buttonCancelCaption);
+	
 	void initDialog(PPScreen* screen, 
-							   DialogResponder* responder,
-							   pp_int32 id,
-							   const PPString& caption,
-							   pp_int32 width,
-							   pp_int32 height,
-							   pp_int32 captionOffset,
-							   const PPString& buttonYesCaption,
-							   const PPString& buttonNoCaption,
-							   const PPString& buttonCancelCaption);
-
+					DialogResponder* responder,
+					pp_int32 id,
+					const PPString& caption,
+					pp_int32 width,
+					pp_int32 height,
+					pp_int32 captionOffset,
+					const PPString& buttonYesCaption,
+					const PPString& buttonNoCaption,
+					const PPString& buttonCancelCaption);
+	
 protected:
 	PPDialogBase() :
-		keyDownInvokeKeyCode(-1)
+		respondListener(NULL),
+		keyDownInvokeKeyCode(-1),
+		parentScreen(NULL),
+		messageBoxContainerGeneric(NULL)
 	{ 
 	}
 		
 public:
 	PPDialogBase(PPScreen* screen, 
-					  DialogResponder* responder,
-					  pp_int32 id,
-					  const PPString& caption,
-					  MessageBoxTypes type = MessageBox_OKCANCEL);
-
+				 DialogResponder* responder,
+				 pp_int32 id,
+				 const PPString& caption,
+				 MessageBoxTypes type = MessageBox_OKCANCEL);
+	
 	PPDialogBase(PPScreen* screen, 
-					  DialogResponder* responder,
-					  pp_int32 id, 
-					  const PPString& caption,
-					  const PPString& message);
+				 DialogResponder* responder,
+				 pp_int32 id, 
+				 const PPString& caption,
+				 const PPString& message);
 	
 	virtual ~PPDialogBase();
 	

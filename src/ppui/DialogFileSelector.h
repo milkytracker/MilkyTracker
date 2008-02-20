@@ -88,14 +88,14 @@ private:
 	
 public:
 	DialogFileSelector(PPScreen* screen, 
-								  DialogResponder* responder,
-								  pp_int32 id,
-								  const PPString& caption,
-								  bool editfileName = false,
-								  bool overwritePrompt = false,
-								  bool selectDirectories = false);
+					   DialogResponder* responder,
+					   pp_int32 id,
+					   const PPString& caption,
+					   bool editfileName = false,
+					   bool overwritePrompt = false,
+					   bool selectDirectories = false);
 
-	~DialogFileSelector();
+	virtual ~DialogFileSelector();
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 

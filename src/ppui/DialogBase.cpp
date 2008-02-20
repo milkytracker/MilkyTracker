@@ -100,12 +100,12 @@ void PPDialogBase::initCommon(PPScreen* screen,
 }	
 
 void PPDialogBase::initDialog(PPScreen* screen, 
-											  DialogResponder* responder,
-											  pp_int32 id,
-											  const PPString& caption,
-											  const PPString& message,
-											  pp_int32 captionOffset,
-											  const PPString& buttonYesCaption)
+							  DialogResponder* responder,
+							  pp_int32 id,
+							  const PPString& caption,
+							  const PPString& message,
+							  pp_int32 captionOffset,
+							  const PPString& buttonYesCaption)
 {
 	respondListener = responder;
 	parentScreen = screen;
@@ -311,6 +311,14 @@ void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, p
 	}
 }
 
+#define CALLHANDLER(HANDLERFUNC) \
+	if (event->getID() != eCommand) \
+		break; \
+	if (respondListener && respondListener->HANDLERFUNC(reinterpret_cast<PPObject*>(this)) == 0) \
+		parentScreen->setModalControl(NULL); \
+	else if (respondListener == NULL) \
+		parentScreen->setModalControl(NULL);
+
 pp_int32 PPDialogBase::handleEvent(PPObject* sender, PPEvent* event)
 {
 #ifdef __LOWRES__
@@ -339,45 +347,43 @@ pp_int32 PPDialogBase::handleEvent(PPObject* sender, PPEvent* event)
 		{
 			case PP_MESSAGEBOX_BUTTON_YES:
 			{
-				if (event->getID() != eCommand)
-					break;					
-				if (respondListener && respondListener->ActionOkay(reinterpret_cast<PPObject*>(this)) == 0)
-					parentScreen->setModalControl(NULL);
-				else if (respondListener == NULL)
-					parentScreen->setModalControl(NULL);
+				CALLHANDLER(ActionOkay);
 				break;
 			}
 
 			case PP_MESSAGEBOX_BUTTON_CANCEL:
 			{
-				if (event->getID() != eCommand)
-					break;
-				if (respondListener && respondListener->ActionCancel(reinterpret_cast<PPObject*>(this)) == 0)
-					parentScreen->setModalControl(NULL);
-				else if (respondListener == NULL)
-					parentScreen->setModalControl(NULL);
+				CALLHANDLER(ActionCancel);
 				break;
 			}
 
 			case PP_MESSAGEBOX_BUTTON_NO:
 			{
-				if (event->getID() != eCommand)
-					break;
-				if (respondListener && respondListener->ActionNo(reinterpret_cast<PPObject*>(this)) == 0)
-					parentScreen->setModalControl(NULL);
-				else if (respondListener == NULL)
-					parentScreen->setModalControl(NULL);
+				CALLHANDLER(ActionNo);
 				break;
 			}
 
 			case PP_MESSAGEBOX_BUTTON_USER1:
 			{
-				if (event->getID() != eCommand)
-					break;
-				if (respondListener && respondListener->ActionUser1(reinterpret_cast<PPObject*>(this)) == 0)
-					parentScreen->setModalControl(NULL);
-				else if (respondListener == NULL)
-					parentScreen->setModalControl(NULL);
+				CALLHANDLER(ActionUser1);
+				break;
+			}
+
+			case PP_MESSAGEBOX_BUTTON_USER2:
+			{
+				CALLHANDLER(ActionUser2);
+				break;
+			}
+
+			case PP_MESSAGEBOX_BUTTON_USER3:
+			{
+				CALLHANDLER(ActionUser3);
+				break;
+			}
+
+			case PP_MESSAGEBOX_BUTTON_USER4:
+			{
+				CALLHANDLER(ActionUser4);
 				break;
 			}
 						

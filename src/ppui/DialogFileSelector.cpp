@@ -63,12 +63,12 @@ pp_int32 DialogFileSelector::OverwritePromptResponder::ActionCancel(PPObject* se
 
 
 DialogFileSelector::DialogFileSelector(PPScreen* screen, 
-															 DialogResponder* responder,
-															 pp_int32 id,
-															 const PPString& caption,
-															 bool editfileName/* = false*/,
-															 bool overwritePrompt/* = false*/,
-															 bool selectDirectories/* = false*/) :
+									   DialogResponder* responder,
+									   pp_int32 id,
+									   const PPString& caption,
+									   bool editfileName/* = false*/,
+									   bool overwritePrompt/* = false*/,
+									   bool selectDirectories/* = false*/) :
 	PPDialogBase(),
 	doOverwritePrompt(overwritePrompt),
 	allowSelectDirectories(selectDirectories),
