@@ -88,8 +88,8 @@ float getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 }
 
 DialogResample::DialogResample(PPScreen* screen, 
-													 DialogResponder* responder,
-													 pp_int32 id) :
+							   DialogResponder* responder,
+							   pp_int32 id) :
 	PPDialogBase(),
 	count(0),
 	resamplerHelper(new ResamplerHelper()),

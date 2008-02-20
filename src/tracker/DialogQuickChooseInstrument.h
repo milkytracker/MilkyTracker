@@ -41,9 +41,9 @@ private:
 	
 public:
 	DialogQuickChooseInstrument(PPScreen* screen, 
-										   DialogResponder* responder,
-										   pp_int32 id,
-										   const PPString& caption);
+								DialogResponder* responder,
+								pp_int32 id,
+								const PPString& caption);
 
 	pp_int32 getValue() { return value; }
 	

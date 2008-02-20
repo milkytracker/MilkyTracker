@@ -86,13 +86,13 @@ enum ControlIDs
 };
 
 // Class which responds to the message box clicks
-class MessageBoxResponderHDRec : public DialogResponder
+class DialogResponderHDRec : public DialogResponder
 {
 private:
 	SectionHDRecorder& section;
 	
 public:
-	MessageBoxResponderHDRec(SectionHDRecorder& section) :	
+	DialogResponderHDRec(SectionHDRecorder& section) :	
 		section(section)
 	{
 	}
@@ -132,26 +132,17 @@ void SectionHDRecorder::validate()
 }
 
 SectionHDRecorder::SectionHDRecorder(Tracker& tracker) :
-	SectionUpperLeft(tracker),
+	SectionUpperLeft(tracker, NULL, new DialogResponderHDRec(*this)),
 	recorderMode(RecorderModeToFile),
 	fromOrder(0), toOrder(0), mixerVolume(256), 
 	resampler(1),
 	insIndex(0), smpIndex(0),
-	currentFileName(TrackerConfig::untitledSong),
-	dialog(NULL)
+	currentFileName(TrackerConfig::untitledSong)
 {
-	messageBoxResponder = new MessageBoxResponderHDRec(*this);
 }
 
 SectionHDRecorder::~SectionHDRecorder()
 {
-	delete messageBoxResponder;
-	
-	if (dialog)
-	{
-		delete dialog;
-		dialog = NULL;
-	}
 }
 
 bool SectionHDRecorder::getSettingsRamping()
@@ -943,7 +934,7 @@ void SectionHDRecorder::showResamplerMessageBox()
 	}
 
 	dialog = new DialogListBox(tracker.screen, 
-													 messageBoxResponder, 
+													 responder, 
 													 RESPONDMESSAGEBOX_SELECTRESAMPLER, 
 													 "Select Resampler",
 													 true);

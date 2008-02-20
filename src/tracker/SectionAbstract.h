@@ -46,21 +46,26 @@ private:
 protected:
 	Tracker& tracker;
 	bool initialised;
+
+	class PPDialogBase* dialog;
+	class DialogResponder* responder;
 	
 protected:
 	virtual void showSection(bool bShow) = 0;
+
+	void showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel = false);
 	
 public:
-	SectionAbstract(Tracker& theTracker) :
+	SectionAbstract(Tracker& theTracker, PPDialogBase* dialog = NULL, DialogResponder* responder = NULL) :
 		lastFocusedControl(NULL),
 		tracker(theTracker),
-		initialised(false)
+		initialised(false),
+		dialog(dialog),
+		responder(responder)
 	{
 	}
 	
-	virtual ~SectionAbstract() 
-	{
-	}
+	virtual ~SectionAbstract();
 
 	// PPEvent listener
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event) = 0;

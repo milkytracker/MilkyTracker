@@ -53,9 +53,9 @@ private:
 
 public:
 	DialogEQ(PPScreen* screen, 
-						DialogResponder* responder,
-						pp_int32 id,
-						EQNumBands numBands);
+			 DialogResponder* responder,
+			 pp_int32 id,
+			 EQNumBands numBands);
 
 	void setBandParam(pp_uint32 index, float param);
 	float getBandParam(pp_uint32 index) const;

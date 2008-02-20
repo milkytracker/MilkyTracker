@@ -75,10 +75,6 @@ private:
 
 	PPPoint radioGroupLocations[5];
 	
-	// respond listener
-	class PPDialogBase* dialog;
-	class MessageBoxResponderDisk* messageBoxResponder;
-
 	PPSystemString* file;
 	PPSystemString* fileFullPath;
 	PPSystemString currentPath;
@@ -181,7 +177,7 @@ private:
 	void assureExtension();
 	
 	// Responder should be friend
-	friend class MessageBoxResponderDisk;		
+	friend class DialogResponderDisk;		
 	
 	friend class Tracker;
 };

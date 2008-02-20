@@ -51,8 +51,8 @@ private:
 
 public:
 	DialogResample(PPScreen* screen, 
-							  DialogResponder* responder,
-							  pp_int32 id);
+				   DialogResponder* responder,
+				   pp_int32 id);
 
 	virtual ~DialogResample();
 

@@ -33,8 +33,8 @@
 #include "PatternEditorControl.h"
 #include "Container.h"
 
-SectionUpperLeft::SectionUpperLeft(Tracker& theTracker) :
-	SectionAbstract(theTracker),
+SectionUpperLeft::SectionUpperLeft(Tracker& theTracker, PPDialogBase* dialog/* = NULL*/, DialogResponder* responder/* = NULL*/) :
+	SectionAbstract(theTracker, dialog, responder),
 	sectionContainer(NULL)
 {
 }

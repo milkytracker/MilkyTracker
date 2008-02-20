@@ -75,7 +75,7 @@ class SectionAbout;
 class PatternEditorControl;
 class InputControlListener;
 class PPDialogBase;
-class SampleLoadChannelSelectionHandler;
+class DialogResponder;
 class ToolInvokeHelper;
 
 struct TXMPattern;
@@ -176,7 +176,7 @@ private:
 	
 	InputControlListener* inputControlListener;
 	
-	SampleLoadChannelSelectionHandler* sampleLoadChannelSelectionHandler;
+	DialogResponder* responder;
 	PPDialogBase* dialog;
 	ToolInvokeHelper* toolInvokeHelper;
 	
@@ -240,11 +240,8 @@ private:
 	PPMessageBoxContainer* instrumentChooser;
 
 	// - message boxes ---------------------------------------------------------
-	PPMessageBoxContainer* messageBoxContainerZAP;
 	PPMessageBoxContainer* messageBoxContainerGeneric;
 
-	void initMessageBoxZAP();
-	
 	enum MessageBoxTypes
 	{
 		MessageBox_OK,
@@ -658,6 +655,7 @@ private:
 
 	friend class InputControlListener;
 	friend class SampleLoadChannelSelectionHandler;
+	friend class ZapInstrumentHandler;
 	friend class ToolInvokeHelper;
 	friend class PanningSettingsContainer;
 	

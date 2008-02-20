@@ -49,6 +49,7 @@ void Zapper::zapAll()
 	tracker.sectionHDRecorder->adjustOrders();
 	// stop song with resetting main volume
 	tracker.ensureSongStopped(true, false);
+	tracker.updateSongInfo(false);
 	tracker.signalWaitState(false);
 }
 
@@ -63,6 +64,7 @@ void Zapper::zapSong()
 	tracker.sectionHDRecorder->adjustOrders();
 	// stop song with resetting main volume
 	tracker.ensureSongStopped(true, false);			
+	tracker.updateSongInfo(false);
 	tracker.signalWaitState(false);
 }
 
@@ -71,13 +73,15 @@ void Zapper::zapPattern()
 	tracker.signalWaitState(true);
 	tracker.playerController->resetPlayTimeCounter();
 	tracker.getPatternEditor()->clearPattern();
+	tracker.updateSongInfo(false);
 	tracker.signalWaitState(false);	
 }
 
-void Zapper::zapInstrument()
+void Zapper::zapInstruments()
 {
 	tracker.signalWaitState(true);
 	tracker.playerController->resetPlayTimeCounter();
 	tracker.moduleEditor->createEmptySong(false, true);
+	tracker.updateSongInfo(false);
 	tracker.signalWaitState(false);
 }

@@ -41,11 +41,16 @@ public:
 		tracker(tracker)
 	{
 	}
+
+	Zapper(const Zapper& src) :
+		tracker(src.tracker)
+	{
+	}
 	
 	void zapAll();
 	void zapSong();
 	void zapPattern();
-	void zapInstrument();	
+	void zapInstruments();	
 };
 
 #endif

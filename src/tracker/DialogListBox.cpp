@@ -37,10 +37,10 @@
 #include "ControlIDs.h"
 
 DialogListBox::DialogListBox(PPScreen* screen, 
-												   DialogResponder* responder,
-												   pp_int32 id,
-												   const PPString& caption,
-												   bool okCancel/* = false*/) :
+							 DialogResponder* responder,
+							 pp_int32 id,
+							 const PPString& caption,
+							 bool okCancel/* = false*/) :
 	PPDialogBase()
 {
 	if (okCancel)

@@ -130,13 +130,13 @@ enum ControlIDs
 #define INDEXTORADIOGROUP(INDEX) ((INDEX) + DISKMENU_NORMAL_RADIOGROUP_SONGTYPE)
 
 // Class which responds to the above message box clicks
-class MessageBoxResponderDisk : public DialogResponder
+class DialogResponderDisk : public DialogResponder
 {
 private:
 	SectionDiskMenu& section;
 	
 public:
-	MessageBoxResponderDisk(SectionDiskMenu& section) :
+	DialogResponderDisk(SectionDiskMenu& section) :
 		section(section)
 	{
 	}
@@ -204,7 +204,7 @@ public:
 };
 
 SectionDiskMenu::SectionDiskMenu(Tracker& theTracker) :
-	SectionUpperLeft(theTracker),
+	SectionUpperLeft(theTracker, NULL, new DialogResponderDisk(*this)),
 	diskMenuVisible(false),
 	classicViewState(BrowseModules),
 	forceClassicBrowser(false),
@@ -218,14 +218,10 @@ SectionDiskMenu::SectionDiskMenu(Tracker& theTracker) :
 	normalViewControls = new PPSimpleVector<PPControl>(0, false);
 	classicViewControls = new PPSimpleVector<PPControl>(0, false);
 
-	messageBoxResponder = new MessageBoxResponderDisk(*this);
-	
 	fileFullPath = new PPSystemString();
 	file = new PPSystemString();
 
 	lastFocusedControl = NULL;
-
-	dialog = NULL;
 
 #ifdef __LOWRES__
 	lastSIPOffsetMove = 0;
@@ -241,9 +237,6 @@ SectionDiskMenu::~SectionDiskMenu()
 	delete fileFullPath;
 	delete file;
 	
-	delete dialog;
-	delete messageBoxResponder;
-
 	delete normalViewControls;
 	delete classicViewControls;
 }
@@ -1485,7 +1478,7 @@ void SectionDiskMenu::showOverwriteMessageBox()
 	}
 	
 	dialog = new PPDialogBase(tracker.screen, 
-											  messageBoxResponder, 
+											  responder, 
 											  RESPONDMESSAGEBOX_OVERWRITE, 
 											  "Overwrite existing file?");
 	dialog->show();	
@@ -1616,17 +1609,7 @@ void SectionDiskMenu::showDeleteMessageBox()
 	if (!listBoxFiles->currentSelectionIsFile())
 		return;
 
-	if (dialog)
-	{
-		delete dialog;
-		dialog = NULL;
-	}
-	
-	dialog = new PPDialogBase(tracker.screen, 
-											  messageBoxResponder, 
-											  RESPONDMESSAGEBOX_DELETE, 
-											  "Delete selected file?");
-	dialog->show();	
+	showMessageBox(RESPONDMESSAGEBOX_DELETE, "Delete selected file?");
 }
 
 void SectionDiskMenu::deleteCurrent()
@@ -1642,23 +1625,29 @@ void SectionDiskMenu::deleteCurrent()
 
 void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 {
-	static const pp_uint32 IDs[] = {DISKMENU_CLASSIC_BUTTON_PREV, 
+	static const pp_uint32 IDs[] = 
+	{
+		DISKMENU_CLASSIC_BUTTON_PREV, 
 		DISKMENU_CLASSIC_BUTTON_NEXT, 
 		DISKMENU_CLASSIC_BUTTON_PARENT, 
 		DISKMENU_CLASSIC_BUTTON_ROOT, 
 		DISKMENU_CLASSIC_BUTTON_HOME, 
 		DISKMENU_CLASSIC_BUTTON_LOAD, 
 		DISKMENU_CLASSIC_BUTTON_DELETE, 
-		DISKMENU_CLASSIC_BUTTON_MAKEDIR};
+		DISKMENU_CLASSIC_BUTTON_MAKEDIR
+	};
 	
-	const bool states[] = {listBoxFiles->canPrev(),
+	const bool states[] = 
+	{
+		listBoxFiles->canPrev(),
 		listBoxFiles->canNext(),
 		listBoxFiles->canGotoParent(),
 		listBoxFiles->canGotoRoot(),
 		listBoxFiles->canGotoHome(),
 		true,
 		listBoxFiles->currentSelectionIsFile(),
-		false};
+		false
+	};
 	
 	ASSERT(sizeof(states)/sizeof(bool) == sizeof(IDs)/sizeof(pp_uint32));
 	
@@ -1898,7 +1887,8 @@ PPString SectionDiskMenu::getKeyFromPredefPathButton(PPControl* button)
 	
 	if (id >= 0 && id < 5)
 	{
-		static const char* keys[BrowseLAST] = {
+		static const char* keys[BrowseLAST] = 
+		{
 			"PREDEF_PATH_ALL",
 			"PREDEF_PATH_MODULES",
 			"PREDEF_PATH_INSTRUMENTS",

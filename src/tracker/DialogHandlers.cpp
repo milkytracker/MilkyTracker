@@ -30,11 +30,14 @@
 
 #include "DialogHandlers.h"
 #include "Tracker.h"
+#include "Zapper.h"
 #include "DialogChannelSelector.h"
+#include "DialogZap.h"
 #include "ListBox.h"
 #include "ModuleEditor.h"
 #include "PlayerController.h"
 #include "SectionSamples.h"
+#include "SectionInstruments.h"
 #include "ControlIDs.h"
 #include "ScopesControl.h"
 
@@ -100,4 +103,47 @@ void SampleLoadChannelSelectionHandler::setCurrentFileName(const PPSystemString&
 void SampleLoadChannelSelectionHandler::setPreferredFileName(const PPSystemString& fileName)
 {
 	this->preferredFileName = fileName;
+}
+
+ZapHandler::ZapHandler(const Zapper& zapper) :
+	zapper(new Zapper(zapper))
+{
+}
+
+ZapHandler::~ZapHandler()
+{
+	delete zapper;
+}
+
+pp_int32 ZapHandler::ActionUser1(PPObject* sender)
+{
+	zapper->zapAll();
+	return 0;
+}
+
+pp_int32 ZapHandler::ActionUser2(PPObject* sender)
+{
+	zapper->zapSong();
+	return 0;
+}
+
+pp_int32 ZapHandler::ActionUser3(PPObject* sender)
+{
+	zapper->zapPattern();
+	return 0;
+}
+
+pp_int32 ZapHandler::ActionUser4(PPObject* sender)
+{
+	zapper->zapInstruments();
+	return 0;
+}
+
+pp_int32 ZapInstrumentHandler::ActionOkay(PPObject* sender)
+{
+	tracker.moduleEditor->zapInstrument(tracker.listBoxInstruments->getSelectedIndex());
+	tracker.sectionInstruments->resetEnvelopeEditor();
+	tracker.sectionSamples->resetSampleEditor();
+	tracker.sectionInstruments->updateAfterLoad();
+	return 0;
 }

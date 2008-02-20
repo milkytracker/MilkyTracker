@@ -59,8 +59,6 @@ private:
 	
 	PPSystemString currentFileName;
 
-	class PPDialogBase* dialog;
-
 	bool getSettingsRamping();
 	void setSettingsRamping(bool b);
 	
@@ -118,9 +116,8 @@ private:
 
 	void storeResampler(pp_uint32 resampler);
 
-	class MessageBoxResponderHDRec* messageBoxResponder;
 	// Responder should be friend
-	friend class MessageBoxResponderHDRec;	
+	friend class DialogResponderHDRec;	
 	
 	friend class Tracker;
 };

@@ -43,8 +43,6 @@ class DialogListBox;
 class SectionOptimize : public SectionUpperLeft
 {
 private:
-	DialogListBox* dialog;
-	
 	void refresh();
 
 	void optimize(bool evaluate = false);

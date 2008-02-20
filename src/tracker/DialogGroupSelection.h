@@ -43,10 +43,10 @@ private:
 
 public:
 	DialogGroupSelection(PPScreen* screen, 
-						   DialogResponder* responder,
-						   pp_int32 id,
-						   const PPString& caption,
-						   const PPSimpleVector<PPString>& choices);
+						 DialogResponder* responder,
+						 pp_int32 id,
+						 const PPString& caption,
+						 const PPSimpleVector<PPString>& choices);
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 

@@ -40,10 +40,10 @@ private:
 
 public:
 	DialogListBox(PPScreen* screen, 
-							 DialogResponder* responder,
-							 pp_int32 id,
-							 const PPString& caption,
-							 bool okCancel = false);
+				  DialogResponder* responder,
+				  pp_int32 id,
+				  const PPString& caption,
+				  bool okCancel = false);
 	
 	PPListBox* getListBox() { return listBox; }
 

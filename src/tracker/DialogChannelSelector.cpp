@@ -37,9 +37,9 @@
 #include "ControlIDs.h"
 
 DialogChannelSelector::DialogChannelSelector(PPScreen* screen, 
-																   DialogResponder* responder,
-																   pp_int32 id,
-																   const PPString& caption) :
+											 DialogResponder* responder,
+											 pp_int32 id,
+											 const PPString& caption) :
 	PPDialogBase()
 {
 	initDialog(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");

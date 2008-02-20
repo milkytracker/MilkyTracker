@@ -258,13 +258,13 @@ static TScreenRes resolutions[NUMRESOLUTIONS] =
 };
 
 // Class which responds to message box clicks
-class SettingsMessageBoxResponder : public DialogResponder
+class DialogResponderSettings : public DialogResponder
 {
 private:
 	SectionSettings& section;
 	
 public:
-	SettingsMessageBoxResponder(SectionSettings& section) :
+	DialogResponderSettings(SectionSettings& section) :
 		section(section)
 	{
 	}
@@ -302,7 +302,7 @@ public:
 };
 
 SectionSettings::SectionSettings(Tracker& theTracker) :
-	SectionAbstract(theTracker),
+	SectionAbstract(theTracker, NULL, new DialogResponderSettings(*this)),
 	sectionContainer(NULL),
 	currentActivePageContainer(NULL),
 	listBoxColors(NULL),
@@ -312,8 +312,7 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 	visible(false),
 	palette(NULL),
 	storePalette(false),
-	colorCopy(NULL),
-	dialog(NULL)
+	colorCopy(NULL)	
 {
 	pp_int32 i;
 
@@ -356,8 +355,6 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 		predefinedColorPalettes->store(i, ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[i]));
 	}
 	
-	messageBoxResponder = new SettingsMessageBoxResponder(*this);
-
 	for (i = 0; i < GlobalColorConfig::ColorLast; i++)
 		colorMapping[i] = GlobalColorConfig::ColorLast-1;
 	
@@ -392,8 +389,6 @@ SectionSettings::~SectionSettings()
 	delete palette;
 	delete mixerSettings;
 	delete colorCopy;
-	delete dialog;
-	delete messageBoxResponder;
 }
 
 pp_int32 SectionSettings::getColorIndex()
@@ -2680,7 +2675,7 @@ void SectionSettings::showCustomResolutionMessageBox()
 	}
 	
 	dialog = new DialogWithValues(tracker.screen, 
-														messageBoxResponder, 
+														responder, 
 														RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
 														"Enter custom resolution"PPSTR_PERIODS, 
 														DialogWithValues::ValueStyleEnterTwoValues);
@@ -2710,7 +2705,7 @@ void SectionSettings::showRestorePaletteMessageBox()
 	}
 	
 	dialog = new PPDialogBase(tracker.screen, 
-											  messageBoxResponder, 
+											  responder, 
 											  RESPONDMESSAGEBOX_RESTOREPALETTES, 
 											  "Restore all default palettes?");
 	dialog->show();	
@@ -2725,7 +2720,7 @@ void SectionSettings::showSelectDriverMessageBox()
 	}
 	
 	dialog = new DialogListBox(tracker.screen, 
-													 messageBoxResponder, 
+													 responder, 
 													 RESPONDMESSAGEBOX_SELECTAUDIODRV, 
 													 "Select audio driver",
 													 true);
@@ -2762,7 +2757,7 @@ void SectionSettings::showResamplerMessageBox()
 	}
 
 	dialog = new DialogListBox(tracker.screen, 
-													 messageBoxResponder, 
+													 responder, 
 													 RESPONDMESSAGEBOX_SELECTRESAMPLER, 
 													 "Select Resampler",
 													 true);

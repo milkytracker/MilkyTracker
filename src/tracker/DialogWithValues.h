@@ -50,10 +50,10 @@ private:
 	
 public:
 	DialogWithValues(PPScreen* screen, 
-								DialogResponder* responder,
-							    pp_int32 id,
-								const PPString& caption,
-								ValueStyles style);
+					 DialogResponder* responder,
+					 pp_int32 id,
+					 const PPString& caption,
+					 ValueStyles style);
 
 	float getValueOne() { return valueOne; }
 	float getValueTwo() { return valueTwo; }

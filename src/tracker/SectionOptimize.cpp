@@ -411,14 +411,12 @@ SectionOptimize::OptimizeSamplesResult SectionOptimize::optimizeSamples(bool con
 }
 
 SectionOptimize::SectionOptimize(Tracker& theTracker) :
-	SectionUpperLeft(theTracker),
-	dialog(NULL)
+	SectionUpperLeft(theTracker)
 {
 }
 
 SectionOptimize::~SectionOptimize()
 {
-	delete dialog;
 }
 
 pp_int32 SectionOptimize::handleEvent(PPObject* sender, PPEvent* event)

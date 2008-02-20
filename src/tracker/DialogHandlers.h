@@ -45,8 +45,8 @@ private:
 public:
 	bool suspendPlayer;
 	
-	SampleLoadChannelSelectionHandler(Tracker& theTracker) : 
-		tracker(theTracker)
+	SampleLoadChannelSelectionHandler(Tracker& tracker) : 
+		tracker(tracker)
 	{
 		suspendPlayer = false;
 	}
@@ -59,6 +59,35 @@ public:
 	virtual pp_int32 ActionOkay(PPObject* sender);
 	virtual pp_int32 ActionCancel(PPObject* sender);
 	virtual pp_int32 ActionUser1(PPObject* sender);
+};
+
+class ZapHandler : public DialogResponder
+{
+private:
+	class Zapper* zapper;
+	
+public:
+	ZapHandler(const Zapper& zapper);
+	virtual ~ZapHandler();
+
+	virtual pp_int32 ActionUser1(PPObject* sender);
+	virtual pp_int32 ActionUser2(PPObject* sender);
+	virtual pp_int32 ActionUser3(PPObject* sender);
+	virtual pp_int32 ActionUser4(PPObject* sender);
+};
+
+class ZapInstrumentHandler : public DialogResponder
+{
+private:
+	Tracker& tracker;
+
+public:
+	ZapInstrumentHandler(Tracker& tracker) : 
+		tracker(tracker)
+	{
+	}
+
+	virtual pp_int32 ActionOkay(PPObject* sender);
 };
 
 #endif

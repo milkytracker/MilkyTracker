@@ -40,10 +40,10 @@
 #include "ControlIDs.h"
 
 DialogGroupSelection::DialogGroupSelection(PPScreen* screen, 
-					  DialogResponder* responder,
-					  pp_int32 id,
-					  const PPString& caption,
-					  const PPSimpleVector<PPString>& choices) :
+										   DialogResponder* responder,
+										   pp_int32 id,
+										   const PPString& caption,
+										   const PPSimpleVector<PPString>& choices) :
 	PPDialogBase()
 {
 	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);

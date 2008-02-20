@@ -34,6 +34,30 @@
 #include "Container.h"
 #include "ListBox.h"
 #include "Tracker.h"
+#include "DialogBase.h"
+
+SectionAbstract::~SectionAbstract()
+{
+	delete responder;
+	delete dialog;
+}
+
+void SectionAbstract::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
+{
+	if (dialog)
+	{
+		delete dialog;
+		dialog = NULL;
+	}
+
+	dialog = new PPDialogBase(tracker.screen, responder, 
+							  id, text, 
+							  yesnocancel ? 
+							  PPDialogBase::MessageBox_YESNOCANCEL :
+							  PPDialogBase::MessageBox_OKCANCEL); 	
+											  
+	dialog->show();
+}
 
 #ifdef __LOWRES__
 void SectionAbstract::replaceAndResizeInstrumentListContainer(pp_int32 listBoxContainerHeight)

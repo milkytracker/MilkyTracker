@@ -61,13 +61,13 @@ enum ControlIDs
 };
 
 // Class which responds to message box clicks
-class SampleMessageBoxResponder : public DialogResponder
+class DialogResponderSamples : public DialogResponder
 {
 private:
 	SectionSamples& section;
 	
 public:
-	SampleMessageBoxResponder(SectionSamples& section) :
+	DialogResponderSamples(SectionSamples& section) :
 		section(section)
 	{
 	}
@@ -110,22 +110,18 @@ public:
 };
 
 SectionSamples::SectionSamples(Tracker& theTracker) :
-	SectionAbstract(theTracker),
+	SectionAbstract(theTracker, NULL, new DialogResponderSamples(*this)),
 	containerEntire(NULL),
 	visible(false),
 	sampleEditorControl(NULL),
 	currentSamplePlayNote(ModuleEditor::MAX_NOTE/2),
 	showRangeOffsets(false),
-	offsetFormat(0),
-	dialog(NULL),
-	messageBoxResponder(new SampleMessageBoxResponder(*this))	
+	offsetFormat(0)
 {
 }
 
 SectionSamples::~SectionSamples()
 {
-	delete messageBoxResponder;
-	delete dialog;
 }
 
 pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
@@ -1328,23 +1324,6 @@ void SectionSamples::setOffsetText(pp_uint32 ID, pp_uint32 offset)
 			break;
 		}
 	}
-}
-
-void SectionSamples::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
-{
-	if (dialog)
-	{
-		delete dialog;
-		dialog = NULL;
-	}
-
-	dialog = new PPDialogBase(tracker.screen, messageBoxResponder, 
-											  id, text, 
-											  yesnocancel ? 
-											  PPDialogBase::MessageBox_YESNOCANCEL :
-											  PPDialogBase::MessageBox_OKCANCEL); 	
-											  
-	dialog->show();
 }
 
 void SectionSamples::handleClearSample()

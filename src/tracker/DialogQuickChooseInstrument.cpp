@@ -38,9 +38,9 @@
 #include "ControlIDs.h"
 
 DialogQuickChooseInstrument::DialogQuickChooseInstrument(PPScreen* screen, 
-					  DialogResponder* responder,
-					  pp_int32 id,
-					  const PPString& caption) :
+														 DialogResponder* responder,
+														 pp_int32 id,
+														 const PPString& caption) :
 	PPDialogBase()
 {
 	value = 0;

@@ -37,6 +37,7 @@
 #include "SampleEditor.h"
 #include "PianoControl.h"
 #include "PatternTools.h"
+#include "SectionSamples.h"
 
 #include "Screen.h"
 #include "PPUIConfig.h"
@@ -51,6 +52,7 @@
 #include "StaticText.h"
 #include "EnvelopeEditorControl.h"
 #include "PatternEditorControl.h"
+#include "DialogBase.h"
 
 #include "PlayerController.h"
 #include "InputControlListener.h"
@@ -61,6 +63,32 @@
 #include "PPSavePanel.h"
 
 #include "ControlIDs.h"
+
+// Class which responds to message box clicks
+class DialogResponderInstruments : public DialogResponder
+{
+private:
+	SectionInstruments& section;
+	
+public:
+	DialogResponderInstruments(SectionInstruments& section) :
+		section(section)
+	{
+	}
+	
+	virtual pp_int32 ActionOkay(PPObject* sender)
+	{
+		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
+		{
+			case MESSAGEBOX_ZAPINSTRUMENT:
+			{
+				section.zapInstrument();
+				break;
+			}
+		}
+		return 0;
+	}	
+};
 
 EnvelopeEditor* SectionInstruments::getEnvelopeEditor()
 {
@@ -73,7 +101,7 @@ void SectionInstruments::showSection(bool bShow)
 }
 
 SectionInstruments::SectionInstruments(Tracker& theTracker) :
-	SectionAbstract(theTracker),
+	SectionAbstract(theTracker, NULL, new DialogResponderInstruments(*this)),
 	containerEntire(NULL),
 	containerEnvelopes(NULL),
 	containerSampleSlider(NULL),
@@ -355,7 +383,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				tracker.showMessageBox(MESSAGEBOX_ZAPINSTRUMENT, "Zap instrument?", Tracker::MessageBox_YESNO);
+				handleZapInstrument();
 				break;
 			
 			// load instrument
@@ -1654,5 +1682,18 @@ void SectionInstruments::setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, 
 		default:
 			ASSERT(false);
 	}	
+}
+
+void SectionInstruments::handleZapInstrument()
+{
+	showMessageBox(MESSAGEBOX_ZAPINSTRUMENT, "Zap instrument?");
+}
+
+void SectionInstruments::zapInstrument()
+{
+	tracker.moduleEditor->zapInstrument(tracker.listBoxInstruments->getSelectedIndex());
+	resetEnvelopeEditor();
+	tracker.sectionSamples->resetSampleEditor();
+	updateAfterLoad();
 }
 

@@ -51,7 +51,7 @@ protected:
 	virtual void showSection(bool bShow);
 	
 public:
-	SectionUpperLeft(Tracker& tracker);
+	SectionUpperLeft(Tracker& tracker, PPDialogBase* dialog = NULL, DialogResponder* responder = NULL);
 	virtual ~SectionUpperLeft();
 
 	// Derived from SectionAbstract

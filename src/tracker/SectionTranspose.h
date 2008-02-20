@@ -71,14 +71,11 @@ public:
 	virtual void update(bool repaint = true);
 	
 private:
-	void showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel = false);
 	void handleTransposeSong();
 	void transposeSong();
 
-	class PPDialogBase* dialog;
-	class TransposeMessageBoxResponder* messageBoxResponder;
 	// Responder should be friend
-	friend class TransposeMessageBoxResponder;	
+	friend class DialogResponderTranspose;	
 
 	friend class Tracker;
 };

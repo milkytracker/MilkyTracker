@@ -1,5 +1,5 @@
 /*
- *  tracker/DialogChannelSelector.h
+ *  tracker/DialogZap.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,31 +21,25 @@
  */
 
 /*
- *  DialogChannelSelector.h
+ *  DialogZap.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on 25.10.05.
+ *  Created by Peter Barth on 20.2.08.
  *
  */
 
-#ifndef __DIALOGCHANNELSELECTOR_H__
-#define __DIALOGCHANNELSELECTOR_H__
+#ifndef __DIALOGZAP_H__
+#define __DIALOGZAP_H__
 
 #include "DialogBase.h"
 
-class DialogChannelSelector : public PPDialogBase
+class DialogZap : public PPDialogBase
 {
-private:
-	class PPListBox* listBox;
-
 public:
-	DialogChannelSelector(PPScreen* screen, 
-						  DialogResponder* responder,
-						  pp_int32 id,
-						  const PPString& caption);
-
-	PPListBox* getListBox() { return listBox; }
-
+	DialogZap(PPScreen* screen, 
+			  DialogResponder* responder,
+			  pp_int32 id);
 };
+
 
 #endif

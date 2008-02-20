@@ -63,6 +63,7 @@
 // Some helper messageboxes & button handlers
 #include "DialogHandlers.h"
 #include "DialogChannelSelector.h"
+#include "DialogZap.h"
 // Helper class to invoke tools which need parameters
 #include "ToolInvokeHelper.h"
 // Panning settings container modal dialog
@@ -133,9 +134,9 @@ Tracker::Tracker() :
 	lowerSectionPage(ActiveLowerSectionPageMain),	
 #endif
 	currentUpperSection(NULL),
-	messageBoxContainerZAP(NULL),
 	messageBoxContainerGeneric(NULL),
 	dialog(NULL),
+	responder(NULL),
 	playTimeText(NULL),
 	instrumentChooser(NULL),
 	inputContainerCurrent(NULL),
@@ -196,8 +197,6 @@ Tracker::Tracker() :
 
 	inputControlListener = new InputControlListener(*this);
 
-	sampleLoadChannelSelectionHandler = new SampleLoadChannelSelectionHandler(*this);
-	
 	toolInvokeHelper = new ToolInvokeHelper(*this);
 
 	//currentPatternAdd = 1;
@@ -220,7 +219,8 @@ Tracker::~Tracker()
 	delete eventKeyDownBindingsFastTracker;
 	
 	delete toolInvokeHelper;
-	delete sampleLoadChannelSelectionHandler;
+	delete responder;
+	delete dialog;
 	delete inputControlListener;
 
 	delete sections;
@@ -229,7 +229,6 @@ Tracker::~Tracker()
 
 	delete playerMaster;
 	
-	delete messageBoxContainerZAP;
 	delete messageBoxContainerGeneric;
 		
 	delete[] muteChannels;		
@@ -885,52 +884,17 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				screen->setModalControl(messageBoxContainerZAP);
-				break;
-
-			case MESSAGEBOXZAP_BUTTON_ALL:
-			case MESSAGEBOXZAP_BUTTON_SONG:
-			case MESSAGEBOXZAP_BUTTON_PATT:
-			case MESSAGEBOXZAP_BUTTON_INS:
-				if (event->getID() != eCommand)
-					break;
+				if (dialog)
+					delete dialog;
 				
-				switch (reinterpret_cast<PPControl*>(sender)->getID())
-				{
-					case MESSAGEBOXZAP_BUTTON_ALL:
-					{
-						Zapper zapper(*this);
-						zapper.zapAll();
-						break;
-					}
-
-					case MESSAGEBOXZAP_BUTTON_SONG:
-					{
-						Zapper zapper(*this);
-						zapper.zapSong();
-						break;
-					}
+				if (responder)
+					delete responder;
 					
-					case MESSAGEBOXZAP_BUTTON_PATT:
-					{
-						Zapper zapper(*this);
-						zapper.zapPattern();
-						break;
-					}
+				responder = new ZapHandler(Zapper(*this));				
+				dialog = new DialogZap(screen, responder, PP_DEFAULT_ID);	
 
-					case MESSAGEBOXZAP_BUTTON_INS:
-					{
-						Zapper zapper(*this);
-						zapper.zapInstrument();
-						break;
-					}
-				}
-
-				updateSongInfo(false);
-
-				screen->setModalControl(NULL);  // repaints
+				dialog->show();
 				break;
-			// ----------------------------------------------
 			
 			// open song	
 			case MAINMENU_LOAD:
@@ -2156,38 +2120,6 @@ bool Tracker::messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBox
 			break;
 		}
 		
-		case MESSAGEBOX_ZAPINSTRUMENT:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					moduleEditor->zapInstrument(listBoxInstruments->getSelectedIndex());
-					sectionInstruments->resetEnvelopeEditor();
-					sectionSamples->resetSampleEditor();
-					break;
-				}
-			}
-			sectionInstruments->updateAfterLoad();
-			//sectionSamples->updateAfterLoad();
-			screen->paint();
-			break;
-		}
-
-		case MESSAGEBOX_TRANSPOSEPROCEED:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					moduleEditor->noteTransposeSong(sectionTranspose->getTransposeParameters());
-					screen->paint();
-					break;
-				}
-			}
-			break;
-		}
-		
 		case MESSAGEBOX_SAVEPROCEED:
 		{
 			switch (messageBoxButtonID)
@@ -3084,15 +3016,19 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 				if (dialog)
 					delete dialog;
 				
-				dialog = new DialogChannelSelector(screen, sampleLoadChannelSelectionHandler, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
+				if (responder)
+					delete responder;
+					
+				responder = new SampleLoadChannelSelectionHandler(*this);				
+				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
 				
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
 					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
 				
-				sampleLoadChannelSelectionHandler->setCurrentFileName(loadingParameters.filename);
-				sampleLoadChannelSelectionHandler->setPreferredFileName(loadingParameters.preferredFilename);
-				sampleLoadChannelSelectionHandler->suspendPlayer = suspendPlayer;
+				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
+				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
+				static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
 				
 				signalWaitState(false);
 				

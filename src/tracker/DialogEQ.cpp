@@ -40,9 +40,9 @@
 #include "EQConstants.h"
 
 DialogEQ::DialogEQ(PPScreen* screen, 
-										 DialogResponder* responder,
-										 pp_int32 id,
-										 EQNumBands numBands) :
+				   DialogResponder* responder,
+				   pp_int32 id,
+				   EQNumBands numBands) :
 	PPDialogBase(),
 	numBands(numBands)
 {

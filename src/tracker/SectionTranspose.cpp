@@ -82,13 +82,13 @@ enum ControlIDs
 };
 
 // Class which responds to message box clicks
-class TransposeMessageBoxResponder : public DialogResponder
+class DialogResponderTranspose : public DialogResponder
 {
 private:
 	SectionTranspose& section;
 	
 public:
-	TransposeMessageBoxResponder(SectionTranspose& section) :
+	DialogResponderTranspose(SectionTranspose& section) :
 		section(section)
 	{
 	}
@@ -106,9 +106,7 @@ public:
 };
 
 SectionTranspose::SectionTranspose(Tracker& theTracker) :
-	SectionUpperLeft(theTracker),
-	dialog(NULL),
-	messageBoxResponder(new TransposeMessageBoxResponder(*this))		
+	SectionUpperLeft(theTracker, NULL, new DialogResponderTranspose(*this))
 {
 	currentInstrumentRangeStart = 0;
 	currentInstrumentRangeEnd = 0;
@@ -119,8 +117,6 @@ SectionTranspose::SectionTranspose(Tracker& theTracker) :
 
 SectionTranspose::~SectionTranspose()
 {
-	delete messageBoxResponder;
-	delete dialog;
 }
 
 void SectionTranspose::setCurrentInstrument(pp_int32 instrument, bool redraw/* = true*/) 
@@ -820,23 +816,6 @@ void SectionTranspose::update(bool repaint/* = true*/)
 	text->setText(currentTransposeAmount < 0 ? "note(s)" : "note(s)");
 	
 	tracker.screen->paintControl(container);
-}
-
-void SectionTranspose::showMessageBox(pp_uint32 id, const PPString& text, bool yesnocancel/* = false*/)
-{
-	if (dialog)
-	{
-		delete dialog;
-		dialog = NULL;
-	}
-
-	dialog = new PPDialogBase(tracker.screen, messageBoxResponder, 
-											  id, text, 
-											  yesnocancel ? 
-											  PPDialogBase::MessageBox_YESNOCANCEL :
-											  PPDialogBase::MessageBox_OKCANCEL); 	
-											  
-	dialog->show();
 }
 
 void SectionTranspose::handleTransposeSong()

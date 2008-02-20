@@ -38,10 +38,10 @@
 #include "ControlIDs.h"
 
 DialogWithValues::DialogWithValues(PPScreen* screen, 
-					  DialogResponder* responder,
-					  pp_int32 id,
-					  const PPString& caption,
-					  ValueStyles style) :
+								   DialogResponder* responder,
+								   pp_int32 id,
+								   const PPString& caption,
+								   ValueStyles style) :
 	PPDialogBase()
 {
 	valueOne = 0;

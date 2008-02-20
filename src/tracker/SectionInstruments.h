@@ -128,6 +128,13 @@ public:
 	PPString getEncodedEnvelope(EnvelopeTypes type, pp_int32 index);
 	void setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, const PPString& str);
 	
+private:
+	void handleZapInstrument();
+	void zapInstrument();
+
+	// Responder should be friend
+	friend class DialogResponderInstruments;	
+
 	friend class Tracker;
 };
 
