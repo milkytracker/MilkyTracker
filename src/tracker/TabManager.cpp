@@ -22,7 +22,7 @@
 
 /*
  *  TabManager.cpp
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 20.12.07.
  *

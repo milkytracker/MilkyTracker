@@ -22,7 +22,7 @@
 
 /*
  *  PPPath.h
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 12.10.06.
  *

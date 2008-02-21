@@ -22,7 +22,7 @@
 
 /*
  *  ModuleServices.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 08.12.07.
  *

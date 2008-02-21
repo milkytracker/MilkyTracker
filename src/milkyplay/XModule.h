@@ -22,7 +22,7 @@
 
 /*
  *  XModule.h
- *  MilkyPlay core
+ MilkyPlay
  *
  *
  */

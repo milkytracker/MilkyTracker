@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver_NULL.cpp
- *  Audio Test
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 29.07.05.
  *

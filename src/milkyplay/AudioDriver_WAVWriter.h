@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver_WAVWriter.h
- *  Audio Test
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 29.07.05.
  *

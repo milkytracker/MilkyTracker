@@ -22,7 +22,7 @@
 
 /*
  *  SamplePlayer.cpp
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 13.12.07.
  *

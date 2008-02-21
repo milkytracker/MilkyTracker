@@ -1,6 +1,6 @@
 /*
  *  SampleEditorControlLastValues.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 18.01.08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.

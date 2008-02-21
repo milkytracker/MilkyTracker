@@ -54,8 +54,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#define SPLASH_WAIT_TIME	0
-
 #include <SDL.h>
 #ifndef __QTOPIA__
 #ifdef HAVE_X11_X_H
@@ -798,49 +796,13 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 		SDL_PollEvent(&event);
 	}
 #endif
-
-	pp_uint32 startTime = PPGetTickCount();
- 
-	if (!noSplash) 
-		myTracker->showSplash();
-	else
-		myTrackerScreen->enableDisplay(false);	
-
-	myTracker->initUI();	
-
-	pp_int32 dTime;
-
-	if (!noSplash)
-	{
-		dTime = (signed)(PPGetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME) dTime = SPLASH_WAIT_TIME;
-		if (dTime < 0) dTime = 0;
-	
-		if(!noSplash) System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-
-		startTime = PPGetTickCount();
-	}
 	
 	// Startup procedure
-	myTracker->startUp();
+	myTracker->startUp(noSplash);
 
 #ifdef HAVE_LIBASOUND
 	InitMidi();
 #endif
-
-	if (!noSplash)
-	{
-		dTime = (signed)(PPGetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME/2) dTime = SPLASH_WAIT_TIME/2;
-		if (dTime < 0) dTime = 0;
-
-		System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-		myTracker->hideSplash();
-	}
-	else
-		myTrackerScreen->enableDisplay(true);			
-	
-	myTrackerScreen->paint();
 
 	// try to create timer
 	SDL_SetTimer(20, timerCallback);	

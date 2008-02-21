@@ -22,7 +22,7 @@
 
 /*
  *  PlayerLogic.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 21.12.07.
  *

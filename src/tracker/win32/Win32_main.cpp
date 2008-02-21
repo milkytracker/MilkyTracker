@@ -1018,15 +1018,12 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 static void InitTracker()
 {
-	pp_int32 dTime = 0;
-
 	myPreferenceDialog = new CPreferencesDialog(hWnd, g_hinst);
 
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
 	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
-	bool showSplash = myTracker->getShowSplashFlagFromDatabase();
 #ifdef __LOWRES__
 	windowSize.width = 320;
 	windowSize.height = 240;
@@ -1044,50 +1041,8 @@ static void InitTracker()
 
 	myTracker->setScreen(myTrackerScreen);
 
-#ifndef __LOWRES__
-	pp_uint32 startTime = GetTickCount();
-
-	if (showSplash)
-		myTracker->showSplash();
-	else
-		myTrackerScreen->enableDisplay(false);	
-
-#endif
-
-	myTracker->initUI();	
-
-#ifndef __LOWRES__
-	if (showSplash)
-	{
-		pp_int32 dTime = (signed)(GetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME) dTime = SPLASH_WAIT_TIME;
-		if (dTime < 0) dTime = 0;
-
-		System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-
-		startTime = GetTickCount();
-	}
-#endif
-
 	// Startup procedure
 	myTracker->startUp();
-
-#ifndef __LOWRES__
-	if (showSplash)
-	{
-		dTime = (signed)(GetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME/2) dTime = SPLASH_WAIT_TIME/2;
-		if (dTime < 0) dTime = 0;
-
-		System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-
-		myTracker->hideSplash();
-	}
-	else
-		myTrackerScreen->enableDisplay(true);	
-#endif
-
-	myTrackerScreen->paint();
 
 	HandleMidiRecording();
 }

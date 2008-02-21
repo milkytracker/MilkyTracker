@@ -75,13 +75,6 @@
 #include "PPOpenPanel.h"
 #include "PPSavePanel.h"
 
-// Logo picture
-#ifdef __EXCLUDE_BIGLOGO__
-	#include "LogoSmall.h"
-#else
-	#include "LogoBig.h"
-#endif
-
 static inline pp_int32 myMod(pp_int32 a, pp_int32 b)
 {
 	pp_int32 res = a%b;
@@ -3396,62 +3389,6 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 	
 	
 	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318);	
-}
-
-void Tracker::showSplash()
-{
-	screen->clear();
-	float shade = 0.0f;
-	pp_int32 deltaT = 100;
-	while (shade <= 256.0f)
-	{
-		pp_int32 startTime = ::PPGetTickCount();
-#ifdef __EXCLUDE_BIGLOGO__
-		screen->paintSplash(LogoSmall::rawData, LogoSmall::width, LogoSmall::height, LogoSmall::width*4, 4, (int)shade); 		
-#else
-		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
-#endif
-		shade+=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
-		if (!deltaT) deltaT++;
-	}
-#ifdef __EXCLUDE_BIGLOGO__
-	screen->paintSplash(LogoSmall::rawData, LogoSmall::width, LogoSmall::height, LogoSmall::width*4, 4); 		
-#else
-	screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3); 		
-#endif
-	screen->enableDisplay(false);
-}
-
-void Tracker::hideSplash()
-{
-	screen->clear();
-#ifdef __EXCLUDE_BIGLOGO__
-	screen->paintSplash(LogoSmall::rawData, LogoSmall::width, LogoSmall::height, LogoSmall::width*4, 4); 		
-#else
-	screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3); 		
-#endif
-	screen->enableDisplay(true);
-	float shade = 256.0f;
-	pp_int32 deltaT = 100;
-	while (shade >= 0.0f)
-	{
-		pp_int32 startTime = ::PPGetTickCount();
-#ifdef __EXCLUDE_BIGLOGO__
-		screen->paintSplash(LogoSmall::rawData, LogoSmall::width, LogoSmall::height, LogoSmall::width*4, 4, (int)shade); 		
-#else
-		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
-#endif
-		shade-=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
-		if (!deltaT) deltaT++;
-	}
-	screen->clear(); 	
-
-	screen->pauseUpdate(true);
-	screen->paintControl(getPatternEditorControl(), false);
-	screen->paint();
-	screen->pauseUpdate(false);
 }
 
 void Tracker::estimateSongLength(bool signalWait/* = false*/)

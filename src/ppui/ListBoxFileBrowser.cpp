@@ -22,7 +22,7 @@
 
 /*
  *  ListBoxFileBrowser.cpp
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 19.10.06.
  *

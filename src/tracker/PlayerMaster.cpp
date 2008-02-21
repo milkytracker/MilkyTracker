@@ -22,7 +22,7 @@
 
 /*
  *  PlayerMaster.cpp
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 18.12.07.
  *

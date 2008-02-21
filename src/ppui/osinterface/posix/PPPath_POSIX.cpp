@@ -22,7 +22,7 @@
 
 /*
  *  PPPath_POSIX.cpp
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 10.03.06.
  *

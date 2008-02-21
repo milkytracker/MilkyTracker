@@ -22,7 +22,7 @@
 
 /*
  *  Zapper.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 26.12.07.
  *

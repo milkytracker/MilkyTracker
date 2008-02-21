@@ -22,7 +22,7 @@
 
 /*
  *  SystemErrorMessage.cpp
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 27.12.07.
  *

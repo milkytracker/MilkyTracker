@@ -22,7 +22,7 @@
 
 /*
  *  EditorBase.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 26.11.07.
  *

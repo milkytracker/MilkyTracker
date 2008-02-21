@@ -22,7 +22,7 @@
 
 /*
  *  SampleLoaderALL.cpp
- *  MilkyTracker
+ MilkyPlay
  *
  *  Created by Peter Barth on 14.09.05.
  *

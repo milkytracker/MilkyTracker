@@ -22,7 +22,7 @@
 
 /*
  *  LoaderDBM.cpp
- *  MilkyTracker
+ MilkyPlay
  *
  *  Created by Peter Barth on 06.03.06.
  *

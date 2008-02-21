@@ -22,7 +22,7 @@
 
 /*
  *  LoaderAMS.cpp
- *  MilkyPlay core
+ MilkyPlay
  *
  *  Created by Peter Barth on 17.12.04.
  *

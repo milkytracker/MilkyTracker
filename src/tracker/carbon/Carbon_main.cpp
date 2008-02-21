@@ -38,8 +38,6 @@
 #include "PPSystem.h"
 #include "MidiReceiver_pthread.h"
 
-#define SPLASH_WAIT_TIME		2000
-
 // globals -------------------------------------
 WindowRef					mainWindow, waitWindow, preferencesWindow;
 MenuRef						mainMenu;
@@ -247,7 +245,6 @@ void initTracker()
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
 	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
-	bool showSplash = myTracker->getShowSplashFlagFromDatabase();
 #ifdef __LOWRES__
 	windowSize.width = 320;
 	windowSize.height = 240;
@@ -268,46 +265,11 @@ void initTracker()
 
 	myTracker->setScreen(myTrackerScreen);
  
-	pp_uint32 startTime = ::PPGetTickCount();
- 
-	if (showSplash)
-		myTracker->showSplash();
-	else
-	{
-		myTrackerScreen->paint();
-		myTrackerScreen->enableDisplay(false);	
-	}
-		
-	myTracker->initUI();	
-
-	if (showSplash)
-	{
-		dTime = (signed)(::PPGetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME) dTime = SPLASH_WAIT_TIME;
-		if (dTime < 0) dTime = 0;
-		
-		System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-		startTime = ::PPGetTickCount();
-	}
 	// Startup procedure
 	myTracker->startUp();
 
 	InitMidi();
 
-	if (showSplash)
-	{
-		dTime = (signed)(::PPGetTickCount() - startTime);
-		if (dTime > SPLASH_WAIT_TIME/2) dTime = SPLASH_WAIT_TIME/2;
-		if (dTime < 0) dTime = 0;
-		
-		System::msleep(SPLASH_WAIT_TIME/2 - dTime);
-		myTracker->hideSplash();
-	}
-	else
-		myTrackerScreen->enableDisplay(true);		
-	
-	myTrackerScreen->paint();	
-	
 	// install crash handler
 //#ifndef __DEBUG__
 //	installCrashHandler();

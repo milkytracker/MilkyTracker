@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriverBase.cpp
- *  milkytracker_universal
+ MilkyPlay
  *
  *  Created by Peter Barth on 15.12.07.
  *

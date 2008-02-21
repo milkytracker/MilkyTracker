@@ -22,7 +22,7 @@
 
 /*
  *  TabHeaderControl.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 09.12.07.
  *

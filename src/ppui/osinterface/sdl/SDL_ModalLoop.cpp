@@ -22,7 +22,7 @@
 
 /*
  *  SDL_ModalLoop.cpp
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 29.03.06.
  *

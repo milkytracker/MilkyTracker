@@ -22,7 +22,7 @@
 
 /*
  *  KeyTranslation.cpp
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 19.11.05.
  *

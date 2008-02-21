@@ -22,7 +22,7 @@
 
 /*
  *  XIInstrument.h
- *  MilkyTracker
+ MilkyPlay
  *
  *  Created by Peter Barth on 07.03.05.
  *

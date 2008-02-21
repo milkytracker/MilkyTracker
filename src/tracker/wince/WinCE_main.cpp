@@ -59,7 +59,6 @@ PPMutex*				globalMutex 	= NULL;
 unsigned short*			vScreen			= NULL;
 PPSize					windowSize(DISPLAYDEVICE_WIDTH,DISPLAYDEVICE_HEIGHT);
 
-
 // Global GAPI variables:
 GXDisplayProperties		gx_displayprop;
 
@@ -85,6 +84,14 @@ pp_int32					dontTurnOffDevice	= FALSE;
 static PPScreen*			myTrackerScreen = NULL;
 static Tracker*				myTracker		= NULL;
 static PPDisplayDevice*		myDisplayDevice = NULL;
+
+// ------------------- Logger -----------------------------
+#ifdef DEBUG
+#include "Logger.h"
+#include "Simple.h"
+#include "PPSystem.h"
+static CLogger*				logger			= NULL;
+#endif
 
 void				TrackerCreate();
 void				TrackerStartUp(bool showSplash);
@@ -271,6 +278,12 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 					LPTSTR    lpCmdLine,
 					int       nCmdShow)
 {
+#ifdef DEBUG
+	SimpleString path(System::getConfigFileName(_T("milky.log")));
+	CLogger _logger(path);
+	logger = &_logger;
+#endif
+
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -1074,15 +1087,14 @@ void TrackerCreate()
 void TrackerStartUp(bool showSplash)
 {
 	// Startup procedure
-	myTracker->startUp();
+	myTracker->startUp(true);
 
 	WaitStateThread::getInstance()->activate(FALSE);
 
+	myTrackerScreen->enableDisplay(true);	
+
 	if (showSplash)
 		myTracker->hideSplash();
-
-	else
-		myTrackerScreen->enableDisplay(true);	
 
 	// clear screen with shade if necessary 
 	if (NeedsDrawBackground())
@@ -1099,8 +1111,8 @@ void TrackerInitGUI(bool showSplash)
 
 	if (showSplash)
 		myTracker->showSplash();
-	else
-		myTrackerScreen->enableDisplay(false);	
+	
+	myTrackerScreen->enableDisplay(false);	
 
 	// Put init message on screen
 	drawString("initializing", vScreen, windowSize.width, (windowSize.width>>1)-12*4, (windowSize.height>>1)-12, 0xFFFF);
@@ -1108,9 +1120,37 @@ void TrackerInitGUI(bool showSplash)
 	WaitStateThread::getInstance()->setDisplayResolution(windowSize.width, windowSize.height);
 
 	WaitStateThread::getInstance()->activate(TRUE, TRUE, FALSE);
-	
-	myTracker->initUI();	
 }
+
+#ifdef DEBUG
+void LogWinMsg(CLogger& logger, LPCTSTR msg, LPARAM lParam)
+{
+	TCHAR dummy[1024];
+
+	wsprintf(dummy, _T("%x"), lParam);
+
+	SimpleString logstr(msg);
+	logstr.append(_T(": "));
+	logstr.append(dummy);
+
+	logger.Log(logstr);
+}
+
+
+void LogMouseDown(CLogger& logger, LPARAM lParam, const PPPoint& point)
+{
+	TCHAR dummy[1024];
+
+	wsprintf(dummy, _T("Before: %i, %i"), LOWORD(lParam), HIWORD(lParam));
+
+	SimpleString logstr(dummy);
+	logstr.append(_T(" "));
+	wsprintf(dummy, _T("After: %i, %i"), point.x, point.y);
+	logstr.append(dummy);
+
+	logger.Log(logstr);
+}
+#endif
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -1157,14 +1197,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_PAINT:
 			return 0;
 #endif
-		
+
+		case WM_SIZE:
+		{
+#ifdef DEBUG
+			LogWinMsg(*logger, _T("WM_SIZE"), lParam);
+#endif
+			break;
+		}
+
 		// ----- left mousebutton -------------------------------
 		case WM_LBUTTONDOWN:
 		{	
 			if (!myTrackerScreen || rMouseDown)
 				break;
-			
+
 			POINTFROMPARAM(p, lParam);
+
+#ifdef DEBUG
+			LogWinMsg(*logger, _T("WM_LBUTTONDOWN"), lParam);
+			LogMouseDown(*logger, lParam, p);
+#endif
 
 			PPEvent myEvent(eLMouseDown, &p, sizeof(PPPoint));			
 			myTrackerScreen->raiseEvent(&myEvent);
@@ -1419,6 +1472,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
+
+#ifdef DEBUG
+			::PostMessage(hWnd, WM_CLOSE, 0, 0);
+#endif
+
 			if (wParam < 256)
 			{
 				if (mappings[wParam].keyModifiers != 0xFFFF &&

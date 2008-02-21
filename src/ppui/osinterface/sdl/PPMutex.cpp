@@ -22,7 +22,7 @@
 
 /*
  *  PPMutex.cpp
- *  PPUI SDL
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 18.11.05.
  *

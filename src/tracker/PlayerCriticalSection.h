@@ -22,7 +22,7 @@
 
 /*
  *  PlayerCriticalSection.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 12.12.07.
  *

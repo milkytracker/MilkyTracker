@@ -22,7 +22,7 @@
 
 /*
  *  EnvelopeEditor.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 25.11.07.
  *

@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriverBase.h
- *  Audio Test
+ *  MilkyPlay
  *
  *  Created by Peter Barth on Fri Feb 25 2005.
  *

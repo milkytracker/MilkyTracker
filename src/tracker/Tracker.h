@@ -512,16 +512,16 @@ public:
 	bool getFullScreenFlagFromDatabase();
 	bool getShowSplashFlagFromDatabase();
 
+	void showSplash();
+	void hideSplash();
+
 	// Tracker startup
-	void startUp();
+	void startUp(bool forceNoSplash = false);
 		
 	// Tracker shutdown
 	bool shutDown();
 	
 	void saveModule(const PPSystemString& fileName);
-
-	void showSplash();
-	void hideSplash();
 
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);

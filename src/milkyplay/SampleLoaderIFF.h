@@ -22,7 +22,7 @@
 
 /*
  *  SampleLoaderIFF.h
- *  MilkyTracker
+ MilkyPlay
  *
  *  Created by Peter Barth on 07.01.06.
  *

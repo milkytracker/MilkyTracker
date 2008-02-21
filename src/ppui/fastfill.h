@@ -22,7 +22,7 @@
 
 /*
  *  fastfill.h
- *  milkytracker_universal
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 28.12.07.
  *
