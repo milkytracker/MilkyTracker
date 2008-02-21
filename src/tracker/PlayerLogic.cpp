@@ -40,10 +40,18 @@
 
 PlayerLogic::PlayerLogic(Tracker& tracker) :
 	tracker(tracker),
+	liveSwitch(false),
 	stopBackgroundOnPlay(false),
 	tracePlay(false),
 	rowPlay(false)
 {
+}
+
+void PlayerLogic::setLiveSwitch(bool liveSwitch)
+{
+	this->liveSwitch = liveSwitch;
+	if (!liveSwitch)
+		tracker.playerMaster->resetQueuedPositions();
 }
 
 void PlayerLogic::playSong(pp_int32 row/* = 0*/)
@@ -206,13 +214,19 @@ void PlayerLogic::ensureSongStopped(bool bResetMainVolume, bool suspend)
 	CONTINUEPATTERN \
 	else if (tracker.playerController->isPlaying() && \
 			!tracker.playerController->isPlayingRowOnly() && \
-			tracker.getFollowSong()) \
+			tracker.shouldFollowSong()) \
 		tracker.playerController->playSong(tracker.moduleEditor->getCurrentOrderIndex(), \
 		0, \
 		tracker.muteChannels);
 
 void PlayerLogic::continuePlayingPattern()
 {
+	if (liveSwitch)
+	{
+		tracker.playerController->setNextPatternToPlay(tracker.moduleEditor->getCurrentPatternIndex());
+		return;
+	}
+
 	if (tracker.playerController->isPlayingPattern() && 
 		!tracker.playerController->isPlayingRowOnly()) 
 		tracker.playerController->playPattern(tracker.moduleEditor->getCurrentPatternIndex(),
@@ -223,6 +237,12 @@ void PlayerLogic::continuePlayingPattern()
 
 void PlayerLogic::continuePlayingSong()
 {
+	if (liveSwitch)
+	{
+		tracker.playerController->setNextOrderToPlay(tracker.moduleEditor->getCurrentOrderIndex());
+		return;
+	}
+
 	CONTINUE
 }
 

@@ -2736,8 +2736,25 @@ void PlayerSTD::updateBPMIndependent()
 
 }
 
+void PlayerSTD::handleQueuedPositions(mp_sint32& poscnt)
+{
+	if (nextOrderIndexToPlay != -1)
+	{
+		poscnt = nextOrderIndexToPlay;
+		nextOrderIndexToPlay = -1;
+		patternIndexToPlay = -1;
+	}
+	else if (nextPatternIndexToPlay != -1)
+	{
+		patternIndexToPlay = nextPatternIndexToPlay;
+		nextPatternIndexToPlay = -1;
+	}
+}
+
 void inline PlayerSTD::setNewPosition(mp_sint32 poscnt)
 {
+	handleQueuedPositions(poscnt);
+
 	if (poscnt == this->poscnt)
 		return;
 
@@ -3009,6 +3026,8 @@ nextrow:
 					rowcnt = 0; 
 					// reset looping flags
 					RESET_ALL_LOOPING
+					
+					handleQueuedPositions(poscnt);
 				}
 				
 			}

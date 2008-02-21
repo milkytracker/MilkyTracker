@@ -141,6 +141,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("PROSPECTIVE", 0);
 	// follow song when playing
 	settingsDatabase->store("FOLLOWSONG", 1);
+	// Live switch
+	settingsDatabase->store("LIVESWITCH", 0);
 	// Our default edit mode
 #ifdef __LOWRES__
 	settingsDatabase->store("EDITMODE", EditModeMilkyTracker);
@@ -438,6 +440,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("FOLLOWSONG") == 0)
 	{
 		setFollowSong(v2 != 0, false);
+	}
+	else if (theKey->getKey().compareTo("LIVESWITCH") == 0)
+	{
+		setLiveSwitch(v2 != 0, false);
 	}
 	else if (theKey->getKey().compareTo("EDITMODE") == 0)
 	{

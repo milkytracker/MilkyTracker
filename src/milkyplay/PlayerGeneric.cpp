@@ -597,7 +597,7 @@ mp_sint32 PlayerGeneric::startPlaying(XModule* module,
 void PlayerGeneric::setPattern(mp_sint32 patternIndex)
 {
 	if (player)
-		player->setPattern(patternIndex);
+		player->setPatternToPlay(patternIndex);
 }
 
 mp_sint32 PlayerGeneric::stopPlaying()

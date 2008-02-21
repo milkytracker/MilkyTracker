@@ -71,7 +71,7 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 		
 		bool record = (editMode == EditModeMilkyTracker ? screen->hasFocus(patternEditorControl) : recordMode);
 		bool releasePlay = false;
-		bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && getFollowSong();
+		bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && shouldFollowSong();
 		
 		// when we're not live recording, we need to decide of we're editing
 		if (!isLiveRecording)
@@ -232,7 +232,7 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 				if (keys[i].playerController)
 					playerController = keys[i].playerController;
 			
-				bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && getFollowSong();
+				bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && shouldFollowSong();
 				
 				ASSERT(sizeof(mp_sint32) == sizeof(pp_int32));
 				

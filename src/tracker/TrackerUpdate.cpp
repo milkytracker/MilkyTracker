@@ -50,6 +50,19 @@
 
 #include "ControlIDs.h"
 
+void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true*/)
+{
+	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
+	ASSERT(container);
+	PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
+	if (button == NULL)
+		return;
+	button->setPressed(b);	
+	
+	if (repaint)
+		screen->paintControl(button);
+}
+
 #ifdef __LOWRES__
 void Tracker::updateSubMenusButtons(bool repaint/* = true*/)
 {
@@ -701,7 +714,7 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 		// if we're not playing a single pattern, we're most likely playing the entire song
 		// and in that case if we're instructed to follow the song while playing we're doing some
 		// order list position updates and stuff ------>
-		if (!playerController->isPlayingPattern() && getFollowSong())
+		if (!playerController->isPlayingPattern() && shouldFollowSong())
 		{
 			// if the current order list index is different from the current 
 			// order list position from the player UPDATE ------>
@@ -742,13 +755,18 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 				getPatternEditorControl()->setRow(row, fast ? false : !getPatternEditorControl()->isDraggingVertical());
 			}
 		}
-		else if (playerController->isPlayingPattern() && !getFollowSong())
+		else if (playerController->isPlayingPattern() && !shouldFollowSong())
 		{
-			// we're playing a pattern and don't follow the song
+			// we're playing the current pattern and don't follow the song
 			// just update the current playing row in the pattern editor
-			getPatternEditorControl()->setSongPosition(-1, row);
+			if (playerController->isPlayingPattern(moduleEditor->getCurrentPatternIndex()))
+				getPatternEditorControl()->setSongPosition(-1, row);
+			// we're playing a pattern different from the one in the editor
+			// don't show any positions
+			else
+				getPatternEditorControl()->setSongPosition(-1, -1);
 		}
-		else if (playerController->isPlayingPattern() && getFollowSong())
+		else if (playerController->isPlayingPattern() && shouldFollowSong())
 		{
 			getPatternEditorControl()->setSongPosition(-1, -1);
 			getPatternEditorControl()->setRow(row, fast ? false : !getPatternEditorControl()->isDraggingVertical());
@@ -991,16 +1009,16 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 	
 	if (wasPlaying)
 	{
-		if (!wasPlayingPattern && getFollowSong())
+		if (!wasPlayingPattern && shouldFollowSong())
 		{
 			getPatternEditorControl()->setSongPosition(-1, -1);
 			getPatternEditorControl()->setRow(0);
 		}
-		else if (wasPlayingPattern && !getFollowSong())
+		else if (wasPlayingPattern && !shouldFollowSong())
 		{
 			getPatternEditorControl()->setSongPosition(-1, 0);
 		}
-		else if (wasPlayingPattern && getFollowSong())
+		else if (wasPlayingPattern && shouldFollowSong())
 		{
 			getPatternEditorControl()->setSongPosition(-1, -1);
 			getPatternEditorControl()->setRow(0);

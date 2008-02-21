@@ -188,6 +188,8 @@ public:
 	
 	void getCurrentSamplePeak(pp_int32& left, pp_int32& right);
 	
+	void resetQueuedPositions();
+	
 	friend class MasterMixerNotificationListener;
 };
 

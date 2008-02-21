@@ -768,6 +768,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_ABOUT_LIVESWITCH:
+			{
+				if (event->getID() != eCommand)
+					break;
+				eventKeyDownBinding_ToggleLiveSwitch();
+				break;
+			}
+
 			case BUTTON_ORDERLIST_EXTENT:
 			{
 				if (event->getID() != eCommand)
@@ -1822,7 +1830,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						
 					// Not wrapped at all... Just calculate new position within pattern and update player position
 					case PatternEditorControl::AdvanceCodeSelectNewRow:
-						if (getFollowSong() && 
+						if (shouldFollowSong() && 
 							isEditingCurrentOrderlistPattern())
 							updateSongRow();
 						break;
@@ -2204,6 +2212,15 @@ void Tracker::setChanged()
 	updateWindowTitle();
 }
 
+bool Tracker::shouldFollowSong()
+{
+	if (playerController->getNextOrderToPlay() != -1 ||
+		playerController->getNextPatternToPlay() != -1)
+		return false;
+
+	return getFollowSong();
+}
+
 bool Tracker::getFollowSong()
 {
 	return followSong;
@@ -2212,15 +2229,7 @@ bool Tracker::getFollowSong()
 void Tracker::setFollowSong(bool b, bool repaint/* = true*/)
 {
 	followSong = b;
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_FOLLOWSONG));
-	if (button == NULL)
-		return;
-	button->setPressed(b);	
-	
-	if (repaint)
-		screen->paintControl(button);
+	updateAboutToggleButton(BUTTON_ABOUT_FOLLOWSONG, b, repaint);
 }
 
 bool Tracker::getProspectiveMode()
@@ -2231,15 +2240,7 @@ bool Tracker::getProspectiveMode()
 void Tracker::setProspectiveMode(bool b, bool repaint/* = true*/)
 {
 	getPatternEditorControl()->setProspective(b);
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_PROSPECTIVE));
-	if (button == NULL)
-		return;
-	button->setPressed(b);	
-	
-	if (repaint)
-		screen->paintControl(button);
+	updateAboutToggleButton(BUTTON_ABOUT_PROSPECTIVE, b, repaint);
 }
 	
 bool Tracker::getCursorWrapAround()
@@ -2250,15 +2251,13 @@ bool Tracker::getCursorWrapAround()
 void Tracker::setCursorWrapAround(bool b, bool repaint/* = true*/)
 {
 	getPatternEditorControl()->setWrapAround(b);
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_WRAPCURSOR));
-	if (button == NULL)
-		return;
-	button->setPressed(b);	
-	
-	if (repaint)
-		screen->paintControl(button);
+	updateAboutToggleButton(BUTTON_ABOUT_WRAPCURSOR, b, repaint);
+}
+
+void Tracker::setLiveSwitch(bool b, bool repaint/* = true*/)
+{	
+	playerLogic->setLiveSwitch(b);
+	updateAboutToggleButton(BUTTON_ABOUT_LIVESWITCH, b, repaint);
 }
 
 bool Tracker::getRecordKeyOff()
@@ -2283,7 +2282,7 @@ void Tracker::setRecordNoteDelay(bool b, bool repaint/* = true*/)
 
 void Tracker::updateSongRow(bool checkFollowSong/* = true*/)
 {
-	if (checkFollowSong && !getFollowSong())
+	if (checkFollowSong && !shouldFollowSong())
 		return;
 		
 	mp_sint32 row = getPatternEditorControl()->getCurrentRow();

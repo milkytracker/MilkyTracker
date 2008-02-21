@@ -33,6 +33,7 @@
 #include "MilkyPlay.h"
 #include "PlayerController.h"
 #include "PlayerMaster.h"
+#include "PlayerLogic.h"
 #include "TrackerSettingsDatabase.h"
 #include "TrackerConfig.h"
 #include "PPSystem.h"
@@ -154,6 +155,7 @@ bool Tracker::shutDown()
 	settingsDatabase->store("PROSPECTIVE", getProspectiveMode() ? 1 : 0);
 	settingsDatabase->store("WRAPAROUND", getCursorWrapAround() ? 1 : 0);
 	settingsDatabase->store("FOLLOWSONG", getFollowSong() ? 1 : 0);
+	settingsDatabase->store("LIVESWITCH", playerLogic->getLiveSwitch() ? 1 : 0);
 
 	// Disk Operations
 	settingsDatabase->store("INTERNALDISKBROWSERSETTINGS", sectionDiskMenu->getConfigUInt32());	

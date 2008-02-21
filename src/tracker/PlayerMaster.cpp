@@ -434,3 +434,12 @@ void PlayerMaster::getCurrentSamplePeak(pp_int32& left, pp_int32& right)
 	right = mixer->getCurrentSamplePeak(pos, 1);
 }
 
+void PlayerMaster::resetQueuedPositions()
+{
+	for (pp_int32 i = 0; i < playerControllers->size(); i++)
+	{		
+		playerControllers->get(i)->setNextOrderToPlay(-1);
+		playerControllers->get(i)->setNextPatternToPlay(-1);
+	}
+}
+

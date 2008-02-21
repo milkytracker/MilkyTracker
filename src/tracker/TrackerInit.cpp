@@ -102,46 +102,50 @@ void Tracker::initUI()
 	// switch to Peak level
 	pp_int32 aboutButtonOffset = -33 - 30 - 30 - 23*3 - 14;
 
-	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset, height2+1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset, height2+1), PPSize(29, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Title");
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	containerAbout->addControl(button);
 
-	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30, height2+1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 29, height2+1), PPSize(24, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Time");
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	containerAbout->addControl(button);
 	
-	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30*2, height2+1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 29+24, height2+1), PPSize(24, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Peak");
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	containerAbout->addControl(button);
 
-	button = new PPButton(MAINMENU_PLAY_SONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30*3 + 2, height2+1), PPSize(23, 9), false);
+	button = new PPButton(MAINMENU_PLAY_SONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + (29+24+24) + 2, height2+1), PPSize(23, 9), false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Play");
 	containerAbout->addControl(button);
 
-	button = new PPButton(MAINMENU_PLAY_PATTERN, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30*3 + 2 + 23, height2+1), PPSize(23, 9), false);
+	button = new PPButton(MAINMENU_PLAY_PATTERN, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + (29+24+24) + 2 + 23, height2+1), PPSize(23, 9), false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Pat");
 	containerAbout->addControl(button);
 
-	button = new PPButton(MAINMENU_STOP, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30*3 + 2 + 23*2, height2+1), PPSize(23, 9), false);
+	button = new PPButton(MAINMENU_STOP, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + (29+24+24) + 2 + 23*2, height2+1), PPSize(23, 9), false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Stop");
 	containerAbout->addControl(button);
 
-	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + 30*3 + 2 + 23*3, height2+1), PPSize(12, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + (29+24+24) + 2 + 23*3, height2+1), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("F");
-	button->setPressed(true);
+	containerAbout->addControl(button);
+
+	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width + aboutButtonOffset + (29+24+24) + 2 + 23*3 + 12, height2+1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("L");
 	containerAbout->addControl(button);
 	
 	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, height2+3), "Title:", true);
@@ -282,12 +286,11 @@ void Tracker::initUI()
 	containerAbout->addControl(staticText);
 
 	// switch to Peak level
-	pp_int32 aboutButtonOffset = 39;
+	pp_int32 aboutButtonOffset = 51;
 
 	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("F");
-	button->setPressed(true);
 	containerAbout->addControl(button);
 
 	button = new PPButton(BUTTON_ABOUT_PROSPECTIVE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12, 1), PPSize(12, 9), false, true, false);
@@ -299,7 +302,11 @@ void Tracker::initUI()
 	button = new PPButton(BUTTON_ABOUT_WRAPCURSOR, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*2, 1), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("W");
-	button->setPressed(true);
+	containerAbout->addControl(button);
+
+	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*3, 1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("L");
 	containerAbout->addControl(button);
 
 	aboutButtonOffset+=34;

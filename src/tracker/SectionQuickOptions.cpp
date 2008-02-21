@@ -368,8 +368,6 @@ void SectionQuickOptions::update(bool repaint/* = true*/)
 	checkBox = static_cast<PPCheckBox*>(container->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE));
 	checkBox->checkIt(tracker.playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionForcePTPitchLimit));
 
-	//checkBoxFollowSong->checkIt(tracker.getFollowSong());
-
 	if (repaint)
 		tracker.screen->paintControl(container);
 }

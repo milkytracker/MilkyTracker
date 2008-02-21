@@ -176,6 +176,9 @@ protected:
 
 	mp_sint32		patternIndexToPlay;		// Play special pattern, -1 = Play entire song
 
+	mp_sint32		nextOrderIndexToPlay;
+	mp_sint32		nextPatternIndexToPlay;
+
 	mp_sint32		kick();
 
 	virtual mp_sint32 allocateStructures() { return 0; }
@@ -232,7 +235,13 @@ public:
 									 mp_sint32 patternIndex = -1,
 									 bool playOneRowOnly = false);
 	
-	void			setPattern(mp_sint32 patternIndex) { patternIndexToPlay = patternIndex; }
+	void			setPatternToPlay(mp_sint32 patternIndex) { patternIndexToPlay = patternIndex; }
+	mp_sint32       getPatternToPlay() const { return patternIndexToPlay; }
+	
+	void            setNextOrderToPlay(mp_sint32 orderIndex) { nextOrderIndexToPlay = orderIndex; nextPatternIndexToPlay = -1; }
+	mp_sint32       getNextOrderToPlay() const { return nextOrderIndexToPlay; }
+	void			setNextPatternToPlay(mp_sint32 patternIndex) { nextPatternIndexToPlay = patternIndex; nextOrderIndexToPlay = -1; }
+	mp_sint32		getNextPatternToPlay() const { return nextPatternIndexToPlay; }
 
 	mp_sint32		stopPlaying();
 	

@@ -397,6 +397,7 @@ private:
 	void			update();	
 	void			updateBPMIndependent();
 
+	void			handleQueuedPositions(mp_sint32& poscnt);
 	void			setNewPosition(mp_sint32 poscnt);
 
 	void			tickhandler();

@@ -134,6 +134,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
 	eventKeyDownBindingsMilkyTracker->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
 	eventKeyDownBindingsMilkyTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
+	eventKeyDownBindingsMilkyTracker->addBinding('L', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleLiveSwitch);	
 
 	// Transpose stuff like FT2
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
@@ -225,6 +226,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding('F', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleFollowSong);	
 	eventKeyDownBindingsFastTracker->addBinding('P', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleProspectiveMode);	
 	eventKeyDownBindingsFastTracker->addBinding('W', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleCursorWrapAround);	
+	eventKeyDownBindingsFastTracker->addBinding('L', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ToggleLiveSwitch);	
 
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL, &Tracker::eventKeyDownBinding_InvokePatternToolVolumeScalePattern);	
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternToolVolumeScaleTrack);	
@@ -718,6 +720,11 @@ void Tracker::eventKeyDownBinding_ToggleProspectiveMode()
 void Tracker::eventKeyDownBinding_ToggleCursorWrapAround()
 {
 	setCursorWrapAround(!getCursorWrapAround());
+}
+
+void Tracker::eventKeyDownBinding_ToggleLiveSwitch()
+{
+	setLiveSwitch(!playerLogic->getLiveSwitch());
 }
 
 void Tracker::eventKeyDownBinding_ToggleRecordKeyOff()

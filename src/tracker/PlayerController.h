@@ -119,7 +119,13 @@ public:
 	bool isActive() const;
 	bool isPlayingPattern() const { return patternPlay; }
 	bool isReallyPlayingPattern() const { return patternPlay && !playRowOnly; }
+	bool isPlayingPattern(mp_sint32 index) const;
 	bool isSuspended() const { return suspended; }
+
+	void setNextOrderToPlay(mp_sint32 orderIndex);
+	mp_sint32 getNextOrderToPlay() const;
+	void setNextPatternToPlay(mp_sint32 patternIndex);
+	mp_sint32 getNextPatternToPlay() const;
 
 	void pause();
 	void unpause();

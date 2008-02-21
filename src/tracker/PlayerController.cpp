@@ -167,7 +167,9 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 
 	reset();
 
-	player->setPattern(-1);
+	player->setPatternToPlay(-1);
+	player->setNextOrderToPlay(-1);
+	player->setNextPatternToPlay(-1);
 
 	// muting has been reset, restore it
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
@@ -207,6 +209,8 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 	reset();
 
 	setCurrentPatternIndex(index);
+	player->setNextOrderToPlay(-1);
+	player->setNextPatternToPlay(-1);
 
 	// muting has been reset, restore it
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
@@ -236,7 +240,7 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 void PlayerController::setCurrentPatternIndex(mp_sint32 index)
 {
 	if (player)
-		player->setPattern(index);
+		player->setPatternToPlay(index);
 }
 
 void PlayerController::stop(bool bResetMainVolume/* = true*/)
@@ -282,6 +286,9 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 	// reset internal variables	
 	if (bResetMainVolume)
 		resetMainVolume();	
+		
+	player->setNextOrderToPlay(-1);
+	player->setNextPatternToPlay(-1);
 
 	criticalSection->leave(false);
 }
@@ -314,9 +321,9 @@ void PlayerController::continuePlaying(bool assureNotSuspended)
 	readjustSpeed();
 	
 	if (wasPlayingPattern)
-		player->setPattern(patternIndex);
+		player->setPatternToPlay(patternIndex);
 	else
-		player->setPattern(-1);
+		player->setPatternToPlay(-1);
 
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
 		player->muteChannel(i, muteChannels[i]);
@@ -375,6 +382,56 @@ bool PlayerController::isActive() const
 		return false;
 
 	return player->isPlaying() && (!player->isIdle());	
+}
+
+bool PlayerController::isPlayingPattern(mp_sint32 index) const
+{
+	if (!player)
+		return false;
+
+	if (index < 0)
+		return false;
+		
+	if (player->getPatternToPlay() < 0)
+		return false;
+
+	return isPlayingPattern() && (player->getPatternToPlay() == index);
+}
+
+void PlayerController::setNextOrderToPlay(mp_sint32 orderIndex)
+{
+	if (!player)
+		return;
+		
+	player->setNextOrderToPlay(orderIndex);
+	patternPlay = false;
+	patternIndex = -1;
+}
+
+mp_sint32 PlayerController::getNextOrderToPlay() const
+{
+	if (!player)
+		return -1;
+
+	return player->getNextOrderToPlay();
+}
+
+void PlayerController::setNextPatternToPlay(mp_sint32 patternIndex)
+{
+	if (!player)
+		return;
+
+	player->setNextPatternToPlay(patternIndex);
+	patternPlay = true;
+	this->patternIndex = patternIndex;
+}
+
+mp_sint32 PlayerController::getNextPatternToPlay() const
+{
+	if (!player)
+		return -1;
+
+	return player->getNextPatternToPlay();
 }
 
 void PlayerController::pause()

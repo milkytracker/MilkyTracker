@@ -269,6 +269,8 @@ private:
 	void hideInputControl(bool bHide = true);
 
 	// - GUI refreshing --------------------------------------------------------
+	void updateAboutToggleButton(pp_int32 id, bool b, bool repaint = true);
+
 	void updateSubMenusButtons(bool repaint = true);
 
 	void updateSongTitle(bool repaint = true);
@@ -376,6 +378,8 @@ private:
 	void ensureSongPlaying(bool continuePlaying);
 	void initPlayback();
 	
+	bool shouldFollowSong();
+	
 	bool getFollowSong();
 	void setFollowSong(bool b, bool repaint = true);
 	
@@ -384,6 +388,8 @@ private:
 	
 	bool getCursorWrapAround();
 	void setCursorWrapAround(bool b, bool repaint = true);
+
+	void setLiveSwitch(bool b, bool repaint = true);
 	
 	bool getRecordKeyOff();
 	void setRecordKeyOff(bool b, bool repaint = true);
@@ -607,6 +613,7 @@ private:
 	void eventKeyDownBinding_ToggleFollowSong();
 	void eventKeyDownBinding_ToggleProspectiveMode();
 	void eventKeyDownBinding_ToggleCursorWrapAround();
+	void eventKeyDownBinding_ToggleLiveSwitch();
 	void eventKeyDownBinding_ToggleRecordKeyOff();
 	void eventKeyDownBinding_ToggleScopes();
 	

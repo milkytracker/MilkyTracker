@@ -38,6 +38,8 @@ class PlayerLogic
 private:
 	class Tracker& tracker;
 
+	bool liveSwitch;
+	
 	bool stopBackgroundOnPlay;
 	
 	bool tracePlay;
@@ -48,6 +50,9 @@ private:
 
 public:
 	PlayerLogic(Tracker& tracker);
+
+	void setLiveSwitch(bool liveSwitch);
+	bool getLiveSwitch() const { return liveSwitch; }	
 
 	void setStopBackgroundOnPlay(bool stopBackgroundOnPlay) { this->stopBackgroundOnPlay = stopBackgroundOnPlay; }
 	bool getStopBackgroundOnPlay() const { return stopBackgroundOnPlay; }
