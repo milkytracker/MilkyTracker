@@ -975,13 +975,13 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 			}
 			if (newSelectionIndex != lastSelectionIndex)
 			{
-				assureCursorVisible();
 				PPEvent ePre(ePreSelection, &newSelectionIndex, sizeof(newSelectionIndex));
 				eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &ePre);
 				this->selectionIndex = newSelectionIndex;
 				PPEvent e(eSelection, &selectionIndex, sizeof(selectionIndex));
 				eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 			}
+			assureCursorVisible();
 		}
 		else
 		{
@@ -1010,13 +1010,13 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 			}
 			if (newSelectionIndex != lastSelectionIndex)
 			{
-				assureCursorVisible();
 				PPEvent ePre(ePreSelection, &newSelectionIndex, sizeof(newSelectionIndex));
 				eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &ePre);
 				this->selectionIndex = newSelectionIndex;
 				PPEvent e(eSelection, &selectionIndex, sizeof(selectionIndex));
 				eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 			}
+			assureCursorVisible();
 		}
 		else
 		{
