@@ -117,6 +117,8 @@ void PlayerLogic::stopSong()
 
 	stopPlayer(*tracker.playerController);
 
+	tracker.moduleEditor->cleanUnusedPatterns();
+
 	tracker.getPatternEditorControl()->setSongPosition(-1, -1);
 	tracker.screen->paintControl(tracker.getPatternEditorControl());
 	tracker.updateSpeed();

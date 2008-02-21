@@ -561,54 +561,6 @@ bool ModuleEditor::allocatePattern(TXMPattern* pattern)
 	return true;
 }
 
-void ModuleEditor::clean()
-{
-	if (!module)
-		return;
-		
-	for (mp_sint32 i = module->header.patnum - 1; i > lastRequestedPatternIndex; i--)
-	{
-		TXMPattern* pattern = &module->phead[i];
-
-		if (pattern->patternData == NULL)
-			continue;
-			
-		mp_sint32 slotSize = pattern->effnum * 2 + 2;
-		
-		mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
-		
-		bool empty = true;
-		for (mp_sint32 j = 0; j < patternSize; j++)
-			if (pattern->patternData[j])
-			{
-				empty = false;
-				break;
-			}
-		
-		if (empty)
-		{
-			bool found = false;
-			for (mp_sint32 j = 0; j < module->header.ordnum; j++)
-				if (module->header.ord[j] == i)
-				{
-					found = true;
-					break;
-				}
-			
-			if (found)
-				break;
-			
-			delete[] pattern->patternData;
-			memset(pattern, 0, sizeof(TXMPattern));
-			module->header.patnum = i;
-		}
-		else
-		{
-			break;
-		}
-	} 
-}
-
 void ModuleEditor::createEmptySong(bool clearPatterns/* = true*/, bool clearInstruments/* = true*/, mp_sint32 numChannels/* = 8*/)
 {
 	if (module)
@@ -799,14 +751,15 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		createNewSong();
 	}
 
-	clean();
+	cleanUnusedPatterns();
 	
 	return res;
 }
 
 bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = eXM*/)
 {
-	clean();
+	// too risky
+	//cleanUnusedPatterns();
 
 	bool res = false;
 	
@@ -994,6 +947,54 @@ bool ModuleEditor::isEditingOrderPosition(mp_sint32 index) const
 	return patternEditor->getPattern() == &module->phead[module->header.ord[index]];
 }
 
+void ModuleEditor::cleanUnusedPatterns()
+{
+	if (!module)
+		return;
+		
+	for (mp_sint32 i = module->header.patnum - 1; i > lastRequestedPatternIndex; i--)
+	{
+		TXMPattern* pattern = &module->phead[i];
+
+		if (pattern->patternData == NULL)
+			continue;
+			
+		mp_sint32 slotSize = pattern->effnum * 2 + 2;
+		
+		mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
+		
+		bool empty = true;
+		for (mp_sint32 j = 0; j < patternSize; j++)
+			if (pattern->patternData[j])
+			{
+				empty = false;
+				break;
+			}
+		
+		if (empty)
+		{
+			bool found = false;
+			for (mp_sint32 j = 0; j < module->header.ordnum; j++)
+				if (module->header.ord[j] == i)
+				{
+					found = true;
+					break;
+				}
+			
+			if (found)
+				break;
+			
+			delete[] pattern->patternData;
+			memset(pattern, 0, sizeof(TXMPattern));
+			module->header.patnum = i;
+		}
+		else
+		{
+			break;
+		}
+	} 
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // Whenever a pattern is requested we will return a pattern that is
 // 32 channels wide, this makes adding/subtracting channels easier
@@ -1004,8 +1005,10 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 {
 	lastRequestedPatternIndex = index;
 
+	// handle with care, this might throw away patterns while the player
+	// is using them
 	if (cleanUnusedPatterns)
-		clean();
+		this->cleanUnusedPatterns();
 	
 	// get requested pattern, allocate one if it's empty
 	TXMPattern* pattern = &module->phead[index];

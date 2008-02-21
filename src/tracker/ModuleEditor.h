@@ -128,8 +128,6 @@ private:
 
 	bool allocatePattern(TXMPattern* pattern);
 	
-	void clean();
-	
 	mp_sint32 lastRequestedPatternIndex;
 	
 	mp_sint32 currentOrderIndex;
@@ -267,8 +265,12 @@ public:
 
 	bool isEditingOrderPosition(mp_sint32 index) const;
 
+	// throw away trailing empty patterns
+	// handle with care, they might be currently playing
+	void cleanUnusedPatterns();
+
 	// get pattern, if not allocated yet, allocate one
-	TXMPattern* getPattern(mp_sint32 index, bool cleanUnusedPatterns = true);
+	TXMPattern* getPattern(mp_sint32 index, bool cleanUnusedPatterns = false);
 
 	// allocate new sample within given instrument (obsolete)
 	mp_sint32 allocateSample(mp_sint32 index);
