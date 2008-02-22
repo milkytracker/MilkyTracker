@@ -36,6 +36,12 @@
 
 class PlayerSTD : public PlayerBase
 {
+public:
+	struct StatusEventListener
+	{
+		virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) { }
+	};
+
 private:
 	enum
 	{
@@ -230,6 +236,8 @@ private:
 	static const mp_uword	lintab[769];
 	static const mp_uint32	logtab[];
 	
+	StatusEventListener* statusEventListener;
+	
 	TModuleChannel*	chninfo;				// our channel information
 	mp_sint32		lastNumAllocatedChannels;
 	
@@ -397,7 +405,7 @@ private:
 	void			update();	
 	void			updateBPMIndependent();
 
-	void			handleQueuedPositions(mp_sint32& poscnt);
+	//void			handleQueuedPositions(mp_sint32& poscnt);
 	void			setNewPosition(mp_sint32 poscnt);
 
 	void			tickhandler();
@@ -412,7 +420,8 @@ protected:
 	virtual void	clearEffectMemory();
 	
 public:
-					PlayerSTD(mp_uint32 frequency);
+					PlayerSTD(mp_uint32 frequency,
+							  StatusEventListener* statusEventListener = NULL);
 					
 	virtual			~PlayerSTD();
 	

@@ -64,10 +64,13 @@ private:
 	class PlayerSTD* player;
 	XModule* module;
 	class PlayerCriticalSection* criticalSection;
+	struct PlayerStatusEventListener* playerStatusEventListener;
 			
 	bool patternPlay;
 	bool playRowOnly;
 	mp_sint32 patternIndex;
+	mp_sint32 nextOrderIndexToPlay;
+	mp_sint32 nextPatternIndexToPlay;
 
 	mp_sint32 lastPosition, lastRow;
 	bool wasPlayingPattern;
@@ -213,6 +216,7 @@ public:
 	bool hasSampleData(mp_uint32 chnIndex);
 	
 	friend class PlayerMaster;
+	friend struct PlayerStatusEventListener;
 };
 
 #endif

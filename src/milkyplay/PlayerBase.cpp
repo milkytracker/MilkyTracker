@@ -94,8 +94,6 @@ PlayerBase::PlayerBase(mp_uint32 frequency) :
 	adder = BPMCounter = 0;
 
 	patternIndexToPlay = -1;
-	nextOrderIndexToPlay = -1;
-	nextPatternIndexToPlay = -1;
 	
 	playMode = PlayMode_Auto;	
 	

@@ -35,6 +35,37 @@
 #include "PPSystem.h"
 #include "PlayerCriticalSection.h"
 
+struct PlayerStatusEventListener : public PlayerSTD::StatusEventListener
+{
+	PlayerController& playerController;
+	
+	PlayerStatusEventListener(PlayerController& playerController) :
+		playerController(playerController)
+	{
+	}
+	
+	virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) 
+	{ 
+		handleQueuedPositions(player, newOrderIndex);
+	}
+	
+private:
+	void handleQueuedPositions(PlayerSTD& player, mp_sint32& poscnt)
+	{
+		if (playerController.nextOrderIndexToPlay != -1)
+		{
+			poscnt = playerController.nextOrderIndexToPlay;
+			playerController.nextOrderIndexToPlay = -1;
+			player.setPatternToPlay(-1);
+		}
+		else if (playerController.nextPatternIndexToPlay != -1)
+		{
+			player.setPatternToPlay(playerController.nextPatternIndexToPlay);
+			playerController.nextPatternIndexToPlay = -1;
+		}
+	}
+};
+
 void PlayerController::assureNotSuspended()
 {
 	if (mixer->isDevicePaused(player))
@@ -62,8 +93,12 @@ PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	player(NULL),
 	module(NULL),
 	criticalSection(NULL),
+	playerStatusEventListener(new PlayerStatusEventListener(*this)),
 	patternPlay(false), playRowOnly(false),
-	patternIndex(0), lastPosition(-1), lastRow(-1),
+	patternIndex(-1), 
+	nextOrderIndexToPlay(-1),
+	nextPatternIndexToPlay(-1),
+	lastPosition(-1), lastRow(-1),
 	suspended(false),
 	firstRecordChannelCall(true),
 	numPlayerChannels(TrackerConfig::numPlayerChannels),
@@ -74,11 +109,10 @@ PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	multiChannelRecord(true),
 	mixerDataCacheSize(fakeScopes ? 0 : 512*2),
 	mixerDataCache(fakeScopes ? NULL : new mp_sint32[mixerDataCacheSize])
-
 {
 	criticalSection = new PlayerCriticalSection(*this);
 
-	player = new PlayerSTD(mixer->getSampleRate());
+	player = new PlayerSTD(mixer->getSampleRate(), playerStatusEventListener);
 	player->setPlayMode(PlayerBase::PlayMode_FastTracker2);
 	player->resetMainVolumeOnStartPlay(false);
 	player->setBufferSize(mixer->getBufferSize());
@@ -168,8 +202,8 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 	reset();
 
 	player->setPatternToPlay(-1);
-	player->setNextOrderToPlay(-1);
-	player->setNextPatternToPlay(-1);
+	setNextOrderToPlay(-1);
+	setNextPatternToPlay(-1);
 
 	// muting has been reset, restore it
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
@@ -209,8 +243,8 @@ void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_s
 	reset();
 
 	setCurrentPatternIndex(index);
-	player->setNextOrderToPlay(-1);
-	player->setNextPatternToPlay(-1);
+	setNextOrderToPlay(-1);
+	setNextPatternToPlay(-1);
 
 	// muting has been reset, restore it
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
@@ -287,8 +321,8 @@ void PlayerController::stop(bool bResetMainVolume/* = true*/)
 	if (bResetMainVolume)
 		resetMainVolume();	
 		
-	player->setNextOrderToPlay(-1);
-	player->setNextPatternToPlay(-1);
+	setNextOrderToPlay(-1);
+	setNextPatternToPlay(-1);
 
 	criticalSection->leave(false);
 }
@@ -400,38 +434,33 @@ bool PlayerController::isPlayingPattern(mp_sint32 index) const
 
 void PlayerController::setNextOrderToPlay(mp_sint32 orderIndex)
 {
-	if (!player)
-		return;
-		
-	player->setNextOrderToPlay(orderIndex);
-	patternPlay = false;
-	patternIndex = -1;
+	nextOrderIndexToPlay = orderIndex; 
+	if (orderIndex != -1)
+	{
+		nextPatternIndexToPlay = -1;
+		patternPlay = false;
+		patternIndex = -1;
+	}
 }
 
 mp_sint32 PlayerController::getNextOrderToPlay() const
 {
-	if (!player)
-		return -1;
-
-	return player->getNextOrderToPlay();
+	return nextOrderIndexToPlay;
 }
 
 void PlayerController::setNextPatternToPlay(mp_sint32 patternIndex)
 {
-	if (!player)
-		return;
+	nextPatternIndexToPlay = patternIndex; 
+	if (patternIndex != -1)
+		nextOrderIndexToPlay = -1;
 
-	player->setNextPatternToPlay(patternIndex);
-	patternPlay = true;
+	patternPlay = nextPatternIndexToPlay != -1;
 	this->patternIndex = patternIndex;
 }
 
 mp_sint32 PlayerController::getNextPatternToPlay() const
 {
-	if (!player)
-		return -1;
-
-	return player->getNextPatternToPlay();
+	return nextPatternIndexToPlay;
 }
 
 void PlayerController::pause()
