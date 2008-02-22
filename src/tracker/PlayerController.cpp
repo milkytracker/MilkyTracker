@@ -52,15 +52,29 @@ struct PlayerStatusEventListener : public PlayerSTD::StatusEventListener
 private:
 	void handleQueuedPositions(PlayerSTD& player, mp_sint32& poscnt)
 	{
+		// there is a queued position
 		if (playerController.nextOrderIndexToPlay != -1)
 		{
+			// the new order the queued one
 			poscnt = playerController.nextOrderIndexToPlay;
+			// the queued one becomes invalid
 			playerController.nextOrderIndexToPlay = -1;
+			// we're no longer in pattern play mode...
+			playerController.patternPlay = false;
+			// ... that's why we're going to set the pattern index to -1
+			playerController.patternIndex = -1;
 			player.setPatternToPlay(-1);
 		}
+		// there is a queued pattern
 		else if (playerController.nextPatternIndexToPlay != -1)
 		{
+			// the new pattern index
 			player.setPatternToPlay(playerController.nextPatternIndexToPlay);
+			// we're no in pattern play mode
+			playerController.patternPlay = true;
+			// that's our new pattern
+			playerController.patternIndex = playerController.nextPatternIndexToPlay;
+			// the queued one becomes invalid
 			playerController.nextPatternIndexToPlay = -1;
 		}
 	}
@@ -436,11 +450,7 @@ void PlayerController::setNextOrderToPlay(mp_sint32 orderIndex)
 {
 	nextOrderIndexToPlay = orderIndex; 
 	if (orderIndex != -1)
-	{
 		nextPatternIndexToPlay = -1;
-		patternPlay = false;
-		patternIndex = -1;
-	}
 }
 
 mp_sint32 PlayerController::getNextOrderToPlay() const
@@ -453,9 +463,6 @@ void PlayerController::setNextPatternToPlay(mp_sint32 patternIndex)
 	nextPatternIndexToPlay = patternIndex; 
 	if (patternIndex != -1)
 		nextOrderIndexToPlay = -1;
-
-	patternPlay = nextPatternIndexToPlay != -1;
-	this->patternIndex = patternIndex;
 }
 
 mp_sint32 PlayerController::getNextPatternToPlay() const
