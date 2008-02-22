@@ -195,7 +195,7 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 
 	// apply ALL settings, not just the different ones
 	applySettings(settingsDatabase, NULL, true, false);
-	
+
 	// update version information
 	settingsDatabase->store("VERSION", TrackerConfig::version);
 	
@@ -203,6 +203,9 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	updateSongInfo(false);
 	
 	updateWindowTitle();
+
+	// try to start playback engine
+	bool masterStart = playerMaster->start();	
 	
 	// remove splash screen
 	if (!noSplash)
@@ -219,7 +222,7 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	
 	screen->paint();
 	
-	if (!playerMaster->start())
+	if (!masterStart)
 	{
 		SystemMessage systemMessage(*screen, SystemMessage::MessageSoundDriverInitFailed);
 		systemMessage.show();

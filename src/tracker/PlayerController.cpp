@@ -172,6 +172,8 @@ PlayerController::~PlayerController()
 		delete player;
 	}
 	
+	delete playerStatusEventListener;
+	
 	delete criticalSection;
 }
 
