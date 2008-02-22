@@ -30,14 +30,8 @@
 #ifndef __AUDIODRIVER_SDL_H__
 #define __AUDIODRIVER_SDL_H__
 
-// You might want to change this
-#ifdef __OSX_SILLYNESS__
-#include <SDL/SDL.h>
-#include <SDL/SDL_audio.h>
-#else
 #include <SDL.h>
 #include <SDL_audio.h>
-#endif
 
 #include "AudioDriver_COMPENSATE.h"
 

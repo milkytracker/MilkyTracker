@@ -93,12 +93,17 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		fprintf(stderr, "SDL: Audio driver doesn't support 16-bit signed samples!\n");
 		return -1;
 	}
-	if(wanted.freq != obtained.freq || wanted.channels != obtained.channels)
+	
+	if (wanted.channels != obtained.channels)
 	{
 		fprintf(stderr, "SDL: Failed to obtain requested audio format.  Suggested format:\n");
-		fprintf(stderr, "SDL: Frequency: %d\nChannels: %d\n");
+		fprintf(stderr, "SDL: Frequency: %d\nChannels: %d\n", obtained.freq, obtained.channels);
 		return -1;
 	}
+	
+	// fallback for obtained sample rate
+	if (wanted.freq != obtained.freq)
+		this->mixFrequency = obtained.freq;
 
 	printf("SDL: Buffer size = %i samples (requested %i)\n", obtained.samples, finalWantedSize / wanted.channels);
 
