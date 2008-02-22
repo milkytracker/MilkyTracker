@@ -22,7 +22,7 @@
 
 /*
  *  XModule.cpp
- *  MilkyPlay module (based on a hybrid of the XM, MDL, AMS and IT format)
+ *  MilkyPlay module (based on a hybrid of the XM, MDL, AMS and IT formats)
  *
  *
  */

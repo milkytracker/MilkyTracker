@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver.h
- *  MilkyPlay core
+ *  MilkyPlay
  *
  *  Created by Peter Barth on Fri Sep 10 2004.
  *

@@ -24,7 +24,7 @@
  *  LoaderUNI.cpp
  *  MilkyPlay Module Loader: MikMod UNIversal Module
  *
- *  Warning: This is an one-by-one conversion of a pascal uni2xm converter ;)
+ *  Warning: This is an one-by-one conversion of my pascal uni2xm converter ;)
  *
  */
 #include "Loaders.h"

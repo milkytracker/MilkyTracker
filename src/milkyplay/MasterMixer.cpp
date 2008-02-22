@@ -22,7 +22,7 @@
 
 /*
  *  MasterMixer.cpp
- *  cliplayer
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 14.12.07.
  *

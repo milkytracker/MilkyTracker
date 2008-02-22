@@ -22,7 +22,7 @@
 
 /*
  *  SampleLoaderGeneric.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 16.09.05.
  *

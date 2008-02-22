@@ -22,7 +22,7 @@
 
 /*
  *  LittleEndian.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on Tue Oct 19 2004.
  *

@@ -22,7 +22,7 @@
 
 /*
  *  Resampler.cpp
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 08.11.07.
  *

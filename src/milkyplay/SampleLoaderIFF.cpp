@@ -22,7 +22,7 @@
 
 /*
  *  SampleLoaderIFF.cpp
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 07.01.06.
  *

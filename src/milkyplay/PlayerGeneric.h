@@ -22,6 +22,7 @@
 
 /*
  *  PlayerGeneric.h
+ *  MilkyPlay
  *
  *	This class is meant to be a wrapper class that handles all 
  *	different sorts of players for different Module types.

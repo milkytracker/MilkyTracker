@@ -22,7 +22,7 @@
 
 /*
  *  Mixable.h
- *  cliplayer
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 14.12.07.
  *

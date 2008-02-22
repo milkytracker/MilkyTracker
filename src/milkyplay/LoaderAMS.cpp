@@ -22,7 +22,7 @@
 
 /*
  *  LoaderAMS.cpp
- MilkyPlay
+ *  MilkyPlay Module Loader: Velvet Studio and Extreme Tracker formats
  *
  *  Created by Peter Barth on 17.12.04.
  *

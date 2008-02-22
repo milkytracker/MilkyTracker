@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver_COREAUDIO.cpp
- *  MilkyPlay audiodriver
+ *  MilkyPlay
  *
  *	The base of this code was a MikMod CoreAudio driver by Fruitz^Dojo
  *  It was heavily modified and improved to deal with some strange behaviour

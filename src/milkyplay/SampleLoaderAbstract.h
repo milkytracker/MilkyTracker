@@ -22,7 +22,7 @@
 
 /*
  *  SampleLoaderAbstract.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 14.09.05.
  *

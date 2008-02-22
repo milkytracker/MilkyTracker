@@ -22,7 +22,7 @@
 
 /*
  *  XIInstrument.cpp
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 07.03.05.
  *

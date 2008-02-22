@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver_RTAUDIO.cpp
- *  SDL Audio
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 09.06.05.
  *

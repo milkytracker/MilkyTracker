@@ -22,7 +22,7 @@
 
 /*
  *  LoaderDBM.cpp
- MilkyPlay
+ *  MilkyPlay Module Loader: Digibooster Pro
  *
  *  Created by Peter Barth on 06.03.06.
  *

@@ -22,7 +22,7 @@
 
 /*
  *  PlayerBase.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on Thu Jan 20 2005.
  *

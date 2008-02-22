@@ -22,7 +22,7 @@
 
 /*
  *  ResamplerCubic.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 03.01.08.
  *

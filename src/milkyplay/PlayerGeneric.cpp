@@ -22,6 +22,7 @@
 
 /*
  *  PlayerGeneric.cpp
+ *  MilkyPlay 
  *
  *  PlayerGeneric is a wrapper that allocates a suiting type of player
  *	for a module while providing the same player interfaces.

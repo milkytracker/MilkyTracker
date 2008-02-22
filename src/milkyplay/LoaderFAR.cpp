@@ -22,7 +22,7 @@
 
 /*
  *  LoaderFAR.cpp
- *  MilkyPlay Module Loader: FAR
+ *  MilkyPlay Module Loader: Farandole Composer
  *
  */
 #include "Loaders.h"

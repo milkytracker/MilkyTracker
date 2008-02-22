@@ -22,7 +22,7 @@
 
 /*
  *  LoaderDTM.cpp
- MilkyPlay
+ *  MilkyPlay Module Loader: Digitrekker 3.0 and Digital Tracker
  *
  *  Created by Peter Barth on 15.01.06.
  *
