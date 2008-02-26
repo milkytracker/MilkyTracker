@@ -65,13 +65,15 @@ static inline void set_pixel_transp(PPGraphicsAbstract* g, pp_int32 x, pp_int32 
 	g->setPixel(x, y, newColor);
 }
 
+// used for win32
 SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24,__EMPTY__)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_RGB24,__EMPTY__)
+// OSX (carbon, 32 bits with alpha channel)
 SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_ARGB32,__EMPTY__)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGRA32,__EMPTY__)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_RGBA32,__EMPTY__)
+// used for wince (GAPI)
 SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_16BIT,__EMPTY__)
+// OSX (carbon, 16 bit color, one unused bit)
 SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_15BIT,__EMPTY__)
+// currently unused, big endian compatible version of PPGraphics_BGR24
 SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24_SLOW,__EMPTY__)
 
 #define PROLOGUE \
@@ -83,6 +85,7 @@ SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24_SLOW,__EMPTY__)
 		this->bitPosR = bitPosR; this->bitPosG = bitPosG; this->bitPosB = bitPosB; \
 	}
 
+// used in the SDL port, arbitrary bit positions but a little bit slower than the rest
 SUBCLASS_GRAPHICSABSTRACT(PROLOGUE,PPGraphics_24bpp_generic,EPILOGUE)
 SUBCLASS_GRAPHICSABSTRACT(PROLOGUE,PPGraphics_32bpp_generic,EPILOGUE)
 
