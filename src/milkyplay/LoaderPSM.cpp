@@ -26,13 +26,32 @@
  */
 #include "Loaders.h"
 
-static bool PxxxTest(mp_ubyte* p)
+static bool PATTTest(mp_ubyte* p, mp_sint32& size)
 {
 	if (p[0] != 'P') return false;
-	if (p[1] < '0' || p[1] > '9') return false;
-	if ((p[2] < '0' || p[2] > '9') && p[2] != ' ') return false;
-	if ((p[3] < '0' || p[3] > '9') && p[3] != ' ') return false;
-	return true;
+	
+	// type Pxxx
+	if (p[1] != 'A')
+	{
+		if (p[1] < '0' || p[1] > '9') return false;
+		if ((p[2] < '0' || p[2] > '9') && p[2] != ' ') return false;
+		if ((p[3] < '0' || p[3] > '9') && p[3] != ' ') return false;
+		size = 4;
+		return true;
+	}
+	// type PATTxxxx
+	else
+	{
+		if (p[2] != 'T' || p[3] != 'T')
+			return false;
+
+		if (p[4] < '0' || p[4] > '9') return false;
+		if ((p[5] < '0' || p[5] > '9') && p[5] != ' ') return false;
+		if ((p[6] < '0' || p[6] > '9') && p[6] != ' ') return false;
+		if ((p[7] < '0' || p[7] > '9') && p[7] != ' ') return false;	
+		size = 8;
+		return true;
+	}
 }
 
 #define RELEASE_PATTERNS { \
@@ -96,6 +115,8 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 	
 	mp_ubyte* songSignature = NULL;
 	mp_uint32 signatureSize = 0;
+	
+	bool sinaria = false;
 	
 	while (true)
 	{
@@ -251,11 +272,15 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 					
 				}
 				
-				while (!PxxxTest(buffer+i+1) && i < size)
+				mp_sint32 patIDSize = 0;
+				while (!PATTTest(buffer+i+1, patIDSize) && i < size)
 					i++;
 				
+				if (patIDSize == 8)
+					sinaria = true;
+				
 				// hier lief was schief
-				if (i >= size)
+				if (i >= size || (patIDSize != 4 && patIDSize != 8))
 				{
 					delete[] buffer;
 					RELEASE_PATTERNS;
@@ -268,19 +293,16 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 					header->ord[header->ordnum++] = patIndex-1; 
 				
 				while (buffer[i+1]=='P' && i < (size-5))
-				{
-					
-					bool found = false;
+				{					
 					for (mp_uint32 j = 0; j < patIndex; j++)
 					{
-						if (memcmp(buffer+i+1,patterns[j]+4,4) == 0)
+						if (memcmp(buffer+i+1,patterns[j]+4,patIDSize) == 0)
 						{
 							header->ord[header->ordnum] = j;
-							found = true;
 							break;
 						}						
 					}
-					i+=5;
+					i+=patIDSize+1;
 					header->ordnum++;
 				}
 				
@@ -291,6 +313,8 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 				
 			// 'DATE'
 			case 0x45544144:	// date chunk (ASCII string)
+			// 'PPAN'
+			case 0x4E415050:	// panning found in sinaria PSM modules
 			// 'PATT'
 			case 0x54544150:	// list of used patterns? pretty useless to me...
 			// 'DSAM'
@@ -317,8 +341,24 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 				
 				if (infoSize == 96)
 				{
+					mp_sint32 offsetName = 13;
+					mp_sint32 offsetSamplen = 54;
+					mp_sint32 offsetLoopstart = 58;
+					mp_sint32 offsetLoopEnd = 62;
+					mp_sint32 offsetVolume = 68;
+					mp_sint32 offsetC4spd = 73;
 					
-					memcpy(instr[insIndex].name, buffer+13, 24);
+					if (sinaria)
+					{
+						offsetName += 4;
+						offsetSamplen += 4;
+						offsetLoopstart += 4;
+						offsetLoopEnd += 4;
+						offsetVolume += 5;
+						offsetC4spd += 5;
+					}
+					
+					memcpy(instr[insIndex].name, buffer+offsetName, 24);
 					
 					if (size > 96)
 					{
@@ -327,11 +367,12 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						for (mp_sint32 j = 0; j < 120; j++) 
 							instr[insIndex].snum[j] = smpIndex;	// build sample table
 						
-						smp[smpIndex].samplen = (mp_sint32)LittleEndian::GET_DWORD(buffer+54);		// sample size
-						smp[smpIndex].loopstart = (mp_sint32)LittleEndian::GET_DWORD(buffer+58);		// loop start
-						smp[smpIndex].looplen = ((mp_sint32)LittleEndian::GET_DWORD(buffer+62)) - ((mp_sint32)LittleEndian::GET_DWORD(buffer+58))+1;	// loop length
+						smp[smpIndex].samplen = (mp_sint32)LittleEndian::GET_DWORD(buffer+offsetSamplen);		// sample size
+						smp[smpIndex].loopstart = (mp_sint32)LittleEndian::GET_DWORD(buffer+offsetLoopstart);		// loop start
+						smp[smpIndex].looplen = ((mp_sint32)LittleEndian::GET_DWORD(buffer+offsetLoopEnd)) - 
+							((mp_sint32)LittleEndian::GET_DWORD(buffer+offsetLoopstart))+1;	// loop length
 						
-						smp[smpIndex].vol = module->vol127to255(buffer[68]);		// volume
+						smp[smpIndex].vol = module->vol127to255(buffer[offsetVolume]);		// volume
 						
 						smp[smpIndex].flags = 1;						// set volume flag
 						
@@ -343,7 +384,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 								smp[smpIndex].looplen-=(smp[smpIndex].loopstart+smp[smpIndex].looplen)-smp[smpIndex].samplen;
 						}
 						
-						module->convertc4spd((mp_uword)LittleEndian::GET_WORD(buffer+73),&smp[smpIndex].finetune,&smp[smpIndex].relnote);
+						module->convertc4spd((mp_uword)LittleEndian::GET_WORD(buffer+offsetC4spd),&smp[smpIndex].finetune,&smp[smpIndex].relnote);
 						
 						ASSERT(smp[smpIndex].samplen+96 == size);
 						
@@ -353,6 +394,14 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 							RELEASE_PATTERNS;
 							return -7;
 						}
+						
+						//if (sinaria)
+						//{
+						//	if (smp[smpIndex].samplen > 2)
+						//		smp[smpIndex].samplen-=2;
+						//	if (smp[smpIndex].looplen > 2)
+						//		smp[smpIndex].looplen-=2;
+						//}
 						
 						smpIndex++;
 						
@@ -401,7 +450,15 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 			pattern[j*5+4] = 0;
 		}
 		
-		mp_ubyte* packed = patterns[i]+10;
+		mp_sint32 patIDSize = 0;
+		if (!PATTTest(patterns[i]+4, patIDSize))
+		{
+			RELEASE_PATTERNS;
+			return -7;
+		}
+		
+		mp_sint32 offset = 6+patIDSize;
+		mp_ubyte* packed = patterns[i]+offset;
 		
 		mp_uint32 index = 0;
 		
@@ -409,7 +466,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		
 		mp_uint32 maxChannels = 0;
 		
-		while (index<(patternSizes[i]-10))
+		while (index<(patternSizes[i]-offset))
 		{
 			
 			mp_uint32 size = ((mp_uword)LittleEndian::GET_WORD(packed+index))-2;
@@ -439,6 +496,10 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						// key off note
 						if (note == 255) 
 							note = 254;
+						else if (patIDSize == 8)
+						{
+							note = ((note+23) / 12) * 16 + (((note+23)) % 12);
+						}
 						
 						slot[0] = note;
 					}
@@ -487,7 +548,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 			maxChannels = header->channum;
 		
 		// convert pattern here:
-		phead[i].rows = (mp_uword)LittleEndian::GET_WORD(patterns[i]+8);
+		phead[i].rows = (mp_uword)LittleEndian::GET_WORD(patterns[i]+offset-2);
 		phead[i].effnum = 3;
 		phead[i].channum = maxChannels;
 		
@@ -519,7 +580,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 					if (finalNote>120)
 					{
 #ifdef VERBOSE
-						printf("Falsche note: %i",finalNote);
+						printf("Wrong note: %i",finalNote);
 #endif
 						finalNote = 0;
 					}

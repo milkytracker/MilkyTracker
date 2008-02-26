@@ -72,7 +72,7 @@ static mp_sint32 convertS3MPattern(TXMPattern* XMPattern,
 				if (finalNote>120)
 				{
 #ifdef VERBOSE
-					printf("Falsche note: %i",finalNote);
+					printf("Wrong note: %i",finalNote);
 #endif
 					finalNote = 0;
 				}
