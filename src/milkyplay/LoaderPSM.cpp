@@ -372,6 +372,10 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						smp[smpIndex].looplen = ((mp_sint32)LittleEndian::GET_DWORD(buffer+offsetLoopEnd)) - 
 							((mp_sint32)LittleEndian::GET_DWORD(buffer+offsetLoopstart))+1;	// loop length
 						
+						mp_sint32 finetune = 0;
+						if (sinaria)
+							finetune = buffer[offsetVolume-1] & 0xf;
+						
 						smp[smpIndex].vol = module->vol127to255(buffer[offsetVolume]);		// volume
 						
 						smp[smpIndex].flags = 1;						// set volume flag
@@ -384,7 +388,13 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 								smp[smpIndex].looplen-=(smp[smpIndex].loopstart+smp[smpIndex].looplen)-smp[smpIndex].samplen;
 						}
 						
-						module->convertc4spd((mp_uword)LittleEndian::GET_WORD(buffer+offsetC4spd),&smp[smpIndex].finetune,&smp[smpIndex].relnote);
+						mp_uint32 c4speed = (mp_uword)LittleEndian::GET_WORD(buffer+offsetC4spd); 
+						mp_uint32 ftC4Speed = module->sfinetunes[finetune];
+			
+						module->convertc4spd(c4speed*ftC4Speed/8448,
+											 &smp[smpIndex].finetune,&smp[smpIndex].relnote);						
+
+						//module->convertc4spd((mp_uword)LittleEndian::GET_WORD(buffer+offsetC4spd),&smp[smpIndex].finetune,&smp[smpIndex].relnote);
 						
 						ASSERT(smp[smpIndex].samplen+96 == size);
 						
