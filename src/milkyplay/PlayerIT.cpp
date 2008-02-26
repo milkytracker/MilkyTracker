@@ -2205,9 +2205,14 @@ void PlayerIT::doEffect(TModuleChannel* chnInf, mp_sint32 effcnt)
 						
 						if (!bSet)
 						{
+							// if position is beyond the last envelope point
+							// we limit it to the last point and exit
+							bool beyond = eop > env->envstruc->env[env->envstruc->num-1][0];														
 							env->a = env->envstruc->num-1;
 							env->b = env->envstruc->num;
 							env->step = env->envstruc->env[env->envstruc->num-1][0];
+							if (beyond)
+								break;
 						}
 						
 						// check if we set envelope position to a loop end point
