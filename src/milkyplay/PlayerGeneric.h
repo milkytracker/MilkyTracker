@@ -399,7 +399,7 @@ public:
 	 * Specify a pattern to be played instead of playing the entire song
 	 * @param  patternIndex		this specifies to play a given pattern only, supply -1 to play entire song instead of just one pattern
 	 */
-	void				setPattern(mp_sint32 patternIndex);
+	void				setPatternToPlay(mp_sint32 patternIndex);
 
 	/**
 	 * Stop playing, also stops audio device (easy, huh?)
