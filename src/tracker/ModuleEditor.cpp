@@ -2295,10 +2295,58 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 		{
 			result++;
 			if (!evaluate)
+			{
 				clearSample(i);
+				// wipe out sample slot
+				memset(module->smp + i, 0, sizeof(TXMSample));
+			}
 		}
 	}
-
+	
+	// relocate samples 
+	if (!evaluate)
+	{
+		for (i = 0; i < module->header.insnum; i++)
+		{
+			mp_sint32 smpRelocTable[16];
+			for (j = 0; j < 16; j++)
+				smpRelocTable[j] = -1;
+			
+			mp_sint32 s = 0;
+			TXMSample* src = module->smp + 16*i;
+			TXMSample* dst = src;
+			for (j = 0; j < 16; j++, src++)
+			{
+				k = i*16+j;
+				if (bitMap[k])
+				{
+					if (src != dst)
+					{
+						*dst = *src;
+						// wipe out source sample
+						memset(src, 0, sizeof(TXMSample));
+					}
+					smpRelocTable[j] = s++;
+					dst++;
+				}
+			}
+			
+			// adjust the FT2 style sample->note mapping table
+			TEditorInstrument* ins = instruments + i;
+			
+			for (j = 0; j < MAX_NOTE; j++)
+				if (ins->nbu[j] < 16 && smpRelocTable[ins->nbu[j]] != -1)
+					ins->nbu[j] = smpRelocTable[ins->nbu[j]];
+				else
+					ins->nbu[j] = 0;
+		
+			// convert back to milkytracker module style mapping
+			for (j = 0; j < MAX_NOTE; j++)
+				module->instr[i].snum[j] = i * 16 + ins->nbu[j];
+			
+		}
+	}
+	
 	if (!evaluate && result)
 		changed = true;
 
