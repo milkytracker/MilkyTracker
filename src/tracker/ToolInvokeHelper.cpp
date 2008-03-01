@@ -34,6 +34,7 @@
 #include "PatternEditorControl.h"
 #include "DialogWithValues.h"
 #include "DialogQuickChooseInstrument.h"
+#include "Screen.h"
 
 ToolInvokeHelper::ToolInvokeHelper(Tracker& theTracker) :
 	tracker(theTracker),
@@ -55,6 +56,9 @@ void ToolInvokeHelper::resetLastValues()
 
 bool ToolInvokeHelper::invokeTool(ToolTypes toolType, pp_int16 keyDownKeyCode/* = -1*/)
 {
+	if (tracker.screen->getModalControl())
+		return false;
+
 	lastToolType = toolType;
 
 	if (dialog)
