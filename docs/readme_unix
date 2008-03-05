@@ -3,23 +3,34 @@ README for MilkyTracker SDL Versions
 
 
 This file contains information that is specific to the SDL versions of
-MilkyTracker.  Please read this file in addition to README.TXT
+MilkyTracker.  Please read this file in addition to MilkyTracker.html
 
-Currently the following operating systems and CPUs are supported:
+Milkytracker should in theory compile and run on any posix compatible operating
+system. However, the build system requires a working C++ compiler and associated
+libraries/includes, Bash compatible shell interpreter and compatible version of
+Gnu Make.
+
+Currently the following platforms have been tested:
 
 - Linux    x86
            x86_64
            powerpc
-           arm
+           arm (GP2X/F200 etc)
 - Freebsd  x86
+- Netbsd  x86
 - Solaris  sparc
+- Other    PSP (it will run, but user input not implemented)
+           AmigaOS (known problems)
+           AROS (known problems)
 
-On most versions installation is simply a matter of unpacking the archive and
-executing the 'milkytracker' binary.  Any platform specific steps to be taken
-will be mentioned below.  It is advisable that you run MilkyTracker from the
-command line (at least the first time you run it) as it will output some
-messages informing you of what audio driver it is using as well as any errors
-that occurred.
+Since the change to open source/GPL, binary distributions of Milkytracker are no
+longer supported (apart from OSX and Windows/Windows CE).  The options are to
+build the binary from the source archive, or to use a pre-built binary possibly
+supplied by your *nix distribution.
+
+It is advisable that you run MilkyTracker from the command line (at least the
+first time you run it) as it will output some messages informing you of what
+audio driver it is using as well as any errors that occurred.
 
 
 MIDI (Alsa only)
@@ -50,6 +61,12 @@ Note that due to weaknesses in some audio configurations we have had to force
 MilkyTracker to use 2^N audio buffer sizes.  This option can be disabled in the
 config menu and this is recommended if your audio driver will accept it.
 
+* New for version v0.90.80 *
+
+Two new audio drivers have been added; ALSA and JACK. JACK by default does not
+attempt to guess which output device to connect to, the connection should be
+made manually.
+
 
 Video Driver
 ============
@@ -65,11 +82,6 @@ are the following command line options:
 The screen size can be selected in the Config->Layout menu.  Fullscreen mode can
 be toggled using ALT+Return.  Note that these arguments are likely to be removed
 in the future - drop us a note if you actually need to use them.
-
-There have been some reports of very high CPU usage when using MilkyTracker on
-certain platforms (most notably some laptop chipsets).  Unfortunately there is
-nothing we can do about this, the fault appears to be in the SDL/X11 video
-driver.
 
 
 Crash Handler
@@ -109,6 +121,20 @@ The mouse pointer can be controlled using the d-pad (it is accelerated with 3
 speeds).  Press the d-pad to click, or press the start button to begin playback.
 GP2X control is likely to be improved in future releases.
 
+
+Asus EEE PC
+===========
+
+This machine has problems which prevent Milkytracker from functioning properly.
+The default Linux install has a broken version of the SDL libraries, most users
+replace the default install with another Linux distribution which seems to fix
+the problem with Milkytracker seg-faulting on startup (the seg-fault is
+generated in the libSDL library). However, even with a different distribution
+installed all is not good.  It seems that the graphic-intense nature of
+Milkytracker causes the audio to stutter on playback.  It is not clear what is
+causing this symptom, but it has reported that routing the audio through JACK
+solves it (SDL and Alsa are affected).  Any suggestions or bugfixes (ideally :)
+are appreciated.
 
 
 Enjoy!
