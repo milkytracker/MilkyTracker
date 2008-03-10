@@ -1288,6 +1288,14 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
+	// if the track inner position is not the note column, we will first 
+	// set the position to the note before decrementing the track number
+	if (properties.tabToNote && cursor.inner > 0)
+	{
+		cursor.inner = 0;
+		return;
+	}
+
 	if (cursor.channel >  0)
 	{
 		cursor.channel--;
