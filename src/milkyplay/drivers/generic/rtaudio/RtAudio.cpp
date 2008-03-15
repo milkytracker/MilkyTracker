@@ -10,6 +10,7 @@
     RtAudio WWW site: http://www.music.mcgill.ca/~gary/rtaudio/
 
     RtAudio: realtime audio i/o C++ classes
+    Copyright (c) 2001-2008 Gary P. Scavone
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation files
@@ -19,6 +20,7 @@
     and to permit persons to whom the Software is furnished to do so,
     subject to the following conditions:
 
+    The above copyright notice and this permission notice shall be
     included in all copies or substantial portions of the Software.
 
     Any person wishing to distribute modifications to the Software is
@@ -29,13 +31,14 @@
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
     ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
     CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 /************************************************************************/
 
-// RtAudio: Version 4.0
+// RtAudio: Version 4.0.4
 
 #include "RtAudio.h"
 #include <iostream>
@@ -52,12 +55,6 @@ const unsigned int RtApi::SAMPLE_RATES[] = {
   #define MUTEX_DESTROY(A)    DeleteCriticalSection(A)
   #define MUTEX_LOCK(A)       EnterCriticalSection(A)
   #define MUTEX_UNLOCK(A)     LeaveCriticalSection(A)
-
-  #define	WAVE_FORMAT_96M08   0x00010000
-  #define 	WAVE_FORMAT_96S08   0x00020000
-  #define 	WAVE_FORMAT_96M16   0x00040000
-  #define 	WAVE_FORMAT_96S16   0x00080000
-
 #elif defined(__LINUX_ALSA__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || defined(__MACOSX_CORE__)
   // pthread API
   #define MUTEX_INITIALIZE(A) pthread_mutex_init(A, NULL)
@@ -1920,8 +1917,8 @@ bool RtApiJack :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
   // Count the available ports containing the client name as device
   // channels.  Jack "input ports" equal RtAudio output channels.
   unsigned int nChannels = 0;
-  unsigned long flag = JackPortIsOutput;
-  if ( mode == INPUT ) flag = JackPortIsInput;
+  unsigned long flag = JackPortIsInput;
+  if ( mode == INPUT ) flag = JackPortIsOutput;
   ports = jack_get_ports( client, deviceName.c_str(), NULL, flag );
   if ( ports ) {
     while ( ports[ nChannels ] ) nChannels++;
@@ -2470,11 +2467,14 @@ RtAudio::DeviceInfo RtApiAsio :: getDeviceInfo( unsigned int device )
     error( RtError::INVALID_USE );
   }
 
-  // Don't probe if a stream is already open.
+  // If a stream is already open, we cannot probe other devices.  Thus, use the saved results.
   if ( stream_.state != STREAM_CLOSED ) {
-    errorText_ = "RtApiAsio::getDeviceInfo: unable to probe driver while a stream is open.";
-    error( RtError::WARNING );
-    return info;
+    if ( device >= devices_.size() ) {
+      errorText_ = "RtApiAsio::getDeviceInfo: device ID was not present before stream was opened.";
+      error( RtError::WARNING );
+      return info;
+    }
+    return devices_[ device ];
   }
 
   char driverName[32];
@@ -2567,6 +2567,16 @@ void bufferSwitch( long index, ASIOBool processNow )
   object->callbackEvent( index );
 }
 
+void RtApiAsio :: saveDeviceInfo( void )
+{
+  devices_.clear();
+
+  unsigned int nDevices = getDeviceCount();
+  devices_.resize( nDevices );
+  for ( unsigned int i=0; i<nDevices; i++ )
+    devices_[i] = getDeviceInfo( i );
+}
+
 bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
                                    unsigned int firstChannel, unsigned int sampleRate,
                                    RtAudioFormat format, unsigned int *bufferSize,
@@ -2587,6 +2597,12 @@ bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     errorText_ = errorStream_.str();
     return FAILURE;
   }
+
+  // The getDeviceInfo() function will not work when a stream is open
+  // because ASIO does not allow multiple devices to run at the same
+  // time.  Thus, we'll probe the system before opening a stream and
+  // save the results for use by getDeviceInfo().
+  this->saveDeviceInfo();
 
   // Only load the driver once for duplex stream.
   if ( mode != INPUT || stream_.mode != OUTPUT ) {
@@ -2634,13 +2650,25 @@ bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     return FAILURE;
   }
 
-  // Set the sample rate.
-  result = ASIOSetSampleRate( (ASIOSampleRate) sampleRate );
+  // Get the current sample rate
+  ASIOSampleRate currentRate;
+  result = ASIOGetSampleRate( &currentRate );
   if ( result != ASE_OK ) {
     drivers.removeCurrentDriver();
-    errorStream_ << "RtApiAsio::probeDeviceOpen: driver (" << driverName << ") error setting sample rate (" << sampleRate << ").";
+    errorStream_ << "RtApiAsio::probeDeviceOpen: driver (" << driverName << ") error getting sample rate.";
     errorText_ = errorStream_.str();
     return FAILURE;
+  }
+
+  // Set the sample rate only if necessary
+  if ( currentRate != sampleRate ) {
+    result = ASIOSetSampleRate( (ASIOSampleRate) sampleRate );
+    if ( result != ASE_OK ) {
+      drivers.removeCurrentDriver();
+      errorStream_ << "RtApiAsio::probeDeviceOpen: driver (" << driverName << ") error setting sample rate (" << sampleRate << ").";
+      errorText_ = errorStream_.str();
+      return FAILURE;
+    }
   }
 
   // Determine the driver data type.
@@ -3295,6 +3323,14 @@ static const char* getAsioErrorString( ASIOError result )
 #include <dsound.h>
 #include <assert.h>
 
+#if defined(__MINGW32__)
+// missing from latest mingw winapi
+#define WAVE_FORMAT_96M08 0x00010000 /* 96 kHz, Mono, 8-bit */
+#define WAVE_FORMAT_96S08 0x00020000 /* 96 kHz, Stereo, 8-bit */
+#define WAVE_FORMAT_96M16 0x00040000 /* 96 kHz, Mono, 16-bit */
+#define WAVE_FORMAT_96S16 0x00080000 /* 96 kHz, Stereo, 16-bit */
+#endif
+
 #define MINIMUM_DEVICE_BUFFER_SIZE 32768
 
 #ifdef _MSC_VER // if Microsoft Visual C++
@@ -3331,7 +3367,7 @@ struct DsHandle {
   HANDLE condition;
 
   DsHandle()
-    :drainCounter(0), internalDrain(false) { id[0] = 0, id[1] = 0; xrun[0] = false; xrun[1] = false; bufferPointer[0] = 0; bufferPointer[1] = 0; }
+    :drainCounter(0), internalDrain(false) { id[0] = 0; id[1] = 0; buffer[0] = 0; buffer[1] = 0; xrun[0] = false; xrun[1] = false; bufferPointer[0] = 0; bufferPointer[1] = 0; }
 };
 
 /*
@@ -3355,7 +3391,7 @@ RtApiDs::RtDsStatistics RtApiDs::getDsStatistics()
 
 // Declarations for utility functions, callbacks, and structures
 // specific to the DirectSound implementation.
-static bool CALLBACK deviceCountCallback( LPGUID lpguid,
+static BOOL CALLBACK deviceQueryCallback( LPGUID lpguid,
                                           LPCTSTR description,
                                           LPCTSTR module,
                                           LPVOID lpContext );
@@ -3396,7 +3432,7 @@ unsigned int RtApiDs :: getDefaultInputDevice( void )
 {
   // Count output devices.
   EnumInfo info;
-  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &info );
+  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &info );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDefaultOutputDevice: error (" << getErrorString( result ) << ") counting output devices!";
     errorText_ = errorStream_.str();
@@ -3407,7 +3443,7 @@ unsigned int RtApiDs :: getDefaultInputDevice( void )
   // Now enumerate input devices until we find the id = NULL.
   info.isInput = true;
   info.getDefault = true;
-  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &info );
+  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &info );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDefaultInputDevice: error (" << getErrorString( result ) << ") enumerating input devices!";
     errorText_ = errorStream_.str();
@@ -3424,7 +3460,7 @@ unsigned int RtApiDs :: getDefaultOutputDevice( void )
   // Enumerate output devices until we find the id = NULL.
   EnumInfo info;
   info.getDefault = true;
-  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &info );
+  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &info );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDefaultOutputDevice: error (" << getErrorString( result ) << ") enumerating output devices!";
     errorText_ = errorStream_.str();
@@ -3440,7 +3476,7 @@ unsigned int RtApiDs :: getDeviceCount( void )
 {
   // Count DirectSound devices.
   EnumInfo info;
-  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &info );
+  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &info );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDeviceCount: error (" << getErrorString( result ) << ") enumerating output devices!";
     errorText_ = errorStream_.str();
@@ -3449,7 +3485,7 @@ unsigned int RtApiDs :: getDeviceCount( void )
 
   // Count DirectSoundCapture devices.
   info.isInput = true;
-  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &info );
+  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &info );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDeviceCount: error (" << getErrorString( result ) << ") enumerating input devices!";
     errorText_ = errorStream_.str();
@@ -3474,7 +3510,7 @@ RtAudio::DeviceInfo RtApiDs :: getDeviceInfo( unsigned int device )
   EnumInfo dsinfo;
   dsinfo.findIndex = true;
   dsinfo.index = device;
-  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &dsinfo );
+  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &dsinfo );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDeviceInfo: error (" << getErrorString( result ) << ") enumerating output devices!";
     errorText_ = errorStream_.str();
@@ -3532,7 +3568,7 @@ RtAudio::DeviceInfo RtApiDs :: getDeviceInfo( unsigned int device )
  probeInput:
 
   dsinfo.isInput = true;
-  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &dsinfo );
+  result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &dsinfo );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::getDeviceInfo: error (" << getErrorString( result ) << ") enumerating input devices!";
     errorText_ = errorStream_.str();
@@ -3642,7 +3678,7 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
   EnumInfo dsinfo;
   dsinfo.findIndex = true;
   dsinfo.index = device;
-  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &dsinfo );
+  HRESULT result = DirectSoundEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &dsinfo );
   if ( FAILED( result ) ) {
     errorStream_ << "RtApiDs::probeDeviceOpen: error (" << getErrorString( result ) << ") enumerating output devices!";
     errorText_ = errorStream_.str();
@@ -3658,7 +3694,7 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
   }
   else { // mode == INPUT
     dsinfo.isInput = true;
-    HRESULT result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceCountCallback, &dsinfo );
+    HRESULT result = DirectSoundCaptureEnumerate( (LPDSENUMCALLBACK) deviceQueryCallback, &dsinfo );
     if ( FAILED( result ) ) {
       errorStream_ << "RtApiDs::probeDeviceOpen: error (" << getErrorString( result ) << ") enumerating input devices!";
       errorText_ = errorStream_.str();
@@ -3751,8 +3787,10 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
     while ( dsPointerLeadTime * 2U > (DWORD) bufferBytes )
       bufferBytes *= 2;
 
-    // Set cooperative level to DSSCL_EXCLUSIVE
-    result = output->SetCooperativeLevel( hWnd, DSSCL_EXCLUSIVE );
+    // Set cooperative level to DSSCL_EXCLUSIVE ... sound stops when window focus changes.
+    //result = output->SetCooperativeLevel( hWnd, DSSCL_EXCLUSIVE );
+    // Set cooperative level to DSSCL_PRIORITY ... sound remains when window focus changes.
+    result = output->SetCooperativeLevel( hWnd, DSSCL_PRIORITY );
     if ( FAILED( result ) ) {
       output->Release();
       errorStream_ << "RtApiDs::probeDeviceOpen: error (" << getErrorString( result ) << ") setting cooperative level (" << dsinfo.name << ")!";
@@ -3793,6 +3831,7 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
     ZeroMemory( &bufferDescription, sizeof( DSBUFFERDESC ) );
     bufferDescription.dwSize = sizeof( DSBUFFERDESC );
     bufferDescription.dwFlags = ( DSBCAPS_STICKYFOCUS |
+                                  DSBCAPS_GLOBALFOCUS |
                                   DSBCAPS_GETCURRENTPOSITION2 |
                                   DSBCAPS_LOCHARDWARE );  // Force hardware mixing
     bufferDescription.dwBufferBytes = bufferBytes;
@@ -3803,6 +3842,7 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
     result = output->CreateSoundBuffer( &bufferDescription, &buffer, NULL );
     if ( FAILED( result ) ) {
       bufferDescription.dwFlags = ( DSBCAPS_STICKYFOCUS |
+                                    DSBCAPS_GLOBALFOCUS |
                                     DSBCAPS_GETCURRENTPOSITION2 |
                                     DSBCAPS_LOCSOFTWARE );  // Force software mixing
       result = output->CreateSoundBuffer( &bufferDescription, &buffer, NULL );
@@ -4065,6 +4105,8 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
     goto error;
   }
 
+  // Boost DS thread priority
+  SetThreadPriority( (HANDLE) stream_.callbackInfo.thread, THREAD_PRIORITY_HIGHEST );
   return SUCCESS;
 
  error:
@@ -4188,7 +4230,7 @@ void RtApiDs :: startStream()
     duplexPrerollBytes = (int) ( 0.5 * stream_.sampleRate * formatBytes( stream_.deviceFormat[1] ) * stream_.nDeviceChannels[1] );
   }
 
-  HRESULT result;
+  HRESULT result = 0;
   if ( stream_.mode == OUTPUT || stream_.mode == DUPLEX ) {
     //statistics.outputFrameSize = formatBytes( stream_.deviceFormat[0] ) * stream_.nDeviceChannels[0];
 
@@ -4234,7 +4276,7 @@ void RtApiDs :: stopStream()
 
   MUTEX_LOCK( &stream_.mutex );
 
-  HRESULT result;
+  HRESULT result = 0;
   LPVOID audioPtr;
   DWORD dataLen;
   DsHandle *handle = (DsHandle *) stream_.apiHandle;
@@ -4783,7 +4825,7 @@ std::string convertTChar( LPCTSTR name )
   return s;
 }
 
-static bool CALLBACK deviceCountCallback( LPGUID lpguid,
+static BOOL CALLBACK deviceQueryCallback( LPGUID lpguid,
                                           LPCTSTR description,
                                           LPCTSTR module,
                                           LPVOID lpContext )
@@ -4796,7 +4838,7 @@ static bool CALLBACK deviceCountCallback( LPGUID lpguid,
     LPDIRECTSOUNDCAPTURE object;
 
     hr = DirectSoundCaptureCreate(  lpguid, &object,   NULL );
-    if ( hr != DS_OK ) return true;
+    if ( hr != DS_OK ) return TRUE;
 
     caps.dwSize = sizeof(caps);
     hr = object->GetCaps( &caps );
@@ -4810,7 +4852,7 @@ static bool CALLBACK deviceCountCallback( LPGUID lpguid,
     DSCAPS caps;
     LPDIRECTSOUND object;
     hr = DirectSoundCreate(  lpguid, &object,   NULL );
-    if ( hr != DS_OK ) return true;
+    if ( hr != DS_OK ) return TRUE;
 
     caps.dwSize = sizeof(caps);
     hr = object->GetCaps( &caps );
@@ -4821,20 +4863,20 @@ static bool CALLBACK deviceCountCallback( LPGUID lpguid,
     object->Release();
   }
 
-  if ( info->getDefault && lpguid == NULL ) return false;
+  if ( info->getDefault && lpguid == NULL ) return FALSE;
 
   if ( info->findIndex && info->counter > info->index ) {
     info->id = lpguid;
     info->name = convertTChar( description );
-    return false;
+    return FALSE;
   }
 
-  return true;
+  return TRUE;
 }
 
 static char* getErrorString( int code )
 {
-	switch (code) {
+	switch ( code ) {
 
   case DSERR_ALLOCATED:
     return "Already allocated";
@@ -5011,6 +5053,18 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   }
 
  foundDevice:
+
+  // If a stream is already open, we cannot probe the stream devices.
+  // Thus, use the saved results.
+  if ( stream_.state != STREAM_CLOSED &&
+       ( stream_.device[0] == device || stream_.device[1] == device ) ) {
+    if ( device >= devices_.size() ) {
+      errorText_ = "RtApiAlsa::getDeviceInfo: device ID was not present before stream was opened.";
+      error( RtError::WARNING );
+      return info;
+    }
+    return devices_[ device ];
+  }
 
   int openMode = SND_PCM_ASYNC;
   snd_pcm_stream_t stream;
@@ -5206,6 +5260,16 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   return info;
 }
 
+void RtApiAlsa :: saveDeviceInfo( void )
+{
+  devices_.clear();
+
+  unsigned int nDevices = getDeviceCount();
+  devices_.resize( nDevices );
+  for ( unsigned int i=0; i<nDevices; i++ )
+    devices_[i] = getDeviceInfo( i );
+}
+
 bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
                                    unsigned int firstChannel, unsigned int sampleRate,
                                    RtAudioFormat format, unsigned int *bufferSize,
@@ -5219,16 +5283,10 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
 
   // I'm not using the "plug" interface ... too much inconsistent behavior.
 
-/*
-  RtAudio behaviour was to search for the first available device on the first
-  available card.  This has been commented out and it now only checks for the
-  'default' device. - Christopher O'Neill 30/11/07
-
   unsigned nDevices = 0;
   int result, subdevice, card;
   char name[64];
   snd_ctl_t *chandle;
-
 
   // Count cards and devices
   card = -1;
@@ -5248,6 +5306,7 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
 			if ( subdevice < 0 ) break;
       if ( nDevices == device ) {
         sprintf( name, "hw:%d,%d", card, subdevice );
+        snd_ctl_close( chandle );
         goto foundDevice;
       }
       nDevices++;
@@ -5267,11 +5326,14 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     errorText_ = "RtApiAlsa::probeDeviceOpen: device ID is invalid!";
     return FAILURE;
   }
-  */
 
-  char name[] = "default";
-  int result;
-  foundDevice:
+ foundDevice:
+
+  // The getDeviceInfo() function will not work for a device that is
+  // already open.  Thus, we'll probe the system before opening a
+  // stream and save the results for use by getDeviceInfo().
+  if ( mode == OUTPUT || ( mode == INPUT && stream_.mode != OUTPUT ) ) // only do once
+    this->saveDeviceInfo();
 
   snd_pcm_stream_t stream;
   if ( mode == OUTPUT )
@@ -5281,7 +5343,6 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
 
   snd_pcm_t *phandle;
   int openMode = SND_PCM_ASYNC;
-  strcpy(name, "default"); // Testing..
   result = snd_pcm_open( &phandle, name, stream, openMode );
   if ( result < 0 ) {
     if ( mode == OUTPUT )
@@ -6102,6 +6163,7 @@ unsigned int RtApiOss :: getDeviceCount( void )
     return 0;
   }
 
+  close( mixerfd );
   return sysinfo.numaudios;
 }
 
@@ -6962,11 +7024,11 @@ extern "C" void *ossCallbackHandler( void *ptr )
 // message printing.
 void RtApi :: error( RtError::Type type )
 {
+  errorStream_.str(""); // clear the ostringstream
   if ( type == RtError::WARNING && showWarnings_ == true )
     std::cerr << '\n' << errorText_ << "\n\n";
   else
     throw( RtError( errorText_, type ) );
-  errorStream_.str(""); // clear the ostringstream
 }
 
 void RtApi :: verifyStream()
@@ -6993,7 +7055,7 @@ void RtApi :: clearStreamInfo()
   stream_.callbackInfo.userData = 0;
   stream_.callbackInfo.isRunning = false;
   for ( int i=0; i<2; i++ ) {
-    stream_.device[i] = 0;
+    stream_.device[i] = 11111;
     stream_.doConvertBuffer[i] = false;
     stream_.deviceInterleaved[i] = true;
     stream_.doByteSwap[i] = false;
