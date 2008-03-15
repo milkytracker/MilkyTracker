@@ -1,7 +1,7 @@
 /*
  *  tracker/Equalizer.cpp
  *
- *  Copyright 2008 Peter Barth
+ *  Copyright 2008 David Ross (david_ross@hotmail.co.uk)
  *
  *  This file is part of Milkytracker.
  *

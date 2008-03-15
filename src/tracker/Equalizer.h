@@ -1,7 +1,7 @@
 /*
  *  tracker/Equalizer.h
  *
- *  Copyright 2008 Peter Barth
+ *  Copyright 2008 David Ross (david_ross@hotmail.co.uk)
  *
  *  This file is part of Milkytracker.
  *
@@ -19,11 +19,6 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-/*
- *  This EQ code is from David Ross (david_ross@hotmail.co.uk)
- */
- 
 #ifndef __EQUALIZER_H__
 #define __EQUALIZER_H__
 
