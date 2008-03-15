@@ -82,8 +82,12 @@ protected:
 
 	void notifyListener(EditorNotifications notification);
 
+	// this must be called when any of the editors changes the module
+	// that will affect pointers and/or sizes in the module structure
+	// when a module is currently playing it will be stopped
 	void enterCriticalSection();
-
+	
+	// continue playing module after a critical change/update
 	void leaveCriticalSection();
 
 public:
@@ -92,7 +96,8 @@ public:
 	void addNotificationListener(EditorNotificationListener* listener);
 	bool removeNotificationListener(EditorNotificationListener* listener);
 
-	// query status
+	// the update notification type
+	// I'm using this to provoke update notifications which don't cause screen refreshes
 	void setLazyUpdateNotifications(bool lazyUpdateNotifications) { this->lazyUpdateNotifications = lazyUpdateNotifications; }
 	bool getLazyUpdateNotifications() const { return lazyUpdateNotifications; }
 	

@@ -1096,6 +1096,7 @@ void PatternEditorControl::eventKeyDownBinding_ReadMacro0()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro1()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(1, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1103,6 +1104,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro1()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro2()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(2, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1110,6 +1112,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro2()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro3()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(3, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1117,6 +1120,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro3()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro4()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(4, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1124,6 +1128,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro4()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro5()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(5, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1131,6 +1136,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro5()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro6()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(6, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1138,6 +1144,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro6()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro7()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(7, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1145,6 +1152,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro7()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro8()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(8, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1152,6 +1160,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro8()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro9()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(9, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1159,6 +1168,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro9()
 
 void PatternEditorControl::eventKeyDownBinding_WriteMacro0()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->writeMacroToCursor(0, this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1258,6 +1268,7 @@ void PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd()
 
 void PatternEditorControl::eventKeyDownBinding_DeleteNote()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->deleteCursorSlotData(this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1265,6 +1276,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNote()
 
 void PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->deleteCursorSlotDataEntire(this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1272,6 +1284,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect()
 
 void PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->deleteCursorSlotDataVolumeAndEffect(this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1279,6 +1292,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect()
 
 void PatternEditorControl::eventKeyDownBinding_DeleteEffect()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->deleteCursorSlotDataEffect(this);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1348,6 +1362,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 
 void PatternEditorControl::eventKeyDownBinding_InsertNote()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->insertNote(patternEditor->getCursor().channel, patternEditor->getCursor().row);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1355,6 +1370,7 @@ void PatternEditorControl::eventKeyDownBinding_InsertNote()
 
 void PatternEditorControl::eventKeyDownBinding_InsertLine()
 {
+	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
 	patternEditor->insertLine(patternEditor->getCursor().row);
 	patternEditor->setLazyUpdateNotifications(false);
@@ -1367,6 +1383,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot()
 	if (cursor.row)
 	{
 		cursor.row--;
+		// prevent unnecessary screen refreshing through listener callback
 		patternEditor->setLazyUpdateNotifications(true);
 		patternEditor->deleteNote(cursor.channel, cursor.row);
 		patternEditor->setLazyUpdateNotifications(false);
@@ -1380,6 +1397,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteLine()
 	if (cursor.row)
 	{
 		cursor.row--;
+		// prevent unnecessary screen refreshing through listener callback
 		patternEditor->setLazyUpdateNotifications(true);
 		patternEditor->deleteLine(cursor.row);
 		patternEditor->setLazyUpdateNotifications(false);
