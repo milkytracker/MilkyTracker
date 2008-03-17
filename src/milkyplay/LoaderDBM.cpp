@@ -284,7 +284,16 @@ static void convertDBMEnvelope(TEnvelope& outEnv, const mp_ubyte* inEnv)
 	}
 #endif
 	
-	outEnv.num = *(inEnv+1);
+	// one single point?
+	// disable envelope
+	if (!*(inEnv+1))
+	{
+		outEnv.type &= ~1;
+		return;
+	}
+	
+	// DBM stores numpoints-1
+	outEnv.num = *(inEnv+1) + 1;
 	outEnv.sustain = *(inEnv+2);
 	outEnv.loops = *(inEnv+3);
 	outEnv.loope = *(inEnv+4);
