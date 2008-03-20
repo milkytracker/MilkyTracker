@@ -39,7 +39,8 @@ public:
 	
 	enum 
 	{
-		MAXCHANNELS = 256
+		MAXCHANNELS = 256,
+		MAXNOTES = 120, // 10 octaves, even though FT2 only uses 8
 	};
 
 	static const PPPoint trackerExitBounds;

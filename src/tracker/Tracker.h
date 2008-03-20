@@ -137,13 +137,13 @@ private:
 	
 	struct TKeyInfo
 	{
-		pp_int32 note, ins, channel;
-		pp_int32 pos, row;
+		pp_int32 note, ins;
+		pp_int32 channel, pos, row;
 		PlayerController* playerController;
 	};
 	
-	TKeyInfo keys[128];
-	
+	TKeyInfo* keys;
+	 
 	pp_int32 keyVolume;
 	
 	pp_uint8* muteChannels;
@@ -469,9 +469,7 @@ private:
 			didOpenTab(false)
 		{
 		}
-	};
-
-	TPrepareLoadingParameters loadingParameters;
+	} loadingParameters;
 
 	bool loadGenericFileType(const PPSystemString& fileName);
 

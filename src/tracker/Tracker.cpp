@@ -195,9 +195,12 @@ Tracker::Tracker() :
 	//currentPatternAdd = 1;
 
 	pp_int32 i;
-	memset(keys, 0, sizeof(keys));
+	
+	keys = new TKeyInfo[TrackerConfig::MAXNOTES];
+	memset(keys, 0, sizeof(TKeyInfo) * TrackerConfig::MAXNOTES);
+	
 	keyVolume = -1;
-			
+	
 	muteChannels = new pp_uint8[TrackerConfig::numPlayerChannels];
 	
 	for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
@@ -224,7 +227,8 @@ Tracker::~Tracker()
 	
 	delete messageBoxContainerGeneric;
 		
-	delete[] muteChannels;		
+	delete[] muteChannels;
+	delete[] keys;	
 	
 	delete instrumentChooser;
 		

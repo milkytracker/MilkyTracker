@@ -49,6 +49,12 @@ private:
 	void refreshSIP();
 
 public:
+	enum
+	{
+		KEY_PRESS = 0,
+		KEY_RELEASE = 0x10000
+	};
+
 	InputControlListener(Tracker& theTracker) :
 		tracker(theTracker),
 		capsLockPressed(false),

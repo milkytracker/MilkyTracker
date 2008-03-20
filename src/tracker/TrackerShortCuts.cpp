@@ -71,9 +71,12 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 		
 		bool record = (editMode == EditModeMilkyTracker ? screen->hasFocus(patternEditorControl) : recordMode);
 		bool releasePlay = false;
-		bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && shouldFollowSong();
+		bool isLiveRecording = (playerController->isPlaying() || 
+								playerController->isPlayingPattern()) && 
+								record && 
+								shouldFollowSong();
 		
-		// when we're not live recording, we need to decide of we're editing
+		// when we're not live recording, we need to decide if we're editing
 		if (!isLiveRecording)
 		{
 			releasePlay = !record;
@@ -96,7 +99,7 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 			
 			// take a look if this key is already pressed
 			bool isPressed = false;
-			for (i = 0; i < 128; i++)
+			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
 			{
 				if (keys[i].note == note)
 				{
@@ -122,14 +125,16 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 			}
 			else
 			{
-				// Get next recording channel: The base for selection of the next channel is the current channel within the pattern editor
+				// Get next recording channel: The base for selection of the 
+				// next channel is the current channel within the pattern editor
 				chn = playerController->getNextRecordingChannel(chn);
 			}
 			
 		}
 		else
 		{
-			// The cursor in the pattern editor must be located in the note column, if not abort
+			// The cursor in the pattern editor must be located in the note column, 
+			// if not abort
 			if (patternEditorControl->getCursorPosInner() != 0)
 			{
 				//event->cancel();
@@ -147,19 +152,18 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 		// key is not pressed, play note and remember key + channel + position within module
 		pp_int32 pos = -1, row = 0, ticker = 0;
 		
-		ASSERT(sizeof(mp_sint32) == sizeof(pp_int32));
-		
-		if (isLiveRecording && !playerController->isPlayingPattern())
-			playerController->getPosition((mp_sint32&)pos, (mp_sint32&)row, (mp_sint32&)ticker);
-		else if (isLiveRecording)
+		// if we are recording we are doing a query on the current position
+		if (isLiveRecording)
 		{
 			playerController->getPosition((mp_sint32&)pos, (mp_sint32&)row, (mp_sint32&)ticker);
-			pos = -1;
+			// order position is invalid if playing a pattern
+			if (playerController->isPlayingPattern())
+				pos = -1;
 		}
 		
 		if (chn != -1)
 		{
-			for (i = 0; i < 128; i++)
+			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
 			{
 				if (!keys[i].note)
 				{
@@ -223,7 +227,7 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 		
 		bool record = (editMode == EditModeMilkyTracker ? screen->hasFocus(patternEditorControl) : recordMode);	
 		
-		for (pp_int32 i = 0; i < 128; i++)
+		for (mp_sint32 i = 0; i < TrackerConfig::MAXNOTES; i++)
 		{
 			// found a playing channel
 			if (keys[i].note == note)
@@ -232,18 +236,20 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 				if (keys[i].playerController)
 					playerController = keys[i].playerController;
 			
-				bool isLiveRecording = (playerController->isPlaying() || playerController->isPlayingPattern()) && record && shouldFollowSong();
-				
-				ASSERT(sizeof(mp_sint32) == sizeof(pp_int32));
+				bool isLiveRecording = (playerController->isPlaying() || 
+										playerController->isPlayingPattern()) && 
+										record && 
+										shouldFollowSong();
 				
 				bool recPat = false;
-				if (isLiveRecording && !playerController->isPlayingPattern())
-					playerController->getPosition((mp_sint32&)pos, (mp_sint32&)row, (mp_sint32&)ticker);
-				else if (isLiveRecording)
+				if (isLiveRecording)
 				{
 					playerController->getPosition((mp_sint32&)pos, (mp_sint32&)row, (mp_sint32&)ticker);
-					pos = -1;
-					recPat = true;
+					if (playerController->isPlayingPattern())
+					{
+						pos = -1;
+						recPat = true;
+					}
 				}
 							
 				if (isLiveRecording && recordKeyOff)
@@ -305,14 +311,14 @@ void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 		volume = 255;
 
 	// Volume here is between 0 to 255, but don't forget to make the volume FT2 compatible (0..64)
-	inputControlListener->sendNote(note, volume != -1 ? XModule::vol64to255((volume*64)/255) : -1);
-	//sendNoteDownToPatternEditor(NULL, note, getPatternEditorControl());
+	inputControlListener->sendNote(note | InputControlListener::KEY_PRESS,
+								   volume != -1 ? XModule::vol64to255((volume*64)/255) : -1);
 }
 
 void Tracker::sendNoteUp(mp_sint32 note)
 {
-	inputControlListener->sendNote(note | (1 << 16));
-	//sendNoteUpToPatternEditor(NULL, note, getPatternEditorControl());
+	// bit 16 indicates key release
+	inputControlListener->sendNote(note | InputControlListener::KEY_RELEASE);
 }
 
 void Tracker::processShortcuts(PPEvent* event)
