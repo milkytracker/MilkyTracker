@@ -3842,10 +3842,3 @@ bool PlayerIT::grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) c
 	memcpy(channelInfo.operands, chninfo[chn].eop, sizeof(chninfo[chn].eop));
 	return true;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// for MilkyTracker use
-//////////////////////////////////////////////////////////////////////////////////////////
-void PlayerIT::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
-{			
-}

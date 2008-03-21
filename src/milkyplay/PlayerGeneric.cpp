@@ -1063,12 +1063,6 @@ mp_sint32 PlayerGeneric::getNumMaxVirChannels() const
 }
 
 // milkytracker
-void PlayerGeneric::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
-{
-	if (player)
-		player->playNote(chn, note, i, vol);
-}
-
 void PlayerGeneric::setPanning(mp_ubyte chn, mp_ubyte pan)
 {
 	if (player)

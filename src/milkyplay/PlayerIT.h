@@ -731,15 +731,6 @@ public:
 	virtual bool	grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) const;
 
 	mp_sint32		getCurMaxVirChannels() const { return curMaxVirChannels; }	
-
-	// milkytracker
-	virtual void	playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1);
-	virtual void	setPanning(mp_ubyte chn, mp_ubyte pan) { chninfo[chn].setPan(pan); }
-
-#ifdef MILKYTRACKER
-	friend class PlayerController;
-	friend class PlayerGeneric;
-#endif
 };
 
 #endif

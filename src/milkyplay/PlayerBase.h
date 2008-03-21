@@ -335,7 +335,8 @@ public:
 	}
 	
 	// milkytracker
-	virtual void			playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1) {}
+	virtual void			playNote(mp_ubyte chn, 
+									 mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1) {}
 	
 	virtual void			setPanning(mp_ubyte chn, mp_ubyte pan) {}
 };

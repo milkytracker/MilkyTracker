@@ -1108,7 +1108,9 @@ pp_int32 PatternEditor::relocateCommandsSelection(const PatternEditorTools::Relo
 	return resCnt;	
 }
 
-bool PatternEditor::writeNote(pp_int32 note, bool withUndo/* = false*/, PatternAdvanceInterface* advanceImpl/* = NULL*/)
+bool PatternEditor::writeNote(pp_int32 note, 
+							  bool withUndo/* = false*/, 
+							  PatternAdvanceInterface* advanceImpl/* = NULL*/)
 {
 	if (withUndo)
 		prepareUndo();
@@ -1148,7 +1150,43 @@ bool PatternEditor::writeNote(pp_int32 note, bool withUndo/* = false*/, PatternA
 	return false;
 }
 
-bool PatternEditor::writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, bool withUndo/* = false*/, PatternAdvanceInterface* advanceImpl/* = NULL*/)
+void PatternEditor::writeDirectNote(pp_int32 note,
+									pp_int32 track/* = -1*/,
+									pp_int32 row/* = -1*/,
+									pp_int32 order/* = -1*/)
+{
+	TXMPattern* pattern = this->pattern;
+	if (order != -1)
+		pattern = &module->phead[module->header.ord[order]];
+
+	if (track == -1)
+		track = cursor.channel;
+		
+	if (row == -1)
+		row = cursor.row;
+
+	PatternTools patternTools;
+	patternTools.setPosition(pattern, track, row);
+
+	// means to delete note
+	if (note == 0xFF)
+	{
+		patternTools.setNote(0);
+	}
+
+	if (note >= 1 && note <= PatternTools::getNoteOffNote())
+	{
+		pp_int32 currentInstrument = getCurrentActiveInstrument();
+		
+		patternTools.setNote(note);
+		if (currentInstrument && note != PatternTools::getNoteOffNote())
+			patternTools.setInstrument(currentInstrument);
+	}
+}
+									
+bool PatternEditor::writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+								bool withUndo/* = false*/, 
+								PatternAdvanceInterface* advanceImpl/* = NULL*/)
 {
 	if (withUndo)
 		prepareUndo();
@@ -1170,6 +1208,31 @@ bool PatternEditor::writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, bool
 		finishUndo(LastChangeSlotChange);
 	return true;
 }
+
+void PatternEditor::writeDirectEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+									  pp_int32 track/* = -1*/,
+									  pp_int32 row/* = -1*/,
+									  pp_int32 order/* = -1*/)
+{
+	TXMPattern* pattern = this->pattern;
+	if (order != -1)
+		pattern = &module->phead[module->header.ord[order]];
+
+	if (track == -1)
+		track = cursor.channel;
+		
+	if (row == -1)
+		row = cursor.row;
+
+	PatternTools patternTools;
+	patternTools.setPosition(pattern, track, row);
+	
+	// only write effect, when valid effect 
+	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x30)
+	if (eff)
+		patternTools.setEffect(effNum, eff, op);
+}
+
 
 bool PatternEditor::writeInstrument(NibbleTypes nibleType, pp_uint8 value, bool withUndo/* = false*/, PatternAdvanceInterface* advanceImpl/* = NULL*/)
 {

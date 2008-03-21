@@ -300,38 +300,45 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 	TModuleChannel* chnInf = chninfo;
 	for (mp_sint32 i = 0; i < initialNumChannels; i++)
 	{
-		TPrEnv* env = &chnInf->venv;
-		
-		if (env->envstruc && (env->envstruc->type & 1) && env->envstruc->num)
+		// handle notes that are played from external source
+		// i.e. keyboard playback
+		if (chnInf->notePlayReadIndex < chnInf->notePlayWriteIndex)
 		{
-			if (env->step < env->envstruc->env[env->envstruc->num-1][0])
+			mp_sint32 idx = chnInf->notePlayReadIndex & (TModuleChannel::NPQSIZE-1);
+			mp_sint32 note = chnInf->notePlayEntries[idx].note;
+			if (note)
 			{
-				env->timeRecord[currentBeatPacket].pos = env->step;
-				env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
+				playNoteInternal(i, note, 
+								chnInf->notePlayEntries[idx].ins, 
+								chnInf->notePlayEntries[idx].vol);
+				chnInf->notePlayEntries[idx].note = 0;
 			}
-			else goto bah1;
+			chnInf->notePlayReadIndex++;
+		}
+		
+		// track envelope position state
+		TPrEnv* env = &chnInf->venv;		
+		if ((env->envstruc && (env->envstruc->type & 1) && env->envstruc->num) &&
+			(env->step < env->envstruc->env[env->envstruc->num-1][0]))
+		{
+			env->timeRecord[currentBeatPacket].pos = env->step;
+			env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
 		}
 		else
 		{
-bah1:
 			env->timeRecord[currentBeatPacket].pos = 0;
 			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
-
-		env = &chnInf->penv;
 		
-		if (env->envstruc && (env->envstruc->type & 1) && env->envstruc->num)
+		env = &chnInf->penv;		
+		if ((env->envstruc && (env->envstruc->type & 1) && env->envstruc->num) &&
+			(env->step < env->envstruc->env[env->envstruc->num-1][0]))
 		{
-			if (env->step < env->envstruc->env[env->envstruc->num-1][0])
-			{
-				env->timeRecord[currentBeatPacket].pos = env->step;
-				env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
-			}
-			else goto bah2;
+			env->timeRecord[currentBeatPacket].pos = env->step;
+			env->timeRecord[currentBeatPacket].envstruc = env->envstruc;
 		}
 		else
 		{
-bah2:
 			env->timeRecord[currentBeatPacket].pos = 0;
 			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
@@ -3070,7 +3077,7 @@ bool PlayerSTD::grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) 
 //////////////////////////////////////////////////////////////////////////////////////////
 // for MilkyTracker use
 //////////////////////////////////////////////////////////////////////////////////////////
-void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
+void PlayerSTD::playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol)
 {
 	if (!i)
 		return;
@@ -3156,7 +3163,7 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 	{
 		// S3M style key-off
 		// sample is stopped
-		if (note == 122) {
+		if (note == XModule::NOTE_CUT) {
 			note=0;
 			if (chnInf->venv.envstruc!=NULL) {
 				if (!(chnInf->venv.envstruc->type&1))
@@ -3190,4 +3197,17 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 		
 	}
 			
+}
+
+void PlayerSTD::playNote(mp_ubyte chn, 
+						 mp_sint32 note, mp_sint32 ins, mp_sint32 vol/* = -1*/)
+{	
+	TModuleChannel* chnInf = &chninfo[chn];
+	// fill ring buffer with note entries
+	// the callback will query these notes and play them 
+	mp_sint32 idx = chnInf->notePlayWriteIndex & (TModuleChannel::NPQSIZE-1);
+	chnInf->notePlayEntries[idx].ins = ins;
+	chnInf->notePlayEntries[idx].vol = vol;
+	chnInf->notePlayEntries[idx].note = note;
+	chnInf->notePlayWriteIndex++;
 }

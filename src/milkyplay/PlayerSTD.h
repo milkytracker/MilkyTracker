@@ -165,6 +165,20 @@ private:
 		mp_ubyte		avibcnt;
 		mp_ubyte		avibsweep;
 		mp_ubyte		avibswcnt;
+		
+		enum
+		{
+			// must be 2^n
+			NPQSIZE = 16
+		};
+		
+		struct NotePlayEntry
+		{
+			mp_sint32 note, ins, vol;
+		} notePlayEntries[NPQSIZE];
+		
+		mp_sint32 notePlayReadIndex;
+		mp_sint32 notePlayWriteIndex;
 	
 		void clear()
 		{
@@ -219,6 +233,15 @@ private:
 			avibcnt = 0;
 			avibsweep = 0;
 			avibswcnt = 0;
+			
+			for (mp_uint32 i = 0; i < NPQSIZE; i++)
+			{
+				notePlayEntries[i].note = notePlayEntries[i].ins = 0;
+				notePlayEntries[i].vol = -1;
+			}
+
+			notePlayReadIndex = 0;
+			notePlayWriteIndex = 0;			
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)
@@ -416,6 +439,8 @@ private:
 	// stop song by setting flag and setting speed to zero
 	void			halt();
 
+	void			playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol);
+
 protected:
 	virtual void	clearEffectMemory();
 	
@@ -433,8 +458,11 @@ public:
 	// virtual from mixer class, perform playing here
 	virtual void	timerHandler(mp_sint32 currentBeatPacket);
 	
-	virtual void	restart(mp_uint32 startPosition = 0, mp_uint32 startRow = 0, bool resetMixer = true, const mp_ubyte* customPanningTable = NULL, bool playOneRowOnly = false); 
-
+	virtual void	restart(mp_uint32 startPosition = 0, mp_uint32 startRow = 0, 
+							bool resetMixer = true, 
+							const mp_ubyte* customPanningTable = NULL, 
+							bool playOneRowOnly = false); 
+	
 	virtual void	reset();
 
 	virtual void	resetAllSpeed();
@@ -442,7 +470,9 @@ public:
 	virtual bool	grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) const;
 
 	// milkytracker
-	virtual void	playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1);
+	virtual void	playNote(mp_ubyte chn, 
+							 mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1);
+							 
 	virtual void	setPanning(mp_ubyte chn, mp_ubyte pan) { chninfo[chn].pan = pan; }
 
 #ifdef MILKYTRACKER

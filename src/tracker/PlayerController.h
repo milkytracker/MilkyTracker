@@ -62,6 +62,7 @@ public:
 private:
 	class MasterMixer* mixer;
 	class PlayerSTD* player;
+	class ModuleEditor* moduleEditor;
 	XModule* module;
 	class PlayerCriticalSection* criticalSection;
 	struct PlayerStatusEventListener* playerStatusEventListener;
@@ -105,7 +106,9 @@ private:
 public:
 	~PlayerController();
 	
-	void attachModule(XModule* module);
+	void attachModuleEditor(ModuleEditor* moduleEditor);
+	
+	ModuleEditor* getModuleEditor() { return moduleEditor; }
 	
 	PlayerCriticalSection* getCriticalSection() { return criticalSection; }
 	
@@ -144,7 +147,8 @@ public:
 	
 	void stopInstrument(mp_sint32 insIndex);
 
-	void playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1);
+	void playNote(mp_ubyte chn, 
+				  mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1);
 
 	void suspendPlayer(bool bResetMainVolume = true, bool stopPlaying = true);	
 	void resumePlayer(bool continuePlaying);

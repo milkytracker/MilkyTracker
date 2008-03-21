@@ -34,6 +34,7 @@
 #include "ResamplerMacros.h"
 #include "PPSystem.h"
 #include "PlayerCriticalSection.h"
+#include "ModuleEditor.h"
 
 struct PlayerStatusEventListener : public PlayerSTD::StatusEventListener
 {
@@ -177,8 +178,11 @@ PlayerController::~PlayerController()
 	delete criticalSection;
 }
 
-void PlayerController::attachModule(XModule* module)
+void PlayerController::attachModuleEditor(ModuleEditor* moduleEditor)
 {
+	this->moduleEditor = moduleEditor;
+	this->module = moduleEditor->getModule();
+
 	if (!player)
 		return;
 
@@ -188,7 +192,6 @@ void PlayerController::attachModule(XModule* module)
 	ASSERT(sizeof(muteChannels)/sizeof(bool) >= (unsigned)totalPlayerChannels);
 
 	player->startPlaying(module, true, 0, 0, totalPlayerChannels, panning, true);	
-	this->module = module;
 
 	// restore muting
 	for (mp_sint32 i = 0; i < numPlayerChannels; i++)
@@ -629,7 +632,8 @@ void PlayerController::stopInstrument(mp_sint32 insIndex)
 	}	
 }
 
-void PlayerController::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
+void PlayerController::playNote(mp_ubyte chn, 
+								mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
 {
 	if (!player)
 		return;
@@ -712,8 +716,8 @@ bool PlayerController::reallocChannels()
 	{
 		bool paused = player->isPaused();
 		stop(false);		
-		// will cause the desired channels to be allocated
-		attachModule(module);
+		// reattaching will cause the desired channels to be allocated
+		attachModuleEditor(moduleEditor);
 		if (paused)
 			player->pausePlaying();
 		continuePlaying();

@@ -348,7 +348,15 @@ public:
 	pp_int32 relocateCommandsSelection(const PatternEditorTools::RelocateParameters& relocateParameters, bool evaluate);
 
 	// --- write slot data ---------------------------------------------------
-	bool writeNote(pp_int32 note, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	bool writeNote(pp_int32 note, 
+				   bool withUndo = false,
+				   PatternAdvanceInterface* advanceImpl = NULL);
+				   
+	// --- write through, without undo etc. ----------------------------------
+	void writeDirectNote(pp_int32 note,
+						 pp_int32 track = -1,
+						 pp_int32 row = -1,
+						 pp_int32 order = -1);
 	
 	enum NibbleTypes
 	{
@@ -361,8 +369,17 @@ public:
 	bool writeFT2Volume(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
 	bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
 	bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
-	bool writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
 
+	bool writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+					 bool withUndo = false, 
+					 PatternAdvanceInterface* advanceImpl = NULL);
+					 	
+	// --- write through, without undo etc. ----------------------------------
+	void writeDirectEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+						   pp_int32 track = -1,
+						   pp_int32 row = -1,
+						   pp_int32 order = -1);
+	
 	// --- dealing with FT2 style effect macros ------------------------------
 	void storeMacroFromCursor(pp_int32 slot);
 	void writeMacroToCursor(pp_int32 slot, PatternAdvanceInterface* advanceImpl = NULL);

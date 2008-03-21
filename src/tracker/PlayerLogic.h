@@ -75,7 +75,9 @@ public:
 	
 	void finishTraceAndRowPlay();
 	
-	static void playNote(class PlayerController& playerController, pp_uint8 chn, pp_int32 note, pp_int32 i, pp_int32 vol = -1);
+	static void playNote(class PlayerController& playerController, 
+						 pp_uint8 chn, 
+						 pp_int32 note, pp_int32 i, pp_int32 vol = -1);
 	
 	friend class Tracker;
 };

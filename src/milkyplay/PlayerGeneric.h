@@ -662,15 +662,6 @@ public:
 
 	// ---------------------------- milkytracker ----------------------------
 	/**
-	 * Play a note on a channel with given instrument (MilkyTracker usage)
-	 * @param  chn	the channel
-	 * @param  note	the note (1-96)
-	 * @param  i	the instrument
-	 * @param  vol	optional volume (0-255) which overrides the instrument volume if present
-	 */	
-	void				playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol = -1);
-
-	/**
 	 * Change panning of a current playing channel
 	 * @param  chn	the channel
 	 * @param  pan	new panning value Left(0..255)Right
