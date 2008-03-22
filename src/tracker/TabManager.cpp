@@ -175,7 +175,7 @@ void TabManager::openNewTab(PlayerController* playerController/* = NULL*/, Modul
 	if (moduleEditor == NULL || playerController == NULL)
 		return;
 		
-	playerController->attachModule(moduleEditor->getModule());					
+	playerController->attachModuleEditor(moduleEditor);					
 	moduleEditor->attachPlayerCriticalSection(playerController->getCriticalSection());
 	playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());	
 
