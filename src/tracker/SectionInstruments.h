@@ -55,14 +55,6 @@ private:
 	pp_int32 currentEnvelopeType; // 0 = Editing volume envelope, 1 = editing panning envelope
 	bool visible;
 
-	PPSize oldInstrumentListSize;
-	PPPoint oldInstrumentListLocation;
-	PPSize oldSampleListSize;
-	PPPoint oldSampleListLocation;
-	PPSize oldInstrumentListContainerSize;
-	PPPoint oldInstrumentListContainerLocation;
-	PPPoint p[4];
-
 	EnvelopeContainer* predefinedVolumeEnvelopes;
 	EnvelopeContainer* predefinedPanningEnvelopes;
 

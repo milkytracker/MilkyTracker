@@ -218,7 +218,7 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 		
 		PPControl* dummy = ctrl->getControlByID(BUTTON_SAMPLES_INVOKEHDRECORDER);
 		if (dummy)
-			ctrl->hide(true);
+			dummy->hide(true);
 	}
 }
 #endif
