@@ -45,6 +45,7 @@
 #include "FileIdentificator.h"
 #include "Decompressor.h"
 #include "Zapper.h"
+#include "TitlePageManager.h"
 
 // Sections
 #include "SectionTranspose.h"
@@ -713,7 +714,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 			
-				setPeakControlHeadingColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+				TitlePageManager titlePageManager(*screen);
+				titlePageManager.setPeakControlHeadingColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 				break;
 			}
 					
@@ -721,7 +723,9 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-				showTitlePage(TitlePageTitle);
+
+				TitlePageManager titlePageManager(*screen);
+				titlePageManager.showTitlePage(TitlePageManager::PageTitle);
 				break;
 			}
 
@@ -729,7 +733,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-				showTitlePage(TitlePageTime);
+				TitlePageManager titlePageManager(*screen);
+				titlePageManager.showTitlePage(TitlePageManager::PageTime);
 				break;
 			}
 			
@@ -745,7 +750,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-				showTitlePage(TitlePagePeak);
+				TitlePageManager titlePageManager(*screen);
+				titlePageManager.showTitlePage(TitlePageManager::PagePeak);
 				break;
 			}
 
@@ -2373,162 +2379,6 @@ void Tracker::rearrangePatternEditorControlOrInstrumentContainer()
 		sectionDiskMenu->resizeInstrumentContainer();
 	else
 		rearrangePatternEditorControl();	
-}
-
-Tracker::TitlePages Tracker::getCurrentTitlePage()
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* buttonShowPeak = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWPEAK));
-	ASSERT(buttonShowPeak);
-	PPButton* buttonShowTime = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTIME));
-	ASSERT(buttonShowTime);
-	PPButton* buttonShowTitle = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTITLE));
-	ASSERT(buttonShowTitle);
-
-	if (buttonShowPeak->isPressed())
-		return TitlePagePeak;
-	else if (buttonShowTime->isPressed())
-		return TitlePageTime;
-		
-	return TitlePageTitle;
-}
-
-void Tracker::showTitlePage(TitlePages page, bool update/* = true*/)
-{
-	switch (page)
-	{
-		case TitlePageTitle:
-			showSongTitleEditField(update);
-			break;
-		case TitlePageTime:
-			showTimeCounter(update);
-			break;
-		case TitlePagePeak:
-			showPeakControl(update);
-			break;
-	}
-}
-
-void Tracker::showSongTitleEditField(bool update/* = true*/)
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* buttonShowPeak = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWPEAK));
-	ASSERT(buttonShowPeak);
-	PPButton* buttonShowTime = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTIME));
-	ASSERT(buttonShowTime);
-	PPButton* buttonShowTitle = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTITLE));
-	ASSERT(buttonShowTitle);
-	PPButton* buttonTimeEstimate = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_ESTIMATESONGLENGTH));
-	ASSERT(buttonTimeEstimate);
-	PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_HEADING));
-	ASSERT(text);
-	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
-	ASSERT(text2);
-	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(false);
-	peakLevelControl->hide(true);
-	text2->hide(true);
-	buttonTimeEstimate->hide(true);
-
-	buttonShowPeak->setPressed(false);
-	buttonShowTime->setPressed(false);
-	buttonShowTitle->setPressed(true);
-#ifdef __LOWRES__
-	text->setText("Title:");
-#else
-	text->setText("Song Title:");
-#endif
-	text->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-
-	if (update)
-		screen->paintControl(container);
-}
-
-void Tracker::showTimeCounter(bool update/* = true*/)
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* buttonShowPeak = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWPEAK));
-	ASSERT(buttonShowPeak);
-	PPButton* buttonShowTime = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTIME));
-	ASSERT(buttonShowTime);
-	PPButton* buttonShowTitle = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTITLE));
-	ASSERT(buttonShowTitle);
-	PPButton* buttonTimeEstimate = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_ESTIMATESONGLENGTH));
-	ASSERT(buttonTimeEstimate);
-	PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_HEADING));
-	ASSERT(text);
-	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
-	ASSERT(text2);
-	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(true);
-	peakLevelControl->hide(true);
-	text2->hide(false);
-	buttonTimeEstimate->hide(false);
-
-	buttonShowPeak->setPressed(false);
-	buttonShowTime->setPressed(true);
-	buttonShowTitle->setPressed(false);
-	text->setText("Time:");
-	text->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-
-	if (update)
-		screen->paintControl(container);
-}
-
-void Tracker::showPeakControl(bool update/* = true*/)
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* buttonShowPeak = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWPEAK));
-	ASSERT(buttonShowPeak);
-	PPButton* buttonShowTime = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTIME));
-	ASSERT(buttonShowTime);
-	PPButton* buttonShowTitle = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_SHOWTITLE));
-	ASSERT(buttonShowTitle);
-	PPButton* buttonTimeEstimate = static_cast<PPButton*>(container->getControlByID(BUTTON_ABOUT_ESTIMATESONGLENGTH));
-	ASSERT(buttonTimeEstimate);
-	PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_HEADING));
-	ASSERT(text);
-	PPStaticText* text2 = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_TIME));
-	ASSERT(text2);
-	
-	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->hide(true);
-	peakLevelControl->hide(false);
-	text2->hide(true);
-	buttonTimeEstimate->hide(true);
-
-	buttonShowPeak->setPressed(true);
-	buttonShowTime->setPressed(false);
-	buttonShowTitle->setPressed(false);
-#ifdef __LOWRES__
-	text->setText("Peak:");
-#else
-	text->setText("Peak level:");
-#endif
-	text->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-
-	if (update)
-		screen->paintControl(container);
-}
-
-void Tracker::setPeakControlHeadingColor(const PPColor& color, bool update/* = true*/)
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ABOUT_HEADING));
-	ASSERT(text);
-	text->setColor(color);
-	
-	if (update)
-		screen->paintControl(container);
-}
-
-bool Tracker::isPeakControlVisible()
-{
-	return !peakLevelControl->isHidden();
 }
 
 void Tracker::showScopes(bool visible, pp_uint32 style)

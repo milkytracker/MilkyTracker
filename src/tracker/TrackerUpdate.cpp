@@ -47,6 +47,7 @@
 #include "SectionQuickOptions.h"
 #include "TabHeaderControl.h"
 #include "PPOpenPanel.h"
+#include "TitlePageManager.h"
 
 #include "ControlIDs.h"
 
@@ -145,7 +146,8 @@ bool Tracker::updatePeakLevelControl()
 	pp_int32 newPeak = left << 1;
 	if (newPeak >= maxPeakThreshold)
 	{
-		setPeakControlHeadingColor(TrackerConfig::colorRecordModeButtonText, false);
+		TitlePageManager titlePageManager(*screen);
+		titlePageManager.setPeakControlHeadingColor(TrackerConfig::colorRecordModeButtonText, false);
 		bUpdateEntire = true;
 	}
 	if (newPeak < oldPeak)
@@ -166,7 +168,8 @@ bool Tracker::updatePeakLevelControl()
 	newPeak = right << 1;
 	if (newPeak >= maxPeakThreshold)
 	{
-		setPeakControlHeadingColor(TrackerConfig::colorRecordModeButtonText, false);
+		TitlePageManager titlePageManager(*screen);
+		titlePageManager.setPeakControlHeadingColor(TrackerConfig::colorRecordModeButtonText, false);
 		bUpdateEntire = true;
 	}
 	if (newPeak < oldPeak)

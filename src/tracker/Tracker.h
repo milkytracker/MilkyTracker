@@ -329,21 +329,6 @@ private:
 
 	void showMainMenu(bool show, bool showInstrumentSelector);
 	
-	enum TitlePages
-	{
-		TitlePageTitle,
-		TitlePageTime,
-		TitlePagePeak
-	};
-	TitlePages getCurrentTitlePage();
-	void showTitlePage(TitlePages page, bool update = true);
-	void showSongTitleEditField(bool update = true);
-	void showTimeCounter(bool update = true);
-	void showPeakControl(bool update = true);
-	
-	void setPeakControlHeadingColor(const PPColor& color, bool update = true);
-	bool isPeakControlVisible();
-
 	void showScopes(bool visible, pp_uint32 style);
 	// - misc. -----------------------------------------------------------------
 	pp_int32 lastPos, lastRow;

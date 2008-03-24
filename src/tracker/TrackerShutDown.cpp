@@ -54,6 +54,7 @@
 #include "SectionSamples.h"
 #include "SectionQuickOptions.h"
 #include "Tools.h"
+#include "TitlePageManager.h"
 
 bool Tracker::checkForChanges(ModuleEditor* moduleEditor/* = NULL*/)
 {
@@ -193,7 +194,8 @@ bool Tracker::shutDown()
 	settingsDatabase->store("ROWINSERTADD", getPatternEditorControl()->getRowInsertAdd());
 
 	// Current visible title page
-	settingsDatabase->store("TITLEPAGE", getCurrentTitlePage());
+	TitlePageManager titlePageManager(*screen);
+	settingsDatabase->store("TITLEPAGE", titlePageManager.getCurrentTitlePage());
 
 	// Save colors
 	TColorPalette palette;

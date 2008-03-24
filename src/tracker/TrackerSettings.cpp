@@ -51,6 +51,7 @@
 #include "TrackerConfig.h"
 #include "ColorPaletteContainer.h"
 #include "Tools.h"
+#include "TitlePageManager.h"
 
 void Tracker::buildDefaultSettings()
 {
@@ -186,7 +187,7 @@ void Tracker::buildDefaultSettings()
 	// current row add
 	settingsDatabase->store("ROWINSERTADD", 1);
 	// show title field
-	settingsDatabase->store("TITLEPAGE", TitlePageTitle);
+	settingsDatabase->store("TITLEPAGE", TitlePageManager::PageTitle);
 	// sample editor last settings
 	settingsDatabase->store("SAMPLEEDITORLASTVALUES", "");
 	// no virtual channels for instrument playback
@@ -512,7 +513,8 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	}
 	else if (theKey->getKey().compareTo("TITLEPAGE") == 0)
 	{
-		showTitlePage((TitlePages)v2, false);
+		TitlePageManager titlePageManager(*screen);
+		titlePageManager.showTitlePage((TitlePageManager::Pages)v2, false);
 	}
 	// ---------------- HD Recorder settings -------------------
 	else if (theKey->getKey().compareTo("HDRECORDER_MIXFREQ") == 0)

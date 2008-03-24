@@ -39,6 +39,7 @@
 #include "PeakLevelControl.h"
 #include "ScopesControl.h"
 #include "TabHeaderControl.h"
+#include "TitlePageManager.h"
 
 // Sections
 #include "SectionTranspose.h"
@@ -428,7 +429,8 @@ void Tracker::initUI()
 	updateJamMenuOrder(false);
 #endif
 
-	showSongTitleEditField(false);
+	TitlePageManager titlePageManager(*screen);	
+	titlePageManager.showSongTitleEditField(false);
 
 	setFollowSong(true, false);
 	setProspectiveMode(false, false);
