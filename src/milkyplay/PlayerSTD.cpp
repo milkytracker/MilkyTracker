@@ -3202,6 +3202,7 @@ void PlayerSTD::playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_s
 void PlayerSTD::playNote(mp_ubyte chn, 
 						 mp_sint32 note, mp_sint32 ins, mp_sint32 vol/* = -1*/)
 {	
+#ifdef MILKYTRACKER
 	TModuleChannel* chnInf = &chninfo[chn];
 	// fill ring buffer with note entries
 	// the callback will query these notes and play them 
@@ -3210,4 +3211,5 @@ void PlayerSTD::playNote(mp_ubyte chn,
 	chnInf->notePlayEntries[idx].vol = vol;
 	chnInf->notePlayEntries[idx].note = note;
 	chnInf->notePlayWriteIndex++;
+#endif
 }

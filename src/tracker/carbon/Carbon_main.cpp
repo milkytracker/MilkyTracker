@@ -73,13 +73,7 @@ static pp_uint32	lastModifierKeyState	= 0;
 
 static PPPoint p;
 
-struct ApplicationPreferences
-{
-	bool insertEmulation;
-	bool sixteenBitColor;
-};
-
-ApplicationPreferences applicationPreferences;
+static bool			sixteenBitColorDepth	= false;
 
 pp_uint32 PPGetTickCount()
 {
@@ -144,7 +138,6 @@ static void installCrashHandler()
 
 // Some forwards
 pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef event,void *userData);
-void RestoreApplicationPreferences();
 
 void RaiseEventSynchronized(PPEvent* event)
 {
@@ -237,10 +230,20 @@ void InitMidi()
 		StopMidiRecording();
 }
 
+void ApplyPreferences()
+{
+	InitMidi();
+	enableInsertKeyEmulation(preferencesDialog->getFakeInsertKey());
+	if (preferencesDialog->getUse15BitColorDepth() != sixteenBitColorDepth)
+	{
+		PPMessageBox infoBox(myTrackerScreen, "Please restart",
+							 "MilkyTracker needs to be restarted to apply new color depth");
+		infoBox.runModal();
+	}
+}
+
 void initTracker()
 {
-	pp_int32 dTime;
-
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
@@ -250,11 +253,13 @@ void initTracker()
 	windowSize.height = 240;
 #endif
 
+	sixteenBitColorDepth = preferencesDialog->getUse15BitColorDepth();
+
 	myDisplayDevice = new PPDisplayDevice(mainWindow, 
 										  waitWindow, 
 										  windowSize.width, 
 										  windowSize.height, 
-										  applicationPreferences.sixteenBitColor ? 16 : 32);
+										  sixteenBitColorDepth ? 16 : 32);
 	
 	myDisplayDevice->init();
 
@@ -268,7 +273,7 @@ void initTracker()
 	// Startup procedure
 	myTracker->startUp();
 
-	InitMidi();
+	ApplyPreferences();
 
 	// install crash handler
 //#ifndef __DEBUG__
@@ -568,9 +573,6 @@ int main(int argc, char* argv[])
     
 	InitKeyCodeTranslation();
 	
-	// retrieve application preferences
-	RestoreApplicationPreferences();
-	
 	// tracker-init 
 	initTracker();
 	
@@ -593,41 +595,6 @@ CantGetNibRef:
 	delete globalMutex;
 
 	return err;
-}
-
-void UpdateMenu()
-{
-	CheckMenuItem (GetMenuHandle(1), 1, applicationPreferences.insertEmulation);
-	CheckMenuItem (GetMenuHandle(1), 2, applicationPreferences.sixteenBitColor);
-}
-
-void RestoreApplicationPreferences()
-{
-	Boolean success;
-
-	CFStringRef key = CFSTR("insertemulation");
-	applicationPreferences.insertEmulation = CFPreferencesGetAppBooleanValue(key, applicationID, &success);
-	enableInsertKeyEmulation(applicationPreferences.insertEmulation);
-
-	key = CFSTR("sixteenbitcolor");
-	applicationPreferences.sixteenBitColor = CFPreferencesGetAppBooleanValue(key, applicationID, &success);
-	enableInsertKeyEmulation(applicationPreferences.sixteenBitColor);
-	
-	UpdateMenu();
-}
-
-void StoreApplicationPreferences()
-{
-	CFStringRef yes = CFSTR("yes");
-	CFStringRef no  = CFSTR("no");
-
-	CFStringRef key = CFSTR("insertemulation");
-	CFPreferencesSetAppValue(key, applicationPreferences.insertEmulation ? yes : no, applicationID);
-	
-	key = CFSTR("sixteenbitcolor");
-	CFPreferencesSetAppValue(key, applicationPreferences.sixteenBitColor ? yes : no, applicationID);
-	
-	CFPreferencesAppSynchronize(applicationID);
 }
 
 void ProcessKeyEvent(EventRef event, EEventDescriptor targetEvent)
@@ -709,8 +676,6 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 							// shutdown was aborted 
 							if (!res)
 								result = noErr;
-							
-							StoreApplicationPreferences();
 							break;
 						}
 						
@@ -722,26 +687,6 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 							break;
 						}
 
-						case kEnableInsertEmulation:
-						{
-							applicationPreferences.insertEmulation = !applicationPreferences.insertEmulation;
-							enableInsertKeyEmulation(applicationPreferences.insertEmulation);
-							UpdateMenu();
-							result = noErr;
-							break;
-						}
-						
-						case kEnable16BitsColor:
-						{
-							applicationPreferences.sixteenBitColor = !applicationPreferences.sixteenBitColor;
-							enableInsertKeyEmulation(applicationPreferences.sixteenBitColor);
-							UpdateMenu();
-							PPMessageBox infoBox(myTrackerScreen, "Please restart","MilkyTracker needs to be restarted to apply new color depth");
-							infoBox.runModal();
-							result = noErr;
-							break;
-						}
-						
 						case kInvokePreferences:
 						{
 							if (preferencesDialog)
@@ -755,8 +700,8 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 							if (preferencesDialog)
 								preferencesDialog->hide();
 							
-							InitMidi();
-
+							ApplyPreferences();
+							
 							SelectWindow(mainWindow);
 							result = noErr;
 							break;

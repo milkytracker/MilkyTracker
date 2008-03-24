@@ -166,6 +166,7 @@ private:
 		mp_ubyte		avibsweep;
 		mp_ubyte		avibswcnt;
 		
+#ifdef MILKYTRACKER
 		enum
 		{
 			// must be 2^n
@@ -179,6 +180,7 @@ private:
 		
 		mp_sint32 notePlayReadIndex;
 		mp_sint32 notePlayWriteIndex;
+#endif
 	
 		void clear()
 		{
@@ -234,6 +236,7 @@ private:
 			avibsweep = 0;
 			avibswcnt = 0;
 			
+#ifdef MILKYTRACKER
 			for (mp_uint32 i = 0; i < NPQSIZE; i++)
 			{
 				notePlayEntries[i].note = notePlayEntries[i].ins = 0;
@@ -242,6 +245,7 @@ private:
 
 			notePlayReadIndex = 0;
 			notePlayWriteIndex = 0;			
+#endif
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)

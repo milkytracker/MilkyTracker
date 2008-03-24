@@ -53,6 +53,8 @@ private:
 		mp_uword age;
 	};
 	
+	const int* table;
+	
 	// Storage
 	mp_sint32 numChannels;
 	
@@ -145,7 +147,7 @@ public:
 		// Age teh bleps!
 		for(mp_sint32 i = 0; i < activeBleps[channel]; i++)
 		{
-			s -= winsinc_integral[filterTable][bleps[channel][i].age] * bleps[channel][i].level;
+			s -= winsinc_integral[filterTable*WINSINCSIZE+bleps[channel][i].age] * bleps[channel][i].level;
 			if((bleps[channel][i].age += paulaAdvance) >= MAX_AGE)
 				activeBleps[channel]  = i; // It died of old age :(
 		}
@@ -184,7 +186,7 @@ public:
 		// Age teh bleps!
 		for(mp_sint32 i = 0; i < activeBleps[channel]; i++)
 		{
-			s -= (winsinc_integral[filterTable][bleps[channel][i].age]>>3) * bleps[channel][i].level;
+			s -= (winsinc_integral[filterTable*WINSINCSIZE+bleps[channel][i].age]>>3) * bleps[channel][i].level;
 			if((bleps[channel][i].age += paulaAdvance) >= MAX_AGE)
 				activeBleps[channel]  = i; // It died of old age :(
 		}

@@ -68,6 +68,9 @@ private:
 
 	UInt32 getNumMidiDevices();
 	
+	void toggleFakeInsertKey();
+	void toggleUse15BitColorDepth();	
+	
 public:
 	PreferencesDialog(WindowRef	windowRef, WindowRef mainWindowRef);
 	~PreferencesDialog();
@@ -79,6 +82,9 @@ public:
 	bool getUseMidiDeviceFlag();
 	bool getRecordVelocityFlag();
 	UInt32 getVelocityAmplify();
+	
+	UInt32 getFakeInsertKey();
+	bool getUse15BitColorDepth();
 };
 
 #endif

@@ -204,6 +204,14 @@ void PlayerLogic::ensureSongStopped(bool bResetMainVolume, bool suspend)
 	}	
 }
 
+void PlayerLogic::ensureSongPlaying(bool continuePlaying)
+{
+	if (tracker.playerController->isSuspended())
+		tracker.playerController->resumePlayer(continuePlaying);
+	else
+		tracker.playerController->continuePlaying();
+}
+
 #define CONTINUEPATTERN \
 	if (tracker.playerController->isPlayingPattern() && \
 		!tracker.playerController->isPlayingRowOnly()) \

@@ -167,6 +167,7 @@ Tracker::Tracker() :
 
 	// Sections
 	sections = new PPSimpleVector<SectionAbstract>();
+	
 	sectionTranspose = new SectionTranspose(*this);
 	sections->add(sectionTranspose);
 	sectionAdvancedEdit = new SectionAdvancedEdit(*this);
@@ -2194,10 +2195,7 @@ void Tracker::ensureSongStopped(bool bResetMainVolume, bool suspend)
 
 void Tracker::ensureSongPlaying(bool continuePlaying)
 {
-	if (playerController->isSuspended())
-		playerController->resumePlayer(continuePlaying);
-	else
-		playerController->continuePlaying();
+	playerLogic->ensureSongPlaying(continuePlaying);
 }
 
 void Tracker::initPlayback()

@@ -32,8 +32,6 @@
 #define __CARBONDEFINITIONS_H__
 
 #define kFullscreenCommand		'gFul'
-#define kEnableInsertEmulation  'eIew'
-#define kEnable16BitsColor		'sIbc'
 #define kInvokePreferences		'iPdc'
 #define kDiscardPreferences		'dPdl'
 #define kConfirmPreferences		'cPdl'

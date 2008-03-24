@@ -39,6 +39,8 @@
 #define KEY_VELOCITYAMPLIFY	"VELOCITYAMPLIFY"
 #define KEY_SAVEPREFS		"SAVEPREFS"
 #define KEY_MIDIDEVICE		"MIDIDEVICE"
+#define KEY_INSERTEMULATION "insertemulation"
+#define KEY_SIXTEENBITCOLOR "sixteenbitcolor"
 
 pascal OSStatus PreferencesDialog::WindowEventHandler(EventHandlerCallRef myHandler, EventRef event, void* userData)
 {
@@ -57,7 +59,8 @@ pascal OSStatus PreferencesDialog::WindowEventHandler(EventHandlerCallRef myHand
 			ControlRef	targetControl = NULL;
 			ControlID	targetControlID;
 
-			GetEventParameter(event, kEventParamDirectObject, typeControlRef, NULL, sizeof(targetControl), NULL, &targetControl);
+			GetEventParameter(event, kEventParamDirectObject, typeControlRef, 
+							  NULL, sizeof(targetControl), NULL, &targetControl);
 			if (targetControl)
 				GetControlID(targetControl, &targetControlID);
 
@@ -67,6 +70,18 @@ pascal OSStatus PreferencesDialog::WindowEventHandler(EventHandlerCallRef myHand
 				{					
 					switch (targetControlID.id)
 					{
+						// simulate insert key with ctrl+up
+						case 131:
+							prefDlg->toggleFakeInsertKey();
+							result = noErr;
+							break;
+
+						// 15 bit color toggle
+						case 132:
+							prefDlg->toggleUse15BitColorDepth();
+							result = noErr;
+							break;
+					
 						// Enable MIDI device
 						case 129:
 							prefDlg->toggleUseMidiDevice();
@@ -221,6 +236,8 @@ void PreferencesDialog::initDataBase()
 	m_dataBase->store(KEY_MIDIDEVICE, "");
 	m_dataBase->store(KEY_RECORDVELOCITY, 0);
 	m_dataBase->store(KEY_VELOCITYAMPLIFY, 100);
+	m_dataBase->store(KEY_INSERTEMULATION, 0);
+	m_dataBase->store(KEY_SIXTEENBITCOLOR, 0);
 
 	// try to retrieve the values from the PLIST
 	Boolean success = FALSE;
@@ -263,20 +280,34 @@ void PreferencesDialog::initDataBase()
 	int i = CFPreferencesGetAppIntegerValue(key, applicationID, &success);
 	if (success)
 		m_dataBase->store(KEY_VELOCITYAMPLIFY, i);		
+
+	// Integer value
+	success = FALSE;
+	key = CFSTR(KEY_INSERTEMULATION);	
+	i = CFPreferencesGetAppIntegerValue(key, applicationID, &success);
+	if (success)
+		m_dataBase->store(KEY_INSERTEMULATION, i);		
+
+	// More boolean values following
+	success = FALSE;
+	key = CFSTR(KEY_SIXTEENBITCOLOR);	
+	b = CFPreferencesGetAppBooleanValue(key, applicationID, &success);
+	if (success)
+		m_dataBase->store(KEY_SIXTEENBITCOLOR, b);		
 }
 
 void PreferencesDialog::shutdownDataBase()
 {
+	CFStringRef yes = CFSTR("yes");
+	CFStringRef no  = CFSTR("no");
+
 	if (m_dataBase->restore(KEY_SAVEPREFS)->getIntValue())
 	{
-		CFStringRef yes = CFSTR("yes");
-		CFStringRef no  = CFSTR("no");
-
 		CFStringRef key = CFSTR(KEY_USEMIDI);		
-		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_USEMIDI)->getIntValue() ? yes : no, applicationID);
+		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_USEMIDI)->getBoolValue() ? yes : no, applicationID);
 
 		key = CFSTR(KEY_SAVEPREFS);		
-		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_SAVEPREFS)->getIntValue() ? yes : no, applicationID);
+		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_SAVEPREFS)->getBoolValue() ? yes : no, applicationID);
 
 		key = CFSTR(KEY_MIDIDEVICE);		
 		CFStringRef CFStrDevName = CFStringCreateWithCString(NULL, m_dataBase->restore(KEY_MIDIDEVICE)->getStringValue(), kCFStringEncodingASCII);
@@ -284,7 +315,7 @@ void PreferencesDialog::shutdownDataBase()
 		CFRelease(CFStrDevName);
 
 		key = CFSTR(KEY_RECORDVELOCITY);		
-		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_RECORDVELOCITY)->getIntValue() ? yes : no, applicationID);
+		CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_RECORDVELOCITY)->getBoolValue() ? yes : no, applicationID);
 
 		SInt32 number = m_dataBase->restore(KEY_VELOCITYAMPLIFY)->getIntValue();
 		CFNumberRef numberRef = CFNumberCreate(NULL, kCFNumberSInt32Type, &number);
@@ -310,6 +341,15 @@ void PreferencesDialog::shutdownDataBase()
 		key = CFSTR(KEY_VELOCITYAMPLIFY);		
 		CFPreferencesSetAppValue(key, NULL, applicationID);
 	}
+	
+	SInt32 number = m_dataBase->restore(KEY_INSERTEMULATION)->getIntValue();
+	CFNumberRef numberRef = CFNumberCreate(NULL, kCFNumberSInt32Type, &number);
+	CFStringRef key = CFSTR(KEY_INSERTEMULATION);		
+	CFPreferencesSetAppValue(key,  numberRef, applicationID);
+	CFRelease(numberRef);
+	
+	key = CFSTR(KEY_SIXTEENBITCOLOR);		
+	CFPreferencesSetAppValue(key, m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getBoolValue() ? yes : no, applicationID);
 	
 	CFPreferencesAppSynchronize(applicationID);
 }
@@ -338,9 +378,13 @@ void PreferencesDialog::restoreDataBase()
 
 void PreferencesDialog::updateToggles()
 {
+	if (NULL==m_dataBase)
+		return;
+
 	ControlHandle checkBoxControl, control;
 	ControlID checkBoxControlID[] = {{kAppSignature, 129}, {kAppSignature, 128}, {kAppSignature, 127}, 
-									 {kAppSignature, 126}, {kAppSignature, 125}, {kAppSignature, 124}};
+									 {kAppSignature, 126}, {kAppSignature, 125}, {kAppSignature, 124},
+									 {kAppSignature, 131}, {kAppSignature, 132}};
 
 	GetControlByID(preferencesWindow, &checkBoxControlID[0], &checkBoxControl);
 	bool b = false;
@@ -350,15 +394,12 @@ void PreferencesDialog::updateToggles()
 	else
 	{
 		EnableControl(checkBoxControl);	
-		if (m_dataBase)
-			b = m_dataBase->restore(KEY_USEMIDI)->getBoolValue();
+		b = m_dataBase->restore(KEY_USEMIDI)->getBoolValue();
 		SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
 	}
 
 	GetControlByID(preferencesWindow, &checkBoxControlID[1], &checkBoxControl);
-	b = false;
-	if (m_dataBase)
-		b = m_dataBase->restore(KEY_SAVEPREFS)->getBoolValue();
+	b = m_dataBase->restore(KEY_SAVEPREFS)->getBoolValue();
 	SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
 
 	GetControlByID(preferencesWindow, &checkBoxControlID[2], &checkBoxControl);
@@ -384,8 +425,7 @@ void PreferencesDialog::updateToggles()
 	else
 	{
 		EnableControl(checkBoxControl);	
-		if (m_dataBase)
-			b = m_dataBase->restore(KEY_RECORDVELOCITY)->getBoolValue();
+		b = m_dataBase->restore(KEY_RECORDVELOCITY)->getBoolValue();
 		SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
 
 		// enable min. value text for slider
@@ -400,6 +440,14 @@ void PreferencesDialog::updateToggles()
 		GetControlByID(preferencesWindow, &checkBoxControlID[5], &control);
 		EnableControl(control);	
 	}
+
+	GetControlByID(preferencesWindow, &checkBoxControlID[6], &checkBoxControl);
+	b = m_dataBase->restore(KEY_INSERTEMULATION)->getBoolValue();
+	SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
+
+	GetControlByID(preferencesWindow, &checkBoxControlID[7], &checkBoxControl);
+	b = m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getBoolValue();
+	SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
 }
 
 void PreferencesDialog::initDialog()
@@ -540,8 +588,28 @@ void PreferencesDialog::storeVelocityAmplify(UInt32 amplify)
 {
 	if (m_dataBase)
 	{
-		m_dataBase->restore("VELOCITYAMPLIFY")->store(amplify);
+		m_dataBase->restore(KEY_VELOCITYAMPLIFY)->store(amplify);
 		updateSliderVelocityAmplify();
+	}
+}
+
+void PreferencesDialog::toggleFakeInsertKey()
+{
+	if (m_dataBase)
+	{
+		int i = m_dataBase->restore(KEY_INSERTEMULATION)->getIntValue();
+		m_dataBase->restore(KEY_INSERTEMULATION)->store(!i);
+		updateToggles();
+	}
+}
+
+void PreferencesDialog::toggleUse15BitColorDepth()
+{
+	if (m_dataBase)
+	{
+		int i = m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getIntValue();
+		m_dataBase->restore(KEY_SIXTEENBITCOLOR)->store(!i);
+		updateToggles();
 	}
 }
 
@@ -616,3 +684,22 @@ UInt32 PreferencesDialog::getVelocityAmplify()
 	return 100;
 }
 
+UInt32 PreferencesDialog::getFakeInsertKey()
+{
+	if (m_dataBase)
+	{
+		return m_dataBase->restore(KEY_INSERTEMULATION)->getIntValue();
+	}
+
+	return 0;
+}
+
+bool PreferencesDialog::getUse15BitColorDepth()
+{
+	if (m_dataBase)
+	{
+		return m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getBoolValue();
+	}
+
+	return false;
+}

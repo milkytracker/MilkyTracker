@@ -64,6 +64,7 @@ public:
 	void stopAll();
 
 	void ensureSongStopped(bool bResetMainVolume, bool suspend);
+	void ensureSongPlaying(bool continuePlaying);
 	void continuePlayingPattern();
 	void continuePlayingSong();
 		
