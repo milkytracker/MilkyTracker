@@ -42,6 +42,8 @@
 #define KEY_INSERTEMULATION "insertemulation"
 #define KEY_SIXTEENBITCOLOR "sixteenbitcolor"
 
+static CFStringRef applicationID = CFSTR("com.Titan.MilkyTracker");
+
 pascal OSStatus PreferencesDialog::WindowEventHandler(EventHandlerCallRef myHandler, EventRef event, void* userData)
 {
     OSStatus	result = eventNotHandledErr;    

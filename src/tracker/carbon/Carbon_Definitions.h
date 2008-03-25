@@ -39,9 +39,5 @@
 
 #define kAppSignature			'MTTP'
 
-
-// also handy
-static CFStringRef applicationID = CFSTR("com.Titan.MilkyTracker");
-
 #endif
 
