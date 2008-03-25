@@ -915,6 +915,10 @@ unrecognizedCommandLineSwitch:
 		}
 	}
 
+	// Workaround for seg-fault in SDL_Init on Eee PC (thanks nostromo)
+	// (see http://forum.eeeuser.com/viewtopic.php?pid=136945)
+	SDL_putenv("SDL_VIDEO_X11_WMCLASS=Milkytracker");
+
 	timerMutex = new PPMutex();
 	globalMutex = new PPMutex();
 	
