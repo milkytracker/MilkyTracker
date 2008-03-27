@@ -1180,12 +1180,12 @@ void PatternEditorControl::setChannel(pp_int32 chn, pp_int32 posInner)
 
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	if (chn >= 0 && chn < pattern->rows)
+	if (chn >= 0 && chn < pattern->channum)
 		cursor.channel = chn;
 
 	cursor.inner = posInner;
 
-	assureCursorVisible(true, true);
+	assureCursorVisible(false, true);
 }
 
 void PatternEditorControl::validate()

@@ -755,7 +755,7 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 				getPatternEditorControl()->setSongPosition(-1, -1);
 				// but we should probably update the current row in the pattern editor as well
 				// as long as the user is not currently dragging the scroll bars in the sample editor
-				getPatternEditorControl()->setRow(row, fast ? false : !getPatternEditorControl()->isDraggingVertical());
+				getPatternEditorControl()->setRow(row, /*fast ? false : */!getPatternEditorControl()->isDraggingVertical());
 			}
 		}
 		else if (playerController->isPlayingPattern() && !shouldFollowSong())
@@ -772,7 +772,7 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 		else if (playerController->isPlayingPattern() && shouldFollowSong())
 		{
 			getPatternEditorControl()->setSongPosition(-1, -1);
-			getPatternEditorControl()->setRow(row, fast ? false : !getPatternEditorControl()->isDraggingVertical());
+			getPatternEditorControl()->setRow(row, /*fast ? false : */!getPatternEditorControl()->isDraggingVertical());
 		}
 		else		
 		{

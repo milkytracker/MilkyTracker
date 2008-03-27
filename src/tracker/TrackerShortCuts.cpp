@@ -208,6 +208,9 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 				patternEditor->writeDirectNote(note,
 											   chn, row, pos);
 				
+				// update cursor to song position in case we're blocking refresh timer
+				updateSongPosition(-1, -1, true);
+				
 				screen->paintControl(patternEditorControl);
 				
 				if (event)
@@ -287,6 +290,9 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 														   keys[i].channel, row, pos);
 					}
 				
+					// update cursor to song position in case we're blocking refresh timer
+					updateSongPosition(-1, -1, true);
+
 					screen->paintControl(patternEditorControl);
 				}
 				
