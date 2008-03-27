@@ -196,6 +196,7 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 				
 				pp_int32 posInner = patternEditorControl->getCursorPosInner();
 				patternEditorControl->setChannel(chn, posInner);
+				patternEditorControl->setRow(row);
 				// add delay note if requested
 				if (ticker && recordNoteDelay)
 					patternEditor->writeDirectEffect(1, 0x3D, ticker > 0xf ? 0xf : ticker,
@@ -208,10 +209,10 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 				patternEditor->writeDirectNote(note,
 											   chn, row, pos);
 				
+				screen->paintControl(patternEditorControl);
+				
 				// update cursor to song position in case we're blocking refresh timer
 				updateSongPosition(-1, -1, true);
-				
-				screen->paintControl(patternEditorControl);
 				
 				if (event)
 					event->cancel();
@@ -270,8 +271,10 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 									  
 				if (isLiveRecording && recordKeyOff)
 				{														
-					// if we're in the same slot => send key off by inserting key off effect
 					setChanged();
+					patternEditorControl->setRow(row);
+
+					// if we're in the same slot => send key off by inserting key off effect
 					if (keys[i].row == row && keys[i].pos == pos)
 					{
 						//mp_sint32 bpm, speed;
@@ -290,10 +293,10 @@ void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEd
 														   keys[i].channel, row, pos);
 					}
 				
+					screen->paintControl(patternEditorControl);
+
 					// update cursor to song position in case we're blocking refresh timer
 					updateSongPosition(-1, -1, true);
-
-					screen->paintControl(patternEditorControl);
 				}
 				
 				keys[i].note = keys[i].channel = 0;
