@@ -225,9 +225,9 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 				{
 					for (mp_uint32 i = 0; i < smp->samplen; i++)
 					{
-						mp_sint32 s1 = ((mp_sint32)buffer[i*6+1] + (((mp_sint32)buffer[i*6+2])<<8));
-						mp_sint32 s2 = ((mp_sint32)buffer[i*6+4] + (((mp_sint32)buffer[i*6+5])<<8));
-						sample[i] = (mp_sword)((s1+s2)>>1);
+						mp_sword s1 = ((mp_sint32)buffer[i*6+1] + (((mp_sint32)buffer[i*6+2])<<8));
+						mp_sword s2 = ((mp_sint32)buffer[i*6+4] + (((mp_sint32)buffer[i*6+5])<<8));
+						sample[i] = ((mp_sint32)s1 + (mp_sint32)s2) >> 1;
 					}
 				}
 				// take left channel
