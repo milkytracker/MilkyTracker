@@ -150,9 +150,12 @@ private:
 		LastChangeWriteMacro,
 		LastChangeCut,
 		LastChangePaste,
+		LastChangeDeleteSelection,
+		
 		LastChangeExpandPattern,
 		LastChangeShrinkPattern,
 		LastChangeResizePattern,
+
 		LastChangeLoadXPattern,
 		LastChangeLoadXTrack,
 		
@@ -217,6 +220,8 @@ private:
 	void cut(ClipBoard& clipBoard);
 	void copy(ClipBoard& clipBoard);
 	void paste(ClipBoard& clipBoard, bool transparent = false, pp_int32 fromChannel = -1);
+
+	void clearRange(const PatternEditorTools::Position& rangeStart, const PatternEditorTools::Position& rangeEnd);
 	
 public:
 	PatternEditor();
@@ -279,7 +284,6 @@ public:
 	const void* getUndoUserData() const { return (void*)undoUserData.getData(); }
 	
 	// --- dealing with the pattern data -------------------------------------
-	void clearRange(const PatternEditorTools::Position& rangeStart, const PatternEditorTools::Position& rangeEnd);
 	void clearSelection();
 	
 	void clearPattern();

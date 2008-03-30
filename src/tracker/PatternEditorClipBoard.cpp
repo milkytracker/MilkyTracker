@@ -50,69 +50,10 @@ void PatternEditor::ClipBoard::makeCopy(TXMPattern& pattern, const PatternEditor
 	if (!PatternEditorTools::hasValidSelection(&pattern, ss, se))
 		return;
 
-	pp_int32 ssc = ss.channel;
-	pp_int32 ssr = ss.row;
-	pp_int32 ssi = ss.inner;
-
-	pp_int32 sec = se.channel;
-	pp_int32 ser = se.row;
-	pp_int32 sei = se.inner;
-
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!PatternEditorTools::normalizeSelection(&pattern, ss, se, 
+												selectionStart.channel, selectionStart.row, selectionStart.inner,
+												selectionEnd.channel, selectionEnd.row, selectionEnd.inner))
 		return;
-
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern.channum) ssc = pattern.channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern.channum) sec = pattern.channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern.rows) ssr = pattern.rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern.rows) ser = pattern.rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	selectionStart.channel = 0;
-	selectionStart.row = 0;
-	selectionEnd.channel = 0;
-	selectionEnd.row = 0;
-
-	if (ssc > sec)
-	{
-		selectionStart.channel = sec;
-		selectionEnd.channel = ssc;
-		selectionStart.inner = sei;
-		selectionEnd.inner = ssi;
-	}
-	else
-	{
-		selectionStart.channel = ssc;
-		selectionEnd.channel = sec;
-		selectionStart.inner = ssi;
-		selectionEnd.inner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStart.row = ser;
-		selectionEnd.row = ssr;
-	}
-	else
-	{
-		selectionStart.row = ssr;
-		selectionEnd.row = ser;
-	}
-	
-	if (selectionStart.channel == selectionEnd.channel && selectionEnd.inner < selectionStart.inner)
-	{
-		mp_sint32 h = selectionEnd.inner;
-		selectionEnd.inner = selectionStart.inner;
-		selectionStart.inner = h;
-	}	
 
 	// only entire instrument column is allowed
 	if (selectionStart.inner >= 1 && selectionStart.inner<=2)

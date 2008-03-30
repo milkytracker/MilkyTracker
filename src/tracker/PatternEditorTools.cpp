@@ -59,21 +59,21 @@ PatternEditorTools::Position PatternEditorTools::getMarkEnd()
 	return pos;
 }
 
-void PatternEditorTools::clearSelection(const PatternEditorTools::Position& ss, const PatternEditorTools::Position& se)
+bool PatternEditorTools::normalizeSelection(const TXMPattern* pattern, 
+											const PatternEditorTools::Position& ss, 
+											const PatternEditorTools::Position& se,
+											pp_int32& selectionStartChannel, 
+											pp_int32& selectionStartRow, 
+											pp_int32& selectionStartInner,
+											pp_int32& selectionEndChannel, 
+											pp_int32& selectionEndRow, 
+											pp_int32& selectionEndInner)
 {
-	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
-		return;
-
-	pp_int32 ssc = ss.channel;
-	pp_int32 ssr = ss.row;
-	pp_int32 ssi = ss.inner;
-
-	pp_int32 sec = se.channel;
-	pp_int32 ser = se.row;
-	pp_int32 sei = se.inner;
+	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
+	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
 
 	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
-		return;
+		return false;
 
 	// sanity checks
 	if (ssc < 0) ssc = 0;
@@ -92,12 +92,12 @@ void PatternEditorTools::clearSelection(const PatternEditorTools::Position& ss, 
 	if (sei > 7) sei = 7;
 
 	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
+	selectionStartChannel = 0;
+	selectionStartRow = 0;
+	selectionStartInner = 0;
+	selectionEndChannel = 0;
+	selectionEndRow = 0;
+	selectionEndInner = 0;
 
 	if (ssc > sec)
 	{
@@ -125,13 +125,35 @@ void PatternEditorTools::clearSelection(const PatternEditorTools::Position& ss, 
 		selectionEndRow = ser;
 	}
 	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
+	if (selectionStartChannel == selectionEndChannel && 
+		selectionEndInner < selectionStartInner)
 	{
 		mp_sint32 h = selectionEndInner;
 		selectionEndInner = selectionStartInner;
 		selectionStartInner = h;
 	}	
+	
+	return true;
+}
+							
 
+void PatternEditorTools::clearSelection(const PatternEditorTools::Position& ss, const PatternEditorTools::Position& se)
+{
+	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
+		return;
+
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
+
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
+		return;
+		
 	// only entire instrument column is allowed
 	if (selectionStartInner >= 1 && selectionStartInner<=2)
 		selectionStartInner = 1;
@@ -252,69 +274,18 @@ pp_int32 PatternEditorTools::insRemapSelection(const Position& ss, const Positio
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
-
+		
 	// only entire instrument column is allowed
 	if (selectionStartInner >= 1 && selectionStartInner<=2)
 		selectionStartInner = 1;
@@ -406,69 +377,18 @@ pp_int32 PatternEditorTools::noteTransposeSelection(const Position& ss, const Po
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
-
+		
 	// only entire instrument column is allowed
 	if (selectionStartInner >= 1 && selectionStartInner<=2)
 		selectionStartInner = 1;
@@ -585,68 +505,17 @@ pp_int32 PatternEditorTools::interpolateValuesInSelection(const PatternEditorToo
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
 
 	// only entire instrument column is allowed
 	if (selectionStartInner >= 1 && selectionStartInner<=2)
@@ -680,8 +549,7 @@ pp_int32 PatternEditorTools::interpolateValuesInSelection(const PatternEditorToo
 
 	for (pp_int32 j = 0; j < selectionWidth; j++)
 		for (pp_int32 k = 0; k < 8; k++)
-		{
-			
+		{			
 			if (selectionWidth == 1)
 			{
 				if (selectionStartInner > k || selectionEndInner < k)
@@ -901,69 +769,18 @@ pp_int32 PatternEditorTools::zeroOperandsSelection(const Position& ss, const Pos
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
-
+		
 	// only entire operand column + effect is allowed
 	if (selectionStartInner >= 5 && selectionStartInner<=7)
 		selectionStartInner = 5;
@@ -1139,68 +956,17 @@ pp_int32 PatternEditorTools::fillOperandsSelection(const Position& ss, const Pos
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
 
 	// only entire operand column + effect is allowed
 	if (selectionStartInner >= 5 && selectionStartInner<=7)
@@ -1365,68 +1131,17 @@ pp_int32 PatternEditorTools::relocateCommandsSelection(const Position& ss, const
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
 
-	pp_int32 ssc = ss.channel, ssr = ss.row, ssi = ss.inner;
-	pp_int32 sec = se.channel, ser = se.row, sei = se.inner;
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
 
-	if (ssc < 0 && ssr < 0 && sec < 0 && ser < 0)
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
 		return 0;
-
-	// sanity checks
-	if (ssc < 0) ssc = 0;
-	if (ssc >= pattern->channum) ssc = pattern->channum-1;
-	if (sec < 0) sec = 0;
-	if (sec >= pattern->channum) sec = pattern->channum-1;
-
-	if (ssr < 0) ssr = 0;
-	if (ssr >= pattern->rows) ssr = pattern->rows-1;
-	if (ser < 0) ser = 0;
-	if (ser >= pattern->rows) ser = pattern->rows-1;
-
-	if (ssi < 0) ssi = 0;
-	if (ssi > 7) ssi = 7;
-	if (sei < 0) sei = 0;
-	if (sei > 7) sei = 7;
-
-	// correct orientation
-	pp_int32 selectionStartChannel = 0;
-	pp_int32 selectionStartRow = 0;
-	pp_int32 selectionStartInner = 0;
-	pp_int32 selectionEndChannel = 0;
-	pp_int32 selectionEndRow = 0;
-	pp_int32 selectionEndInner = 0;
-
-	if (ssc > sec)
-	{
-		selectionStartChannel = sec;
-		selectionEndChannel = ssc;
-		selectionStartInner = sei;
-		selectionEndInner = ssi;
-	}
-	else
-	{
-		selectionStartChannel = ssc;
-		selectionEndChannel = sec;
-		selectionStartInner = ssi;
-		selectionEndInner = sei;
-	}
-
-	if (ssr > ser)
-	{
-		selectionStartRow = ser;
-		selectionEndRow = ssr;
-	}
-	else
-	{
-		selectionStartRow = ssr;
-		selectionEndRow = ser;
-	}
-	
-	if (selectionStartChannel == selectionEndChannel && selectionEndInner < selectionStartInner)
-	{
-		mp_sint32 h = selectionEndInner;
-		selectionEndInner = selectionStartInner;
-		selectionStartInner = h;
-	}	
 
 	// only entire operand column + effect is allowed
 	if (selectionStartInner >= 5 && selectionStartInner<=7)
@@ -1697,7 +1412,8 @@ pp_int32 PatternEditorTools::scaleVolume(const Position& startSelection, const P
 	if (endSelRow > pattern->rows - 1)
 		endSelRow = pattern->rows - 1;
 	
-	float step = (endScale - startScale) / ((endSelRow - startSelRow) != 0.0f ? (float)(endSelRow - startSelRow) : 1.0f);
+	float step = (endScale - startScale) / ((endSelRow - startSelRow) != 0.0f ? 
+											(float)(endSelRow - startSelRow) : 1.0f);
 	
 	for (pp_int32 r = startSelRow; r <= endSelRow; r++)
 	{

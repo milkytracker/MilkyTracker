@@ -379,7 +379,17 @@ void PatternEditor::clearRange(const PatternEditorTools::Position& rangeStart, c
 
 void PatternEditor::clearSelection()
 {
+	if (pattern == NULL)
+		return;
+
+	if (pattern->patternData == NULL)
+		return;
+	
+	prepareUndo();
+	
 	clearRange(selection.start, selection.end);
+	
+	finishUndo(LastChangeDeleteSelection);
 }
 
 void PatternEditor::clearPattern()

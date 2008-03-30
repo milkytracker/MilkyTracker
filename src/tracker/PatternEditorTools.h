@@ -197,6 +197,16 @@ public:
 	static void slotClear(mp_ubyte* dst, pp_int32 from, pp_int32 to);
 
 	static bool hasValidSelection(const TXMPattern* pattern, const Position& ss, const Position& se, pp_int32 numVisibleChannels = -1);
+
+	static bool normalizeSelection(const TXMPattern* pattern, 
+								   const PatternEditorTools::Position& ss, 
+								   const PatternEditorTools::Position& se,
+								   pp_int32& selectionStartChannel, 
+								   pp_int32& selectionStartRow, 
+								   pp_int32& selectionStartInner,
+								   pp_int32& selectionEndChannel, 
+								   pp_int32& selectionEndRow, 
+								   pp_int32& selectionEndInner);
 	
 	static void flattenSelection(Position& selectionStart, Position& selectionEnd)
 	{
