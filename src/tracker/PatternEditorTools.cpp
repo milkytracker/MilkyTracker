@@ -655,7 +655,7 @@ pp_int32 PatternEditorTools::interpolateValuesInSelection(const PatternEditorToo
 			
 			}
 			
-			// we'll need at least 2 values to interpolate inbetween
+			// we'll need at least 2 values to interpolate in between
 			if (numValues >= 2)
 			{
 				for (pp_int32 n = 0; n < numValues-1; n++)

@@ -22,13 +22,13 @@
 
 /*
  *  ChannelMixer.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on Tue Oct 19 2004.
  *
  *  This class is pretty much emulating a Gravis Ultrasound with a timer set to 250Hz
  *  i.e. mixerHandler() will call a timer routine 250 times per second while mixing 
- *  the audio stream inbetween.
+ *  the audio stream in between.
  */
 #ifndef __CHANNELMIXER_H__
 #define __CHANNELMIXER_H__

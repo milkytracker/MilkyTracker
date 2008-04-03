@@ -29,7 +29,7 @@
  *
  *  This class is pretty much emulating a Gravis Ultrasound with a timer set to 250Hz
  *  I.e. the mixer() routine will call a user specified handler 250 times per second
- *  while mixing the audio stream inbetween.
+ *  while mixing the audio stream in between.
  */
 #include "ChannelMixer.h"
 #include "ResamplerFactory.h"
@@ -1067,7 +1067,7 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 
 				if (!disableMixing)
 				{
-					// do some inbetween state recording 
+					// do some in between state recording 
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
 						storeTimeRecordData(nb, &channel[c]);
@@ -1121,7 +1121,7 @@ void ChannelMixer::mix(mp_sint32* mixbuff32, mp_uint32 bufferSize)
 
 				if (!disableMixing)
 				{
-					// do some inbetween state recording 
+					// do some in between state recording 
 					// to be able to show smooth updates even if the buffer is large
 					for (mp_uint32 c=0;c<mixerNumActiveChannels;c++) 
 						storeTimeRecordData(nb, &channel[c]);

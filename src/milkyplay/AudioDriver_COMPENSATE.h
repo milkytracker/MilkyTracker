@@ -22,7 +22,7 @@
 
 /*
  *  AudioDriver_COMPENSATE.h
- MilkyPlay
+ *  MilkyPlay
  *
  *  Created by Peter Barth on 22.04.06.
  *
