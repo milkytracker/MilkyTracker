@@ -869,24 +869,20 @@ bool SampleEditor::cutSampleInternal()
 	if (sStart == sEnd)
 		return false;
 
-	if (sEnd < (signed)sample->loopstart + (signed)sample->looplen)
-		sample->loopstart-=(sEnd - sStart);
-	if ((signed)sample->loopstart < 0)
-		sample->loopstart = 0;
+	// reset loop area double buffer to original sample state
+	// (switch buffering off)
+	sample->restoreOriginalState();
 
-	if (sample->type & 16)
-	{
-		mp_sword* buff = (mp_sword*)sample->sample;
-		for (pp_uint32 i = selectionEnd; i <= sample->samplen; i++)
-			buff[(i-selectionEnd)+selectionStart] = buff[i];
-	}
-	else
-	{
-		mp_sbyte* buff = (mp_sbyte*)sample->sample;
-		for (pp_uint32 i = selectionEnd; i <= sample->samplen; i++)
-			buff[(i-selectionEnd)+selectionStart] = buff[i];
-	}
+	for (pp_uint32 i = selectionEnd; i <= sample->samplen; i++)
+		sample->setSampleValue((i-selectionEnd)+selectionStart, sample->getSampleValue(i));
+
+	mp_sint32 sLoopStart = sample->loopstart;
+	if (sEnd < (signed)sample->loopstart + (signed)sample->looplen)
+		sLoopStart-=(sEnd - sStart);
+	if (sLoopStart < 0)
+		sLoopStart = 0;
 	
+	sample->loopstart = sLoopStart;
 	sample->samplen -= abs(selectionEnd - selectionStart);
 	
 	return true;
