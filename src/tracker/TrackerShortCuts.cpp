@@ -41,7 +41,6 @@
 #include "PatternEditorControl.h"
 
 #include "ModuleEditor.h"
-#include "PatternTools.h"
 #include "TrackerConfig.h"
 
 #include "InputControlListener.h"
@@ -49,6 +48,12 @@
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
 
+// note events can come from two sources:
+// 1. they're bound to a keyboard event (key down/up):
+//    in that case the source event needs to be delivered
+//    the event is canceled if it is caught in a realtime recording scenario
+// 2. coming from an external source (MIDI keyboard)
+//    in that case you can set the event to NULL
 void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl)
 {
 	PlayerController* playerController = this->playerController;
@@ -207,8 +212,7 @@ void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, Pattern
 					patternEditor->writeDirectEffect(0, 0xC, (pp_uint8)keyVolume,
 													 chn, row, pos);
 				
-				patternEditor->writeDirectNote(note,
-											   chn, row, pos);
+				patternEditor->writeDirectNote(note, chn, row, pos);
 				
 				screen->paintControl(patternEditorControl);
 				
@@ -316,7 +320,7 @@ void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 
 	// Volume here is between 0 to 255, but don't forget to make the volume FT2 compatible (0..64)
 	inputControlListener->sendNote(note | InputControlListener::KEY_PRESS,
-								   volume != -1 ? XModule::vol64to255((volume*64)/255) : -1);
+								   volume == -1 ? -1 : (signed)PatternTools::normalizeVol(volume));
 }
 
 void Tracker::sendNoteUp(mp_sint32 note)
@@ -803,52 +807,32 @@ processOthers:
 
 void Tracker::switchEditMode(EditModes mode)
 {
-	switch (mode)
+	bool b = (mode == EditModeMilkyTracker);
+
+	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
+	ASSERT(container);
+	
+	// Assign keyboard bindings
+	getPatternEditorControl()->setShowFocus(b);
+	listBoxInstruments->setShowFocus(b);
+	listBoxSamples->setShowFocus(b);
+	listBoxOrderList->setShowFocus(b);
+	sectionDiskMenu->setFileBrowserShowFocus(b);
+	sectionDiskMenu->setCycleFilenames(b);
+	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
+	ASSERT(container);
+	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(b);
+	
+	if (b)
 	{
-		case EditModeMilkyTracker:
-		{
-			PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
-			ASSERT(container);
-			
-			// Assign keyboard bindings
-			eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
-			
-			getPatternEditorControl()->setShowFocus(true);
-			listBoxInstruments->setShowFocus(true);
-			listBoxSamples->setShowFocus(true);
-			listBoxOrderList->setShowFocus(true);
-			sectionDiskMenu->setFileBrowserShowFocus(true);
-			sectionDiskMenu->setCycleFilenames(true);
-			container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-			ASSERT(container);
-			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(true);
-			
-			screen->setFocus(listBoxInstruments, false);			
-			break;
-		}
-
-		case EditModeFastTracker:
-		{
-			PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
-			ASSERT(container);
-
-			// Assign keyboard bindings
-			eventKeyDownBindings = eventKeyDownBindingsFastTracker;			
-
-			getPatternEditorControl()->setShowFocus(false);
-			listBoxInstruments->setShowFocus(false);
-			listBoxSamples->setShowFocus(false);
-			listBoxOrderList->setShowFocus(false);
-			sectionDiskMenu->setCycleFilenames(false);
-			sectionDiskMenu->setFileBrowserShowFocus(false);
-			container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-			ASSERT(container);
-			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(false);
-			
-			recordMode = true;
-			eventKeyDownBinding_ToggleFT2Edit();
-			break;
-		}
+		eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;	
+		screen->setFocus(listBoxInstruments, false);
+	}
+	else
+	{
+		eventKeyDownBindings = eventKeyDownBindingsFastTracker;	
+		recordMode = true;
+		eventKeyDownBinding_ToggleFT2Edit();
 	}
 	
 	getPatternEditorControl()->switchEditMode(mode);
@@ -857,6 +841,23 @@ void Tracker::switchEditMode(EditModes mode)
 }
 
 // Process messagebox shortcuts (RETURN & ESC)
+// the modal dialogs only appear to be modal, we're still getting
+// keyboard events here in case a modal dialog box appears
+// this is the handler which allows for esc + return handling in case
+// of a modal dialog
+static void simulateMouseClickEvent(PPControl* ctrl)
+{
+	PPPoint p = ctrl->getLocation();
+	p.x+=ctrl->getSize().width >> 1;
+	p.y+=ctrl->getSize().height >> 1;
+	
+	PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
+	PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
+	
+	ctrl->callEventListener(&e1);
+	ctrl->callEventListener(&e2);
+}
+
 bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 {
 	PPControl* ctrl = screen->getModalControl();
@@ -867,6 +868,9 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 	PPSimpleVector<PPControl>& controls = static_cast<PPContainer*>(ctrl)->getControls();
 
 	pp_int32 i;
+	// if dialog contains list (list can also be an edit field btw.)
+	// and something is being edited in that list we don't simulate 
+	// yes/no/cancel button presses
 	for (i = 0; i < controls.size(); i++)
 	{
 		PPControl* ctrl = controls.get(i);
@@ -874,6 +878,9 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 			return true;
 	}
 
+	// iterate over controls in dialog and see whether we can find 
+	// yes/no/cancel buttons
+	// if that's the case we simulate mouse button press
 	pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 
 	for (i = 0; i < controls.size(); i++)
@@ -884,60 +891,16 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 			case PP_MESSAGEBOX_BUTTON_YES:	
 				if (keyCode == VK_RETURN)
 				{
-					PPPoint p = ctrl->getLocation();
-					p.x+=ctrl->getSize().width >> 1;
-					p.y+=ctrl->getSize().height >> 1;
-					
-					PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
-					PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
-					
-					ctrl->callEventListener(&e1);
-					ctrl->callEventListener(&e2);
-					
-					//bool res = messageBoxEventListener(screen->getModalControl()->getID(), MESSAGEBOX_BUTTON_YES);
-					
-					//if (res)
-					//	screen->setModalControl(NULL);  // repaints
+					simulateMouseClickEvent(ctrl);
 					return true;
 				}
 				break;
 				
 			case PP_MESSAGEBOX_BUTTON_CANCEL:
-				if (keyCode == VK_ESCAPE)
-				{
-					PPPoint p = ctrl->getLocation();
-					p.x+=ctrl->getSize().width >> 1;
-					p.y+=ctrl->getSize().height >> 1;
-					
-					PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
-					PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
-					
-					ctrl->callEventListener(&e1);
-					ctrl->callEventListener(&e2);
-					//bool res = messageBoxEventListener(screen->getModalControl()->getID(), MESSAGEBOX_BUTTON_CANCEL);
-					
-					//if (res)
-					//	screen->setModalControl(NULL);  // repaints
-					return true;
-				}
-				break;
-
 			case PP_MESSAGEBOX_BUTTON_NO:
 				if (keyCode == VK_ESCAPE)
 				{
-					PPPoint p = ctrl->getLocation();
-					p.x+=ctrl->getSize().width >> 1;
-					p.y+=ctrl->getSize().height >> 1;
-					
-					PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
-					PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
-					
-					ctrl->callEventListener(&e1);
-					ctrl->callEventListener(&e2);
-					//bool res = messageBoxEventListener(screen->getModalControl()->getID(), MESSAGEBOX_BUTTON_NO);
-					
-					//if (res)
-					//	screen->setModalControl(NULL);  // repaints
+					simulateMouseClickEvent(ctrl);
 					return true;
 				}
 				break;

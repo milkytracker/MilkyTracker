@@ -34,21 +34,16 @@
 #include "Event.h"
 #include "SectionUpperLeft.h"
 
-class PPControl;
-class Tracker;
-class PPCheckBox;
-class PanningSettingsContainer;
-
 class SectionQuickOptions : public SectionUpperLeft
 {
 private:
-	PPCheckBox* checkBoxKeepSettings;
-	PanningSettingsContainer* panningSettingsContainer;
+	class PPCheckBox* checkBoxKeepSettings;
+	class PanningDialog* panningDialog;
 	
 	pp_uint8* oldPanning;
 
 public:
-	SectionQuickOptions(Tracker& tracker);
+	SectionQuickOptions(class Tracker& tracker);
 	virtual ~SectionQuickOptions();
 
 	// Derived from SectionAbstract

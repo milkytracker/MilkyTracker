@@ -1,5 +1,5 @@
 /*
- *  tracker/PanningSettingsContainer.h
+ *  tracker/PanningDialog.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,15 +21,15 @@
  */
 
 /*
- *  PanningSettingsContainer.h
+ *  PanningDialog.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 03.03.06.
  *
  */
 
-#ifndef __PANNINGSETTINGSCONTAINER_H__
-#define __PANNINGSETTINGSCONTAINER_H__
+#ifndef __PANNINGDIALOG_H__
+#define __PANNINGDIALOG_H__
 
 #include "BasicTypes.h"
 #include "Event.h"
@@ -37,7 +37,7 @@
 class PPScreen;
 class PPContainer;
 
-class PanningSettingsContainer : public EventListenerInterface
+class PanningDialog : public EventListenerInterface
 {
 private:
 	PPContainer* container;
@@ -48,8 +48,8 @@ private:
 	pp_uint32 numChannels;
 	
 public:
-	PanningSettingsContainer(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels);
-	virtual ~PanningSettingsContainer();
+	PanningDialog(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels);
+	virtual ~PanningDialog();
 
 	void init();
 

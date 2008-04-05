@@ -34,7 +34,7 @@
 #include "Event.h"
 
 static Ascii2KeyCodeTable ascKeyCodeTable;
-static bool insertKeyEmulation = false;
+static InsertKeyShortcuts insertKeyEmulation = InsertKeyShortcutNone;
 
 void InitKeyCodeTranslation()
 {
@@ -127,6 +127,10 @@ pp_uint16 KeyCodeToVK(UInt32 keyCode)
 			return 0xDB;
 		// Return isn't it?
 		case 36:
+			// allow using ctrl+enter as replacement for insert
+			if (insertKeyEmulation == InsertKeyShortcutCtrlEnter && 
+				TestForKeyDown(kVirtualControlKey))
+				return VK_INSERT;
 			return VK_RETURN;
 		// Ä
 		case 39:
@@ -157,6 +161,10 @@ pp_uint16 KeyCodeToVK(UInt32 keyCode)
 			return 0xE2;
 
 		case 51:
+			// allow using ctrl+backspace as replacement for insert
+			if (insertKeyEmulation == InsertKeyShortcutCtrlBackspace && 
+				TestForKeyDown(kVirtualControlKey))
+				return VK_INSERT;
 			return VK_BACK;
 
 		case 53:
@@ -226,10 +234,11 @@ pp_uint16 KeyCodeToVK(UInt32 keyCode)
 			return VK_DOWN;
 
 		case 126:
-			if (insertKeyEmulation && TestForKeyDown(kVirtualControlKey))
+			// allow using ctrl+up as replacement for insert
+			if (insertKeyEmulation == InsertKeyShortcutCtrlUp && 
+				TestForKeyDown(kVirtualControlKey))
 				return VK_INSERT;
-			else
-				return VK_UP;
+			return VK_UP;
 			
 		default:
 			if (KeyCodeToAscii(keyCode) >= 'a' && KeyCodeToAscii(keyCode) <= 'z')
@@ -242,6 +251,8 @@ pp_uint16 KeyCodeToVK(UInt32 keyCode)
 	return 0;
 }
 
+// the following translation is not complete, only keys which are necessary
+// are translated
 pp_uint16 KeyCodeToSC(UInt32 keyCode)
 {
 	/*printf("%i\n",keyCode);
@@ -517,8 +528,8 @@ pp_uint16 KeyCodeToSC(UInt32 keyCode)
 	return 0;
 }
 
-void enableInsertKeyEmulation(bool b)
+void enableInsertKeyEmulation(InsertKeyShortcuts shortcut)
 {
-	insertKeyEmulation = b;
+	insertKeyEmulation = shortcut;
 }
 

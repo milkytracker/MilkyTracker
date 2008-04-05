@@ -33,7 +33,7 @@
 
 #include "BasicTypes.h"
 
-// some Carbon stuff ---------------------------
+// some constants
 enum MacKeyModifiers
 {
 	MacKeyModifierCommand	= 256,
@@ -43,12 +43,21 @@ enum MacKeyModifiers
 	MacKeyModifierCtrl		= 4096
 };
 
-// forwards ------------------------------------
+// translate mac style key codes to their PC counterparts
 void InitKeyCodeTranslation();
 pp_uint16 KeyCodeToVK(UInt32 keyCode);
 pp_uint16 KeyCodeToSC(UInt32 keyCode);
 void QueryKeyModifiers();
 
-void enableInsertKeyEmulation(bool b);
+// provide means to simulate missing insert key on mac notebook keyboard
+enum InsertKeyShortcuts
+{
+	InsertKeyShortcutNone,
+	InsertKeyShortcutCtrlUp,
+	InsertKeyShortcutCtrlEnter,
+	InsertKeyShortcutCtrlBackspace,
+};
+
+void enableInsertKeyEmulation(InsertKeyShortcuts shortcut);
 
 #endif

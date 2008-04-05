@@ -802,3 +802,7 @@ void PatternTools::convertVolumeToEffect(pp_int32 vol, pp_int32& effect, pp_int3
 	}
 	
 }
+
+pp_uint8 PatternTools::getNoteOffNote() { return XModule::NOTE_OFF; }
+	
+pp_uint32 PatternTools::normalizeVol(pp_uint32 volume) { return XModule::vol64to255((volume*64)/255); }

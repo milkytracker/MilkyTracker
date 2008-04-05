@@ -52,7 +52,7 @@ private:
 	void backupDataBase();
 	void restoreDataBase();
 
-	void updateToggles();
+	void updateControls();
 	void initDialog();
 	
 	UInt32 getComboSelection();
@@ -68,7 +68,7 @@ private:
 
 	UInt32 getNumMidiDevices();
 	
-	void toggleFakeInsertKey();
+	void setFakeInsertKey(UInt32 style);
 	void toggleUse15BitColorDepth();	
 	
 public:

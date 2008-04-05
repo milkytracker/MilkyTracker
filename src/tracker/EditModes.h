@@ -28,18 +28,18 @@
  *
  */
 
-#ifndef EDITMODES__H
-#define EDITMODES__H
+#ifndef __EDITMODES_H__
+#define __EDITMODES_H__
 
 enum EditModes
 {
-	EditModeMilkyTracker = 0,
+	EditModeMilkyTracker,
 	EditModeFastTracker
 };
 
 enum ScrollModes
 {
-	ScrollModeToEnd = 0,
+	ScrollModeToEnd,
 	ScrollModeToCenter,
 	ScrollModeStayInCenter
 };

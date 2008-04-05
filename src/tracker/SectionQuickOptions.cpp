@@ -39,7 +39,7 @@
 #include "StaticText.h"
 #include "Seperator.h"
 #include "Container.h"
-#include "PanningSettingsContainer.h"
+#include "PanningDialog.h"
 
 #include "ControlIDs.h"
 
@@ -66,7 +66,7 @@ enum ControlIDs
 SectionQuickOptions::SectionQuickOptions(Tracker& theTracker) :
 	SectionUpperLeft(theTracker),
 	checkBoxKeepSettings(NULL),
-	panningSettingsContainer(NULL),
+	panningDialog(NULL),
 	oldPanning(NULL)
 {
 }
@@ -74,7 +74,7 @@ SectionQuickOptions::SectionQuickOptions(Tracker& theTracker) :
 SectionQuickOptions::~SectionQuickOptions()
 {
 	delete[] oldPanning;
-	delete panningSettingsContainer;
+	delete panningDialog;
 }
 
 pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
@@ -125,9 +125,9 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 				saveOldPanning();
 				
 				for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
-					panningSettingsContainer->setPanning((pp_uint8)i, tracker.playerController->getPanning((pp_uint8)i), false);
+					panningDialog->setPanning((pp_uint8)i, tracker.playerController->getPanning((pp_uint8)i), false);
 					
-				panningSettingsContainer->show(true);
+				panningDialog->show(true);
 				break;
 			}
 				
@@ -182,15 +182,15 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 		
 	}
 	else if (event->getID() == eValueChanged && 
-			 reinterpret_cast<PanningSettingsContainer*>(sender) == panningSettingsContainer)
+			 reinterpret_cast<PanningDialog*>(sender) == panningDialog)
 	{
 		pp_uint32 i = *(reinterpret_cast<pp_uint32*>(event->getDataPtr()));
 		
-		tracker.playerController->setPanning((pp_uint8)i, panningSettingsContainer->getPanning(i));
+		tracker.playerController->setPanning((pp_uint8)i, panningDialog->getPanning(i));
 	}
 	else if (event->getID() == eCanceled)
 	{
-		if (reinterpret_cast<PanningSettingsContainer*>(sender) == panningSettingsContainer)
+		if (reinterpret_cast<PanningDialog*>(sender) == panningDialog)
 		{	
 			restoreOldPanning();
 		}
@@ -204,8 +204,8 @@ void SectionQuickOptions::init(pp_int32 px, pp_int32 py)
 	PPCheckBox* checkBox;
 	PPScreen* screen = tracker.screen;
 
-	if (panningSettingsContainer == NULL)
-		panningSettingsContainer = new PanningSettingsContainer(screen, this, TrackerConfig::numPlayerChannels);
+	if (panningDialog == NULL)
+		panningDialog = new PanningDialog(screen, this, TrackerConfig::numPlayerChannels);
 
 	PPContainer* container = new PPContainer(CONTAINER_QUICKOPTIONS, tracker.screen, this, PPPoint(px, py), PPSize(320,UPPERLEFTSECTIONHEIGHT), false);
 	container->setColor(TrackerConfig::colorThemeMain);	

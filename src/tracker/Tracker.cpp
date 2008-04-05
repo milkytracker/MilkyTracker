@@ -68,7 +68,7 @@
 // Helper class to invoke tools which need parameters
 #include "ToolInvokeHelper.h"
 // Panning settings container modal dialog
-#include "PanningSettingsContainer.h"
+#include "PanningDialog.h"
 
 #include "ControlIDs.h"
 

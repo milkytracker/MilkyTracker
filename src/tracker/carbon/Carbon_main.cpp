@@ -68,7 +68,7 @@ static bool			rMouseDown				= false;
 static pp_uint32	rButtonDownStartTime;
 
 static pp_uint32	timerTicker				= 0;
-static pp_int32		keyTimerTicker			= 0;
+//static pp_int32		keyTimerTicker			= 0;
 static pp_uint32	lastModifierKeyState	= 0;
 
 static PPPoint p;
@@ -233,7 +233,7 @@ void InitMidi()
 void ApplyPreferences()
 {
 	InitMidi();
-	enableInsertKeyEmulation(preferencesDialog->getFakeInsertKey());
+	enableInsertKeyEmulation((InsertKeyShortcuts)preferencesDialog->getFakeInsertKey());
 	if (preferencesDialog->getUse15BitColorDepth() != sixteenBitColorDepth)
 	{
 		PPMessageBox infoBox(myTrackerScreen, "Please restart",
@@ -303,8 +303,8 @@ static pascal OSErr myDragReceiveHandler(WindowPtr theWindow, void *refcon, Drag
 {
 	ItemReference theItem;
 	HFSFlavor targetFile;
-	PromiseHFSFlavor targetPromise;
-	FSSpec targetSpec;
+	//PromiseHFSFlavor targetPromise;
+	//FSSpec targetSpec;
 	Size theSize;
 	OSErr err = eventNotHandledErr;
 	
@@ -378,7 +378,7 @@ static pascal OSErr myDragTrackingHandler(DragTrackingMessage message, WindowPtr
 	switch (message) {
 	
 		case kDragTrackingEnterWindow:
-			{	Point mouse;
+			{	
 				gApprovedDrag = false;
 				if (theWindow == FrontWindow()) {
 					if (approveDragReference(theDragRef, &gApprovedDrag) != noErr) break;
@@ -512,21 +512,24 @@ int main(int argc, char* argv[])
   
 	globalMutex = new PPMutex();
   
-    EventTypeSpec	mainSpec[] = {{kEventClassCommand,kEventCommandProcess},
-                                      {kEventClassKeyboard,kEventRawKeyDown},
-                                      {kEventClassKeyboard,kEventRawKeyRepeat},
-                                      {kEventClassKeyboard,kEventRawKeyUp},
-                                      {kEventClassKeyboard,kEventRawKeyModifiersChanged},
-                                      {kEventClassMouse,kEventMouseDown},
-                                      {kEventClassMouse,kEventMouseUp},
-                                      {kEventClassMouse,kEventMouseMoved},
-									  {kEventClassMouse,kEventMouseExited},
-                                      {kEventClassMouse,kEventMouseDragged},
-									  {kEventClassMouse,kEventMouseWheelMoved},
-									  {kEventClassTextInput,kEventUnicodeForKeyEvent},
-									  {kEventClassWindow,kEventWindowDrawContent},
-									  {kEventClassWindow,kEventWindowBoundsChanged}};
-
+    EventTypeSpec mainSpec[] = 
+	{
+		{kEventClassCommand,kEventCommandProcess},
+		{kEventClassKeyboard,kEventRawKeyDown},
+		{kEventClassKeyboard,kEventRawKeyRepeat},
+		{kEventClassKeyboard,kEventRawKeyUp},
+		{kEventClassKeyboard,kEventRawKeyModifiersChanged},
+		{kEventClassMouse,kEventMouseDown},
+		{kEventClassMouse,kEventMouseUp},
+		{kEventClassMouse,kEventMouseMoved},
+		{kEventClassMouse,kEventMouseExited},
+		{kEventClassMouse,kEventMouseDragged},
+		{kEventClassMouse,kEventMouseWheelMoved},
+		{kEventClassTextInput,kEventUnicodeForKeyEvent},
+		{kEventClassWindow,kEventWindowDrawContent},
+		{kEventClassWindow,kEventWindowBoundsChanged}
+	};
+	
     // Create a Nib reference passing the name of the nib file (without the .nib extension)
     // CreateNibReference only searches into the application bundle.
     err = CreateNibReference(CFSTR("main"), &nibRef);
@@ -639,12 +642,8 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 	if (!myTrackerScreen)
 		return result;
 	
-	HICommand	command;
-    
-	Rect		windowRect;
-	
-    UInt32	eventClass, eventKind, keyCode;
-	UInt16  character;
+	Rect	windowRect;
+    UInt32	eventClass, eventKind;
     
     eventClass = GetEventClass(event);
     eventKind = GetEventKind(event);

@@ -74,7 +74,7 @@ pascal OSStatus PreferencesDialog::WindowEventHandler(EventHandlerCallRef myHand
 					{
 						// simulate insert key with ctrl+up
 						case 131:
-							prefDlg->toggleFakeInsertKey();
+							prefDlg->setFakeInsertKey(GetControl32BitValue(targetControl)-1);
 							result = noErr;
 							break;
 
@@ -378,7 +378,7 @@ void PreferencesDialog::restoreDataBase()
 	m_dataBase = new TrackerSettingsDatabase(*m_dataBaseCopy);
 }
 
-void PreferencesDialog::updateToggles()
+void PreferencesDialog::updateControls()
 {
 	if (NULL==m_dataBase)
 		return;
@@ -444,8 +444,8 @@ void PreferencesDialog::updateToggles()
 	}
 
 	GetControlByID(preferencesWindow, &checkBoxControlID[6], &checkBoxControl);
-	b = m_dataBase->restore(KEY_INSERTEMULATION)->getBoolValue();
-	SetControl32BitValue(checkBoxControl, b ? TRUE : FALSE);
+	UInt32 value = m_dataBase->restore(KEY_INSERTEMULATION)->getIntValue();
+	SetControl32BitValue(checkBoxControl, value+1);
 
 	GetControlByID(preferencesWindow, &checkBoxControlID[7], &checkBoxControl);
 	b = m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getBoolValue();
@@ -508,7 +508,7 @@ void PreferencesDialog::initDialog()
 		DisableControl(popupButtonControl);	
 	}
 	
-	updateToggles();
+	updateControls();
 
 	updateSliderVelocityAmplify();	
 }
@@ -528,7 +528,7 @@ void PreferencesDialog::toggleRecordVelocity()
 	{
 		int i = m_dataBase->restore(KEY_RECORDVELOCITY)->getIntValue();
 		m_dataBase->restore(KEY_RECORDVELOCITY)->store(!i);
-		updateToggles();
+		updateControls();
 	}
 }
 
@@ -538,7 +538,7 @@ void PreferencesDialog::toggleUseMidiDevice()
 	{
 		int i = m_dataBase->restore(KEY_USEMIDI)->getIntValue();
 		m_dataBase->restore(KEY_USEMIDI)->store(!i);
-		updateToggles();
+		updateControls();
 	}
 }
 
@@ -548,7 +548,7 @@ void PreferencesDialog::toggleSavePreferences()
 	{
 		int i = m_dataBase->restore(KEY_SAVEPREFS)->getIntValue();
 		m_dataBase->restore(KEY_SAVEPREFS)->store(!i);
-		updateToggles();
+		updateControls();
 	}
 }
 
@@ -595,13 +595,12 @@ void PreferencesDialog::storeVelocityAmplify(UInt32 amplify)
 	}
 }
 
-void PreferencesDialog::toggleFakeInsertKey()
+void PreferencesDialog::setFakeInsertKey(UInt32 style)
 {
 	if (m_dataBase)
 	{
-		int i = m_dataBase->restore(KEY_INSERTEMULATION)->getIntValue();
-		m_dataBase->restore(KEY_INSERTEMULATION)->store(!i);
-		updateToggles();
+		m_dataBase->restore(KEY_INSERTEMULATION)->store(style);
+		updateControls();
 	}
 }
 
@@ -611,7 +610,7 @@ void PreferencesDialog::toggleUse15BitColorDepth()
 	{
 		int i = m_dataBase->restore(KEY_SIXTEENBITCOLOR)->getIntValue();
 		m_dataBase->restore(KEY_SIXTEENBITCOLOR)->store(!i);
-		updateToggles();
+		updateControls();
 	}
 }
 

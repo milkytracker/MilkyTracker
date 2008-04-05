@@ -1,5 +1,5 @@
 /*
- *  tracker/PanningSettingsContainer.cpp
+ *  tracker/PanningDialog.cpp
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,14 +21,14 @@
  */
 
 /*
- *  PanningSettingsContainer.cpp
+ *  PanningDialog.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on 03.03.06.
  *
  */
 
-#include "PanningSettingsContainer.h"
+#include "PanningDialog.h"
 #include "Tracker.h"
 #include "Screen.h"
 #include "ControlIDs.h"
@@ -43,7 +43,7 @@
 #define BUTTON_PANNING_MILKY	1002
 #define BUTTON_PANNING_MONO		1003
 
-PanningSettingsContainer::PanningSettingsContainer(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels) :
+PanningDialog::PanningDialog(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels) :
 	screen(theScreen),
 	eventListener(theEventListener),
 	container(NULL),
@@ -53,7 +53,7 @@ PanningSettingsContainer::PanningSettingsContainer(PPScreen* theScreen, EventLis
 	init();
 }
 
-PanningSettingsContainer::~PanningSettingsContainer()
+PanningDialog::~PanningDialog()
 {
 	delete[] panning;
 	delete container;
@@ -61,7 +61,7 @@ PanningSettingsContainer::~PanningSettingsContainer()
 
 
 // PPEvent listener
-pp_int32 PanningSettingsContainer::handleEvent(PPObject* sender, PPEvent* event)
+pp_int32 PanningDialog::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eCommand)
 	{
@@ -145,7 +145,7 @@ pp_int32 PanningSettingsContainer::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void PanningSettingsContainer::init()
+void PanningDialog::init()
 {
 	pp_int32 width = 290;
 	pp_int32 height = 234;
@@ -219,7 +219,7 @@ void PanningSettingsContainer::init()
 	panning = new pp_uint8[numChannels];
 }
 
-void PanningSettingsContainer::show(bool b)
+void PanningDialog::show(bool b)
 {
 	if (b)
 	{
@@ -229,7 +229,7 @@ void PanningSettingsContainer::show(bool b)
 		screen->setModalControl(NULL);
 }
 
-void PanningSettingsContainer::setPanning(pp_uint32 chn, pp_uint8 pan, bool repaint/* = true*/)
+void PanningDialog::setPanning(pp_uint32 chn, pp_uint8 pan, bool repaint/* = true*/)
 {
 	if (panning == NULL)
 		return;
@@ -250,7 +250,7 @@ void PanningSettingsContainer::setPanning(pp_uint32 chn, pp_uint8 pan, bool repa
 		screen->paintControl(slider);
 }
 
-void PanningSettingsContainer::applyPanningAmiga()
+void PanningDialog::applyPanningAmiga()
 {
 	for (pp_uint32 i = 0; i < numChannels; i++)
 	{
@@ -279,7 +279,7 @@ void PanningSettingsContainer::applyPanningAmiga()
 	screen->paintControl(container);
 }
 
-void PanningSettingsContainer::applyPanningMilky()
+void PanningDialog::applyPanningMilky()
 {
 	for (pp_uint32 i = 0; i < numChannels; i++)
 	{
@@ -291,7 +291,7 @@ void PanningSettingsContainer::applyPanningMilky()
 	screen->paintControl(container);
 }
 
-void PanningSettingsContainer::applyPanningMono()
+void PanningDialog::applyPanningMono()
 {
 	for (pp_uint32 i = 0; i < numChannels; i++)
 	{

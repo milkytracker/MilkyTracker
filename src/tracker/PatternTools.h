@@ -24,7 +24,6 @@
 #define PATTERNTOOLS__H
 
 #include "BasicTypes.h"
-#include "XModule.h"
 
 #define TONOTE(octave, note) \
 ((((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) < 97 ? (((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) : -1)
@@ -34,7 +33,7 @@ class PatternTools
 private:
 	pp_int32 offset;
 	pp_int32 currentEffectIndex;
-	TXMPattern* pattern;
+	struct TXMPattern* pattern;
 	pp_int32 lockOffset;
 
 public:
@@ -81,7 +80,8 @@ public:
 	static pp_uint32 getDecNumDigits(pp_uint32 value);
 	static void convertToDec(char* name, pp_uint32 value, pp_uint32 numDigits);
 	
-	static inline pp_uint8 getNoteOffNote() { return XModule::NOTE_OFF; }
+	static pp_uint8 getNoteOffNote();	
+	static pp_uint32 normalizeVol(pp_uint32 volume);
 };
 
 #endif
