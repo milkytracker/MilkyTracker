@@ -184,7 +184,7 @@ public:
 	void setMultiChannelRecord(bool b);
 	
 	bool start();
-	bool stop();
+	bool stop(bool detachPlayers);
 	
 	void getCurrentSamplePeak(pp_int32& left, pp_int32& right);
 	

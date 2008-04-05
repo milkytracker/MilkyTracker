@@ -560,7 +560,8 @@ mp_sint32 ITSampleLoader::read_IT_compressed_block () {
 	mp_sint32 res = f.read(source_buffer, 1, size);
 	if (res != size)
 	{
-		free (source_buffer);
+		delete[] (mp_ubyte*)source_buffer;
+		source_buffer = NULL;
 		return FUNCTION_FAILED;
 	}
 

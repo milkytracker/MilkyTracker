@@ -120,7 +120,7 @@ bool Tracker::shutDown()
 	}
 	moduleEditor = currentEditor;
 
-	playerMaster->stop();
+	playerMaster->stop(true);
 
 	XMFile f(System::getConfigFileName(), true);
 

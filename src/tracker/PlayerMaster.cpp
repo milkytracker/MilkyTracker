@@ -415,8 +415,16 @@ bool PlayerMaster::start()
 	return mixer->start() == 0;
 }
 
-bool PlayerMaster::stop()
+bool PlayerMaster::stop(bool detachPlayers)
 {
+	// removes playing devices from master mixer before stopping
+	// the master mixer audio device
+	if (detachPlayers)
+	{
+		for (pp_int32 i = 0; i < playerControllers->size(); i++)
+			playerControllers->get(i)->detachDevice();
+	}
+
 	return mixer->stop() == 0;
 }
 	

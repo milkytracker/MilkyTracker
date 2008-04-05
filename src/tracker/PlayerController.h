@@ -101,6 +101,8 @@ private:
 	// no construction outside
 	PlayerController(class MasterMixer* mixer, bool fakeScopes);
 
+	bool detachDevice();
+
 	void reset();
 	
 public:

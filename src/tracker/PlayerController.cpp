@@ -103,6 +103,15 @@ void PlayerController::reset()
 	player->resetChannelsFull();
 }
 
+bool PlayerController::detachDevice()
+{
+	if (!mixer->isDeviceRemoved(player))
+	{
+		return mixer->removeDevice(player);
+	}
+	return false;
+}
+
 PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	mixer(mixer),
 	player(NULL),
@@ -168,8 +177,7 @@ PlayerController::~PlayerController()
 
 	if (player)
 	{
-		if (!mixer->isDeviceRemoved(player))
-			mixer->removeDevice(player);
+		detachDevice();
 		delete player;
 	}
 	
