@@ -1061,7 +1061,7 @@ bool PlayerController::isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 en
 
 	ChannelMixer* mixer = player;
 
-	PlayerSTD::TPrEnv* env = NULL;
+	const PlayerSTD::TPrEnv* env = NULL;
 	
 	switch (envelopeType)
 	{
@@ -1098,7 +1098,7 @@ bool PlayerController::isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32
 	if (!player)
 		return false;
 
-	PlayerSTD::TModuleChannel* chnInf = &player->chninfo[channel];
+	const PlayerSTD::TModuleChannel* chnInf = &player->chninfo[channel];
 	
 	if (player->channel[channel].flags&ChannelMixer::MP_SAMPLE_PLAY)
 	{

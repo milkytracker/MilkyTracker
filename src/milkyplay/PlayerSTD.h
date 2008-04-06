@@ -59,7 +59,7 @@ private:
 		struct TTimeRecord
 		{
 			mp_sword pos;
-			TEnvelope* envstruc;
+			const TEnvelope* envstruc;
 		};
 		
 		TTimeRecord* timeRecord;
