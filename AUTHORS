@@ -1,1 +1,25 @@
-Automake requires this file to be here.
+Main Code:
+    Peter "pailes" Barth
+
+Additional Code:
+    Christopher "Deltafire" O'Neill (SDL ports, some features/bugfixes)
+    Antti S. Lankila (Amiga filter coefficients)
+    Varthall (Amiga port)
+
+3rd Party Libraries:
+    RTMidi/RTAudio
+    PortAudio
+    ZLib
+    Zziplib
+
+Pixel Graphics:
+    kenet
+    raina
+
+Demo songs:
+    svenzzon
+    Strobe & Kmuland
+    raina
+
+ASCII art (.nfo file):
+    H2o
