@@ -30,36 +30,57 @@
 #ifndef __AUDIODRIVER_RTAUDIO_H__
 #define __AUDIODRIVER_RTAUDIO_H__
 
-#include "RtAudio.h"
-#include "RtError.h"
 #include "AudioDriver_COMPENSATE.h"
 
-class AudioDriver_RTAUDIO : public AudioDriver_COMPENSATE
+class AudioDriver_RTAUDIO : public AudioDriverInterface
 {
 private:
-	static const char*	driverNames[];
-
-	RtAudio*			audio;
-	RtAudio::Api selectedAudioApi;
+	AudioDriverInterface* impl;
 	
-	static int			fill_audio(void* stream, void*, unsigned int length,  double streamTime, RtAudioStreamStatus status, void *udata);
-									 									 
 public:
-				AudioDriver_RTAUDIO(RtAudio::Api audioApi = RtAudio::UNSPECIFIED);
+	enum Api 
+	{
+		UNSPECIFIED,    /*!< Search for a working compiled API. */
+		LINUX_ALSA,     /*!< The Advanced Linux Sound Architecture API. */
+		LINUX_OSS,      /*!< The Linux Open Sound System API. */
+		UNIX_JACK,      /*!< The Jack Low-Latency Audio Server API. */
+		MACOSX_CORE,    /*!< Macintosh OS-X Core Audio API. */
+		WINDOWS_ASIO,   /*!< The Steinberg Audio Stream I/O API. */
+		WINDOWS_DS,     /*!< The Microsoft Direct Sound API. */
+		RTAUDIO_DUMMY   /*!< A compilable but non-functional API. */
+	};
+	
+	enum Version
+	{
+		V3,
+		V4
+	};
+	
+	
+				AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED, Version version = V4);
 
 	virtual		~AudioDriver_RTAUDIO();
 			
-	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
-	virtual     mp_sint32   closeDevice();
-
-	virtual     void		start();
-	virtual     mp_sint32   stop();
-
-	virtual     mp_sint32   pause();
-	virtual     mp_sint32   resume();
-
-	virtual		const char* getDriverID() { return driverNames[selectedAudioApi]; }
+	virtual		mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
+	virtual		mp_uint32	getMixFrequency() const;
+	virtual		mp_sint32   closeDevice();
+	virtual		void		start();
+	virtual		mp_sint32   stop();
+	virtual		mp_sint32   pause();
+	virtual		mp_sint32   resume();
+	virtual		mp_uint32	getNumPlayedSamples() const;
+	virtual		mp_uint32	getBufferPos() const;
+	virtual		bool		supportsTimeQuery();
+	virtual		const char* getDriverID();
+	virtual		void		advance();
+	virtual		mp_sint32	getPreferredSampleRate() const;
 	virtual		mp_sint32	getPreferredBufferSize() const;
+	virtual		void		msleep(mp_uint32 msecs);
+	virtual		bool		isMixerActive();
+	virtual		void		setIdle(bool idle);
+	
+	void createRt4Instance(Api audioApi = UNSPECIFIED);
+	void createRt3Instance(Api audioApi = UNSPECIFIED);
 };
 
 #endif

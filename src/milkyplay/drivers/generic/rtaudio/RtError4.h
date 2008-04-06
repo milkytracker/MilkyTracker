@@ -16,6 +16,9 @@
 #include <iostream>
 #include <string>
 
+namespace RtAudio4
+{
+
 class RtError : public std::exception
 {
  public:
@@ -55,6 +58,8 @@ class RtError : public std::exception
  protected:
   std::string message_;
   Type type_;
+};
+
 };
 
 #endif

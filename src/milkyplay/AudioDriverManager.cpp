@@ -30,8 +30,8 @@
 #define ALLOC_DRIVERLIST(NUMDRIVERS) \
 	enumerationIndex = -1; \
 	numDrivers = (NUMDRIVERS); \
-	driverList = new AudioDriverBase*[numDrivers]; \
-	memset(driverList, 0, numDrivers*sizeof(AudioDriverBase*));
+	driverList = new AudioDriverInterface*[numDrivers]; \
+	memset(driverList, 0, numDrivers*sizeof(AudioDriverInterface*));
 
 #define CLEANUP_DRIVERLIST \
 	for (mp_sint32 i = 0; i < numDrivers; i++) \
@@ -68,8 +68,8 @@ AudioDriverManager::AudioDriverManager() :
 	driverList[i++] = new AudioDriver_MMSYSTEM(true);
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
 	driverList[i++] = new AudioDriver_RTAUDIO();
-	driverList[i++] = new AudioDriver_RTAUDIO(RtAudio::WINDOWS_ASIO);
-	driverList[i++] = new AudioDriver_RTAUDIO(RtAudio::WINDOWS_DS);
+	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_ASIO);
+	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_DS);
 
 	// On windows vista we set the DS driver to the default
 #ifndef _WIN32_WCE
@@ -111,7 +111,7 @@ AudioDriverManager::AudioDriverManager() :
 
 	driverList[0] = new AudioDriver_COREAUDIO();
 	driverList[1] = new AudioDriver_RTAUDIO();
-	driverList[2] = new AudioDriver_RTAUDIO(RtAudio::MACOSX_CORE);
+	driverList[2] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::MACOSX_CORE);
 #else
 	ALLOC_DRIVERLIST(1);
 	driverList[0] = new AudioDriver_COREAUDIO();
@@ -180,7 +180,7 @@ AudioDriverManager::AudioDriverManager() :
 
 #endif
 
-AudioDriverBase* AudioDriverManager::getPreferredAudioDriver()
+AudioDriverInterface* AudioDriverManager::getPreferredAudioDriver()
 {
 	return driverList[defaultDriverIndex];
 }
@@ -190,7 +190,7 @@ AudioDriverManager::~AudioDriverManager()
 	CLEANUP_DRIVERLIST;
 }
 
-AudioDriverBase* AudioDriverManager::getAudioDriverByName(const char* name)
+AudioDriverInterface* AudioDriverManager::getAudioDriverByName(const char* name)
 {
 	if (name == NULL)
 		return NULL;

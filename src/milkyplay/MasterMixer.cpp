@@ -41,7 +41,7 @@ enum
 MasterMixer::MasterMixer(mp_uint32 sampleRate, 
 						 mp_uint32 bufferSize/* = 0*/, 
 						 mp_uint32 numDevices/* = 1*/,
-						 AudioDriverBase* audioDriver/* = 0*/) :
+						 AudioDriverInterface* audioDriver/* = 0*/) :
 	listener(0),
 	sampleRate(sampleRate),
 	bufferSize(bufferSize),
@@ -519,7 +519,7 @@ bool MasterMixer::setCurrentAudioDriverByName(const char* name)
 	if (audioDriverManager == 0)
 		audioDriverManager = new AudioDriverManager();
 
-	AudioDriverBase* newAudioDriver = audioDriverManager->getAudioDriverByName(name);
+	AudioDriverInterface* newAudioDriver = audioDriverManager->getAudioDriverByName(name);
 	if (newAudioDriver == 0)
 	{
 		newAudioDriver = audioDriverManager->getPreferredAudioDriver();	

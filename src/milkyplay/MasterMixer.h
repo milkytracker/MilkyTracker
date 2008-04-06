@@ -51,7 +51,7 @@ public:
 	MasterMixer(mp_uint32 sampleRate, 
 				mp_uint32 bufferSize = 0, 
 				mp_uint32 numDevices = 1,
-				class AudioDriverBase* audioDriver = 0);
+				class AudioDriverInterface* audioDriver = 0);
 	
 	virtual ~MasterMixer();
 	
@@ -98,7 +98,7 @@ public:
 	Mixable* getFilterHook(Mixable* filterHook) const { return filterHook; }
 	
 	// some legacy functions used by milkytracker
-	const class AudioDriverBase* getAudioDriver() const { return audioDriver; }
+	const class AudioDriverInterface* getAudioDriver() const { return audioDriver; }
 	
 	const char*	getCurrentAudioDriverName() const;
 	bool setCurrentAudioDriverByName(const char* name);
@@ -137,7 +137,7 @@ private:
 	DeviceDescriptor* devices;
 	
 	mutable class AudioDriverManager* audioDriverManager;
-	AudioDriverBase* audioDriver;
+	AudioDriverInterface* audioDriver;
 	
 	bool initialized;
 	bool started;

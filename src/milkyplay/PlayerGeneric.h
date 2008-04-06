@@ -40,7 +40,7 @@
 #include "PlayerBase.h"
 
 class XModule;
-class AudioDriverBase;
+class AudioDriverInterface;
 
 class PlayerGeneric : public MixerSettings, public PlayModeSettings
 {

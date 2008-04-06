@@ -39,6 +39,60 @@
 
 class MasterMixer;
 
+class AudioDriverInterface
+{
+public:
+	// init device, hook resources
+	virtual		mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer) = 0;
+
+	virtual		mp_uint32	getMixFrequency() const = 0;
+	
+	// close device, unhook resources
+	virtual		mp_sint32   closeDevice() = 0;
+
+	// start device
+	virtual		void		start() = 0;
+	// stop device 
+	virtual		mp_sint32   stop() = 0;
+
+	// pause the device:
+	// this is actually a little bit awkward, because it was meant to
+	// be an interface for waveOutPause (win32) which immediately pauses the 
+	// device no matter how large the buffer size is whereas stop waits 
+	// until all pending buffers have been played which is not suitable for 
+	// a client player application.
+	// You *should* implement this anyway, just set a flag and don't 
+	// output any audio when the flag is set or something
+	virtual		mp_sint32   pause() = 0;
+	// resume the device from paused state
+	virtual		mp_sint32   resume() = 0;
+
+	// if the device supports query of how many samples are played since 
+	// start has been called, return number of samples here
+	virtual		mp_uint32	getNumPlayedSamples() const = 0;
+	// returns the position within the buffer
+	virtual		mp_uint32	getBufferPos() const = 0;
+	// if the device supports query of how many samples are played since 
+	// start has been called, return true here
+	virtual		bool		supportsTimeQuery() = 0;
+
+	// should be kinda unique
+	virtual		const char* getDriverID() = 0;
+
+	// required by wav/null drivers, ignore if you're not writing a wav writer
+	virtual		void		advance() = 0;
+
+	// return preferred sample rate here
+	virtual		mp_sint32	getPreferredSampleRate() const = 0;
+	
+	// should return preferred buffer size for preferred sample rate (see above)
+	virtual		mp_sint32	getPreferredBufferSize() const = 0;
+	
+	virtual		void		msleep(mp_uint32 msecs) = 0;
+	virtual		bool		isMixerActive() = 0;
+	virtual		void		setIdle(bool idle) = 0;
+};
+
 // -------------------------------------------------------------------------
 // Important note: On construction an AudioDriver instance should not
 // hook any real resources, so it should be possible to instantiate
@@ -57,7 +111,7 @@ class MasterMixer;
 // -7 = out of memory
 // -8 = unknown error
 // -------------------------------------------------------------------------
-class AudioDriverBase
+class AudioDriverBase : public AudioDriverInterface
 {
 protected:
 	MasterMixer*	mixer;	
@@ -92,26 +146,6 @@ public:
 	
 				mp_uint32	getMixFrequency() const { return mixFrequency; }
 	
-	// close device, unhook resources
-	virtual		mp_sint32   closeDevice() = 0;
-
-	// start device
-	virtual		void		start() = 0;
-	// stop device 
-	virtual		mp_sint32   stop() = 0;
-
-	// pause the device:
-	// this is actually a little bit awkward, because it was meant to
-	// be an interface for waveOutPause (win32) which immediately pauses the 
-	// device no matter how large the buffer size is whereas stop waits 
-	// until all pending buffers have been played which is not suitable for 
-	// a client player application.
-	// You *should* implement this anyway, just set a flag and don't 
-	// output any audio when the flag is set or something
-	virtual		mp_sint32   pause() = 0;
-	// resume the device from paused state
-	virtual		mp_sint32   resume() = 0;
-
 	// if the device supports query of how many samples are played since 
 	// start has been called, return number of samples here
 	virtual		mp_uint32	getNumPlayedSamples() const { return 0; }
@@ -121,17 +155,11 @@ public:
 	// start has been called, return true here
 	virtual		bool		supportsTimeQuery() { return false; }
 
-	// should be kinda unique
-	virtual		const char* getDriverID() = 0;
-
 	// required by wav/null drivers, ignore if you're not writing a wav writer
 	virtual		void		advance() { }
 
 	// return preferred sample rate here
 	virtual		mp_sint32	getPreferredSampleRate() const { return 48000; }
-	
-	// should return preferred buffer size for preferred sample rate (see above)
-	virtual		mp_sint32	getPreferredBufferSize() const = 0;
 	
 	virtual		void		msleep(mp_uint32 msecs);
 	virtual		bool		isMixerActive();	

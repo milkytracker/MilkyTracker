@@ -49,7 +49,10 @@
 
 #include <string>
 #include <vector>
-#include "RtError.h"
+#include "RtError4.h"
+
+namespace RtAudio4
+{
 
 /*! \typedef typedef unsigned long RtAudioFormat;
     \brief RtAudio data format type.
@@ -471,29 +474,42 @@ class RtAudio
   RtApi *rtapi_;
 };
 
+};
+
 // Operating system dependent thread functionality.
 #if defined(__WINDOWS_DS__) || defined(__WINDOWS_ASIO__)
   #include <windows.h>
   #include <process.h>
 
+namespace RtAudio4
+{
   typedef unsigned long ThreadHandle;
   typedef CRITICAL_SECTION StreamMutex;
+};
 
 #elif defined(__LINUX_ALSA__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || defined(__MACOSX_CORE__)
   // Using pthread library for various flavors of unix.
   #include <pthread.h>
 
+namespace RtAudio4
+{
   typedef pthread_t ThreadHandle;
   typedef pthread_mutex_t StreamMutex;
+};
 
 #else // Setup for "dummy" behavior
 
+namespace RtAudio4
+{
   #define __RTAUDIO_DUMMY__
   typedef int ThreadHandle;
   typedef int StreamMutex;
+};
 
 #endif
 
+namespace RtAudio4
+{
 // This global structure type is used to pass callback information
 // between the private RtAudio stream structure and global callback
 // handling functions.
@@ -508,6 +524,8 @@ struct CallbackInfo {
   // Default constructor.
   CallbackInfo()
     :object(0), callback(0), userData(0), apiInfo(0), isRunning(false) {}
+};
+
 };
 
 // **************************************************************** //
@@ -529,6 +547,9 @@ struct CallbackInfo {
 #endif
 
 #include <sstream>
+
+namespace RtAudio4
+{
 
 class RtApi
 {
@@ -694,11 +715,16 @@ inline long RtAudio :: getStreamLatency( void ) { return rtapi_->getStreamLatenc
 inline double RtAudio :: getStreamTime( void ) { return rtapi_->getStreamTime(); }
 inline void RtAudio :: showWarnings( bool value ) throw() { rtapi_->showWarnings( value ); }
 
+};
+
 // RtApi Subclass prototypes.
 
 #if defined(__MACOSX_CORE__)
 
 #include <CoreAudio/AudioHardware.h>
+
+namespace RtAudio4
+{
 
 class RtApiCore: public RtApi
 {
@@ -734,9 +760,14 @@ public:
   static const char* getErrorCode( OSStatus code );
 };
 
+};
+
 #endif
 
 #if defined(__UNIX_JACK__)
+
+namespace RtAudio4
+{
 
 class RtApiJack: public RtApi
 {
@@ -767,9 +798,14 @@ public:
                         RtAudio::StreamOptions *options );
 };
 
+};
+
 #endif
 
 #if defined(__WINDOWS_ASIO__)
+
+namespace RtAudio4
+{
 
 class RtApiAsio: public RtApi
 {
@@ -803,9 +839,14 @@ public:
                         RtAudio::StreamOptions *options );
 };
 
+};
+
 #endif
 
 #if defined(__WINDOWS_DS__)
+
+namespace RtAudio4
+{
 
 class RtApiDs: public RtApi
 {
@@ -841,9 +882,14 @@ public:
                         RtAudio::StreamOptions *options );
 };
 
+};
+
 #endif
 
 #if defined(__LINUX_ALSA__)
+
+namespace RtAudio4
+{
 
 class RtApiAlsa: public RtApi
 {
@@ -875,9 +921,14 @@ public:
                         RtAudio::StreamOptions *options );
 };
 
+};
+
 #endif
 
 #if defined(__LINUX_OSS__)
+
+namespace RtAudio4
+{
 
 class RtApiOss: public RtApi
 {
@@ -907,9 +958,14 @@ public:
                         RtAudio::StreamOptions *options );
 };
 
+};
+
 #endif
 
 #if defined(__RTAUDIO_DUMMY__)
+
+namespace RtAudio4
+{
 
 class RtApiDummy: public RtApi
 {
@@ -930,6 +986,8 @@ public:
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options ) { return false; };
+};
+
 };
 
 #endif

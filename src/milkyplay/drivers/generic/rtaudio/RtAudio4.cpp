@@ -40,8 +40,11 @@
 
 // RtAudio: Version 4.0.4
 
-#include "RtAudio.h"
+#include "RtAudio4.h"
 #include <iostream>
+
+namespace RtAudio4
+{
 
 // Static variable definitions.
 const unsigned int RtApi::MAX_SAMPLE_RATES = 14;
@@ -359,6 +362,7 @@ double RtApi :: getStreamTime( void )
 #endif
 }
 
+};
 
 // *************************************************** //
 //
@@ -368,6 +372,8 @@ double RtApi :: getStreamTime( void )
 
 #if defined(__MACOSX_CORE__)
 
+namespace RtAudio4
+{
 // The OS X CoreAudio API is designed to use a separate callback
 // procedure for each of its audio devices.  A single RtAudio duplex
 // stream using two different devices is supported here, though it
@@ -1646,6 +1652,8 @@ const char* RtApiCore :: getErrorCode( OSStatus code )
 	}
 }
 
+};
+
 //******************** End of __MACOSX_CORE__ *********************//
 #endif
 
@@ -1682,6 +1690,9 @@ const char* RtApiCore :: getErrorCode( OSStatus code )
 
 #include <jack/jack.h>
 #include <unistd.h>
+
+namespace RtAudio4
+{
 
 // A structure to hold various information related to the Jack API
 // implementation.
@@ -2371,6 +2382,9 @@ bool RtApiJack :: callbackEvent( unsigned long nframes )
   RtApi::tickStreamTime();
   return SUCCESS;
 }
+
+};
+
 //******************** End of __UNIX_JACK__ *********************//
 #endif
 
@@ -2397,6 +2411,9 @@ bool RtApiJack :: callbackEvent( unsigned long nframes )
 #include "asio/iasiothiscallresolver.h"
 #include "asio/asiodrivers.h"
 #include <cmath>
+
+namespace RtAudio4
+{
 
 AsioDrivers drivers;
 ASIOCallbacks asioCallbacks;
@@ -3307,6 +3324,9 @@ static const char* getAsioErrorString( ASIOError result )
 
   return "Unknown error.";
 }
+
+};
+
 //******************** End of __WINDOWS_ASIO__ *********************//
 #endif
 
@@ -3336,6 +3356,9 @@ static const char* getAsioErrorString( ASIOError result )
 #ifdef _MSC_VER // if Microsoft Visual C++
 #pragma comment( lib, "winmm.lib" ) // then, auto-link winmm.lib. Otherwise, it has to be added manually.
 #endif
+
+namespace RtAudio4
+{
 
 static inline DWORD dsPointerDifference( DWORD laterPointer, DWORD earlierPointer, DWORD bufferSize )
 {
@@ -4927,6 +4950,9 @@ static char* getErrorString( int code )
     return "DirectSound unknown error";
 	}
 }
+
+};
+
 //******************** End of __WINDOWS_DS__ *********************//
 #endif
 
@@ -4935,6 +4961,9 @@ static char* getErrorString( int code )
 
 #include <alsa/asoundlib.h>
 #include <unistd.h>
+
+namespace RtAudio4
+{
 
 // A structure to hold various information related to the ALSA API
 // implementation.
@@ -6109,6 +6138,8 @@ extern "C" void *alsaCallbackHandler( void *ptr )
   pthread_exit( NULL );
 }
 
+};
+
 //******************** End of __LINUX_ALSA__ *********************//
 #endif
 
@@ -6122,6 +6153,9 @@ extern "C" void *alsaCallbackHandler( void *ptr )
 #include "oss/soundcard.h"
 #include <errno.h>
 #include <math.h>
+
+namespace RtAudio4
+{
 
 extern "C" void *ossCallbackHandler(void * ptr);
 
@@ -7010,9 +7044,13 @@ extern "C" void *ossCallbackHandler( void *ptr )
   pthread_exit( NULL );
 }
 
+};
+
 //******************** End of __LINUX_OSS__ *********************//
 #endif
 
+namespace RtAudio4
+{
 
 // *************************************************** //
 //
@@ -7664,6 +7702,8 @@ void RtApi :: byteSwapBuffer( char *buffer, unsigned int samples, RtAudioFormat 
     }
   }
 }
+
+};
 
 // Indentation settings for Vim and Emacs
 //

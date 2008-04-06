@@ -34,15 +34,15 @@
 
 #include "MilkyPlayTypes.h"
 
-class AudioDriverBase;
+class AudioDriverInterface;
 
 class AudioDriverManager
 {
 private:
-	AudioDriverBase**	driverList;
-	mp_sint32			numDrivers;
-	mp_sint32			defaultDriverIndex;
-	mutable mp_sint32	enumerationIndex;
+	AudioDriverInterface**	driverList;
+	mp_sint32				numDrivers;
+	mp_sint32				defaultDriverIndex;
+	mutable mp_sint32		enumerationIndex;
 	
 public:
 	AudioDriverManager();
@@ -53,8 +53,8 @@ public:
 	 * NULL is returned if either none is available or an alloc error occurred
 	 * @return			audio driver instance
 	 */
-	AudioDriverBase* getPreferredAudioDriver();
-	AudioDriverBase* getAudioDriverByName(const char* name);
+	AudioDriverInterface* getPreferredAudioDriver();
+	AudioDriverInterface* getAudioDriverByName(const char* name);
 
 	const char* getFirstDriverName() const;
 	const char* getNextDriverName() const;
