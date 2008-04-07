@@ -37,19 +37,7 @@
 #include <unistd.h> 
 #endif
 
-static const char*driverNames[] =
-{
-	"Unspecified (RtAudio)",
-	"Alsa (RtAudio)",
-	"OSS (RtAudio)",
-	"Jack (RtAudio)",
-	"CoreAudio (RtAudio)",
-	"Irix (RtAudio)",
-	"ASIO (RtAudio)",
-	"DirectSound (RtAudio)"
-};
-
-class AudioDriverImpl : public AudioDriver_COMPENSATE
+class Rt3AudioDriverImpl : public AudioDriver_COMPENSATE
 {
 private:
 	RtAudio* audio;
@@ -60,7 +48,7 @@ private:
 		// upgrade to reflect number of bytes, instead number of samples
 		length<<=2;
 		
-		AudioDriverImpl* audioDriver = (AudioDriverImpl*)udata;
+		Rt3AudioDriverImpl* audioDriver = (Rt3AudioDriverImpl*)udata;
 		
 		// Base class can handle this
 		audioDriver->fillAudioWithCompensation((char *) stream, length);
@@ -68,14 +56,14 @@ private:
 	}
 	
 public:
-	AudioDriverImpl(RtAudio::RtAudioApi audioApi = RtAudio::UNSPECIFIED) :
+	Rt3AudioDriverImpl(RtAudio::RtAudioApi audioApi = RtAudio::UNSPECIFIED) :
 		AudioDriver_COMPENSATE(),
 		audio(NULL),
 		selectedAudioApi(audioApi)
 	{
 	}
 
-	virtual	~AudioDriverImpl()
+	virtual	~Rt3AudioDriverImpl()
 	{
 	}
 			
@@ -298,7 +286,21 @@ public:
 		else return -1;
 	}
 		
-	virtual		const char* getDriverID() { return driverNames[selectedAudioApi]; }
+	virtual		const char* getDriverID() 
+	{ 
+		static const char*driverNames[] =
+		{
+			"Unspecified (RtAudio)",
+			"Alsa (RtAudio)",
+			"OSS (RtAudio)",
+			"Jack (RtAudio)",
+			"CoreAudio (RtAudio)",
+			"Irix (RtAudio)",
+			"ASIO (RtAudio)",
+			"DirectSound (RtAudio)"
+		};
+		return driverNames[selectedAudioApi]; 
+	}
 };
 
 void AudioDriver_RTAUDIO::createRt3Instance(Api audioApi/* = UNSPECIFIED*/)
@@ -324,7 +326,7 @@ void AudioDriver_RTAUDIO::createRt3Instance(Api audioApi/* = UNSPECIFIED*/)
 	}
 	if (impl)
 		delete impl;
-	impl = new AudioDriverImpl(rtApi);
+	impl = new Rt3AudioDriverImpl(rtApi);
 }
 
 

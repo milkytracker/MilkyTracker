@@ -3421,7 +3421,7 @@ static BOOL CALLBACK deviceQueryCallback( LPGUID lpguid,
 
 static char* getErrorString( int code );
 
-extern "C" unsigned __stdcall callbackHandler( void *ptr );
+extern "C" unsigned __stdcall callbackHandler_rt4( void *ptr );
 
 struct EnumInfo {
   bool isInput;
@@ -4121,7 +4121,7 @@ bool RtApiDs :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigned 
   unsigned threadId;
   stream_.callbackInfo.object = (void *) this;
   stream_.callbackInfo.isRunning = true;
-  stream_.callbackInfo.thread = _beginthreadex( NULL, 0, &callbackHandler,
+  stream_.callbackInfo.thread = _beginthreadex( NULL, 0, &callbackHandler_rt4,
                                                 &stream_.callbackInfo, 0, &threadId );
   if ( stream_.callbackInfo.thread == 0 ) {
     errorText_ = "RtApiDs::probeDeviceOpen: error creating callback thread!";
@@ -4815,7 +4815,7 @@ void RtApiDs :: callbackEvent()
 // Definitions for utility functions and callbacks
 // specific to the DirectSound implementation.
 
-extern "C" unsigned __stdcall callbackHandler( void *ptr )
+extern "C" unsigned __stdcall callbackHandler_rt4( void *ptr )
 {
   CallbackInfo *info = (CallbackInfo *) ptr;
   RtApiDs *object = (RtApiDs *) info->object;

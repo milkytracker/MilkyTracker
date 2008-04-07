@@ -95,10 +95,6 @@ AudioDriverManager::AudioDriverManager() :
 //////////////////////////////////////////////////////////////////
 #include "AudioDriver_COREAUDIO.h"
 
-#ifdef __OSX_PANTHER__
-#undef __MACOSX_CORE__
-#endif
-
 #ifdef __MACOSX_CORE__
 #include "AudioDriver_RTAUDIO.h"
 #endif

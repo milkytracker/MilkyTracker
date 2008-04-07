@@ -57,7 +57,11 @@ public:
 	};
 	
 	
+#ifdef __OSX_PANTHER__
+				AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED, Version version = V3);
+#else
 				AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED, Version version = V4);
+#endif
 
 	virtual		~AudioDriver_RTAUDIO();
 			

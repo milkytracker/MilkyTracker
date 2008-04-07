@@ -30,6 +30,9 @@
  */
 
 #include "AudioDriver_RTAUDIO.h"
+
+#ifndef __OSX_PANTHER__
+
 #include "RtAudio4.h"
 
 #ifdef DRIVER_UNIX
@@ -39,19 +42,7 @@
 
 using namespace RtAudio4;
 
-static const char* driverNames[] =
-{
-	"Unspecified (RtAudio)",
-	"Alsa (RtAudio)",
-	"OSS (RtAudio)",
-	"Jack (RtAudio)",
-	"CoreAudio (RtAudio)",
-	"ASIO (RtAudio)",
-	"DirectSound (RtAudio)",
-	"Dummy"
-};
-
-class AudioDriverImpl : public AudioDriver_COMPENSATE
+class Rt4AudioDriverImpl : public AudioDriver_COMPENSATE
 {
 private:
 	RtAudio* audio;
@@ -62,7 +53,7 @@ private:
 		// upgrade to reflect number of bytes, instead number of samples
 		length<<=2;
 		
-		AudioDriverImpl* audioDriver = (AudioDriverImpl*)udata;
+		Rt4AudioDriverImpl* audioDriver = (Rt4AudioDriverImpl*)udata;
 		
 		// Base class can handle this
 		audioDriver->fillAudioWithCompensation((char *) stream, length);
@@ -70,14 +61,14 @@ private:
 	}
 									 									 
 public:
-	AudioDriverImpl(RtAudio::Api audioApi = RtAudio::UNSPECIFIED) :
+	Rt4AudioDriverImpl(RtAudio::Api audioApi = RtAudio::UNSPECIFIED) :
 		AudioDriver_COMPENSATE(),
 		audio(NULL),
 		selectedAudioApi(audioApi)
 	{
 	}
 
-	virtual	~AudioDriverImpl()
+	virtual	~Rt4AudioDriverImpl()
 	{
 	}
 			
@@ -270,7 +261,21 @@ public:
 		else return -1;
 	}
 		
-	virtual		const char* getDriverID() { return driverNames[selectedAudioApi]; }
+	virtual		const char* getDriverID() 
+	{ 
+		static const char* driverNames[] =
+		{
+			"Unspecified (RtAudio)",
+			"Alsa (RtAudio)",
+			"OSS (RtAudio)",
+			"Jack (RtAudio)",
+			"CoreAudio (RtAudio)",
+			"ASIO (RtAudio)",
+			"DirectSound (RtAudio)",
+			"Dummy"
+		};
+		return driverNames[selectedAudioApi]; 
+	}
 };
 
 void AudioDriver_RTAUDIO::createRt4Instance(Api audioApi/* = UNSPECIFIED*/)
@@ -302,7 +307,13 @@ void AudioDriver_RTAUDIO::createRt4Instance(Api audioApi/* = UNSPECIFIED*/)
 	}
 	if (impl)
 		delete impl;
-	impl = new AudioDriverImpl(rtApi);
+	impl = new Rt4AudioDriverImpl(rtApi);
 }
 
+#else
 
+void AudioDriver_RTAUDIO::createRt4Instance(Api audioApi/* = UNSPECIFIED*/)
+{
+}
+
+#endif
