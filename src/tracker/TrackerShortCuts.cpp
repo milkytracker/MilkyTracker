@@ -48,12 +48,6 @@
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
 
-// note events can come from two sources:
-// 1. they're bound to a keyboard event (key down/up):
-//    in that case the source event needs to be delivered
-//    the event is canceled if it is caught in a realtime recording scenario
-// 2. coming from an external source (MIDI keyboard)
-//    in that case you can set the event to NULL
 void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl)
 {
 	PlayerController* playerController = this->playerController;
@@ -479,11 +473,11 @@ void Tracker::selectPreviousInstrument()
 ///////////////////////////////////////////////////////////////////////////////
 // The Fasttracker II compatibility mode is really just a big hack, because
 // MilkyTracker uses focus handling on most editable controls while FT2 doesn't
-// It works like this:
-// A few keys always go to the pattern editor
-// If record mode is ON all keyboard events are also routed to pattern editor 
-// (no matter if it can do something or not)
-// Keys are not routed into any other control except for editing
+// ----------------------------------------------------------------------------
+// 1. a defined set of keys always are always routed to to the pattern editor
+// 2. If record mode is ON all keyboard events are also routed to pattern editor 
+//    (no matter if it can handle them or not)
+// 3. Keys are not routed into any other control except for editing
 ///////////////////////////////////////////////////////////////////////////////
 void Tracker::processShortcutsFastTracker(PPEvent* event)
 {
