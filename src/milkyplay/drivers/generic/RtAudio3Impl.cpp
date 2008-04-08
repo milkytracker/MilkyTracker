@@ -290,14 +290,14 @@ public:
 	{ 
 		static const char*driverNames[] =
 		{
-			"Unspecified (RtAudio)",
-			"Alsa (RtAudio)",
-			"OSS (RtAudio)",
-			"Jack (RtAudio)",
-			"CoreAudio (RtAudio)",
-			"Irix (RtAudio)",
-			"ASIO (RtAudio)",
-			"DirectSound (RtAudio)"
+			"Unspecified (RtAudio3)",
+			"Alsa (RtAudio3)",
+			"OSS (RtAudio3)",
+			"Jack (RtAudio3)",
+			"CoreAudio (RtAudio3)",
+			"Irix (RtAudio3)",
+			"ASIO (RtAudio3)",
+			"DirectSound (RtAudio3)"
 		};
 		return driverNames[selectedAudioApi]; 
 	}

@@ -300,7 +300,7 @@ class RtAudio
     the enumerated list values.  Note that there can be more than one
     API compiled for certain operating systems.
   */
-  static void getCompiledApi( std::vector<RtAudio::Api> &apis ) throw();
+  static void getCompiledApi( std::vector<Api> &apis ) throw();
 
   //! The class constructor.
   /*!
@@ -311,7 +311,7 @@ class RtAudio
     compiled, the default order of use is JACK, ALSA, OSS (Linux
     systems) and ASIO, DS (Windows systems).
   */
-  RtAudio( RtAudio::Api api=UNSPECIFIED ) throw();
+  RtAudio( Api api=UNSPECIFIED ) throw();
 
   //! The destructor.
   /*!
@@ -705,10 +705,10 @@ inline unsigned int RtAudio :: getDeviceCount( void ) throw() { return rtapi_->g
 inline RtAudio::DeviceInfo RtAudio :: getDeviceInfo( unsigned int device ) { return rtapi_->getDeviceInfo( device ); }
 inline unsigned int RtAudio :: getDefaultInputDevice( void ) throw() { return rtapi_->getDefaultInputDevice(); }
 inline unsigned int RtAudio :: getDefaultOutputDevice( void ) throw() { return rtapi_->getDefaultOutputDevice(); }
-inline void RtAudio :: closeStream( void ) throw() { return rtapi_->closeStream(); }
-inline void RtAudio :: startStream( void ) { return rtapi_->startStream(); }
-inline void RtAudio :: stopStream( void )  { return rtapi_->stopStream(); }
-inline void RtAudio :: abortStream( void ) { return rtapi_->abortStream(); }
+inline void RtAudio :: closeStream( void ) throw() { rtapi_->closeStream(); }
+inline void RtAudio :: startStream( void ) { rtapi_->startStream(); }
+inline void RtAudio :: stopStream( void )  { rtapi_->stopStream(); }
+inline void RtAudio :: abortStream( void ) { rtapi_->abortStream(); }
 inline bool RtAudio :: isStreamOpen( void ) throw() { return rtapi_->isStreamOpen(); }
 inline bool RtAudio :: isStreamRunning( void ) throw() { return rtapi_->isStreamRunning(); }
 inline long RtAudio :: getStreamLatency( void ) { return rtapi_->getStreamLatency(); }

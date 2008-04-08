@@ -180,7 +180,7 @@ void RtAudio :: openStream( RtAudio::StreamParameters *outputParameters,
                             RtAudioCallback callback, void *userData,
                             RtAudio::StreamOptions *options )
 {
-  return rtapi_->openStream( outputParameters, inputParameters, format,
+  rtapi_->openStream( outputParameters, inputParameters, format,
                              sampleRate, bufferFrames, callback,
                              userData, options );
 }
@@ -2745,7 +2745,7 @@ bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
   else if ( *bufferSize > (unsigned int) maxSize ) *bufferSize = (unsigned int) maxSize;
   else if ( granularity == -1 ) {
     // Make sure bufferSize is a power of two.
-    double power = std::log10( (double) *bufferSize ) / log10( 2.0 );
+	  double power = log10( (double) *bufferSize ) / log10( 2.0 );
     *bufferSize = (int) pow( 2.0, floor(power+0.5) );
     if ( *bufferSize < (unsigned int) minSize ) *bufferSize = (unsigned int) minSize;
     else if ( *bufferSize > (unsigned int) maxSize ) *bufferSize = (unsigned int) maxSize;
@@ -2919,7 +2919,7 @@ bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     stream_.apiHandle = 0;
   }
 
-  for ( int i=0; i<2; i++ ) {
+  for ( i=0; i<2; i++ ) {
     if ( stream_.userBuffer[i] ) {
       free( stream_.userBuffer[i] );
       stream_.userBuffer[i] = 0;
@@ -3343,11 +3343,19 @@ static const char* getAsioErrorString( ASIOError result )
 #include <dsound.h>
 #include <assert.h>
 
-#if defined(__MINGW32__)
-// missing from latest mingw winapi
+#ifndef WAVE_FORMAT_96M08
 #define WAVE_FORMAT_96M08 0x00010000 /* 96 kHz, Mono, 8-bit */
+#endif
+
+#ifndef WAVE_FORMAT_96S16
 #define WAVE_FORMAT_96S08 0x00020000 /* 96 kHz, Stereo, 8-bit */
+#endif
+
+#ifndef WAVE_FORMAT_96S16
 #define WAVE_FORMAT_96M16 0x00040000 /* 96 kHz, Mono, 16-bit */
+#endif
+
+#ifndef WAVE_FORMAT_96S16
 #define WAVE_FORMAT_96S16 0x00080000 /* 96 kHz, Stereo, 16-bit */
 #endif
 
@@ -3520,6 +3528,7 @@ unsigned int RtApiDs :: getDeviceCount( void )
 
 RtAudio::DeviceInfo RtApiDs :: getDeviceInfo( unsigned int device )
 {
+  unsigned int k;
   // Because DirectSound always enumerates input and output devices
   // separately (and because we don't attempt to combine devices
   // internally), none of our "devices" will ever be duplex.
@@ -3567,7 +3576,7 @@ RtAudio::DeviceInfo RtApiDs :: getDeviceInfo( unsigned int device )
 
   // Get sample rate information.
   info.sampleRates.clear();
-  for ( unsigned int k=0; k<MAX_SAMPLE_RATES; k++ ) {
+  for ( k=0; k<MAX_SAMPLE_RATES; k++ ) {
     if ( SAMPLE_RATES[k] >= (unsigned int) outCaps.dwMinSecondarySampleRate &&
          SAMPLE_RATES[k] <= (unsigned int) outCaps.dwMaxSecondarySampleRate )
       info.sampleRates.push_back( SAMPLE_RATES[k] );

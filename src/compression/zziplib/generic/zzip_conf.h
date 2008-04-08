@@ -106,7 +106,11 @@
 #ifdef   ZZIP___int64
 #define _zzip___int64 ZZIP___int64
 #else
+#ifdef _MSC_VER
+#define _zzip___int64 __int64
+#else
 #define _zzip___int64 long long
+#endif
 #endif
 #endif
 

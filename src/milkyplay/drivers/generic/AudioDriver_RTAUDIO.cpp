@@ -135,5 +135,5 @@ bool		AudioDriver_RTAUDIO::isMixerActive()
 
 void		AudioDriver_RTAUDIO::setIdle(bool idle)
 {
-	return impl->setIdle(idle);
+	impl->setIdle(idle);
 }
