@@ -47,6 +47,7 @@
 #include "PPUIConfig.h"
 #include "PatternEditorControl.h"
 
+#include "SectionSwitcher.h"
 #include "SectionHDRecorder.h"
 
 #include "DialogBase.h"
@@ -289,7 +290,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 						break;
 						
 					case 2:
-						tracker.showUpperSection(tracker.sectionHDRecorder);
+						tracker.sectionSwitcher->showUpperSection(tracker.sectionHDRecorder);
 						break;
 				}
 
@@ -1540,7 +1541,7 @@ void SectionDiskMenu::saveCurrent()
 				case 2:
 				{
 					tracker.sectionHDRecorder->setCurrentFileName(fileFullPath);
-					tracker.showUpperSection(tracker.sectionHDRecorder);
+					tracker.sectionSwitcher->showUpperSection(tracker.sectionHDRecorder);
 					if (dialog &&
 						tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
 					{

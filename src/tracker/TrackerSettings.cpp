@@ -34,6 +34,7 @@
 #include "PlayerMaster.h"
 #include "PlayerController.h"
 #include "PlayerLogic.h"
+#include "RecorderLogic.h"
 #include "TabManager.h"
 #include "Dictionary.h"
 #include "PatternEditorControl.h"
@@ -556,11 +557,11 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	}
 	else if (theKey->getKey().compareTo("MULTICHN_RECORDKEYOFF") == 0)
 	{
-		setRecordKeyOff(v2 != 0);
+		recorderLogic->setRecordKeyOff(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("MULTICHN_RECORDNOTEDELAY") == 0)
 	{
-		setRecordNoteDelay(v2 != 0);
+		recorderLogic->setRecordNoteDelay(v2 != 0);
 	}
 	// ----------------------- Tabs -------------------------
 	else if (theKey->getKey().compareTo("TABS_STOPBACKGROUNDBEHAVIOUR") == 0)

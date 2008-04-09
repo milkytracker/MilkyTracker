@@ -35,6 +35,7 @@
 #include "ListBox.h"
 #include "Tracker.h"
 #include "DialogBase.h"
+#include "SectionSwitcher.h"
 
 SectionAbstract::~SectionAbstract()
 {
@@ -107,7 +108,7 @@ void SectionAbstract::replaceInstrumentListBoxes(bool b, pp_int32 listBoxContain
 	if (b)
 	{
 		tracker.showMainMenu(false, true);
-		tracker.showSubMenu(Tracker::ActiveLowerSectionPageInstruments, false);
+		tracker.sectionSwitcher->showSubMenu(SectionSwitcher::ActiveLowerSectionPageInstruments, false);
 
 		screen->getControlByID(CONTAINER_LOWRES_TINYMENU)->show(false);
 		

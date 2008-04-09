@@ -64,21 +64,6 @@ void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true
 		screen->paintControl(button);
 }
 
-#ifdef __LOWRES__
-void Tracker::updateSubMenusButtons(bool repaint/* = true*/)
-{
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_MENUSWITCH));
-
-	for (pp_int32 i = 0; i < NUMSUBMENUS(); i++)
-		static_cast<PPButton*>(container->getControlByID(BUTTON_0+i))->setPressed(false);
-	
-	static_cast<PPButton*>(container->getControlByID(BUTTON_0+lowerSectionPage))->setPressed(true);
-
-	if (repaint)
-		screen->paintControl(container);
-}
-#endif
-
 bool Tracker::updatePianoControl(PianoControl* pianoControl)
 {
 	if (!pianoControl)

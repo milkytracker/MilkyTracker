@@ -26,6 +26,7 @@
 #include "PlayerController.h"
 #include "PlayerMaster.h"
 #include "PlayerLogic.h"
+#include "RecorderLogic.h"
 #include "SamplePlayer.h"
 #include "SimpleVector.h"
 #include "ModuleEditor.h"
@@ -48,6 +49,7 @@
 #include "TitlePageManager.h"
 
 // Sections
+#include "SectionSwitcher.h"
 #include "SectionTranspose.h"
 #include "SectionAdvancedEdit.h"
 #include "SectionDiskMenu.h"
@@ -123,11 +125,6 @@ Tracker::Tracker() :
 	screen(NULL),
 	peakLevelControl(NULL),
 	scopesControl(NULL),
-	bottomSection(ActiveBottomSectionNone),
-#ifdef __LOWRES__
-	lowerSectionPage(ActiveLowerSectionPageMain),	
-#endif
-	currentUpperSection(NULL),
 	messageBoxContainerGeneric(NULL),
 	dialog(NULL),
 	responder(NULL),
@@ -143,7 +140,6 @@ Tracker::Tracker() :
 	currentFileName(TrackerConfig::untitledSong),
 	lastState(false),
 	editMode(EditModeFastTracker),
-	recordMode(false), recordKeyOff(true), recordNoteDelay(false),
 	extendedOrderlist(false),
 	followSong(true),
 	caughtMouseInUpperLeftCorner(false), 
@@ -165,8 +161,11 @@ Tracker::Tracker() :
 	moduleEditor = tabManager->createModuleEditor();
 
 	playerLogic = new PlayerLogic(*this);
+	recorderLogic = new RecorderLogic(*this);
 
 	// Sections
+	sectionSwitcher = new SectionSwitcher(*this);
+	
 	sections = new PPSimpleVector<SectionAbstract>();
 	
 	sectionTranspose = new SectionTranspose(*this);
@@ -194,14 +193,7 @@ Tracker::Tracker() :
 
 	toolInvokeHelper = new ToolInvokeHelper(*this);
 
-	//currentPatternAdd = 1;
-
 	pp_int32 i;
-	
-	keys = new TKeyInfo[TrackerConfig::MAXNOTES];
-	memset(keys, 0, sizeof(TKeyInfo) * TrackerConfig::MAXNOTES);
-	
-	keyVolume = -1;
 	
 	muteChannels = new pp_uint8[TrackerConfig::numPlayerChannels];
 	
@@ -222,7 +214,9 @@ Tracker::~Tracker()
 	delete inputControlListener;
 
 	delete sections;
+	delete sectionSwitcher;
 
+	delete recorderLogic;
 	delete playerLogic;
 
 	delete playerMaster;
@@ -230,7 +224,6 @@ Tracker::~Tracker()
 	delete messageBoxContainerGeneric;
 		
 	delete[] muteChannels;
-	delete[] keys;	
 	
 	delete instrumentChooser;
 		
@@ -364,60 +357,6 @@ void Tracker::setNumChannels(pp_int32 numChannels, bool repaint/* = true*/)
 	updatePatternEditorControl(repaint, false);
 }
 
-// General bottom sections show/hide
-void Tracker::showBottomSection(ActiveBottomSections section, bool paint/* = true*/)
-{
-	switch (bottomSection)
-	{
-		case ActiveBottomSectionInstrumentEditor:
-			sectionInstruments->show(false);
-			break;
-		case ActiveBottomSectionSampleEditor:
-			sectionSamples->show(false);
-			break;
-	}
-
-	if (bottomSection != section)
-		bottomSection = section;
-	else
-		bottomSection = ActiveBottomSectionNone;
-	
-	switch (bottomSection)
-	{
-		case ActiveBottomSectionInstrumentEditor:
-			sectionInstruments->show(true);
-			break;
-		case ActiveBottomSectionSampleEditor:
-			sectionSamples->show(true);
-			break;
-		case ActiveBottomSectionNone:
-			rearrangePatternEditorControl();
-			break;
-	}	
-	
-	if (paint)
-		screen->paint();
-}
-
-void Tracker::showUpperSection(SectionAbstract* section, bool hideSIP/* = true*/)
-{
-	screen->pauseUpdate(true);
-	if (currentUpperSection)
-	{
-		currentUpperSection->show(false);
-	}
-	if (section)
-	{
-		if (hideSIP)
-			hideInputControl();
-
-		section->show(true);
-	}
-	screen->pauseUpdate(false);
-	screen->update();
-	currentUpperSection = section;
-}
-
 void Tracker::showSongSettings(bool show)
 {
 	screen->getControlByID(CONTAINER_ABOUT)->show(show);
@@ -449,7 +388,7 @@ void Tracker::showMainMenu(bool show, bool showInstrumentSelector)
 	}
 	else
 	{
-		showSubMenu(lowerSectionPage, false);
+		sectionSwitcher->showCurrentSubMenu(false);
 		screen->getControlByID(CONTAINER_LOWRES_MENUSWITCH)->show(true);
 	}
 #endif
@@ -493,66 +432,6 @@ void Tracker::updateScopesControlButtons()
 			static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_REC))->setPressed(true);
 			break;
 	}
-}
-
-void Tracker::showSubMenu(ActiveLowerSectionPages section, bool repaint/* = true*/)
-{
-	// Hide everything first
-	showSongSettings(false);
-	showMainOptions(false);
-	screen->getControlByID(CONTAINER_INSTRUMENTLIST)->show(false);	
-	screen->getControlByID(CONTAINER_LOWRES_TINYMENU)->show(false);
-	screen->getControlByID(CONTAINER_LOWRES_JAMMENU)->show(false);
-	
-	scopesControl->show(false);
-	screen->getControlByID(CONTAINER_SCOPECONTROL)->show(false);
-	
-	// Last active page was the "Jam"-section so the pattern editor has probably been resized
-	// Check if it was resized and if so, restore original size
-	if (lastLowerSectionPage == ActiveLowerSectionPageJam && 
-		section != ActiveLowerSectionPageJam &&
-		patternEditorSize != getPatternEditorControl()->getSize())
-	{
-		getPatternEditorControl()->setSize(patternEditorSize);
-	}	
-	
-	switch (section)
-	{
-		case ActiveLowerSectionPageMain:
-			showMainOptions(true);
-			hideInputControl(false);
-			break;
-		case ActiveLowerSectionPageSong:
-			showSongSettings(true);
-			hideInputControl(false);
-			break;
-		case ActiveLowerSectionPageInstruments:
-			screen->getControlByID(CONTAINER_INSTRUMENTLIST)->show(true);	
-			screen->getControlByID(CONTAINER_LOWRES_TINYMENU)->show(true);
-			hideInputControl(false);
-			break;
-		case ActiveLowerSectionPageScopes:
-			scopesControl->show(true);
-			screen->getControlByID(CONTAINER_SCOPECONTROL)->show(true);
-			updateScopesControlButtons();
-			hideInputControl(false);
-			break;
-		case ActiveLowerSectionPageJam:
-		{
-			PPControl* control = screen->getControlByID(CONTAINER_LOWRES_JAMMENU);
-			ASSERT(control);
-			patternEditorSize = getPatternEditorControl()->getSize();
-			PPSize size(screen->getWidth(), control->getLocation().y);
-			if (getPatternEditorControl()->getSize() != size)
-				getPatternEditorControl()->setSize(size);
-			hideInputControl();
-			screen->getControlByID(CONTAINER_LOWRES_JAMMENU)->show(true);
-			break;
-		}
-	}
-	
-	if (repaint)
-		screen->paint();
 }
 
 void Tracker::toggleJamMenuPianoSize()
@@ -824,20 +703,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 				PPButton* button = reinterpret_cast<PPButton*>(sender);
 				
-				ActiveLowerSectionPages lsPageNew = (ActiveLowerSectionPages)(button->getID() - BUTTON_0);
-
-				// same page, nothing to do
-				if (lsPageNew == lowerSectionPage)
-					break;
-
-				// remember what was currently active
-				lastLowerSectionPage = lowerSectionPage;
-				// apply new page
-				lowerSectionPage = lsPageNew;
-				
-				updateSubMenusButtons(false);
-				// make it visible
-				showSubMenu(lowerSectionPage);
+				sectionSwitcher->switchToSubMenu((SectionSwitcher::ActiveLowerSectionPages)(button->getID() - BUTTON_0));		
 				break;
 			}
 #endif
@@ -982,7 +848,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				showBottomSection(ActiveBottomSectionNone);
+				sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
 				screen->paint(true, true);
 				break;
 			}
@@ -1066,8 +932,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				// so we first need to hide the entire section before we can show 
 				// the HD recorder section
 				screen->pauseUpdate(true);
-				if (bottomSection != ActiveBottomSectionNone)
-					showBottomSection(ActiveBottomSectionNone, false);
+				sectionSwitcher->hideBottomSection();
 
 				sectionHDRecorder->selectSampleOutput();
 				eventKeyDownBinding_InvokeSectionHDRecorder();
@@ -2210,8 +2075,7 @@ void Tracker::initPlayback()
 
 	playerController->resetPlayTimeCounter();
 
-	if (recordMode)
-		playerController->initRecording();					
+	recorderLogic->init();
 }
 
 void Tracker::setChanged()
@@ -2266,26 +2130,6 @@ void Tracker::setLiveSwitch(bool b, bool repaint/* = true*/)
 {	
 	playerLogic->setLiveSwitch(b);
 	updateAboutToggleButton(BUTTON_ABOUT_LIVESWITCH, b, repaint);
-}
-
-bool Tracker::getRecordKeyOff()
-{
-	return recordKeyOff;
-}
-
-void Tracker::setRecordKeyOff(bool b, bool repaint/* = true*/)
-{
-	recordKeyOff = b;
-}
-
-bool Tracker::getRecordNoteDelay()
-{
-	return recordNoteDelay;
-}
-
-void Tracker::setRecordNoteDelay(bool b, bool repaint/* = true*/)
-{
-	recordNoteDelay = b;
 }
 
 void Tracker::updateSongRow(bool checkFollowSong/* = true*/)
@@ -2979,10 +2823,7 @@ void Tracker::loadType(FileTypes eType)
 		// The bottom section fills up the entire screen 
 		// so we first need to hide the entire section before we can show the disk menu
 		screen->pauseUpdate(true);
-		if (bottomSection != ActiveBottomSectionNone)
-		{
-			showBottomSection(ActiveBottomSectionNone, false);
-		}
+		sectionSwitcher->hideBottomSection();
 #endif
 		sectionDiskMenu->selectSaveType(eType);
 		eventKeyDownBinding_InvokeSectionDiskMenu();

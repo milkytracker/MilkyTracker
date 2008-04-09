@@ -33,6 +33,7 @@
 #include "KeyBindings.h"
 #include "PlayerController.h"
 #include "PlayerLogic.h"
+#include "RecorderLogic.h"
 #include "ModuleEditor.h"
 
 #include "PPUIConfig.h"
@@ -47,6 +48,7 @@
 #include "ScopesControl.h"
 #include "TabHeaderControl.h"
 
+#include "SectionSwitcher.h"
 #include "SectionSettings.h"
 #include "SectionTranspose.h"
 #include "SectionAdvancedEdit.h"
@@ -370,8 +372,7 @@ void Tracker::eventKeyDownBinding_PlayPatternFromFIRSTQUARTER()
 								  row,
 								  muteChannels);
 
-	if (recordMode)
-		playerController->initRecording();					
+	recorderLogic->init();
 }
 
 void Tracker::eventKeyDownBinding_PlayPatternFromSECONDQUARTER()
@@ -388,8 +389,7 @@ void Tracker::eventKeyDownBinding_PlayPatternFromSECONDQUARTER()
 								  row,
 								  muteChannels);
 
-	if (recordMode)
-		playerController->initRecording();					
+	recorderLogic->init();
 }
 
 void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
@@ -406,8 +406,7 @@ void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
 								  row,
 								  muteChannels);
 
-	if (recordMode)
-		playerController->initRecording();					
+	recorderLogic->init();
 }
 
 void Tracker::eventKeyDownBinding_PlayRow()
@@ -568,8 +567,8 @@ void Tracker::eventKeyDownBinding_InvokeMainScreen()
 	if (screen->getModalControl())
 		return;
 
-	showBottomSection(ActiveBottomSectionNone);
-	showUpperSection(NULL);	
+	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
+	sectionSwitcher->showUpperSection(NULL);	
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionInstruments()
@@ -577,7 +576,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionInstruments()
 	if (screen->getModalControl())
 		return;
 
-	showBottomSection(ActiveBottomSectionInstrumentEditor);
+	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionInstrumentEditor);
 	screen->paint(true, true);
 }
 
@@ -586,7 +585,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionSamples()
 	if (screen->getModalControl())
 		return;
 
-	showBottomSection(ActiveBottomSectionSampleEditor);
+	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionSampleEditor);
 	screen->paint(true, true);
 }
 
@@ -595,7 +594,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionTranspose()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionTranspose);
+	sectionSwitcher->showUpperSection(sectionTranspose);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionAdvancedEdit()
@@ -603,7 +602,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionAdvancedEdit()
 	if (screen->getModalControl())
 		return;
 	
-	showUpperSection(sectionAdvancedEdit);
+	sectionSwitcher->showUpperSection(sectionAdvancedEdit);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionDiskMenu()
@@ -611,7 +610,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionDiskMenu()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionDiskMenu, false);
+	sectionSwitcher->showUpperSection(sectionDiskMenu, false);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionHDRecorder()
@@ -619,7 +618,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionHDRecorder()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionHDRecorder);
+	sectionSwitcher->showUpperSection(sectionHDRecorder);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionSettings()
@@ -637,7 +636,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionSettings()
 	
 	settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);
 	
-	showUpperSection(sectionSettings);
+	sectionSwitcher->showUpperSection(sectionSettings);
 	
 	screen->paint(true, true);	
 }
@@ -647,7 +646,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionQuickOptions()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionQuickOptions);
+	sectionSwitcher->showUpperSection(sectionQuickOptions);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionOptimize()
@@ -655,7 +654,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionOptimize()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionOptimize);
+	sectionSwitcher->showUpperSection(sectionOptimize);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionAbout()
@@ -663,7 +662,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionAbout()
 	if (screen->getModalControl())
 		return;
 
-	showUpperSection(sectionAbout);
+	sectionSwitcher->showUpperSection(sectionAbout);
 }
 
 void Tracker::eventKeyDownBinding_ToggleFT2Edit()
@@ -674,7 +673,7 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
 	ASSERT(container);
 	
-	button->setTextColor(recordMode ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
+	button->setTextColor(recorderLogic->getRecordMode() ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
 	
 #ifdef __LOWRES__
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_TINYMENU));
@@ -683,7 +682,7 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
 	ASSERT(button);
 	
-	button->setTextColor(recordMode ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
+	button->setTextColor(recorderLogic->getRecordMode() ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
 
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_JAMMENU));
 	ASSERT(container);
@@ -691,19 +690,18 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
 	ASSERT(button);
 	
-	button->setTextColor(recordMode ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
+	button->setTextColor(recorderLogic->getRecordMode() ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
 #endif
 
-	getPatternEditorControl()->setRecordMode(!recordMode);
+	getPatternEditorControl()->setRecordMode(!recorderLogic->getRecordMode());
 	
 	//button->setColor(recordMode ? PPColor(191, 191, 191) : PPColor(192, 32, 32));	
 	//screen->paintControl(button);
 	
 	screen->paint();
-	recordMode = !recordMode;	
+	recorderLogic->setRecordMode(!recorderLogic->getRecordMode());	
 
-	if (recordMode && (playerController->isPlaying() || playerController->isPlayingPattern()))
-		playerController->initRecording();							
+	recorderLogic->initToggleEdit();
 }
 
 void Tracker::eventKeyDownBinding_ToggleFollowSong()
@@ -729,7 +727,7 @@ void Tracker::eventKeyDownBinding_ToggleLiveSwitch()
 
 void Tracker::eventKeyDownBinding_ToggleRecordKeyOff()
 {
-	setRecordKeyOff(!getRecordKeyOff());
+	recorderLogic->setRecordKeyOff(!recorderLogic->getRecordKeyOff());
 }
 
 void Tracker::eventKeyDownBinding_ToggleScopes()

@@ -78,8 +78,6 @@ class PPDialogBase;
 class DialogResponder;
 class ToolInvokeHelper;
 
-struct TXMPattern;
-struct TXMSample;
 struct TMixerSettings;
 
 // Key binding forwards
@@ -111,40 +109,6 @@ private:
 	pp_int32 NUMSUBMENUS()						{ return 5; }
 	pp_int32 MAXEDITORHEIGHT();
 #endif
-
-	enum ActiveBottomSections
-	{
-		ActiveBottomSectionNone = 0,
-		ActiveBottomSectionInstrumentEditor,
-		ActiveBottomSectionSampleEditor
-	};
-	
-	ActiveBottomSections bottomSection;
-
-#ifdef __LOWRES__
-	enum ActiveLowerSectionPages
-	{
-		ActiveLowerSectionPageMain = 0,
-		ActiveLowerSectionPageSong,
-		ActiveLowerSectionPageInstruments,
-		ActiveLowerSectionPageScopes,
-		ActiveLowerSectionPageJam
-	};
-	
-	ActiveLowerSectionPages lowerSectionPage;
-	ActiveLowerSectionPages lastLowerSectionPage;
-#endif	
-	
-	struct TKeyInfo
-	{
-		pp_int32 note, ins;
-		pp_int32 channel, pos, row;
-		PlayerController* playerController;
-	};
-	
-	TKeyInfo* keys;
-	 
-	pp_int32 keyVolume;
 	
 	pp_uint8* muteChannels;
 	
@@ -153,6 +117,7 @@ private:
 	PlayerMaster* playerMaster;
 	ModuleEditor* moduleEditor;
 	class PlayerLogic* playerLogic;
+	class RecorderLogic* recorderLogic;
 	
 	PatternEditorControl* patternEditorControl;
 	PeakLevelControl* peakLevelControl;
@@ -160,6 +125,8 @@ private:
 	PPStaticText* playTimeText;
 	
 	// - Sections --------------------------------------------------------------
+	class SectionSwitcher* sectionSwitcher;
+	
 	PPSimpleVector<SectionAbstract>* sections;
 	SectionTranspose* sectionTranspose;
 	SectionAdvancedEdit* sectionAdvancedEdit;
@@ -171,8 +138,6 @@ private:
 	SectionQuickOptions* sectionQuickOptions;
 	SectionOptimize* sectionOptimize;
 	SectionAbout* sectionAbout;
-	
-	SectionAbstract* currentUpperSection;
 	
 	InputControlListener* inputControlListener;
 	
@@ -190,9 +155,6 @@ private:
 
 	// - Tracker mode ----------------------------------------------------------
 	EditModes editMode;
-	bool recordMode;
-	bool recordKeyOff;
-	bool recordNoteDelay;
 	bool extendedOrderlist;	
 	bool followSong;
 	bool caughtMouseInUpperLeftCorner;
@@ -271,8 +233,6 @@ private:
 	// - GUI refreshing --------------------------------------------------------
 	void updateAboutToggleButton(pp_int32 id, bool b, bool repaint = true);
 
-	void updateSubMenusButtons(bool repaint = true);
-
 	void updateSongTitle(bool repaint = true);
 
 #ifdef __LOWRES__
@@ -310,19 +270,13 @@ private:
 	void updateAfterTabSwitch();
 
 	// - show hide GUI sections ------------------------------------------------
-	// General bottom sections show/hide
-	void showBottomSection(ActiveBottomSections section, bool paint = true);
-	void showUpperSection(SectionAbstract* section, bool hideSIP = true);
-
 	// Show/hide main section (song settings + main menu)
 	void showSongSettings(bool show);
 	void showMainOptions(bool show);
 	
 #ifdef __LOWRES__
-	PPSize patternEditorSize;
 	void selectScopesControl(pp_int32 ctrlType);
 	void updateScopesControlButtons();
-	void showSubMenu(ActiveLowerSectionPages section, bool repaint = true);
 	void toggleJamMenuPianoSize();
 	void flipInstrumentListBoxes();
 #endif
@@ -345,7 +299,7 @@ private:
 	void doFollowSong();
 	
 	PatternEditorControl* getPatternEditorControl() { return patternEditorControl; }
-	void updatePatternEditorControl(/*TXMPattern* pattern = NULL, */bool repaint = true, bool fast = false);
+	void updatePatternEditorControl(bool repaint = true, bool fast = false);
 	PatternEditor* getPatternEditor();
 	SampleEditor* getSampleEditor();
 	EnvelopeEditor* getEnvelopeEditor();
@@ -375,11 +329,6 @@ private:
 	void setCursorWrapAround(bool b, bool repaint = true);
 
 	void setLiveSwitch(bool b, bool repaint = true);
-	
-	bool getRecordKeyOff();
-	void setRecordKeyOff(bool b, bool repaint = true);
-	bool getRecordNoteDelay();
-	void setRecordNoteDelay(bool b, bool repaint = true);
 	
 	void updateSongRow(bool checkFollowSong = true);
 	
@@ -483,6 +432,11 @@ private:
 	void saveType(FileTypes eType);
 	void buildMODSaveErrorWarning(pp_int32 error);
 
+	bool getShowSplashFlagFromDatabase();
+
+	void showSplash();
+	void hideSplash();
+
 public:
 	Tracker();
 
@@ -499,10 +453,6 @@ public:
 	
 	PPSize getWindowSizeFromDatabase();
 	bool getFullScreenFlagFromDatabase();
-	bool getShowSplashFlagFromDatabase();
-
-	void showSplash();
-	void hideSplash();
 
 	// Tracker startup
 	void startUp(bool forceNoSplash = false);
@@ -517,9 +467,6 @@ public:
 
 private:
 	void switchEditMode(EditModes mode);
-
-	void sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl);
-	void sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl);
 
 	// Process keyboard events according to current edit mode
 	void processShortcuts(PPEvent* event);
@@ -651,7 +598,9 @@ private:
 	
 	friend class TabManager;
 	friend class PlayerLogic;
+	friend class RecorderLogic;
 	friend class Zapper;
+	friend class SectionSwitcher;
 };
 
 #endif

@@ -42,6 +42,7 @@
 #include "TitlePageManager.h"
 
 // Sections
+#include "SectionSwitcher.h"
 #include "SectionTranspose.h"
 #include "SectionAdvancedEdit.h"
 #include "SectionDiskMenu.h"
@@ -241,8 +242,8 @@ void Tracker::initUI()
 		screen->addControl(container);
 	}
 
-	updateSubMenusButtons(false);
-	showSubMenu(lowerSectionPage, false);
+	sectionSwitcher->updateSubMenusButtons(false);
+	sectionSwitcher->showCurrentSubMenu(false);
 
 	pp_int32 peCtrlHeight = screen->getHeight()-UPPERSECTIONDEFAULTHEIGHT()-INPUTCONTAINERHEIGHT_DEFAULT;
 	

@@ -36,6 +36,7 @@
 #include "ControlIDs.h"
 #include "SIPButtons.h"
 #include "PatternEditorControl.h"
+#include "RecorderLogic.h"
 
 static const pp_uint16 scanCodesLetters[]	= {SC_A, SC_B, SC_C, SC_D, SC_E, SC_F, SC_G, SC_H, SC_I, SC_J, SC_K, SC_L, SC_M,
 											   SC_N, SC_O, SC_P, SC_Q, SC_R, SC_S, SC_T, SC_U, SC_V, SC_W, SC_X, SC_Z, SC_Y};
@@ -86,7 +87,7 @@ void InputControlListener::sendNote(pp_int32 v, pp_int32 volume/* = -1*/)
 	// Save current octave
 	pp_int32 currentOctave = tracker.getPatternEditor()->getCurrentOctave();	
 	tracker.getPatternEditor()->setCurrentOctave(octave);
-	tracker.keyVolume = volume;
+	tracker.recorderLogic->setKeyVolume(volume);
 	
 	vk[0] = noteKeys[realNote];
 	vk[1] = noteKeyScancodes[realNote];
@@ -96,7 +97,7 @@ void InputControlListener::sendNote(pp_int32 v, pp_int32 volume/* = -1*/)
 	PPEvent event((v >> 16) ? eKeyUp : eKeyDown, &vk, sizeof(vk));
 	screen->raiseEvent(&event);	
 
-	tracker.keyVolume = -1;
+	tracker.recorderLogic->setKeyVolume(-1);
 	// restore octave
 	tracker.getPatternEditor()->setCurrentOctave(currentOctave);
 }

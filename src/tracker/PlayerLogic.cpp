@@ -33,8 +33,9 @@
 #include "PlayerMaster.h"
 #include "PlayerController.h"
 #include "ModuleEditor.h"
-#include "ListBox.h"
+#include "RecorderLogic.h"
 
+#include "ListBox.h"
 #include "Screen.h"
 #include "PatternEditorControl.h"
 
@@ -113,7 +114,7 @@ void PlayerLogic::stopPlayer(PlayerController& playerController)
 
 void PlayerLogic::stopSong()
 {
-	memset(tracker.keys, 0, sizeof(tracker.keys));
+	tracker.recorderLogic->reset();
 
 	stopPlayer(*tracker.playerController);
 

@@ -34,7 +34,7 @@
 #include "Event.h"
 #include "PlayerController.h"
 #include "PlayerLogic.h"
-#include "RecPosProvider.h"
+#include "RecorderLogic.h"
 
 #include "Container.h"
 #include "ListBox.h"
@@ -47,265 +47,6 @@
 #include "SectionInstruments.h"
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
-
-void Tracker::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl)
-{
-	PlayerController* playerController = this->playerController;
-	PatternEditor* patternEditor = patternEditorControl->getPatternEditor();
-
-	pp_int32 i;
-	
-	if (note >= 1 && note != PatternTools::getNoteOffNote() /* Key Off */)
-	{
-		// get current channel from pattern editor (= channel to play)
-		pp_int32 chn = patternEditorControl->getCurrentChannel();	
-		
-		// if this is a valid note
-		pp_int32 ins = getInstrumentToPlay(note, playerController);
-		
-		if (ins < 0)
-		{
-			if (event)
-				event->cancel();
-			return;
-		}
-		
-		bool record = (editMode == EditModeMilkyTracker ? screen->hasFocus(patternEditorControl) : recordMode);
-		bool releasePlay = false;
-		bool isLiveRecording = (playerController->isPlaying() || 
-								playerController->isPlayingPattern()) && 
-								record && 
-								shouldFollowSong();
-		
-		// when we're not live recording, we need to decide if we're editing
-		if (!isLiveRecording)
-		{
-			releasePlay = !record;
-		}
-		// if we're live recording this is a "release" play, it means that the 
-		// note will not be repeated on a key being pressed, it will stay on
-		// 'till the key is released, but only when the current selected column
-		// is the note column
-		else
-		{
-			releasePlay = patternEditorControl->getCursorPosInner() == 0;
-		}
-		
-		if (releasePlay)
-		{
-			// Somewhere editing of text in an edit field takes place,
-			// in that case we don't want to be playing anything
-			if (isActiveEditing())
-				return;
-			
-			// take a look if this key is already pressed
-			bool isPressed = false;
-			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
-			{
-				if (keys[i].note == note)
-				{
-					isPressed = true;
-					break;
-				}
-			}
-			// this key is already pressed, we won't play that note again
-			if (isPressed)
-			{
-				// If we're live recording, this event should not be routed anywhere else
-				// it terminates HERE! (event shall not be routed to the pattern editor)
-				if (isLiveRecording && event)
-					event->cancel();
-				return;
-			}
-			
-			// if we're not recording, cycle through the channels
-			// use jam-channels for playing if requested
-			if (!isLiveRecording)
-			{
-				chn = playerController->getNextPlayingChannel(chn);
-			}
-			else
-			{
-				// Get next recording channel: The base for selection of the 
-				// next channel is the current channel within the pattern editor
-				chn = playerController->getNextRecordingChannel(chn);
-			}
-			
-		}
-		else
-		{
-			// The cursor in the pattern editor must be located in the note column, 
-			// if not abort
-			if (patternEditorControl->getCursorPosInner() != 0)
-			{
-				//event->cancel();
-				return;
-			}
-			else
-			{
-				pp_int32 newIns = patternEditor->getCurrentActiveInstrument();
-				if (newIns >= 0)
-					ins = newIns;
-			}
-		}
-		
-		
-		RecPosProvider recPosProvider(*playerController);
-		// key is not pressed, play note and remember key + channel + position within module
-		pp_int32 pos = -1, row = 0, ticker = 0;
-		
-		// if we are recording we are doing a query on the current position
-		if (isLiveRecording)
-			recPosProvider.getPosition(pos, row, ticker);
-		else
-		{
-			pos = row = -1;
-		}
-		
-		if (chn != -1)
-		{
-			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
-			{
-				if (!keys[i].note)
-				{
-					keys[i].note = note;
-					keys[i].ins = ins;
-					keys[i].channel = chn;
-					keys[i].pos = pos;
-					keys[i].row = row;
-					keys[i].playerController = playerController;
-					break;
-				}
-				// if there is already a note playing on this channel
-				// we "cut" the note
-				else if (keys[i].channel == chn)
-				{
-					keys[i].note = keys[i].channel = 0;
-				}
-			}
-			
-			// play it
-			playerLogic->playNote(*playerController, (mp_ubyte)chn, note, 
-								  (mp_ubyte)ins, keyVolume);
-			
-			// if we're recording send the note to the pattern editor
-			if (isLiveRecording)
-			{
-				setChanged();
-				// update cursor to song position in case we're blocking refresh timer
-				updateSongPosition(pos, row, true);
-				pp_int32 posInner = patternEditorControl->getCursorPosInner();
-				patternEditorControl->setChannel(chn, posInner);
-				patternEditorControl->setRow(row);
-				// add delay note if requested
-				if (ticker && recordNoteDelay)
-					patternEditor->writeDirectEffect(1, 0x3D, ticker > 0xf ? 0xf : ticker,
-													 chn, row, pos);
-				
-				if (keyVolume != -1 && keyVolume >= 0 && keyVolume <= 255)
-					patternEditor->writeDirectEffect(0, 0xC, (pp_uint8)keyVolume,
-													 chn, row, pos);
-				
-				patternEditor->writeDirectNote(note, chn, row, pos);
-				
-				screen->paintControl(patternEditorControl);
-				
-				// update cursor to song position in case we're blocking refresh timer
-				//updateSongPosition(-1, -1, true);
-				
-				if (event)
-					event->cancel();
-			}
-		}
-		else if (event)
-		{
-			event->cancel();
-		}
-		
-	}
-}
-
-void Tracker::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, PatternEditorControl* patternEditorControl)
-{
-	// if this is a valid note look if we're playing something and release note by sending key-off
-	if (note >= 1 && note <= ModuleEditor::MAX_NOTE)
-	{	
-		PatternEditor* patternEditor = patternEditorControl->getPatternEditor();
-
-		pp_int32 pos = -1, row = 0, ticker = 0;
-		
-		bool record = (editMode == EditModeMilkyTracker ? screen->hasFocus(patternEditorControl) : recordMode);	
-		
-		for (mp_sint32 i = 0; i < TrackerConfig::MAXNOTES; i++)
-		{
-			// found a playing channel
-			if (keys[i].note == note)
-			{
-				PlayerController* playerController = this->playerController;
-				if (keys[i].playerController)
-					playerController = keys[i].playerController;
-			
-				bool isLiveRecording = (playerController->isPlaying() || 
-										playerController->isPlayingPattern()) && 
-										record && 
-										shouldFollowSong();
-				
-				bool recPat = false;
-				RecPosProvider recPosProvider(*playerController);
-				if (isLiveRecording)
-				{
-					recPosProvider.getPosition(pos, row, ticker);
-					if (pos == -1)
-						recPat = true;
-				}
-				else
-				{
-					pos = row = -1;
-				}
-							
-				// send key off
-				playerLogic->playNote(*playerController, (mp_ubyte)keys[i].channel, 
-									  PatternTools::getNoteOffNote(), 
-									  keys[i].ins);
-									  
-				if (isLiveRecording && recordKeyOff)
-				{														
-					setChanged();
-					// update cursor to song position in case we're blocking refresh timer
-					updateSongPosition(pos, row, true);
-					patternEditorControl->setRow(row);
-
-					// if we're in the same slot => send key off by inserting key off effect
-					if (keys[i].row == row && keys[i].pos == pos)
-					{
-						//mp_sint32 bpm, speed;
-						//playerController->getSpeed(bpm, speed);
-						patternEditor->writeDirectEffect(1, 0x14, ticker ? ticker : 1,
-														 keys[i].channel, row, pos);
-					}
-					// else write key off
-					else
-					{
-						if (ticker && recordNoteDelay)
-							patternEditor->writeDirectEffect(1, 0x14, ticker,
-															 keys[i].channel, row, pos);
-						else
-							patternEditor->writeDirectNote(PatternTools::getNoteOffNote(),
-														   keys[i].channel, row, pos);
-					}
-				
-					screen->paintControl(patternEditorControl);
-
-					// update cursor to song position in case we're blocking refresh timer
-					//updateSongPosition(-1, -1, true);
-				}
-				
-				keys[i].note = keys[i].channel = 0;
-			}
-		}
-		
-	}
-}
 
 void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 {
@@ -398,7 +139,7 @@ processBindings:
 				// translate key to note
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
 
-				sendNoteDownToPatternEditor(event, note, patternEditorControl);	
+				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);	
 				break;
 			}
 
@@ -423,7 +164,7 @@ processBindings:
 				
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);				
 				
-				sendNoteUpToPatternEditor(event, note, patternEditorControl);	
+				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
 			}
 		}
 		
@@ -743,7 +484,7 @@ processOthers:
 				if (screen->getModalControl())
 					break;
 
-				if (recordMode)
+				if (recorderLogic->getRecordMode())
 				{
 					getPatternEditorControl()->callEventListener(event);
 					event->cancel();
@@ -782,7 +523,7 @@ processOthers:
 				if (screen->getModalControl())
 					/*break;*/return;
 
-				if (recordMode)
+				if (recorderLogic->getRecordMode())
 				{
 					getPatternEditorControl()->callEventListener(event);
 					event->cancel();
@@ -825,7 +566,7 @@ void Tracker::switchEditMode(EditModes mode)
 	else
 	{
 		eventKeyDownBindings = eventKeyDownBindingsFastTracker;	
-		recordMode = true;
+		recorderLogic->setRecordMode(true);
 		eventKeyDownBinding_ToggleFT2Edit();
 	}
 	
