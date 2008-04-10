@@ -88,7 +88,7 @@ public:
 };
 
 #ifndef __LOWRES__
-class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapSmall>
+class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapLarge>
 {
 private:
 	enum
@@ -127,10 +127,10 @@ public:
 	virtual const pp_int32* getDIVLUT() { return DIVLUT; }
 	virtual const pp_int32* getMODLUT() { return MODLUT; }
 	
-	friend class PPSingleton<PianoBitmapSmall>;
+	friend class PPSingleton<PianoBitmapLarge>;
 };
 #else
-class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapSmall>
+class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapLarge>
 {
 private:
 	PianoBitmapLarge()
@@ -148,7 +148,7 @@ public:
 	virtual const pp_int32* getDIVLUT() { return NULL; }
 	virtual const pp_int32* getMODLUT() { return NULL; }
 	
-	friend class PPSingleton<PianoBitmapSmall>;
+	friend class PPSingleton<PianoBitmapLarge>;
 };
 #endif
 
