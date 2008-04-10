@@ -2,9 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(MilkyTracker, 0.1, www.milkytracker.net)
+AC_INIT(MilkyTracker, 0.90.80, www.milkytracker.net)
 AC_CONFIG_SRCDIR(src)
-AM_INIT_AUTOMAKE(milkytracker,0.0.1)
+AM_INIT_AUTOMAKE(milkytracker,0.90.80)
 
 # Checks for programs.
 AC_PROG_CXX
