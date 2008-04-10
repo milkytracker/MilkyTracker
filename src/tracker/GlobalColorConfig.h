@@ -32,8 +32,9 @@
 #define GLOBALCOLORCONFIG__H
 
 #include "BasicTypes.h"
+#include "Singleton.h"
 
-class GlobalColorConfig
+class GlobalColorConfig : public PPSingleton<GlobalColorConfig>
 {
 private:
 	PPColor dummy;
@@ -77,16 +78,13 @@ public:
 		ColorLast = ColorScopes + 24 // remember to subtract one from the last value every time you add another color to the list
 	};
 
-private:
-	static GlobalColorConfig* instance;
-	
 public:
-	static GlobalColorConfig* getInstance();
-	
 	const PPColor& getColor(GlobalColors whichColor);
 	const char* getColorReadableDescription(GlobalColors whichColor);
 
 	void setColor(GlobalColors whichColor, const PPColor& color);
+	
+	friend class PPSingleton<GlobalColorConfig>;
 };
 
 #endif

@@ -33,6 +33,7 @@
 
 #include "EditorBase.h"
 #include "Undo.h"
+#include "Singleton.h"
 
 struct TXMSample;
 
@@ -42,7 +43,7 @@ class SampleEditor : public EditorBase
 {
 public:
 	// clipboard
-	class ClipBoard
+	class ClipBoard : public PPSingleton<ClipBoard>
 	{
 	private:		
 		mp_ubyte numBits;
@@ -53,14 +54,10 @@ public:
 		
 		pp_int32 selectionWidth;
 		
-		static ClipBoard* instance;
-
 		ClipBoard();
 		
 	public:
 		~ClipBoard();
-		
-		static ClipBoard* getInstance();
 		
 		void makeCopy(TXMSample& sample, XModule& module, pp_int32 selectionStart, pp_int32 selectionEnd, bool cut = false);
 		void paste(TXMSample& sample, XModule& module, pp_int32 pos);
@@ -91,6 +88,8 @@ public:
 			else ASSERT(false);
 			return 0;
 		}
+		
+		friend class PPSingleton<ClipBoard>;
 	};
 
 	// operations

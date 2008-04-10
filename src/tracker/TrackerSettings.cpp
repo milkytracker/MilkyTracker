@@ -662,7 +662,8 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	}
 }
 
-void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings, TrackerSettingsDatabase& currentSettings)
+void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings, 
+										   TrackerSettingsDatabase& currentSettings)
 {
 	mixerSettings.mixFreq = currentSettings.restore("MIXERFREQ")->getIntValue();
 	mixerSettings.bufferSize = currentSettings.restore("BUFFERSIZE")->getIntValue();

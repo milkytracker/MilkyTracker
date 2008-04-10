@@ -32,16 +32,6 @@
 #include "TrackerConfig.h"
 #include "PPUIConfig.h"
 
-GlobalColorConfig* GlobalColorConfig::instance = NULL;
-
-GlobalColorConfig* GlobalColorConfig::getInstance()
-{
-	if (instance == NULL)
-		instance = new GlobalColorConfig();
-
-	return instance;
-}
-
 const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor)
 {
 	switch (whichColor)

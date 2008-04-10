@@ -772,7 +772,6 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
-	if (!noSplash) noSplash = !myTracker->getShowSplashFlagFromDatabase();
  	if(!fullScreen) fullScreen = myTracker->getFullScreenFlagFromDatabase();
 #ifdef __LOWRES__
 	windowSize.width = DISPLAYDEVICE_WIDTH;

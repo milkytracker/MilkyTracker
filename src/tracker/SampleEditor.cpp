@@ -37,16 +37,6 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 
-SampleEditor::ClipBoard* SampleEditor::ClipBoard::instance = NULL;
-
-SampleEditor::ClipBoard* SampleEditor::ClipBoard::getInstance()
-{
-	if (instance == NULL)
-		instance = new ClipBoard();
-		
-	return instance;
-}
-
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
 {

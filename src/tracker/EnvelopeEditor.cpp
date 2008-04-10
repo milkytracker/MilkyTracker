@@ -32,16 +32,6 @@
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
-EnvelopeEditor::ClipBoard* EnvelopeEditor::ClipBoard::instance = NULL;
-
-EnvelopeEditor::ClipBoard* EnvelopeEditor::ClipBoard::getInstance()
-{
-	if (instance == NULL)
-		instance = new ClipBoard();
-		
-	return instance;
-}
-
 EnvelopeEditor::ClipBoard::ClipBoard() :
 	envelopeCopy(NULL)
 {

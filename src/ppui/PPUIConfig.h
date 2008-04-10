@@ -32,8 +32,9 @@
 #define PPUICONFIG__H
 
 #include "BasicTypes.h"
+#include "Singleton.h"
 
-class PPUIConfig
+class PPUIConfig : public PPSingleton<PPUIConfig>
 {
 public:
 	enum PPUIColors
@@ -56,16 +57,15 @@ public:
 
 
 private:
-	static PPUIConfig* instance;
 	PPColor colors[ColorLast];
 	
 	PPUIConfig();
 	
 public:
-	static PPUIConfig* getInstance();
-	
 	const PPColor& getColor(PPUIColors whichColor) { return colors[whichColor]; }
 	void setColor(PPUIColors whichColor, const PPColor& color) { colors[whichColor] = color; }
+	
+	friend class PPSingleton<PPUIConfig>;
 };
 
 #endif

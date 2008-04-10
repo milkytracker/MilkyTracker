@@ -33,6 +33,7 @@
 
 #include "EditorBase.h"
 #include "Undo.h"
+#include "Singleton.h"
 
 struct TEnvelope;
 
@@ -48,23 +49,21 @@ public:
 	};
 
 private:
-	class ClipBoard
+	class ClipBoard : public PPSingleton<ClipBoard>
 	{
 	private:
 		TEnvelope* envelopeCopy;
-		
-		static ClipBoard* instance;
 		
 		ClipBoard();
 
 	public:
 		~ClipBoard();
 
-		static ClipBoard* getInstance();
-		
 		void makeCopy(TEnvelope& envelope);
 		void paste(TEnvelope& envelope);
 		bool isEmpty() const { return envelopeCopy == NULL; }
+		
+		friend class PPSingleton<ClipBoard>;
 	};
 
 	TEnvelope* envelope;

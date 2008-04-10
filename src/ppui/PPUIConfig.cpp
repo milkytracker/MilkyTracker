@@ -30,8 +30,6 @@
 
 #include "PPUIConfig.h"
 
-PPUIConfig* PPUIConfig::instance = NULL;
-
 PPUIConfig::PPUIConfig()
 {
 	colors[ColorSelection] = PPColor(64*2, 64*2, 128*2-1);
@@ -49,10 +47,3 @@ PPUIConfig::PPUIConfig()
 	colors[ColorStaticText] = PPColor(255, 255, 255); 
 }
 
-PPUIConfig* PPUIConfig::getInstance()
-{
-	if (instance == NULL)
-		instance = new PPUIConfig();
-
-	return instance;
-}

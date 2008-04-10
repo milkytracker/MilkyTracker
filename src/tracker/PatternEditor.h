@@ -118,6 +118,8 @@ private:
 		pp_int32 selectionWidth;
 		pp_int32 selectionHeight;
 		
+		// FT2 uses different clipboards for track/pattern/block operations
+		// so a regular singleton design won't cut it
 		static ClipBoard* instances[ClipBoardTypeLAST];
 		
 		ClipBoard();
@@ -127,7 +129,9 @@ private:
 		
 		static ClipBoard* getInstance(ClipBoardTypes type);
 		
-		void makeCopy(TXMPattern& pattern, const PatternEditorTools::Position& ss, const PatternEditorTools::Position& se, bool clear = false);
+		void makeCopy(TXMPattern& pattern, 
+					  const PatternEditorTools::Position& ss, const PatternEditorTools::Position& se, 
+					  bool clear = false);
 		void paste(TXMPattern& pattern, pp_int32 sc, pp_int32 sr, bool transparent = false);
 		bool isEmpty() const { return buffer == NULL; }
 		

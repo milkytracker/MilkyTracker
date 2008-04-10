@@ -23,6 +23,8 @@
 #ifndef PIANO__H
 #define PIANO__H
 
+#include "Singleton.h"
+
 class PianoBitmapBase
 {
 protected:
@@ -43,7 +45,7 @@ public:
 	virtual const pp_int32* getMODLUT() = 0;
 };
 
-class PianoBitmapSmall : public PianoBitmapBase
+class PianoBitmapSmall : public PianoBitmapBase, public PPSingleton<PianoBitmapSmall>
 {
 private:
 	enum
@@ -65,8 +67,6 @@ private:
 		}	
 	}
 
-	static PianoBitmapSmall* instance;
-
 	static const pp_uint8 PIANO_LUT[];
 	static const pp_uint8 PIANO[];
 
@@ -74,13 +74,6 @@ private:
 	pp_int32 MODLUT[width];
 
 public:
-	static PianoBitmapSmall* getInstance()
-	{
-		if (instance == NULL)
-			instance = new PianoBitmapSmall();
-		return instance;
-	}
-
 	virtual const pp_uint8* getBitmap() { return PIANO; }
 	virtual const pp_uint8* getBitmapLUT() { return PIANO_LUT; }
 
@@ -90,10 +83,12 @@ public:
 
 	virtual const pp_int32* getDIVLUT() { return DIVLUT; }
 	virtual const pp_int32* getMODLUT() { return MODLUT; }
+	
+	friend class PPSingleton<PianoBitmapSmall>;
 };
 
 #ifndef __LOWRES__
-class PianoBitmapLarge : public PianoBitmapBase
+class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapSmall>
 {
 private:
 	enum
@@ -115,8 +110,6 @@ private:
 		}	
 	}
 
-	static PianoBitmapLarge* instance;
-
 	static const pp_uint8 PIANO_LUT[];
 	static const pp_uint8 PIANO[];
 
@@ -124,13 +117,6 @@ private:
 	pp_int32 MODLUT[width];
 
 public:
-	static PianoBitmapLarge* getInstance()
-	{
-		if (instance == NULL)
-			instance = new PianoBitmapLarge();
-		return instance;
-	}
-
 	virtual const pp_uint8* getBitmap() { return PIANO; }
 	virtual const pp_uint8* getBitmapLUT() { return PIANO_LUT; }
 
@@ -140,25 +126,18 @@ public:
 
 	virtual const pp_int32* getDIVLUT() { return DIVLUT; }
 	virtual const pp_int32* getMODLUT() { return MODLUT; }
+	
+	friend class PPSingleton<PianoBitmapSmall>;
 };
 #else
-class PianoBitmapLarge : public PianoBitmapBase
+class PianoBitmapLarge : public PianoBitmapBase, public PPSingleton<PianoBitmapSmall>
 {
 private:
 	PianoBitmapLarge()
 	{
 	}
 
-	static PianoBitmapLarge* instance;
-
 public:
-	static PianoBitmapLarge* getInstance()
-	{
-		if (instance == NULL)
-			instance = new PianoBitmapLarge();
-		return instance;
-	}
-
 	virtual const pp_uint8* getBitmap() { return NULL; }
 	virtual const pp_uint8* getBitmapLUT() { return NULL; }
 
@@ -168,6 +147,8 @@ public:
 
 	virtual const pp_int32* getDIVLUT() { return NULL; }
 	virtual const pp_int32* getMODLUT() { return NULL; }
+	
+	friend class PPSingleton<PianoBitmapSmall>;
 };
 #endif
 

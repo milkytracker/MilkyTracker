@@ -155,11 +155,13 @@ private:
 
 	// - Tracker mode ----------------------------------------------------------
 	EditModes editMode;
+
+	// - Misc. settings --------------------------------------------------------
 	bool extendedOrderlist;	
 	bool followSong;
-	bool caughtMouseInUpperLeftCorner;
-	
+	bool caughtMouseInUpperLeftCorner;	
 	bool useClassicBrowser;
+	
 	// - Keyboard bindings -----------------------------------------------------
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindings;
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsMilkyTracker;
@@ -181,8 +183,6 @@ private:
 	PPListBox* listBoxOrderList;
 	PPListBox* listBoxInstruments;
 	PPListBox* listBoxSamples;
-
-	void estimateSongLength(bool signalWait = false);
 
 	// - build UI parts --------------------------------------------------------
 	void initSectionOrderlist(pp_int32 x, pp_int32 y);
@@ -431,11 +431,7 @@ private:
 	bool saveCurrentModuleAsSelectedType();
 	void saveType(FileTypes eType);
 	void buildMODSaveErrorWarning(pp_int32 error);
-
-	bool getShowSplashFlagFromDatabase();
-
-	void showSplash();
-	void hideSplash();
+	void estimateSongLength(bool signalWait = false);
 
 public:
 	Tracker();
@@ -453,6 +449,10 @@ public:
 	
 	PPSize getWindowSizeFromDatabase();
 	bool getFullScreenFlagFromDatabase();
+	bool getShowSplashFlagFromDatabase();
+
+	void showSplash();
+	void hideSplash();
 
 	// Tracker startup
 	void startUp(bool forceNoSplash = false);
