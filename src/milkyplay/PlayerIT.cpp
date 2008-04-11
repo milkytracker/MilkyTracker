@@ -3725,8 +3725,9 @@ void PlayerIT::tickhandler()
 				}
 				else if (pbreak&&(poscnt==(module->header.ordnum-1))) 
 				{
+					// Pattern break on the last order? Break to restart position
 					if (!pjump || (pjump && pjumpPriority > pbreakPriority))
-						setNewPosition(playModeFT2 ? poscnt : module->header.restart);
+						setNewPosition(module->header.restart);
 					rowcnt=pbreakpos-1;
 					startNextRow = -1;
 				}
