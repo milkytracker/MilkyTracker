@@ -861,12 +861,23 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 
 			// the vibrato in the volumn volumn (index 0) works differently 
 			// before applying that, we assure that this is an XM module by checking
-			// the module header
+			// the module header (checking for FT2 replay mode is not enough,
+			// since it won't guarantee that there is volume and effect column)
 			if ((module->header.flags & XModule::MODULE_XMVOLCOLUMNVIBRATO) &&
-				ticker == maxTicks - 1 && !effcnt)
+				ticker == maxTicks - 1)
 			{
-				chnInf->finalVibratoPer = vmp;
-				chnInf->hasVibrato = true;
+				// if this is a volume column vibrato we keep the pitch
+				if (!effcnt)
+				{
+					chnInf->finalVibratoPer = vmp;
+					chnInf->hasVibrato = true;
+				}
+				// if not we reset that
+				else
+				{
+					chnInf->finalVibratoPer = 0;
+					chnInf->hasVibrato = false;
+				}
 			}
 
 			setFreq(chn,getfreq(chn,getfinalperiod(chn,vmp),chnInf->freqadjust));
@@ -2947,8 +2958,10 @@ void PlayerSTD::tickhandler()
 				}
 				else if (pbreak&&(poscnt==(module->header.ordnum-1))) 
 				{
+					// when in FT2 playmode and there is a Dxx in the last
+					// order, we don't jump to the start, we stay in the current order
 					if (!pjump || (pjump && pjumpPriority > pbreakPriority))
-						setNewPosition(0);
+						setNewPosition(playModeFT2 ? poscnt : module->header.restart);
 					rowcnt=pbreakpos-1;
 					startNextRow = -1;
 				}

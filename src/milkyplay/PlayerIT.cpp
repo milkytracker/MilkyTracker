@@ -1329,9 +1329,12 @@ void PlayerIT::doTickEffect(TModuleChannel* chnInf, mp_sint32 effcnt)
 			// before applying that, we assure that this is an XM module by checking
 			// the module header
 			if ((module->header.flags & XModule::MODULE_XMVOLCOLUMNVIBRATO) &&
-				ticker == maxTicks - 1 && !effcnt)
+				ticker == maxTicks - 1)
 			{
-				chnInf->setFinalVibratoPer(vmp);
+				if (!effcnt)
+					chnInf->setFinalVibratoPer(vmp);
+				else
+					chnInf->adjustVibratoPer();
 			}
 
 			if (chn >= 0)
@@ -3723,7 +3726,7 @@ void PlayerIT::tickhandler()
 				else if (pbreak&&(poscnt==(module->header.ordnum-1))) 
 				{
 					if (!pjump || (pjump && pjumpPriority > pbreakPriority))
-						setNewPosition(0);
+						setNewPosition(playModeFT2 ? poscnt : module->header.restart);
 					rowcnt=pbreakpos-1;
 					startNextRow = -1;
 				}

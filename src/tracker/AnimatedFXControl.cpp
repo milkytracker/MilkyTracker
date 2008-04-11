@@ -52,15 +52,29 @@
 #include "Fire.h"
 #endif
 
-static const char* text = "Hello everybody and welcome to MilkyTracker the original portable tracker with REAL oldschool feeling guaranteed. "
-						  "MilkyTracker offers almost identical FT2 behaviour in both user experience and playback. Why don't you play some tunes and decide for yourself! "
-						  "Hihos fly out to everyone who has contributed: Kenet (for making these awesome logos), Kmuland, raina (the icons and everything), "
-						  "Deltafire (fixing and enhancing the SDL port), Flasch (lots of bugfixing here), Gary P. Scavone for RtAudio and RtMidi, "
-						  "Andrew Simper of Vellocet for the noise code, David Ross for the EQ code, Andreas@lucid-cake.net (providing a Zaurus SL-5500 and the OSX build environment), "
-						  "Svenzzon^TiTAN (for his nice example tune) and all other TiTAN members, Strobe, Funky Fish, d0pefish (lavaburn.com, you know why =), Conna, Skyrunner^Brain Control, "
-						  "505 on #atariscene, Dualtrax, grmbls (for starting this all off), StarFish, m0d and everyone who finds this program useful. "
-						  "A very SPECIAL thanks goes out to everyone who made donations to support me, I really appreciate it. Now go ahead and make some nice tune or visit #milkytracker on Espernet... "
-						  "----- wrapping ---- wrapping ---- wrapping ---- .....         ";
+static const char* text = 
+"Yes! We've finally made it. A new MilkyTracker release brought to you by the MilkyTracker crew and TiTAN! "
+"All we gotta say is: This is a huge leap from the previous versions. Enjoy loading multiple modules in different "
+"tabs and even play them at the same time. Copying over data from other modules has never been easier. "
+"For the high fidelity folks a bunch of new resamplers have been added to guarantee crystal clear audio output. "
+"Also many issues have been fixed, overall stability has been greatly improved and some other features are waiting to be "
+"discovered. Go ahead and check them out.      " 
+"With this release MilkyTracker is also going open source. So what does that mean? Linux distributions "
+"can finally include MilkyTracker in their software trees and people interested in porting and maintaining MilkyTracker "
+"are encouraged to do so.      "
+"Now heads up for some credits!      " 
+"MilkyTracker contains code from the following people: "
+"Antti S. Lankila (Amiga filter algorithm/coefficients), "
+"Andrew Simper (noise code), "
+"David Ross (EQ code), "
+"Heikki Orsila/Claudio Matsuoka (powerpacker decrunching)      "
+"MilkyTracker also makes use of some common 3rd party libraries: "
+"RtMidi/RtAudio, "
+"zlib & zziplib (ZIP extraction)      "
+"A special thanks goes out to everyone who has donated money to support MilkyTracker "
+"or contributed to MilkyTracker by dropping emails, writing bug reports or drawing fonts. "
+"Now enjoy your stay, happy tracking!      "
+"----- wrapping ---- wrapping ---- wrapping ---- .....         ";
 
 pp_int32 AnimatedFXControl::counter = 0;
 
