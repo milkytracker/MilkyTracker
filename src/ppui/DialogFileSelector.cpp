@@ -157,7 +157,7 @@ DialogFileSelector::DialogFileSelector(PPScreen* screen,
 	
 	y2 = getMessageBoxContainer()->getControlByID(DISKMENU_STATICTEXT_SORTBY)->getLocation().y + 14;
 	
-	listBoxFiles	= new PPListBoxFileBrowser(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x2, y2), PPSize(listBoxWidth, height - (120)));
+	listBoxFiles	= new PPListBoxFileBrowser(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x2, y2), PPSize(listBoxWidth, height - (122)));
 	listBoxFiles->setFilePrefix("");
 	listBoxFiles->setDirectoryPrefix("");
 	listBoxFiles->setDirectorySuffixPathSeperator();

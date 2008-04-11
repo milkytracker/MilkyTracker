@@ -1,3 +1,7 @@
+# ----------------------------------------------------------------------
+# pailes on 10/4/08: Sorry this no longer works
+# if you really wanna try building this you need to find another way ;))
+# ----------------------------------------------------------------------
 # Brute force makefile used to compile MilkyTracker for Linux
 # It assumes you have SDL installed in the right paths
 # Tested on Ubuntu PowerPC linux and some other x86 Linux distributions
