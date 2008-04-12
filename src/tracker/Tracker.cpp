@@ -2574,8 +2574,9 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 		tabManager->openNewTab();
 	}
 
-	loadingParameters.wasPlaying = playerController->isPlaying() || playerController->isPlayingPattern();
-	loadingParameters.wasPlayingPattern = playerController->isPlayingPattern();
+	bool rowPlay = playerController->isPlayingRowOnly();
+	loadingParameters.wasPlaying = rowPlay ? false : (playerController->isPlaying() || playerController->isPlayingPattern());
+	loadingParameters.wasPlayingPattern = rowPlay ? false : playerController->isPlayingPattern();
 	
 	if (loadingParameters.suspendPlayer)
 	{

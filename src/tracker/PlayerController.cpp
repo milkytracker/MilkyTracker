@@ -196,7 +196,7 @@ void PlayerController::attachModuleEditor(ModuleEditor* moduleEditor)
 
 	if (!mixer->isDeviceRemoved(player))
 		mixer->removeDevice(player);
-			
+
 	ASSERT(sizeof(muteChannels)/sizeof(bool) >= (unsigned)totalPlayerChannels);
 
 	player->startPlaying(module, true, 0, 0, totalPlayerChannels, panning, true);	

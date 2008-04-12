@@ -84,10 +84,10 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		
 		bool record = (tracker.editMode == EditModeMilkyTracker ? tracker.screen->hasFocus(patternEditorControl) : recordMode);
 		bool releasePlay = false;
-		bool isLiveRecording = (playerController->isPlaying() || 
-								playerController->isPlayingPattern()) && 
-								record && 
-								tracker.shouldFollowSong();
+		bool isLiveRecording = playerController->isPlaying() && 
+							   !playerController->isPlayingRowOnly() &&
+							   record && 
+							   tracker.shouldFollowSong();
 		
 		// when we're not live recording, we need to decide if we're editing
 		if (!isLiveRecording)
@@ -257,11 +257,11 @@ void RecorderLogic::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, Pat
 				if (keys[i].playerController)
 					playerController = keys[i].playerController;
 			
-				bool isLiveRecording = (playerController->isPlaying() || 
-										playerController->isPlayingPattern()) && 
-										record && 
-										tracker.shouldFollowSong();
-				
+				bool isLiveRecording = playerController->isPlaying() && 
+									   !playerController->isPlayingRowOnly() &&
+									   record && 
+									   tracker.shouldFollowSong();
+							   				
 				bool recPat = false;
 				RecPosProvider recPosProvider(*playerController);
 				if (isLiveRecording)
@@ -327,6 +327,6 @@ void RecorderLogic::init()
 
 void RecorderLogic::initToggleEdit()
 {
-	if (recordMode && (tracker.playerController->isPlaying() || tracker.playerController->isPlayingPattern()))
+	if (recordMode && (tracker.playerController->isPlaying()))
 		tracker.playerController->initRecording();							
 }
