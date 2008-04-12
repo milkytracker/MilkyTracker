@@ -57,6 +57,67 @@
 	<body>
 		<h1>MilkyTracker ChangeLog</h1>
 
+		<h2>04/13/08 (v0.90.80):</h2>
+
+		<h3>Important note:</h3>
+		<p>This version of MilkyTracker will update your current configuration file in a way that it's no longer usable with older versions. 
+		It is recommended that you keep a backup of your configuration file.
+		On <b>Windows</b> the configuration is stored in the application folder. 
+		When using MilkyTracker on <b>OS X</b> or <b>Unix</b> systems the configuration is stored in your home directory in a file called .milkytracker_config.
+		</p>
+
+		<h3>Whats New:</h3>
+		<ul>
+			<li>Killer feature: Open up to 32 modules using tabs(*):
+				<ul>
+					<li>Allows simultaneous playback of different tabs</li>
+					<li>Copy pattern data/instruments/samples between tabs</li>
+				</ul>
+			</li>
+			<li>New resamplers for improved sound quality:
+				<ul>
+					<li>Cubic Lagrange</li>
+                    <li>Cubic Spline</li>
+                    <li>Fast Sinc (window size 16, fixed point integer, sinc lookup table)</li>
+                    <li>Precise Sinc (window size 128, double floating point)</li>
+                    <li>Amiga 500</li>
+                    <li>Amiga 500 LED</li>
+                    <li>Amiga 1200</li>
+                    <li>Amiga 1200 LED</li>
+				</ul>
+			</li>
+			<li>Render parts of the song directly into a sample slot (from HD recorder)</li>
+			<li>Live switch toggle [L]</li>
+			<li>Track splitter insert note off toggle</li>
+			<li>Sample editor shows time in milliseconds according to currently selected relative note</li>
+			<li>Notes on muted channels appear in grey on the piano</li>
+			<li>Scopes also available with smoothed lines</li>
+			<li>Added option to always mixdown stereo samples, no more questions ;)</li>
+			<li>WAV loader recognizes loop points and also exports them</li>
+		</ul>
+        <p>(*) Only available in the Desktop version of MilkyTracker</p>
+		<h3>Bugs Fixed:</h3>
+		<h4>Replay</h4>
+		<ul>
+			<li>Fixed bug in bidirectional looping which caused clicks on short samples</li>
+			<li>Introduced smart loop area double buffering to eliminate sample looping clicks</li>
+			<li>Fixed issue when switching between 4xx and Vx</li>
+			<li>Fixed issue when having a Dxx on the last order and restart is not zero</li>
+			<li>Milky's note range was going slightly higher than that of Ft2's.</li>
+		</ul>
+		<h4>Other</h4>
+		<ul>
+            <li>CRASH/FREEZE: When trying apply crossfade on invalid selections in sample editor.</li>
+            <li>FREEZE: Optimize song can freeze MilkyTracker if the displayed pattern number no longer exists after optimization.</li>
+            <li>Bug in the XI-loader causes instrument vibrato settings not to be applied until some instrument setting is modified.</li>
+            <li>Cutting arpeggio commands by selecting only the operand digits leaves invisible 000 commands on the pattern that repeat the previous arpeggio from effect memory.</li>
+			<li>GUS patch loader note mapping more accurate now</li>
+			<li>Some custom screen resolutions lead to distorted rendering.</li>
+			<li>The Apple AIFF loader doesn't load big endian samples correctly.</li>			
+			<li>Rewritten major parts of the GUI &amp; editor code to be more reliable.</li>
+			<li>Countless bugs you might not even have found yet</li>
+		</ul>	
+
 		<h2>05/20/07 (v0.90.60):</h2>
 		<h3>Whats New:</h3>
 		<ul>
