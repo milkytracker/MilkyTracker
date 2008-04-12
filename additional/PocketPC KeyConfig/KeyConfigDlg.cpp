@@ -7,8 +7,8 @@
 #include "TrackerSettingsDatabase.h"
 #include "VirtualKeyToScanCodeTable.h"
 #include "XMFile.h"
-#include "System_WIN32.h"
-#include "..\PPUI\Event.h"
+#include "PPSystem_WIN32.h"
+#include "Event.h"
 
 #define NUMTABS 3
 
@@ -101,15 +101,15 @@ void SetupKeyDatabase()
 	keyDatabase->store("KEY:Delete", DEFINEKEY(VK_DELETE));
 	keyDatabase->store("KEY:Insert", DEFINEKEY(VK_INSERT));
 	keyDatabase->store("KEY:Backspace", DEFINEKEY(VK_BACK));
-	keyDatabase->store("KEY:Insert line", DEFINEKEY(VK_INSERT, eKeySHIFT));
-	keyDatabase->store("KEY:Backspace line", DEFINEKEY(VK_BACK, eKeySHIFT));
-	keyDatabase->store("KEY:Undo", DEFINEKEY('Z', eKeyCTRL));
-	keyDatabase->store("KEY:Redo", DEFINEKEY('Y', eKeyCTRL));
+	keyDatabase->store("KEY:Insert line", DEFINEKEY(VK_INSERT, KeyModifierSHIFT));
+	keyDatabase->store("KEY:Backspace line", DEFINEKEY(VK_BACK, KeyModifierSHIFT));
+	keyDatabase->store("KEY:Undo", DEFINEKEY('Z', KeyModifierCTRL));
+	keyDatabase->store("KEY:Redo", DEFINEKEY('Y', KeyModifierCTRL));
 	keyDatabase->store("KEY:Play song", DEFINEKEY(VK_RETURN));
-	keyDatabase->store("KEY:Play pattern", DEFINEKEY(VK_RETURN, eKeyCTRL));
-	keyDatabase->store("KEY:Play pattern from current position", DEFINEKEY(VK_RETURN, eKeySHIFT));
-	keyDatabase->store("KEY:Preview row", DEFINEKEY(VK_SPACE, eKeySHIFT));
-	keyDatabase->store("KEY:Preview song/pattern", DEFINEKEY(VK_SPACE, eKeyALT));
+	keyDatabase->store("KEY:Play pattern", DEFINEKEY(VK_RETURN, KeyModifierCTRL));
+	keyDatabase->store("KEY:Play pattern from current position", DEFINEKEY(VK_RETURN, KeyModifierSHIFT));
+	keyDatabase->store("KEY:Preview row", DEFINEKEY(VK_SPACE, KeyModifierSHIFT));
+	keyDatabase->store("KEY:Preview song/pattern", DEFINEKEY(VK_SPACE, KeyModifierALT));
 	keyDatabase->store("KEY:Stop playing", DEFINEKEY(VK_ESCAPE));
 	keyDatabase->store("KEY:Record mode toggle", DEFINEKEY(VK_SPACE));
 	keyDatabase->store("ORIENTATION", 0);
