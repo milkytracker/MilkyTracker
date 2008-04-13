@@ -27,8 +27,7 @@ if test "x$with_alsa" != xno; then
 		RTMIDI="../midi/libmidi.a"
 		RTMIDI_DIR="midi"
 		AC_SUBST(RTMIDI)
-		AC_SUBST(RTMIDI_DIR)
-		need_dl=yes],
+		AC_SUBST(RTMIDI_DIR)],
 		[if test "x$with_alsa" != xcheck; then
 			AC_MSG_FAILURE([--with-alsa was given, but test for alsa failed])
 		else
@@ -42,7 +41,7 @@ AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files is missing]))
+AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files are missing]))
 
 # Check that SDL supports the X11 wm
 AC_MSG_CHECKING([whether SDL supports X11])
@@ -66,16 +65,12 @@ AC_ARG_WITH([jack],
 
 if test x$with_jack != xno; then
 	AC_CHECK_HEADERS([jack/jack.h],
-		need_dl=yes,
+		[AC_CHECK_LIB(dl,dlsym,,[AC_MSG_ERROR(["libdl is needed for ALSA or JACK support"])])],
 		[if test x$with_jack != xcheck; then
 			AC_MSG_FAILURE([--with-jack was given, but JACK headers were not found])
 		else
 			AC_MSG_WARN([JACK headers not found, JACK support disabled])
 		fi])
-fi
-
-if test x$need_dl = xyes; then
-	AC_CHECK_LIB(dl,dlsym,,[AC_MSG_ERROR(["libdl is needed for ALSA or JACK support"])])
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.
