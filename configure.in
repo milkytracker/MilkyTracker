@@ -4,7 +4,7 @@
 AC_PREREQ(2.61)
 AC_INIT(MilkyTracker, 0.90.80, www.milkytracker.net)
 AC_CONFIG_SRCDIR(src)
-AM_INIT_AUTOMAKE(milkytracker,0.90.80)
+AM_INIT_AUTOMAKE(dist-bzip2)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -16,28 +16,66 @@ AC_PROG_RANLIB
 AC_PROG_MKDIR_P
 
 # Checks for libraries.
-# AC_CHECK_LIB([SDL], SDL_Init,, AC_MSG_ERROR(Please install libSDL))
-# AC_CHECK_LIB([pthread], pthread_create,, AC_MSG_ERROR(pthread library required))
-# AC_CHECK_LIB([asound], snd_hwdep_info,,)
-# AC_CHECK_LIB([X11], XSync,, AC_MSG_WARN(X11 not found, enhancements disabled))
-AM_PATH_ALSA(,
-	RTMIDI="../midi/libmidi.a"
-	RTMIDI_DIR="midi"
-	AC_SUBST(RTMIDI)
-	AC_SUBST(RTMIDI_DIR),
-	AC_MSG_WARN([ALSA not found - midi support disabled]))
-#AC_CHECK_LIB([jack], jack_client_new, LIBS="$LIBS -ldl", AC_MSG_WARN(JACK support disabled))
-#AM_CONDITIONAL([JACK], [test x$HAVE_LIBJACK = xtrue])
+AC_ARG_WITH([alsa],
+	[AS_HELP_STRING([--with-alsa],
+	[Enable native ALSA sound/midi support @<:@default=check@:>@])],
+	[],
+	[with_alsa=check])
+
+if test "x$with_alsa" != xno; then
+	AM_PATH_ALSA([1.0.0],[
+		RTMIDI="../midi/libmidi.a"
+		RTMIDI_DIR="midi"
+		AC_SUBST(RTMIDI)
+		AC_SUBST(RTMIDI_DIR)
+		need_dl=yes],
+		[if test "x$with_alsa" != xcheck; then
+			AC_MSG_FAILURE([--with-alsa was given, but test for alsa failed])
+		else
+			AC_MSG_WARN([ALSA not found - midi support disabled])
+		fi])
+fi
+
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
-#LIBS="$LIBS $SDL_LIBS"
 
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h X11/X.h jack/jack.h])
-if [test x$HAVE_JACK_H = xtrue]; then
-	LIBS="$LIBS -ldl"
+AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files is missing]))
+
+# Check that SDL supports the X11 wm
+AC_MSG_CHECKING([whether SDL supports X11])
+OLDCPPFLAGS=$CPPFLAGS
+CPPFLAGS=$SDL_CFLAGS
+AC_COMPILE_IFELSE(
+	[#include<SDL_syswm.h>
+	const int test = SDL_SYSWM_X11;],
+	[AC_MSG_RESULT([yes])]
+	AC_DEFINE([HAVE_X11], [1], [SDL supports X11 features]),
+	[AC_MSG_RESULT([no])])
+CPPFLAGS=$OLDCPPFLAGS
+
+
+# Jack is dynamically linked (to ease binary portability)
+AC_ARG_WITH([jack],
+	[AS_HELP_STRING([--with-jack],
+	[Enable JACK support @<:@default=check@:>@])],
+	[],
+	[with_jack=check])
+
+if test x$with_jack != xno; then
+	AC_CHECK_HEADERS([jack/jack.h],
+		need_dl=yes,
+		[if test x$with_jack != xcheck; then
+			AC_MSG_FAILURE([--with-jack was given, but JACK headers were not found])
+		else
+			AC_MSG_WARN([JACK headers not found, JACK support disabled])
+		fi])
+fi
+
+if test x$need_dl = xyes; then
+	AC_CHECK_LIB(dl,dlsym,,[AC_MSG_ERROR(["libdl is needed for ALSA or JACK support"])])
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -82,6 +120,7 @@ AC_CONFIG_FILES([Makefile
                  src/midi/Makefile
                  src/milkyplay/Makefile
                  src/ppui/Makefile
+                 src/ppui/osinterface/Makefile
                  src/tracker/Makefile])
 AC_OUTPUT
 #([Makefile src/Makefile src/midi/Makefile src/milkyplay/Makefile src/ppui/Makefile src/fx/Makefile src/tracker/Makefile src/compression/Makefile])

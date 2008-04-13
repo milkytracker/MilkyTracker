@@ -144,7 +144,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 periodSizeAsSamples, const mp_u
 		2, // channels
 		mixFrequency,
 		0, // disallow soft resampling
-		(2000000 * periodSizeAsSamples) / mixFrequency)) < 0)
+		(2000000 * static_cast<unsigned long long> (periodSizeAsSamples)) / mixFrequency)) < 0)
 			// period size in uS
 	{
 		fprintf(stderr, "ALSA: Playback open error (%s)\nALSA: Is your mixer frequency correct? Try 48000Hz\n", snd_strerror(err));

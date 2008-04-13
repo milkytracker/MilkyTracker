@@ -56,7 +56,7 @@
 
 #include <SDL.h>
 #ifndef __QTOPIA__
-#ifdef HAVE_X11_X_H
+#ifdef HAVE_X11
 #include <SDL_syswm.h>
 #endif
 #endif
@@ -743,7 +743,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	SDL_EnableUNICODE(1);
 
 #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
-    (!defined(DISABLE_X11) && !defined(__CYGWIN32__) && !defined(ENABLE_NANOX) && \
+    (!defined(__CYGWIN32__) && !defined(ENABLE_NANOX) && \
      !defined(__QNXNTO__) && !defined(__AROS__))
 
 	// Initialise crash handler
@@ -757,14 +757,13 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	sigaction(SIGABRT, &act, &oldAct);
 	sigaction(SIGFPE, &act, &oldAct);
 	sigaction(SIGSEGV, &act, &oldAct);
+#endif
 	
-#if defined(HAVE_X11_X_H) && !defined(__QTOPIA__)
+#if defined(HAVE_X11) && !defined(__QTOPIA__)
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWMInfo(&info) && info.subsystem == SDL_SYSWM_X11)
 		isX11 = true;	// Used in SDL_KeyTranslation.cpp
-#endif
-
 #endif
 
 	SDL_WM_SetCaption("Loading MilkyTracker...", "MilkyTracker");

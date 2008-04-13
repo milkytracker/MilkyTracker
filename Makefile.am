@@ -1,1 +1,2 @@
 SUBDIRS = src
+EXTRA_DIST = docs/ChangeLog.html docs/ChangeLog.rtf docs/EqualizerDesign.doc docs/FAQ.html docs/MilkyTracker.html docs/MilkyTracker.rtf docs/TiTAN.nfo docs/readme_OSX.html docs/readme_OSX.rtf docs/readme_PocketPC.html docs/readme_PocketPC.rtf docs/readme_rtaudio docs/readme_unix platforms/osx/milkytracker_ppc.zip platforms/osx/milkytracker_sdl.zip platforms/osx/milkytracker_universal.zip platforms/win32/milkytracker_devcpp.zip platforms/win32/milkytracker_vs8.zip platforms/wince/milkytracker_evc3.zip
