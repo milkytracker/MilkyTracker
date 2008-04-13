@@ -66,7 +66,7 @@ AC_ARG_WITH([jack],
 
 if test x$with_jack != xno; then
 	AC_CHECK_HEADERS([jack/jack.h],
-		[AC_CHECK_LIB(dl,dlsym,,[AC_MSG_ERROR(["libdl is needed for ALSA or JACK support"])])],
+		[AC_SEARCH_LIBS(dlsym,dl,,[AC_MSG_ERROR([Dynamic library support not found - required for JACK support])])],
 		[if test x$with_jack != xcheck; then
 			AC_MSG_FAILURE([--with-jack was given, but JACK headers were not found])
 		else
