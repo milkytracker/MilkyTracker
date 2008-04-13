@@ -1,1 +1,17 @@
-Automake requires this file to be here.
+Notes on building MilkyTracker
+==============================
+
+See INSTALL for a more general explanation of how 'configure' works.
+
+The configure scripts try to check for everything needed, and will also
+auto-detect ALSA and JACK adding support automatically; However, this
+behaviour can be over-ridden using the following arguments to configure:
+
+ --with-alsa | --with-jack
+   Force build to use alsa/jack, build will fail if not found.
+ --without-alsa | --without-jack
+   Disable alsa/jack support.
+
+Note that the configure scripts plus associated Makefiles are designed
+to build the SDL version of MilkyTracker only. Build files for other
+targets (OSX, win32, wince) can be found in the 'platforms' directory.
