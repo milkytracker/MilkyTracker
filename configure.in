@@ -37,6 +37,7 @@ fi
 
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
+CPPFLAGS="$CPPFLAGS -D__FORCE_SDL_AUDIO__"
 
 # Checks for header files.
 AC_HEADER_DIRENT
