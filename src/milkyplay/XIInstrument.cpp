@@ -679,8 +679,8 @@ mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
 			mp_sword last = 0;
 			for (mp_uint32 i = 0; i < smp[k].samplen; i++)
 			{
-				dst[i] = smp->getSampleValue(i)-last;
-				last = smp->getSampleValue(i);
+				dst[i] = smp[k].getSampleValue(i)-last;
+				last = smp[k].getSampleValue(i);
 			}
 		
 			f.writeWords((mp_uword*)dst, smp[k].samplen);
@@ -694,8 +694,8 @@ mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
 			mp_sbyte last = 0;
 			for (mp_uint32 i = 0; i < smp[k].samplen; i++)
 			{
-				dst[i] = smp->getSampleValue(i)-last;
-				last = smp->getSampleValue(i);
+				dst[i] = smp[k].getSampleValue(i)-last;
+				last = smp[k].getSampleValue(i);
 			}
 
 			f.write(dst, 1, smp[k].samplen);

@@ -635,8 +635,20 @@ placeCursor:
 					// then select other line
 					commitChanges();
 				
+					if (selectionIndex != -1)
+					{
+						PPEvent e(ePreSelection, &selectionIndex, sizeof(selectionIndex));
+						eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
+					}
+					
 					this->selectionIndex = selectionIndex;
 
+					if (selectionIndex != -1)
+					{
+						PPEvent e(eSelection, &selectionIndex, sizeof(selectionIndex));
+						eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
+					}
+					
 					pp_int32 columnSelStart = cp.x / font->getCharWidth() + startPos;
 					
 					if (columnSelStart <= (signed)getItem(selectionIndex).length())
