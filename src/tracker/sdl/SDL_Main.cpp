@@ -905,7 +905,7 @@ int main(int argc, char *argv[])
 unrecognizedCommandLineSwitch:
 			if(argv[argc][0] == '-') {
 				fprintf(stderr, 
-						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-fullscreen] [-nosplash] [-nonstdbk] [-recvelocity]\n", argv[0]);
+						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-fullscreen] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
 				exit(1);
 			} else {
 				loadFile = argv[argc];
