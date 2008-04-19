@@ -64,6 +64,7 @@ int AudioDriver_JACK::jackProcess(jack_nframes_t nframes, void *arg)
 		leftBuffer[in] = audioDriver->rawStream[out++] * (1.0/32768.0);
 		rightBuffer[in] = audioDriver->rawStream[out++] * (1.0/32768.0);
 	}
+	return 0;
 }
 
 AudioDriver_JACK::AudioDriver_JACK() :
