@@ -68,7 +68,6 @@ void SystemMessage::show()
 	
 	if (header && message)
 	{
-		screen.enableDisplay(true);
 		PPMessageBox messageBox(&screen, header, message);		
 		messageBox.runModal();
 	}

@@ -57,6 +57,15 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dial
 {
 	bool exitModalLoop = false;
 	SDL_Event event;
+
+	// screen might be disabled in a stackable fashion
+	pp_uint32 screenEnableStackCount = 0;
+	while (!screen->isDisplayEnabled())
+	{
+		screen->enableDisplay(true);
+		screenEnableStackCount++;
+	}
+
 	// This is the responder for buttons invoked by the modal dialog
 	ModalLoopResponder modalLoopResponder(exitModalLoop);
 
@@ -114,6 +123,13 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dial
 
 	// re-attach tracker
 	screen->attachEventListener(eventListener);	
+
+	// if screen was disabled we enable it again
+	while (screenEnableStackCount > 0)
+	{
+		screen->enableDisplay(false);
+		screenEnableStackCount--;
+	}
 	
 	return modalLoopResponder.getReturnCode();
 }

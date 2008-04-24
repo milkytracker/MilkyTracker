@@ -545,6 +545,11 @@ void PPScreen::enableDisplay(bool enable)
 	displayDevice->enable(enable);
 }
 
+bool PPScreen::isDisplayEnabled()
+{
+	return displayDevice->isEnabled();
+}
+
 void PPScreen::clear()
 {
 	PPGraphicsAbstract* g = displayDevice->open();

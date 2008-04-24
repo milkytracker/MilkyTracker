@@ -96,6 +96,7 @@ public:
 	
 	void pauseUpdate(bool pause);
 	void enableDisplay(bool enable);
+	bool isDisplayEnabled();
 
 	void setFocus(PPControl* control, bool repaint = true);
 
