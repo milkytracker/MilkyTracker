@@ -707,7 +707,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						smp[s].looplen>>=1;
 					}
 					
-					if (module->loadModuleSample(f, s, XModule::ST_DEFAULT, XModule::ST_DELTA | XModule::ST_16BIT) != 0)
+					if (module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT) != 0)
 						return -7;					
 				}
 				
