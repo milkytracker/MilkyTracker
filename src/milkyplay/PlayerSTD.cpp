@@ -3136,6 +3136,12 @@ void PlayerSTD::playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_s
 					chnInf->ins = 0;
 					return;
 				}
+				
+				mp_sint32 finalNote = note + (mp_sint32)module->smp[chnInf->smp].relnote;
+					
+				// Within current note range?
+				if (!(finalNote >= 1 && finalNote <= 119))
+					return;
 			
 				chnInf->finetune=module->smp[chnInf->smp].finetune;
 				chnInf->relnote=module->smp[chnInf->smp].relnote;
