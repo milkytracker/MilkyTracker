@@ -466,7 +466,7 @@ void DialogFileSelector::refreshCurrentFileEditField(bool repaint/* = true*/)
 {
 	const PPPathEntry* entry = listBoxFiles->getCurrentSelectedPathEntry();
 
-	if (allowEditFileName && !entry->isFile())
+	if (!entry || (allowEditFileName && !entry->isFile()))
 		return;
 
 	editFieldCurrentFile->clear();
