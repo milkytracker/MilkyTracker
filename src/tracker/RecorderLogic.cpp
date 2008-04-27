@@ -42,6 +42,9 @@
 void RecorderLogic::reset()
 {
 	memset(keys, 0, sizeof(TKeyInfo) * TrackerConfig::MAXNOTES);
+
+	for (pp_int32 i = 0; i < TrackerConfig::MAXNOTES; i++)
+		keys[i].channel = -1;
 }
 
 RecorderLogic::RecorderLogic(Tracker& tracker) :
@@ -178,7 +181,8 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		{
 			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
 			{
-				if (!keys[i].note)
+				// key not pressed or note already playing on this channel
+				if (!keys[i].note || (keys[i].channel == chn))
 				{
 					keys[i].note = note;
 					keys[i].ins = ins;
@@ -190,10 +194,10 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				}
 				// if there is already a note playing on this channel
 				// we "cut" the note
-				else if (keys[i].channel == chn)
-				{
-					keys[i].note = keys[i].channel = 0;
-				}
+				//else if (keys[i].channel == chn)
+				//{
+				//	keys[i].note = keys[i].channel = 0;
+				//}
 			}
 			
 			// play it
@@ -312,7 +316,8 @@ void RecorderLogic::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, Pat
 					//updateSongPosition(-1, -1, true);
 				}
 				
-				keys[i].note = keys[i].channel = 0;
+				keys[i].note = 0;
+				keys[i].channel = -1;
 			}
 		}
 		
