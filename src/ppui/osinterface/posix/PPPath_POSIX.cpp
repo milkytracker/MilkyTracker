@@ -169,8 +169,8 @@ bool PPPath_POSIX::canGotoHome()
 
 void PPPath_POSIX::gotoHome()
 {
-	char *home = getenv("HOME");
-	if(home)
+	char* home = getenv("HOME");
+	if (home)
 	{
 		change(home);
 		updatePath();
