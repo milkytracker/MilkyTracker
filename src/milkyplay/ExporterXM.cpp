@@ -1930,10 +1930,10 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 		else
 		{
 unused:
-			f.writeWord(swap(1));
+			f.writeWord(swap(0));
 			f.writeByte(0);
 			f.writeByte(0);
-			f.writeWord(swap(1));
+			f.writeWord(swap(0));
 			f.writeWord(swap(1));
 		}
 				

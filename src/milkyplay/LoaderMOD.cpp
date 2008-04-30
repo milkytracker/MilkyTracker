@@ -174,6 +174,10 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 			return -8;
 	}
 	
+#ifdef VERBOSE
+	printf("Loading...\n");
+#endif
+	
 	mp_sint32 i, s = 0;
 	for (i = 0; i < header->insnum; i++) {
 		mp_ubyte insname[22];
@@ -189,6 +193,10 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 		f.read(&vol,1,1);
 		loopstart = f.readWord();
 		looplen = f.readWord();
+		
+#ifdef VERBOSE
+		printf("Ins %i, smplen: %i, loopstart: %i, looplen: %i\n", i, mot2int(smplen), mot2int(loopstart), mot2int(looplen));
+#endif
 		
 		memcpy(instr[i].name, insname, 22);
 
@@ -418,6 +426,10 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	}
 
 	module->postProcessSamples();
+	
+#ifdef VERBOSE
+	printf("%i / %i\n", f.pos(), f.size());
+#endif
 
 	return 0;
 }
