@@ -1845,7 +1845,7 @@ void Tracker::initInputContainerDefault(pp_int32 x, pp_int32 y)
 	x3+=button->getSize().width;
 	button = new PPButton(INPUT_BUTTON_BACKLINE, screen, inputControlListener, PPPoint(x3, y2), PPSize(bWidth, bHeight), false, true, true);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Bacline");
+	button->setText("Backline");
 	container->addControl(button);	
 
 	// piano test
