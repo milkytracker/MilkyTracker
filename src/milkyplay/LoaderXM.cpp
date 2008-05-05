@@ -767,6 +767,12 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				}
 			}
 		}
+		
+		// correct loop type 0x03 (undefined)
+		// will become ping pong loop
+		// note that FT2 will refuse to load XM files with such a loop type
+		if ((smp[s].type & 0x3) == 0x3)
+			smp[s].type&=~1;		
 	}
 
 	// correct number of patterns if necessary, otherwise the post processing will remove

@@ -1440,13 +1440,13 @@ pp_int32 PatternEditorTools::scaleVolume(const Position& startSelection, const P
 					if ((!src[2] && src[4]) || (!src[2] && !src[4]))
 					{					
 						src[2] = 0x0C;
-						src[3] = scaleByte(module->smp[s].sample ? module->smp[s].vol : 192, startScale);
+						src[3] = scaleByte(module->smp[s].sample ? module->smp[s].vol : 255, startScale);
 						stats++;
 					}
 					else if (src[2] && !src[4])
 					{
 						src[4] = 0x0C;
-						src[5] = scaleByte(module->smp[s].sample ? module->smp[s].vol : 192, startScale);
+						src[5] = scaleByte(module->smp[s].sample ? module->smp[s].vol : 255, startScale);
 						stats++;
 					}
 				}
