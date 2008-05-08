@@ -1947,7 +1947,7 @@ const char* XModule::identifyModule(const mp_ubyte* buffer)
 mp_sint32 XModule::loadModule(const SYSCHAR* fileName, bool scanForSubSongs/* = false*/)
 {
 	XMFile f(fileName);
-	return loadModule(f, scanForSubSongs); 
+	return f.isOpen() ? loadModule(f, scanForSubSongs) : -8; 
 }
 
 mp_sint32 XModule::loadModule(XMFileBase& f, bool scanForSubSongs/* = false*/)
