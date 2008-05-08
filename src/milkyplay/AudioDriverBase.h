@@ -42,6 +42,10 @@ class MasterMixer;
 class AudioDriverInterface
 {
 public:
+	virtual ~AudioDriverInterface()
+	{
+	}
+
 	// init device, hook resources
 	virtual		mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer) = 0;
 

@@ -205,8 +205,8 @@ mp_sint32	PlayerSTD::getlogperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 fin
 
 PlayerSTD::PlayerSTD(mp_uint32 frequency,
 					 StatusEventListener* statusEventListener/* = NULL*/) : 
-	statusEventListener(statusEventListener),
 	PlayerBase(frequency),
+	statusEventListener(statusEventListener),
 	chninfo(NULL),
 	lastNumAllocatedChannels(-1)
 {

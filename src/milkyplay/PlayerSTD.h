@@ -39,6 +39,10 @@ class PlayerSTD : public PlayerBase
 public:
 	struct StatusEventListener
 	{
+		virtual ~StatusEventListener()
+		{
+		}
+		
 		virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) { }
 	};
 

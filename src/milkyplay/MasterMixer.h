@@ -45,6 +45,10 @@ public:
 	class MasterMixerNotificationListener
 	{
 	public:
+		virtual ~MasterMixerNotificationListener()
+		{
+		}
+	
 		virtual void masterMixerNotification(MasterMixerNotifications notification) = 0;
 	};
 

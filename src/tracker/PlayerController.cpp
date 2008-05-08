@@ -420,7 +420,7 @@ bool PlayerController::isPlaying() const
 	if (!module)
 		return false;
 
-	return player->isPlaying() && (!player->isIdle()) && !player->hasStopped();	
+	return player->isPlaying() && (!player->isIdle()) && !player->hasSongHalted();	
 }
 
 bool PlayerController::isPlayingRowOnly() const

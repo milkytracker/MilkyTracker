@@ -35,6 +35,10 @@
 
 struct Mixable
 {
+	virtual ~Mixable()
+	{
+	}
+
 	virtual void mix(mp_sint32* buffer, mp_uint32 numSamples) = 0;			
 };
 
