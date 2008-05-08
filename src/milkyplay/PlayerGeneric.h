@@ -409,9 +409,13 @@ public:
 	
 	/**
 	 * Check if song has been stopped (either the song did something stupid or it played once and repeat is false)
+	 * NOTE: This will not mean that audio streaming has stopped, it only tells you that the song hit a position 
+	 * that was already played and if it's not in repeat mode it will halt. 
+	 * If the player is in repeat mode this will most probably always return false and even if it is true you need 
+	 * to still call stopPlaying() if you want to play another song.
 	 * @return			true or false
 	 */
-	bool				hasStopped() const;
+	bool				hasSongHalted() const;
 
 	/**
 	 * This is probably only used by MilkyTracker

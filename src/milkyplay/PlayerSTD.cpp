@@ -3068,7 +3068,7 @@ nextrow:
 
 void PlayerSTD::halt()
 {
-	stopped = true;
+	halted = true;
 	BPMCounter = adder = 0;
 	if (resetOnStopFlag)
 		resetChannelsWithoutMuting();

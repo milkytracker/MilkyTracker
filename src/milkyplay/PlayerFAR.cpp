@@ -734,7 +734,7 @@ NoNote1:
 					poscnt=module->header.restart;
 				else
 				{
-					stopped = true;
+					halted = true;
 					BPMCounter = adder = 0;
 					if (resetOnStopFlag)
 						resetChannelsWithoutMuting();

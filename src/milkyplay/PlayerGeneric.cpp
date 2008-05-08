@@ -612,10 +612,10 @@ mp_sint32 PlayerGeneric::stopPlaying()
 	return 0;
 }
 
-bool PlayerGeneric::hasStopped() const
+bool PlayerGeneric::hasSongHalted() const
 {
 	if (player)
-		return player->hasStopped();
+		return player->hasSongHalted();
 		
 	return true;
 }
@@ -987,7 +987,7 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 		timingLUT[curOrderPos] = 0;
 	}
 
-	while (!player->hasStopped() && player->getOrder(0) <= endOrder)
+	while (!player->hasSongHalted() && player->getOrder(0) <= endOrder)
 	{
 		wavWriter->advance();
 

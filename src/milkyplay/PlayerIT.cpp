@@ -3829,7 +3829,7 @@ nextrow:
 
 void PlayerIT::halt()
 {
-	stopped = true;
+	halted = true;
 	BPMCounter = adder = 0;
 	if (resetOnStopFlag)
 		resetChannelsWithoutMuting();

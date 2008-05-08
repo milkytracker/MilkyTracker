@@ -47,7 +47,7 @@ mp_sint32 PlayerBase::kick()
 	// playing => song is not paused yet
 	paused = false;
 	// playing => song has not stopped yet
-	stopped = false;
+	halted = false;
 	// repeat mode
 	this->repeat = repeat;
 	// set idle mode
@@ -86,7 +86,7 @@ PlayerBase::PlayerBase(mp_uint32 frequency) :
 	
 	startPlay						= false;
 	paused							= false;
-	stopped							= false;
+	halted							= false;
 	idle							= false;
 	resetOnStopFlag					= false;
 	resetMainVolumeOnStartPlayFlag	= true;
@@ -155,7 +155,7 @@ void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* =
 	// initialise crappy global variables
 	baseBpm = 125;
 	
-	stopped = false;
+	halted = false;
 	
 	synccnt = 0;
 	rowcnt = startRow;

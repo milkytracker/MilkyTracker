@@ -150,7 +150,7 @@ protected:
 	XModule*		module;
 
 	bool			paused;					// Player is paused
-	bool			stopped;				// Playing has been stopped (song is over)
+	bool			halted;					// Playing has been stopped (song is over)
 	bool			repeat;					// Player will repeat song
 	bool			idle;					// Player is mixing, but not processing song
 	bool			playOneRowOnly;			// Player will only play one row and not advance to the next row (used for milkytracker)
@@ -237,7 +237,7 @@ public:
 	
 	mp_sint32		stopPlaying();
 	
-	bool			hasStopped() const { return stopped; }
+	bool			hasSongHalted() const { return halted; }
 
 	void			setIdle(bool idle) { this->idle = idle; }
 	bool			isIdle() const { return idle; }
