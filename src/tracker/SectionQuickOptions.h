@@ -38,7 +38,7 @@ class SectionQuickOptions : public SectionUpperLeft
 {
 private:
 	class PPCheckBox* checkBoxKeepSettings;
-	class PanningDialog* panningDialog;
+	class DialogPanning* dialogPanning;
 	
 	pp_uint8* oldPanning;
 

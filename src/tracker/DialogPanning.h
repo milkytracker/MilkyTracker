@@ -1,5 +1,5 @@
 /*
- *  tracker/PanningDialog.h
+ *  tracker/DialogPanning.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,47 +21,39 @@
  */
 
 /*
- *  PanningDialog.h
+ *  DialogPanning.h
  *  MilkyTracker
  *
  *  Created by Peter Barth on 03.03.06.
  *
  */
 
-#ifndef __PANNINGDIALOG_H__
-#define __PANNINGDIALOG_H__
+#ifndef __DIALOGPANNING_H__
+#define __DIALOGPANNING_H__
 
-#include "BasicTypes.h"
-#include "Event.h"
+#include "DialogBase.h"
 
-class PPScreen;
-class PPContainer;
-
-class PanningDialog : public EventListenerInterface
+class DialogPanning : public PPDialogBase
 {
 private:
-	PPContainer* container;
-	PPScreen* screen;
 	EventListenerInterface* eventListener;
 
 	pp_uint8* panning;
 	pp_uint32 numChannels;
 	
 public:
-	PanningDialog(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels);
-	virtual ~PanningDialog();
-
-	void init();
-
-	void show(bool b);
+	DialogPanning(PPScreen* theScreen, EventListenerInterface* theEventListener, pp_uint32 channels);
+	virtual ~DialogPanning();
 
 	// PPEvent listener
-	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
+	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 	
 	void setPanning(pp_uint32 chn, pp_uint8 pan, bool repaint = true);
 	pp_uint8 getPanning(pp_uint32 chn) { return panning[chn]; }
 
 private:
+	void init();
+
 	void applyPanningAmiga();
 	void applyPanningMilky();
 	void applyPanningMono();

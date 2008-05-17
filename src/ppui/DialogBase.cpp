@@ -247,10 +247,10 @@ void PPDialogBase::initDialog(PPScreen* screen,
 }
 
 PPDialogBase::PPDialogBase(PPScreen* screen, 
-									 DialogResponder* responder,
-									 pp_int32 id, 
-									 const PPString& caption,
-									 MessageBoxTypes type/* = MessageBox_OKCANCEL*/) :
+						   DialogResponder* responder,
+						   pp_int32 id, 
+						   const PPString& caption,
+						   MessageBoxTypes type/* = MessageBox_OKCANCEL*/) :
 	keyDownInvokeKeyCode(-1)
 {
 	switch (type)
@@ -268,10 +268,10 @@ PPDialogBase::PPDialogBase(PPScreen* screen,
 }
 
 PPDialogBase::PPDialogBase(PPScreen* screen, 
-									 DialogResponder* responder,
-									 pp_int32 id, 
-									 const PPString& caption,
-									 const PPString& message) :
+						   DialogResponder* responder,
+						   pp_int32 id, 
+						   const PPString& caption,
+						   const PPString& message) :
 	keyDownInvokeKeyCode(-1)
 {
 	initDialog(screen, responder, id, caption, message, 26, "Okay");
@@ -282,9 +282,12 @@ PPDialogBase::~PPDialogBase()
 	delete messageBoxContainerGeneric;
 }
 
-void PPDialogBase::show()
+void PPDialogBase::show(bool b/* = true*/)
 {
-	parentScreen->setModalControl(messageBoxContainerGeneric, true);
+	if (b)
+		parentScreen->setModalControl(messageBoxContainerGeneric);
+	else
+		parentScreen->setModalControl(NULL);
 }
 
 void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, pp_uint16 chr)
@@ -315,9 +318,9 @@ void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, p
 	if (event->getID() != eCommand) \
 		break; \
 	if (respondListener && respondListener->HANDLERFUNC(reinterpret_cast<PPObject*>(this)) == 0) \
-		parentScreen->setModalControl(NULL); \
+		show(false); \
 	else if (respondListener == NULL) \
-		parentScreen->setModalControl(NULL);
+		show(false);
 
 pp_int32 PPDialogBase::handleEvent(PPObject* sender, PPEvent* event)
 {
