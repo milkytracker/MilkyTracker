@@ -51,7 +51,7 @@ public:
 
 	void setValueCaption(const PPString& caption);
 
-	virtual void show();
+	virtual void show(bool b = true);
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 

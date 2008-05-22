@@ -254,16 +254,18 @@ DialogResample::~DialogResample()
 	delete resamplerHelper;
 }
 
-void DialogResample::show()
+void DialogResample::show(bool b/* = true*/)
 {
-	currentSelectedListBox = 0;
-	updateListBoxes();
-	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
-	
-	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
-	button->setText(resamplerHelper->getResamplerName(interpolationType, true));
-	
-	PPDialogBase::show();	
+	if (b)
+	{
+		currentSelectedListBox = 0;
+		updateListBoxes();
+		listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
+		
+		PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_CONTROL_USER1));
+		button->setText(resamplerHelper->getResamplerName(interpolationType, true));
+	}
+	PPDialogBase::show(b);	
 }
 
 pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)

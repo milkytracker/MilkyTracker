@@ -283,13 +283,15 @@ pp_int32 DialogFileSelector::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void DialogFileSelector::show()
+void DialogFileSelector::show(bool b/* = true*/)
 {
-	refreshExtensions();
-
-	refresh(false);
+	if (b)
+	{
+		refreshExtensions();
+		refresh(false);
+	}
 	
-	PPDialogBase::show();
+	PPDialogBase::show(b);
 }
 
 const PPSystemString& DialogFileSelector::getSelectedPathFull() 

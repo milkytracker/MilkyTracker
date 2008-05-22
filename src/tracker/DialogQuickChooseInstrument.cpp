@@ -140,10 +140,11 @@ void DialogQuickChooseInstrument::setValueCaption(const PPString& caption)
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_VALUE_ONE_CAPTION, parentScreen, this, PPPoint(x, y), caption, true));
 }
 
-void DialogQuickChooseInstrument::show()
+void DialogQuickChooseInstrument::show(bool b/* = true*/)
 {
-	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
-	PPDialogBase::show();	
+	if (b)
+		listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
+	PPDialogBase::show(b);	
 }
 
 pp_uint16 DialogQuickChooseInstrument::numPadKeyToValue(pp_uint16 keyCode)

@@ -205,10 +205,11 @@ void DialogWithValues::setValueTwoCaption(const PPString& caption)
 	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_VALUE_TWO_CAPTION, parentScreen, this, PPPoint(x, y), caption, true));
 }
 
-void DialogWithValues::show()
+void DialogWithValues::show(bool b/* = true*/)
 {
-	listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
-	PPDialogBase::show();	
+	if (b)
+		listBoxEnterEditState(MESSAGEBOX_LISTBOX_VALUE_ONE);
+	PPDialogBase::show(b);	
 }
 
 pp_int32 DialogWithValues::handleEvent(PPObject* sender, PPEvent* event)

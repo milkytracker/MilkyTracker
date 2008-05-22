@@ -99,7 +99,7 @@ public:
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 
-	virtual void show();
+	virtual void show(bool b = true);
 
 	const PPSystemString& getSelectedPathFull();
 

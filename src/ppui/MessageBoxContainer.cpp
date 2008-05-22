@@ -27,6 +27,7 @@
 #include "BasicTypes.h"
 #include "PPUIConfig.h"
 #include "Screen.h"
+#include "SimpleVector.h"
 
 PPMessageBoxContainer::PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, const PPString& caption) :
 	PPContainer(id, parentScreen, eventListener, location, size),
@@ -162,46 +163,59 @@ pp_int32 PPMessageBoxContainer::dispatchEvent(PPEvent* event)
 	return PPContainer::dispatchEvent(event);
 }
 
-bool PPMessageBoxContainer::isPointInCaption(const PPPoint& point) const
+bool PPMessageBoxContainer::isPointInCaption(const PPPoint& point)
 {
-	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
-	return (point.x >= location.x && point.x <= location.x + size.width &&
-			point.y >= location.y && point.y <= location.y + captionSize);
+	PPSimpleVector<PPControl>& controls = getControls();
+
+	for (pp_int32 i = 0; i < controls.size(); i++)
+		if (controls.get(i)->hit(point))
+			return false;
+
+	return hit(point);
+
+	//return (point.x >= location.x && point.x <= location.x + size.width &&
+	//		point.y >= location.y && point.y <= location.y + captionSize);
 }
 
-bool PPMessageBoxContainer::handleMove(const PPPoint& point)
+bool PPMessageBoxContainer::handleMove(PPPoint point)
 {
 	if (!captured)
 		return false;
 
-	if (point.x < 0 || point.y < 0)
-		return false;
+	const pp_int32 catchBound = 4;
+	const pp_int32 dcatchBound = catchBound*2;
+	
+	const pp_int32 width = size.width;
+	const pp_int32 height = size.height;
 
-	if (point.x >= parentScreen->getWidth() || point.y >= parentScreen->getHeight())
-		return false;
-		
-	PPPoint delta(point.x - lastCapturePoint.x, point.y - lastCapturePoint.y);
+	bool ignorex = (point.x < -(width-dcatchBound)) || (point.x >= parentScreen->getWidth() + (width - dcatchBound));
+	bool ignorey = (point.y < -(height-dcatchBound)) || (point.y >= parentScreen->getHeight() + (height - dcatchBound));;
+
+	PPPoint delta(ignorex ? 0 : point.x - lastCapturePoint.x, ignorey ? 0 : point.y - lastCapturePoint.y);
 	
-	lastCapturePoint = point;
+	if (!ignorex)
+		lastCapturePoint.x = point.x;
+	if (!ignorey)
+		lastCapturePoint.y = point.y;
 	
-	if (location.x + delta.x < 0)
+	if (location.x + delta.x < -(width-dcatchBound))
 	{
-		delta.x -= (location.x + delta.x);
+		delta.x += -(width-dcatchBound) - (location.x + delta.x);
 	}
 
-	if (location.y + delta.y < 0)
+	if (location.y + delta.y < -(height-dcatchBound))
 	{
-		delta.y -= (location.y + delta.y);
+		delta.y += -(height-dcatchBound) - (location.y + delta.y);
 	}
 
-	if (location.x + delta.x + size.width >= parentScreen->getWidth())
+	if (location.x + delta.x >= parentScreen->getWidth() - dcatchBound)
 	{
-		delta.x -= (location.x + delta.x + size.width) - parentScreen->getWidth();
+		delta.x -= (location.x + delta.x) - (parentScreen->getWidth() - dcatchBound);
 	}
 	
-	if (location.y + delta.y + size.height >= parentScreen->getHeight())	
+	if (location.y + delta.y >= parentScreen->getHeight() - dcatchBound)
 	{
-		delta.y -= (location.y + delta.y + size.height) - parentScreen->getHeight();
+		delta.y -= (location.y + delta.y) - (parentScreen->getHeight() - dcatchBound);
 	}
 	
 	move(delta);

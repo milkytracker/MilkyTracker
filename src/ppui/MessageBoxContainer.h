@@ -62,9 +62,9 @@ public:
 	void setCaption(const PPString& caption) { this->caption = caption; }
 	
 private:
-	bool isPointInCaption(const PPPoint& point) const;
+	bool isPointInCaption(const PPPoint& point);
 	
-	bool handleMove(const PPPoint& point);	
+	bool handleMove(PPPoint point);	
 };
 
 #endif

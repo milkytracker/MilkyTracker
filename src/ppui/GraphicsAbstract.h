@@ -177,6 +177,11 @@ protected:
 
 	void validateRect()
 	{
+		if (currentClipRect.x1 < 0)
+			currentClipRect.x1 = 0;
+		if (currentClipRect.y1 < 0)
+			currentClipRect.y1 = 0;
+
 		if (currentClipRect.x2 > width)
 			currentClipRect.x2 = width;
 		if (currentClipRect.y2 > height)
