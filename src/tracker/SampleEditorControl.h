@@ -134,7 +134,7 @@ public:
 	virtual void paint(PPGraphicsAbstract* graphics);	
 	virtual bool gainsFocus() { return false; }
 	virtual bool isActive() { return true; }	
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
 	virtual void setSize(PPSize size);

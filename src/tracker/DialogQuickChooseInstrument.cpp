@@ -226,9 +226,9 @@ pp_int32 DialogQuickChooseInstrument::handleEvent(PPObject* sender, PPEvent* eve
 			
 			const char* transTab = "0123456789abcdef";
 			chr = transTab[chr];
-			listBox->callEventListener(event);
+			listBox->dispatchEvent(event);
 			PPEvent event2(eKeyChar, &chr, sizeof(chr));
-			listBox->callEventListener(&event2);
+			listBox->dispatchEvent(&event2);
 			
 			if (listBox->getItem(0).length() == 2)
 			{

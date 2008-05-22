@@ -60,7 +60,7 @@ PPControl::PPControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 {
 }
 
-pp_int32 PPControl::callEventListener(PPEvent* event)
+pp_int32 PPControl::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

@@ -219,7 +219,7 @@ SimpleBitmap& PPButton::getBitmap()
 	return *bitmap;
 }
 
-pp_int32 PPButton::callEventListener(PPEvent* event)
+pp_int32 PPButton::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

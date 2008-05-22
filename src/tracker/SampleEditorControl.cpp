@@ -610,7 +610,7 @@ void SampleEditorControl::endMarkerDragging()
 	resizing = 0;
 }
 
-pp_int32 SampleEditorControl::callEventListener(PPEvent* event)
+pp_int32 SampleEditorControl::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;
@@ -633,7 +633,7 @@ invokeContextMenuLabel:
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 
 			break;
@@ -652,7 +652,7 @@ invokeContextMenuLabel:
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			// Clicked on sample data -> select sample data
 			else
@@ -688,7 +688,7 @@ invokeContextMenuLabel:
 			controlCaughtByRMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -702,7 +702,7 @@ invokeContextMenuLabel:
 			controlCaughtByLMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;
 			}
 			else
@@ -730,7 +730,7 @@ invokeContextMenuLabel:
 			// Clicked on horizontal scrollbar -> route event to scrollbar and catch scrollbar control
 			if (caughtControl && controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}		
 
@@ -794,7 +794,7 @@ invokeContextMenuLabel:
 		{
 			if (caughtControl && controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 
@@ -907,14 +907,14 @@ selectingAndResizing:
 		case eRMouseDrag:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			break;
 		}
 		
 		case eRMouseRepeat:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			break;
 		}
 
@@ -1005,7 +1005,7 @@ selectingAndResizing:
 			if (caughtControl == NULL)
 				break;
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			break;
 
 	}

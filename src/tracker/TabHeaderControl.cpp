@@ -104,7 +104,7 @@ void TabHeaderControl::paint(PPGraphicsAbstract* g)
 	paintControls(g);
 }
 
-pp_int32 TabHeaderControl::callEventListener(PPEvent* event)
+pp_int32 TabHeaderControl::dispatchEvent(PPEvent* event)
 { 
 	switch (event->getID())
 	{
@@ -115,12 +115,12 @@ pp_int32 TabHeaderControl::callEventListener(PPEvent* event)
 			if (leftButton && leftButton->isEnabled() && leftButton->isVisible() && leftButton->hit(*p))
 			{
 				caughtControl = leftButton;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			else if (rightButton && rightButton->isEnabled() && rightButton->isVisible() && rightButton->hit(*p))
 			{
 				caughtControl = rightButton;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 			}
 			else
 			{
@@ -141,13 +141,13 @@ pp_int32 TabHeaderControl::callEventListener(PPEvent* event)
 				break;
 			}
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			caughtControl = NULL;			
 			break;		
 			
 		default:
 			if (caughtControl != NULL)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 	}
 	
 	return 0;

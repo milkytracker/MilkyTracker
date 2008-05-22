@@ -92,7 +92,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 			if (!control->isVisible() || !control->receiveTimerEvent())
 				continue;
 			
-			control->callEventListener(event);
+			control->dispatchEvent(event);
 		}
 		return;
 	}
@@ -108,7 +108,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 		if (!modalControl)
 			return;		
 		
-		modalControl->callEventListener(event);
+		modalControl->dispatchEvent(event);
 		return;
 	}
 
@@ -128,7 +128,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						
 				if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
 				{
-					contextMenuControl->callEventListener(event);
+					contextMenuControl->dispatchEvent(event);
 					mouseMoveHandeled = true;
 				}
 			}
@@ -150,7 +150,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						
 						if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
 						{
-							contextMenuControl->callEventListener(event);
+							contextMenuControl->dispatchEvent(event);
 						}
 						else 
 						{
@@ -200,7 +200,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						break;
 					}
 					default:
-						contextMenuControl->callEventListener(event);
+						contextMenuControl->dispatchEvent(event);
 				}
 			}
 		}
@@ -208,7 +208,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;
 	}
 
-	rootContainer->callEventListener(event);
+	rootContainer->dispatchEvent(event);
 
 #if 0
 	pp_int32 i;
@@ -252,12 +252,12 @@ void PPScreen::raiseEvent(PPEvent* event)
 				
 				if (modalControl->hit(*p) && modalControl->isActive())
 				{
-					modalControl->callEventListener(event);
+					modalControl->dispatchEvent(event);
 				}
 				break;
 			}
 			default:
-				modalControl->callEventListener(event);
+				modalControl->dispatchEvent(event);
 		}
 		
 		if (event->getID() != eTimer)
@@ -279,7 +279,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						
 				if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
 				{
-					contextMenuControl->callEventListener(event);
+					contextMenuControl->dispatchEvent(event);
 					mouseMoveHandeled = true;
 				}
 			}
@@ -305,7 +305,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						
 						if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
 						{
-							contextMenuControl->callEventListener(event);
+							contextMenuControl->dispatchEvent(event);
 						}
 						else //if (!contextMenuControl->hit(*p))
 						{
@@ -329,7 +329,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						break;
 					}
 					default:
-						contextMenuControl->callEventListener(event);
+						contextMenuControl->dispatchEvent(event);
 				}
 			}
 		}
@@ -346,7 +346,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 			if (!control->isVisible() || !control->receiveTimerEvent())
 				continue;
 			
-			control->callEventListener(event);
+			control->dispatchEvent(event);
 		}
 	}
 	// handle events which are routed to focused control
@@ -365,7 +365,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 		{
 			case eRMouseUp:
 			{
-				focusedControl->callEventListener(event);
+				focusedControl->dispatchEvent(event);
 
 				PPPoint* p = (PPPoint*)event->getDataPtr();
 				for (i = 0; i < controls.size(); i++)
@@ -375,7 +375,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 						continue;
 					if (control->hit(*p))
 					{
-						control->callEventListener(event);
+						control->dispatchEvent(event);
 					}
 				}
 
@@ -390,7 +390,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 			// Mouse button up event
 			case eLMouseUp:
 			{
-				focusedControl->callEventListener(event);
+				focusedControl->dispatchEvent(event);
 
 				// reset focus if control cannot gain focus
 				if (focusedControl && !focusedControl->gainsFocus())
@@ -400,13 +400,13 @@ void PPScreen::raiseEvent(PPEvent* event)
 			}; break; 
 
 			/*case eLMouseDrag:
-				focusedControl->callEventListener(event);
+				focusedControl->dispatchEvent(event);
 				break;
 
 			case eLMouseRepeat:
 				focused*/
 			default:
-				focusedControl->callEventListener(event);
+				focusedControl->dispatchEvent(event);
 				break;
 		
 		}
@@ -434,7 +434,7 @@ forward:
 				
 				if (control->hit(params->pos) && control->isActive())
 				{
-					control->callEventListener(event);
+					control->dispatchEvent(event);
 					goto exit;
 				}
 				
@@ -453,20 +453,20 @@ forward:
 					if (!bLastHit && bHit)
 					{
 						PPEvent e(eMouseEntered, p, sizeof(PPPoint));
-						control->callEventListener(&e);
+						control->dispatchEvent(&e);
 					}
 					else if (bLastHit && !bHit)
 					{
 						PPEvent e(eMouseLeft, p, sizeof(PPPoint));
-						control->callEventListener(&e);
+						control->dispatchEvent(&e);
 					}
 				
 					if (bHit)
 					{
 						if (control != lastMouseOverControl && lastMouseOverControl)
-							lastMouseOverControl->callEventListener(event);
+							lastMouseOverControl->dispatchEvent(event);
 
-						control->callEventListener(event);
+						control->dispatchEvent(event);
 						lastMouseOverControl = control;
 						goto exit;
 					}
@@ -481,7 +481,7 @@ forward:
 				
 				if (control->hit(*p) && control->isActive())
 				{
-					control->callEventListener(event);
+					control->dispatchEvent(event);
 					goto exit;
 				}
 				break;
@@ -504,7 +504,7 @@ forward:
 					if (control->gainsFocus() && focusedControl != control && focusedControl)
 					{
 						PPEvent e(event->getID() == eFocusGainedNoRepaint ? eFocusLostNoRepaint : eFocusLost);
-						focusedControl->callEventListener(&e);
+						focusedControl->dispatchEvent(&e);
 					}
 					
 					if (focusedControl != control)
@@ -513,11 +513,11 @@ forward:
 						if (lastFocusedControl != focusedControl && focusedControl->gainsFocus())
 						{
 							PPEvent e(event->getID() == eFocusGainedNoRepaint ? eFocusGainedNoRepaint : eFocusGained, p, sizeof(PPPoint));
-							focusedControl->callEventListener(&e);
+							focusedControl->dispatchEvent(&e);
 						}
 					}
 
-					control->callEventListener(event);
+					control->dispatchEvent(event);
 					goto exit;
 				}
 			}; break;
@@ -914,7 +914,7 @@ void PPScreen::setModalControl(PPControl* control, bool repaint/* = true*/)
 	if (modalControl)
 	{
 		PPEvent event(eFocusLostNoRepaint);
-		modalControl->callEventListener(&event);
+		modalControl->dispatchEvent(&event);
 		modalControl->show(false);
 	}
 
@@ -923,13 +923,13 @@ void PPScreen::setModalControl(PPControl* control, bool repaint/* = true*/)
 		// uncatch controls within containers
 		releaseCaughtControls();		
 		PPEvent event(eFocusGainedNoRepaint);
-		control->callEventListener(&event);
+		control->dispatchEvent(&event);
 		control->show(true);
 	}
 	else if (focusedControl)
 	{
 		PPEvent event(eFocusGainedNoRepaint);
-		focusedControl->callEventListener(&event);
+		focusedControl->dispatchEvent(&event);
 	}
 
 	modalControl = control; 
@@ -948,7 +948,7 @@ void PPScreen::setContextMenuControl(PPControl* control, bool repaint/* = true*/
 	PPEvent event2(eFocusGained);
 	
 	for (pp_int32 i = 0; i < contextMenuControls->size(); i++)
-		contextMenuControls->get(i)->callEventListener(&event);						
+		contextMenuControls->get(i)->dispatchEvent(&event);						
 
 	delete contextMenuControls;
 	contextMenuControls = new PPSimpleVector<PPControl>(16, false);
@@ -957,7 +957,7 @@ void PPScreen::setContextMenuControl(PPControl* control, bool repaint/* = true*/
 	{
 		// uncatch controls within containers
 		releaseCaughtControls();		
-		control->callEventListener(&event2);
+		control->dispatchEvent(&event2);
 		contextMenuControls->add(control); 		
 	}
 	
@@ -972,7 +972,7 @@ void PPScreen::addContextMenuControl(PPControl* control, bool repaint/* = true*/
 
 	if (control)
 	{
-		control->callEventListener(&event2);
+		control->dispatchEvent(&event2);
 		contextMenuControls->add(control); 		
 	}
 	

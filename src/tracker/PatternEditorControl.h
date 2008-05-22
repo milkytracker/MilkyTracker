@@ -208,7 +208,7 @@ public:
 	virtual bool gainsFocus() { return true; }
 	virtual bool gainedFocusByMouse() { return caughtControl == NULL; }
 	virtual bool isActive() { return true; }
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 	
 	// from EventListenerInterface
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);

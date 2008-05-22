@@ -177,7 +177,7 @@ void PPRadioGroup::paint(PPGraphicsAbstract* g)
 
 }
 
-pp_int32 PPRadioGroup::callEventListener(PPEvent* event)
+pp_int32 PPRadioGroup::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

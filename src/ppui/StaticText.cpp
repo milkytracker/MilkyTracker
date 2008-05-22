@@ -122,7 +122,7 @@ void PPStaticText::paint(PPGraphicsAbstract* g)
 		delete[] temp;
 }
 
-pp_int32 PPStaticText::callEventListener(PPEvent* event)
+pp_int32 PPStaticText::dispatchEvent(PPEvent* event)
 { 
 	if (!eventListener)
 		return -1;

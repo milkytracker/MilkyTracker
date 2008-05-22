@@ -40,7 +40,7 @@
 
 #define SCROLLBARWIDTH  SCROLLBUTTONSIZE
 
-pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
+pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 { 
 	if (pattern == NULL)
 		return -1;
@@ -113,7 +113,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = hTopScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			else if (hBottomScrollbar->hit(*p))
 			{
@@ -121,7 +121,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = hBottomScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			// Clicked on vertical scrollbar -> route event to scrollbar and catch scrollbar control
 			else if (vLeftScrollbar->hit(*p))
@@ -130,7 +130,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = vLeftScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 			}
 			else if (vRightScrollbar->hit(*p))
 			{
@@ -138,7 +138,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = vRightScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 			}
 			else 
 			{
@@ -175,7 +175,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 			controlCaughtByRMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -220,7 +220,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = hTopScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			else if (hBottomScrollbar->hit(*p))
 			{
@@ -228,7 +228,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = hBottomScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			// Clicked on vertical scrollbar -> route event to scrollbar and catch scrollbar control
 			else if (vLeftScrollbar->hit(*p))
@@ -237,7 +237,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = vLeftScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 			}
 			else if (vRightScrollbar->hit(*p))
 			{
@@ -245,7 +245,7 @@ pp_int32 PatternEditorControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = vRightScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 			}
 			// Clicked in client area
 			else
@@ -433,7 +433,7 @@ unmuteAll:
 			controlCaughtByLMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -471,7 +471,7 @@ unmuteAll:
 		{
 			if (caughtControl && controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}			
 			
@@ -487,7 +487,7 @@ unmuteAll:
 		case eRMouseDrag:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 
 			break;
 		}
@@ -495,7 +495,7 @@ unmuteAll:
 		case eRMouseRepeat:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 
 			break;
 		}
@@ -504,7 +504,7 @@ unmuteAll:
 		{
 			if (caughtControl && controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}		
 
@@ -810,7 +810,7 @@ markSelection:
 			if (caughtControl == NULL)
 				break;
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			goto leave;
 		
 	}
@@ -972,7 +972,7 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 				if (menuInvokeChannel != -1 && menuInvokeChannel != this->menuInvokeChannel) 
 				{
 					PPEvent e((EEventDescriptor)metaData->id, &metaData->p, sizeof(PPPoint));
-					callEventListener(&e);
+					dispatchEvent(&e);
 				}
 				// clicked somewhere else in the control, no more channel header
 				// highlight and repaint without updating

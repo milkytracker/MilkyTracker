@@ -61,20 +61,20 @@ void PPCheckBox::paint(PPGraphicsAbstract* graphics)
 	button->paint(graphics);
 }
 	
-pp_int32 PPCheckBox::callEventListener(PPEvent* event)
+pp_int32 PPCheckBox::dispatchEvent(PPEvent* event)
 {
 	//if (!visible)
 	//	return 0;
 
 	if (event->getID() == eLMouseDown)
 	{
-		button->callEventListener(event);
+		button->dispatchEvent(event);
 	}
 	else if (event->getID() == eLMouseUp)
 	{
 		button->setText(isChecked() ? ::notChecked : ::checked);
 		
-		button->callEventListener(event);
+		button->dispatchEvent(event);
 	}
 	
 	parentScreen->paintControl(this);

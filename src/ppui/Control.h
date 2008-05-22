@@ -71,7 +71,7 @@ public:
 	void setOwnerControl(PPControl* ownerControl) { this->ownerControl = ownerControl; }
 	PPControl* getOwnerControl() { return ownerControl; }
 
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	virtual void paint(PPGraphicsAbstract* graphics) = 0;
 

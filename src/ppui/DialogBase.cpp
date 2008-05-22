@@ -300,7 +300,7 @@ void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, p
 
 		PPControl* ctrl = messageBoxContainerGeneric->getFocusedControl();
 		if (ctrl && ctrl->isListBox())
-			ctrl->callEventListener(&keyDown);
+			ctrl->dispatchEvent(&keyDown);
 	}
 	else if (event == eKeyChar)
 	{
@@ -310,7 +310,7 @@ void PPDialogBase::sendKey(EEventDescriptor event, pp_uint16 vk, pp_uint16 sc, p
 
 		PPControl* ctrl = messageBoxContainerGeneric->getFocusedControl();
 		if (ctrl && ctrl->isListBox())
-			ctrl->callEventListener(&keyDown);
+			ctrl->dispatchEvent(&keyDown);
 	}
 }
 

@@ -66,7 +66,7 @@ void PPContainer::paint(PPGraphicsAbstract* g)
 	paintControls(g);
 }
 
-pp_int32 PPContainer::callEventListener(PPEvent* event)
+pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 { 
 	if (event->getID() == eInvalid)
 		return 0;
@@ -83,7 +83,7 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 			case eLMouseDown:
 			case eRMouseDown:
 				currentlyPressedMouseButtons++;
-				res = control->callEventListener(event);
+				res = control->dispatchEvent(event);
 				goto exit;
 
 			case eLMouseUp:
@@ -105,7 +105,7 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 			case eRMouseDrag:
 			case eRMouseRepeat:
 			case eMouseMoved:
-				res = control->callEventListener(event);
+				res = control->dispatchEvent(event);
 				goto exit;
 		}		
 	}
@@ -136,7 +136,7 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 		
 		if (!mouseEvent)
 		{
-			res = control->callEventListener(event);
+			res = control->dispatchEvent(event);
 			
 			// we're getting send an focus lost event
 			// so remove all references to focused controls
@@ -203,7 +203,7 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 				TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 				if (control->hit(params->pos) && control->isActive())
 				{
-					control->callEventListener(event);
+					control->dispatchEvent(event);
 					abortLoop = true;
 				}
 				break;
@@ -222,20 +222,20 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 					if (!bLastHit && bHit)
 					{
 						PPEvent e(eMouseEntered, p, sizeof(PPPoint));
-						control->callEventListener(&e);
+						control->dispatchEvent(&e);
 					}
 					else if (bLastHit && !bHit)
 					{
 						PPEvent e(eMouseLeft, p, sizeof(PPPoint));
-						control->callEventListener(&e);
+						control->dispatchEvent(&e);
 					}
 				
 					if (bHit)
 					{
 						if (control != lastMouseOverControl && lastMouseOverControl)
-							lastMouseOverControl->callEventListener(event);
+							lastMouseOverControl->dispatchEvent(event);
 
-						res = control->callEventListener(event);	
+						res = control->dispatchEvent(event);	
 						lastMouseOverControl = control;				
 						abortLoop = true;
 					}
@@ -252,7 +252,7 @@ pp_int32 PPContainer::callEventListener(PPEvent* event)
 				{
 					currentlyPressedMouseButtons++;
 					caughtControl = control;
-					control->callEventListener(event);
+					control->dispatchEvent(event);
 					abortLoop = true;
 				}
 				break;
@@ -439,7 +439,7 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 	if (this->focusedControl)
 	{
 		PPEvent e(repaint ? eFocusLost : eFocusLostNoRepaint);
-		this->focusedControl->callEventListener(&e);
+		this->focusedControl->dispatchEvent(&e);
 	}
 	
 	this->focusedControl = control;
@@ -447,7 +447,7 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 	if (this->focusedControl)
 	{
 		PPEvent e(repaint ? eFocusGained : eFocusGainedNoRepaint);
-		this->focusedControl->callEventListener(&e);
+		this->focusedControl->dispatchEvent(&e);
 	}
 
 
@@ -457,7 +457,7 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 		/*if (focusedControl != control && focusedControl)
 		{
 			PPEvent e(eFocusLost);
-			focusedControl->callEventListener(&e);
+			focusedControl->dispatchEvent(&e);
 		}*/
 
 		PPEvent eLost(eFocusLost);
@@ -465,13 +465,13 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 		{
 			PPControl* ctrl = controls.get(i);
 			if (ctrl != control)
-				ctrl->callEventListener(&eLost);
+				ctrl->dispatchEvent(&eLost);
 		}
 
 		if (reGain && control)
 		{
 			PPEvent eGained(eFocusGained);
-			control->callEventListener(&eGained);
+			control->dispatchEvent(&eGained);
 
 			lastFocusedControl = control;
 		}

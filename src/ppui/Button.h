@@ -110,7 +110,7 @@ public:
 	void setAutoSizeFont(bool autoSizeFont) { this->autoSizeFont = autoSizeFont; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 	virtual bool gainsFocus() { return false; }
 	virtual bool isActive() { return true; }
 	

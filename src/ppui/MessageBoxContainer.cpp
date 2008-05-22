@@ -26,14 +26,24 @@
 #include "Font.h"
 #include "BasicTypes.h"
 #include "PPUIConfig.h"
+#include "Screen.h"
 
 PPMessageBoxContainer::PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, const PPString& caption) :
 	PPContainer(id, parentScreen, eventListener, location, size),
-	caption(caption)		
+	caption(caption),
+	captured(false)	
 {
 	PPContainer::setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorMessageBoxContainer));	
 
-	button = new PPButton(-1, NULL, NULL, location, size, false, false, false);
+	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	captionSize = 2 + 2*2 + font->getCharHeight() + 1;
+
+	buttonLocation = location;
+	buttonLocation.y+=captionSize;
+	buttonSize = size;
+	buttonSize.height-=captionSize;
+
+	button = new PPButton(-1, NULL, NULL, buttonLocation, buttonSize, false, false, false);
 	button->setColor(*PPContainer::color);
 }
 
@@ -56,10 +66,13 @@ void PPMessageBoxContainer::paint(PPGraphicsAbstract* g)
 
 	g->setColor(*color);
 	
-	g->setRect(location.x, location.y, location.x + size.width, location.y + size.height);
+	g->setRect(location.x, location.y, location.x + size.width, location.y + captionSize);
+	g->fill();
 
 	//g->fill();
 	button->paint(g);
+
+	g->setRect(location.x, location.y, location.x + size.width, location.y + size.height);
 
 	g->setColor(bColor);
 
@@ -82,11 +95,11 @@ void PPMessageBoxContainer::paint(PPGraphicsAbstract* g)
 
 	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
 
-	g->drawHLine(location.x + 2, location.x + size.width - 3, location.y + 2 + 2*2 + font->getCharHeight());
+	g->drawHLine(location.x + 2, location.x + size.width - 3, location.y + captionSize-1);
 
 	g->setColor(bColor);
 
-	g->drawHLine(location.x + 3, location.x + size.width - 2, location.y + 2 + 2*2 + font->getCharHeight() + 1);
+	g->drawHLine(location.x + 3, location.x + size.width - 2, location.y + captionSize);
 
 	pp_int32 cx = size.width / 2 - font->getStrWidth(caption) / 2;
 
@@ -104,13 +117,102 @@ void PPMessageBoxContainer::paint(PPGraphicsAbstract* g)
 void PPMessageBoxContainer::setSize(PPSize size)
 {
 	PPContainer::setSize(size);
+
+	buttonSize = size;
+	buttonSize.height-=captionSize;
 	
-	button->setSize(size);
+	button->setSize(buttonSize);
 }
 
 void PPMessageBoxContainer::setLocation(PPPoint location)
 {
 	PPContainer::setLocation(location);
 
-	button->setLocation(location);
+	buttonLocation = location;
+	buttonLocation.y+=captionSize;
+
+	button->setLocation(buttonLocation);
 }
+
+pp_int32 PPMessageBoxContainer::dispatchEvent(PPEvent* event)
+{
+	switch (event->getID())
+	{
+		case eLMouseDown:
+			lastCapturePoint = *reinterpret_cast<PPPoint*>(event->getDataPtr());
+			captured = isPointInCaption(lastCapturePoint);
+			if (captured)
+				return 0;
+			break;
+
+		case eLMouseDrag:
+			if (handleMove(*reinterpret_cast<PPPoint*>(event->getDataPtr())))
+				return 0;
+			break;
+
+		case eLMouseUp:
+			if (captured)
+			{
+				captured = false;
+				return 0;
+			}
+			break;			
+	}
+	
+	return PPContainer::dispatchEvent(event);
+}
+
+bool PPMessageBoxContainer::isPointInCaption(const PPPoint& point) const
+{
+	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	return (point.x >= location.x && point.x <= location.x + size.width &&
+			point.y >= location.y && point.y <= location.y + captionSize);
+}
+
+bool PPMessageBoxContainer::handleMove(const PPPoint& point)
+{
+	if (!captured)
+		return false;
+
+	if (point.x < 0 || point.y < 0)
+		return false;
+
+	if (point.x >= parentScreen->getWidth() || point.y >= parentScreen->getHeight())
+		return false;
+		
+	PPPoint delta(point.x - lastCapturePoint.x, point.y - lastCapturePoint.y);
+	
+	lastCapturePoint = point;
+	
+	if (location.x + delta.x < 0)
+	{
+		delta.x -= (location.x + delta.x);
+	}
+
+	if (location.y + delta.y < 0)
+	{
+		delta.y -= (location.y + delta.y);
+	}
+
+	if (location.x + delta.x + size.width >= parentScreen->getWidth())
+	{
+		delta.x -= (location.x + delta.x + size.width) - parentScreen->getWidth();
+	}
+	
+	if (location.y + delta.y + size.height >= parentScreen->getHeight())	
+	{
+		delta.y -= (location.y + delta.y + size.height) - parentScreen->getHeight();
+	}
+	
+	move(delta);
+	
+	PPPoint buttonPos = button->getLocation();
+	buttonPos.x+=delta.x;
+	buttonPos.y+=delta.y;
+	button->setLocation(buttonPos);
+	
+	parentScreen->paint();
+	
+	return true;
+}
+

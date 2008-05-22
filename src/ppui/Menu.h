@@ -83,40 +83,16 @@ struct PPMenu
 	bool subMenu;
 	PPContextMenu* parentMenu;
 	
-	PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgColor, bool bSubMenu = false) :
-		font(aFont),
-		backColor(&bgColor),
-		borderColor(&bgColor),
-		textBrightColor(NULL),
-		textDarkColor(NULL),
-		subMenu(bSubMenu),
-		parentMenu(NULL)
-		//borderColor(128, 128, 128)
-	{
-		this->selectionColor = &selectionColor;
-	}
+	PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgColor, bool bSubMenu = false);
 	
-	pp_uint32 getMaxWidth();			
-	pp_uint32 getEntryHeight();
-	PPRect getBoundingRect();
+	pp_uint32 getMaxWidth() const;			
+	pp_uint32 getEntryHeight() const;
+	PPRect getBoundingRect() const;
 	
-	bool setState(pp_int32 theId, pp_uint32 newState)
-	{
-		bool b = false;
-		for (pp_int32 i = 0; i < items.size(); i++)
-		{
-			if (items.get(i)->identifier == theId)
-			{
-				items.get(i)->state = newState;
-				b = true;
-			}
-		}
-		
-		return b;
-	}
+	bool setState(pp_int32 theId, pp_uint32 newState);
 	
 	void setSubMenu(bool bSubMenu) { subMenu = bSubMenu; }
-	bool isSubMenu() { return subMenu; }
+	bool isSubMenu() const { return subMenu; }
 	
 	void setParentMenu(PPContextMenu* parent) { parentMenu = parent; }
 	PPContextMenu* getParentMenu() { return parentMenu; }

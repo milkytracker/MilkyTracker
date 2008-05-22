@@ -38,8 +38,14 @@ class PPMessageBoxContainer : public PPContainer
 {
 private:
 	PPString caption;
-
+	pp_int32 captionSize;
+	
+	PPPoint buttonLocation;
+	PPSize buttonSize;
 	PPButton* button;
+
+	bool captured;
+	PPPoint lastCapturePoint;
 
 public:
 	PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, const PPString& caption);
@@ -51,7 +57,14 @@ public:
 	virtual void setSize(PPSize size);
 	virtual void setLocation(PPPoint location);
 
+	virtual pp_int32 dispatchEvent(PPEvent* event);
+
 	void setCaption(const PPString& caption) { this->caption = caption; }
+	
+private:
+	bool isPointInCaption(const PPPoint& point) const;
+	
+	bool handleMove(const PPPoint& point);	
 };
 
 #endif

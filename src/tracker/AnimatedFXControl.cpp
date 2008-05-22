@@ -258,7 +258,7 @@ void AnimatedFXControl::paint(PPGraphicsAbstract* g)
 	lastTime = currentTime;
 }
 
-pp_int32 AnimatedFXControl::callEventListener(PPEvent* event)
+pp_int32 AnimatedFXControl::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

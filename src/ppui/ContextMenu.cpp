@@ -93,7 +93,7 @@ void PPContextMenu::showSubMenu(PPContextMenu* subMenu)
 	parentScreen->addContextMenuControl(subMenu);
 }
 
-pp_int32 PPContextMenu::callEventListener(PPEvent* event)
+pp_int32 PPContextMenu::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

@@ -54,7 +54,7 @@ PPListBoxFileBrowser::~PPListBoxFileBrowser()
 	delete currentPath;
 }
 
-pp_int32 PPListBoxFileBrowser::callEventListener(PPEvent* event)
+pp_int32 PPListBoxFileBrowser::dispatchEvent(PPEvent* event)
 {
 	if (event->getID() == eKeyChar && cycleFilenames)
 	{	
@@ -63,7 +63,7 @@ pp_int32 PPListBoxFileBrowser::callEventListener(PPEvent* event)
 		if (keyCode < 255)
 			cycle((char)keyCode);
 	}
-	return PPListBox::callEventListener(event);
+	return PPListBox::dispatchEvent(event);
 }
 
 void PPListBoxFileBrowser::clearExtensions()

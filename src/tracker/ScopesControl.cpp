@@ -545,7 +545,7 @@ void ScopesControl::handleSingleRec(pp_int32 channel)
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
-pp_int32 ScopesControl::callEventListener(PPEvent* event)
+pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;

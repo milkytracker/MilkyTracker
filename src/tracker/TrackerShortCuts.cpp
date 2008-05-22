@@ -110,7 +110,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 					
 				if (static_cast<PPControl*>(getPatternEditorControl()) != screen->getFocusedControl())
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 				}
 				break;
 			}
@@ -181,7 +181,7 @@ void Tracker::selectNextOrder(bool wrap/* = false*/)
 
 	pp_uint16 vk[3] = {VK_DOWN, 0, 0};
 	PPEvent e(eKeyDown, &vk, sizeof(vk));
-	listBoxOrderList->callEventListener(&e);
+	listBoxOrderList->dispatchEvent(&e);
 }
 
 void Tracker::selectPreviousOrder(bool wrap/* = false*/)
@@ -194,21 +194,21 @@ void Tracker::selectPreviousOrder(bool wrap/* = false*/)
 
 	pp_uint16 vk[3] = {VK_UP, 0, 0};
 	PPEvent e(eKeyDown, &vk, sizeof(vk));
-	listBoxOrderList->callEventListener(&e);
+	listBoxOrderList->dispatchEvent(&e);
 }
 
 void Tracker::selectNextInstrument()
 {
 	pp_uint16 vk[3] = {VK_DOWN, 0, 0};
 	PPEvent e(eKeyDown, &vk, sizeof(vk));
-	listBoxInstruments->callEventListener(&e);
+	listBoxInstruments->dispatchEvent(&e);
 }
 
 void Tracker::selectPreviousInstrument()
 {
 	pp_uint16 vk[3] = {VK_UP, 0, 0};
 	PPEvent e(eKeyDown, &vk, sizeof(vk));
-	listBoxInstruments->callEventListener(&e);
+	listBoxInstruments->dispatchEvent(&e);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 			case SC_WTF:
 				if (!::getKeyModifier() || ::getKeyModifier() == KeyModifierSHIFT)
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 					keyCode = 0;
 				}
@@ -269,7 +269,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				
 				if (::getKeyModifier() == KeyModifierALT)
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 					keyCode = 0;
 				}
@@ -309,7 +309,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				if (screen->getModalControl())
 					break;
 
-				getPatternEditorControl()->callEventListener(event);
+				getPatternEditorControl()->dispatchEvent(event);
 				event->cancel();
 				break;
 			
@@ -333,7 +333,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				// Global meaning here
 				if (::getKeyModifier())
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 					break;
 				}
@@ -359,7 +359,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				
 				if (::getKeyModifier() == (KeyModifierCTRL|KeyModifierALT))
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				else goto processOthers;
@@ -371,7 +371,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				
 				if (::getKeyModifier() == KeyModifierSHIFT)
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				else goto processOthers;
@@ -384,7 +384,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				if (::getKeyModifier() == KeyModifierSHIFT ||
 					::getKeyModifier() == (KeyModifierSHIFT|KeyModifierCTRL))
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				else goto processOthers;
@@ -405,7 +405,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 					::getKeyModifier() == KeyModifierALT ||
 					::getKeyModifier() == (KeyModifierSHIFT|KeyModifierALT))
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				else if (::getKeyModifier() == KeyModifierSHIFT)
@@ -417,7 +417,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 						case VK_DOWN:
 						case VK_NEXT:
 						case VK_PRIOR:
-							listBoxInstruments->callEventListener(event);
+							listBoxInstruments->dispatchEvent(event);
 							event->cancel();
 							break;
 						
@@ -445,7 +445,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 						case VK_DOWN:
 						case VK_NEXT:
 						case VK_PRIOR:
-							listBoxSamples->callEventListener(event);
+							listBoxSamples->dispatchEvent(event);
 							event->cancel();
 							break;
 					}
@@ -473,7 +473,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				if (screen->getModalControl())
 					break;
 
-				getPatternEditorControl()->callEventListener(event);
+				getPatternEditorControl()->dispatchEvent(event);
 				event->cancel();
 				break;
 
@@ -486,7 +486,7 @@ processOthers:
 
 				if (recorderLogic->getRecordMode())
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				// if recordMode is false and focus is on pattern editor
@@ -513,7 +513,7 @@ processOthers:
 				if (screen->getModalControl())
 					break;
 
-				getPatternEditorControl()->callEventListener(event);
+				getPatternEditorControl()->dispatchEvent(event);
 				event->cancel();
 				break;
 
@@ -525,7 +525,7 @@ processOthers:
 
 				if (recorderLogic->getRecordMode())
 				{
-					getPatternEditorControl()->callEventListener(event);
+					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
 				// if recordMode is false and focus is on pattern editor
@@ -589,8 +589,8 @@ static void simulateMouseClickEvent(PPControl* ctrl)
 	PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
 	PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
 	
-	ctrl->callEventListener(&e1);
-	ctrl->callEventListener(&e2);
+	ctrl->dispatchEvent(&e1);
+	ctrl->dispatchEvent(&e2);
 }
 
 bool Tracker::processMessageBoxShortcuts(PPEvent* event)

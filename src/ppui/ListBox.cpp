@@ -363,7 +363,7 @@ PPListBox::SelectReturnCodes PPListBox::select(const PPPoint* p)
 	return SelectReturnCodeDefault;
 }
 
-pp_int32 PPListBox::callEventListener(PPEvent* event)
+pp_int32 PPListBox::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;
@@ -450,7 +450,7 @@ pp_int32 PPListBox::callEventListener(PPEvent* event)
 				if (controlCaughtByLMouseButton)
 					break;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				controlCaughtByRMouseButton = true;
 			}
 			// Clicked on vertical scrollbar -> route event to scrollbar and catch scrollbar control
@@ -459,7 +459,7 @@ pp_int32 PPListBox::callEventListener(PPEvent* event)
 				if (controlCaughtByLMouseButton)
 					break;
 				caughtControl = vScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByRMouseButton = true;
 			}
 			else if (rightButtonConfirm)
@@ -524,7 +524,7 @@ dragorautoscroll:
 				}
 			}
 			else
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 
 			break;
 		}
@@ -541,7 +541,7 @@ dragorautoscroll:
 				if (controlCaughtByRMouseButton)
 					break;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				controlCaughtByLMouseButton = true;
 			}
 			// Clicked on vertical scrollbar -> route event to scrollbar and catch scrollbar control
@@ -550,7 +550,7 @@ dragorautoscroll:
 				if (controlCaughtByRMouseButton)
 					break;
 				caughtControl = vScrollbar;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByLMouseButton = true;
 			}
 			// Clicked on text -> select text
@@ -572,7 +572,7 @@ dragorautoscroll:
 			controlCaughtByRMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -688,7 +688,7 @@ placeCursor:
 
 			if (!controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -960,7 +960,7 @@ skiprefresh:
 			if (caughtControl == NULL)
 				break;
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			break;
 
 	}

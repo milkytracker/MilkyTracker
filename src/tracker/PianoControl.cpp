@@ -364,7 +364,7 @@ void PianoControl::paint(PPGraphicsAbstract* g)
 
 }
 
-pp_int32 PianoControl::callEventListener(PPEvent* event)
+pp_int32 PianoControl::dispatchEvent(PPEvent* event)
 { 
 	if (eventListener == NULL)
 		return -1;
@@ -384,7 +384,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByRMouseButton = true;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			break;
 		}		
@@ -400,7 +400,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 					break;
 				controlCaughtByLMouseButton = true;
 				caughtControl = hScrollbar;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			}
 			// Clicked in client area
 			else
@@ -442,7 +442,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 			controlCaughtByRMouseButton = false;
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;			
 				break;
 			}
@@ -476,7 +476,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 			controlCaughtByLMouseButton = false;
 			if (!controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;
 			}
 			break;
@@ -485,7 +485,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 		{
 			if (caughtControl && controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 			
@@ -535,14 +535,14 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 		case eRMouseDrag:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			break;
 		}
 		
 		case eRMouseRepeat:
 		{
 			if (caughtControl && controlCaughtByRMouseButton)
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 			break;
 		}
 		
@@ -570,7 +570,7 @@ pp_int32 PianoControl::callEventListener(PPEvent* event)
 			if (caughtControl == NULL)
 				break;
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			break;
 
 	}

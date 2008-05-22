@@ -72,7 +72,7 @@ public:
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	virtual bool gainsFocus();
 	virtual bool gainedFocusByMouse();

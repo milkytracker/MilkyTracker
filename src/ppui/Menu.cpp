@@ -33,7 +33,20 @@
 #include "GraphicsAbstract.h"
 
 // ------------- menu --------------------------------------------
-pp_uint32 PPMenu::getMaxWidth()
+PPMenu::PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgColor, bool bSubMenu/* = false*/) :
+	font(aFont),
+	backColor(&bgColor),
+	borderColor(&bgColor),
+	selectionColor(&selectionColor),
+	textBrightColor(NULL),
+	textDarkColor(NULL),
+	subMenu(bSubMenu),
+	parentMenu(NULL)
+//borderColor(128, 128, 128)
+{
+}
+
+pp_uint32 PPMenu::getMaxWidth() const
 {
 	pp_uint32 maxWidth = 0;
 
@@ -47,7 +60,7 @@ pp_uint32 PPMenu::getMaxWidth()
 	return maxWidth;
 }
 
-pp_uint32 PPMenu::getEntryHeight()
+pp_uint32 PPMenu::getEntryHeight() const
 {
 #ifndef __LOWRES__
 	return font->getCharHeight()+2;
@@ -56,7 +69,7 @@ pp_uint32 PPMenu::getEntryHeight()
 #endif
 }
 
-PPRect PPMenu::getBoundingRect()
+PPRect PPMenu::getBoundingRect() const
 {
 	PPRect r;
 	r.x1 = 0;
@@ -64,6 +77,21 @@ PPRect PPMenu::getBoundingRect()
 	r.y2 = items.size()*getEntryHeight()+4;
 	r.x2 = getMaxWidth()*font->getCharWidth()+5;
 	return r;
+}
+
+bool PPMenu::setState(pp_int32 theId, pp_uint32 newState)
+{
+	bool b = false;
+	for (pp_int32 i = 0; i < items.size(); i++)
+	{
+		if (items.get(i)->identifier == theId)
+		{
+			items.get(i)->state = newState;
+			b = true;
+		}
+	}
+	
+	return b;
 }
 
 void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 menuSelection)

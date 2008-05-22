@@ -186,7 +186,7 @@ void PPSlider::setBarPosition(pp_int32 pos, bool repaint /* = false */)
 		parentScreen->paintControl(this);
 }
 
-pp_int32 PPSlider::callEventListener(PPEvent* event)
+pp_int32 PPSlider::dispatchEvent(PPEvent* event)
 {
 	//if (!visible)
 	//	return 0;
@@ -221,13 +221,13 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 			if (buttonUp->hit(*p))
 			{
 				caughtControl = buttonUp;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				controlCaughtByLMouseButton = true;
 			}
 			else if (buttonDown->hit(*p))
 			{
 				caughtControl = buttonDown;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByLMouseButton = true;
 			}
 			else if (buttonBar->hit(*p))
@@ -239,7 +239,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 				// -------------------------
 				caughtMouseLocation = *p;
 				caughtControlLocation = buttonBar->getLocation();
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByLMouseButton = true;
 			}
 			else if (backgroundButton->hit(*p))
@@ -258,7 +258,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 
 			if (controlCaughtByRMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 
@@ -270,7 +270,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 			}
 			// -------------------------
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			caughtControl = NULL;
 			break;
 
@@ -278,7 +278,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 		{
 			if (caughtControl)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 			else
@@ -303,7 +303,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 					caughtControl = buttonBar;
 					caughtMouseLocation = *p;
 					caughtControlLocation = buttonBar->getLocation();
-					caughtControl->callEventListener(event);				
+					caughtControl->dispatchEvent(event);				
 				}
 
 			}
@@ -317,13 +317,13 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 			if (buttonUp->hit(*p))
 			{
 				caughtControl = buttonUp;
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				controlCaughtByRMouseButton = true;
 			}
 			else if (buttonDown->hit(*p))
 			{
 				caughtControl = buttonDown;
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByRMouseButton = true;
 			}
 			else if (buttonBar->hit(*p))
@@ -335,7 +335,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 				// -------------------------
 				caughtMouseLocation = *p;
 				caughtControlLocation = buttonBar->getLocation();
-				caughtControl->callEventListener(event);				
+				caughtControl->dispatchEvent(event);				
 				controlCaughtByRMouseButton = true;
 			}
 			else if (backgroundButton->hit(*p))
@@ -354,7 +354,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 
 			if (controlCaughtByLMouseButton)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 
@@ -366,7 +366,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 			}
 			// -------------------------
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			caughtControl = NULL;
 			break;
 
@@ -374,7 +374,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 		{
 			if (caughtControl)
 			{
-				caughtControl->callEventListener(event);
+				caughtControl->dispatchEvent(event);
 				break;
 			}
 			else
@@ -399,7 +399,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 					caughtControl = buttonBar;
 					caughtMouseLocation = *p;
 					caughtControlLocation = buttonBar->getLocation();
-					caughtControl->callEventListener(event);				
+					caughtControl->dispatchEvent(event);				
 				}
 
 			}
@@ -411,7 +411,7 @@ pp_int32 PPSlider::callEventListener(PPEvent* event)
 			if (caughtControl == NULL)
 				break;
 
-			caughtControl->callEventListener(event);
+			caughtControl->dispatchEvent(event);
 			break;
 
 	}

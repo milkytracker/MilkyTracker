@@ -186,7 +186,7 @@ public:
 
 	virtual bool isActive() { return true; }
 	
-	virtual pp_int32 callEventListener(PPEvent* event);
+	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	virtual void setSize(PPSize size);
 	virtual void setLocation(PPPoint location);
