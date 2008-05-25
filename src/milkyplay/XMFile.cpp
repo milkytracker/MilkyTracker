@@ -171,15 +171,6 @@ XMFile::XMFile(const SYSCHAR*	fileName, bool writeAccess /* = false*/) :
 
 	bytesRead = 0;
 	
-#ifdef DEBUG
-	handle = CreateFile(fileName,
-					    writeAccess ? GENERIC_WRITE : GENERIC_READ,
-						writeAccess ? FILE_SHARE_WRITE : FILE_SHARE_READ,
-						NULL,
-						writeAccess ? CREATE_ALWAYS : OPEN_EXISTING, 
-						FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_NORMAL, 
-						NULL);
-#else
 	handle = CreateFile(fileName,
 					    writeAccess ? GENERIC_WRITE : GENERIC_READ,
 						writeAccess ? FILE_SHARE_WRITE : FILE_SHARE_READ,
@@ -187,7 +178,6 @@ XMFile::XMFile(const SYSCHAR*	fileName, bool writeAccess /* = false*/) :
 						writeAccess ? CREATE_ALWAYS : OPEN_EXISTING, 
 						FILE_ATTRIBUTE_NORMAL, 
 						NULL);
-#endif
 
 	//ASSERT(handle != INVALID_HANDLE_VALUE);
 
