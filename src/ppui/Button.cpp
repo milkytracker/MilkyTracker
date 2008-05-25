@@ -44,18 +44,11 @@ PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* 
 	// default colors
 	pressed = false;
 	
-	bitmap = NULL;
-
 	font = PPFont::getFont(PPFont::FONT_SYSTEM);
 }
 
 PPButton::~PPButton()
 {
-	if (bitmap)
-	{
-		delete[] bitmap->buffer;
-		delete bitmap;
-	}
 }
 
 void PPButton::paint(PPGraphicsAbstract* g)
@@ -92,14 +85,6 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		
 		g->fillVerticalShaded(nsbColor, nsdColor, invertShading);
 
-	}
-
-	if (bitmap)
-	{
-		if (pressed)
-			g->blit(*bitmap, PPPoint(location.x+1+offset.x, location.y+1+offset.y));
-		else
-			g->blit(*bitmap, PPPoint(location.x+offset.x, location.y+offset.y));
 	}
 
 	PPColor bColor = *color;
@@ -202,21 +187,6 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		g->drawVLine(location.y, location.y + size.height, location.x + size.width);
 	}
 
-}
-
-SimpleBitmap& PPButton::getBitmap()
-{
-	if (bitmap == NULL)
-	{
-		bitmap = new SimpleBitmap;
-		bitmap->height = size.height;
-		bitmap->width = size.width;
-		bitmap->buffer = new pp_uint8[bitmap->width * bitmap->height * 3];
-
-		memset(bitmap->buffer, 0, bitmap->width * bitmap->height * 3);
-	}
-
-	return *bitmap;
 }
 
 pp_int32 PPButton::dispatchEvent(PPEvent* event)

@@ -162,8 +162,7 @@ protected:
 		*b = h;
 	}
 
-	pp_int32 width, height, pitch;
-	pp_uint8* buffer;
+	pp_int32 width, height;
 
 public:
 	bool lock;
@@ -171,12 +170,24 @@ public:
 protected:		
 	PPColor currentColor;
 	pp_uint16 color16;
-	PPRect currentClipRect;
+	PPRect currentClipRect, origRect;
 
 	PPFont* currentFont;
 
 	void validateRect()
 	{
+		if ((currentClipRect.x1 < 0 && currentClipRect.x2 < 0) ||
+			(currentClipRect.y1 < 0 && currentClipRect.y2 < 0) ||
+			(currentClipRect.x1 > width && currentClipRect.x2 > width) ||
+			(currentClipRect.y1 > height && currentClipRect.y2 > height))
+		{
+			currentClipRect.x1 = 0;
+			currentClipRect.x2 = 0;
+			currentClipRect.y1 = 0;
+			currentClipRect.y2 = 0;
+			return;
+		}
+	
 		if (currentClipRect.x1 < 0)
 			currentClipRect.x1 = 0;
 		if (currentClipRect.y1 < 0)
@@ -193,42 +204,39 @@ protected:
 		color16 = (((pp_uint16)((currentColor.r)>>3)<<11)+((pp_uint16)((currentColor.g)>>2)<<5)+(pp_uint16)((currentColor.b)>>3));
 	}
 
-public:
-	PPGraphicsAbstract(pp_int32 w, pp_int32 h, pp_int32 p, void* buff) :
-		width(w), height(h), pitch(p), buffer((pp_uint8*)buff),
+	PPGraphicsAbstract(pp_int32 w, pp_int32 h) :
+		width(w), height(h),
 		lock(false),
 		currentFont(NULL)
 	{
 	}
-	
-	void setBufferProperties(pp_int32 p, void *buff)
-	{
-		pitch = p;
-		buffer = (pp_uint8*)buff;
-	}
 
+public:	
 	pp_int32 getWidth() { return width; }
 	pp_int32 getHeight() { return height; }
 
 	void setRect(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2) 
 	{ 
 		currentClipRect.x1 = x1; currentClipRect.y1 = y1; currentClipRect.x2 = x2; currentClipRect.y2 = y2; 
+		origRect = currentClipRect;
 		validateRect();
 	}
+	
 	void setRect(PPRect r) 
 	{ 
-		currentClipRect = r; 
+		currentClipRect = origRect = r; 
 		validateRect();
 	}
 
-	PPRect getRect() { return currentClipRect; }
+	PPRect getRect() { return origRect; }
 
 	void setFullRect()
 	{
 		currentClipRect.x1 = 0; 
 		currentClipRect.y1 = 0; 
 		currentClipRect.x2 = width-1; 
-		currentClipRect.y2 = height-1; 		
+		currentClipRect.y2 = height-1; 	
+		origRect = currentClipRect;
 	}
 
 	void clipLine(pp_int32& x1, pp_int32& y1, pp_int32& x2, pp_int32& y2)
@@ -278,8 +286,8 @@ public:
 	virtual void drawLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2) = 0;
 	virtual void drawAntialiasedLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2) = 0;
 
-	virtual void blit(SimpleBitmap& bitmap, PPPoint p) = 0;
-	virtual void blit(const pp_uint8* src, const PPPoint& p, const PPSize& size, pp_uint32 pitch, pp_uint32 bpp, pp_int32 intensity = 256) = 0;
+	virtual void blit(const pp_uint8* src, const PPPoint& p, const PPSize& size, 
+					  pp_uint32 pitch, pp_uint32 bpp, pp_int32 intensity = 256) = 0;
 
 	virtual void drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underlined = false) = 0;
 	virtual void drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined = false) = 0;

@@ -42,12 +42,12 @@ SDL_Surface* PPDisplayDevice::CreateScreen(Uint16 w, Uint16 h, Uint8 bpp, Uint32
 }
 
 PPDisplayDevice::PPDisplayDevice(SDL_Surface*& screen, 
-							 pp_int32 width, 
-							 pp_int32 height, 
-							 pp_int32 bpp,
-							 bool fullScreen, 
-							 Orientations theOrientation/* = ORIENTATION_NORMAL*/, 
-							 bool swapRedBlue/* = false*/) :
+								 pp_int32 width, 
+								 pp_int32 height, 
+								 pp_int32 bpp,
+								 bool fullScreen, 
+								 Orientations theOrientation/* = ORIENTATION_NORMAL*/, 
+								 bool swapRedBlue/* = false*/) :
 	PPDisplayDeviceBase(width, height),
 	realWidth(width), realHeight(height),
 	orientation(theOrientation),
@@ -153,9 +153,9 @@ PPGraphicsAbstract* PPDisplayDevice::open()
 		currentGraphics->lock = false;
 
 		if (orientation != ORIENTATION_NORMAL)
-			currentGraphics->setBufferProperties(temporaryBufferPitch, (pp_uint8*)temporaryBuffer);		
+			static_cast<PPGraphicsFrameBuffer*>(currentGraphics)->setBufferProperties(temporaryBufferPitch, (pp_uint8*)temporaryBuffer);		
 		else
-			currentGraphics->setBufferProperties(theSurface->pitch, (pp_uint8*)theSurface->pixels);		
+			static_cast<PPGraphicsFrameBuffer*>(currentGraphics)->setBufferProperties(theSurface->pitch, (pp_uint8*)theSurface->pixels);		
 		
 		return currentGraphics;
 	}

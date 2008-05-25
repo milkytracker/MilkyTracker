@@ -30,21 +30,95 @@
 class SliderButton : public PPButton
 {
 private:
+	bool horizontal;
+	bool up;
+
+public:
+	SliderButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+					PPPoint location, PPSize size, 
+					bool horiz = true, bool up = true) :
+		PPButton(id, parentScreen, eventListener, location, size, false, true, true),
+		horizontal(horiz),
+		up(up)
+	{
+	}
+	
+	virtual void paint(PPGraphicsAbstract* g)
+	{
+		if (!isVisible())
+			return;
+	
+		PPButton::paint(g);		
+		
+		g->setColor(0,0,0);
+		
+		PPPoint location = this->location;
+		if (isPressed())
+		{
+			location.x++;
+			location.y++;
+		}
+
+		PPSize b = getSize();
+		
+		// draw fancy triangles
+		if (up)
+		{
+			const pp_int32 size = (b.width>>1)-2;
+			
+			const pp_int32 xo = ((b.width >> 1) - size)-1;
+			const pp_int32 yo = ((b.width >> 1) - (size>>1))-1;
+			
+			for (pp_int32 j = 0; j <= size; j++)
+				for (pp_int32 i = 0; i < (size*2+1)-j*2; i++)
+				{
+					pp_int32 x = i+j, y = j;
+					
+					if (horizontal)
+						g->setPixel(size-y+yo+location.x, x+xo+location.y);
+					else
+						g->setPixel(x+xo+location.x, size-y+yo+location.y);					
+				}
+		}
+		else
+		{
+			const pp_int32 size = (b.width>>1)-2;
+			
+			const pp_int32 xo = ((b.width >> 1) - size)-1;
+			const pp_int32 yo = ((b.width >> 1) - (size>>1))-1;
+			
+			for (pp_int32 j = 0; j <= size; j++)
+				for (pp_int32 i = 0; i < (size*2+1)-j*2; i++)
+				{
+					pp_int32 x = i+j, y = j;
+					
+					if (horizontal)
+						g->setPixel(y+yo+location.x, x+xo+location.y);
+					else
+						g->setPixel(x+xo+location.x, y+yo+location.y);					
+				}
+		}
+	}
+};
+
+class SliderBarButton : public PPButton
+{
+private:
 	PPSeperator* seperators[3];
 	bool horizontal;
 
 public:
-	SliderButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
-				 PPPoint location, PPSize size, bool border = true, bool clickable = true, bool update = true, bool horiz = true) :
+	SliderBarButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+					PPPoint location, PPSize size, bool border = true, bool clickable = true, bool update = true, bool horiz = true) :
 		PPButton(id, parentScreen, eventListener, location, size, border, clickable, update),
 		horizontal(horiz)
 	{
-		seperators[0] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
-		seperators[1] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
-		seperators[2] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
+			seperators[0] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
+			seperators[1] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
+			seperators[2] = new PPSeperator(0, parentScreen, PPPoint(0, 0), SCROLLBUTTONSIZE - 6, *getColor(), !horizontal);
 	}
 	
-	virtual ~SliderButton()
+	virtual ~SliderBarButton()
 	{
 		delete seperators[0];
 		delete seperators[1];
@@ -115,116 +189,20 @@ void PPScrollbar::initButtons()
 	backgroundButton->setColor(backgroundColor);
 	backgroundButton->setInvertShading(true);
 
-	buttonUp = new PPButton(0, parentScreen, this, location, PPSize(SCROLLBUTTONSIZE,SCROLLBUTTONSIZE), false);
+	buttonUp = new SliderButton(0, parentScreen, this, location, PPSize(SCROLLBUTTONSIZE,SCROLLBUTTONSIZE), 
+								horizontal, true);
 
-	SimpleBitmap b = buttonUp->getBitmap();
+	buttonDown = new SliderButton(0, parentScreen, this, buttonDownPos , PPSize(SCROLLBUTTONSIZE,SCROLLBUTTONSIZE), 
+								  horizontal, false);
 
-	{
-		const pp_int32 size = (b.width>>1)-2;
-
-		const pp_int32 xo = ((b.width >> 1) - size)-1;
-		const pp_int32 yo = ((b.width >> 1) - (size>>1))-1;
-
-		for (pp_int32 j = 0; j <= size; j++)
-			for (pp_int32 i = 0; i < (size*2+1)-j*2; i++)
-			{
-				pp_uint8* buf;
-
-				pp_int32 x = i+j, y = j;
-				
-				if (horizontal)
-					buf = (pp_uint8*)b.buffer+((x+xo)*b.width+((size-y)+yo))*3;
-				else
-					buf = (pp_uint8*)b.buffer+(((size-y)+yo)*b.width+(x+xo))*3;
-				
-				buf[0] = 1;
-				buf[1] = 1;
-				buf[2] = 1;
-				//g->setPixel(x+i+j,y+j);
-			}
-	}
-
-	/*for (x = 1; x < b.width-4; x++)
-	{
-		pp_int32 y2 = (x>>1)+(b.height>>1);
-		pp_int32 y1 = (b.height-1)-((x>>1)+(b.height>>1));
-		
-		for (y = y1; y < y2; y++)
-		{
-			
-			pp_uint8* buf;
-
-			if (horizontal)
-				buf = (pp_uint8*)b.buffer+(y*b.width+x+1)*3;
-			else
-				buf = (pp_uint8*)b.buffer+((x+1)*b.width+y)*3;
-
-			buf[0] = 1;
-			buf[1] = 1;
-			buf[2] = 1;
-		}
-	}*/
-
-	buttonDown = new PPButton(0, parentScreen, this, buttonDownPos , PPSize(SCROLLBUTTONSIZE,SCROLLBUTTONSIZE), false);
-
-	b = buttonDown->getBitmap();
-	/*for (x = 1; x < b.width-4; x++)
-	{
-		pp_int32 y2 = (x>>1)+(b.height>>1);
-		pp_int32 y1 = (b.height-1)-((x>>1)+(b.height>>1));
-		
-		for (y = y1; y < y2; y++)
-		{
-			
-			pp_uint8* buf;
-
-			if (horizontal)
-				buf = (pp_uint8*)b.buffer+(y*b.width+(b.width-1-(x+1)))*3;
-			else
-				buf = (pp_uint8*)b.buffer+((b.height-1-(x+1))*b.width+y)*3;
-
-			buf[0] = 1;
-			buf[1] = 1;
-			buf[2] = 1;
-		}
-	}*/
-	{
-		const pp_int32 size = (b.width>>1)-2;
-
-		const pp_int32 xo = ((b.width >> 1) - size)-1;
-		const pp_int32 yo = ((b.width >> 1) - (size>>1))-1;
-
-		for (pp_int32 j = 0; j <= size; j++)
-			for (pp_int32 i = 0; i < (size*2+1)-j*2; i++)
-			{
-				pp_uint8* buf;
-
-				pp_int32 x = i+j, y = j;
-				
-				if (horizontal)
-					buf = (pp_uint8*)b.buffer+((x+xo)*b.width+(y+yo))*3;
-				else
-					buf = (pp_uint8*)b.buffer+((y+yo)*b.width+(x+xo))*3;
-				
-				buf[0] = 1;
-				buf[1] = 1;
-				buf[2] = 1;
-				//g->setPixel(x+i+j,y+j);
-			}
-	}
-	
-	buttonBar = new SliderButton(0, parentScreen, this, buttonBarPos, buttonBarSize, false, false, true, horizontal);
-	/*if (!horizontal)
-	{
-		buttonBar->setVerticalShading(false);
-		backgroundButton->setVerticalShading(false);
-	}*/
+	buttonBar = new SliderBarButton(0, parentScreen, this, buttonBarPos, buttonBarSize, false, false, true, horizontal);
 
 	setBarSize(currentBarSize);
 	setBarPosition(currentBarPosition);
 }
 
-PPScrollbar::PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, pp_int32 size, bool horizontal) :
+PPScrollbar::PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						 PPPoint location, pp_int32 size, bool horizontal) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(0,0)),
 	oneDimSize(size),
 	horizontal(horizontal),

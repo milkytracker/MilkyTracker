@@ -57,8 +57,6 @@ private:
 	bool lMouseDown;
 	bool rMouseDown;
 
-	SimpleBitmap* bitmap;
-
 	PPFont* font;
 	PPString text;
 
@@ -81,8 +79,6 @@ public:
 
 	void setXOffset(pp_int32 offset) { this->offset.x = offset; }
 	void setYOffset(pp_int32 offset) { this->offset.y = offset; }
-
-	SimpleBitmap& getBitmap(); 
 
 	void setText(const PPString& text);
 	const PPString& getText() { return text; }

@@ -435,7 +435,7 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 	if (control == this->focusedControl)
 		return;
 	
-	// the current control is about to loose focus
+	// the current control is about to lose focus
 	if (this->focusedControl)
 	{
 		PPEvent e(repaint ? eFocusLost : eFocusLostNoRepaint);

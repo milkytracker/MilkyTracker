@@ -30,7 +30,7 @@
 	(((col) & 0x1f) + (((col)>>1)&0x3E0) + (((col)>>1)&0x7C00))
 
 PPGraphics_15BIT::PPGraphics_15BIT(pp_int32 w, pp_int32 h, pp_int32 p, void* buff) :
-	PPGraphicsAbstract(w, h, p, buff)
+	PPGraphicsFrameBuffer(w, h, p, buff)
 {
 }
 
@@ -203,28 +203,6 @@ void PPGraphics_15BIT::drawLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 
 void PPGraphics_15BIT::drawAntialiasedLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2)
 {
 	__PPGRAPHICSAALINETEMPLATE
-}
-
-void PPGraphics_15BIT::blit(SimpleBitmap& bitmap, PPPoint p)
-{
-
-	pp_uint8* src = (pp_uint8*)bitmap.buffer;
-
-	for (int y = 0; y < bitmap.height; y++)
-		for (int x = 0; x < bitmap.width; x++)
-		{
-		
-			if (src[0]||src[1]||src[2])
-			{
-				pp_uint16* buff = (pp_uint16*)buffer+(pitch>>1)*(y+p.y)+(x+p.x);
-				
-				*buff = (((pp_uint16)((src[0])>>3)<<10)+((pp_uint16)((src[1])>>3)<<5)+(pp_uint16)((src[2])>>3));
-			}
-
-			src+=3;
-
-		}
-
 }
 
 void PPGraphics_15BIT::blit(const pp_uint8* src, const PPPoint& p, const PPSize& size, pp_uint32 pitch, pp_uint32 bpp, pp_int32 intensity/* = 256*/)

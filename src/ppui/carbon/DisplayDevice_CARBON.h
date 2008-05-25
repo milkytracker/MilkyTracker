@@ -35,9 +35,6 @@
 #include <pthread.h>
 #include "PPSystem.h"
 
-// Forwards
-class PPGraphicsAbstract;
-
 class PPDisplayDevice : public PPDisplayDeviceBase
 {
 	struct GWorldWrapper

@@ -211,7 +211,7 @@ PPGraphicsAbstract* PPDisplayDevice::open()
 	pp_uint8* buffer;
 	pp_uint32 pitch;
     mainGWorld->UnlockGWorldMemory(&buffer, (unsigned int*)&pitch);
-	currentGraphics->setBufferProperties(pitch, buffer);
+	static_cast<PPGraphicsFrameBuffer*>(currentGraphics)->setBufferProperties(pitch, buffer);
 	
 	currentGraphics->lock = false;
 	

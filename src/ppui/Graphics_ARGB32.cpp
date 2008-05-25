@@ -27,7 +27,7 @@
 #define BPP 4
 
 PPGraphics_ARGB32::PPGraphics_ARGB32(pp_int32 w, pp_int32 h, pp_int32 p, void* buff) :
-	PPGraphicsAbstract(w, h, p, buff)
+	PPGraphicsFrameBuffer(w, h, p, buff)
 {
 }
 
@@ -217,27 +217,6 @@ void PPGraphics_ARGB32::drawLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32
 void PPGraphics_ARGB32::drawAntialiasedLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2)
 {	
 	__PPGRAPHICSAALINETEMPLATE
-}
-
-void PPGraphics_ARGB32::blit(SimpleBitmap& bitmap, PPPoint p)
-{
-	pp_uint8* src = (pp_uint8*)bitmap.buffer;
-
-	for (int y = 0; y < bitmap.height; y++)
-		for (int x = 0; x < bitmap.width; x++)
-		{
-		
-			if (src[0]||src[1]||src[2])
-			{
-				pp_uint8* buff = (pp_uint8*)buffer+((y+p.y)*pitch+(x+p.x)*BPP);
-				buff[1] = src[0];
-				buff[2] = src[1];
-				buff[3] = src[2];
-			}
-
-			src+=3;
-
-		}
 }
 
 void PPGraphics_ARGB32::blit(const pp_uint8* src, const PPPoint& p, const PPSize& size, pp_uint32 pitch, pp_uint32 bpp, pp_int32 intensity/* = 256*/)

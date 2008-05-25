@@ -154,11 +154,6 @@ struct PPRect
 	
 };
 
-#define VALIDATE \
-	if (r > 255) r = 255; \
-	if (g > 255) g = 255; \
-	if (b > 255) b = 255;
-
 struct PPColor
 {
 	pp_int32 r,g,b;
@@ -169,13 +164,20 @@ struct PPColor
 
 	PPColor()
 	{}
+	
+	void validate()
+	{
+		if (r > 255) r = 255;
+		if (g > 255) g = 255;
+		if (b > 255) b = 255;
+	}
 
 	void scale(float f) 
 	{
 		r = (pp_int32)((float)r*f);
 		g = (pp_int32)((float)g*f);
 		b = (pp_int32)((float)b*f);
-		VALIDATE
+		validate();
 	}
 
 	void scale(float fr, float fg, float fb) 
@@ -183,7 +185,7 @@ struct PPColor
 		r = (pp_int32)((float)r*fr);
 		g = (pp_int32)((float)g*fg);
 		b = (pp_int32)((float)b*fb);
-		VALIDATE
+		validate();
 	}
 
 	void scaleFixed(pp_int32 f) 
@@ -191,7 +193,7 @@ struct PPColor
 		r = (r*f)>>16;
 		g = (g*f)>>16;
 		b = (b*f)>>16;
-		VALIDATE
+		validate();
 	}
 	
 	void interpolateFixed(const PPColor& col, pp_int32 f)
@@ -199,7 +201,7 @@ struct PPColor
 		r = (f*r + col.r*(65536-f)) >> 16;
 		g = (f*g + col.g*(65536-f)) >> 16;
 		b = (f*b + col.b*(65536-f)) >> 16;
-		VALIDATE
+		validate();
 	}
 
 	PPColor invert() const
@@ -219,9 +221,7 @@ struct PPColor
 		if (g < 0) g = 0;
 		if (b < 0) b = 0;
 
-		if (r > 255) r = 255;
-		if (g > 255) g = 255;
-		if (b > 255) b = 255;
+		validate();
 	}
 
 	void operator+=(const PPColor& source)
@@ -229,7 +229,7 @@ struct PPColor
 		r+=source.r;
 		g+=source.g;
 		b+=source.b;
-		VALIDATE
+		validate();
 	}
 	
 	bool operator==(const PPColor& source)
@@ -241,15 +241,6 @@ struct PPColor
 	{
 		return !(r == source.r && g == source.g && b == source.b);
 	}
-};
-
-#undef VALIDATE
-
-// 24 bit image
-struct SimpleBitmap
-{
-	pp_int32 width, height;
-	pp_uint8* buffer;
 };
 
 #ifdef WIN32

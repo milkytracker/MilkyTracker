@@ -30,10 +30,30 @@
 
 #include "GraphicsAbstract.h"
 
+class PPGraphicsFrameBuffer : public PPGraphicsAbstract
+{
+protected:
+	pp_int32 pitch;
+	pp_uint8* buffer;
+
+public:
+	PPGraphicsFrameBuffer(pp_int32 w, pp_int32 h, pp_int32 p, void* buff) :
+		PPGraphicsAbstract(w, h),
+		pitch(p), buffer((pp_uint8*)buff)
+	{
+	}
+	
+	void setBufferProperties(pp_int32 p, void* buff)
+	{
+		pitch = p;
+		buffer = (pp_uint8*)buff;
+	}
+};
+
 #define __EMPTY__
 
-#define SUBCLASS_GRAPHICSABSTRACT(prologue, name, epilogue) \
-class name : public PPGraphicsAbstract \
+#define SUBCLASS_GRAPHICS(baseclass, prologue, name, epilogue) \
+class name : public baseclass \
 { \
 private: \
 	prologue \
@@ -47,7 +67,6 @@ public: \
 	virtual void drawVLine(pp_int32 y1, pp_int32 y2, pp_int32 x); \
 	virtual void drawLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2); \
 	virtual void drawAntialiasedLine(pp_int32 x1, pp_int32 y1, pp_int32 x2, pp_int32 y2); \
-	virtual void blit(SimpleBitmap& bitmap, PPPoint p); \
 	virtual void blit(const pp_uint8* src, const PPPoint& p, const PPSize& size, pp_uint32 pitch, pp_uint32 bpp, pp_int32 intensity = 256); \
 	virtual void drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underlined = false); \
 	virtual void drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined = false); \
@@ -66,15 +85,15 @@ static inline void set_pixel_transp(PPGraphicsAbstract* g, pp_int32 x, pp_int32 
 }
 
 // used for win32
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24,__EMPTY__)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_BGR24, __EMPTY__)
 // OSX (carbon, 32 bits with alpha channel)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_ARGB32,__EMPTY__)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_ARGB32, __EMPTY__)
 // used for wince (GAPI)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_16BIT,__EMPTY__)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_16BIT, __EMPTY__)
 // OSX (carbon, 16 bit color, one unused bit)
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_15BIT,__EMPTY__)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_15BIT, __EMPTY__)
 // currently unused, big endian compatible version of PPGraphics_BGR24
-SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24_SLOW,__EMPTY__)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_BGR24_SLOW, __EMPTY__)
 
 #define PROLOGUE \
 	pp_uint32 bitPosR, bitPosG, bitPosB;
@@ -86,8 +105,8 @@ SUBCLASS_GRAPHICSABSTRACT(__EMPTY__,PPGraphics_BGR24_SLOW,__EMPTY__)
 	}
 
 // used in the SDL port, arbitrary bit positions but a little bit slower than the rest
-SUBCLASS_GRAPHICSABSTRACT(PROLOGUE,PPGraphics_24bpp_generic,EPILOGUE)
-SUBCLASS_GRAPHICSABSTRACT(PROLOGUE,PPGraphics_32bpp_generic,EPILOGUE)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_24bpp_generic, EPILOGUE)
+SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_32bpp_generic, EPILOGUE)
 
 #undef EPILOGUE
 #undef PROLOGUE
