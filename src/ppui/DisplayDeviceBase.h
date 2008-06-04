@@ -167,6 +167,10 @@ public:
 	{
 	}
 
+	virtual ~PPDisplayDeviceBase()
+	{
+	}
+
 	void enable(bool b) 
 	{
 		if (!b)

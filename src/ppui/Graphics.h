@@ -108,6 +108,9 @@ SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_BGR24_SLOW, __EMP
 SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_24bpp_generic, EPILOGUE)
 SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_32bpp_generic, EPILOGUE)
 
+// currently unused, big endian compatible version of PPGraphics_BGR24
+SUBCLASS_GRAPHICS(PPGraphicsAbstract, __EMPTY__, PPGraphics_OGL, __EMPTY__)
+
 #undef EPILOGUE
 #undef PROLOGUE
 

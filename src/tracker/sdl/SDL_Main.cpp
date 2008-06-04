@@ -64,6 +64,8 @@
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
+#include "DisplayDeviceFB_SDL.h"
+#include "DisplayDeviceOGL_SDL.h"
 #include "Screen.h"
 #include "Tracker.h"
 #include "PPMutex.h"
@@ -76,13 +78,13 @@
 // --------------------------------------------------------------------------
 
 // SDL surface screen
-SDL_Surface *screen = NULL;
+SDL_Surface*				screen				= NULL;
 SDL_TimerID	timer;
 
 // Tracker globals
 static PPScreen*			myTrackerScreen		= NULL;
 static Tracker*				myTracker			= NULL;
-static PPDisplayDevice*		myDisplayDevice		= NULL;
+static PPDisplayDevice*	    myDisplayDevice		= NULL;
 #ifdef HAVE_LIBASOUND
 static MidiReceiver*		myMidiReceiver		= NULL;
 #endif
@@ -108,7 +110,9 @@ static pp_uint32	rButtonDownStartTime;
 
 static pp_uint32	timerTicker				= 0;
 
-static PPPoint p;
+static PPPoint		p;
+
+static const bool	openGL					= true;
 
 // This needs to be visible from outside 
 pp_uint32 PPGetTickCount()
@@ -634,7 +638,6 @@ void translateKeyUpEvent(const SDL_Event& event)
 
 void processSDLEvents(const SDL_Event& event)
 {
-	pp_uint32 mod = SDL_GetModState();
 	pp_uint32 mouseButton = 0;
 
 	switch (event.type)
@@ -715,7 +718,8 @@ void crashHandler(int signum)
 }
 #endif
 
-void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool swapRedBlue, bool fullScreen, bool noSplash)
+void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, 
+				 bool swapRedBlue, bool fullScreen, bool noSplash)
 {
 	/* Initialize SDL */
 	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) 
@@ -771,13 +775,20 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, bool 
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
- 	if(!fullScreen) fullScreen = myTracker->getFullScreenFlagFromDatabase();
+ 	if (!fullScreen) 
+		fullScreen = myTracker->getFullScreenFlagFromDatabase();
+
 #ifdef __LOWRES__
 	windowSize.width = DISPLAYDEVICE_WIDTH;
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-	myDisplayDevice = new PPDisplayDevice(screen, windowSize.width, windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
+	if (openGL)	
+		myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width, windowSize.height, 
+							   bpp, fullScreen, orientation, swapRedBlue);
+	else
+		myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width, windowSize.height, 
+							  bpp, fullScreen, orientation, swapRedBlue);		
 
 	myDisplayDevice->init();
 
@@ -855,8 +866,10 @@ int main(int argc, char *argv[])
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
 	bool swapRedBlue = false, fullScreen = false, noSplash = false;
 	bool recVelocity = false;
+	
 	// Parse command line
-	while ( argc > 1 ) {
+	while ( argc > 1 ) 
+	{
 		--argc;
 		if ( strcmp(argv[argc-1], "-bpp") == 0 ) 
 		{
@@ -901,13 +914,17 @@ int main(int argc, char *argv[])
 		{
 			recVelocity = true;
 		}
-		else {
+		else 
+		{
 unrecognizedCommandLineSwitch:
-			if(argv[argc][0] == '-') {
+			if (argv[argc][0] == '-') 
+			{
 				fprintf(stderr, 
 						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-fullscreen] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
 				exit(1);
-			} else {
+			} 
+			else 
+			{
 				loadFile = argv[argc];
 			}
 		}
@@ -952,7 +969,8 @@ unrecognizedCommandLineSwitch:
 	done = 0;
 	while (!done && SDL_WaitEvent(&event)) 
 	{
-		switch (event.type) {
+		switch (event.type) 
+		{
 			case SDL_QUIT:
 				exitSDLEventLoop(false);
 				break;
@@ -998,6 +1016,7 @@ unrecognizedCommandLineSwitch:
 	myTracker = NULL;
 	delete myTrackerScreen;
 	myTrackerScreen = NULL;
+	delete myDisplayDevice;
 	globalMutex->unlock();
 	timerMutex->unlock();
 	SDL_Quit();

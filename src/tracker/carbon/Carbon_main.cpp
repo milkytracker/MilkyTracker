@@ -590,6 +590,7 @@ int main(int argc, char* argv[])
 	globalMutex->unlock();
 	delete myTracker;
 	delete myTrackerScreen;
+	delete myDisplayDevice;
 	delete preferencesDialog;
 
 CantCreateWindow:

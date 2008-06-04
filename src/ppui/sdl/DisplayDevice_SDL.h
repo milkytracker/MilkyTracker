@@ -25,8 +25,8 @@
 //	Our display device
 //
 /////////////////////////////////////////////////////////////////
-#ifndef DISPLAYDEVICE__H
-#define DISPLAYDEVICE__H
+#ifndef __DISPLAYDEVICE_H__
+#define __DISPLAYDEVICE_H__
 
 #include "BasicTypes.h"
 #include "DisplayDeviceBase.h"
@@ -49,19 +49,15 @@ public:
 		ORIENTATION_UNKNOWN
 	};
 
-private:
+protected:
 	pp_int32 realWidth, realHeight;
 	SDL_Surface* theSurface;
 	Orientations orientation;
-	
-	pp_uint8* temporaryBuffer;
-	pp_uint32 temporaryBufferPitch, temporaryBufferBPP;
 	
 	SDL_Surface* CreateScreen(Uint16 w, Uint16 h, Uint8 bpp, Uint32 flags);
 
 	// used for rotating coordinates etc.
 	void adjust(pp_int32& x, pp_int32& y);
-	void swap(const PPRect& r);
 
 	// Mouse pointers
 	SDL_Cursor *cursorStandard, *cursorResizeLeft, *cursorResizeRight, *cursorEggtimer, *cursorHand;
@@ -73,21 +69,14 @@ private:
 	
 public:
 	PPDisplayDevice(SDL_Surface*& screen, 
-				  pp_int32 width, 
-				  pp_int32 height, 
-				  pp_int32 bpp, 
-				  bool fullScreen,
-				  Orientations theOrientation = ORIENTATION_NORMAL, 
-				  bool swapRedBlue = false);
+					pp_int32 width, 
+					pp_int32 height, 
+					pp_int32 bpp, 
+					bool fullScreen,
+					Orientations theOrientation = ORIENTATION_NORMAL);
 				  
 	virtual ~PPDisplayDevice();
 
-	virtual PPGraphicsAbstract* open();
-	virtual void close();
-
-	void update();
-	void update(const PPRect& r);
-	
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
