@@ -23,11 +23,27 @@
 #include "Graphics.h"
 #include "Font.h"
 
-#define BPP 3
+#include <OpenGL/gl.h>		// Header File For The OpenGL32 Library
+
+static void setupOrtho(pp_uint32 width, pp_uint32 height)
+{
+	glViewport(0, 0, width, height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, width, height, 0, -1.0, 1.0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
 
 PPGraphics_OGL::PPGraphics_OGL(pp_int32 w, pp_int32 h, pp_int32 p, void* buff) :
 	PPGraphicsAbstract(w, h)
 {
+	setupOrtho(w, h);
+	
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);	
 }
 
 void PPGraphics_OGL::setPixel(pp_int32 x, pp_int32 y)

@@ -59,7 +59,7 @@ PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen,
 	/* Set a video mode */
 	theSurface = screen = CreateScreen(realWidth, realHeight, 
 									   bpp, videoFlags | (bFullScreen==true ? SDL_FULLSCREEN : 0));
-	if ( screen == NULL ) 
+	if (NULL == screen) 
 	{
 		fprintf(stderr, "Could not set video mode: %s\n", SDL_GetError());	
 		exit(2);
@@ -109,7 +109,9 @@ void PPDisplayDeviceOGL::update()
 		return;
 	}
 	
-	SDL_UpdateRect(theSurface, 0, 0, 0, 0);
+	 SDL_GL_SwapBuffers();
+	
+	//SDL_UpdateRect(theSurface, 0, 0, 0, 0);
 }
 
 void PPDisplayDeviceOGL::update(const PPRect& r)
@@ -122,9 +124,11 @@ void PPDisplayDeviceOGL::update(const PPRect& r)
 		return;
 	}
 
-	PPRect r3 = r;
-	transformInverse(r3);
+	 SDL_GL_SwapBuffers();
 
-	SDL_UpdateRect(theSurface, r3.x1, r3.y1, r3.x2-r3.x1, r3.y2-r3.y1);
+	//PPRect r3 = r;
+	//transformInverse(r3);
+
+	//SDL_UpdateRect(theSurface, r3.x1, r3.y1, r3.x2-r3.x1, r3.y2-r3.y1);
 }
 
