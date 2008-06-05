@@ -23,6 +23,10 @@
 #include "DisplayDeviceOGL_SDL.h"
 #include "Graphics.h"
 
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#endif
+
 PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen, 
 									   pp_int32 width, 
 									   pp_int32 height, 
@@ -44,6 +48,7 @@ PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen,
     Uint32 videoFlags = SDL_OPENGL;    /* Enable OpenGL in SDL          */
     videoFlags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering       */
     videoFlags |= SDL_HWPALETTE;       /* Store the palette in hardware */
+	//videoFlags |= SDL_ASYNCBLIT;
 
     /* This checks to see if surfaces can be stored in memory */
     if (videoinfo->hw_available)
@@ -65,7 +70,20 @@ PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen,
 		exit(2);
 	}	
 
-	currentGraphics = new PPGraphics_OGL(width, height, 0, NULL);	
+#if 0
+	CGLError err;
+	CGLContextObj ctx = CGLGetCurrentContext();
+	
+	// Enable the multi-threading
+	err =  CGLEnable( ctx, kCGLCEMPEngine);
+	
+	if (err != kCGLNoError )
+	{
+		exit(2);
+	}    	
+#endif
+	
+	currentGraphics = new PPGraphics_OGL(width, height);	
 	currentGraphics->lock = true;
 }
 

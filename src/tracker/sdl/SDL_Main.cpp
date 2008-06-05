@@ -265,6 +265,13 @@ void gp2xMouseMove()
 }
 #endif
 
+enum SDLUserEvents
+{
+	SDLUserEventTimer,
+	SDLUserEventLMouseRepeat,
+	SDLUserEventRMouseRepeat,
+};
+
 static Uint32 timerCallback(Uint32 interval)
 {
 	timerMutex->lock();
@@ -275,11 +282,16 @@ static Uint32 timerCallback(Uint32 interval)
 		return interval;
 	}
 	
+	SDL_UserEvent ev;	
+	ev.type = SDL_USEREVENT;
 
 	if (!(timerTicker % 1))
 	{
-		PPEvent myEvent(eTimer);
-		RaiseEventSerialized(&myEvent);
+		ev.code = SDLUserEventTimer;
+		SDL_PushEvent((SDL_Event*)&ev);		
+		
+		//PPEvent myEvent(eTimer);
+		//RaiseEventSerialized(&myEvent);
 	}
 	
 	timerTicker++;
@@ -291,15 +303,25 @@ static Uint32 timerCallback(Uint32 interval)
 	if (lMouseDown &&
 		(timerTicker - lButtonDownStartTime) > 25)
 	{
-		PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));		
-		RaiseEventSerialized(&myEvent);
+		ev.type = SDLUserEventLMouseRepeat;
+		ev.data1 = (void*)p.x;
+		ev.data2 = (void*)p.y;
+		SDL_PushEvent((SDL_Event*)&ev);		
+
+		//PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));		
+		//RaiseEventSerialized(&myEvent);
 	}
 
 	if (rMouseDown &&
 		(timerTicker - rButtonDownStartTime) > 25)
 	{
-		PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
-		RaiseEventSerialized(&myEvent);
+		ev.type = SDLUserEventRMouseRepeat;
+		ev.data1 = (void*)p.x;
+		ev.data2 = (void*)p.y;
+		SDL_PushEvent((SDL_Event*)&ev);		
+
+		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
+		//RaiseEventSerialized(&myEvent);
 	}
 
 	timerMutex->unlock();
@@ -681,6 +703,39 @@ void processSDLEvents(const SDL_Event& event)
 	}
 }
 
+void processSDLUserEvents(const SDL_UserEvent& event)
+{
+	switch (event.code)
+	{
+		case SDLUserEventTimer:
+		{
+			PPEvent myEvent(eTimer);
+			RaiseEventSerialized(&myEvent);
+			break;
+		}
+
+		case SDLUserEventLMouseRepeat:
+		{
+			PPPoint p;
+			p.x = (pp_int32)event.data1;
+			p.y = (pp_int32)event.data2;
+			PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));		
+			RaiseEventSerialized(&myEvent);
+			break;
+		}
+			
+		case SDLUserEventRMouseRepeat:
+		{
+			PPPoint p;
+			p.x = (pp_int32)event.data1;
+			p.y = (pp_int32)event.data2;
+			PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
+			RaiseEventSerialized(&myEvent);
+			break;
+		}
+	}
+}
+
 #ifdef __unix__
 void crashHandler(int signum) 
 {
@@ -990,6 +1045,10 @@ unrecognizedCommandLineSwitch:
 				}
 				break;
 			}
+
+			case SDL_USEREVENT:
+				processSDLUserEvents((const SDL_UserEvent&)event);
+				break;
 
 			default:
 				processSDLEvents(event);
