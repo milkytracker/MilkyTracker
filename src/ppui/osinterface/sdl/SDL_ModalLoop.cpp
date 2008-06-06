@@ -36,6 +36,7 @@
 #include "PPMutex.h"
 
 void processSDLEvents(const SDL_Event& event);
+void processSDLUserEvents(const SDL_UserEvent& event);
 
 extern PPMutex* globalMutex;
 
@@ -110,7 +111,11 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dial
 				}
 				break;
 			}
-
+			
+			case SDL_USEREVENT:
+				processSDLUserEvents((const SDL_UserEvent&)event);
+				break;
+			
 			default:
 				processSDLEvents(event);
 				break;
