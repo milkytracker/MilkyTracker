@@ -153,6 +153,14 @@ void PPGraphics_OGL::drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underli
 	
 	glBitmap(currentFont->getCharWidth(), currentFont->getCharHeight(), 0, currentFont->getCharHeight()-1, 0, 0, 
 			 (GLubyte*)fontCacheEntry->oglBitmapData+offset);	
+
+	if (underlined)
+	{
+		glBegin(GL_LINES);
+		glVertex2i(x, y+currentFont->getCharHeight());
+		glVertex2i(x+currentFont->getCharWidth(), y+currentFont->getCharHeight());
+		glEnd();
+	}
 }
 
 void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined/* = false*/)
