@@ -36,16 +36,19 @@ static void setupOrtho(pp_uint32 width, pp_uint32 height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, width, height, 0, -1.0, 1.0);
-    glTranslatef(.5, .5, 0);
+    glTranslatef(0.5f, 0.5f, 0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
 
 PPGraphics_OGL::PPGraphics_OGL(pp_int32 w, pp_int32 h) :
-	PPGraphicsAbstract(w, h)
+	PPGraphicsAbstract(w, h),
+	fontCacheEntry(NULL)
 {
 	setupOrtho(w, h);
+	
+	glEnable(GL_SCISSOR_TEST);
 	
 	glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);	
@@ -62,7 +65,7 @@ void PPGraphics_OGL::setPixel(pp_int32 x, pp_int32 y)
 {
 	glBegin(GL_POINTS);
 	glColor3ub(currentColor.r, currentColor.g, currentColor.b);        
-	glVertex2i(x, y+1);
+	glVertex2i(x, y);
 	glEnd();
 }
 
@@ -70,7 +73,7 @@ void PPGraphics_OGL::setPixel(pp_int32 x, pp_int32 y, const PPColor& color)
 {
 	glBegin(GL_POINTS);
 	glColor3ub(color.r, color.g, color.b);        
-	glVertex2i(x, y+1);
+	glVertex2i(x, y);
 	glEnd();
 }
 
@@ -141,12 +144,23 @@ void PPGraphics_OGL::blit(const pp_uint8* src, const PPPoint& p, const PPSize& s
 
 void PPGraphics_OGL::drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underlined)
 {
+	if (!fontCacheEntry || !currentFont)
+		return;
+		
+	glRasterPos2d(x, y);
+	
+	pp_uint32 offset = (pp_uint32)chr * fontCacheEntry->newWidth * fontCacheEntry->newHeight;
+	
+	glBitmap(currentFont->getCharWidth(), currentFont->getCharHeight(), 0, currentFont->getCharHeight()-1, 0, 0, 
+			 (GLubyte*)fontCacheEntry->oglBitmapData+offset);	
 }
 
 void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined/* = false*/)
 {
 	if (currentFont == NULL)
 		return;
+
+	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 
 	pp_int32 charWidth = (signed)currentFont->getCharWidth();
 	pp_int32 charHeight = (signed)currentFont->getCharHeight();
@@ -176,6 +190,8 @@ void PPGraphics_OGL::drawStringVertical(const char* str, pp_int32 x, pp_int32 y,
 {
 	if (currentFont == NULL)
 		return;
+
+	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 
 	pp_int32 charWidth = (signed)currentFont->getCharWidth();
 	pp_int32 charHeight = (signed)currentFont->getCharHeight();
@@ -229,4 +245,87 @@ void PPGraphics_OGL::fillVerticalShaded(PPRect r, const PPColor& colSrc, const P
 		glVertex2i(r.x1, r.y2);
 		glEnd();
 	}
+}
+
+void PPGraphics_OGL::validateRect()
+{
+	PPGraphicsAbstract::validateRect();
+
+	glScissor(currentClipRect.x1, 
+			  this->height-currentClipRect.y1-(currentClipRect.y2-currentClipRect.y1), 
+			  currentClipRect.x2-currentClipRect.x1,
+			  currentClipRect.y2-currentClipRect.y1);
+}
+
+void PPGraphics_OGL::setFont(PPFont* font)
+{
+	PPGraphicsAbstract::setFont(font);
+
+	bool found = false;
+	for (pp_int32 i = 0; i < sizeof(fontCache) / sizeof(FontCacheEntry); i++)
+	{
+		if (fontCache[i].font && fontCache[i].font->fontBits == font->fontBits)
+		{
+			found = true;
+			fontCacheEntry = &fontCache[i];
+			break;
+		}
+	}
+
+	if (!found)
+	{
+		pp_int32 slot = 0;
+		for (pp_int32 i = 0; i < sizeof(fontCache) / sizeof(FontCacheEntry); i++)
+		{
+			if (!fontCache[i].font)
+			{
+				slot = i;
+				break;
+			}
+		}
+		
+		fontCache[slot].createFromFont(font);
+		fontCacheEntry = &fontCache[slot];
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_LSB_FIRST, true);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, ((font->getCharWidth()+7) / 8) * 8);
+}
+
+void PPGraphics_OGL::FontCacheEntry::createFromFont(PPFont* font)
+{
+	this->font = font;
+
+	newWidth = (font->getCharWidth() + 7) / 8;
+	newHeight = font->getCharHeight();
+	
+	pp_uint32 size = newWidth*newHeight*256;
+	
+	delete[] oglBitmapData;
+	oglBitmapData = new pp_uint8[size];
+	memset(oglBitmapData, 0, size);
+	
+	Bitstream stream(oglBitmapData, size);
+	
+	pp_uint32 dst = 0;
+	for (pp_uint32 i = 0; i < 256; i++)
+	{
+		for (pp_uint32 y = 0; y < font->getCharHeight(); y++)
+		{			
+			if ((dst & 7) != 0)
+				dst = ((dst+7)/8)*8;
+			for (pp_uint32 x = 0; x < font->getCharWidth(); x++)
+			{
+				stream.write(dst, font->getPixelBit(i, x, font->getCharHeight() - 1 - y));
+				dst++;
+			}
+		}
+	}
+}
+
+PPGraphics_OGL::FontCacheEntry::~FontCacheEntry()
+{
+	delete[] oglBitmapData;
 }

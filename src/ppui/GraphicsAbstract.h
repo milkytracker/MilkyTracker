@@ -174,7 +174,7 @@ protected:
 
 	PPFont* currentFont;
 
-	void validateRect()
+	virtual void validateRect()
 	{
 		if ((currentClipRect.x1 < 0 && currentClipRect.x2 < 0) ||
 			(currentClipRect.y1 < 0 && currentClipRect.y2 < 0) ||
@@ -237,6 +237,7 @@ public:
 		currentClipRect.x2 = width-1; 
 		currentClipRect.y2 = height-1; 	
 		origRect = currentClipRect;
+		validateRect();
 	}
 
 	void clipLine(pp_int32& x1, pp_int32& y1, pp_int32& x2, pp_int32& y2)
@@ -270,7 +271,7 @@ public:
 
 	PPColor getColor() { return currentColor; }
 
-	void setFont(PPFont* font) { currentFont = font; }
+	virtual void setFont(PPFont* font) { currentFont = font; }
 	PPFont* getCurrentFont() { return currentFont; }
 
 	// Interfaces to be implemented by sub class

@@ -40,6 +40,35 @@ public:
 	virtual void drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined = false); 
 	virtual void drawStringVertical(const char* str, pp_int32 x, pp_int32 y, bool underlined = false); 
 	virtual void fillVerticalShaded(PPRect r, const PPColor& colSrc, const PPColor& colDst, bool invertShading);
+	virtual void setFont(PPFont* font);
+
+protected:
+	virtual void validateRect();
+	
+private:
+	struct FontCacheEntry
+	{
+		PPFont* font;
+		pp_uint8* oglBitmapData;
+
+		pp_uint32 newWidth;
+		pp_uint32 newHeight;
+		
+		FontCacheEntry() :
+			font(NULL),
+			oglBitmapData(NULL),
+			newWidth(0),
+			newHeight(0)
+		{
+		}
+		
+		~FontCacheEntry();
+		
+		void createFromFont(PPFont* font);
+	};
+	
+	FontCacheEntry fontCache[4];	
+	FontCacheEntry* fontCacheEntry;
 }; 
  
  #endif
