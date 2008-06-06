@@ -49,6 +49,7 @@ private:
 	struct FontCacheEntry
 	{
 		PPFont* font;
+		pp_uint8* oldFontBits;
 		pp_uint8* oglBitmapData;
 
 		pp_uint32 newWidth;
@@ -56,6 +57,7 @@ private:
 		
 		FontCacheEntry() :
 			font(NULL),
+			oldFontBits(NULL),
 			oglBitmapData(NULL),
 			newWidth(0),
 			newHeight(0)

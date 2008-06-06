@@ -151,9 +151,11 @@ void PPGraphics_OGL::drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underli
 	
 	pp_uint32 offset = (pp_uint32)chr * fontCacheEntry->newWidth * fontCacheEntry->newHeight;
 	
-	glBitmap(currentFont->getCharWidth(), currentFont->getCharHeight(), 0, currentFont->getCharHeight()-1, 0, 0, 
+	glBitmap(currentFont->getCharWidth(), currentFont->getCharHeight(), 
+			 0, currentFont->getCharHeight()-1,
+			 0, 0, 
 			 (GLubyte*)fontCacheEntry->oglBitmapData+offset);	
-
+	
 	if (underlined)
 	{
 		glBegin(GL_LINES);
@@ -272,7 +274,7 @@ void PPGraphics_OGL::setFont(PPFont* font)
 	bool found = false;
 	for (pp_int32 i = 0; i < sizeof(fontCache) / sizeof(FontCacheEntry); i++)
 	{
-		if (fontCache[i].font && fontCache[i].font->fontBits == font->fontBits)
+		if (fontCache[i].font && fontCache[i].oldFontBits == font->fontBits)
 		{
 			found = true;
 			fontCacheEntry = &fontCache[i];
@@ -305,6 +307,7 @@ void PPGraphics_OGL::setFont(PPFont* font)
 void PPGraphics_OGL::FontCacheEntry::createFromFont(PPFont* font)
 {
 	this->font = font;
+	this->oldFontBits = font->fontBits;
 
 	newWidth = (font->getCharWidth() + 7) / 8;
 	newHeight = font->getCharHeight();
