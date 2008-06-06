@@ -134,15 +134,7 @@ void PPDisplayDeviceOGL::update()
 
 void PPDisplayDeviceOGL::update(const PPRect& r)
 {
-	if (!isUpdateAllowed() || !isEnabled())
-		return;
-	
-	if (theSurface->locked)
-	{
-		return;
-	}
-
-	 SDL_GL_SwapBuffers();
+	update();
 
 	//PPRect r3 = r;
 	//transformInverse(r3);

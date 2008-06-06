@@ -29,7 +29,7 @@
  */
 
 #include "PPMessageBox.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "SDL_ModalLoop.h"
 #include "DialogFileSelector.h"
 

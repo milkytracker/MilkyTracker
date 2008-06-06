@@ -23,7 +23,11 @@
 #include "Graphics.h"
 #include "Font.h"
 
-#include <OpenGL/gl.h>		// Header File For The OpenGL32 Library
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 static void setupOrtho(pp_uint32 width, pp_uint32 height)
 {
@@ -32,6 +36,7 @@ static void setupOrtho(pp_uint32 width, pp_uint32 height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, width, height, 0, -1.0, 1.0);
+    glTranslatef(.5, .5, 0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -95,8 +100,8 @@ void PPGraphics_OGL::drawHLine(pp_int32 x1, pp_int32 x2, pp_int32 y)
 {
 	glBegin(GL_LINES);
 	glColor3ub(currentColor.r, currentColor.g, currentColor.b);        
-	glVertex2i(x1, y+1);
-	glVertex2i(x2, y+1);
+	glVertex2i(x1, y);
+	glVertex2i(x2, y);
 	glEnd();
 }
 
