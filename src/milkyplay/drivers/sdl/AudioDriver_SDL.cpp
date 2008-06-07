@@ -127,10 +127,11 @@ mp_sint32 AudioDriver_SDL::closeDevice()
 	return 0;
 }
 
-void AudioDriver_SDL::start()
+mp_sint32 AudioDriver_SDL::start()
 {
 	SDL_PauseAudio(0);
 	deviceHasStarted = true;
+	return 0;
 }
 
 mp_sint32 AudioDriver_SDL::pause()

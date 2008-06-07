@@ -300,7 +300,7 @@ void AudioDriver_MMSYSTEM::kick()
 	currentBufferIndex = (currentBufferIndex+1) % NUMBUFFERS;
 }
 
-void AudioDriver_MMSYSTEM::start()
+mp_sint32 AudioDriver_MMSYSTEM::start()
 {
 	deviceHasStarted = true;
 	for (int i = 0; i < NUMBUFFERS; i++)
@@ -314,6 +314,8 @@ void AudioDriver_MMSYSTEM::start()
 		lastTimeInMillis = ::GetTickCount();
 		timeInSamples = sampleCounter = 0;
 	}
+	
+	return 0;
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::pause()

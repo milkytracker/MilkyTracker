@@ -154,7 +154,10 @@ mp_sint32 MasterMixer::start()
 			return res;
 	}
 		
-	audioDriver->start();	
+	res = audioDriver->start();	
+	if (res != 0)
+		return res;
+	
 	started = true;
 	return 0;
 }

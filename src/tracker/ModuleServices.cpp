@@ -181,9 +181,10 @@ public:
 		return 0;
 	}
 	
-	virtual void start()
+	virtual mp_sint32 start()
 	{
 		index = 0;
+		return 0;
 	}
 	
 	virtual	const char* getDriverID() { return "BufferWriter"; }

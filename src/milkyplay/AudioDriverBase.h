@@ -55,7 +55,7 @@ public:
 	virtual		mp_sint32   closeDevice() = 0;
 
 	// start device
-	virtual		void		start() = 0;
+	virtual		mp_sint32	start() = 0;
 	// stop device 
 	virtual		mp_sint32   stop() = 0;
 

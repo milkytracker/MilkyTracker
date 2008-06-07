@@ -246,15 +246,16 @@ mp_sint32 AudioDriver_COREAUDIO::closeDevice()
 	return 0;
 }
 
-void AudioDriver_COREAUDIO::start()
+mp_sint32 AudioDriver_COREAUDIO::start()
 {
 	// start the audio IO Proc...
 	if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
 	{
 		lastError = MPERR_OSX_DEVICE_START;
-		return;
+		return -1;
 	}
 	deviceHasStarted = true;
+	return 0;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::pause()

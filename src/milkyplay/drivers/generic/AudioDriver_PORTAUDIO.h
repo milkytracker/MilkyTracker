@@ -56,7 +56,7 @@ public:
 	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
 	virtual     mp_sint32   closeDevice();
 
-	virtual     void		start();
+	virtual     mp_sint32	start();
 	virtual     mp_sint32   stop();
 
 	virtual     mp_sint32   pause();

@@ -66,8 +66,9 @@ mp_sint32 AudioDriver_NULL::closeDevice()
 	return 0;
 }
 
-void AudioDriver_NULL::start()
+mp_sint32 AudioDriver_NULL::start()
 {
+	return 0;
 }
 
 mp_sint32 AudioDriver_NULL::pause()

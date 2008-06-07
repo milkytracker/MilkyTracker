@@ -184,7 +184,7 @@ mp_sint32 AudioDriver_ALSA::closeDevice()
 	return 0;
 }
 
-void AudioDriver_ALSA::start()
+mp_sint32 AudioDriver_ALSA::start()
 {
 	const snd_pcm_channel_area_t *my_areas;
 	snd_pcm_uframes_t offset, frames, size;
@@ -225,9 +225,11 @@ void AudioDriver_ALSA::start()
 	if (err < 0)
 	{
 		fprintf(stderr, "ALSA: Could not start PCM device (%s)\n", snd_strerror(err));
+		return -1;
 	}
 	
 	deviceHasStarted = true;
+	return 0;
 }
 
 mp_sint32 AudioDriver_ALSA::pause()

@@ -234,7 +234,7 @@ public:
 		else return -1;
 	}
 
-	virtual void start()
+	virtual mp_sint32 start()
 	{
 		if (audio)
 		{
@@ -242,12 +242,15 @@ public:
 			{
 				audio->startStream();
 				deviceHasStarted = true;
+				return 0;
 			}
 			catch (RtError &error) 
 			{
 				error.printMessage();
+				return -1;
 			}			
 		}
+		else return -1;
 	}
 
 	virtual mp_sint32 pause()

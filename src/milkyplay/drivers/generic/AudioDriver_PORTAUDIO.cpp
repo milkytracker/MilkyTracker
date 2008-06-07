@@ -142,7 +142,7 @@ mp_sint32 AudioDriver_PORTAUDIO::closeDevice()
 	return 0;
 }
 
-void AudioDriver_PORTAUDIO::start()
+mp_sint32 AudioDriver_PORTAUDIO::start()
 {
 	// hopefully this works
 	// no error checking performed
@@ -150,12 +150,11 @@ void AudioDriver_PORTAUDIO::start()
 	if (err != paNoError)
 	{
 		deviceHasStarted = false;
-		// Deal with error
+		return -1;
 	}
-	else
-	{
-		deviceHasStarted = true;
-	}
+
+	deviceHasStarted = true;
+	return 0;
 }
 
 mp_sint32 AudioDriver_PORTAUDIO::pause()

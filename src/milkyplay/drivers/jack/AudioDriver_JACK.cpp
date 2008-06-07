@@ -170,10 +170,11 @@ mp_sint32 AudioDriver_JACK::closeDevice()
 	return 0;
 }
 
-void AudioDriver_JACK::start()
+mp_sint32 AudioDriver_JACK::start()
 {
 	jack_activate(hJack);
 	deviceHasStarted = true;
+	return 0;
 }
 
 mp_sint32 AudioDriver_JACK::pause()

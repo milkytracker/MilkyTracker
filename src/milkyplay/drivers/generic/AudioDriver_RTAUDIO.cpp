@@ -68,9 +68,9 @@ mp_sint32   AudioDriver_RTAUDIO::closeDevice()
 	return impl->closeDevice();
 }
 
-void		AudioDriver_RTAUDIO::start()
+mp_sint32	AudioDriver_RTAUDIO::start()
 {
-	impl->start();
+	return impl->start();
 }
 
 mp_sint32   AudioDriver_RTAUDIO::stop()

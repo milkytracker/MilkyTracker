@@ -142,10 +142,11 @@ mp_sint32 AudioDriver_PSP::closeDevice()
 	return 0;
 }
 
-void AudioDriver_PSP::start()
+mp_sint32 AudioDriver_PSP::start()
 {
 	deviceHasStarted = true;
 	pspAudioSetChannelCallback(PSP_AUDIO_CHANNEL, fill_audio, (void*)this);
+	return 0;
 }
 
 mp_sint32 AudioDriver_PSP::pause()
