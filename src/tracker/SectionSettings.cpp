@@ -2675,10 +2675,10 @@ void SectionSettings::showCustomResolutionMessageBox()
 	}
 	
 	dialog = new DialogWithValues(tracker.screen, 
-														responder, 
-														RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
-														"Enter custom resolution"PPSTR_PERIODS, 
-														DialogWithValues::ValueStyleEnterTwoValues);
+								  responder, 
+								  RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
+								  "Enter custom resolution"PPSTR_PERIODS, 
+								  DialogWithValues::ValueStyleEnterTwoValues);
 														
 	static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Width in pixels:");
 	static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Height in pixels:");
@@ -2705,9 +2705,9 @@ void SectionSettings::showRestorePaletteMessageBox()
 	}
 	
 	dialog = new PPDialogBase(tracker.screen, 
-											  responder, 
-											  RESPONDMESSAGEBOX_RESTOREPALETTES, 
-											  "Restore all default palettes?");
+							  responder, 
+							  RESPONDMESSAGEBOX_RESTOREPALETTES, 
+							  "Restore all default palettes?");
 	dialog->show();	
 }
 
@@ -2720,10 +2720,10 @@ void SectionSettings::showSelectDriverMessageBox()
 	}
 	
 	dialog = new DialogListBox(tracker.screen, 
-													 responder, 
-													 RESPONDMESSAGEBOX_SELECTAUDIODRV, 
-													 "Select audio driver",
-													 true);
+							   responder, 
+							   RESPONDMESSAGEBOX_SELECTAUDIODRV, 
+							   "Select audio driver",
+							   true);
 	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	mp_sint32 i = 0;
@@ -2757,10 +2757,10 @@ void SectionSettings::showResamplerMessageBox()
 	}
 
 	dialog = new DialogListBox(tracker.screen, 
-													 responder, 
-													 RESPONDMESSAGEBOX_SELECTRESAMPLER, 
-													 "Select Resampler",
-													 true);
+							   responder, 
+							   RESPONDMESSAGEBOX_SELECTRESAMPLER, 
+							   "Select Resampler",
+							   true);
 	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	ResamplerHelper resamplerHelper;

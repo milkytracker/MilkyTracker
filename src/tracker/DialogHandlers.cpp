@@ -147,3 +147,16 @@ pp_int32 ZapInstrumentHandler::ActionOkay(PPObject* sender)
 	tracker.sectionInstruments->updateAfterLoad();
 	return 0;
 }
+
+pp_int32 SaveProceedHandler::ActionOkay(PPObject* sender)
+{
+	tracker.handleSaveProceed();
+	return 0;
+}
+
+pp_int32 SaveProceedHandler::ActionCancel(PPObject* sender)
+{
+	tracker.handleSaveCancel();
+	return 0;
+}
+

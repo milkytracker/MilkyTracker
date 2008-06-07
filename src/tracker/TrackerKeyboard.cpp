@@ -493,52 +493,15 @@ void Tracker::eventKeyDownBinding_Save()
 	if (screen->getModalControl())
 		return;
 
-	if (TrackerConfig::untitledSong.compareTo(moduleEditor->getModuleFileNameFull().stripExtension()) == 0)
-	{
-		eventKeyDownBinding_SaveAs();
-	}
-	else
-	{
-		if (moduleEditor->getSaveType() == ModuleEditor::ModSaveTypeMOD)
-		{
-			pp_uint32 err = moduleEditor->getPTIncompatibilityCode();
-			
-			if (err)
-			{
-				if (savePanel)
-				{
-					delete savePanel;
-					savePanel = NULL;
-				}
-				buildMODSaveErrorWarning((pp_int32)err);
-				return;
-			}
-		}				
-		saveCurrentModuleAsSelectedType();
-	}
+	save();
 }
 
 void Tracker::eventKeyDownBinding_SaveAs()
 {
 	if (screen->getModalControl())
 		return;
-
-	//resetKeyModifier();
-
-	switch (moduleEditor->getSaveType())
-	{
-		case ModuleEditor::ModSaveTypeMOD:
-			saveType(Tracker::FileTypeSongMOD);
-			break;
-
-		case ModuleEditor::ModSaveTypeXM:
-			saveType(Tracker::FileTypeSongXM);
-			break;
-			
-		default:
-			ASSERT(false);
-	}
-
+	
+	saveAs();
 }
 
 void Tracker::eventKeyDownBinding_NextPattern()

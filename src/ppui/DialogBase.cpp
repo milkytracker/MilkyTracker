@@ -455,3 +455,10 @@ pp_int32 PPDialogBase::getID()
 }
 
 
+void PPDialogBase::setMessageBoxContainer(PPMessageBoxContainer* container)
+{
+	delete messageBoxContainerGeneric;
+	messageBoxContainerGeneric = container;
+}
+
+

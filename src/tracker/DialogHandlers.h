@@ -90,4 +90,19 @@ public:
 	virtual pp_int32 ActionOkay(PPObject* sender);
 };
 
+class SaveProceedHandler : public DialogResponder
+{
+private:
+	Tracker& tracker;
+
+public:
+	SaveProceedHandler(Tracker& tracker) : 
+		tracker(tracker)
+	{
+	}
+
+	virtual pp_int32 ActionOkay(PPObject* sender);
+	virtual pp_int32 ActionCancel(PPObject* sender);
+};
+
 #endif

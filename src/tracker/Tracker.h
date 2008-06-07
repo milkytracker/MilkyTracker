@@ -430,6 +430,11 @@ private:
 	bool saveTypeWithDialog(FileTypes eType, EventListenerInterface* fileSystemChangedListener = NULL);
 	bool saveCurrentModuleAsSelectedType();
 	void saveType(FileTypes eType);
+	void save();
+	void saveAs();
+	void handleSaveProceed();
+	void handleSaveCancel();
+	
 	void buildMODSaveErrorWarning(pp_int32 error);
 	void estimateSongLength(bool signalWait = false);
 
@@ -596,6 +601,7 @@ private:
 	friend class SampleLoadChannelSelectionHandler;
 	friend class ZapInstrumentHandler;
 	friend class ToolInvokeHelper;
+	friend class SaveProceedHandler;
 	friend class PanningSettingsContainer;
 	
 	friend class TabManager;

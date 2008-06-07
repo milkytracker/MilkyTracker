@@ -147,6 +147,7 @@ public:
 	void setResponder(DialogResponder* responder) { respondListener = responder; }
 	
 	PPMessageBoxContainer* getMessageBoxContainer() const { return messageBoxContainerGeneric; }
+	void setMessageBoxContainer(PPMessageBoxContainer* container);
 	
 	virtual void show(bool b = true);
 	

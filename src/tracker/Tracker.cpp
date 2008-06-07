@@ -1991,29 +1991,7 @@ bool Tracker::messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBox
 			}
 
 			break;
-		}
-		
-		case MESSAGEBOX_SAVEPROCEED:
-		{
-			switch (messageBoxButtonID)
-			{
-				case PP_MESSAGEBOX_BUTTON_YES:
-				{
-					if (savePanel != NULL)
-						saveTypeWithDialog(currentSaveFileType, fileSystemChangedListener);
-					else
-						saveCurrentModuleAsSelectedType();
-					break;
-				}
-				
-				case PP_MESSAGEBOX_BUTTON_NO:
-					delete savePanel;
-					savePanel = NULL;
-					break;
-			}
-			break;
-		}
-
+		}		
 	}
 	
 	return true;
@@ -3051,6 +3029,71 @@ void Tracker::saveType(FileTypes eType)
 	}
 }
 
+void Tracker::save()
+{
+	if (TrackerConfig::untitledSong.compareTo(moduleEditor->getModuleFileNameFull().stripExtension()) == 0)
+	{
+		saveAs();
+	}
+	else
+	{
+		if (moduleEditor->getSaveType() == ModuleEditor::ModSaveTypeMOD)
+		{
+			pp_uint32 err = moduleEditor->getPTIncompatibilityCode();
+			
+			if (err)
+			{
+				// remove save panel
+				// => the handler for the upcoming modal dialog
+				// will note from the absent save panel that saving will be
+				// done to the current document
+				if (savePanel)
+				{
+					delete savePanel;
+					savePanel = NULL;
+				}
+				buildMODSaveErrorWarning((pp_int32)err);
+				return;
+			}
+		}				
+		saveCurrentModuleAsSelectedType();
+	}
+}
+	
+void Tracker::saveAs()
+{
+	switch (moduleEditor->getSaveType())
+	{
+		case ModuleEditor::ModSaveTypeMOD:
+			saveType(Tracker::FileTypeSongMOD);
+			break;
+
+		case ModuleEditor::ModSaveTypeXM:
+			saveType(Tracker::FileTypeSongXM);
+			break;
+			
+		default:
+			ASSERT(false);
+	}
+}
+
+void Tracker::handleSaveProceed()
+{
+	// if there is a save panel present we save with file name
+	// selection, otherwise we simply save the current document
+	// in the current format
+	if (savePanel != NULL)
+		saveTypeWithDialog(currentSaveFileType, fileSystemChangedListener);
+	else
+		saveCurrentModuleAsSelectedType();
+}
+
+void Tracker::handleSaveCancel()
+{
+	delete savePanel;
+	savePanel = NULL;
+}
+
 void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 {
 	static const char* warnings[] = {"Song contains more than 31 instruments\nSave anyway?",
@@ -3078,8 +3121,29 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 									 "* Volume column is not used        \n"\
 									 "* Only effects between 0 and F     \n\nSave anyway?"};
 	
+	if (dialog)
+		delete dialog;
 	
-	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318);	
+	if (responder)
+		delete responder;
+	
+	responder = new SaveProceedHandler(*this);				
+				
+	dialog = new PPDialogBase(screen, responder, MESSAGEBOX_SAVEPROCEED, "");
+	
+	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318, -1, false);	
+	
+	// Transfer ownership of modal overlayed container to dialog
+	// => also set new event listener
+	dialog->setMessageBoxContainer(messageBoxContainerGeneric);
+	messageBoxContainerGeneric->setEventListener(dialog);
+	PPSimpleVector<PPControl>& controls = messageBoxContainerGeneric->getControls();
+	for (pp_int32 i = 0; i < controls.size(); i++)
+		controls.get(i)->setEventListener(dialog);
+	
+	messageBoxContainerGeneric = NULL;
+	
+	dialog->show();
 }
 
 void Tracker::estimateSongLength(bool signalWait/* = false*/)
