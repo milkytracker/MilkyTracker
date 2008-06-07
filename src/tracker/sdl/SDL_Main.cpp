@@ -112,7 +112,7 @@ static pp_uint32	timerTicker				= 0;
 
 static PPPoint		p;
 
-static const bool	openGL					= true;
+static const bool	openGL					= false;
 
 // This needs to be visible from outside 
 pp_uint32 PPGetTickCount()

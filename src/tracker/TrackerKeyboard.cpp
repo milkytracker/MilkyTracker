@@ -113,6 +113,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierALT, &Tracker::eventKeyDownBinding_PlayTrace);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_ESCAPE, 0, &Tracker::eventKeyDownBinding_Stop);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, 0, &Tracker::eventKeyDownBinding_Edit);
+	eventKeyDownBindingsMilkyTracker->addBinding('U', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_UnmuteAll);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F4, KeyModifierALT, &Tracker::eventKeyDownBinding_ExitApplication);
 	
 	eventKeyDownBindingsMilkyTracker->addBinding('Q', KeyModifierCTRL, &Tracker::eventKeyDownBinding_ExitApplication);
@@ -195,6 +196,7 @@ void Tracker::initKeyBindings()
 	// for the die-hard FT2 users
 	eventKeyDownBindingsFastTracker->addBinding(VK_RCONTROL, 0xFFFF, &Tracker::eventKeyDownBinding_PlaySong);
 	eventKeyDownBindingsFastTracker->addBinding(VK_RMENU, 0xFFFF, &Tracker::eventKeyDownBinding_PlayPattern);
+	eventKeyDownBindingsFastTracker->addBinding('U', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_UnmuteAll);
 
 	// Transpose all instruments
 	eventKeyDownBindingsFastTracker->addBinding(VK_F1, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_TransposeAllInsTrackDown);
@@ -468,6 +470,14 @@ void Tracker::eventKeyDownBinding_Edit()
 			//screen->paint();
 		}
 	}
+}
+
+void Tracker::eventKeyDownBinding_UnmuteAll()
+{
+	if (isActiveEditing())
+		return;
+
+	scopesControl->handleUnmuteAll();
 }
 
 void Tracker::eventKeyDownBinding_Open()

@@ -110,7 +110,9 @@ static void crashHandler(int signum)
 	else
 	{
 		snprintf(message, sizeof(message), "MilkyTracker crashed with signal %i\n"
-				"Please submit a bug report stating exactly what you were doing at the time of the crash, as well as the above signal number.  Also note if it is possible to reproduce this crash.\n", signum);
+				"Please submit a bug report stating exactly what you were doing at "
+				"the time of the crash, as well as the above signal number.  "
+				"Also note if it is possible to reproduce this crash.\n", signum);
 		fprintf(stderr, "\n");
 		fprintf(stderr, message);
 		

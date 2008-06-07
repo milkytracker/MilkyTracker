@@ -48,6 +48,8 @@ PPGraphics_OGL::PPGraphics_OGL(pp_int32 w, pp_int32 h) :
 {
 	setupOrtho(w, h);
 	
+	//glDrawBuffer(GL_FRONT_AND_BACK);
+	
 	glEnable(GL_SCISSOR_TEST);
 	
 	glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -151,6 +153,7 @@ void PPGraphics_OGL::drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underli
 	
 	pp_uint32 offset = (pp_uint32)chr * fontCacheEntry->newWidth * fontCacheEntry->newHeight;
 	
+	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 	glBitmap(currentFont->getCharWidth(), currentFont->getCharHeight(), 
 			 0, currentFont->getCharHeight()-1,
 			 0, 0, 
@@ -167,13 +170,15 @@ void PPGraphics_OGL::drawChar(pp_uint8 chr, pp_int32 x, pp_int32 y, bool underli
 
 void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool underlined/* = false*/)
 {
-	if (currentFont == NULL)
+	if (!fontCacheEntry || !currentFont)
 		return;
 
 	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 
 	pp_int32 charWidth = (signed)currentFont->getCharWidth();
 	pp_int32 charHeight = (signed)currentFont->getCharHeight();
+	const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
+	const pp_uint32 size = fontCacheEntry->newWidth * fontCacheEntry->newHeight;
 
 	pp_int32 sx = x;
 
@@ -182,14 +187,27 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 		switch (*str)
 		{
 			case '\xf4':
-				setPixel(x+(charWidth>>1), y+(charHeight>>1));
+				glBegin(GL_POINTS);
+				glVertex2i(x+(charWidth>>1), y+(charHeight>>1));
+				glEnd();
 				break;
 			case '\n':
 				y+=charHeight;
 				x=sx-charWidth;
 				break;
 			default:
-				drawChar(*str, x, y, underlined);
+			{
+				pp_uint32 offset = ((pp_uint8)*str) * size;
+				glRasterPos2d(x, y);
+				glBitmap(charWidth, charHeight, 0, charHeight-1, 0, 0, data+offset);	
+				if (underlined)
+				{
+					glBegin(GL_LINES);
+					glVertex2i(x, y+charHeight);
+					glVertex2i(x+charWidth, y+charHeight);
+					glEnd();
+				}
+			}
 		}
         x += charWidth;
         str++;
@@ -198,23 +216,38 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 
 void PPGraphics_OGL::drawStringVertical(const char* str, pp_int32 x, pp_int32 y, bool underlined/* = false*/)
 {
-	if (currentFont == NULL)
+	if (!fontCacheEntry || !currentFont)
 		return;
 
 	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 
 	pp_int32 charWidth = (signed)currentFont->getCharWidth();
 	pp_int32 charHeight = (signed)currentFont->getCharHeight();
+	const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
+	const pp_uint32 size = fontCacheEntry->newWidth * fontCacheEntry->newHeight;
 
     while (*str) 
 	{
 		switch (*str)
 		{
 			case '\xf4':
-				setPixel(x+(charWidth>>1), y+(charHeight>>1));
+				glBegin(GL_POINTS);
+				glVertex2i(x+(charWidth>>1), y+(charHeight>>1));
+				glEnd();
 				break;
 			default:
-				drawChar(*str, x, y, underlined);
+			{
+				pp_uint32 offset = ((pp_uint8)*str) * size;
+				glRasterPos2d(x, y);
+				glBitmap(charWidth, charHeight, 0, charHeight-1, 0, 0, data+offset);	
+				if (underlined)
+				{
+					glBegin(GL_LINES);
+					glVertex2i(x, y+charHeight);
+					glVertex2i(x+charWidth, y+charHeight);
+					glEnd();
+				}
+			}
 		}
         y += charHeight;
         str++;

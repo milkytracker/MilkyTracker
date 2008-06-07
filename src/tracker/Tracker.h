@@ -518,6 +518,8 @@ private:
 	void eventKeyDownBinding_Stop();
 	void eventKeyDownBinding_Edit();	
 
+	void eventKeyDownBinding_UnmuteAll();
+
 	void eventKeyDownBinding_Open();
 	void eventKeyDownBinding_Save();
 	void eventKeyDownBinding_SaveAs();

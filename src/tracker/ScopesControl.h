@@ -128,22 +128,21 @@ public:
 	void setNumChannels(pp_int32 numChannels) { this->numChannels = numChannels; }
 	
 	bool needsUpdate();
-	
+	void enable(bool b) { enabled = b; }
+
 	void muteChannel(pp_int32 index, bool b) { muteChannels[index] = (b ? 1 : 0); }
 	void recordChannel(pp_int32 index, bool b) { recChannels[index] = (b ? 1 : 0); }
 	
 	bool isSoloChannel(pp_int32 c);
 	bool isSingleRecChannel(pp_int32 c);
-	
-	pp_int32 pointToChannel(const PPPoint& pt);
-
-	void enable(bool b) { enabled = b; }
-	
+		
 	void handleMute(pp_int32 channel);
 	void handleSolo(pp_int32 channel);
 	void handleRec(pp_int32 channel);
 	void handleSingleRec(pp_int32 channel);
 
+	void handleUnmuteAll();
+	
 	void setCurrentClickType(ClickTypes type) { currentClickType = type; }
 	ClickTypes getCurrentClickType() { return currentClickType; }
 	
@@ -153,6 +152,9 @@ public:
 	//void setSolid(bool b) { appearance = b ? AppearanceTypeSolid : AppearanceTypeNormal; }
 	//bool getSolid() const { return appearance == AppearanceTypeSolid; }
 	
+private:	
+	pp_int32 pointToChannel(const PPPoint& pt);
+
 	pp_int32 WRAPCHANNELS();
 };
 
