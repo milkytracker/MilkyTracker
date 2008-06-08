@@ -178,11 +178,21 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 	pp_int32 charWidth = (signed)currentFont->getCharWidth();
 	pp_int32 charHeight = (signed)currentFont->getCharHeight();
 	const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
-	const pp_uint32 size = fontCacheEntry->newWidth * fontCacheEntry->newHeight;
+	
+	glRasterPos2d(x, y);
 
-	pp_int32 sx = x;
+	// Testing - No underline or \n support
+	// Note: Even when using display lists, the opengl renderer is desperately slow
+	//       (on my Nvidia at least), it's unusable at fullscreen resolutions. Perhaps
+	//       using point-sprites would be quicker..  - Chris
+	
+	//glPushAttrib(GL_LIST_BIT);
+	glCallLists(strlen(str), GL_UNSIGNED_BYTE, (GLubyte *) str);
+	//glPopAttrib();
 
-    while (*str) 
+/*	pp_int32 sx = x;
+
+	while (*str) 
 	{
 		switch (*str)
 		{
@@ -194,12 +204,13 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 			case '\n':
 				y+=charHeight;
 				x=sx-charWidth;
+				glRasterPos2d(x, y);
 				break;
 			default:
 			{
 				pp_uint32 offset = ((pp_uint8)*str) * size;
-				glRasterPos2d(x, y);
-				glBitmap(charWidth, charHeight, 0, charHeight-1, 0, 0, data+offset);	
+				//glRasterPos2d(x, y);
+				glBitmap(charWidth, charHeight, 0, charHeight-1, charWidth, 0, data+offset);	
 				if (underlined)
 				{
 					glBegin(GL_LINES);
@@ -211,7 +222,7 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 		}
         x += charWidth;
         str++;
-    }
+    }*/
 }
 
 void PPGraphics_OGL::drawStringVertical(const char* str, pp_int32 x, pp_int32 y, bool underlined/* = false*/)
@@ -303,7 +314,11 @@ void PPGraphics_OGL::validateRect()
 void PPGraphics_OGL::setFont(PPFont* font)
 {
 	PPGraphicsAbstract::setFont(font);
-
+	
+	pp_int32 charWidth = (signed)font->getCharWidth();
+	pp_int32 charHeight = (signed)font->getCharHeight();
+	
+	
 	bool found = false;
 	for (pp_int32 i = 0; i < sizeof(fontCache) / sizeof(FontCacheEntry); i++)
 	{
@@ -311,9 +326,15 @@ void PPGraphics_OGL::setFont(PPFont* font)
 		{
 			found = true;
 			fontCacheEntry = &fontCache[i];
+			glListBase(fontCacheEntry->listOffset);
 			break;
 		}
 	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_LSB_FIRST, true);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, ((font->getCharWidth()+7) / 8) * 8);
 
 	if (!found)
 	{
@@ -329,12 +350,21 @@ void PPGraphics_OGL::setFont(PPFont* font)
 		
 		fontCache[slot].createFromFont(font);
 		fontCacheEntry = &fontCache[slot];
+		
+		fontCacheEntry->listOffset = glGenLists(256);
+		glListBase(fontCacheEntry->listOffset);
+		const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
+		const pp_uint32 size = fontCacheEntry->newWidth * fontCacheEntry->newHeight;
+		
+
+		for(pp_uint32 i = 0; i < 256; i++)
+		{
+			glNewList(fontCacheEntry->listOffset + i, GL_COMPILE);
+			glBitmap(charWidth, charHeight, 0, charHeight-1, charWidth, 0, data+i*size);
+			glEndList();
+		}
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_LSB_FIRST, true);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, ((font->getCharWidth()+7) / 8) * 8);
 }
 
 void PPGraphics_OGL::FontCacheEntry::createFromFont(PPFont* font)

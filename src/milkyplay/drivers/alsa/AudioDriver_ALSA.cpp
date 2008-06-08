@@ -106,7 +106,8 @@ void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 		if (commitres < 0 || (snd_pcm_uframes_t)commitres != frames) {
 			if ((err = snd_pcm_recover(handle, commitres >= 0 ? -EPIPE : commitres, 0)) < 0) {
 				fprintf(stderr, "ALSA: MMAP commit error: %s\n", snd_strerror(err));
-				exit(1);
+				// What now?
+//				exit(1);
 			}
 			first = 1;
 		}

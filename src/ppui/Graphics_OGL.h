@@ -23,6 +23,8 @@
  #ifndef __GRAPHICSOGL_H__
  #define __GRAPHICSOGL_H__
  
+#include<GL/gl.h>
+ 
 class PPGraphics_OGL : public PPGraphicsAbstract 
 { 
 public: 
@@ -51,6 +53,7 @@ private:
 		PPFont* font;
 		pp_uint8* oldFontBits;
 		pp_uint8* oglBitmapData;
+		GLuint listOffset;
 
 		pp_uint32 newWidth;
 		pp_uint32 newHeight;
