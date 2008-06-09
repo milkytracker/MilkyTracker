@@ -65,7 +65,7 @@ private:
 	class ModuleEditor* moduleEditor;
 	XModule* module;
 	class PlayerCriticalSection* criticalSection;
-	struct PlayerStatusEventListener* playerStatusEventListener;
+	class PlayerStatusTracker* playerStatusTracker;
 			
 	bool patternPlay;
 	bool playRowOnly;
@@ -144,7 +144,8 @@ public:
 	
 	void readjustSpeed(bool adjustModuleHeader = true);
 	
-	void playSample(TXMSample* sample, mp_sint32 currentSamplePlayNote, mp_sint32 rangeStart = -1, mp_sint32 rangeEnd = -1);
+	void playSample(const TXMSample& sample, mp_sint32 currentSamplePlayNote, 
+					mp_sint32 rangeStart = -1, mp_sint32 rangeEnd = -1);
 	void stopSample();
 	
 	void stopInstrument(mp_sint32 insIndex);
@@ -208,8 +209,8 @@ private:
 	mp_sint32 getCurrentBeatIndex();
 
 public:
-	bool isSamplePlaying(const TXMSample* smp, mp_sint32 channel, mp_sint32& pos, mp_sint32& vol, mp_sint32& pan);
-	bool isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 envelopeType, mp_sint32 channel, mp_sint32& pos);
+	bool isSamplePlaying(const TXMSample& smp, mp_sint32 channel, mp_sint32& pos, mp_sint32& vol, mp_sint32& pan);
+	bool isEnvelopePlaying(const TEnvelope& envelope, mp_sint32 envelopeType, mp_sint32 channel, mp_sint32& pos);
 	bool isNotePlaying(mp_sint32 ins, mp_sint32 channel, mp_sint32& note, bool& muted);
 	
 	class SampleDataFetcher
@@ -222,7 +223,7 @@ public:
 	bool hasSampleData(mp_uint32 chnIndex);
 	
 	friend class PlayerMaster;
-	friend struct PlayerStatusEventListener;
+	friend class PlayerStatusTracker;
 };
 
 #endif

@@ -298,6 +298,9 @@ public:
 	{
 		const pp_int32 height = (r.y2 - r.y1);
 
+		if (!height)
+			return;
+
 		pp_int32 addr = (colDst.r - colSrc.r)*65536 / height;
 		pp_int32 addg = (colDst.g - colSrc.g)*65536 / height;
 		pp_int32 addb = (colDst.b - colSrc.b)*65536 / height;

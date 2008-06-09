@@ -860,7 +860,7 @@ void Tracker::doFollowSong()
 		for (pp_int32 i = 0; i < playerController->getAllNumPlayingChannels(); i++)
 		{
 			pp_int32 pos, vol, pan;
-			if (playerController->isSamplePlaying(smp, i, pos, vol, pan))
+			if (playerController->isSamplePlaying(*smp, i, pos, vol, pan))
 			{
 				// it is there 
 				// => set the position mark
@@ -912,7 +912,7 @@ void Tracker::doFollowSong()
 		for (pp_int32 i = 0; i < playerController->getPlayerNumPlayingChannels(); i++)
 		{	
 			pp_int32 pos;
-			if (playerController->isEnvelopePlaying(ee->getEnvelope(), sectionInstruments->getVisibleEnvelopeType(), i, pos))
+			if (playerController->isEnvelopePlaying(*ee->getEnvelope(), sectionInstruments->getVisibleEnvelopeType(), i, pos))
 			{
 				eeCtrl->setShowMark(i, pos);
 				

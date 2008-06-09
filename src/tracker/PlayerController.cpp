@@ -36,21 +36,95 @@
 #include "PlayerCriticalSection.h"
 #include "ModuleEditor.h"
 
-struct PlayerStatusEventListener : public PlayerSTD::StatusEventListener
+class PlayerStatusTracker : public PlayerSTD::StatusEventListener
 {
-	PlayerController& playerController;
-	
-	PlayerStatusEventListener(PlayerController& playerController) :
+public:
+	PlayerStatusTracker(PlayerController& playerController) :
 		playerController(playerController)
 	{
+		clearUpdateCommandBuff();
 	}
+	
+	// this is being called from the player callback in a serialized fashion
+	virtual void timerTickEnded(PlayerSTD& player, XModule& module) 
+	{ 
+		if (rbReadIndex < rbWriteIndex)
+		{			
+			mp_sint32 idx = rbReadIndex & (UPDATEBUFFSIZE-1);			
+			
+			// handle notes that are played from external source
+			// i.e. keyboard playback
+			switch (updateCommandBuff[idx].code)
+			{
+				case UpdateCommandCodeNote:
+				{
+					UpdateCommandNote* command = reinterpret_cast<UpdateCommandNote*>(&updateCommandBuff[idx]);
+					mp_sint32 note = command->note;
+					if (note)
+					{
+						player.playNote(command->channel, note, 
+										command->ins, 
+										command->volume);
+						command->note = 0;
+					}
+					break;
+				}
+
+				case UpdateCommandCodeSample:
+				{
+					UpdateCommandSample* command = reinterpret_cast<UpdateCommandSample*>(&updateCommandBuff[idx]);
+					const TXMSample* smp = command->smp;
+					if (smp)
+					{
+						playSampleInternal(player, command->channel, smp, command->currentSamplePlayNote,
+										   command->rangeEnd, command->rangeStart);
+						command->smp = NULL;
+					}
+					
+					break;
+				}
+				
+			}
+			rbReadIndex++;
+		}
+	}	
 	
 	virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) 
 	{ 
 		handleQueuedPositions(player, newOrderIndex);
 	}
-	
+
+	void playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 ins, mp_sint32 vol/* = -1*/)
+	{	
+		// fill ring buffer with note entries
+		// the callback will query these notes and play them 
+		mp_sint32 idx = rbWriteIndex & (UPDATEBUFFSIZE-1);
+		UpdateCommandNote* command = reinterpret_cast<UpdateCommandNote*>(&updateCommandBuff[idx]);
+		command->channel = chn;
+		command->ins = ins;
+		command->volume = vol;
+		command->note = note;
+		command->code = UpdateCommandCodeNote;
+		rbWriteIndex++;
+	}
+
+	void playSample(mp_ubyte chn, const TXMSample& smp, mp_sint32 currentSamplePlayNote, mp_sint32 rangeStart, mp_sint32 rangeEnd)
+	{
+		// fill ring buffer with sample playback entries
+		mp_sint32 idx = rbWriteIndex & (UPDATEBUFFSIZE-1);
+		UpdateCommandSample* command = reinterpret_cast<UpdateCommandSample*>(&updateCommandBuff[idx]);
+		command->channel = chn;
+		command->currentSamplePlayNote = currentSamplePlayNote;
+		command->rangeStart = rangeStart;
+		command->rangeEnd = rangeEnd;
+		command->smp = &smp;
+		command->code = UpdateCommandCodeSample;
+		rbWriteIndex++;
+	}
+				  
 private:
+	PlayerController& playerController;
+	
 	void handleQueuedPositions(PlayerSTD& player, mp_sint32& poscnt)
 	{
 		// there is a queued position
@@ -79,6 +153,94 @@ private:
 			playerController.nextPatternIndexToPlay = -1;
 		}
 	}
+	
+	void playSampleInternal(PlayerSTD& player, mp_ubyte chn, const TXMSample* smp, mp_sint32 currentSamplePlayNote, 
+							mp_sint32 rangeStart, mp_sint32 rangeEnd)
+	{
+		pp_int32 period = player.getlogperiod(currentSamplePlayNote+1, smp->relnote, smp->finetune) << 8;
+		pp_int32 freq = player.getlogfreq(period); 
+
+		player.setFreq(chn,freq);
+		player.setVol(chn, (smp->vol*512)/255);
+		player.setPan(chn, 128);
+
+		player.chninfo[chn].flags |= 0x100; // CHANNEL_FLAGS_UPDATE_IGNORE
+
+		pp_int32 flags = (smp->type >> 2) & 4;
+		
+		if (rangeStart == -1 && rangeEnd == -1)
+		{
+			flags |= smp->type & 3;
+			
+			if (flags & 3)
+				player.playSample(chn, smp->sample, smp->samplen, 0, 0, false, smp->loopstart, smp->loopstart+smp->looplen, flags);
+			else
+				player.playSample(chn, smp->sample, smp->samplen, 0, 0, false, 0, smp->samplen, flags);
+		}
+		else
+		{
+			if (rangeStart == -1 || rangeEnd == -1)
+				return;
+			
+			if (rangeEnd > (signed)smp->samplen)
+				rangeEnd = smp->samplen;
+
+			player.playSample(chn, smp->sample, smp->samplen, rangeStart, 0, false, 0, rangeEnd, flags);
+		}
+	}
+
+	void clearUpdateCommandBuff()
+	{
+		memset(updateCommandBuff, 0, sizeof(updateCommandBuff));
+		rbReadIndex = rbWriteIndex = 0;
+	}
+	
+	enum
+	{
+		// must be 2^n
+		UPDATEBUFFSIZE = 64
+	};
+	
+	enum UpdateCommandCodes
+	{
+		UpdateCommandCodeInvalid = 0,
+		UpdateCommandCodeNote,
+		UpdateCommandCodeSample,
+	};
+	
+	struct UpdateCommand
+	{
+		mp_ubyte code;			
+		mp_uint32 data[8];
+		void* pdata[8];
+	};
+
+	struct UpdateCommandNote
+	{
+		mp_ubyte code;			
+		mp_sint32 note;
+		mp_sint32 channel;
+		mp_sint32 ins;
+		mp_sint32 volume;
+		mp_uint32 data[4];
+		void* pdata[8];
+	};
+	
+	struct UpdateCommandSample
+	{
+		mp_ubyte code;
+		mp_uint32 currentSamplePlayNote;
+		mp_uint32 rangeStart;
+		mp_uint32 rangeEnd;
+		mp_sint32 channel;
+		mp_uint32 data[4];
+		const TXMSample* smp;
+	};
+	
+	UpdateCommand updateCommandBuff[UPDATEBUFFSIZE];
+	
+	mp_sint32 rbReadIndex;
+	mp_sint32 rbWriteIndex;	
 };
 
 void PlayerController::assureNotSuspended()
@@ -117,7 +279,7 @@ PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 	player(NULL),
 	module(NULL),
 	criticalSection(NULL),
-	playerStatusEventListener(new PlayerStatusEventListener(*this)),
+	playerStatusTracker(new PlayerStatusTracker(*this)),
 	patternPlay(false), playRowOnly(false),
 	patternIndex(-1), 
 	nextOrderIndexToPlay(-1),
@@ -136,7 +298,7 @@ PlayerController::PlayerController(MasterMixer* mixer, bool fakeScopes) :
 {
 	criticalSection = new PlayerCriticalSection(*this);
 
-	player = new PlayerSTD(mixer->getSampleRate(), playerStatusEventListener);
+	player = new PlayerSTD(mixer->getSampleRate(), playerStatusTracker);
 	player->setPlayMode(PlayerBase::PlayMode_FastTracker2);
 	player->resetMainVolumeOnStartPlay(false);
 	player->setBufferSize(mixer->getBufferSize());
@@ -181,7 +343,7 @@ PlayerController::~PlayerController()
 		delete player;
 	}
 	
-	delete playerStatusEventListener;
+	delete playerStatusTracker;
 	
 	delete criticalSection;
 }
@@ -560,7 +722,7 @@ void PlayerController::readjustSpeed(bool adjustModuleHeader/* = true*/)
 	setSpeed(bpm, speed, adjustModuleHeader);
 }
 
-void PlayerController::playSample(TXMSample* smp, mp_sint32 currentSamplePlayNote, mp_sint32 rangeStart/* = -1*/, mp_sint32 rangeEnd/* = -1*/)
+void PlayerController::playSample(const TXMSample& smp, mp_sint32 currentSamplePlayNote, mp_sint32 rangeStart/* = -1*/, mp_sint32 rangeEnd/* = -1*/)
 {
 	if (!player)
 		return;
@@ -571,37 +733,7 @@ void PlayerController::playSample(TXMSample* smp, mp_sint32 currentSamplePlayNot
 	{
 		pp_int32 i = numPlayerChannels + numVirtualChannels + 1;
 
-		pp_int32 period = player->getlogperiod(currentSamplePlayNote+1, smp->relnote, smp->finetune) << 8;
-		pp_int32 freq = player->getlogfreq(period); 
-
-		player->setFreq(i,freq);
-		player->setVol(i, (smp->vol*512)/255);
-		player->setPan(i, 128);
-
-		player->chninfo[i].flags |= 0x100; // CHANNEL_FLAGS_UPDATE_IGNORE
-
-		pp_int32 flags = (smp->type >> 2) & 4;
-		
-		if (rangeStart == -1 && rangeEnd == -1)
-		{
-			flags |= smp->type & 3;
-			
-			if (flags & 3)
-				player->playSample(i, smp->sample, smp->samplen, 0, 0, false, smp->loopstart, smp->loopstart+smp->looplen, flags);
-			else
-				player->playSample(i, smp->sample, smp->samplen, 0, 0, false, 0, smp->samplen, flags);
-		}
-		else
-		{
-			if (rangeStart == -1 || rangeEnd == -1)
-				return;
-			
-			if (rangeEnd > (signed)smp->samplen)
-				rangeEnd = smp->samplen;
-
-			player->playSample(i, smp->sample, smp->samplen, rangeStart, 0, false, 0, rangeEnd, flags);
-		}
-		
+		playerStatusTracker->playSample(i, smp, currentSamplePlayNote, rangeStart, rangeEnd);		
 	}	
 
 }
@@ -613,6 +745,7 @@ void PlayerController::stopSample()
 
 	if (player->isPlaying())
 	{
+		// doesn't seem to be a critical race condition
 		pp_int32 i = numPlayerChannels + numVirtualChannels + 1;
 
 		player->stopSample(i);
@@ -629,6 +762,7 @@ void PlayerController::stopInstrument(mp_sint32 insIndex)
 
 	if (player->isPlaying())
 	{
+		// doesn't seem to be a critical race condition
 		for (pp_int32 i = 0; i < numPlayerChannels + numVirtualChannels; i++)
 		{
 			if (player->chninfo[i].ins == insIndex)
@@ -640,15 +774,15 @@ void PlayerController::stopInstrument(mp_sint32 insIndex)
 	}	
 }
 
-void PlayerController::playNote(mp_ubyte chn, 
-								mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
+void PlayerController::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
 {
 	if (!player)
 		return;
 		
 	assureNotSuspended();
 
-	player->playNote(chn, note, i, vol);
+	// note playing goes synchronized in the playback callback
+	playerStatusTracker->playNote(chn, note, i, vol);
 }
 
 void PlayerController::suspendPlayer(bool bResetMainVolume/* = true*/, bool stopPlaying/* = true*/)
@@ -1029,7 +1163,7 @@ mp_sint32 PlayerController::getCurrentBeatIndex()
 	return 0;
 }
 
-bool PlayerController::isSamplePlaying(const TXMSample* smp, mp_sint32 channel, mp_sint32& pos, mp_sint32& vol, mp_sint32& pan)
+bool PlayerController::isSamplePlaying(const TXMSample& smp, mp_sint32 channel, mp_sint32& pos, mp_sint32& vol, mp_sint32& pan)
 {
 	if (!player)
 		return false;
@@ -1044,7 +1178,7 @@ bool PlayerController::isSamplePlaying(const TXMSample* smp, mp_sint32 channel, 
 	
 	// compare sample from sample editor against sample from current mixer channel
 	if (pos >= 0 && 
-		(void*)mixer->channel[channel].timeRecord[j].sample == (void*)smp->sample)
+		(void*)mixer->channel[channel].timeRecord[j].sample == (void*)smp.sample)
 	{
 		vol = (mixer->channel[channel].timeRecord[j].volPan & 0xFFFF) >> 1;
 		pan = (mixer->channel[channel].timeRecord[j].volPan) >> 16;
@@ -1054,7 +1188,7 @@ bool PlayerController::isSamplePlaying(const TXMSample* smp, mp_sint32 channel, 
 	return false;
 }
 
-bool PlayerController::isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 envelopeType, mp_sint32 channel, mp_sint32& pos)
+bool PlayerController::isEnvelopePlaying(const TEnvelope& envelope, mp_sint32 envelopeType, mp_sint32 channel, mp_sint32& pos)
 {
 	if (!player)
 		return false;
@@ -1076,7 +1210,7 @@ bool PlayerController::isEnvelopePlaying(const TEnvelope* envelope, mp_sint32 en
 	pp_int32 j = getCurrentBeatIndex();
 	pos = env->timeRecord[j].pos;
 	
-	if (env && env->timeRecord[j].envstruc && env->timeRecord[j].envstruc == envelope)
+	if (env && env->timeRecord[j].envstruc && env->timeRecord[j].envstruc == &envelope)
 	{
 		
 		if ((env->timeRecord[j].envstruc->num && 

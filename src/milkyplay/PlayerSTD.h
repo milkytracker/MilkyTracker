@@ -39,10 +39,10 @@ class PlayerSTD : public PlayerBase
 public:
 	struct StatusEventListener
 	{
-		virtual ~StatusEventListener()
-		{
-		}
-		
+		virtual ~StatusEventListener() { }
+
+		virtual void timerTickStarted(PlayerSTD& player, XModule& module) { }
+		virtual void timerTickEnded(PlayerSTD& player, XModule& module) { }
 		virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) { }
 	};
 
@@ -170,22 +170,6 @@ private:
 		mp_ubyte		avibsweep;
 		mp_ubyte		avibswcnt;
 		
-#ifdef MILKYTRACKER
-		enum
-		{
-			// must be 2^n
-			NPQSIZE = 16
-		};
-		
-		struct NotePlayEntry
-		{
-			mp_sint32 note, ins, vol;
-		} notePlayEntries[NPQSIZE];
-		
-		mp_sint32 notePlayReadIndex;
-		mp_sint32 notePlayWriteIndex;
-#endif
-	
 		void clear()
 		{
 			flags = 0;
@@ -239,17 +223,6 @@ private:
 			avibcnt = 0;
 			avibsweep = 0;
 			avibswcnt = 0;
-			
-#ifdef MILKYTRACKER
-			for (mp_uint32 i = 0; i < NPQSIZE; i++)
-			{
-				notePlayEntries[i].note = notePlayEntries[i].ins = 0;
-				notePlayEntries[i].vol = -1;
-			}
-
-			notePlayReadIndex = 0;
-			notePlayWriteIndex = 0;			
-#endif
 		}
 		
 		void reallocTimeRecord(mp_uint32 size)
@@ -447,8 +420,6 @@ private:
 	// stop song by setting flag and setting speed to zero
 	void			halt();
 
-	void			playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol);
-
 protected:
 	virtual void	clearEffectMemory();
 	
@@ -478,14 +449,14 @@ public:
 	virtual bool	grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) const;
 
 	// milkytracker
-	virtual void	playNote(mp_ubyte chn, 
-							 mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1);
+	virtual void	playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1);
 							 
 	virtual void	setPanning(mp_ubyte chn, mp_ubyte pan) { chninfo[chn].pan = pan; }
 
 #ifdef MILKYTRACKER
 	friend class PlayerController;
 	friend class PlayerGeneric;
+	friend class PlayerStatusTracker;
 #endif
 };
 

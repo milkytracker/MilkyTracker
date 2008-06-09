@@ -48,7 +48,7 @@ public:
 	{
 	}
 	
-	void playSample(TXMSample* smp, pp_uint32 note, pp_int32 rangeStart = -1, pp_int32 rangeEnd = -1);
+	void playSample(const TXMSample& smp, pp_uint32 note, pp_int32 rangeStart = -1, pp_int32 rangeEnd = -1);
 	void playSample(pp_int32 insIndex, pp_int32 smpIndex, pp_uint32 note);
 	void playSample(pp_int32 insIndex, pp_uint32 note);
 	void playCurrentSample(pp_uint32 note);

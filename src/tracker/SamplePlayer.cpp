@@ -33,14 +33,14 @@
 #include "SampleEditor.h"
 #include "PlayerController.h"
 
-void SamplePlayer::playSample(TXMSample* smp, pp_uint32 note, pp_int32 rangeStart/* = -1*/, pp_int32 rangeEnd/* = -1*/)
+void SamplePlayer::playSample(const TXMSample& smp, pp_uint32 note, pp_int32 rangeStart/* = -1*/, pp_int32 rangeEnd/* = -1*/)
 {
 	playerController.playSample(smp, note, rangeStart, rangeEnd);	
 }
 
 void SamplePlayer::playSample(pp_int32 insIndex, pp_int32 smpIndex, pp_uint32 note)
 {
-	playSample(moduleEditor.getSampleInfo(insIndex, smpIndex), note);
+	playSample(*moduleEditor.getSampleInfo(insIndex, smpIndex), note);
 }
 
 void SamplePlayer::playSample(pp_int32 insIndex, pp_uint32 note)
@@ -52,7 +52,7 @@ void SamplePlayer::playSample(pp_int32 insIndex, pp_uint32 note)
 
 void SamplePlayer::playCurrentSample(pp_uint32 note)
 {
-	playSample(moduleEditor.getSampleEditor()->getSample(), note);
+	playSample(*moduleEditor.getSampleEditor()->getSample(), note);
 }
 
 void SamplePlayer::playCurrentSampleSelectionRange(pp_uint32 note)
@@ -62,7 +62,7 @@ void SamplePlayer::playCurrentSampleSelectionRange(pp_uint32 note)
 	if (sampleEditor->getLogicalSelectionStart() != -1 &&
 		sampleEditor->getLogicalSelectionStart() != -1)
 	{
-		playSample(sampleEditor->getSample(), 
+		playSample(*sampleEditor->getSample(), 
 				   note, 
 				   sampleEditor->getLogicalSelectionStart(), 
 				   sampleEditor->getLogicalSelectionEnd());

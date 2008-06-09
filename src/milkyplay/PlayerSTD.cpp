@@ -278,6 +278,9 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 	if (paused)
 		return;
 
+	if (statusEventListener)
+		statusEventListener->timerTickStarted(*this, *module);
+
 	mp_int64 dummy = (mp_int64)BPMCounter;
 	dummy+=(mp_int64)adder;
 	BPMCounter=(mp_sint32)dummy;
@@ -300,22 +303,6 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 	TModuleChannel* chnInf = chninfo;
 	for (mp_sint32 i = 0; i < initialNumChannels; i++)
 	{
-		// handle notes that are played from external source
-		// i.e. keyboard playback
-		if (chnInf->notePlayReadIndex < chnInf->notePlayWriteIndex)
-		{
-			mp_sint32 idx = chnInf->notePlayReadIndex & (TModuleChannel::NPQSIZE-1);
-			mp_sint32 note = chnInf->notePlayEntries[idx].note;
-			if (note)
-			{
-				playNoteInternal(i, note, 
-								chnInf->notePlayEntries[idx].ins, 
-								chnInf->notePlayEntries[idx].vol);
-				chnInf->notePlayEntries[idx].note = 0;
-			}
-			chnInf->notePlayReadIndex++;
-		}
-		
 		// track envelope position state
 		TPrEnv* env = &chnInf->venv;		
 		if ((env->envstruc && (env->envstruc->type & 1) && env->envstruc->num) &&
@@ -346,6 +333,8 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 		chnInf++;
 	}
 #endif
+	if (statusEventListener)
+		statusEventListener->timerTickEnded(*this, *module);
 }
 
 void PlayerSTD::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 0*/, bool resetMixer/* = true*/, const mp_ubyte* customPanningTable/* = NULL*/, bool playOneRowOnly/* = false*/)
@@ -3089,7 +3078,7 @@ bool PlayerSTD::grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) 
 //////////////////////////////////////////////////////////////////////////////////////////
 // for MilkyTracker use
 //////////////////////////////////////////////////////////////////////////////////////////
-void PlayerSTD::playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol)
+void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vol/* = -1*/)
 {
 	if (!i)
 		return;
@@ -3215,19 +3204,4 @@ void PlayerSTD::playNoteInternal(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_s
 		
 	}
 			
-}
-
-void PlayerSTD::playNote(mp_ubyte chn, 
-						 mp_sint32 note, mp_sint32 ins, mp_sint32 vol/* = -1*/)
-{	
-#ifdef MILKYTRACKER
-	TModuleChannel* chnInf = &chninfo[chn];
-	// fill ring buffer with note entries
-	// the callback will query these notes and play them 
-	mp_sint32 idx = chnInf->notePlayWriteIndex & (TModuleChannel::NPQSIZE-1);
-	chnInf->notePlayEntries[idx].ins = ins;
-	chnInf->notePlayEntries[idx].vol = vol;
-	chnInf->notePlayEntries[idx].note = note;
-	chnInf->notePlayWriteIndex++;
-#endif
 }

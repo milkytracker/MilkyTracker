@@ -20,10 +20,14 @@
  *
  */
  
- #ifndef __GRAPHICSOGL_H__
- #define __GRAPHICSOGL_H__
- 
-#include<GL/gl.h>
+#ifndef __GRAPHICSOGL_H__
+#define __GRAPHICSOGL_H__
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
  
 class PPGraphics_OGL : public PPGraphicsAbstract 
 { 
@@ -76,5 +80,4 @@ private:
 	FontCacheEntry* fontCacheEntry;
 }; 
  
- #endif
- 
+#endif

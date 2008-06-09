@@ -192,7 +192,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_SAMPLE_PLAY_DISPLAY:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
-				samplePlayer.playSample(sampleEditor->getSample(), 
+				samplePlayer.playSample(*sampleEditor->getSample(), 
 										currentSamplePlayNote, 
 										sampleEditorControl->getCurrentPosition(), 
 										sampleEditorControl->getCurrentPosition() + sampleEditorControl->getCurrentDisplayRange());
