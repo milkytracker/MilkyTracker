@@ -37,9 +37,8 @@
 #include <iostream>
 #include "MidiTools.h"
 
-MidiReceiver::MidiReceiver(Tracker& theTracker, PPMutex& theCriticalSectionMutex) :
-	tracker(theTracker),
-	criticalSectionMutex(theCriticalSectionMutex),
+MidiReceiver::MidiReceiver(MidiEventHandler& midiEventHandler) :
+	midiEventHandler(midiEventHandler),
 	midiin(NULL),
 	recordVelocity(false),
 	velocityAmplify(100)
@@ -104,9 +103,7 @@ void MidiReceiver::processMessage(double deltatime, std::vector<unsigned char>* 
 		note -= 12;
 		if (note < 1) note = 1;
 		
-		criticalSectionMutex.lock();
-		tracker.sendNoteUp(note);
-		criticalSectionMutex.unlock();
+		midiEventHandler.keyUp(note);
 	}
 	else if (command >= 144 && command <= 159)
 	{
@@ -119,15 +116,11 @@ void MidiReceiver::processMessage(double deltatime, std::vector<unsigned char>* 
 		
 		if (velocity == 0)
 		{
-			criticalSectionMutex.lock();
-			tracker.sendNoteUp(note);
-			criticalSectionMutex.unlock();
+			midiEventHandler.keyUp(note);
 		}
 		else
 		{
-			criticalSectionMutex.lock();
-			tracker.sendNoteDown(note, recordVelocity ? vol126to255(velocity-1, velocityAmplify) : -1);
-			criticalSectionMutex.unlock();
+			midiEventHandler.keyDown(note, recordVelocity ? vol126to255(velocity-1, velocityAmplify) : -1);
 		}
 	}	
 }

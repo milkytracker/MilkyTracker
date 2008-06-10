@@ -200,6 +200,26 @@ void StopMidiRecording()
 	}
 }
 
+class MidiEventHandler : public MidiReceiver::MidiEventHandler
+{
+public:
+	virtual void keyDown(int note, int volume) 
+	{
+		globalMutex->lock();
+		myTracker->sendNoteDown(note, volume);
+		globalMutex->unlock();
+	}
+
+	virtual void keyUp(int note) 
+	{
+		globalMutex->lock();
+		myTracker->sendNoteUp(note);
+		globalMutex->unlock();
+	}
+};
+
+MidiEventHandler midiEventHandler;
+
 void StartMidiRecording(unsigned int devID, bool recordMidiVelocity, unsigned int velocityAmplify)
 {
 	if (devID == (unsigned)-1)
@@ -207,7 +227,7 @@ void StartMidiRecording(unsigned int devID, bool recordMidiVelocity, unsigned in
 
 	StopMidiRecording();
 
-	myMidiReceiver = new MidiReceiver(*myTracker, *globalMutex);
+	myMidiReceiver = new MidiReceiver(midiEventHandler);
 	myMidiReceiver->setRecordVelocity(recordMidiVelocity);
 	myMidiReceiver->setVelocityAmplify(velocityAmplify);	
 

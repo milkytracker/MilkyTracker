@@ -270,6 +270,8 @@ enum SDLUserEvents
 	SDLUserEventTimer,
 	SDLUserEventLMouseRepeat,
 	SDLUserEventRMouseRepeat,
+	SDLUserEventMidiKeyDown,
+	SDLUserEventMidiKeyUp,
 };
 
 static Uint32 timerCallback(Uint32 interval)
@@ -330,6 +332,38 @@ static Uint32 timerCallback(Uint32 interval)
 }
 
 #ifdef HAVE_LIBASOUND
+class MidiEventHandler : public MidiReceiver::MidiEventHandler
+{
+public:
+	virtual void keyDown(int note, int volume) 
+	{
+		SDL_UserEvent ev;	
+		ev.type = SDL_USEREVENT;
+		ev.type = SDLUserEventMidiKeyDown;
+		ev.data1 = (void*)note;
+		ev.data2 = (void*)volume;
+		SDL_PushEvent((SDL_Event*)&ev);		
+
+		//globalMutex->lock();
+		//myTracker->sendNoteDown(note, volume);
+		//globalMutex->unlock();
+	}
+
+	virtual void keyUp(int note) 
+	{
+		SDL_UserEvent ev;	
+		ev.type = SDL_USEREVENT;
+		ev.type = SDLUserEventMidiKeyDown;
+		ev.data1 = (void*)note;
+		SDL_PushEvent((SDL_Event*)&ev);		
+
+		//globalMutex->lock();
+		//myTracker->sendNoteUp(note);
+		//globalMutex->unlock();
+	}
+};
+
+
 void StopMidiRecording()
 {
 	if (myMidiReceiver)
@@ -733,6 +767,26 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 			RaiseEventSerialized(&myEvent);
 			break;
 		}
+
+		case SDLUserEventMidiKeyDown:
+		{
+			pp_int32 note = (pp_int32)event.data1;
+			pp_int32 volume = (pp_int32)event.data2;
+			globalMutex->lock();
+			myTracker->sendNoteDown(note, volume);
+			globalMutex->unlock();
+			break;
+		}
+
+		case SDLUserEventMidiKeyUp:
+		{
+			pp_int32 note = (pp_int32)event.data1;
+			globalMutex->lock();
+			myTracker->sendNoteUp(note);
+			globalMutex->unlock();
+			break;
+		}
+
 	}
 }
 

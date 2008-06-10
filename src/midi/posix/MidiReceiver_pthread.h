@@ -33,15 +33,20 @@
 
 #include <vector>
 
-class Tracker;
-class PPMutex;
 class RtMidiIn;
 
 class MidiReceiver
 {
+public:
+	class MidiEventHandler
+	{
+	public:
+		virtual void keyDown(int note, int volume) = 0;
+		virtual void keyUp(int note) = 0;
+	};
+
 private:
-	Tracker& tracker;
-	PPMutex& criticalSectionMutex;
+	MidiEventHandler& midiEventHandler;
 	RtMidiIn* midiin;
 	bool recordVelocity;
 	int velocityAmplify;
@@ -53,7 +58,7 @@ private:
 	void processMessage(double deltatime, std::vector<unsigned char>* message, int offset);
 	
 public:
-	MidiReceiver(Tracker& theTracker, PPMutex& theCriticalSectionMutex);
+	MidiReceiver(MidiEventHandler& midiEventHandler);
 	~MidiReceiver();
 
 	void setRecordVelocity(bool recVelocity) { recordVelocity = recVelocity; }
