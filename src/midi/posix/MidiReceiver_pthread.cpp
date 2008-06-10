@@ -120,7 +120,7 @@ void MidiReceiver::processMessage(double deltatime, std::vector<unsigned char>* 
 		}
 		else
 		{
-			midiEventHandler.keyDown(note, recordVelocity ? vol126to255(velocity-1, velocityAmplify) : -1);
+			midiEventHandler.keyDown(note, recordVelocity ? vol126to255(velocity-1, velocityAmplify) : 0xff);
 		}
 	}	
 }

@@ -305,7 +305,7 @@ static Uint32 timerCallback(Uint32 interval)
 	if (lMouseDown &&
 		(timerTicker - lButtonDownStartTime) > 25)
 	{
-		ev.type = SDLUserEventLMouseRepeat;
+		ev.code = SDLUserEventLMouseRepeat;
 		ev.data1 = (void*)p.x;
 		ev.data2 = (void*)p.y;
 		SDL_PushEvent((SDL_Event*)&ev);		
@@ -317,7 +317,7 @@ static Uint32 timerCallback(Uint32 interval)
 	if (rMouseDown &&
 		(timerTicker - rButtonDownStartTime) > 25)
 	{
-		ev.type = SDLUserEventRMouseRepeat;
+		ev.code = SDLUserEventRMouseRepeat;
 		ev.data1 = (void*)p.x;
 		ev.data2 = (void*)p.y;
 		SDL_PushEvent((SDL_Event*)&ev);		
@@ -339,7 +339,7 @@ public:
 	{
 		SDL_UserEvent ev;	
 		ev.type = SDL_USEREVENT;
-		ev.type = SDLUserEventMidiKeyDown;
+		ev.code = SDLUserEventMidiKeyDown;
 		ev.data1 = (void*)note;
 		ev.data2 = (void*)volume;
 		SDL_PushEvent((SDL_Event*)&ev);		
@@ -353,7 +353,7 @@ public:
 	{
 		SDL_UserEvent ev;	
 		ev.type = SDL_USEREVENT;
-		ev.type = SDLUserEventMidiKeyDown;
+		ev.code = SDLUserEventMidiKeyUp;
 		ev.data1 = (void*)note;
 		SDL_PushEvent((SDL_Event*)&ev);		
 
@@ -361,7 +361,7 @@ public:
 		//myTracker->sendNoteUp(note);
 		//globalMutex->unlock();
 	}
-};
+} midiEventHandler;
 
 
 void StopMidiRecording()
@@ -379,7 +379,7 @@ void StartMidiRecording(unsigned int devID)
 
 	StopMidiRecording();
 
-	myMidiReceiver = new MidiReceiver(*myTracker, *globalMutex);
+	myMidiReceiver = new MidiReceiver(midiEventHandler);
 
 	if (!myMidiReceiver->startRecording(devID))
 	{

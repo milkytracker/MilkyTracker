@@ -331,13 +331,13 @@ void PPGraphics_OGL::setFont(PPFont* font)
 		}
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_LSB_FIRST, true);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, ((font->getCharWidth()+7) / 8) * 8);
-
 	if (!found)
 	{
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glPixelStorei(GL_UNPACK_LSB_FIRST, true);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, ((font->getCharWidth()+7) / 8) * 8);
+
 		pp_int32 slot = 0;
 		for (pp_int32 i = 0; i < sizeof(fontCache) / sizeof(FontCacheEntry); i++)
 		{
