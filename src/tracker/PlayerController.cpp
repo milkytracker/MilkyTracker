@@ -48,7 +48,7 @@ public:
 	// this is being called from the player callback in a serialized fashion
 	virtual void timerTickEnded(PlayerSTD& player, XModule& module) 
 	{ 
-		if (rbReadIndex < rbWriteIndex)
+		while (rbReadIndex < rbWriteIndex)
 		{			
 			mp_sint32 idx = rbReadIndex & (UPDATEBUFFSIZE-1);			
 			
@@ -104,6 +104,7 @@ public:
 		command->ins = ins;
 		command->volume = vol;
 		command->note = note;
+		// code needs to be filled in last
 		command->code = UpdateCommandCodeNote;
 		rbWriteIndex++;
 	}
@@ -198,7 +199,7 @@ private:
 	enum
 	{
 		// must be 2^n
-		UPDATEBUFFSIZE = 64
+		UPDATEBUFFSIZE = 128
 	};
 	
 	enum UpdateCommandCodes
@@ -235,6 +236,7 @@ private:
 		mp_sint32 channel;
 		mp_uint32 data[4];
 		const TXMSample* smp;
+		void* pdata[7];
 	};
 	
 	UpdateCommand updateCommandBuff[UPDATEBUFFSIZE];
