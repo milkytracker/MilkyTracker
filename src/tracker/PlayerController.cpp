@@ -46,10 +46,18 @@ public:
 	}
 	
 	// this is being called from the player callback in a serialized fashion
-	virtual void timerTickEnded(PlayerSTD& player, XModule& module) 
+	virtual void playerTickStarted(PlayerSTD& player, XModule& module) 
 	{ 
 		while (rbReadIndex < rbWriteIndex)
 		{			
+			/*static int counter = 0;
+			if (counter == 2)
+			{
+				int i = 0;
+				i++;
+				i--;
+			}
+			counter++;*/
 			mp_sint32 idx = rbReadIndex & (UPDATEBUFFSIZE-1);			
 			
 			// handle notes that are played from external source

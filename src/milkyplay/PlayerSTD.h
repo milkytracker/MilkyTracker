@@ -41,6 +41,8 @@ public:
 	{
 		virtual ~StatusEventListener() { }
 
+		virtual void playerTickStarted(PlayerSTD& player, XModule& module) { }
+		virtual void playerTickEnded(PlayerSTD& player, XModule& module) { }
 		virtual void timerTickStarted(PlayerSTD& player, XModule& module) { }
 		virtual void timerTickEnded(PlayerSTD& player, XModule& module) { }
 		virtual void patternEndReached(PlayerSTD& player, XModule& module, mp_sint32& newOrderIndex) { }

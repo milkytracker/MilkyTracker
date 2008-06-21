@@ -293,7 +293,14 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 #else
 		setActiveChannels(module->header.channum);
 #endif
+
+		if (statusEventListener)
+			statusEventListener->playerTickStarted(*this, *module);
+
 		tickhandler();
+
+		if (statusEventListener)
+			statusEventListener->playerTickEnded(*this, *module);
 	}
 	
 	if (module->header.flags & XModule::MODULE_AMSENVELOPES)
@@ -333,8 +340,9 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 		chnInf++;
 	}
 #endif
+
 	if (statusEventListener)
-		statusEventListener->timerTickEnded(*this, *module);
+		statusEventListener->timerTickStarted(*this, *module);
 }
 
 void PlayerSTD::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 0*/, bool resetMixer/* = true*/, const mp_ubyte* customPanningTable/* = NULL*/, bool playOneRowOnly/* = false*/)

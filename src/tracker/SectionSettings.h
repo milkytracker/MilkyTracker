@@ -68,10 +68,11 @@ private:
 
 	bool visible;
 	
-	pp_int32 currentActivePageNum;
+	pp_int32 currentActiveTabNum;
+	pp_int32 currentActivePageStart;
 	
-	PPSimpleVector<PPContainer>* pages[NUMSETTINGSPAGES];
-	pp_int32 numSubPages[NUMSETTINGSPAGES];
+	PPSimpleVector<PPSimpleVector<class TabPage> > tabPages;
+	
 	pp_int32 currentActiveSubPageNum[NUMSETTINGSPAGES];
 	
 	TColorDescriptor colorDescriptors[GlobalColorConfig::ColorLast];
@@ -86,30 +87,6 @@ private:
 	
 	void showPage(pp_int32 page, pp_int32 subPage = 0);
 	
-	void initPage_I(PPContainer* container, pp_int32 x, pp_int32 y);
-	void initPage_I_2(PPContainer* container, pp_int32 x, pp_int32 y);
-
-	void initPage_II(PPContainer* container, pp_int32 x, pp_int32 y);
-
-	void initPage_III(PPContainer* container, pp_int32 x, pp_int32 y);
-
-	void initPage_IV(PPContainer* container, pp_int32 x, pp_int32 y);
-	void initPage_IV_2(PPContainer* container, pp_int32 x, pp_int32 y);
-
-	void initPage_V(PPContainer* container, pp_int32 x, pp_int32 y);
-
-	void updatePage_I();
-	void updatePage_I_2();
-
-	void updatePage_II();
-
-	void updatePage_III();
-
-	void updatePage_IV();
-	void updatePage_IV_2();
-
-	void updatePage_V();
-
 	void showRestartMessageBox();
 	
 	void initColorDescriptors();
@@ -179,6 +156,12 @@ private:
 
 	// Responder should be friend
 	friend class DialogResponderSettings;	
+	
+	friend class TabPageLayout_2;
+	friend class TabPageLayout_3;
+
+	friend class TabPageFonts_1;
+	friend class TabPageFonts_2;
 
 	friend class Tracker;
 };
