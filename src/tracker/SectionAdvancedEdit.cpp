@@ -144,7 +144,7 @@ pp_int32 SectionAdvancedEdit::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				splitTrackNumSubsequentChannels++;
 
-				if (splitTrackNumSubsequentChannels > (signed)tracker.moduleEditor->getNumChannels())
+				if (splitTrackNumSubsequentChannels >= (signed)tracker.moduleEditor->getNumChannels())
 					splitTrackNumSubsequentChannels = (signed)tracker.moduleEditor->getNumChannels()-1;
 				if (splitTrackNumSubsequentChannels < 1)
 					splitTrackNumSubsequentChannels = 1;
