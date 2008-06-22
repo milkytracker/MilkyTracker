@@ -56,53 +56,14 @@ public:
 	
 	static void removeFile(const PPSystemString& fileName);
 	
-	void setFilename(const PPSystemString& filename) { this->fileName = fileName; }
+	virtual void setFilename(const PPSystemString& filename);
+
+	virtual DecompressorBase* clone() = 0;
 	
 protected:
 	PPSystemString fileName;
 	
 };
-
-/*****************************************************************************
- * PowerPacker decompressor
- *****************************************************************************/
-class DecompressorPP20 : public DecompressorBase
-{
-public:
-	DecompressorPP20(const PPSystemString& fileName);
-
-	virtual bool identify(XMFile& f);
-	
-	virtual bool decompress(const PPSystemString& outFileName);
-};
-
-/*****************************************************************************
- * Unreal Music (UMX) "decompressor" 
- *****************************************************************************/
-class DecompressorUMX : public DecompressorBase
-{
-public:
-	DecompressorUMX(const PPSystemString& fileName);
-
-	virtual bool identify(XMFile& f);
-	
-	virtual bool decompress(const PPSystemString& outFileName);
-};
-
-#ifndef __EXCLUDE_ZIPPEDMODULES__
-/*****************************************************************************
- * ZIP decompressor
- *****************************************************************************/
-class DecompressorZIP : public DecompressorBase
-{
-public:
-	DecompressorZIP(const PPSystemString& filename);
-
-	virtual bool identify(XMFile& f);
-	
-	virtual bool decompress(const PPSystemString& outFilename);
-};
-#endif
 
 /*****************************************************************************
  * Generic decompressor
@@ -115,9 +76,27 @@ public:
 	virtual bool identify(XMFile& f);
 	
 	virtual bool decompress(const PPSystemString& outFileName);
+	
+	virtual DecompressorBase* clone();
 
+	virtual void setFilename(const PPSystemString& filename);
+	
 private:
-	PPSimpleVector<DecompressorBase> decompressorList;
+	void adjustFilenames(const PPSystemString& filename);	
+
+	PPSimpleVector<DecompressorBase> decompressors;
+	
+public:
+	static PPSimpleVector<DecompressorBase>& decompressorList();
+
+	template<class type>
+	struct RegisterDecompressor
+	{
+		RegisterDecompressor()
+		{
+			Decompressor::decompressorList().add(new type(""));
+		}
+	};
 };
 
 #endif

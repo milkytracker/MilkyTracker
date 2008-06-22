@@ -115,6 +115,8 @@ SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_32bpp_generic, EPI
 
 #undef __EMPTY__
 
+#ifdef __OPENGL__
 #include "Graphics_OGL.h"
+#endif
 
 #endif
