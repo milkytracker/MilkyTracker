@@ -50,14 +50,6 @@ public:
 	{ 
 		while (rbReadIndex < rbWriteIndex)
 		{			
-			/*static int counter = 0;
-			if (counter == 2)
-			{
-				int i = 0;
-				i++;
-				i--;
-			}
-			counter++;*/
 			mp_sint32 idx = rbReadIndex & (UPDATEBUFFSIZE-1);			
 			
 			// handle notes that are played from external source
@@ -85,7 +77,7 @@ public:
 					if (smp)
 					{
 						playSampleInternal(player, command->channel, smp, command->currentSamplePlayNote,
-										   command->rangeEnd, command->rangeStart);
+										   command->rangeStart,  command->rangeEnd);
 						command->smp = NULL;
 					}
 					
