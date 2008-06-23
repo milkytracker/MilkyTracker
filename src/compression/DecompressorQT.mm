@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorQT.cpp
+ *  tracker/DecompressorQT.mm
  *
  *  Copyright 2008 Peter Barth
  *
@@ -21,7 +21,7 @@
  */
  
 /*
- *  DecompressorQT.cpp
+ *  DecompressorQT.mm
  *  milkytracker_universal
  *
  *  Created by Peter Barth on 22.06.08.

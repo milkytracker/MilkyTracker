@@ -184,9 +184,10 @@ const char* TrackerConfig::moduleExtensions[] =
 	"pp","PowerPacked Modules",
 	"umx","Unreal Music",
 #ifndef __EXCLUDE_ZIPPEDMODULES__
-	"mdz","Zipped module",
-	"zip","Zipped module",
+	"mdz","Compressed module",
+	"zip","Compressed module",
 #endif
+	"lha","Compressed module",
 	NULL, NULL
 };
 
@@ -219,3 +220,8 @@ const char* TrackerConfig::trackExtensions[] =
 	NULL, NULL
 };
 
+const char* TrackerConfig::colorExtensions[] = 
+{
+	"mct","MilkyTracker colors",
+	NULL, NULL
+};

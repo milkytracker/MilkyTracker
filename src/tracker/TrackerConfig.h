@@ -165,6 +165,14 @@ public:
 	static const char* trackExtensions[];
 	static const char* getTrackExtension(TrackExtensions extension) { return trackExtensions[extension*2]; }
 	static const char* getTrackDescription(TrackExtensions extension) { return trackExtensions[extension*2+1]; }
+
+	enum ColorExtensions
+	{
+		ColorExtensionMCT
+	};
+	static const char* colorExtensions[];
+	static const char* getColorExtension(ColorExtensions extension) { return colorExtensions[extension*2]; }
+	static const char* getColorDescription(ColorExtensions extension) { return colorExtensions[extension*2+1]; }
 };
 
 #endif

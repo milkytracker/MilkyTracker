@@ -54,6 +54,10 @@
 #include "TrackerSettingsDatabase.h"
 #include "SectionSamples.h"
 #include "ColorPaletteContainer.h"
+#include "ColorExportImport.h"
+// OS Interface
+#include "PPOpenPanel.h"
+#include "PPSavePanel.h"
 
 #include "ControlIDs.h"
 
@@ -172,6 +176,10 @@ enum ControlIDs
 	SLIDER_COLOR_BLUE,
 	BUTTON_COLOR,
 	BUTTON_COLOR_PREDEF_STORE,
+
+	BUTTON_COLOR_EXPORT,
+	BUTTON_COLOR_IMPORT,
+
 	BUTTON_COLOR_PREVIEW,
 	BUTTON_COLOR_COPY,
 	BUTTON_COLOR_PASTE,
@@ -882,12 +890,22 @@ public:
 		
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Colors", true, true));
 		
-		PPButton* button = new PPButton(BUTTON_COLOR_PREVIEW, screen, this, PPPoint(x2 + 115, y2 + 2), PPSize(39, 9));
+		PPButton* button = new PPButton(BUTTON_COLOR_IMPORT, screen, this, PPPoint(x2 + 54, y2 + 2), PPSize(9, 9));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("I");
+		container->addControl(button);
+
+		button = new PPButton(BUTTON_COLOR_EXPORT, screen, this, PPPoint(x2 + 54 + 10, y2 + 2), PPSize(9, 9));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("E");
+		container->addControl(button);
+
+		button = new PPButton(BUTTON_COLOR_PREVIEW, screen, this, PPPoint(x2 + 115, y2 + 2), PPSize(39, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Preview");
 		container->addControl(button);
 		
-		button = new PPButton(BUTTON_COLOR_RESTORE, screen, this, PPPoint(x2 + 115 - 42, y2 + 2), PPSize(39, 9));
+		button = new PPButton(BUTTON_COLOR_RESTORE, screen, this, PPPoint(x2 + 115 - 40, y2 + 2), PPSize(39, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Restore");
 		container->addControl(button);
@@ -1545,7 +1563,8 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 	visible(false),
 	palette(NULL),
 	storePalette(false),
-	colorCopy(NULL)	
+	colorCopy(NULL),
+	lastColorFile(TrackerConfig::untitledSong)
 {
 	pp_int32 i;
 
@@ -2086,6 +2105,24 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_COLOR_EXPORT:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				exportCurrentColorPalette();
+				break;
+			}
+
+			case BUTTON_COLOR_IMPORT:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				importCurrentColorPalette();
+				break;
+			}
+
 			case BUTTON_COLOR_PREVIEW:
 			{
 				if (event->getID() != eCommand)
@@ -2451,7 +2488,9 @@ void SectionSettings::show(bool bShow)
 		}
 		
 		showSection(bShow);
-		showPage(0);
+		
+		// why should we do that? just show the last active tab
+		//showPage(0); 
 
 		screen->paint();
 	}
@@ -2633,6 +2672,8 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	screen->addControl(sectionContainer);
 	
 	initialised = true;
+
+	showPage(0, 0);
 
 	showSection(false);
 }
@@ -3012,6 +3053,62 @@ void SectionSettings::storeCustomResolution()
 	tracker.settingsDatabase->store("YRESOLUTION", height);
 	
 	update();
+}
+
+void SectionSettings::importCurrentColorPalette()
+{
+	PPOpenPanel panel(tracker.screen, "Open colors");
+	
+	panel.addExtensions(TrackerConfig::colorExtensions);
+	
+	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
+	{
+		TColorPalette pal;
+		ColorExportImport exportImport(panel.getFileName());
+		
+		if (exportImport.importColorPalette(pal))
+		{
+			for (pp_int32 j = 0; j < pal.numColors; j++)
+				colorDescriptors[j].colorCopy = pal.colors[j];
+			
+			currentColor = colorDescriptors[getColorIndex()].colorCopy;
+						
+			update();
+			
+			lastColorFile = panel.getFileName();
+		}
+		else
+		{
+			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Unrecognized type/corrupt file", Tracker::MessageBox_OK);			
+		}
+	}
+}
+
+void SectionSettings::exportCurrentColorPalette()
+{
+	PPSystemString fileName = lastColorFile.stripPath().stripExtension();
+	fileName.append(".");
+	fileName.append(TrackerConfig::getColorExtension(TrackerConfig::ColorExtensionMCT));
+
+	PPSavePanel panel(tracker.screen, "Save colors", fileName);
+	
+	panel.addExtensions(TrackerConfig::colorExtensions);
+	
+	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
+	{
+		TColorPalette pal;
+		
+		pal.numColors = GlobalColorConfig::ColorLast;
+		for (pp_int32 j = 0; j < pal.numColors; j++)
+			pal.colors[j] = colorDescriptors[j].colorCopy;
+			
+		ColorExportImport exportImport(panel.getFileName());
+		
+		if (!exportImport.exportColorPalette(pal))
+		{
+			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not create file", Tracker::MessageBox_OK);						
+		}
+	}
 }
 
 

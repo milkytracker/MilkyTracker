@@ -85,6 +85,8 @@ private:
 	// backup of the current mixer settings, will be restored on cancel
 	TMixerSettings* mixerSettings;
 	
+	PPSystemString lastColorFile;
+	
 	void showPage(pp_int32 page, pp_int32 subPage = 0);
 	
 	void showRestartMessageBox();
@@ -153,6 +155,9 @@ private:
 
 	void storeAudioDriver(const char* driverName);
 	void storeResampler(pp_uint32 resampler);
+
+	void importCurrentColorPalette();
+	void exportCurrentColorPalette();
 
 	// Responder should be friend
 	friend class DialogResponderSettings;	
