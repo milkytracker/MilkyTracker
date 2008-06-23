@@ -1,39 +1,3 @@
-#define NOGDICAPMASKS
-#define NOVIRTUALKEYCODES
-#define NOWINMESSAGES
-#define NOWINSTYLES
-#define NOSYSMETRICS
-#define NOMENUS
-#define NOICONS
-#define NOKEYSTATES
-#define NOSYSCOMMANDS
-#define NORASTEROPS
-#define OEMRESOURCE
-#define NOATOM
-#define NOCLIPBOARD
-#define NOCTLMGR
-#define NODRAWTEXT
-#define NOGDI
-#define NOKERNEL
-#define NOUSER
-#define NONLS
-#define NOMETAFILE
-#define NOMINMAX
-#define NOMSG
-#define NOOPENFILE
-#define NOSCROLL
-#define NOSERVICE
-#define NOSOUND
-#define NOTEXTMETRIC
-#define NOWH
-#define NOWINOFFSETS
-#define NOCOMM
-#define NOKANJI
-#define NOHELP
-#define NOPROFILER
-#define NODEFERWINDOWPOS
-#define NOMCX
-
 #include "unlha32.h"
 
 #include "lharc.h"
@@ -48,8 +12,9 @@
 #include "shuf.inl"
 #include "larc.inl"
 
-CLhaArchive::CLhaArchive(/*pp_uint8* lpStream*/StreamerBase& streamer, pp_uint32 dwMemLength, const char* lpszExtensions) :
-	m_lpStream(streamer)
+CLhaArchive::CLhaArchive(/*pp_uint8* lpStream*/StreamerBase& streamer, pp_uint32 dwMemLength, IDNotifier* notifier) :
+	m_lpStream(streamer),
+	m_notifier(notifier)
 //---------------------------------------------------------------------------------
 {
 	// File Read
@@ -120,6 +85,13 @@ bool CLhaArchive::ExtractFile()
 		blocksize = 0;
 		long pos = m_dwStreamPos;
 		extract_one(m_dwStreamPos, &hdr);
+		
+		if (m_notifier && m_lpOutputFile && m_dwOutputLen)
+		{
+			if (m_notifier->identify(m_lpOutputFile, m_dwOutputLen))
+				break;
+		}
+		
 		m_dwStreamPos = pos + hdr.packed_size;
 	}
 

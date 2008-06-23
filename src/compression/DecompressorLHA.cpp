@@ -83,6 +83,17 @@ public:
 	}
 };
 
+struct ModuleIdentifyNotifier : public CLhaArchive::IDNotifier 
+{
+	virtual bool identify(void* buffer, pp_uint32 len) const
+	{
+		mp_ubyte buff[XModule::IdentificationBufferSize];
+		memset(buff, 0, sizeof(buff));
+		memcpy(buff, buffer, len > sizeof(buff) ? sizeof(buff) : len);
+		
+		return XModule::identifyModule(buff) != NULL;
+	}
+};
 
 DecompressorLHA::DecompressorLHA(const PPSystemString& filename) :
 	DecompressorBase(filename)
@@ -111,7 +122,9 @@ bool DecompressorLHA::decompress(const PPSystemString& outFilename)
 
 	XMFileStreamer streamer(f);
 
-	CLhaArchive archive(streamer, f.size(), NULL);
+	ModuleIdentifyNotifier idnotifier;
+
+	CLhaArchive archive(streamer, f.size(), &idnotifier);
 
 	if (!archive.IsArchive())
 		return false;

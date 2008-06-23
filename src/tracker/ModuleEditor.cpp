@@ -1385,7 +1385,7 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	instruments[index].volfade = ins->volfade>>1;
 	instruments[index].vibtype = ins->vibtype;
 	instruments[index].vibrate = ins->vibrate;
-	instruments[index].vibdepth = ins->vibdepth;
+	instruments[index].vibdepth = ins->vibdepth>>1;
 	instruments[index].vibsweep = ins->vibsweep;
 	
 	// Wipe samples first

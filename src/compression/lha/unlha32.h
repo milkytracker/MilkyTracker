@@ -49,12 +49,17 @@ public:
 		virtual void read(void* buffer, pp_uint32 from, pp_uint32 len) = 0;
 	};
 
+	struct IDNotifier
+	{
+		virtual bool identify(void* buffer, pp_uint32 len) const = 0;
+	};
+
 	enum { MAXMATCH = 256 };	// formerly F (not more than UCHAR_MAX + 1)
 	enum { THRESHOLD = 3 };		// choose optimal value
 	enum { NC = 255 + MAXMATCH + 2 - THRESHOLD };
 	
 public:
-	CLhaArchive(/*pp_uint8* lpStream*/StreamerBase& streamer, pp_uint32 dwMemLength, const char* lpszExtensions=NULL);
+	CLhaArchive(StreamerBase& streamer, pp_uint32 dwMemLength, IDNotifier* notifier = NULL);
 	~CLhaArchive();
 
 public:
@@ -64,8 +69,9 @@ public:
 	bool ExtractFile();
 
 protected:
-	/*pp_uint8**/StreamerBase& m_lpStream;		// LHA file data
+	StreamerBase& m_lpStream;		// LHA file data
 	pp_uint32 m_dwStreamLen;	// LHA file size
+	IDNotifier* m_notifier;
 	pp_uint32 m_dwStreamPos;	// LHA file position
 	pp_uint8* m_lpOutputFile;
 	pp_uint32 m_dwOutputLen;
