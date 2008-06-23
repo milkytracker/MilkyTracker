@@ -35,6 +35,9 @@
 
 /*****************************************************************************
  * QT decompressor
+ * This class uses QTKit to extract the audio from quicktime media content
+ * to an uncompressed 16 bit AIFF file which MilkyTracker can read directly.
+ * Note: QTKit is only available on OS X 10.4 and later.
  *****************************************************************************/
 class DecompressorQT : public DecompressorBase
 {

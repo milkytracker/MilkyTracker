@@ -49,10 +49,17 @@ bool DecompressorQT::identify(XMFile& f)
 	
 	NSString* filename = [NSString stringWithUTF8String:f.getFileName()];
 	
-	id qtError = nil;
-	id movie = [QTMovie movieWithFile:filename error:&qtError];	
+	NSError* qtError = nil;
+	QTMovie* movie = [QTMovie movieWithFile:filename error:&qtError];	
 	
-	res = (nil == qtError);
+	if (nil != qtError)
+	{
+		res = false;
+	}
+	else
+	{
+		res = [[movie attributeForKey:QTMovieHasAudioAttribute] boolValue] != NO;
+	}
 	
 	[pool release];
 	return res;	
@@ -66,8 +73,8 @@ bool DecompressorQT::decompress(const PPSystemString& outFilename)
 	
 	NSString* filename = [NSString stringWithUTF8String:fileName];
 	
-	id qtError = nil;
-	id movie = [QTMovie movieWithFile:filename error:&qtError];	
+	NSError* qtError = nil;
+	QTMovie* movie = [QTMovie movieWithFile:filename error:&qtError];	
 	
 	if (nil == qtError) 
 	{			
