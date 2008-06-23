@@ -164,6 +164,7 @@ bool FileIdentificator::isTrack()
 bool FileIdentificator::isCompressed()
 {
 	Decompressor decompressor(fileName);
+	f->seek(0);
 	return decompressor.identify(*f);
 }
 
