@@ -243,11 +243,21 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						// helper pattern to set speed and tempo for that particular song
 						else
 						{
+							char patSig[10];
+							sprintf(patSig, "P%i  ", patIndex % 999);
+						
 							patterns[patIndex] = new mp_ubyte[20];
 							memset(patterns[patIndex],0,20);
+							memcpy(patterns[patIndex]+4, patSig, 4);
 							patternSizes[patIndex] = 20;
 							
 							mp_ubyte* pattern = patterns[patIndex];
+
+							pattern[0] = 0xFF;
+							pattern[1] = 0xFF;
+							pattern[2] = 0xFF;
+							pattern[3] = 0xFF;
+
 							pattern[8] = 0x01;	// just one row
 							pattern[10] = 0x0A;	// 10 bytes in size
 							pattern[12] = 0x10; // read effect + operand 
@@ -575,6 +585,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		
 		mp_ubyte* dstSlot = phead[i].patternData;
 		for (row = 0; row < phead[i].rows; row++)
+		{
 			for (mp_uint32 c = 0; c < maxChannels; c++)
 			{
 				const mp_ubyte* srcSlot = pattern+row*32*5+c*5;
@@ -802,6 +813,21 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 				
 				dstSlot+=8;
 			}
+			
+		}
+		
+		bool dummyPattern = (*(patterns[i]) == 0xFF 
+							 && *(patterns[i]+1) == 0xFF  
+							 && *(patterns[i]+2) == 0xFF  
+							 && *(patterns[i]+3) == 0xFF);
+		
+		// mark song start with effect 0x1E + operand 0xFF
+		if (dummyPattern && phead[i].rows == 1)
+		{
+			phead[i].patternData[2] = XModule::SubSongMarkEffect;
+			phead[i].patternData[3] = XModule::SubSongMarkOperand;
+		}
+			
 	}
 		
 	delete[] pattern;

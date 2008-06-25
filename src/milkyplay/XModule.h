@@ -290,7 +290,7 @@ class XModule
 public:
 	enum
 	{
-		IdentificationBufferSize = 2048
+		IdentificationBufferSize	= 2048,
 	};
 
 	///////////////////////////////////////////////////////
@@ -532,7 +532,10 @@ public:
 		NOTE_LAST	= 120,
 		NOTE_OFF	= 121,
 		NOTE_CUT	= 122,
-		NOTE_FADE	= 123
+		NOTE_FADE	= 123,
+
+		SubSongMarkEffect	= 0x1E,
+		SubSongMarkOperand	= 0xFF,
 	};
 		
 	TXMHeader		header;		// module header

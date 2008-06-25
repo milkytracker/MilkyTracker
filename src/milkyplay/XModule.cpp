@@ -2344,6 +2344,17 @@ void XModule::buildSubSongTable()
 									break;
 								}
 								
+								case SubSongMarkEffect:
+								{
+									if (eop == SubSongMarkOperand)
+									{
+										subSongPositions[numSubSongs*2+1] = poscntMax;
+										numSubSongs++;
+										breakMain = true;
+										continue;
+									}
+								}
+								
 								case 0x2B:
 								{
 									pjump = 1;
