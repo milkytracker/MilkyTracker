@@ -31,10 +31,6 @@
 #include "Decompressor.h"
 #include "XMFile.h"
 
-#include "DecompressorPP20.h"
-#include "DecompressorUMX.h"
-#include "DecompressorZIP.h"
-
 void DecompressorBase::removeFile(const PPSystemString& fileName)
 {
 	XMFile::remove(fileName);
