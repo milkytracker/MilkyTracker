@@ -47,7 +47,7 @@ bool DecompressorPP20::identify(XMFile& f)
 	return (id == 0x30325050);
 }
 	
-bool DecompressorPP20::decompress(const PPSystemString& outFileName)
+bool DecompressorPP20::decompress(const PPSystemString& outFileName, Hints hint)
 {
 	XMFile f(fileName);	
 	unsigned int size = f.size();

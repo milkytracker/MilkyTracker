@@ -43,7 +43,7 @@ public:
 
 	virtual bool identify(XMFile& f);
 	
-	virtual bool decompress(const PPSystemString& outFileName);
+	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
 
 	virtual DecompressorBase* clone();
 };

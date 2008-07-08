@@ -49,7 +49,7 @@ bool DecompressorGZIP::identify(XMFile& f)
 }
 	
 	
-bool DecompressorGZIP::decompress(const PPSystemString& outFileName)
+bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 {
     gzFile *gz_input_file = NULL;
 	int len = 0;

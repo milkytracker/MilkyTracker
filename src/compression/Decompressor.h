@@ -39,6 +39,16 @@ class XMFile;
 class DecompressorBase
 {
 public:
+	enum Hints
+	{
+		HintAll,
+		HintModules,
+		HintInstruments,
+		HintSamples,
+		HintPatterns,
+		HintTracks
+	};
+
 	DecompressorBase(const PPSystemString& fileName) :
 		fileName(fileName)
 	{
@@ -52,7 +62,7 @@ public:
 
 	virtual bool identify();
 	
-	virtual bool decompress(const PPSystemString& outFileName) = 0;
+	virtual bool decompress(const PPSystemString& outFileName, Hints hint) = 0;
 	
 	static void removeFile(const PPSystemString& fileName);
 	
@@ -75,7 +85,7 @@ public:
 
 	virtual bool identify(XMFile& f);
 	
-	virtual bool decompress(const PPSystemString& outFileName);
+	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
 	
 	virtual DecompressorBase* clone();
 

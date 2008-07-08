@@ -2478,6 +2478,36 @@ Tracker::FileTypes Tracker::getCurrentSelectedSampleSaveType()
 	return (FileTypes)sectionDiskMenu->getCurrentSelectedSampleSaveType();
 }
 
+pp_uint32 Tracker::fileTypeToHint(FileTypes type)
+{
+	switch (type)
+	{
+		case Tracker::FileTypeSongAllModules:			
+		case Tracker::FileTypeSongMOD:
+		case Tracker::FileTypeSongXM:
+			return DecompressorBase::HintModules;
+
+		case Tracker::FileTypePatternXP:
+			return DecompressorBase::HintPatterns;
+
+		case Tracker::FileTypeTrackXT:
+			return DecompressorBase::HintTracks;
+
+		case Tracker::FileTypeSongAllInstruments:
+		case Tracker::FileTypeInstrumentXI:
+			return DecompressorBase::HintInstruments;
+
+		case Tracker::FileTypeSongAllSamples:
+		case Tracker::FileTypeSampleWAV:
+		case Tracker::FileTypeSampleIFF:
+			return DecompressorBase::HintSamples;
+
+		default:
+			return DecompressorBase::HintAll;
+
+	}
+}
+
 bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 {
 	// we need to find out what file type this is
@@ -2492,7 +2522,7 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 		// and choose that file type
 		PPSystemString tempFile(ModuleEditor::getTempFilename());
 		Decompressor decompressor(fileName);
-		if (decompressor.decompress(tempFile))
+		if (decompressor.decompress(tempFile, (DecompressorBase::Hints)fileTypeToHint(FileTypeAllFiles)))
 		{
 			fileIdentificator = new FileIdentificator(tempFile);
 			type = fileIdentificator->getFileType();
@@ -2572,7 +2602,7 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 		// if this is compressed, try to decompress
 		PPSystemString tempFile(ModuleEditor::getTempFilename());
 		Decompressor decompressor(fileName);
-		if (decompressor.decompress(tempFile))
+		if (decompressor.decompress(tempFile, (DecompressorBase::Hints)fileTypeToHint(eType)))
 		{
 			// we compressed to a temporary file
 			// load that instead, but keep the original file name as preferred 

@@ -57,8 +57,13 @@ bool DecompressorUMX::identify(XMFile& f)
 #define MAGIC_SCRM	MAGIC4('S','C','R','M')
 #define MAGIC_M_K_	MAGIC4('M','.','K','.')
 	
-bool DecompressorUMX::decompress(const PPSystemString& outFileName)
+bool DecompressorUMX::decompress(const PPSystemString& outFileName, Hints hint)
 {
+	// If client requests something else than a module we can't deal we that
+	if (hint != HintAll &&
+		hint != HintModules)
+		return false;
+
 	XMFile f(fileName);	
 
 	int i;

@@ -363,6 +363,7 @@ private:
 	// - Save panels -----------------------------------------------------------
 	enum FileTypes
 	{
+		FileTypeAllFiles,
 		FileTypeSongAllModules,
 		FileTypeSongMOD,
 		FileTypeSongXM,
@@ -404,6 +405,8 @@ private:
 		{
 		}
 	} loadingParameters;
+
+	static pp_uint32 fileTypeToHint(FileTypes type);
 
 	bool loadGenericFileType(const PPSystemString& fileName);
 

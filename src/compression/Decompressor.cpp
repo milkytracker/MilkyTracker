@@ -72,14 +72,14 @@ bool Decompressor::identify(XMFile& f)
 	return false;
 }	
 	
-bool Decompressor::decompress(const PPSystemString& outFileName)
+bool Decompressor::decompress(const PPSystemString& outFileName, Hints hint)
 {
 	bool result = false;
 	for (pp_int32 i = 0; i < decompressors.size(); i++)
 	{
 		if (decompressors.get(i)->identify())
 		{
-			result = decompressors.get(i)->decompress(outFileName);
+			result = decompressors.get(i)->decompress(outFileName, hint);
 			break;
 		}
 	}

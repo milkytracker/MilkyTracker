@@ -113,7 +113,7 @@ bool DecompressorLHA::identify(XMFile& f)
 	return res;
 }	
 	
-bool DecompressorLHA::decompress(const PPSystemString& outFilename)
+bool DecompressorLHA::decompress(const PPSystemString& outFilename, Hints hint)
 {
 	XMFile f(fileName);
 	

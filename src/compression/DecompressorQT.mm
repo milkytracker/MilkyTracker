@@ -65,8 +65,13 @@ bool DecompressorQT::identify(XMFile& f)
 	return res;	
 }	
 	
-bool DecompressorQT::decompress(const PPSystemString& outFilename)
+bool DecompressorQT::decompress(const PPSystemString& outFilename, Hints hint)
 {
+	// If client requests something else than a sample we can't deal we that
+	if (hint != HintAll &&
+		hint != HintSamples)
+		return false;
+
 	bool res = true;
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];

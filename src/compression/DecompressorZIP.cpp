@@ -54,7 +54,7 @@ bool DecompressorZIP::identify(XMFile& f)
 	return (res && error == 0);
 }	
 	
-bool DecompressorZIP::decompress(const PPSystemString& outFilename)
+bool DecompressorZIP::decompress(const PPSystemString& outFilename, Hints hint)
 {
 	ZipExtractor extractor(fileName);
 	
