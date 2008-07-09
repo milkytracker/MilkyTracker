@@ -35,6 +35,8 @@ if test "x$with_alsa" != xno; then
 		fi])
 fi
 
+AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
+
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 CPPFLAGS="$CPPFLAGS -D__FORCE_SDL_AUDIO__"

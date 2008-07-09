@@ -183,6 +183,9 @@ const char* TrackerConfig::moduleExtensions[] =
 	"xm","Fasttracker 2",
 	"pp","PowerPacked Modules",
 	"umx","Unreal Music",
+#ifdef HAVE_LIBZ
+	"gz","GZipped module",
+#endif
 #ifndef __EXCLUDE_ZIPPEDMODULES__
 	"mdz","Compressed module",
 	"zip","Compressed module",
