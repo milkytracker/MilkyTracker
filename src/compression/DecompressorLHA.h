@@ -43,8 +43,8 @@ public:
 
 	virtual bool identify(XMFile& f);
 	
-	// this type of archive can contain any file type
-	virtual bool doesServeHint(Hints hint) { return true; }
+	// this type of archive only contain modules
+	virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintModules); }
 	
 	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
 
