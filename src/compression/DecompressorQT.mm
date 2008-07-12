@@ -65,7 +65,7 @@ bool DecompressorQT::identify(XMFile& f)
 	return res;	
 }	
 	
-const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorQT::getDescriptors(Hints hint) const
+const PPSimpleVector<Descriptor>& DecompressorQT::getDescriptors(Hints hint) const
 {
 	descriptors.clear();
 	// TODO: add wild card support

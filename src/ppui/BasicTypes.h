@@ -642,4 +642,22 @@ public:
 
 };
 
+struct Descriptor
+{
+	PPString extension;
+	PPString description;
+	
+	Descriptor(const PPString& ext, const PPString& desc) :
+		extension(ext), description(desc)
+	{
+	}
+	
+	Descriptor(const Descriptor& source) :
+		extension(source.extension), description(source.description)
+	{
+	}
+	
+};
+
+
 #endif

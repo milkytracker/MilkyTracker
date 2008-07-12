@@ -48,7 +48,7 @@ bool DecompressorGZIP::identify(XMFile& f)
 	return (id == 0x08088B1F);
 }
 	
-const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorGZIP::getDescriptors(Hints hint) const
+const PPSimpleVector<Descriptor>& DecompressorGZIP::getDescriptors(Hints hint) const
 {
 	descriptors.clear();
 	descriptors.add(new Descriptor("gz", "GZIP Archive")); 	

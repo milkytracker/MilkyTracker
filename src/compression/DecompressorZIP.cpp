@@ -54,7 +54,7 @@ bool DecompressorZIP::identify(XMFile& f)
 	return (res && error == 0);
 }	
 	
-const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorZIP::getDescriptors(Hints hint) const
+const PPSimpleVector<Descriptor>& DecompressorZIP::getDescriptors(Hints hint) const
 {
 	descriptors.clear();
 	descriptors.add(new Descriptor("zip", "ZIP Archive")); 	

@@ -118,7 +118,7 @@ const char** FileExtProvider::fillList(const char** baseList, ExtensionTypes typ
 
 	if (decompressor.doesServeHint((DecompressorBase::Hints)type))
 	{
-		const PPSimpleVector<DecompressorBase::Descriptor>& src = decompressor.getDescriptors((DecompressorBase::Hints)type);
+		const PPSimpleVector<Descriptor>& src = decompressor.getDescriptors((DecompressorBase::Hints)type);
 	
 		for (pp_int32 j = 0; j < src.size(); j++)
 		{

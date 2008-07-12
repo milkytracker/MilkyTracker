@@ -58,16 +58,6 @@ private:
 	bool sortAscending;
 	bool cycleFilenames;
 
-	struct Descriptor
-	{
-		PPSystemString extension;
-		PPSystemString description;
-
-		Descriptor(const PPSystemString& ext, const PPSystemString& desc) :
-			extension(ext), description(desc)
-		{}
-	};
-
 	PPSimpleVector<Descriptor> items;
 
 	SortTypes sortType;

@@ -29,16 +29,6 @@
 class PPOpenPanel : public PPModalDialog
 {
 protected:
-	struct Descriptor
-	{
-		PPString extension;
-		PPString description;
-
-		Descriptor(const PPString& ext, const PPString& desc) :
-			extension(ext), description(desc)
-		{}
-	};
-
 	PPSimpleVector<Descriptor> items;
 
 	PPSystemString fileName;

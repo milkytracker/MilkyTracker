@@ -82,15 +82,15 @@ bool Decompressor::doesServeHint(Hints hint)
 	return false;
 }
 
-struct DescriptorSortRule : public PPSimpleVector<DecompressorBase::Descriptor>::SortRule
+struct DescriptorSortRule : public PPSimpleVector<Descriptor>::SortRule
 {
-	virtual pp_int32 compare(const DecompressorBase::Descriptor& left, const DecompressorBase::Descriptor& right) const
+	virtual pp_int32 compare(const Descriptor& left, const Descriptor& right) const
 	{
 		return left.description.compareTo(right.description);
 	}
 };
 
-const PPSimpleVector<DecompressorBase::Descriptor>& Decompressor::getDescriptors(Hints hint) const
+const PPSimpleVector<Descriptor>& Decompressor::getDescriptors(Hints hint) const
 {
 	descriptors.clear();
 
@@ -98,7 +98,7 @@ const PPSimpleVector<DecompressorBase::Descriptor>& Decompressor::getDescriptors
 	{
 		if (decompressors.get(i)->doesServeHint(hint))
 		{
-			const PPSimpleVector<DecompressorBase::Descriptor>& src = decompressors.get(i)->getDescriptors(hint);
+			const PPSimpleVector<Descriptor>& src = decompressors.get(i)->getDescriptors(hint);
 		
 			for (pp_int32 j = 0; j < src.size(); j++)
 			{
