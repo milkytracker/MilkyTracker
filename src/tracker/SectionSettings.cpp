@@ -59,6 +59,8 @@
 #include "PPOpenPanel.h"
 #include "PPSavePanel.h"
 
+#include "FileExtProvider.h"
+
 #include "ControlIDs.h"
 
 #ifdef __LOWRES__
@@ -3057,9 +3059,11 @@ void SectionSettings::storeCustomResolution()
 
 void SectionSettings::importCurrentColorPalette()
 {
+	FileExtProvider fileExtProvider;
+
 	PPOpenPanel panel(tracker.screen, "Open colors");
 	
-	panel.addExtensions(TrackerConfig::colorExtensions);
+	panel.addExtensions(fileExtProvider.getColorExtensions());
 	
 	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
 	{
@@ -3086,13 +3090,15 @@ void SectionSettings::importCurrentColorPalette()
 
 void SectionSettings::exportCurrentColorPalette()
 {
+	FileExtProvider fileExtProvider;
+
 	PPSystemString fileName = lastColorFile.stripPath().stripExtension();
 	fileName.append(".");
-	fileName.append(TrackerConfig::getColorExtension(TrackerConfig::ColorExtensionMCT));
+	fileName.append(fileExtProvider.getColorExtension(FileExtProvider::ColorExtensionMCT));
 
 	PPSavePanel panel(tracker.screen, "Save colors", fileName);
 	
-	panel.addExtensions(TrackerConfig::colorExtensions);
+	panel.addExtensions(fileExtProvider.getColorExtensions());
 	
 	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
 	{

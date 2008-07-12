@@ -852,7 +852,7 @@ void SectionHDRecorder::exportWAVAs(const PPSystemString& fileName)
 {
 	if (tracker.useClassicBrowser)
 	{
-		tracker.saveType(Tracker::FileTypeSongWAV);
+		tracker.saveType(FileTypes::FileTypeSongWAV);
 	}
 	else
 	{

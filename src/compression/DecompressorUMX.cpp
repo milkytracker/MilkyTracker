@@ -47,6 +47,12 @@ bool DecompressorUMX::identify(XMFile& f)
 	return (id == 0x9E2A83C1);
 }
 	
+const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorUMX::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+	descriptors.add(new Descriptor("umx", "Unreal Data File")); 	
+	return descriptors;
+}	
 	
 #define TEST_SIZE 1500
 

@@ -113,6 +113,13 @@ bool DecompressorLHA::identify(XMFile& f)
 	return res;
 }	
 	
+const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorLHA::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+	descriptors.add(new Descriptor("lha", "LHA Archive")); 	
+	return descriptors;
+}		
+	
 bool DecompressorLHA::decompress(const PPSystemString& outFilename, Hints hint)
 {
 	XMFile f(fileName);

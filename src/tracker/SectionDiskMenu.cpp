@@ -58,6 +58,8 @@
 #include "XMFile.h"
 #include "PPSavePanel.h"
 
+#include "FileExtProvider.h"
+
 #include "ControlIDs.h"
 
 enum ControlIDs
@@ -250,9 +252,9 @@ pp_int32 SectionDiskMenu::getCurrentSelectedSampleSaveType()
 	switch (static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE))->getChoice())
 	{
 		case 0:
-			return Tracker::FileTypeSampleWAV;
+			return FileTypes::FileTypeSampleWAV;
 		case 1:
-			return Tracker::FileTypeSampleIFF;
+			return FileTypes::FileTypeSampleIFF;
 	}
 	
 	return -1;
@@ -272,7 +274,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				if (screen->getModalControl())
 					break;
 				
-				tracker.loadTypeWithDialog(Tracker::FileTypeSongAllModules);
+				tracker.loadTypeWithDialog(FileTypes::FileTypeSongAllModules);
 				break;
 			}
 
@@ -282,11 +284,11 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				switch (static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE))->getChoice())
 				{
 					case 0:
-						tracker.saveTypeWithDialog(Tracker::FileTypeSongXM);
+						tracker.saveTypeWithDialog(FileTypes::FileTypeSongXM);
 						break;
 						
 					case 1:
-						tracker.saveTypeWithDialog(Tracker::FileTypeSongMOD);
+						tracker.saveTypeWithDialog(FileTypes::FileTypeSongMOD);
 						break;
 						
 					case 2:
@@ -299,49 +301,49 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 
 			case DISKMENU_NORMAL_BUTTON_LOAD_PATTERN:
 			{
-				tracker.loadTypeWithDialog(Tracker::FileTypePatternXP);
+				tracker.loadTypeWithDialog(FileTypes::FileTypePatternXP);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_SAVE_PATTERN:
 			{
-				tracker.saveTypeWithDialog(Tracker::FileTypePatternXP);
+				tracker.saveTypeWithDialog(FileTypes::FileTypePatternXP);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_LOAD_TRACK:
 			{
-				tracker.loadTypeWithDialog(Tracker::FileTypeTrackXT);
+				tracker.loadTypeWithDialog(FileTypes::FileTypeTrackXT);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_SAVE_TRACK:
 			{
-				tracker.saveTypeWithDialog(Tracker::FileTypeTrackXT);
+				tracker.saveTypeWithDialog(FileTypes::FileTypeTrackXT);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_LOAD_INSTRUMENT:
 			{
-				tracker.loadTypeWithDialog(Tracker::FileTypeSongAllInstruments);
+				tracker.loadTypeWithDialog(FileTypes::FileTypeSongAllInstruments);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_SAVE_INSTRUMENT:
 			{
-				tracker.saveTypeWithDialog(Tracker::FileTypeInstrumentXI);
+				tracker.saveTypeWithDialog(FileTypes::FileTypeInstrumentXI);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_LOAD_SAMPLE:
 			{
-				tracker.loadTypeWithDialog(Tracker::FileTypeSongAllSamples);
+				tracker.loadTypeWithDialog(FileTypes::FileTypeSongAllSamples);
 				break;
 			}
 
 			case DISKMENU_NORMAL_BUTTON_SAVE_SAMPLE:
 			{
-				tracker.saveTypeWithDialog((Tracker::FileTypes)getCurrentSelectedSampleSaveType());	
+				tracker.saveTypeWithDialog(getCurrentSelectedSampleSaveType());	
 				break;
 			}
 
@@ -1038,42 +1040,42 @@ void SectionDiskMenu::selectSaveType(pp_uint32 type)
 {
 	switch (type)
 	{
-		case Tracker::FileTypeSongMOD:
+		case FileTypes::FileTypeSongMOD:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE))->setChoice(1);
 			classicViewState = BrowseModules;
 			break;
-		case Tracker::FileTypeSongAllModules:
-		case Tracker::FileTypeSongXM:
+		case FileTypes::FileTypeSongAllModules:
+		case FileTypes::FileTypeSongXM:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE))->setChoice(0);
 			classicViewState = BrowseModules;
 			break;
-		case Tracker::FileTypeSongWAV:
+		case FileTypes::FileTypeSongWAV:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE))->setChoice(2);
 			classicViewState = BrowseModules;
 			break;
 
-		case Tracker::FileTypePatternXP:
+		case FileTypes::FileTypePatternXP:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_PATTERNTYPE))->setChoice(0);
 			classicViewState = BrowsePatterns;
 			break;
 
-		case Tracker::FileTypeTrackXT:
+		case FileTypes::FileTypeTrackXT:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE))->setChoice(0);
 			classicViewState = BrowseTracks;
 			break;
 
-		case Tracker::FileTypeInstrumentXI:
-		case Tracker::FileTypeSongAllInstruments:
+		case FileTypes::FileTypeInstrumentXI:
+		case FileTypes::FileTypeSongAllInstruments:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE))->setChoice(0);
 			classicViewState = BrowseInstruments;
 			break;
 
-		case Tracker::FileTypeSampleWAV:
-		case Tracker::FileTypeSongAllSamples:
+		case FileTypes::FileTypeSampleWAV:
+		case FileTypes::FileTypeSongAllSamples:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE))->setChoice(0);
 			classicViewState = BrowseSamples;
 			break;
-		case Tracker::FileTypeSampleIFF:
+		case FileTypes::FileTypeSampleIFF:
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE))->setChoice(1);
 			classicViewState = BrowseSamples;
 			break;
@@ -1451,19 +1453,19 @@ void SectionDiskMenu::loadCurrentSelectedFile()
 			tracker.loadGenericFileType(fileFullPath);
 			break;
 		case BrowseModules:
-			tracker.loadTypeFromFile(Tracker::FileTypeSongAllModules, fileFullPath);
+			tracker.loadTypeFromFile(FileTypes::FileTypeSongAllModules, fileFullPath);
 			break;
 		case BrowseInstruments:
-			tracker.loadTypeFromFile(Tracker::FileTypeSongAllInstruments, fileFullPath);
+			tracker.loadTypeFromFile(FileTypes::FileTypeSongAllInstruments, fileFullPath);
 			break;
 		case BrowseSamples:
-			tracker.loadTypeFromFile(Tracker::FileTypeSongAllSamples, fileFullPath);
+			tracker.loadTypeFromFile(FileTypes::FileTypeSongAllSamples, fileFullPath);
 			break;
 		case BrowsePatterns:
-			tracker.loadTypeFromFile(Tracker::FileTypePatternXP, fileFullPath);
+			tracker.loadTypeFromFile(FileTypes::FileTypePatternXP, fileFullPath);
 			break;
 		case BrowseTracks:
-			tracker.loadTypeFromFile(Tracker::FileTypeTrackXT, fileFullPath);
+			tracker.loadTypeFromFile(FileTypes::FileTypeTrackXT, fileFullPath);
 			break;		
 	}
 	
@@ -1519,7 +1521,7 @@ void SectionDiskMenu::saveCurrent()
 	
 	bool res = true;
 	
-	Tracker::FileTypes saveType;
+	FileTypes saveType;
 	
 	switch (classicViewState)
 	{
@@ -1531,11 +1533,11 @@ void SectionDiskMenu::saveCurrent()
 			switch (currentActiveRadioGroup->getChoice())
 			{
 				case 0:
-					saveType = Tracker::FileTypeSongXM;
+					saveType = FileTypes::FileTypeSongXM;
 					break;
 					
 				case 1:
-					saveType = Tracker::FileTypeSongMOD;
+					saveType = FileTypes::FileTypeSongMOD;
 					break;
 					
 				case 2:
@@ -1555,28 +1557,28 @@ void SectionDiskMenu::saveCurrent()
 		}
 		
 		case BrowseInstruments:
-			saveType = Tracker::FileTypeInstrumentXI;
+			saveType = FileTypes::FileTypeInstrumentXI;
 			break;
 		case BrowseSamples:
 		{
 			switch (currentActiveRadioGroup->getChoice())
 			{
 				case 0:
-					saveType = Tracker::FileTypeSampleWAV;
+					saveType = FileTypes::FileTypeSampleWAV;
 					break;
 					
 				case 1:
-					saveType = Tracker::FileTypeSampleIFF;
+					saveType = FileTypes::FileTypeSampleIFF;
 					break;
 			}
 			
 			break;
 		}
 		case BrowsePatterns:
-			saveType = Tracker::FileTypePatternXP;
+			saveType = FileTypes::FileTypePatternXP;
 			break;
 		case BrowseTracks:
-			saveType = Tracker::FileTypeTrackXT;
+			saveType = FileTypes::FileTypeTrackXT;
 			break;		
 	}
 	
@@ -1778,6 +1780,8 @@ void SectionDiskMenu::reload(bool repaint/* = true*/)
 
 void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 {
+	FileExtProvider fileExtProvider;
+
 	listBoxFiles->clearExtensions();
 	
 	const char** extensions = NULL;
@@ -1787,19 +1791,19 @@ void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 		switch (classicViewState)
 		{
 			case BrowseModules:
-				extensions = TrackerConfig::moduleExtensions;
+				extensions = fileExtProvider.getModuleExtensions();
 				break;
 			case BrowseInstruments:
-				extensions = TrackerConfig::instrumentExtensions;
+				extensions = fileExtProvider.getInstrumentExtensions();
 				break;
 			case BrowseSamples:
-				extensions = TrackerConfig::sampleExtensions;
+				extensions = fileExtProvider.getSampleExtensions();
 				break;
 			case BrowsePatterns:
-				extensions = TrackerConfig::patternExtensions;
+				extensions = fileExtProvider.getPatternExtensions();
 				break;
 			case BrowseTracks:
-				extensions = TrackerConfig::trackExtensions;
+				extensions = fileExtProvider.getTrackExtensions();
 				break;		
 		}
 	}

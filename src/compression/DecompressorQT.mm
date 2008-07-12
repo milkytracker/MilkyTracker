@@ -65,6 +65,14 @@ bool DecompressorQT::identify(XMFile& f)
 	return res;	
 }	
 	
+const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorQT::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+	// TODO: add wild card support
+	//descriptors.add(new Descriptor("*", "Quicktime Content")); 	
+	return descriptors;
+}	
+	
 bool DecompressorQT::decompress(const PPSystemString& outFilename, Hints hint)
 {
 	// If client requests something else than a sample we can't deal we that

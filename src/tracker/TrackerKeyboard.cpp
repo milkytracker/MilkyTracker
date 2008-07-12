@@ -485,7 +485,7 @@ void Tracker::eventKeyDownBinding_Open()
 	if (screen->getModalControl())
 		return;
 
-	loadType(FileTypeSongAllModules);
+	loadType(FileTypes::FileTypeSongAllModules);
 }
 
 void Tracker::eventKeyDownBinding_Save()

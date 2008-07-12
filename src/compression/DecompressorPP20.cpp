@@ -47,6 +47,13 @@ bool DecompressorPP20::identify(XMFile& f)
 	return (id == 0x30325050);
 }
 	
+const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorPP20::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+	descriptors.add(new Descriptor("pp", "Powerpacker Archive")); 	
+	return descriptors;
+}	
+	
 bool DecompressorPP20::decompress(const PPSystemString& outFileName, Hints hint)
 {
 	XMFile f(fileName);	

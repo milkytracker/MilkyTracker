@@ -54,6 +54,17 @@ bool DecompressorZIP::identify(XMFile& f)
 	return (res && error == 0);
 }	
 	
+const PPSimpleVector<DecompressorBase::Descriptor>& DecompressorZIP::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+	descriptors.add(new Descriptor("zip", "ZIP Archive")); 	
+
+	if (hint == HintModules || hint == HintAll)
+		descriptors.add(new Descriptor("mdz", "Zipped Module")); 	
+		
+	return descriptors;
+}		
+	
 bool DecompressorZIP::decompress(const PPSystemString& outFilename, Hints hint)
 {
 	ZipExtractor extractor(fileName);

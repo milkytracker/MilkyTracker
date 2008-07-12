@@ -26,6 +26,7 @@
 #include "BasicTypes.h"
 #include "Event.h"
 #include "EditModes.h"
+#include "FileTypes.h"
 
 #define INPUTCONTAINERHEIGHT_DEFAULT	(25+SCROLLBUTTONSIZE+4)
 #define INPUTCONTAINERHEIGHT_EXTENDED	(25+SCROLLBUTTONSIZE+4+13)
@@ -360,23 +361,7 @@ private:
 	// Signal waitstate
 	void signalWaitState(bool b);
 	
-	// - Save panels -----------------------------------------------------------
-	enum FileTypes
-	{
-		FileTypeAllFiles,
-		FileTypeSongAllModules,
-		FileTypeSongMOD,
-		FileTypeSongXM,
-		FileTypeSongWAV,
-		FileTypePatternXP,
-		FileTypeTrackXT,
-		FileTypeSongAllInstruments,
-		FileTypeInstrumentXI,
-		FileTypeSongAllSamples,
-		FileTypeSampleWAV,
-		FileTypeSampleIFF
-	};
-
+	// - Load/Save -------------------------------------------------------------
 	FileTypes currentSaveFileType;
 	PPSavePanel* savePanel;
 	EventListenerInterface* fileSystemChangedListener;

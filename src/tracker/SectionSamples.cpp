@@ -146,7 +146,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				tracker.loadType(Tracker::FileTypeSongAllSamples);
+				tracker.loadType(FileTypes::FileTypeSongAllSamples);
 				break;
 			}
 

@@ -46,6 +46,11 @@ public:
 
 	virtual bool identify(XMFile& f);
 	
+	// this type of archive can only contain samples
+	virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintSamples); }
+
+	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+
 	virtual bool decompress(const PPSystemString& outFilename, Hints hint);
 	
 	virtual DecompressorBase* clone();

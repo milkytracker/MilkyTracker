@@ -44,6 +44,7 @@
 #include "KeyBindings.h"
 #include "ModuleServices.h"
 #include "FileIdentificator.h"
+#include "FileExtProvider.h"
 #include "Decompressor.h"
 #include "Zapper.h"
 #include "TitlePageManager.h"
@@ -2473,7 +2474,7 @@ void Tracker::commitListBoxChanges()
 		listBoxSamples->commitChanges();
 }
 
-Tracker::FileTypes Tracker::getCurrentSelectedSampleSaveType()
+FileTypes Tracker::getCurrentSelectedSampleSaveType()
 {
 	return (FileTypes)sectionDiskMenu->getCurrentSelectedSampleSaveType();
 }
@@ -2482,24 +2483,24 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 {
 	switch (type)
 	{
-		case Tracker::FileTypeSongAllModules:			
-		case Tracker::FileTypeSongMOD:
-		case Tracker::FileTypeSongXM:
+		case FileTypes::FileTypeSongAllModules:			
+		case FileTypes::FileTypeSongMOD:
+		case FileTypes::FileTypeSongXM:
 			return DecompressorBase::HintModules;
 
-		case Tracker::FileTypePatternXP:
+		case FileTypes::FileTypePatternXP:
 			return DecompressorBase::HintPatterns;
 
-		case Tracker::FileTypeTrackXT:
+		case FileTypes::FileTypeTrackXT:
 			return DecompressorBase::HintTracks;
 
-		case Tracker::FileTypeSongAllInstruments:
-		case Tracker::FileTypeInstrumentXI:
+		case FileTypes::FileTypeSongAllInstruments:
+		case FileTypes::FileTypeInstrumentXI:
 			return DecompressorBase::HintInstruments;
 
-		case Tracker::FileTypeSongAllSamples:
-		case Tracker::FileTypeSampleWAV:
-		case Tracker::FileTypeSampleIFF:
+		case FileTypes::FileTypeSongAllSamples:
+		case FileTypes::FileTypeSampleWAV:
+		case FileTypes::FileTypeSampleIFF:
 			return DecompressorBase::HintSamples;
 
 		default:
@@ -2522,7 +2523,7 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 		// and choose that file type
 		PPSystemString tempFile(ModuleEditor::getTempFilename());
 		Decompressor decompressor(fileName);
-		if (decompressor.decompress(tempFile, (DecompressorBase::Hints)fileTypeToHint(FileTypeAllFiles)))
+		if (decompressor.decompress(tempFile, (DecompressorBase::Hints)fileTypeToHint(FileTypes::FileTypeAllFiles)))
 		{
 			fileIdentificator = new FileIdentificator(tempFile);
 			type = fileIdentificator->getFileType();
@@ -2539,15 +2540,15 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 	switch (type)
 	{
 		case FileIdentificator::FileTypeModule:
-			return loadTypeFromFile(FileTypeSongAllModules, fileName);		
+			return loadTypeFromFile(FileTypes::FileTypeSongAllModules, fileName);		
 		case FileIdentificator::FileTypeInstrument:
-			return loadTypeFromFile(FileTypeSongAllInstruments, fileName);
+			return loadTypeFromFile(FileTypes::FileTypeSongAllInstruments, fileName);
 		case FileIdentificator::FileTypeSample:
-			return loadTypeFromFile(FileTypeSongAllSamples, fileName);
+			return loadTypeFromFile(FileTypes::FileTypeSongAllSamples, fileName);
 		case FileIdentificator::FileTypePattern:
-			return loadTypeFromFile(FileTypePatternXP, fileName);
+			return loadTypeFromFile(FileTypes::FileTypePatternXP, fileName);
 		case FileIdentificator::FileTypeTrack:
-			return loadTypeFromFile(FileTypeTrackXT, fileName);
+			return loadTypeFromFile(FileTypes::FileTypeTrackXT, fileName);
 	}
 	
 	return false;
@@ -2565,14 +2566,14 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 
 	loadingParameters.res = true;
 	
-	if (saveCheck && eType == FileTypeSongAllModules && !checkForChangesOpenModule())
+	if (saveCheck && eType == FileTypes::FileTypeSongAllModules && !checkForChangesOpenModule())
 		return false;
 	
 	loadingParameters.lastError = "Error while loading/unknown format";	
 
 	signalWaitState(true);
 
-	if (eType == FileTypeSongAllModules &&
+	if (eType == FileTypes::FileTypeSongAllModules &&
 		settingsDatabase->restore("TABS_LOADMODULEINNEWTAB")->getBoolValue() &&
 		(moduleEditor->hasChanged() || !moduleEditor->isEmpty()))
 	{
@@ -2660,7 +2661,7 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 	
 	switch (eType)
 	{
-		case FileTypeSongAllModules:
+		case FileTypes::FileTypeSongAllModules:
 		{
 			if (loadingParameters.preferredFilename.length())
 				loadingParameters.res = moduleEditor->openSong(loadingParameters.filename,
@@ -2673,28 +2674,28 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			break;
 		}
 			
-		case FileTypePatternXP:
+		case FileTypes::FileTypePatternXP:
 		{
 			loadingParameters.res = getPatternEditor()->loadExtendedPattern(loadingParameters.filename);
 			updateSongInfo();
 			break;
 		}
 			
-		case FileTypeTrackXT:
+		case FileTypes::FileTypeTrackXT:
 		{
 			loadingParameters.res = getPatternEditor()->loadExtendedTrack(loadingParameters.filename);
 			updateSongInfo();
 			break;
 		}
 			
-		case FileTypeSongAllInstruments:
+		case FileTypes::FileTypeSongAllInstruments:
 		{
 			loadingParameters.res = moduleEditor->loadInstrument(loadingParameters.filename, listBoxInstruments->getSelectedIndex());
 			sectionInstruments->updateAfterLoad();
 			break;
 		}
 			
-		case FileTypeSongAllSamples:
+		case FileTypes::FileTypeSongAllSamples:
 		{
 			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
 			
@@ -2759,44 +2760,46 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 // load different things
 bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = true*/, bool repaint/* = true*/)
 {
+	FileExtProvider fileExtProvider;
+
 	PPOpenPanel* openPanel = NULL;
 
 	switch (eLoadType)
 	{
-		case FileTypeSongAllModules:
+		case FileTypes::FileTypeSongAllModules:
 		{
 			if (!checkForChangesOpenModule())
 				return false;
 			openPanel = new PPOpenPanel(screen, "Open module");		
-			openPanel->addExtensions(TrackerConfig::moduleExtensions);
+			openPanel->addExtensions(fileExtProvider.getModuleExtensions());
 			break;
 		}
 	
-		case FileTypePatternXP:
+		case FileTypes::FileTypePatternXP:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Extended Pattern");
-			openPanel->addExtensions(TrackerConfig::patternExtensions);
+			openPanel->addExtensions(fileExtProvider.getPatternExtensions());
 			break;			
 		}
 
-		case FileTypeTrackXT:
+		case FileTypes::FileTypeTrackXT:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Extended Track");
-			openPanel->addExtensions(TrackerConfig::trackExtensions);
+			openPanel->addExtensions(fileExtProvider.getTrackExtensions());
 			break;			
 		}
 
-		case FileTypeSongAllInstruments:
+		case FileTypes::FileTypeSongAllInstruments:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Instrument");
-			openPanel->addExtensions(TrackerConfig::instrumentExtensions);
+			openPanel->addExtensions(fileExtProvider.getInstrumentExtensions());
 			break;
 		}
 
-		case FileTypeSongAllSamples:
+		case FileTypes::FileTypeSongAllSamples:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Sample");
-			openPanel->addExtensions(TrackerConfig::sampleExtensions);
+			openPanel->addExtensions(fileExtProvider.getSampleExtensions());
 			break;
 		}
 	}
@@ -2847,15 +2850,17 @@ void Tracker::loadType(FileTypes eType)
 
 bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 {
+	FileExtProvider fileExtProvider;
+
 	currentSaveFileType = eSaveType;
 	
 	switch (eSaveType)
 	{
-		case FileTypeSongMOD:
+		case FileTypes::FileTypeSongMOD:
 		{
 			savePanel = new PPSavePanel(screen, "Save Protracker Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeMOD));
-			savePanel->addExtension(TrackerConfig::getModuleExtension(TrackerConfig::ModuleExtensionMOD),
-									TrackerConfig::getModuleDescription(TrackerConfig::ModuleExtensionMOD));
+			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionMOD),
+									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionMOD));
 			
 			pp_uint32 err = moduleEditor->getPTIncompatibilityCode();
 			
@@ -2867,59 +2872,59 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			break;
 		}
 			
-		case FileTypeSongXM:
+		case FileTypes::FileTypeSongXM:
 			savePanel = new PPSavePanel(screen, "Save Extended Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeXM));
-			savePanel->addExtension(TrackerConfig::getModuleExtension(TrackerConfig::ModuleExtensionXM),
-									TrackerConfig::getModuleDescription(TrackerConfig::ModuleExtensionXM));
+			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionXM),
+									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionXM));
 			break;
 			
-		case FileTypePatternXP:
+		case FileTypes::FileTypePatternXP:
 		{
 			PPSystemString fileName = moduleEditor->getModuleFileName().stripExtension();
 			fileName.append(".xp");
 			savePanel = new PPSavePanel(screen, "Save Extended Pattern", fileName);
-			savePanel->addExtension(TrackerConfig::getPatternExtension(TrackerConfig::PatternExtensionXP),
-									TrackerConfig::getPatternDescription(TrackerConfig::PatternExtensionXP));
+			savePanel->addExtension(fileExtProvider.getPatternExtension(FileExtProvider::PatternExtensionXP),
+									fileExtProvider.getPatternDescription(FileExtProvider::PatternExtensionXP));
 			break;			
 		}
 			
-		case FileTypeTrackXT:
+		case FileTypes::FileTypeTrackXT:
 		{
 			PPSystemString fileName = moduleEditor->getModuleFileName().stripExtension();
 			fileName.append(".xt");
 			savePanel = new PPSavePanel(screen, "Save Extended Track", fileName);
-			savePanel->addExtension(TrackerConfig::getTrackExtension(TrackerConfig::TrackExtensionXT),
-									TrackerConfig::getTrackDescription(TrackerConfig::TrackExtensionXT));
+			savePanel->addExtension(fileExtProvider.getTrackExtension(FileExtProvider::TrackExtensionXT),
+									fileExtProvider.getTrackDescription(FileExtProvider::TrackExtensionXT));
 			break;			
 		}
 			
-		case FileTypeInstrumentXI:
+		case FileTypes::FileTypeInstrumentXI:
 		{
 			PPSystemString sampleFileName = moduleEditor->getInstrumentFileName(listBoxInstruments->getSelectedIndex());
 			sampleFileName.append(".xi");
 			savePanel = new PPSavePanel(screen, "Save Instrument", sampleFileName);
-			savePanel->addExtension(TrackerConfig::getInstrumentExtension(TrackerConfig::InstrumentExtensionXI),
-									TrackerConfig::getInstrumentDescription(TrackerConfig::InstrumentExtensionXI));
+			savePanel->addExtension(fileExtProvider.getInstrumentExtension(FileExtProvider::InstrumentExtensionXI),
+									fileExtProvider.getInstrumentDescription(FileExtProvider::InstrumentExtensionXI));
 			break;
 		}
 			
-		case FileTypeSampleWAV:
+		case FileTypes::FileTypeSampleWAV:
 		{
 			PPSystemString sampleFileName = moduleEditor->getSampleFileName(listBoxInstruments->getSelectedIndex(), listBoxSamples->getSelectedIndex());
 			sampleFileName.append(".wav");
 			savePanel = new PPSavePanel(screen, "Save uncompressed WAV",sampleFileName);
-			savePanel->addExtension(TrackerConfig::getSampleExtension(TrackerConfig::SampleExtensionWAV),
-									TrackerConfig::getSampleDescription(TrackerConfig::SampleExtensionWAV));
+			savePanel->addExtension(fileExtProvider.getSampleExtension(FileExtProvider::SampleExtensionWAV),
+									fileExtProvider.getSampleDescription(FileExtProvider::SampleExtensionWAV));
 			break;
 		}
 			
-		case FileTypeSampleIFF:
+		case FileTypes::FileTypeSampleIFF:
 		{
 			PPSystemString sampleFileName = moduleEditor->getSampleFileName(listBoxInstruments->getSelectedIndex(), listBoxSamples->getSelectedIndex());
 			sampleFileName.append(".iff");
 			savePanel = new PPSavePanel(screen, "Save uncompressed IFF",sampleFileName);
-			savePanel->addExtension(TrackerConfig::getSampleExtension(TrackerConfig::SampleExtensionIFF),
-									TrackerConfig::getSampleDescription(TrackerConfig::SampleExtensionIFF));
+			savePanel->addExtension(fileExtProvider.getSampleExtension(FileExtProvider::SampleExtensionIFF),
+									fileExtProvider.getSampleDescription(FileExtProvider::SampleExtensionIFF));
 			break;
 		}
 	}
@@ -2956,40 +2961,40 @@ bool Tracker::saveTypeWithDialog(FileTypes eSaveType, EventListenerInterface* fi
 			
 			switch (eSaveType)
 			{
-				case FileTypeSongMOD:
+				case FileTypes::FileTypeSongMOD:
 					commitListBoxChanges();
 					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeMOD);
 					break;
 					
-				case FileTypeSongXM:
+				case FileTypes::FileTypeSongXM:
 					commitListBoxChanges();
 					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeXM);
 					break;
 					
-				case FileTypeTrackXT:
+				case FileTypes::FileTypeTrackXT:
 				{
 					res = getPatternEditor()->saveExtendedTrack(file);
 					break;
 				}
 					
-				case FileTypePatternXP:
+				case FileTypes::FileTypePatternXP:
 				{
 					res = getPatternEditor()->saveExtendedPattern(file);
 					break;
 				}
 					
-				case FileTypeInstrumentXI:
+				case FileTypes::FileTypeInstrumentXI:
 					commitListBoxChanges();
 					res = moduleEditor->saveInstrument(file, listBoxInstruments->getSelectedIndex());
 					break;
 					
-				case FileTypeSampleWAV:
+				case FileTypes::FileTypeSampleWAV:
 					commitListBoxChanges();
 					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(), 
 												   listBoxSamples->getSelectedIndex(), ModuleEditor::SampleFormatTypeWAV);
 					break;
 					
-				case FileTypeSampleIFF:
+				case FileTypes::FileTypeSampleIFF:
 					commitListBoxChanges();
 					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(), 
 												   listBoxSamples->getSelectedIndex(), ModuleEditor::SampleFormatTypeIFF);
@@ -3045,12 +3050,12 @@ void Tracker::saveType(FileTypes eType)
 	{
 		sectionDiskMenu->selectSaveType(eType);
 		
-		if (eType == FileTypeSongWAV)
+		if (eType == FileTypes::FileTypeSongWAV)
 			sectionDiskMenu->setModuleTypeAdjust(false);
 		
 		eventKeyDownBinding_InvokeSectionDiskMenu();
 		
-		if (eType == FileTypeSongWAV)
+		if (eType == FileTypes::FileTypeSongWAV)
 			sectionDiskMenu->setModuleTypeAdjust(true);
 	}
 	else
@@ -3095,11 +3100,11 @@ void Tracker::saveAs()
 	switch (moduleEditor->getSaveType())
 	{
 		case ModuleEditor::ModSaveTypeMOD:
-			saveType(Tracker::FileTypeSongMOD);
+			saveType(FileTypes::FileTypeSongMOD);
 			break;
 
 		case ModuleEditor::ModSaveTypeXM:
-			saveType(Tracker::FileTypeSongXM);
+			saveType(FileTypes::FileTypeSongXM);
 			break;
 			
 		default:

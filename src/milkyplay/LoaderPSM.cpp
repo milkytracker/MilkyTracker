@@ -25,6 +25,7 @@
  *  MilkyPlay Module Loader: Version 1/2 of Epic MegaGames MASI
  */
 #include "Loaders.h"
+#include <stdio.h>
 
 static bool PATTTest(mp_ubyte* p, mp_sint32& size)
 {

@@ -72,6 +72,48 @@ bool Decompressor::identify(XMFile& f)
 	return false;
 }	
 	
+bool Decompressor::doesServeHint(Hints hint)
+{
+	for (pp_int32 i = 0; i < decompressors.size(); i++)
+	{
+		if (decompressors.get(i)->doesServeHint(hint))
+			return true;
+	}
+	return false;
+}
+
+struct DescriptorSortRule : public PPSimpleVector<DecompressorBase::Descriptor>::SortRule
+{
+	virtual pp_int32 compare(const DecompressorBase::Descriptor& left, const DecompressorBase::Descriptor& right) const
+	{
+		return left.description.compareTo(right.description);
+	}
+};
+
+const PPSimpleVector<DecompressorBase::Descriptor>& Decompressor::getDescriptors(Hints hint) const
+{
+	descriptors.clear();
+
+	for (pp_int32 i = 0; i < decompressors.size(); i++)
+	{
+		if (decompressors.get(i)->doesServeHint(hint))
+		{
+			const PPSimpleVector<DecompressorBase::Descriptor>& src = decompressors.get(i)->getDescriptors(hint);
+		
+			for (pp_int32 j = 0; j < src.size(); j++)
+			{
+				descriptors.add(new Descriptor(*src.get(j))); 
+			}
+		}
+	}
+	
+	DescriptorSortRule sortRule;
+	
+	descriptors.sort(sortRule);
+	
+	return descriptors;
+}
+	
 bool Decompressor::decompress(const PPSystemString& outFileName, Hints hint)
 {
 	bool result = false;

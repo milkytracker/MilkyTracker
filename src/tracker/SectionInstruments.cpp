@@ -392,7 +392,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				tracker.loadType(Tracker::FileTypeSongAllInstruments);
+				tracker.loadType(FileTypes::FileTypeSongAllInstruments);
 				break;
 			}
 
@@ -402,7 +402,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				tracker.saveType(Tracker::FileTypeInstrumentXI);
+				tracker.saveType(FileTypes::FileTypeInstrumentXI);
 				break;
 			}
 

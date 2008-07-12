@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorZIP.h
+ *  tracker/FileTypes.h
  *
  *  Copyright 2008 Peter Barth
  *
@@ -19,39 +19,59 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+ 
 /*
- *  DecompressorZIP.h
+ *  FileTypes.h
  *  milkytracker_universal
  *
- *  Created by Peter Barth on 22.06.08.
+ *  Created by Peter Barth on 12.07.08.
  *
  */
 
-#ifndef __DECOMPRESSOR_ZIP_H__
-#define __DECOMPRESSOR_ZIP_H__
+#ifndef __FILETYPES_H__
+#define __FILETYPES_H__
 
-#include "Decompressor.h"
+#include "BasicTypes.h"
 
-/*****************************************************************************
- * ZIP decompressor
- *****************************************************************************/
-class DecompressorZIP : public DecompressorBase
+struct FileTypes
 {
-public:
-	DecompressorZIP(const PPSystemString& filename);
+	enum Types
+	{
+		FileTypeAllFiles,
+		FileTypeSongAllModules,
+		FileTypeSongMOD,
+		FileTypeSongXM,
+		FileTypeSongWAV,
+		FileTypePatternXP,
+		FileTypeTrackXT,
+		FileTypeSongAllInstruments,
+		FileTypeInstrumentXI,
+		FileTypeSongAllSamples,
+		FileTypeSampleWAV,
+		FileTypeSampleIFF
+	};
+	
+	Types type;
 
-	virtual bool identify(XMFile& f);
+	FileTypes() : 
+		type(FileTypeAllFiles)
+	{
+	}
+	
+	FileTypes(Types type) : 
+		type(type)
+	{
+	}
 
-	// this type of archive can contain any file type
-	virtual bool doesServeHint(Hints hint) { return true; }
+	FileTypes(pp_int32 type) : 
+		type((Types)type)
+	{
+	}
 	
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
-	
-	virtual bool decompress(const PPSystemString& outFilename, Hints hint);
-	
-	virtual DecompressorBase* clone();
+	operator pp_int32() const
+	{
+		return (pp_int32)type;
+	}
 };
 
 #endif
-

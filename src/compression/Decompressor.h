@@ -48,6 +48,23 @@ public:
 		HintPatterns,
 		HintTracks
 	};
+	
+	struct Descriptor
+	{
+		PPString extension;
+		PPString description;
+
+		Descriptor(const PPString& ext, const PPString& desc) :
+			extension(ext), description(desc)
+		{
+		}
+		
+		Descriptor(const Descriptor& source) :
+			extension(source.extension), description(source.description)
+		{
+		}
+		
+	};
 
 	DecompressorBase(const PPSystemString& fileName) :
 		fileName(fileName)
@@ -62,6 +79,10 @@ public:
 
 	virtual bool identify();
 	
+	virtual bool doesServeHint(Hints hint) = 0;
+	
+	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const = 0;
+	
 	virtual bool decompress(const PPSystemString& outFileName, Hints hint) = 0;
 	
 	static void removeFile(const PPSystemString& fileName);
@@ -72,7 +93,8 @@ public:
 	
 protected:
 	PPSystemString fileName;
-	
+
+	mutable PPSimpleVector<Descriptor> descriptors;
 };
 
 /*****************************************************************************
@@ -85,6 +107,10 @@ public:
 
 	virtual bool identify(XMFile& f);
 	
+	virtual bool doesServeHint(Hints hint);
+	
+	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+
 	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
 	
 	virtual DecompressorBase* clone();

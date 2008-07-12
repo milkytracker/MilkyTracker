@@ -183,6 +183,70 @@ public:
 
 	bool isEmpty() const { return numValues == 0; }
 
+	// -- sorting --------------------------------------------------------------
+	struct SortRule
+	{
+		virtual pp_int32 compare(const Type& left, const Type& right) const = 0;
+	};
+	
+private:
+	static pp_int32 partition(Type** a, pp_int32 left, pp_int32 right, const SortRule& sortRule, bool descending = false)
+	{
+		const pp_int32 sign = descending ? -1 : 1;
+	
+		pp_int32 first=left, pivot=right--;
+		while(left<=right)
+		{
+			while(sortRule.compare(*a[left], *a[pivot])*sign < 0/*a[left]<a[pivot]*/)
+				left++;
+			
+			while((right>=first)&&(sortRule.compare(*a[right], *a[pivot])*sign >= 0/*a[right]>=a[pivot]*/))
+				right--;
+			
+			if(left<right)
+			{
+				swap(a, left,right);
+				left++;
+			}
+		}
+		if(left!=pivot)
+		swap(a, left,pivot);
+			
+		return left;
+	}
+			
+	static void swap(Type** a, pp_int32 i, pp_int32 j)
+	{
+		Type* temp=a[i];
+		a[i]=a[j];
+		a[j]=temp;
+	}
+			
+	static void sortInternal(Type** array, pp_int32 left, pp_int32 right, const SortRule& sortRule, bool descending = false)
+	{
+		pp_int32 p;
+		
+		if(left>=right)
+			return;
+		
+		p = partition(array, left, right, sortRule, descending);
+		
+		sortInternal(array, left,p-1, sortRule, descending);
+		sortInternal(array, p+1, right, sortRule, descending);
+	}
+
+public:
+	void sort(const SortRule& sortRule, pp_int32 l = 0, pp_int32 r = -1, const bool descending = false)
+	{
+		if (r == -1)
+			r = size()-1;
+	
+		// no need to sort
+		if (l == 0 && r <= 1)
+			return;
+		
+		sortInternal(values, l, r, sortRule, descending);
+	}	
 };
 
 #endif
