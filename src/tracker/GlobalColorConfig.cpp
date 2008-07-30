@@ -32,7 +32,7 @@
 #include "TrackerConfig.h"
 #include "PPUIConfig.h"
 
-const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor)
+const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 {
 	switch (whichColor)
 	{
@@ -96,7 +96,7 @@ const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor)
 	}
 }
 
-const char* GlobalColorConfig::getColorReadableDescription(GlobalColors whichColor)
+const char* GlobalColorConfig::getColorReadableDescription(GlobalColors whichColor) const
 {
 	switch (whichColor)
 	{

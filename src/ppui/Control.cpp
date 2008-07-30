@@ -68,17 +68,13 @@ pp_int32 PPControl::dispatchEvent(PPEvent* event)
 	return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event); 
 }
 
-bool PPControl::hit(const PPPoint& p)
+bool PPControl::hit(const PPPoint& p) const
 {
 	if (!visible)
 		return false;
 
-	if ((p.x >= location.x && p.x < location.x + size.width) &&
-		(p.y >= location.y && p.y < location.y + size.height))
-		return true;
-
-	return false;
-
+	return ((p.x >= location.x && p.x < location.x + size.width) &&
+			(p.y >= location.y && p.y < location.y + size.height));
 }
 
 void PPControl::notifyChanges()
@@ -133,7 +129,7 @@ void PPControl::drawThickBorder(PPGraphicsAbstract* g, const PPColor& borderColo
 	g->drawVLine(location.y+1, location.y + size.height-2, location.x + size.width - 2);
 }
 
-bool PPControl::isVisible()
+bool PPControl::isVisible() const
 {
 	bool visible = this->visible;
 

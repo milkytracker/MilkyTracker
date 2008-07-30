@@ -107,8 +107,6 @@ public:
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	virtual pp_int32 dispatchEvent(PPEvent* event);
-	virtual bool gainsFocus() { return false; }
-	virtual bool isActive() { return true; }
 	
 private:
 	void handleButtonPress(bool& lMouseDown, bool& rMouseDown);

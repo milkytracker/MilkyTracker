@@ -55,47 +55,43 @@ private:
 
 public:
 	// Empty string
-	PPSystemString()
+	PPSystemString() :
+		strBuffer(new char[1]),
+		allocatedSize(1)
 	{
-		strBuffer = new char[1];
-		*strBuffer = 0;
-		
-		allocatedSize = 1;
+		*strBuffer = 0;		
 	}
 
 	// String from single character
-	PPSystemString(char c)
+	PPSystemString(char c) :
+		strBuffer(new char[2]),
+		allocatedSize(2)
 	{
-		strBuffer = new char[2];
 		*strBuffer = c;
 		*(strBuffer+1) = 0;
-		
-		allocatedSize = 2;
 	}
 
-	PPSystemString(const char* str)
+	PPSystemString(const char* str) :
+		strBuffer(new char[strlen(str) + 1]),
+		allocatedSize(strlen(str) + 1)		
 	{
-		strBuffer = new char[strlen(str) + 1];
-		strcpy(strBuffer, str);
-		
-		allocatedSize = strlen(str) + 1;
+		strcpy(strBuffer, str);		
 	}
 
-	PPSystemString(const char* str, pp_uint32 length)
+	PPSystemString(const char* str, pp_uint32 length) :
+		strBuffer(new char[length + 1]),
+		allocatedSize(length + 1)
 	{
-		strBuffer = new char[length + 1];
 		memcpy(strBuffer, str, length);
 		strBuffer[length] = 0;
-
-		allocatedSize = length + 1;
 	}
 
 	// copy c'tor
-	PPSystemString(const PPSystemString& str)
+	PPSystemString(const PPSystemString& str) :
+		strBuffer(new char[str.allocatedSize]),
+		allocatedSize(str.allocatedSize)
 	{
-		strBuffer = new char[str.allocatedSize];
 		memcpy(strBuffer, str.strBuffer, str.allocatedSize);
-		allocatedSize = str.allocatedSize;
 	}
 
 	operator const char*() const

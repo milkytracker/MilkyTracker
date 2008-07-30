@@ -41,7 +41,7 @@ public:
 	
 	// must contain pairs of extensions / description
 	// terminated by TWO NULL pointers
-	virtual void addExtensions(const char* extensions[])
+	virtual void addExtensions(const char* const extensions[])
 	{
 		for (pp_uint32 i = 0; extensions[i] != NULL; i+=2)
 			addExtension(extensions[i], extensions[i+1]);

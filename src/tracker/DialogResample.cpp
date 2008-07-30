@@ -379,7 +379,7 @@ pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)
 		{
 			case MESSAGEBOX_LISTBOX_VALUE_ONE:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				setRelNote((pp_int32)atoi(*str));
 				calcSize();
 				updateListBoxes();
@@ -389,7 +389,7 @@ pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)
 
 			case MESSAGEBOX_LISTBOX_VALUE_TWO:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				setFineTune((pp_int32)atoi(*str));
 				calcSize();
 				updateListBoxes();
@@ -399,7 +399,7 @@ pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)
 
 			case MESSAGEBOX_LISTBOX_VALUE_THREE:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				setC4Speed((float)atof(*str));
 				calcSize();
 				updateListBoxes();

@@ -162,7 +162,7 @@ const PPPathEntry* PPPath_POSIX::getNextEntry()
 	return NULL;
 }
 
-bool PPPath_POSIX::canGotoHome()
+bool PPPath_POSIX::canGotoHome() const
 {
 	return getenv("HOME") ? true : false;
 }
@@ -177,7 +177,7 @@ void PPPath_POSIX::gotoHome()
 	}
 }
 
-bool PPPath_POSIX::canGotoRoot()
+bool PPPath_POSIX::canGotoRoot() const
 {
 	return true;
 }
@@ -188,7 +188,7 @@ void PPPath_POSIX::gotoRoot()
 	updatePath();
 }
 
-bool PPPath_POSIX::canGotoParent()
+bool PPPath_POSIX::canGotoParent() const
 {
 	return true;
 }
@@ -198,17 +198,17 @@ void PPPath_POSIX::gotoParent()
 	stepInto("..");
 }
 
-char PPPath_POSIX::getPathSeparatorAsASCII()
+char PPPath_POSIX::getPathSeparatorAsASCII() const
 {
 	return '/';
 }
 
-const PPSystemString PPPath_POSIX::getPathSeparator()
+const PPSystemString PPPath_POSIX::getPathSeparator() const
 {
 	return PPSystemString(getPathSeparatorAsASCII());
 }
 
-bool PPPath_POSIX::fileExists(const PPSystemString& fileName)
+bool PPPath_POSIX::fileExists(const PPSystemString& fileName) const
 {
 	struct stat file_status;
 	

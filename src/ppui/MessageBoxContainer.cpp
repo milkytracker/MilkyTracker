@@ -115,7 +115,7 @@ void PPMessageBoxContainer::paint(PPGraphicsAbstract* g)
 	paintControls(g);
 }
 
-void PPMessageBoxContainer::setSize(PPSize size)
+void PPMessageBoxContainer::setSize(const PPSize& size)
 {
 	PPContainer::setSize(size);
 
@@ -125,7 +125,7 @@ void PPMessageBoxContainer::setSize(PPSize size)
 	button->setSize(buttonSize);
 }
 
-void PPMessageBoxContainer::setLocation(PPPoint location)
+void PPMessageBoxContainer::setLocation(const PPPoint& location)
 {
 	PPContainer::setLocation(location);
 
@@ -140,14 +140,14 @@ pp_int32 PPMessageBoxContainer::dispatchEvent(PPEvent* event)
 	switch (event->getID())
 	{
 		case eLMouseDown:
-			lastCapturePoint = *reinterpret_cast<PPPoint*>(event->getDataPtr());
+			lastCapturePoint = *reinterpret_cast<const PPPoint*>(event->getDataPtr());
 			captured = isPointInCaption(lastCapturePoint);
 			if (captured)
 				return 0;
 			break;
 
 		case eLMouseDrag:
-			if (handleMove(*reinterpret_cast<PPPoint*>(event->getDataPtr())))
+			if (handleMove(*reinterpret_cast<const PPPoint*>(event->getDataPtr())))
 				return 0;
 			break;
 

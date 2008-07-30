@@ -370,7 +370,7 @@ const PPPathEntry* PPPath_WIN32::getNextEntry()
 	return NULL;
 }
 
-bool PPPath_WIN32::canGotoHome()
+bool PPPath_WIN32::canGotoHome() const
 {
 	// we're going to assume Unicode is for WinNT and higher
 	// means SHGetFolderPath is available
@@ -392,7 +392,7 @@ void PPPath_WIN32::gotoHome()
 #endif
 }
 
-bool PPPath_WIN32::canGotoRoot()
+bool PPPath_WIN32::canGotoRoot() const
 {
 	return true;
 }
@@ -403,7 +403,7 @@ void PPPath_WIN32::gotoRoot()
 	updatePath();
 }
 
-bool PPPath_WIN32::canGotoParent()
+bool PPPath_WIN32::canGotoParent() const
 {
 	return true;
 }
@@ -413,17 +413,17 @@ void PPPath_WIN32::gotoParent()
 	stepInto("..");
 }
 
-char PPPath_WIN32::getPathSeparatorAsASCII()
+char PPPath_WIN32::getPathSeparatorAsASCII() const
 {
 	return '\\';
 }
 
-const PPSystemString PPPath_WIN32::getPathSeparator()
+const PPSystemString PPPath_WIN32::getPathSeparator() const
 {
 	return PPSystemString(getPathSeparatorAsASCII());
 }
 
-bool PPPath_WIN32::fileExists(const PPSystemString& fileName)
+bool PPPath_WIN32::fileExists(const PPSystemString& fileName) const
 {
 	HANDLE handle = CreateFile(fileName,
 					    GENERIC_READ,

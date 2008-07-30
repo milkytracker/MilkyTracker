@@ -36,8 +36,6 @@ bool KeyboardBindingHandler::processKeyEvents(PPEvent* event)
 	{
 		case eKeyDown:
 		{	
-			//assureCursorVisible();
-			
 			pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 
 			switch (keyCode)

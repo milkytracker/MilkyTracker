@@ -157,7 +157,7 @@ public:
 	
 	void setKeyDownInvokeKeyCode(pp_int16 keyCode) { keyDownInvokeKeyCode = keyCode; }
 
-	pp_int32 getID();
+	pp_int32 getID() const;
 		
 private:
 	void initCommon(PPScreen* screen, 

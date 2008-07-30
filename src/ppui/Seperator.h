@@ -46,10 +46,6 @@ public:
 	void setColor(const PPColor& color) { this->color = &color; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
-
-	virtual bool gainsFocus() { return false; };
-
-	virtual bool isActive() { return true; }
 };
 
 #endif

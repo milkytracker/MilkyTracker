@@ -346,7 +346,7 @@ void PPContextMenu::processMenuHit(const PPPoint& p)
 
 }
 
-void PPContextMenu::setSize(PPSize size)
+void PPContextMenu::setSize(const PPSize& size)
 {
 	this->size = size;
 
@@ -357,20 +357,22 @@ void PPContextMenu::setSize(PPSize size)
 		location.y-=((location.y + size.height+2)-parentScreen->getHeight());
 }
 
-void PPContextMenu::setLocation(PPPoint location)
+void PPContextMenu::setLocation(const PPPoint& location)
 {
-	if (location.x + size.width+2 > parentScreen->getWidth())
-		location.x-=((location.x + size.width+2)-parentScreen->getWidth());
+	PPPoint loc = location;
 
-	if (location.y + size.height+2 > parentScreen->getHeight())
-		location.y-=((location.y + size.height+2)-parentScreen->getHeight());
+	if (loc.x + size.width+2 > parentScreen->getWidth())
+		loc.x-=((loc.x + size.width+2)-parentScreen->getWidth());
 
-	if (location.x < 0)
-		location.x = 0;
+	if (loc.y + size.height+2 > parentScreen->getHeight())
+		loc.y-=((loc.y + size.height+2)-parentScreen->getHeight());
 
-	if (location.y < 0)
-		location.y = 0;
+	if (loc.x < 0)
+		loc.x = 0;
 
-	this->location = location;
+	if (loc.y < 0)
+		loc.y = 0;
+
+	this->location = loc;
 }
 

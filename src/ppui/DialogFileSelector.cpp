@@ -269,7 +269,7 @@ pp_int32 DialogFileSelector::handleEvent(PPObject* sender, PPEvent* event)
 		{
 			case MESSAGEBOX_LISTBOX_USER1+1:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				*fileFullPath = listBoxFiles->getCurrentPathAsString();
 				PPSystemString newStr(*str);
 				fileFullPath->append(newStr);			
@@ -544,7 +544,7 @@ void DialogFileSelector::next()
 	refresh();
 }
 
-void DialogFileSelector::addExtension(const PPSystemString& ext, const PPSystemString& desc)
+void DialogFileSelector::addExtension(const PPString& ext, const PPString& desc)
 {
 	extensions.add(new Descriptor(ext, desc));
 }

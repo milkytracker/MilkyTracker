@@ -58,7 +58,7 @@ private:
 
 	PPSimpleVector<PPString> tempExtensions;
 	
-	const char** fillList(const char** baseList, ExtensionTypes type);
+	const char* const* fillList(const char* const* baseList, ExtensionTypes type);
 
 public:
 	FileExtProvider() :
@@ -103,7 +103,7 @@ public:
 		ModuleExtensionLAST,
 	};	
 	
-	const char** getModuleExtensions();
+	const char* const* getModuleExtensions();
 	const char* getModuleExtension(ModuleExtensions extension);
 	const char* getModuleDescription(ModuleExtensions extension);
 	
@@ -115,7 +115,7 @@ public:
 		InstrumentExtensionLAST,
 	};
 
-	const char** getInstrumentExtensions();
+	const char* const* getInstrumentExtensions();
 	const char* getInstrumentExtension(InstrumentExtensions extension);
 	const char* getInstrumentDescription(InstrumentExtensions extension);
 	
@@ -130,7 +130,7 @@ public:
 		SampleExtensionLAST
 	};
 
-	const char** getSampleExtensions();
+	const char* const* getSampleExtensions();
 	const char* getSampleExtension(SampleExtensions extension);
 	const char* getSampleDescription(SampleExtensions extension);
 	
@@ -141,7 +141,7 @@ public:
 		PatternExtensionLAST
 	};
 	
-	const char** getPatternExtensions();	
+	const char* const* getPatternExtensions();	
 	const char* getPatternExtension(PatternExtensions extension);
 	const char* getPatternDescription(PatternExtensions extension);
 	
@@ -152,7 +152,7 @@ public:
 		TrackExtensionLAST
 	};
 
-	const char** getTrackExtensions();
+	const char* const* getTrackExtensions();
 	const char* getTrackExtension(TrackExtensions extension);
 	const char* getTrackDescription(TrackExtensions extension);
 
@@ -163,7 +163,7 @@ public:
 		ColorExtensionLAST
 	};
 
-	const char** getColorExtensions();
+	const char* const* getColorExtensions();
 	const char* getColorExtension(ColorExtensions extension);
 	const char* getColorDescription(ColorExtensions extension);
 };

@@ -94,13 +94,13 @@ void PPCheckBox::enable(bool b)
 	button->enable(b);
 }
 
-void PPCheckBox::setSize(PPSize size)
+void PPCheckBox::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 	button->setSize(size);
 }
 
-void PPCheckBox::setLocation(PPPoint location)
+void PPCheckBox::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 	button->setLocation(location);

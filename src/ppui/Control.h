@@ -69,49 +69,47 @@ public:
 	EventListenerInterface* getEventListener() { return eventListener; }
 
 	void setOwnerControl(PPControl* ownerControl) { this->ownerControl = ownerControl; }
-	PPControl* getOwnerControl() { return ownerControl; }
+	PPControl* getOwnerControl() const { return ownerControl; }
 
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	virtual void paint(PPGraphicsAbstract* graphics) = 0;
 
-	virtual bool gainsFocus() { return false; }
-	virtual bool gainedFocusByMouse() { return gainsFocus(); }
+	virtual bool gainsFocus() const { return false; }
+	virtual bool gainedFocusByMouse() const { return gainsFocus(); }
 
-	virtual bool isActive() { return true; }
+	virtual bool isActive() const { return true; }
 
-	virtual bool hit(const PPPoint& p); 
+	virtual bool hit(const PPPoint& p) const; 
 
 	virtual void show(bool visible) { this->visible = visible; }
 	virtual void hide(bool hidden) { show(!hidden); }
 
-	virtual bool isVisible();
-	virtual bool isHidden() { return !isVisible(); }
+	virtual bool isVisible() const;
+	virtual bool isHidden() const { return !isVisible(); }
 	
 	virtual void enable(bool b) { enabled = b; }
-	bool isEnabled() { return enabled; }
+	virtual bool isEnabled() const { return enabled; }
 
-	PPPoint getLocation() { return location; }
-	PPSize getSize() { return size; }
-	PPRect getBoundingRect() 
+	const PPPoint& getLocation() const { return location; }
+	const PPSize& getSize() const { return size; }
+
+	PPRect getBoundingRect() const
 	{
-		PPRect result;
-		result.x1 = location.x;
-		result.y1 = location.y;
-		result.x2 = location.x + size.width;
-		result.y2 = location.y + size.height;
+		PPRect result(location.x, location.y, 
+					  location.x + size.width, location.y + size.height);
 		return result;
 	}
 
-	pp_int32 getID() { return id; }
+	pp_int32 getID() const { return id; }
 
-	virtual void setSize(PPSize size) { this->size = size; }
-	virtual void setLocation(PPPoint location) { this->location = location; }
-	virtual bool isContainer() { return false; }
-	virtual bool isListBox() { return false; }
-	virtual bool receiveTimerEvent() { return false; }
+	virtual void setSize(const PPSize& size) { this->size = size; }
+	virtual void setLocation(const PPPoint& location) { this->location = location; }
+	virtual bool isContainer() const { return false; }
+	virtual bool isListBox() const { return false; }
+	virtual bool receiveTimerEvent() const { return false; }
 
-	virtual bool gotFocus() { return hasFocus; }
+	virtual bool gotFocus() const { return hasFocus; }
 
 protected:
 	virtual void translateCoordinates(PPPoint& cp) 

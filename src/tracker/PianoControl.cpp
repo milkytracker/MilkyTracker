@@ -675,7 +675,7 @@ void PianoControl::setyScale(pp_int32 scale)
 	yscale = scale; 
 }
 
-void PianoControl::setLocation(PPPoint location)
+void PianoControl::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 
@@ -687,7 +687,7 @@ void PianoControl::setLocation(PPPoint location)
 	hScrollbar->setBarPosition(p);
 }
 
-void PianoControl::setSize(PPSize size)
+void PianoControl::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 	delete hScrollbar;

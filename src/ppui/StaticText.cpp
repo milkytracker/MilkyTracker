@@ -130,7 +130,7 @@ pp_int32 PPStaticText::dispatchEvent(PPEvent* event)
 	switch (event->getID())
 	{
 		case eLMouseDown:
-			if (hit(*reinterpret_cast<PPPoint*>(event->getDataPtr())))
+			if (hit(*reinterpret_cast<const PPPoint*>(event->getDataPtr())))
 			{
 				PPEvent e(eCommand);
 				return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 

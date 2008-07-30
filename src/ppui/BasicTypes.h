@@ -97,17 +97,17 @@ struct PPSize
 	PPSize() 
 	{}
 
-	bool operator==(const PPSize& source)
+	bool operator==(const PPSize& source) const
 	{
 		return (width == source.width && height == source.height);
 	}
 	
-	bool operator!=(const PPSize& source)
+	bool operator!=(const PPSize& source) const
 	{
 		return !(width == source.width && height == source.height);
 	}
 	
-	bool match(pp_int32 width, pp_int32 height)
+	bool match(pp_int32 width, pp_int32 height) const
 	{
 		return (this->width == width && this->height == height);
 	}
@@ -127,7 +127,7 @@ struct PPRect
 	pp_int32 width() const { return x2-x1; }
 	pp_int32 height() const { return y2-y1; }
 	
-	bool intersect(const PPRect& rc)
+	bool intersect(const PPRect& rc) const
 	{
 		pp_int32 left1, left2;
 		pp_int32 right1, right2;
@@ -232,12 +232,12 @@ struct PPColor
 		validate();
 	}
 	
-	bool operator==(const PPColor& source)
+	bool operator==(const PPColor& source) const
 	{
 		return (r == source.r && g == source.g && b == source.b);
 	}
 	
-	bool operator!=(const PPColor& source)
+	bool operator!=(const PPColor& source) const
 	{
 		return !(r == source.r && g == source.g && b == source.b);
 	}
@@ -272,50 +272,43 @@ private:
 
 public:
 	// Empty string
-	PPString()
+	PPString() :
+		strBuffer(new char[8]),
+		allocatedSize(8)
 	{
-		strBuffer = new char[8];
-		*strBuffer = 0;
-		
-		allocatedSize = 8;
+		*strBuffer = 0;		
 	}
 
 	// String from single character
-	PPString(char c)
+	PPString(char c) :
+		strBuffer(new char[8]),
+		allocatedSize(8)
 	{
-		strBuffer = new char[8];
 		*strBuffer = c;
 		*(strBuffer+1) = 0;
-		
-		allocatedSize = 8;
 	}
 
-	PPString(const char* str)
+	PPString(const char* str) :
+		strBuffer(new char[strlen(str) + 1]),
+		allocatedSize((pp_uint32)strlen(str) + 1)		
 	{
-		strBuffer = new char[strlen(str) + 1];
-		strcpy(strBuffer, str);
-		
-		allocatedSize = (pp_uint32)strlen(str) + 1;
+		strcpy(strBuffer, str);		
 	}
 
-	PPString(const char* str, pp_uint32 length)
+	PPString(const char* str, pp_uint32 length) :
+		strBuffer(new char[length + 1]),
+		allocatedSize(length + 1)
 	{
-		if (length > strlen(str))
-			length = strlen(str);
-		
-		strBuffer = new char[length + 1];
 		memcpy(strBuffer, str, length);
 		strBuffer[length] = 0;
-
-		allocatedSize = length + 1;			
 	}
 
 	// copy c'tor
-	PPString(const PPString& str)
+	PPString(const PPString& str) :
+		strBuffer(new char[str.allocatedSize]),
+		allocatedSize(str.allocatedSize)
 	{
-		strBuffer = new char[str.allocatedSize];
 		memcpy(strBuffer, str.strBuffer, str.allocatedSize);
-		allocatedSize = str.allocatedSize;
 	}
 
 	operator const char*() const

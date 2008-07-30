@@ -176,13 +176,13 @@ pp_int32 TabHeaderControl::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void TabHeaderControl::setSize(PPSize size)
+void TabHeaderControl::setSize(const PPSize& size)
 {
 	this->size = size;
 	backgroundButton->setSize(size);
 }
 
-void TabHeaderControl::setLocation(PPPoint location)
+void TabHeaderControl::setLocation(const PPPoint& location)
 {
 	this->location = location;
 	backgroundButton->setLocation(location);	

@@ -79,8 +79,8 @@ public:
 	};
 
 public:
-	const PPColor& getColor(GlobalColors whichColor);
-	const char* getColorReadableDescription(GlobalColors whichColor);
+	const PPColor& getColor(GlobalColors whichColor) const;
+	const char* getColorReadableDescription(GlobalColors whichColor) const;
 
 	void setColor(GlobalColors whichColor, const PPColor& color);
 	

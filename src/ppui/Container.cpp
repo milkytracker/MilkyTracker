@@ -335,7 +335,7 @@ bool PPContainer::removeControl(PPControl* control)
 	return res;
 }
 
-bool PPContainer::gainsFocus() 
+bool PPContainer::gainsFocus() const
 { 
 	if (caughtControl && caughtControl->gainsFocus())
 		return true;
@@ -413,13 +413,13 @@ void PPContainer::hide(bool hidden)
 	}
 }
 
-void PPContainer::setSize(PPSize size)
+void PPContainer::setSize(const PPSize& size)
 {
 	this->size = size;
 	backgroundButton->setSize(size);
 }
 
-void PPContainer::setLocation(PPPoint location)
+void PPContainer::setLocation(const PPPoint& location)
 {
 	/*PPPoint offset(location.x - this->location.x, location.y - this->location.y);
 	

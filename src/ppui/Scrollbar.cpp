@@ -688,7 +688,7 @@ pp_int32 PPScrollbar::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void PPScrollbar::setLocation(PPPoint location)
+void PPScrollbar::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 	

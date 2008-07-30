@@ -202,12 +202,11 @@ public:
 	void setScrollMode(ScrollModes mode) { properties.scrollMode = mode; adjustScrollBarPositionsAndSizes(); assureCursorVisible(); } 
 
 	// from PPControl
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 	virtual void paint(PPGraphicsAbstract* graphics);
-	virtual bool gainsFocus() { return true; }
-	virtual bool gainedFocusByMouse() { return caughtControl == NULL; }
-	virtual bool isActive() { return true; }
+	virtual bool gainsFocus() const { return true; }
+	virtual bool gainedFocusByMouse() const { return caughtControl == NULL; }
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 	
 	// from EventListenerInterface

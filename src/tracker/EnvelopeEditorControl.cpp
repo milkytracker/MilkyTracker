@@ -788,14 +788,14 @@ pp_int32 EnvelopeEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void EnvelopeEditorControl::setSize(PPSize size)
+void EnvelopeEditorControl::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 
 	hScrollbar->setSize(size.width - 1);
 }
 
-void EnvelopeEditorControl::setLocation(PPPoint location)
+void EnvelopeEditorControl::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 

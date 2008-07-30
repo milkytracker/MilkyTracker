@@ -33,7 +33,6 @@
 
 #include "DialogBase.h"
 #include "SimpleVector.h"
-//#include "UndoStack.h"
 
 class PPListBoxFileBrowser;
 class PPListBox;
@@ -74,16 +73,6 @@ private:
 	
 	OverwritePromptResponder* overwritePrompResponder;
 
-	struct Descriptor
-	{
-		PPSystemString extension;
-		PPSystemString description;
-
-		Descriptor(const PPSystemString& ext, const PPSystemString& desc) :
-			extension(ext), description(desc)
-		{}
-	};
-	
 	PPSimpleVector<Descriptor> extensions;
 	
 public:
@@ -105,7 +94,7 @@ public:
 
 	void setCurrentEditFileName(const PPSystemString& name);	
 	
-	void addExtension(const PPSystemString& ext, const PPSystemString& desc);
+	void addExtension(const PPString& ext, const PPString& desc);
 
 private:	
 	void updateButtonStates(bool repaint = true);

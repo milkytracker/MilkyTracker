@@ -202,7 +202,7 @@ pp_int32 PPButton::dispatchEvent(PPEvent* event)
 		case eLMouseDrag:
 		case eRMouseDrag:
 		{
-			PPPoint p = *reinterpret_cast<PPPoint*>(event->getDataPtr());
+			PPPoint p = *reinterpret_cast<const PPPoint*>(event->getDataPtr());
 			if (!hit(p) && clickable && pressed && update)
 			{
 				pressed = false;
@@ -292,7 +292,7 @@ void PPButton::handleButtonRelease(bool& lMouseDown, bool& rMouseDown, PPEvent* 
 		if (update)
 			parentScreen->paintControl(this);			
 		
-		if (hit(*reinterpret_cast<PPPoint*>(event->getDataPtr())))
+		if (hit(*reinterpret_cast<const PPPoint*>(event->getDataPtr())))
 		{
 			PPEvent e(postEvent);
 			eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 

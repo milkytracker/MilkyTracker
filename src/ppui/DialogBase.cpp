@@ -446,7 +446,7 @@ void PPDialogBase::setUserButtonText(pp_int32 index, const PPString& caption)
 }
 
 
-pp_int32 PPDialogBase::getID()
+pp_int32 PPDialogBase::getID() const
 {
 	if (messageBoxContainerGeneric)
 		return messageBoxContainerGeneric->getID();

@@ -49,7 +49,7 @@ protected:
 	bool processKeyEvents(PPEvent* event);
 
 	void resetKeyModifier() { keyModifier = 0; }
-	pp_uint32 getKeyModifier() { return keyModifier; }
+	pp_uint32 getKeyModifier() const { return keyModifier; }
 };
 
 #endif

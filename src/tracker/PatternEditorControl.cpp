@@ -149,7 +149,7 @@ void PatternEditorControl::setFont(PPFont* font)
 	assureCursorVisible();
 }
 
-void PatternEditorControl::setSize(PPSize size)
+void PatternEditorControl::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 	
@@ -170,7 +170,7 @@ void PatternEditorControl::setSize(PPSize size)
 	assureCursorVisible();
 }
 
-void PatternEditorControl::setLocation(PPPoint location)
+void PatternEditorControl::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 

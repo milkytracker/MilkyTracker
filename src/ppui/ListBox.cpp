@@ -1108,7 +1108,7 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void PPListBox::setSize(PPSize size)
+void PPListBox::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 	
@@ -1127,7 +1127,7 @@ void PPListBox::setSize(PPSize size)
 	assureCursorVisible();
 }
 
-void PPListBox::setLocation(PPPoint p)
+void PPListBox::setLocation(const PPPoint& p)
 {
 	PPControl::setLocation(p);
 
@@ -1153,7 +1153,7 @@ void PPListBox::addItem(const PPString& item)
 	adjustScrollbars();
 }
 
-const PPString& PPListBox::getItem(pp_int32 index)
+const PPString& PPListBox::getItem(pp_int32 index) const
 {
 	return *items->get(index);
 }

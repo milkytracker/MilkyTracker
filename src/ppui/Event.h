@@ -117,36 +117,37 @@ public:
 	}
 
 	PPEvent(EEventDescriptor ID, pp_int32 theMetaData = 0) :
+		ID(ID),
 		dataSize(0),
 		metaData(theMetaData)
 	{ 
-		this->ID = ID; 
 	}
 
 	PPEvent(EEventDescriptor ID, void* dataPtr, pp_int32 dSize, pp_int32 theMetaData = 0) :
+		ID(ID),
 		dataSize(dSize),
 		metaData(theMetaData)
 	{ 
-		this->ID = ID; 
 		if (dSize <= (signed)sizeof(userData))
 			memcpy(userData, dataPtr, dataSize); 
 		else
 			exit(0);
 	}
 	
-	PPEvent(const PPEvent& event)
+	PPEvent(const PPEvent& event) :
+		ID(event.ID),
+		dataSize(event.dataSize),
+		metaData(event.metaData)
 	{
-		this->ID = event.ID;
-		this->dataSize = event.dataSize;
 		memcpy(this->userData, event.userData, event.dataSize);
 	}
 
-	EEventDescriptor getID() { return ID; }
+	EEventDescriptor getID() const { return ID; }
 
-	void* getDataPtr() { return userData; }	
-	pp_int32 getDataSize() { return dataSize; }
+	const void* getDataPtr() const { return userData; }	
+	pp_int32 getDataSize() const { return dataSize; }
 	
-	pp_int32 getMetaData() { return metaData; }
+	pp_int32 getMetaData() const { return metaData; }
 	
 	void cancel() { ID = eInvalid; }
 };

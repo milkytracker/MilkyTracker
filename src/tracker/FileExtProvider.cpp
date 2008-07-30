@@ -97,7 +97,7 @@ const char* FileExtProvider::colorExtensions[] =
 	NULL, NULL
 };
 
-const char** FileExtProvider::fillList(const char** baseList, ExtensionTypes type)
+const char* const* FileExtProvider::fillList(const char* const* baseList, ExtensionTypes type)
 {
 	tempExtensions.clear();
 
@@ -142,7 +142,7 @@ const char** FileExtProvider::fillList(const char** baseList, ExtensionTypes typ
 	return (const char**)tempList;
 }
 
-const char** FileExtProvider::getModuleExtensions()
+const char* const* FileExtProvider::getModuleExtensions()
 {
 	return fillList(moduleExtensions, ExtensionTypeModules);
 }
@@ -150,7 +150,7 @@ const char** FileExtProvider::getModuleExtensions()
 const char* FileExtProvider::getModuleExtension(ModuleExtensions extension) { return moduleExtensions[extension*2]; }
 const char* FileExtProvider::getModuleDescription(ModuleExtensions extension) { return moduleExtensions[extension*2+1]; }
 
-const char** FileExtProvider::getInstrumentExtensions()
+const char* const* FileExtProvider::getInstrumentExtensions()
 {
 	return fillList(instrumentExtensions, ExtensionTypeInstruments);
 }
@@ -158,7 +158,7 @@ const char** FileExtProvider::getInstrumentExtensions()
 const char* FileExtProvider::getInstrumentExtension(InstrumentExtensions extension) { return instrumentExtensions[extension*2]; }
 const char* FileExtProvider::getInstrumentDescription(InstrumentExtensions extension) { return instrumentExtensions[extension*2+1]; }
 
-const char** FileExtProvider::getSampleExtensions()
+const char* const* FileExtProvider::getSampleExtensions()
 {
 	return fillList(sampleExtensions, ExtensionTypeSamples);
 }
@@ -166,7 +166,7 @@ const char** FileExtProvider::getSampleExtensions()
 const char* FileExtProvider::getSampleExtension(SampleExtensions extension) { return sampleExtensions[extension*2]; }
 const char* FileExtProvider::getSampleDescription(SampleExtensions extension) { return sampleExtensions[extension*2+1]; }
 
-const char** FileExtProvider::getPatternExtensions()
+const char* const* FileExtProvider::getPatternExtensions()
 {
 	return fillList(patternExtensions, ExtensionTypePatterns);
 }
@@ -174,7 +174,7 @@ const char** FileExtProvider::getPatternExtensions()
 const char* FileExtProvider::getPatternExtension(PatternExtensions extension) { return patternExtensions[extension*2]; }
 const char* FileExtProvider::getPatternDescription(PatternExtensions extension) { return patternExtensions[extension*2+1]; }
 
-const char** FileExtProvider::getTrackExtensions()
+const char* const* FileExtProvider::getTrackExtensions()
 {
 	return fillList(trackExtensions, ExtensionTypeTracks);
 }
@@ -182,7 +182,7 @@ const char** FileExtProvider::getTrackExtensions()
 const char* FileExtProvider::getTrackExtension(TrackExtensions extension) { return trackExtensions[extension*2]; }
 const char* FileExtProvider::getTrackDescription(TrackExtensions extension) { return trackExtensions[extension*2+1]; }
 
-const char** FileExtProvider::getColorExtensions()
+const char* const* FileExtProvider::getColorExtensions()
 {
 	return colorExtensions;
 }

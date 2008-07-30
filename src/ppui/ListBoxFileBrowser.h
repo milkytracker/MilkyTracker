@@ -73,7 +73,7 @@ public:
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual bool receiveTimerEvent() { return false; }	
+	virtual bool receiveTimerEvent() const { return false; }	
 	
 	void refreshFiles();
 	
@@ -86,26 +86,26 @@ public:
 		if (this->sortType >= NumSortRules)
 			this->sortType = SortByName;
 	}
-	SortTypes getSortType() { return sortType; }
+	SortTypes getSortType() const { return sortType; }
 	
 	void clearExtensions();	
 	// must contain pairs of extensions / description
 	// terminated by TWO NULL pointers
-	void addExtensions(const char* extensions[]);
-	void addExtension(const PPSystemString& ext, const PPSystemString& desc);
+	void addExtensions(const char* const extensions[]);
+	void addExtension(const PPString& ext, const PPString& desc);
 	
-	PPPath& getCurrentPath() { return *currentPath; }
-	PPSystemString getCurrentPathAsString();
-	PPString getCurrentPathAsASCIIString();
-	PPPathEntry* getPathEntry(pp_int32 index);
-	PPPathEntry* getCurrentSelectedPathEntry() { return getPathEntry(PPListBox::getSelectedIndex()); }
-	PPSimpleVector<class PPPathEntry>& getPathEntries() { return pathEntries; }
+	const PPPath& getCurrentPath() const { return *currentPath; }
+	PPSystemString getCurrentPathAsString() const;
+	PPString getCurrentPathAsASCIIString() const;
+	const PPPathEntry* getPathEntry(pp_int32 index) const;
+	const PPPathEntry* getCurrentSelectedPathEntry() const { return getPathEntry(PPListBox::getSelectedIndex()); }
+	const PPSimpleVector<class PPPathEntry>& getPathEntries() const { return pathEntries; }
 
-	bool canGotoHome();
+	bool canGotoHome() const;
 	void gotoHome();
-	bool canGotoRoot();
+	bool canGotoRoot() const;
 	void gotoRoot();
-	bool canGotoParent();
+	bool canGotoParent() const;
 	void gotoParent();
 
 	bool currentSelectionIsFile();

@@ -58,8 +58,8 @@ public:
 	PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border = true);
 	virtual ~PPContainer();
 
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 
 	//void setColor(pp_int32 r,pp_int32 g,pp_int32 b) { color.r = r; color.g = g; color.b = b; backgroundButton->setColor(color); }
 	void setColor(const PPColor& color) { this->color = &color; backgroundButton->setColor(color); }
@@ -74,13 +74,13 @@ public:
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual bool gainsFocus();
+	virtual bool gainsFocus() const;
 	virtual bool gainedFocusByMouse();
 
 	virtual void show(bool visible);
 	virtual void hide(bool hidden);
 
-	virtual bool isContainer() { return true; }
+	virtual bool isContainer() const { return true; }
 
 	PPControl* getControlByID(pp_int32 id);
 

@@ -83,10 +83,6 @@ public:
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual bool gainsFocus() { return false; }
-
-	virtual bool isActive() { return true; }
-
 	void fitSize(); 
 };
 

@@ -69,17 +69,17 @@ public:
 	virtual const PPPathEntry* getFirstEntry();
 	virtual const PPPathEntry* getNextEntry();	
 	
-	virtual bool canGotoHome();
+	virtual bool canGotoHome() const;
 	virtual void gotoHome();
-	virtual bool canGotoRoot();
+	virtual bool canGotoRoot() const;
 	virtual void gotoRoot();
-	virtual bool canGotoParent();
+	virtual bool canGotoParent() const;
 	virtual void gotoParent();
 	
-	virtual char getPathSeparatorAsASCII();
-	virtual const PPSystemString getPathSeparator();
+	virtual char getPathSeparatorAsASCII() const;
+	virtual const PPSystemString getPathSeparator() const;
 	
-	virtual bool fileExists(const PPSystemString& fileName);
+	virtual bool fileExists(const PPSystemString& fileName) const;
 };
 
 #endif

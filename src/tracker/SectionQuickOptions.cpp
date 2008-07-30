@@ -184,7 +184,7 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 	else if (event->getID() == eValueChanged && 
 			 reinterpret_cast<DialogPanning*>(sender) == dialogPanning)
 	{
-		pp_uint32 i = *(reinterpret_cast<pp_uint32*>(event->getDataPtr()));
+		pp_uint32 i = *(reinterpret_cast<const pp_uint32*>(event->getDataPtr()));
 		
 		tracker.playerController->setPanning((pp_uint8)i, dialogPanning->getPanning(i));
 	}

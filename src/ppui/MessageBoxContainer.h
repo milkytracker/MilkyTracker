@@ -54,8 +54,8 @@ public:
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 

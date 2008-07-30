@@ -73,25 +73,25 @@ void PPListBoxFileBrowser::clearExtensions()
 
 // must contain pairs of extensions / description
 // terminated by TWO NULL pointers
-void PPListBoxFileBrowser::addExtensions(const char* extensions[])
+void PPListBoxFileBrowser::addExtensions(const char* const extensions[])
 {
 	for (pp_uint32 i = 0; extensions[i] != NULL; i+=2)
 		addExtension(extensions[i], extensions[i+1]);
 }
 
-void PPListBoxFileBrowser::addExtension(const PPSystemString& ext, const PPSystemString& desc)
+void PPListBoxFileBrowser::addExtension(const PPString& ext, const PPString& desc)
 {
 	Descriptor* d = new Descriptor(ext, desc);
 	items.add(d);
 }
 
 
-PPSystemString PPListBoxFileBrowser::getCurrentPathAsString() 
+PPSystemString PPListBoxFileBrowser::getCurrentPathAsString() const
 { 
 	return currentPath->getCurrent(); 
 }
 
-PPString PPListBoxFileBrowser::getCurrentPathAsASCIIString()
+PPString PPListBoxFileBrowser::getCurrentPathAsASCIIString() const
 {
 	char* nameASCIIZ = currentPath->getCurrent().toASCIIZ();	
 	PPString result(nameASCIIZ);
@@ -104,12 +104,12 @@ void PPListBoxFileBrowser::refreshFiles()
 	iterateFilesInFolder();
 }
 
-PPPathEntry* PPListBoxFileBrowser::getPathEntry(pp_int32 index)
+const PPPathEntry* PPListBoxFileBrowser::getPathEntry(pp_int32 index) const
 {
 	return pathEntries.get(index);
 }
 
-bool PPListBoxFileBrowser::canGotoHome()
+bool PPListBoxFileBrowser::canGotoHome() const
 {
 	return currentPath->canGotoHome();
 }
@@ -130,7 +130,7 @@ void PPListBoxFileBrowser::gotoHome()
 	refreshFiles();
 }
 
-bool PPListBoxFileBrowser::canGotoRoot()
+bool PPListBoxFileBrowser::canGotoRoot() const
 {
 	return currentPath->canGotoRoot();
 }
@@ -151,7 +151,7 @@ void PPListBoxFileBrowser::gotoRoot()
 	refreshFiles();
 }
 
-bool PPListBoxFileBrowser::canGotoParent()
+bool PPListBoxFileBrowser::canGotoParent() const
 {
 	return currentPath->canGotoParent();
 }
@@ -174,13 +174,13 @@ void PPListBoxFileBrowser::gotoParent()
 
 bool PPListBoxFileBrowser::currentSelectionIsFile()
 {
-	PPPathEntry* entry = getPathEntry(PPListBox::getSelectedIndex());
+	const PPPathEntry* entry = getPathEntry(PPListBox::getSelectedIndex());
 	return entry ? entry->isFile() : false;
 }
 
 bool PPListBoxFileBrowser::stepIntoCurrentSelection()
 {
-	PPPathEntry* entry = getPathEntry(PPListBox::getSelectedIndex());
+	const PPPathEntry* entry = getPathEntry(PPListBox::getSelectedIndex());
 	
 	return entry ? stepInto(*entry) : false;
 }
@@ -445,7 +445,8 @@ bool PPListBoxFileBrowser::checkExtension(const PPPathEntry& entry)
 	
 	for (pp_int32 i = 0; i < items.size(); i++)
 	{
-		if (entry.getName().compareToExtension(items.get(i)->extension))
+		PPSystemString sysStr(items.get(i)->extension);
+		if (entry.getName().compareToExtension(sysStr))
 		{
 			res = true;
 			break;

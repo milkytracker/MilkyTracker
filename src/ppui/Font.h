@@ -45,7 +45,7 @@ public:
 
 	void clear() { for (pp_uint32 i = 0; i < bufferSize; i++) buffer[i] = 0; }
 
-	bool read(pp_uint32 offset)
+	bool read(pp_uint32 offset) const
 	{		
 		return (buffer[offset>>3]>>(offset&7))&1;
 	}
@@ -130,7 +130,7 @@ public:
 
 	static PPFont* getFont(pp_uint32 fontId);
 
-	bool getPixelBit(pp_uint8 chr, pp_uint32 x, pp_uint32 y) { return bitstream->read(chr*charDim+y*charWidth+x); }
+	bool getPixelBit(pp_uint8 chr, pp_uint32 x, pp_uint32 y) const { return bitstream->read(chr*charDim+y*charWidth+x); }
 
 	pp_uint32 getStrWidth(const char* str) const;
 	
@@ -202,9 +202,6 @@ public:
 		return result;
 	}	
 	
-	///////////////////////////////////////////////////////////
-	// Be careful, the following functions arenot thread-safe 
-	///////////////////////////////////////////////////////////
 	static const char* getFamilyInternalName(FontID fontID);
 	
 	static const char* getFirstFontFamilyName();

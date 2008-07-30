@@ -78,10 +78,6 @@ public:
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual bool gainsFocus() { return false; }
-
-	virtual bool isActive() { return true; }
-	
 	void setUnderlined(bool b) { underlined = b; }
 
 	void setValue(pp_int32 value, bool hex, pp_uint32 numDigits = 0, bool negative = false);

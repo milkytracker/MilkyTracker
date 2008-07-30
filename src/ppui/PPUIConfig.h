@@ -62,7 +62,7 @@ private:
 	PPUIConfig();
 	
 public:
-	const PPColor& getColor(PPUIColors whichColor) { return colors[whichColor]; }
+	const PPColor& getColor(PPUIColors whichColor) const { return colors[whichColor]; }
 	void setColor(PPUIColors whichColor, const PPColor& color) { colors[whichColor] = color; }
 	
 	friend class PPSingleton<PPUIConfig>;

@@ -543,7 +543,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 		{
 			case DISKMENU_CLASSIC_LISTBOX_NAME:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<const PPString* const*>(event->getDataPtr()));
 				*fileFullPath = listBoxFiles->getCurrentPathAsString();
 				PPSystemString temp(*str);
 				*file = temp;
@@ -1784,7 +1784,7 @@ void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 
 	listBoxFiles->clearExtensions();
 	
-	const char** extensions = NULL;
+	const char* const* extensions = NULL;
 	
 	if (static_cast<PPCheckBox*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS))->isChecked())
 	{

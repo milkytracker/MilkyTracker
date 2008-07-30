@@ -292,17 +292,17 @@ public:
 	virtual const PPPathEntry* getFirstEntry() = 0;
 	virtual const PPPathEntry* getNextEntry() = 0;	
 	
-	virtual bool canGotoHome() = 0;
+	virtual bool canGotoHome() const = 0;
 	virtual void gotoHome() = 0;
-	virtual bool canGotoRoot() = 0;
+	virtual bool canGotoRoot() const = 0;
 	virtual void gotoRoot() = 0;
-	virtual bool canGotoParent() = 0;
+	virtual bool canGotoParent() const = 0;
 	virtual void gotoParent() = 0;
 	
-	virtual char getPathSeparatorAsASCII() = 0;
-	virtual const PPSystemString getPathSeparator() = 0;
+	virtual char getPathSeparatorAsASCII() const = 0;
+	virtual const PPSystemString getPathSeparator() const = 0;
 
-	virtual bool fileExists(const PPSystemString& fileName) = 0;
+	virtual bool fileExists(const PPSystemString& fileName) const = 0;
 };
 
 #endif

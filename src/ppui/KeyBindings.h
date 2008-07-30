@@ -72,7 +72,8 @@ public:
 		pp_int32 i = 0;
 		while (bindings[i].handlerFunc && i < (signed)currentBindingIndex)
 		{
-			if (bindings[i].keyCode == keyCode && (bindings[i].keyModifier == 0xFFFF || bindings[i].keyModifier == keyModifier))
+			if (bindings[i].keyCode == keyCode && 
+				(bindings[i].keyModifier == 0xFFFF || bindings[i].keyModifier == keyModifier))
 			{
 				handlerFunc = bindings[i].handlerFunc;
 				return true;

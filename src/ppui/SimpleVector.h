@@ -29,8 +29,8 @@ template<class Type>
 class PPSimpleVector
 {
 private:
-	Type** values;
 	pp_int32 numValuesAllocated;
+	Type** values;
 	pp_int32 numValues;
 	bool destroy;
 
@@ -45,6 +45,10 @@ private:
 		this->values = values;
 	}
 
+	// no copy construction please
+	PPSimpleVector(const PPSimpleVector&);
+	PPSimpleVector& operator=(const PPSimpleVector&);
+	
 public:
 	PPSimpleVector(pp_int32 initialSize = 0, bool destroy = true)
 	{

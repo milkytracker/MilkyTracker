@@ -1076,14 +1076,14 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	return 0;
 }
 
-void SampleEditorControl::setSize(PPSize size)
+void SampleEditorControl::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 
 	hScrollbar->setSize(size.width - 1);
 }
 
-void SampleEditorControl::setLocation(PPPoint location)
+void SampleEditorControl::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 

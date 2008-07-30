@@ -81,13 +81,9 @@ public:
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
-
-	virtual bool gainsFocus() { return false; }
-
-	virtual bool isActive() { return true; }
 	
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 	
 	// menu controlling
 	void addEntry(const PPString& s, pp_int32 theId, PPContextMenu* contextMenu = NULL);

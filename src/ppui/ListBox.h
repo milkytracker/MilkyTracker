@@ -124,7 +124,7 @@ public:
 	~PPListBox();
 
 	void setFont(PPFont* font) { this->font = font; }
-	PPFont* getFont() { return font; }
+	PPFont* getFont() const { return font; }
 
 	void setBorderColor(const PPColor& color) { this->borderColor = &color; }
 
@@ -153,7 +153,7 @@ public:
 	void setMaxEditSize(pp_int32 max) { maxEditSize = max; }
 
 	void addItem(const PPString& item); 
-	const PPString& getItem(pp_int32 index);
+	const PPString& getItem(pp_int32 index) const;
 
 	void updateItem(pp_int32 index, const PPString& item);
 
@@ -166,8 +166,8 @@ public:
 	void setSelectedIndex(pp_int32 index, bool adjustStartIndex = true, bool assureCursor = true);
 	void setSelectedIndexByItem(const PPString& item, bool adjustStartIndex = true); 
 
-	bool isLastEntry() { return selectionIndex == getNumItems() - 1; }
-	bool isFirstEntry() { return selectionIndex == 0; }
+	bool isLastEntry() const { return selectionIndex == getNumItems() - 1; }
+	bool isFirstEntry() const { return selectionIndex == 0; }
 
 	bool isEditing() const { return columnSelectionStart>=0; }
 	
@@ -181,22 +181,20 @@ public:
 	// from PPControl
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
-	virtual bool gainsFocus() { return keepsFocus; }
-	virtual bool gainedFocusByMouse() { return keepsFocus && ((caughtControl == NULL) && (items->size() > 0)); }
+	virtual bool gainsFocus() const { return keepsFocus; }
+	virtual bool gainedFocusByMouse() const { return keepsFocus && ((caughtControl == NULL) && (items->size() > 0)); }
 
-	virtual bool isActive() { return true; }
-	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 
 	// from EventListenerInterface
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
-	virtual bool isListBox() { return true; }
+	virtual bool isListBox() const { return true; }
 
-	virtual bool receiveTimerEvent() { return true; }
+	virtual bool receiveTimerEvent() const { return true; }
 
 	void commitChanges();
 	void discardChanges();

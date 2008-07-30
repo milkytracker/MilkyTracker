@@ -85,7 +85,7 @@ public:
 
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 	
-	virtual bool receiveTimerEvent() { return true; }	
+	virtual bool receiveTimerEvent() const { return true; }	
 	
 	virtual void show(bool bShow);
 };

@@ -101,8 +101,8 @@ public:
 	TabHeaderControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size);
 	virtual ~TabHeaderControl();
 
-	virtual void setSize(PPSize size);
-	virtual void setLocation(PPPoint location);
+	virtual void setSize(const PPSize& size);
+	virtual void setLocation(const PPPoint& location);
 
 	void setColor(const PPColor& color) { this->color = &color; backgroundButton->setColor(color); }
 

@@ -279,7 +279,7 @@ pp_int32 DialogQuickChooseInstrument::handleEvent(PPObject* sender, PPEvent* eve
 			// song title
 			case MESSAGEBOX_LISTBOX_VALUE_ONE:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));							
+				const PPString* str = *(reinterpret_cast<const PPString* const*>(event->getDataPtr()));							
 				
 				setValue(getByte(*str));
 				break;

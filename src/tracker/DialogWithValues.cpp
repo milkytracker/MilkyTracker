@@ -270,14 +270,14 @@ pp_int32 DialogWithValues::handleEvent(PPObject* sender, PPEvent* event)
 			// song title
 			case MESSAGEBOX_LISTBOX_VALUE_ONE:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				setValueOne((float)atof(*str));
 				break;
 			}
 
 			case MESSAGEBOX_LISTBOX_VALUE_TWO:
 			{
-				PPString* str = *(reinterpret_cast<PPString**>(event->getDataPtr()));
+				const PPString* str = *(reinterpret_cast<PPString* const*>(event->getDataPtr()));
 				setValueTwo((float)atof(*str));
 				break;
 			}

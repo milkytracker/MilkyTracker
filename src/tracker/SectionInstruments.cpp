@@ -537,7 +537,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				tracker.setChanged();
 				pp_int32 i = tracker.listBoxInstruments->getSelectedIndex();	
-				moduleEditor->updateSampleTable(i, *(reinterpret_cast<pp_uint8**>(event->getDataPtr())));
+				moduleEditor->updateSampleTable(i, *(reinterpret_cast<const pp_uint8* const*>(event->getDataPtr())));
 				break;
 			}		
 		}

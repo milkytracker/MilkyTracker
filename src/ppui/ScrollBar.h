@@ -84,11 +84,7 @@ public:
 	
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
-	virtual bool gainsFocus() { return false; }
-
-	virtual bool isActive() { return true; }
-
-	virtual void setLocation(PPPoint location);
+	virtual void setLocation(const PPPoint& location);
 
 	virtual void setSize(pp_uint32 size);
 };

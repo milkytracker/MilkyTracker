@@ -146,7 +146,7 @@ void PPSlider::setBarSize(pp_int32 size, bool repaint /* = true */)
 
 }
 
-void PPSlider::setLocation(PPPoint location)
+void PPSlider::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 	
