@@ -107,11 +107,10 @@ public:
 	ScopesControl(pp_int32 id, 
 				  PPScreen* parentScreen, 
 				  EventListenerInterface* eventListener, 
-				  PPPoint location, 
-				  PPSize size, 
+				  const PPPoint& location, const PPSize& size, 
 				  bool border = true);
 
-	~ScopesControl();
+	virtual ~ScopesControl();
 
 	void setColor(pp_int32 r,pp_int32 g,pp_int32 b) { color.r = r; color.g = g; color.b = b; }
 	void setColor(PPColor color) { this->color = color; }
@@ -133,8 +132,8 @@ public:
 	void muteChannel(pp_int32 index, bool b) { muteChannels[index] = (b ? 1 : 0); }
 	void recordChannel(pp_int32 index, bool b) { recChannels[index] = (b ? 1 : 0); }
 	
-	bool isSoloChannel(pp_int32 c);
-	bool isSingleRecChannel(pp_int32 c);
+	bool isSoloChannel(pp_int32 c) const;
+	bool isSingleRecChannel(pp_int32 c) const;
 		
 	void handleMute(pp_int32 channel);
 	void handleSolo(pp_int32 channel);
@@ -144,13 +143,10 @@ public:
 	void handleUnmuteAll();
 	
 	void setCurrentClickType(ClickTypes type) { currentClickType = type; }
-	ClickTypes getCurrentClickType() { return currentClickType; }
+	ClickTypes getCurrentClickType() const { return currentClickType; }
 	
 	void setAppearance(AppearanceTypes appearance) { this->appearance = appearance; }
 	AppearanceTypes getAppearance() const { return appearance; }
-	
-	//void setSolid(bool b) { appearance = b ? AppearanceTypeSolid : AppearanceTypeNormal; }
-	//bool getSolid() const { return appearance == AppearanceTypeSolid; }
 	
 private:	
 	pp_int32 pointToChannel(const PPPoint& pt);

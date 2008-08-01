@@ -48,7 +48,8 @@ private:
 	PPPoint lastCapturePoint;
 
 public:
-	PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, const PPString& caption);
+	PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						  const PPPoint& location, const PPSize& size, const PPString& caption);
 
 	virtual ~PPMessageBoxContainer();
 

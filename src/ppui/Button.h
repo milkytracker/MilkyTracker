@@ -61,10 +61,15 @@ private:
 	PPString text;
 
 public:
-	PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border = true, bool clickable = true, bool update = true);
+	PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+			 const PPPoint& location, const PPSize& size, 
+			 bool border = true, 
+			 bool clickable = true, 
+			 bool update = true);
+
 	virtual ~PPButton();
 
-	void setSize(PPSize size) 
+	virtual void setSize(const PPSize& size) 
 	{ 
 		this->size = size; 
 		if (this->size.width < 8)
@@ -72,32 +77,31 @@ public:
 		if (this->size.height < 8)
 			this->size.height = 8;
 	}
-	void setLocation(PPPoint location) { this->location = location; }
 
 	void setColor(const PPColor& color) { this->color = &color; }
-	const PPColor* getColor() { return color; }
+	const PPColor* getColor() const { return color; }
 
 	void setXOffset(pp_int32 offset) { this->offset.x = offset; }
 	void setYOffset(pp_int32 offset) { this->offset.y = offset; }
 
 	void setText(const PPString& text);
-	const PPString& getText() { return text; }
+	const PPString& getText() const { return text; }
 
 	void setTextColor(const PPColor& color) { this->textColor = &color; }
-	const PPColor* getTextColor() { return textColor; }
+	const PPColor* getTextColor() const { return textColor; }
 
 	void setVerticalText(bool b) { verticalText = b; }
 
 	void setFont(PPFont* font) { this->font = font; }
-	PPFont* getFont() { return font; }
+	PPFont* getFont() const { return font; }
 
 	void setPressed(bool pressed) { this->pressed = pressed; }
-	bool isPressed() { return pressed; }
+	bool isPressed() const { return pressed; }
 
 	void setUpdateable(bool b) { update = b; }
 
 	void setClickable(bool b) { clickable = b; }
-	bool isClickable() { return clickable; }
+	bool isClickable() const { return clickable; }
 	
 	void setInvertShading(bool b) { invertShading = b; }
 

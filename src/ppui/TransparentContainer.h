@@ -36,7 +36,8 @@ class PPButton;
 class PPTransparentContainer : public PPContainer
 {
 public:
-	PPTransparentContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size);
+	PPTransparentContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						   const PPPoint& location, const PPSize& size);
 
 	virtual ~PPTransparentContainer();
 

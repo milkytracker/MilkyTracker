@@ -59,12 +59,13 @@ void SampleEditorControl::signalWaitState(bool b)
 }
 
 SampleEditorControl::SampleEditorControl(pp_int32 id, 
-						   PPScreen* parentScreen, 
-						   EventListenerInterface* eventListener, 
-						   PPPoint location, 
-						   PPSize size, 
-						   bool border/*= true*/) :
+										 PPScreen* parentScreen, 
+										 EventListenerInterface* eventListener, 
+										 const PPPoint& location, 
+										 const PPSize& size, 
+										 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
+	border(border),
 	borderColor(&ourOwnBorderColor),
 	caughtControl(NULL),
 	controlCaughtByLMouseButton(false), controlCaughtByRMouseButton(false),
@@ -82,8 +83,6 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	relativeNote(0),
 	offsetFormat(OffsetFormatHex)
 {
-	this->border = border;
-
 	// default color
 	backgroundColor.set(0, 0, 0);
 

@@ -100,9 +100,9 @@ public:
 
 	void setFocus(PPControl* control, bool repaint = true);
 
-	PPControl* getFocusedControl();
+	PPControl* getFocusedControl() const;
 
-	bool hasFocus(PPControl* control);
+	bool hasFocus(PPControl* control) const;
 
 	void addControl(PPControl* control);
 	bool removeControl(PPControl* control);
@@ -110,9 +110,9 @@ public:
 	void addTimerEventControl(PPControl* control);
 	bool removeTimerEventControl(PPControl* control);
 
-	PPControl* getControlByID(pp_int32 id);
+	PPControl* getControlByID(pp_int32 id) const;
 
-	PPControl* getModalControl() { return modalControl; }
+	PPControl* getModalControl() const { return modalControl; }
 
 	void releaseCaughtControls();
 	void setModalControl(PPControl* control, bool repaint = true);
@@ -122,14 +122,14 @@ public:
 	bool removeContextMenuControl(PPControl* control, bool repaint = true);
 	bool removeLastContextMenuControl(bool repaint = true);
 	
-	bool hasContextMenu(PPControl* control);
+	bool hasContextMenu(PPControl* control) const;
 	
-	PPControl* getContextMenuControl(pp_int32 index = 0) 
+	PPControl* getContextMenuControl(pp_int32 index = 0) const
 	{ 
 		return index < contextMenuControls->size() ? contextMenuControls->get(index) : NULL; 
 	}
 
-	PPControl* getLastContextMenuControl() 
+	PPControl* getLastContextMenuControl() const
 	{ 
 		return contextMenuControls->size() ? contextMenuControls->get(contextMenuControls->size()-1) : NULL; 
 	}
@@ -137,8 +137,8 @@ public:
 	void setShowDragHilite(bool b);
 
 	// -------------- PPDisplayDevice Delegates -------------------
-	pp_int32 getWidth();
-	pp_int32 getHeight();
+	pp_int32 getWidth() const;
+	pp_int32 getHeight() const;
 
 	static pp_int32 getDefaultWidth();
 	static pp_int32 getDefaultHeight();
@@ -148,12 +148,12 @@ public:
 	void setSize(const PPSize& size);
 
 	bool goFullScreen(bool b);
-	bool isFullScreen();
+	bool isFullScreen() const;
 	
 	void signalWaitState(bool b, const PPColor& color);	
 	
 	void setMouseCursor(MouseCursorTypes type);
-	MouseCursorTypes getCurrentActiveMouseCursor();
+	MouseCursorTypes getCurrentActiveMouseCursor() const;
 	
 	void shutDown();
 };

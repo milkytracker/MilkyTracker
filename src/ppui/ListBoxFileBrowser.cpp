@@ -32,11 +32,8 @@
 #include "Screen.h"
 #include "PPPathFactory.h"
 
-PPListBoxFileBrowser::PPListBoxFileBrowser(pp_int32 id, 
-										   PPScreen* parentScreen, 
-										   EventListenerInterface* eventListener, 
-										   PPPoint location, 
-										   PPSize size) :
+PPListBoxFileBrowser::PPListBoxFileBrowser(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+										   const PPPoint& location, const PPSize& size) :
 	PPListBox(id, parentScreen, eventListener, location, size, true, false, true, true),
 	filePrefix("<FILE> "), fileSuffix(""),
 	directoryPrefix("<DIR>  "), directorySuffix(""),
@@ -47,7 +44,6 @@ PPListBoxFileBrowser::PPListBoxFileBrowser(pp_int32 id,
 	setRightButtonConfirm(true);
 	currentPath = PPPathFactory::createPath();
 }
-
 
 PPListBoxFileBrowser::~PPListBoxFileBrowser()
 {
@@ -217,7 +213,7 @@ bool PPListBoxFileBrowser::gotoPath(const PPSystemString& path, bool reload/* = 
 	return res;
 }
 
-bool PPListBoxFileBrowser::canPrev()
+bool PPListBoxFileBrowser::canPrev() const
 {
 	return !history.IsEmpty();
 }
@@ -230,7 +226,7 @@ void PPListBoxFileBrowser::prev()
 	gotoPath(*history.Pop());
 }
 
-bool PPListBoxFileBrowser::canNext()
+bool PPListBoxFileBrowser::canNext() const
 {
 	return !history.IsTop();
 }

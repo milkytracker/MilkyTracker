@@ -111,17 +111,14 @@ private:
 	ColorQueryListener* colorQueryListener;
 
 public:
-	PPListBox(pp_int32 id, 
-			  PPScreen* parentScreen, 
-			  EventListenerInterface* eventListener, 
-			  PPPoint location, 
-			  PPSize size, 
+	PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+			  const PPPoint& location, const PPSize& size, 
 			  bool border = true, 
 			  bool editable = false,
 			  bool scrollable = true,
 			  bool showSelectionAlways = false);
 	
-	~PPListBox();
+	virtual ~PPListBox();
 
 	void setFont(PPFont* font) { this->font = font; }
 	PPFont* getFont() const { return font; }

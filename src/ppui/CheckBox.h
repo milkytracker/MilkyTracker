@@ -43,11 +43,13 @@ private:
 	PPButton* button;
 
 public:
-	PPCheckBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, bool checked = true);
+	PPCheckBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+			   const PPPoint& location, 
+			   bool checked = true);
 	
-	~PPCheckBox();
+	virtual ~PPCheckBox();
 
-	bool isChecked();
+	bool isChecked() const;
 
 	void checkIt(bool checked);
 

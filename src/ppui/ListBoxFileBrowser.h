@@ -63,11 +63,8 @@ private:
 	SortTypes sortType;
 
 public:
-	PPListBoxFileBrowser(pp_int32 id, 
-						 PPScreen* parentScreen, 
-						 EventListenerInterface* eventListener, 
-						 PPPoint location, 
-						 PPSize size);
+	PPListBoxFileBrowser(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						 const PPPoint& location, const PPSize& size);
 	
 	virtual ~PPListBoxFileBrowser();
 	
@@ -113,9 +110,9 @@ public:
 	bool stepInto(const PPPathEntry& entry);
 	bool gotoPath(const PPSystemString& path, bool reload = true);
 	
-	bool canPrev();
+	bool canPrev() const;
 	void prev();
-	bool canNext();
+	bool canNext() const;
 	void next();
 
 	void setFilePrefix(const PPString& prefix);

@@ -30,7 +30,9 @@
 static const char* checked = "\xFF";
 static const char* notChecked = "\x20";
 
-PPCheckBox::PPCheckBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, bool checked /* = true */) :
+PPCheckBox::PPCheckBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+					   const PPPoint& location, 
+					   bool checked /* = true */) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(10,10))
 {
 	button = new PPButton(id, parentScreen, this, location, this->size);
@@ -42,7 +44,7 @@ PPCheckBox::~PPCheckBox()
 	delete button;
 }
 
-bool PPCheckBox::isChecked()
+bool PPCheckBox::isChecked() const
 {
 	return button->getText().compareTo(checked) == 0;
 }

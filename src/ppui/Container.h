@@ -55,16 +55,19 @@ private:
 	pp_int32 currentlyPressedMouseButtons;
 
 public:
-	PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border = true);
-	virtual ~PPContainer();
+	PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				const PPPoint& location, const PPSize& size, 
+				bool border = true);
 
+	virtual ~PPContainer();
+	
 	virtual void setSize(const PPSize& size);
 	virtual void setLocation(const PPPoint& location);
 
 	//void setColor(pp_int32 r,pp_int32 g,pp_int32 b) { color.r = r; color.g = g; color.b = b; backgroundButton->setColor(color); }
 	void setColor(const PPColor& color) { this->color = &color; backgroundButton->setColor(color); }
 
-	const PPColor& getColor() { return *color; }
+	const PPColor& getColor() const { return *color; }
 
 	void addControl(PPControl* control);
 
@@ -75,7 +78,7 @@ public:
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	virtual bool gainsFocus() const;
-	virtual bool gainedFocusByMouse();
+	virtual bool gainedFocusByMouse() const;
 
 	virtual void show(bool visible);
 	virtual void hide(bool hidden);
@@ -89,7 +92,7 @@ public:
 	PPSimpleVector<PPControl>& getControls() { return controls; }
 
 	void setFocus(PPControl* control, bool repaint = true);
-	bool hasFocus(PPControl* control);
+	bool hasFocus(PPControl* control) const;
 	
 	void move(const PPPoint& offset);
 	void adjustContainerSize();

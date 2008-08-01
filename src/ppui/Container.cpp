@@ -25,7 +25,9 @@
 #include "Screen.h"
 #include "PPUIConfig.h"
 
-PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border /* = true */) :
+PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						 const PPPoint& location, const PPSize& size, 
+						 bool border /* = true */) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorContainer)),
 	focusedControl(NULL),
@@ -346,7 +348,7 @@ bool PPContainer::gainsFocus() const
 	return false;
 }
 
-bool PPContainer::gainedFocusByMouse()
+bool PPContainer::gainedFocusByMouse() const
 {
 	if (caughtControl && caughtControl->gainedFocusByMouse())
 		return true;
@@ -481,7 +483,7 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 #endif
 }
 
-bool PPContainer::hasFocus(PPControl* control)
+bool PPContainer::hasFocus(PPControl* control) const
 { 
 	return focusedControl == control; 
 }

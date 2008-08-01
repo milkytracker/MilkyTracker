@@ -27,15 +27,12 @@
 #include "Tools.h"
 #include "PPUIConfig.h"
 
-PPStaticText::PPStaticText(pp_int32 id,		
-					   PPScreen* parentScreen, 
-					   EventListenerInterface* eventListener, 
-					   PPPoint location, 
-					   const PPString& text, 
-					   bool drawShadow /*= false*/, 
-					   bool drawUnderlined /*= false*/,
-					   bool autoShrink /*= false*/) :
-					   
+PPStaticText::PPStaticText(pp_int32 id,	PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						   const PPPoint& location, 
+						   const PPString& text, 
+						   bool drawShadow /*= false*/, 
+						   bool drawUnderlined /*= false*/,
+						   bool autoShrink /*= false*/) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(0,0)),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText)),
 	drawShadow(drawShadow),
@@ -146,13 +143,6 @@ void PPStaticText::setText(const PPString& text)
 {
 	this->text = text;
 
-	calcExtent();
-}
-
-void PPStaticText::setText(const char* text)
-{
-	this->text = text;
-	
 	calcExtent();
 }
 

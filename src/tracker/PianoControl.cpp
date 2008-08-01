@@ -98,17 +98,16 @@ pp_int32 PianoControl::KEYWIDTH()
 PianoControl::PianoControl(pp_int32 id, 
 						   PPScreen* parentScreen, 
 						   EventListenerInterface* eventListener, 
-						   PPPoint location, 
-						   PPSize size, 
+						   const PPPoint& location, 
+						   const PPSize& size, 
 						   pp_uint8 numNotes,
 						   bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
+	border(border),
 	NUMNOTES(numNotes),
 	borderColor(&ourOwnBorderColor),
 	mode(ModeEdit)
 {
-	this->border = border;
-
 	// default color
 	ourOwnBorderColor.set(192, 192, 192);
 
@@ -721,7 +720,7 @@ void PianoControl::pressNote(pp_int32 note, bool pressed, bool muted/* = false*/
 	}
 }
 
-bool PianoControl::getNoteState(pp_int32 note)
+bool PianoControl::getNoteState(pp_int32 note) const
 {
 	if (note >= 0 && note < NUMNOTES)
 		return keyState[note].pressed;

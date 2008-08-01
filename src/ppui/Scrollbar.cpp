@@ -202,7 +202,7 @@ void PPScrollbar::initButtons()
 }
 
 PPScrollbar::PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
-						 PPPoint location, pp_int32 size, bool horizontal) :
+						 const PPPoint& location, pp_int32 size, bool horizontal) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(0,0)),
 	oneDimSize(size),
 	horizontal(horizontal),

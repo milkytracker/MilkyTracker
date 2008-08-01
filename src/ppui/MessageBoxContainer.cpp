@@ -29,7 +29,8 @@
 #include "Screen.h"
 #include "SimpleVector.h"
 
-PPMessageBoxContainer::PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, const PPString& caption) :
+PPMessageBoxContainer::PPMessageBoxContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+											 const PPPoint& location, const PPSize& size, const PPString& caption) :
 	PPContainer(id, parentScreen, eventListener, location, size),
 	caption(caption),
 	captured(false)	

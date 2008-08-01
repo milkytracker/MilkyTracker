@@ -37,7 +37,8 @@
 
 #define SCROLLBARWIDTH  SCROLLBUTTONSIZE
 
-PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border/*= true*/) :
+PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+										   const PPPoint& location, const PPSize& size, bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&TrackerConfig::colorThemeMain),
 	cursorColor(&TrackerConfig::colorPatternEditorCursorLine),
@@ -1259,7 +1260,7 @@ void PatternEditorControl::validate()
 		selectionEnd.row = pattern->rows-1;*/
 }
 
-bool PatternEditorControl::hasValidSelection()
+bool PatternEditorControl::hasValidSelection() const
 {
 	return patternEditor->hasValidSelection();
 }

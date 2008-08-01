@@ -102,11 +102,11 @@ void AnimatedFXControl::createFX()
 }
 
 AnimatedFXControl::AnimatedFXControl(pp_int32 id, 
-								   PPScreen* parentScreen, 
-								   EventListenerInterface* eventListener, 
-								   PPPoint location, 
-								   PPSize size, 
-								   bool border/*= true*/) :
+									 PPScreen* parentScreen, 
+									 EventListenerInterface* eventListener, 
+									 const PPPoint& location, 
+									 const PPSize& size, 
+									 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&ourOwnBorderColor),
 	fx(NULL), vscreen(NULL)

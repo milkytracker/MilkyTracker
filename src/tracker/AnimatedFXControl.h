@@ -67,13 +67,13 @@ private:
 
 public:
 	AnimatedFXControl(pp_int32 id, 
-					 PPScreen* parentScreen, 
-					 EventListenerInterface* eventListener, 
-					 PPPoint location, 
-					 PPSize size, 
-					 bool border = true);
-
-	~AnimatedFXControl();
+					  PPScreen* parentScreen, 
+					  EventListenerInterface* eventListener, 
+					  const PPPoint& location, 
+					  const PPSize& size, 
+					  bool border = true);
+	
+	virtual ~AnimatedFXControl();
 
 	void setColor(pp_int32 r,pp_int32 g,pp_int32 b) { color.r = r; color.g = g; color.b = b; }
 	void setColor(PPColor color) { this->color = color; }

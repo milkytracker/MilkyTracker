@@ -44,14 +44,14 @@ DialogGroupSelection::DialogGroupSelection(PPScreen* screen,
 {
 	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
 
-	initDialog(screen, responder, id, caption, 290, 74 + choices.size()*(font->getCharHeight() + PPRadioGroup::eDefaultSpacerHeight + 1), 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, caption, 290, 74 + choices.size()*(font->getCharHeight() + PPRadioGroup::DefaultSpacerHeight + 1), 26, "Ok", "Cancel");
 
 	pp_int32 i, j = 0;
 	
 	j = 0;
 	for (i = 0; i < choices.size(); i++)
 	{
-		pp_int32 size = choices.get(i)->length()*font->getCharWidth() + PPRadioGroup::eDefaultRadioWidth;
+		pp_int32 size = choices.get(i)->length()*font->getCharWidth() + PPRadioGroup::DefaultRadioWidth;
 		if (size > j) j = size;
 	}
 

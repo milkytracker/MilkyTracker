@@ -95,7 +95,7 @@ struct PPMenu
 	bool isSubMenu() const { return subMenu; }
 	
 	void setParentMenu(PPContextMenu* parent) { parentMenu = parent; }
-	PPContextMenu* getParentMenu() { return parentMenu; }
+	PPContextMenu* getParentMenu() const { return parentMenu; }
 	
 	void paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 menuSelection);
 

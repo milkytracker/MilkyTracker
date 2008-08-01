@@ -84,8 +84,8 @@ public:
 	EnvelopeEditorControl(pp_int32 id, 
 						  PPScreen* parentScreen, 
 						  EventListenerInterface* eventListener, 
-						  PPPoint location, 
-						  PPSize size, 
+						  const PPPoint& location, 
+						  const PPSize& size, 
 						  bool border = true);
 
 	~EnvelopeEditorControl();

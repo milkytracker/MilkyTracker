@@ -63,12 +63,12 @@ pp_int32 ScopesControl::WRAPCHANNELS()
 }
 
 ScopesControl::ScopesControl(pp_int32 id, 
-								   PPScreen* parentScreen, 
-								   EventListenerInterface* eventListener, 
-								   PPPoint location, 
-								   PPSize size, 
-								   bool border/*= true*/) :
+							 PPScreen* parentScreen, 
+							 EventListenerInterface* eventListener, 
+							 const PPPoint& location, const PPSize& size, 
+							 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
+	border(border),
 	borderColor(&ourOwnBorderColor),
 	playerController(NULL),
 	numChannels(0),
@@ -76,8 +76,6 @@ ScopesControl::ScopesControl(pp_int32 id,
 	appearance(AppearanceTypeNormal),
 	currentClickType(ClickTypeMute)
 {
-	this->border = border;
-
 	// default color
 	color.set(0, 0, 0);
 
@@ -628,7 +626,7 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 	return 0;
 }
 
-bool ScopesControl::isSoloChannel(pp_int32 c)
+bool ScopesControl::isSoloChannel(pp_int32 c) const
 {
 	pp_int32 i = 0;
 	for (pp_int32 j = 0; j < numChannels; j++)
@@ -641,7 +639,7 @@ bool ScopesControl::isSoloChannel(pp_int32 c)
 	return false;
 }
 
-bool ScopesControl::isSingleRecChannel(pp_int32 c)
+bool ScopesControl::isSingleRecChannel(pp_int32 c) const
 {
 	pp_int32 i = 0;
 	for (pp_int32 j = 0; j < numChannels; j++)

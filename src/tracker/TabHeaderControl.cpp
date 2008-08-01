@@ -61,7 +61,8 @@ void TabHeaderControl::handleTabClick(const PPPoint& p)
 	}
 }
 
-TabHeaderControl::TabHeaderControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size) :
+TabHeaderControl::TabHeaderControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+								   const PPPoint& location, const PPSize& size) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorContainer)),
 	leftButton(NULL),

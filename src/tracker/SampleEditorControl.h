@@ -119,11 +119,11 @@ public:
 	SampleEditorControl(pp_int32 id, 
 				 PPScreen* parentScreen, 
 				 EventListenerInterface* eventListener, 
-				 PPPoint location, 
-				 PPSize size, 
+				 const PPPoint& location, 
+				 const PPSize& size, 
 				 bool border = true);
 
-	~SampleEditorControl();
+	virtual ~SampleEditorControl();
 
 	void setBackgroundColor(const PPColor& color) { backgroundColor = color; }
 	void setBorderColor(const PPColor& color) { borderColor = &color; }

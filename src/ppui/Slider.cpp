@@ -70,7 +70,9 @@ void PPSlider::initButtons()
 	setBarPosition(currentBarPosition, false);
 }
 
-PPSlider::PPSlider(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, pp_int32 size, bool horizontal, bool buttonSwap) :
+PPSlider::PPSlider(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				   const PPPoint& location, pp_int32 size, 
+				   bool horizontal, bool buttonSwap) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(0,0)),
 	oneDimSize(size),
 	horizontal(horizontal),

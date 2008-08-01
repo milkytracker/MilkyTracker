@@ -41,8 +41,10 @@ private:
 	const PPColor* color;	
 	
 public:
-	PPSeperator(pp_int32 id, PPScreen* parentScreen, PPPoint location, pp_uint32 size, const PPColor& theColor, bool horizontal = true);
-
+	PPSeperator(pp_int32 id, PPScreen* parentScreen, 
+				const PPPoint& location, pp_uint32 size, 
+				const PPColor& theColor, bool horizontal = true);
+	
 	void setColor(const PPColor& color) { this->color = &color; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);

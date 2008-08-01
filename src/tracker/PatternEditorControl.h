@@ -192,9 +192,12 @@ private:
 	pp_int32 selectionKeyModifier;
 	
 public:
-	PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border = true);
-	~PatternEditorControl();
-
+	PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						 const PPPoint& location, const PPSize& size, 
+						 bool border = true);
+	
+	virtual ~PatternEditorControl();
+	
 	void setColor(PPColor color) { bgColor = color; }
 	void setFont(PPFont* font);
 
@@ -213,11 +216,13 @@ public:
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
 	void attachPatternEditor(PatternEditor* patternEditor);
-	//const TXMPattern* getPattern() { return pattern; }
 
 	void reset();
 	
-	bool isDraggingVertical() const { return (caughtControl == vLeftScrollbar) || (caughtControl == vRightScrollbar)/* && (scrollMode != eModeScrollStayInCenter)*/; }
+	bool isDraggingVertical() const 
+	{ 
+		return (caughtControl == vLeftScrollbar) || (caughtControl == vRightScrollbar); 
+	}
 
 	// set number of visible channels, if this is -1 it will dynamically adjust it
 	void setNumVisibleChannels(pp_int32 numChannels);
@@ -235,18 +240,18 @@ public:
 	void getSongPosition(pp_int32& currentOrderlistIndex, pp_int32& row) { row = songPos.row; currentOrderlistIndex = songPos.orderListIndex; }
 	void setChannel(pp_int32 chn, pp_int32 posInner);
 
-	pp_int32 getCurrentChannel() { return patternEditor->getCursor().channel; }
-	pp_int32 getCurrentRow() { return patternEditor->getCursor().row; }
-	pp_int32 getCursorPosInner() { return patternEditor->getCursor().inner; }
+	pp_int32 getCurrentChannel() const { return patternEditor->getCursor().channel; }
+	pp_int32 getCurrentRow() const { return patternEditor->getCursor().row; }
+	pp_int32 getCursorPosInner() const { return patternEditor->getCursor().inner; }
 
 	pp_int32 ScanCodeToNote(pp_int16 keyCode);
 
 	void setCurrentInstrument(pp_int32 ins) { patternEditor->setCurrentInstrument(ins); }
 	void enableInstrument(bool b) { patternEditor->enableInstrument(b); }
-	bool isInstrumentEnabled() { return patternEditor->isInstrumentEnabled(); }
+	bool isInstrumentEnabled() const { return patternEditor->isInstrumentEnabled(); }
 	void setInstrumentBackTrace(bool b) { patternEditor->setInstrumentBackTrace(b); }
 
-	bool hasValidSelection();
+	bool hasValidSelection() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// --- more flags coming
@@ -262,16 +267,16 @@ public:
 	void setHexCount(bool b) { properties.hexCount = b; }
 	// set prospective mode
 	void setProspective(bool b) { properties.prospective = b; }
-	bool getProspective() { return properties.prospective; }
+	bool getProspective() const { return properties.prospective; }
 	// set wraparound mode
 	void setWrapAround(bool b) { properties.wrapAround = b; }
-	bool getWrapAround() { return properties.wrapAround; }
+	bool getWrapAround() const { return properties.wrapAround; }
 	// set tab to note
 	void setTabToNote(bool b) { properties.tabToNote = b; }
-	bool getTabToNote() { return properties.tabToNote; }
+	bool getTabToNote() const { return properties.tabToNote; }
 	// mouse click allows cursor-repositioning
 	void setClickToCursor(bool b) { properties.clickToCursor = b; }
-	bool getClickToCursor() { return properties.clickToCursor; }
+	bool getClickToCursor() const { return properties.clickToCursor; }
 	// autoresize
 	void setAutoResize(bool b) { patternEditor->setAutoResize(b); }
 	bool getAutoResize() { return patternEditor->getAutoResize(); }
@@ -292,7 +297,7 @@ public:
 	
 	void advanceRow(bool assureCursor = true, bool repaint = true);
 
-	PatternEditor* getPatternEditor() { return patternEditor; }
+	PatternEditor* getPatternEditor() const { return patternEditor; }
 
 	// --- these are defined in PatternEditorControlTransposeHandler.cpp -----
 	void showNoteTransposeWarningMessageBox(pp_int32 fuckups);

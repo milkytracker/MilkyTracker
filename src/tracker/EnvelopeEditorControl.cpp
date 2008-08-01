@@ -46,8 +46,8 @@
 EnvelopeEditorControl::EnvelopeEditorControl(pp_int32 id, 
 											 PPScreen* parentScreen, 
 											 EventListenerInterface* eventListener, 
-											 PPPoint location, 
-											 PPSize size, 
+											 const PPPoint& location, 
+											 const PPSize& size, 
 											 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&ourOwnBorderColor),

@@ -56,18 +56,22 @@ private:
 	pp_int32 maxWidth;
 
 public:
-	enum DEFAULTEXTENTS {
-		eDefaultSpacerHeight = 5,
-		eDefaultRadioWidth = 14
+	enum
+	{
+		DefaultSpacerHeight = 5,
+		DefaultRadioWidth = 14
 	};
 
-	PPRadioGroup(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, pp_uint32 spacerHeight = eDefaultSpacerHeight);
-	~PPRadioGroup();
+	PPRadioGroup(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				 const PPPoint& location, const PPSize& size, 
+				 pp_uint32 spacerHeight = DefaultSpacerHeight);
+
+	virtual ~PPRadioGroup();
 
 	void setColor(const PPColor& color) { this->radioButtonColor = &color; }
 
 	void addItem(const PPString& item);
-	const PPString& getItem(pp_int32 index);
+	const PPString& getItem(pp_int32 index) const;
 
 	void setSpacerHeight(pp_uint32 spacerHeight) { this->spacerHeight = spacerHeight; }
 
@@ -77,7 +81,7 @@ public:
 
 	void setChoice(pp_uint32 choice) { this->choice = choice; }
 
-	pp_uint32 getChoice() { return choice; }
+	pp_uint32 getChoice() const { return choice; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	

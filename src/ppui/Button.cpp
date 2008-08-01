@@ -27,7 +27,11 @@
 #include "Font.h"
 #include "PPUIConfig.h"
 
-PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, bool border/*= true*/, bool clickable/*= true*/, bool update/*=true*/) :
+PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				   const PPPoint& location, const PPSize& size, 
+				   bool border/*= true*/, 
+				   bool clickable/*= true*/, 
+				   bool update/*=true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButton)),
 	textColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText)),

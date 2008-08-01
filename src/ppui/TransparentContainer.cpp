@@ -24,7 +24,8 @@
 #include "TransparentContainer.h"
 #include "BasicTypes.h"
 
-PPTransparentContainer::PPTransparentContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size) :
+PPTransparentContainer::PPTransparentContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+											   const PPPoint& location, const PPSize& size) :
 	PPContainer(id, parentScreen, eventListener, location, size)
 {
 }

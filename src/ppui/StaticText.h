@@ -54,23 +54,20 @@ private:
 	PPSize extent;
 
 public:
-	PPStaticText(pp_int32 id, 
-			   PPScreen* parentScreen, 
-			   EventListenerInterface* eventListener, 
-			   PPPoint location, 
-			   const PPString& text, 
-			   bool drawShadow = false,
-			   bool drawUnderlined = false,
-			   bool autoShrink = false);
-			   
-	~PPStaticText();
+	PPStaticText(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				 const PPPoint& location, 
+				 const PPString& text, 
+				 bool drawShadow = false,
+				 bool drawUnderlined = false,
+				 bool autoShrink = false);
+	
+	virtual ~PPStaticText();
 
 	void setColor(const PPColor& color) { this->color = &color; }
 
 	void setText(const PPString& text);
-	void setText(const char* text);
 
-	PPString& getText() { return text; }
+	const PPString& getText() const { return text; }
 
 	void setFont(PPFont* font) { this->font = font; calcExtent(); }
 

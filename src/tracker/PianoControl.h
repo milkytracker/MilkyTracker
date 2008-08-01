@@ -90,29 +90,29 @@ public:
 	PianoControl(pp_int32 id, 
 				 PPScreen* parentScreen, 
 				 EventListenerInterface* eventListener, 
-				 PPPoint location, 
-				 PPSize size, 
+				 const PPPoint& location, 
+				 const PPSize& size, 
 				 pp_uint8 numNotes,
 				 bool border = true);
 
 	~PianoControl();
 
 	void setMode(Modes mode) { this->mode = mode; }
-	Modes getMode() { return mode; }
+	Modes getMode() const { return mode; }
 
 	void setBorderColor(const PPColor& color) { this->borderColor = &color; }
 
 	void setxMax(pp_int32 xMax) { this->xMax = xMax; adjustScrollbars(); }
-	pp_int32 getxMax() { return xMax; }
+	pp_int32 getxMax() const { return xMax; }
 
 	void setyMax(pp_int32 yMax) { this->yMax = yMax; adjustScrollbars(); }
-	pp_int32 getyMax() { return yMax; }
+	pp_int32 getyMax() const { return yMax; }
 
 	void setxScale(pp_int32 scale);
 	void setyScale(pp_int32 scale);
 
-	pp_int32 getxScale() { return xscale; }
-	pp_int32 getyScale() { return yscale; }
+	pp_int32 getxScale() const { return xscale; }
+	pp_int32 getyScale() const { return yscale; }
 
 	void setSampleTable(const pp_uint8* nbu);
 
@@ -120,7 +120,7 @@ public:
 
 	void pressNote(pp_int32 note, bool pressed, bool muted = false);
 
-	bool getNoteState(pp_int32 note);
+	bool getNoteState(pp_int32 note) const;
 
 	void assureNoteVisible(pp_int32 note);
 

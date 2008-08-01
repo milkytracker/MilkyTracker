@@ -27,7 +27,8 @@
 #include "Font.h"
 #include "PPUIConfig.h"
 
-PPRadioGroup::PPRadioGroup(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size, pp_uint32 spacerHeight /* = 4 */) :
+PPRadioGroup::PPRadioGroup(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+	const PPPoint& location, const PPSize& size, pp_uint32 spacerHeight /* = 4 */) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	radioButtonColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorRadioGroupButton)),
 	textColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText)),
@@ -75,7 +76,7 @@ void PPRadioGroup::paint(PPGraphicsAbstract* g)
 
 	pp_uint32 spacerHeight = (font->getCharHeight()) + this->spacerHeight;
 
-	pp_uint32 spacerWidth = maxWidth + eDefaultRadioWidth;
+	pp_uint32 spacerWidth = maxWidth + DefaultRadioWidth;
 
 	for (i = 0; i < items.size(); i++)
 	{
@@ -198,7 +199,7 @@ pp_int32 PPRadioGroup::dispatchEvent(PPEvent* event)
 				break;
 
 			pp_uint32 spacerHeight = (font->getCharHeight()) + this->spacerHeight;
-			pp_uint32 spacerWidth = maxWidth + eDefaultRadioWidth;
+			pp_uint32 spacerWidth = maxWidth + DefaultRadioWidth;
 
 			pp_int32 index = -1;
 			if (!horizontal)
@@ -241,7 +242,7 @@ void PPRadioGroup::addItem(const PPString& item)
 		maxWidth = width;
 }
 
-const PPString& PPRadioGroup::getItem(pp_int32 index)
+const PPString& PPRadioGroup::getItem(pp_int32 index) const
 {
 	return *items.get((index >= 0 && index < items.size()) ? index : 0);
 }
@@ -249,5 +250,5 @@ const PPString& PPRadioGroup::getItem(pp_int32 index)
 void PPRadioGroup::fitSize()
 {
 	size.height = items.size()*((font->getCharHeight()) + this->spacerHeight + 1);
-	size.width = maxWidth + eDefaultRadioWidth;
+	size.width = maxWidth + DefaultRadioWidth;
 }

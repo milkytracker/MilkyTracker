@@ -52,8 +52,7 @@ private:
 	void update();
 
 public:
-	DialogEQ(PPScreen* screen, 
-			 DialogResponder* responder,
+	DialogEQ(PPScreen* screen, DialogResponder* responder,
 			 pp_int32 id,
 			 EQNumBands numBands);
 

@@ -56,8 +56,7 @@ public:
 	PeakLevelControl(pp_int32 id, 
 					 PPScreen* parentScreen, 
 					 EventListenerInterface* eventListener, 
-					 PPPoint location, 
-					 PPSize size, 
+					 const PPPoint& location, const PPSize& size, 
 					 bool border = true);
 
 	~PeakLevelControl();
@@ -68,7 +67,7 @@ public:
 	void setBorderColor(const PPColor& color) { this->borderColor = &color; }
 
 	void setPeak(pp_int32 whichPeak, pp_int32 p) { if (p>65536) p = 65536; if (p < 0) p = 0; peak[whichPeak] = p; }
-	pp_int32 getPeak(pp_int32 whichPeak) { return peak[whichPeak]; } 
+	pp_int32 getPeak(pp_int32 whichPeak) const { return peak[whichPeak]; } 
 
 	// from PPControl
 	virtual void paint(PPGraphicsAbstract* graphics);

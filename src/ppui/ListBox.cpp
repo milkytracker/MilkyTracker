@@ -56,15 +56,12 @@ void PPListBox::initialize()
 		hScrollbar->show(!autoHideHScroll);
 }
 
-PPListBox::PPListBox(pp_int32 id, 
-				 PPScreen* parentScreen, 
-				 EventListenerInterface* eventListener, 
-				 PPPoint location, 
-				 PPSize size, 
-				 bool border/*= true*/, 
-				 bool editable/*= false*/, 
-				 bool scrollable/* = true*/,
-				 bool showSelectionAlways/*= false*/) :
+PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+					 const PPPoint& location, const PPSize& size, 
+					 bool border/*= true*/, 
+					 bool editable/*= false*/, 
+					 bool scrollable/* = true*/,
+					 bool showSelectionAlways/*= false*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBorder)),
 	backGroundButtonColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground)),

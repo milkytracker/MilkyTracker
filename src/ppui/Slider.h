@@ -69,8 +69,11 @@ private:
 	void initButtons();
 
 public:
-	PPSlider(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, pp_int32 size, bool horizontal = false, bool buttonSwap = false);
-	~PPSlider();	
+	PPSlider(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+			 const PPPoint& location, pp_int32 size, 
+			 bool horizontal = false, bool buttonSwap = false);
+
+	virtual ~PPSlider();	
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
@@ -100,8 +103,8 @@ public:
 	// set bar position [0 - 65536]
 	void setBarPosition(pp_int32 pos, bool repaint = false);
 
-	pp_uint32 getBarSize() { return currentBarSize; }
-	pp_uint32 getBarPosition() { return currentBarPosition; }
+	pp_uint32 getBarSize() const { return currentBarSize; }
+	pp_uint32 getBarPosition() const { return currentBarPosition; }
 };
 
 #endif

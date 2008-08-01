@@ -31,7 +31,9 @@
 #include "Seperator.h"
 #include "GraphicsAbstract.h"
 
-PPSeperator::PPSeperator(pp_int32 id, PPScreen* parentScreen, PPPoint location, pp_uint32 size, const PPColor& theColor, bool horizontal/* = true*/) :
+PPSeperator::PPSeperator(pp_int32 id, PPScreen* parentScreen, 
+						 const PPPoint& location, pp_uint32 size, 
+						 const PPColor& theColor, bool horizontal/* = true*/) :
 	PPControl(id, parentScreen, NULL, location, PPSize(0,0)),
 	horizontal(horizontal),
 	color(&theColor)

@@ -28,12 +28,10 @@
 #include "Menu.h"
 #include "PPUIConfig.h"
 
-PPContextMenu::PPContextMenu(pp_int32 id, 
-						 PPScreen* parentScreen, 
-						 EventListenerInterface* eventListener, 
-						 PPPoint location, 
+PPContextMenu::PPContextMenu(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+						 const PPPoint& location, 
 						 const PPColor& selColor, 
-						 bool doAutoAddHide/* = false*/,
+						 bool doAutoAddHide/* = false*/, 
 						 PPFont* font/* = NULL*/) :
 	PPControl(id, parentScreen, eventListener, location, PPSize(0,0)),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorMenuBackground)),
@@ -290,7 +288,7 @@ void PPContextMenu::addEntry(const PPString& s, pp_int32 theId, PPContextMenu* c
 	}
 }
 
-bool PPContextMenu::hitMenu(const PPPoint& p)
+bool PPContextMenu::hitMenu(const PPPoint& p) const
 {
 	pp_int32 py = location.x;
 	pp_int32 px = location.y;

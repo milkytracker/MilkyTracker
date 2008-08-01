@@ -57,15 +57,13 @@ private:
 	void showSubMenu(PPContextMenu* subMenu);
 
 public:
-	PPContextMenu(pp_int32 id, 
-				PPScreen* parentScreen, 
-				EventListenerInterface* eventListener, 
-				PPPoint location, 
-				const PPColor& selColor, 
-				bool doAutoAddHide = false,
-				PPFont* font = NULL);
-
-	~PPContextMenu();
+	PPContextMenu(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				  const PPPoint& location, 
+				  const PPColor& selColor, 
+				  bool doAutoAddHide = false, 
+				  PPFont* font = NULL);
+	
+	virtual ~PPContextMenu();
 
 	void setColor(const PPColor& color) { this->color = &color; }
 
@@ -76,7 +74,8 @@ public:
 		PPRect r = menu->getBoundingRect();		
 		setSize(PPSize(r.width(), r.height()));
 	}
-	PPFont* getFont() { return font; }
+	
+	PPFont* getFont() const { return font; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
@@ -90,15 +89,15 @@ public:
 
 	bool setState(pp_int32 theId, pp_uint32 newState) { return menu->setState(theId, newState); }
 	
-	bool hitMenu(const PPPoint& p);
+	bool hitMenu(const PPPoint& p) const;
 
 	void processMenuHit(const PPPoint& p);
 	
 	void setSubMenu(bool bSubMenu) { menu->setSubMenu(bSubMenu); }
-	bool isSubMenu() { return menu->isSubMenu(); }
+	bool isSubMenu() const { return menu->isSubMenu(); }
 
 	void setParentMenu(PPContextMenu* parent) { menu->setParentMenu(parent); }
-	PPContextMenu* getParentMenu() { return menu->getParentMenu(); }
+	PPContextMenu* getParentMenu() const { return menu->getParentMenu(); }
 	
 	void setNotifyParentOnHide(bool notifyParentOnHide) { this->notifyParentOnHide = notifyParentOnHide; }
 	bool getNotifyParentOnHide() const { return notifyParentOnHide; }

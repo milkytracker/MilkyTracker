@@ -65,9 +65,12 @@ private:
 	void initButtons();
 
 public:
-	PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, pp_int32 size, bool horizontal = false);
-	~PPScrollbar();	
+	PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+				const PPPoint& location, pp_int32 size, 
+				bool horizontal = false);
 
+	virtual ~PPScrollbar();	
+	
 	void setBackgroundColor(const PPColor& color) { backgroundColor = color; }
 
 	// set bar size [none:0 - full:65536]
@@ -75,8 +78,8 @@ public:
 	// set bar position [0 - 65536]
 	void setBarPosition(pp_int32 pos, bool repaint = false);
 
-	pp_uint32 getBarSize() { return currentBarSize; }
-	pp_uint32 getBarPosition() { return currentBarPosition; }
+	pp_uint32 getBarSize() const { return currentBarSize; }
+	pp_uint32 getBarPosition() const { return currentBarPosition; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	

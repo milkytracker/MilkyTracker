@@ -60,7 +60,8 @@ protected:
 	bool hasFocus;
 
 	PPControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener = NULL);
-	PPControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, const PPPoint& location, const PPSize& size);
+	PPControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+			  const PPPoint& location, const PPSize& size);
 
 public:
 	virtual ~PPControl() {}

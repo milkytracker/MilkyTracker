@@ -98,7 +98,8 @@ private:
 	void assureTabVisible(pp_uint32 index);
 	
 public:
-	TabHeaderControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, PPPoint location, PPSize size);
+	TabHeaderControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+					 const PPPoint& location, const PPSize& size);
 	virtual ~TabHeaderControl();
 
 	virtual void setSize(const PPSize& size);
@@ -106,13 +107,13 @@ public:
 
 	void setColor(const PPColor& color) { this->color = &color; backgroundButton->setColor(color); }
 
-	const PPColor& getColor() { return *color; }
+	const PPColor& getColor() const { return *color; }
 
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
-	virtual	bool isVisible() { return PPControl::isVisible() && getNumTabs() > 1; }
+	virtual	bool isVisible() const { return PPControl::isVisible() && getNumTabs() > 1; }
 
 	// from EventListenerInterface
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);

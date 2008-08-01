@@ -49,7 +49,8 @@ void PPScreen::paintDragHighlite(PPGraphicsAbstract* g)
 }
 
 PPScreen::PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* eventListener /* = NULL */) :
-	// no focused control yet
+	displayDevice(displayDevice),
+	eventListener(eventListener),	
 	focusedControl(NULL),
 	beforeModalFocusedControl(NULL),
 	modalControl(NULL),
@@ -57,16 +58,12 @@ PPScreen::PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* e
 	rootContainer(NULL),
 	lastMouseOverControl(NULL)
 {
-	// Set our display device
-	this->displayDevice = displayDevice;
-
-	// set our event listener
-	this->eventListener = eventListener;
-	
 	contextMenuControls = new PPSimpleVector<PPControl>(16, false);
 	timerEventControls = new PPSimpleVector<PPControl>(16, false);
 	
-	rootContainer = new PPTransparentContainer(-1, this, eventListener, PPPoint(0, 0), PPSize(displayDevice->getWidth(), displayDevice->getHeight()));
+	rootContainer = new PPTransparentContainer(-1, this, eventListener, 
+											   PPPoint(0, 0), 
+											   PPSize(displayDevice->getWidth(), displayDevice->getHeight()));
 }
 
 PPScreen::~PPScreen()
@@ -209,330 +206,6 @@ void PPScreen::raiseEvent(PPEvent* event)
 	}
 
 	rootContainer->dispatchEvent(event);
-
-#if 0
-	pp_int32 i;
-	bool handled = false;
-
-	/*if (contextMenuControls->size() && event->getID() == eKeyDown)
-	{
-		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		if (keyCode == VK_ESCAPE)
-		{
-			setContextMenuControl(NULL);
-			return;
-		}
-	}*/
-
-	// route events to event listener first
-	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event);
-
-	if (event->getID() == eInvalid)
-		goto exit;
-
-	// ------- handle modal control -----------------------------------
-	if (modalControl && modalControl->isVisible())
-	{
-		if (modalControl->getEventListener() && modalControl->getEventListener() != eventListener)
-			modalControl->getEventListener()->handleEvent(reinterpret_cast<PPObject*>(this), event);
-	
-		if (!modalControl)
-			goto exit;
-	
-		switch (event->getID())
-		{
-			case eLMouseDown:
-			case eLMouseDoubleClick:
-			case eRMouseDown:
-			case eRMouseDoubleClick:
-			case eFocusGained:
-			case eFocusGainedNoRepaint:
-			{
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-				
-				if (modalControl->hit(*p) && modalControl->isActive())
-				{
-					modalControl->dispatchEvent(event);
-				}
-				break;
-			}
-			default:
-				modalControl->dispatchEvent(event);
-		}
-		
-		if (event->getID() != eTimer)
-			goto exit;
-	}
-
-	// ------- handle context menu -----------------------------------
-	if (contextMenuControls->size() && event->getID() != eTimer)
-	{
-		handled = true;
-		
-		bool mouseMoveHandeled = false;
-		if (event->getID() == eMouseMoved || event->getID() == eLMouseDrag)
-		{
-			for (i = 0; i < contextMenuControls->size(); i++)
-			{
-				PPControl* contextMenuControl = contextMenuControls->get(contextMenuControls->size()-1);
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-						
-				if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
-				{
-					contextMenuControl->dispatchEvent(event);
-					mouseMoveHandeled = true;
-				}
-			}
-		}
-		if (mouseMoveHandeled)
-			goto exit;
-		
-		for (i = 0; i < contextMenuControls->size(); i++)
-		{
-			//PPControl* contextMenuControl = contextMenuControls->get(contextMenuControls->size()-1);
-			
-			PPControl* contextMenuControl = contextMenuControls->get(i);
-			if (contextMenuControl && contextMenuControl->isVisible())
-			{
-				switch (event->getID())
-				{
-					case eLMouseDown:
-						//case eLMouseDoubleClick:
-					case eRMouseDown:
-						//case eRMouseDoubleClick:
-					{
-						PPPoint* p = (PPPoint*)event->getDataPtr();
-						
-						if (contextMenuControl->hit(*p) && contextMenuControl->isActive())
-						{
-							contextMenuControl->dispatchEvent(event);
-						}
-						else //if (!contextMenuControl->hit(*p))
-						{
-							bool inOtherMenu = false;
-							for (pp_int32 j = 0; j < contextMenuControls->size(); j++)
-								if (contextMenuControls->get(j) != contextMenuControl &&
-									contextMenuControls->get(j)->hit(*p))
-								{
-									inOtherMenu = true;
-									break;
-								}
-							
-							if (!inOtherMenu)
-							{
-								if (event->getID() == eRMouseDown ||
-									event->getID() == eLMouseDown)
-									handled = false;
-								setContextMenuControl(NULL);
-							}
-						}
-						break;
-					}
-					default:
-						contextMenuControl->dispatchEvent(event);
-				}
-			}
-		}
-		if (handled)
-			goto exit;
-	}
-	
-	// route timer event
-	if (event->getID() == eTimer)
-	{
-		for (i = 0; i < timerEventControls->size(); i++)
-		{
-			PPControl* control = timerEventControls->get(i);
-			if (!control->isVisible() || !control->receiveTimerEvent())
-				continue;
-			
-			control->dispatchEvent(event);
-		}
-	}
-	// handle events which are routed to focused control
-	else if (focusedControl && 
-		event->getID() != eLMouseDown &&
-		event->getID() != eLMouseDoubleClick &&
-		event->getID() != eRMouseDown &&
-		event->getID() != eRMouseDoubleClick &&
-		event->getID() != eFocusGained &&
-		event->getID() != eFocusGainedNoRepaint &&
-		event->getID() != eMouseWheelMoved &&
-		event->getID() != eMouseMoved)
-	{
-
-		switch (event->getID())
-		{
-			case eRMouseUp:
-			{
-				focusedControl->dispatchEvent(event);
-
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-				for (i = 0; i < controls.size(); i++)
-				{
-					PPControl* control = controls.get(i);
-					if (!control->isVisible() || control == focusedControl)
-						continue;
-					if (control->hit(*p))
-					{
-						control->dispatchEvent(event);
-					}
-				}
-
-				// reset focus if control cannot gain focus
-				if (!focusedControl->gainsFocus())
-					focusedControl = lastFocusedControl;
-
-				goto exit;
-				break;
-			}
-
-			// Mouse button up event
-			case eLMouseUp:
-			{
-				focusedControl->dispatchEvent(event);
-
-				// reset focus if control cannot gain focus
-				if (focusedControl && !focusedControl->gainsFocus())
-					focusedControl = lastFocusedControl;
-				
-				goto exit;
-			}; break; 
-
-			/*case eLMouseDrag:
-				focusedControl->dispatchEvent(event);
-				break;
-
-			case eLMouseRepeat:
-				focused*/
-			default:
-				focusedControl->dispatchEvent(event);
-				break;
-		
-		}
-	
-	
-	}
-
-forward:
-	// handle other events
-	handled = false;
-	for (i = 0; i < controls.size(); i++)
-	{
-		
-		PPControl* control = controls.get(i);
-
-		if (!control->isVisible()  || !control->isEnabled())
-			continue;
-
-		switch (event->getID())
-		{
-			// Mouse button down event
-			case eMouseWheelMoved:
-			{
-				TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
-				
-				if (control->hit(params->pos) && control->isActive())
-				{
-					control->dispatchEvent(event);
-					goto exit;
-				}
-				
-				break;
-			}
-			
-			case eMouseMoved:
-			{
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-				
-				if (control->isActive())
-				{
-					bool bHit = control->hit(*p);
-					bool bLastHit = control->hit(lastMousePoint);
-				
-					if (!bLastHit && bHit)
-					{
-						PPEvent e(eMouseEntered, p, sizeof(PPPoint));
-						control->dispatchEvent(&e);
-					}
-					else if (bLastHit && !bHit)
-					{
-						PPEvent e(eMouseLeft, p, sizeof(PPPoint));
-						control->dispatchEvent(&e);
-					}
-				
-					if (bHit)
-					{
-						if (control != lastMouseOverControl && lastMouseOverControl)
-							lastMouseOverControl->dispatchEvent(event);
-
-						control->dispatchEvent(event);
-						lastMouseOverControl = control;
-						goto exit;
-					}
-				}
-				break;
-			}
-
-			case eLMouseUp:
-			case eRMouseUp:
-			{
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-				
-				if (control->hit(*p) && control->isActive())
-				{
-					control->dispatchEvent(event);
-					goto exit;
-				}
-				break;
-			}
-			
-			case eLMouseDown:
-			case eLMouseDoubleClick:
-			case eRMouseDown:
-			case eRMouseDoubleClick:
-			case eFocusGained:
-			case eFocusGainedNoRepaint:
-			{
-				PPPoint* p = (PPPoint*)event->getDataPtr();
-				
-				if (control->hit(*p) && control->isActive())
-				{
-					if (control != focusedControl)
-						lastFocusedControl = focusedControl;
-					
-					if (control->gainsFocus() && focusedControl != control && focusedControl)
-					{
-						PPEvent e(event->getID() == eFocusGainedNoRepaint ? eFocusLostNoRepaint : eFocusLost);
-						focusedControl->dispatchEvent(&e);
-					}
-					
-					if (focusedControl != control)
-					{
-						focusedControl = control;
-						if (lastFocusedControl != focusedControl && focusedControl->gainsFocus())
-						{
-							PPEvent e(event->getID() == eFocusGainedNoRepaint ? eFocusGainedNoRepaint : eFocusGained, p, sizeof(PPPoint));
-							focusedControl->dispatchEvent(&e);
-						}
-					}
-
-					control->dispatchEvent(event);
-					goto exit;
-				}
-			}; break;
-
-		}
-		
-	}	
-	if (event->getID() == eMouseMoved)
-	{
-		PPPoint* p = (PPPoint*)event->getDataPtr();		
-		lastMousePoint = *p;
-	}
-	
-exit:;
-#endif
 }
 
 void PPScreen::pauseUpdate(bool pause)
@@ -827,7 +500,7 @@ void PPScreen::setFocus(PPControl* control, bool repaint/* = true*/)
 	}
 }
 
-PPControl* PPScreen::getFocusedControl()
+PPControl* PPScreen::getFocusedControl() const
 {
 	// first we need to find the control which is at the end of the focus hierarchy
 	PPControl* parent = rootContainer;
@@ -840,7 +513,7 @@ PPControl* PPScreen::getFocusedControl()
 	return parent->isContainer() ? NULL : parent;
 }
 
-bool PPScreen::hasFocus(PPControl* control)
+bool PPScreen::hasFocus(PPControl* control) const
 { 
 	// if the client is asking for container focus we first need to find the control 
 	// which is at the end of the focus hierarchy (see above)
@@ -886,7 +559,7 @@ bool PPScreen::removeTimerEventControl(PPControl* control)
 }
 
 
-PPControl* PPScreen::getControlByID(pp_int32 id)
+PPControl* PPScreen::getControlByID(pp_int32 id) const
 {
 	return rootContainer->getControlByID(id);
 }
@@ -1014,7 +687,7 @@ bool PPScreen::removeLastContextMenuControl(bool repaint/* = true*/)
 	return false;
 }
 
-bool PPScreen::hasContextMenu(PPControl* control)
+bool PPScreen::hasContextMenu(PPControl* control) const
 {
 	if (!contextMenuControls->size())
 		return false;
@@ -1040,7 +713,7 @@ void PPScreen::setShowDragHilite(bool b)
 	paint(); 
 }
 
-pp_int32 PPScreen::getWidth()
+pp_int32 PPScreen::getWidth() const
 {
 	if (displayDevice == NULL)
 		return -1;
@@ -1048,7 +721,7 @@ pp_int32 PPScreen::getWidth()
 	return displayDevice->getWidth();
 }
 
-pp_int32 PPScreen::getHeight()
+pp_int32 PPScreen::getHeight() const
 {
 	if (displayDevice == NULL)
 		return -1;
@@ -1088,7 +761,7 @@ bool PPScreen::goFullScreen(bool b)
 	return false;
 }
 
-bool PPScreen::isFullScreen()
+bool PPScreen::isFullScreen() const
 {
 	if (displayDevice)
 		return displayDevice->isFullScreen();
@@ -1108,7 +781,7 @@ void PPScreen::setMouseCursor(MouseCursorTypes type)
 		displayDevice->setMouseCursor(type);
 }
 
-MouseCursorTypes PPScreen::getCurrentActiveMouseCursor()
+MouseCursorTypes PPScreen::getCurrentActiveMouseCursor() const
 {
 	if (displayDevice)
 		return (MouseCursorTypes)displayDevice->getCurrentActiveMouseCursor();
