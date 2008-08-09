@@ -134,10 +134,10 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			noiseFilterTypes.add(new PPString("Brown"));
 
 			dialog = new DialogGroupSelection(parentScreen, 
-																	toolHandlerResponder, 
-																	PP_DEFAULT_ID, 
-																	"Select noise type"PPSTR_PERIODS,
-																	noiseFilterTypes);
+											  toolHandlerResponder, 
+											  PP_DEFAULT_ID, 
+											  "Select noise type"PPSTR_PERIODS,
+											  noiseFilterTypes);
 			break;
 		}
 		

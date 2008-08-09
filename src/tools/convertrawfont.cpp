@@ -32,8 +32,8 @@
 #include "Font.h"
 
 #define NUMCHARS	99
-#define CHARWIDTH	8
-#define CHARHEIGHT	8
+#define CHARWIDTH	12
+#define CHARHEIGHT	12
 #define CHARSIZE	(CHARWIDTH*CHARHEIGHT)	
 
 static pp_uint8 dstFont[CHARSIZE*256/8];
@@ -46,7 +46,7 @@ static pp_uint8 src[CHARSIZE*NUMCHARS];
 		{ \
 			if (src[k*CHARSIZE+y*CHARWIDTH+x]) \
 			{ \
-				bitstream->write(i*CHARSIZE+y*CHARWIDTH+(CHARWIDTH-1-x), true); \
+				bitstream->write(i*CHARSIZE+y*CHARWIDTH+/*(CHARWIDTH-1-x)*/x, true); \
 			} \
 		} \
 	}
@@ -110,7 +110,7 @@ void convert(const char* infile, const char* outfile)
 		src[(CHARHEIGHT/2-1)*CHARWIDTH+x] = 0xFF;
 		src[(CHARHEIGHT/2)*CHARWIDTH+x] = 0xFF;
 	}
-	k = ' ';
+	k = 0;
 	i = 0xc4;
 	CONVERT_LARGE_CHAR
 
@@ -121,10 +121,13 @@ void convert(const char* infile, const char* outfile)
 
 int main()
 {
-	convert("IDC-Harmonica.raw", "IDC-Harmonica.8X8");
-	convert("IDC-Hoodlum.raw", "IDC-Hoodlum.8X8");
-	convert("IDC-MicroKnight.raw", "IDC-MicroKnight.8X8");
-	convert("REZ-ASCII.raw", "REZ-ASCII.8X8");
+	//convert("IDC-Harmonica.raw", "IDC-Harmonica.8X8");
+	//convert("IDC-Hoodlum.raw", "IDC-Hoodlum.8X8");
+	//convert("IDC-MicroKnight.raw", "IDC-MicroKnight.8X8");
+	//convert("REZ-ASCII.raw", "REZ-ASCII.8X8");
+
+	convert("IDC-Harmonica12.raw", "IDC-Harmonica.12X12");
+	convert("IDC-MicroKnight12.raw", "IDC-MicroKnight.12X12");
 
 	return 0;
 }

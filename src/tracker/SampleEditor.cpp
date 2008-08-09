@@ -2046,10 +2046,10 @@ void SampleEditor::tool_triangularSmoothSample(const FilterParameters* par)
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = (getFloatSampleFromWaveform(i - sStart - 2, buffer, sLen) +
-				  getFloatSampleFromWaveform(i - sStart - 1, buffer, sLen)*2.0f +
-				  getFloatSampleFromWaveform(i - sStart, buffer, sLen)*3.0f +
-				  getFloatSampleFromWaveform(i - sStart + 1, buffer, sLen)*2.0f +
-				  getFloatSampleFromWaveform(i - sStart + 2, buffer, sLen)) * (1.0f/9.0f);
+				   getFloatSampleFromWaveform(i - sStart - 1, buffer, sLen)*2.0f +
+				   getFloatSampleFromWaveform(i - sStart, buffer, sLen)*3.0f +
+				   getFloatSampleFromWaveform(i - sStart + 1, buffer, sLen)*2.0f +
+				   getFloatSampleFromWaveform(i - sStart + 2, buffer, sLen)) * (1.0f/9.0f);
 				  
 		setFloatSampleInWaveform(i, f);		
 	}

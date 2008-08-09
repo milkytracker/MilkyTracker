@@ -123,10 +123,8 @@ private:
 			zeroEffectCharacter('\xf4')
 		{
 		}
-	};
+	} properties;
 	
-	Properties properties;
-
 	PPFont* font;
 		
 	PPScrollbar* hTopScrollbar;
