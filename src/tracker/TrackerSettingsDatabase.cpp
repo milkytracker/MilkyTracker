@@ -32,9 +32,10 @@
 #include "TrackerSettingsDatabase.h"
 #include "XMFile.h"
 
-TrackerSettingsDatabase::TrackerSettingsDatabase(const TrackerSettingsDatabase& source)
+TrackerSettingsDatabase::TrackerSettingsDatabase(const TrackerSettingsDatabase& source) :
+	dictionary(source.dictionary),
+	maxKeys(source.maxKeys)
 {
-	dictionary = source.dictionary;
 }
 
 TrackerSettingsDatabase& TrackerSettingsDatabase::operator=(const TrackerSettingsDatabase& source)
@@ -42,6 +43,7 @@ TrackerSettingsDatabase& TrackerSettingsDatabase::operator=(const TrackerSetting
 	if (this != &source)
 	{
 		dictionary = source.dictionary;		
+		maxKeys = source.maxKeys;
 	}
 	
 	return *this;
@@ -71,6 +73,9 @@ bool TrackerSettingsDatabase::serialize(XMFile& f)
 {
 	if (f.isOpenForWriting())
 	{
+		if (maxKeys >= 0 && dictionary.size() > maxKeys)
+			return false;
+	
 		f.writeDword(dictionary.size());
 
 		const PPDictionaryKey* theKey = dictionary.getFirstKey();
@@ -90,6 +95,9 @@ bool TrackerSettingsDatabase::serialize(XMFile& f)
 	else
 	{
 		pp_int32 size = f.readDword();
+
+		if (maxKeys >= 0 && size > maxKeys)
+			return false;
 	
 		for (pp_int32 i = 0; i < size; i++)
 		{

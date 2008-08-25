@@ -34,7 +34,7 @@
 
 bool ColorExportImport::importColorPalette(TColorPalette& palette)
 {
-	TrackerSettingsDatabase colorDataBase;
+	TrackerSettingsDatabase colorDataBase(1);
 
 	XMFile f(fileName);
 
@@ -44,7 +44,8 @@ bool ColorExportImport::importColorPalette(TColorPalette& palette)
 		return false;
 	}
 	
-	colorDataBase.serialize(f);
+	if (!colorDataBase.serialize(f))
+		return false;
 	
 	PPDictionaryKey* key = colorDataBase.restore("ACTIVECOLORS");
 	
@@ -53,12 +54,12 @@ bool ColorExportImport::importColorPalette(TColorPalette& palette)
 		palette = ColorPaletteContainer::decodePalette(key->getStringValue());			
 	}	
 	
-	return true;
+	return key != NULL;
 }
 
 bool ColorExportImport::exportColorPalette(const TColorPalette& palette)
 {
-	TrackerSettingsDatabase colorDataBase;
+	TrackerSettingsDatabase colorDataBase(1);
 	colorDataBase.store("ACTIVECOLORS", ColorPaletteContainer::encodePalette(palette));
 		
 	XMFile f(fileName, true);
@@ -68,7 +69,8 @@ bool ColorExportImport::exportColorPalette(const TColorPalette& palette)
 		return false;
 	}
 		
-	colorDataBase.serialize(f);
+	if (!colorDataBase.serialize(f))
+		return false;
 	
 	return true;
 }

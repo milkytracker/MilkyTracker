@@ -41,9 +41,13 @@ class TrackerSettingsDatabase
 {
 private:
 	PPDictionary dictionary;
+	pp_int32 maxKeys;
 	
 public:
-	TrackerSettingsDatabase() {}
+	TrackerSettingsDatabase(pp_int32 maxKeys = -1) :
+		maxKeys(maxKeys)
+	{
+	}
 	
 	// copy c'tor
 	TrackerSettingsDatabase(const TrackerSettingsDatabase& source);	
