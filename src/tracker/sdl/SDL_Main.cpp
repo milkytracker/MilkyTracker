@@ -274,7 +274,7 @@ enum SDLUserEvents
 	SDLUserEventMidiKeyUp,
 };
 
-static Uint32 timerCallback(Uint32 interval)
+static SDLCALL Uint32 timerCallback(Uint32 interval)
 {
 	timerMutex->lock();
 
@@ -836,7 +836,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		exit(1);
 	}
-	atexit(SDL_Quit);
+	// atexit(SDL_Quit);	Not really needed, and needs a wrapper for OS/2
 
 #ifdef __GP2X__
 	if ( SDL_Init(SDL_INIT_JOYSTICK) < 0 || !SDL_JoystickOpen(0)) 

@@ -34,7 +34,7 @@
 
 #include "AudioDriver_SDL.h"
 
-void AudioDriver_SDL::fill_audio(void *udata, Uint8 *stream, int length) 
+void SDLCALL AudioDriver_SDL::fill_audio(void *udata, Uint8 *stream, int length) 
 {
 	AudioDriver_SDL* audioDriver = (AudioDriver_SDL*)udata;
 
