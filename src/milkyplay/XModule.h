@@ -411,14 +411,19 @@ public:
 	///////////////////////////////////////////////////////
 	// load sample into memory							 //
 	///////////////////////////////////////////////////////
-	static bool			loadSample(XMFileBase& f, void* buffer, mp_uint32 size, mp_uint32 length,mp_sint32 flags = ST_DEFAULT);
+	static bool			loadSample(XMFileBase& f, void* buffer, 
+								   mp_uint32 size, mp_uint32 length, 
+								   mp_sint32 flags = ST_DEFAULT);
 	
 	///////////////////////////////////////////////////////
 	// load a bunch of samples into memory				 //
 	///////////////////////////////////////////////////////
-	mp_sint32			loadModuleSample(XMFileBase& f, mp_sint32 index, mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT);
-
-	mp_sint32			loadModuleSamples(XMFileBase& f, mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT);
+	mp_sint32			loadModuleSample(XMFileBase& f, mp_sint32 index,
+										 mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT,
+										 mp_uint32 alternateSize = 0);
+	
+	mp_sint32			loadModuleSamples(XMFileBase& f, 
+										  mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT);
 	
 	static void			convertXMVolumeEffects(mp_ubyte volume, mp_ubyte& eff, mp_ubyte& op);
 	

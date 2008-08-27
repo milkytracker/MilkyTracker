@@ -454,7 +454,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 		mp_sint32 s = 0;
 		mp_sint32 e = 0;
 		for (y=0;y<header->insnum;y++) {
-		
+
 			// fixes MOOH.XM loading problems
 			// seems to store more instruments in the header than in the actual file
 			if (f.posWithBaseOffset() >= fileSize)
@@ -649,6 +649,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					{
 						bool adpcm = (smp[s].res == 0xAD);
 					
+						mp_uint32 oldSize = smp[s].samplen;
 						if (smp[s].type&16) 
 						{
 							smp[s].samplen>>=1;
@@ -657,8 +658,9 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						}
 						
 						if (module->loadModuleSample(f, s, 
-													  adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA, 
-													  adpcm ? (XModule::ST_PACKING_ADPCM | XModule::ST_16BIT) : (XModule::ST_DELTA | XModule::ST_16BIT)) != 0)
+													 adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA, 
+													 adpcm ? (XModule::ST_PACKING_ADPCM | XModule::ST_16BIT) : (XModule::ST_DELTA | XModule::ST_16BIT), 
+													 oldSize) != 0)
 							return -7;					
 						
 						if (adpcm)
@@ -700,6 +702,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 				if (smp[s].samplen)
 				{
+					mp_uint32 oldSize = smp[s].samplen;
 					if (smp[s].type&16) 
 					{
 						smp[s].samplen>>=1;
@@ -707,7 +710,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						smp[s].looplen>>=1;
 					}
 					
-					if (module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT) != 0)
+					if (module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT, oldSize) != 0)
 						return -7;					
 				}
 				

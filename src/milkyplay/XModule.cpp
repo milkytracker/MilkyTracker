@@ -1555,32 +1555,38 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	return true;
 }
 
-mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index, mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/)
+mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index, 
+									mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/,
+									mp_uint32 alternateSize/* = 0*/)
 {
 	if (smp[index].type & 16)
 	{
-		smp[index].sample = (mp_sbyte*)allocSampleMem(smp[index].samplen*2);
+		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen*2;
+		
+		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		
 		if (smp[index].sample == NULL)
 		{
 			return -7;
 		}
 		
-		if (!loadSample(f,smp[index].sample, smp[index].samplen<<1, smp[index].samplen, flags16))
+		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags16))
 		{
 			return -7;
 		}
 	}
 	else
 	{
-		smp[index].sample = (mp_sbyte*)allocSampleMem(smp[index].samplen);
+		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen;
+		
+		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		
 		if (smp[index].sample == NULL)
 		{
 			return -7;
 		}
 		
-		if (!loadSample(f,smp[index].sample, smp[index].samplen, smp[index].samplen, flags8))
+		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags8))
 		{
 			return -7;
 		}		
@@ -1588,7 +1594,6 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index, mp_sint32 fl
 	
 	return 0;
 }
-
 
 mp_sint32 XModule::loadModuleSamples(XMFileBase& f, mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/)
 {
