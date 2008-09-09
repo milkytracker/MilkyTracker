@@ -477,6 +477,8 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 		{
 			module->smp[i*16+j].venvnum = venvIndex + 1;
 			module->smp[i*16+j].penvnum = penvIndex + 1;
+			// default fade out to cut
+			module->smp[i*16+j].volfade = 0xFFFF;
 		}
 
 		instruments[i].volfade = 0xFFFF >> 1;
