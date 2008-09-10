@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <math.h>
 #include "BasicTypes.h"
+#include "Font.h"
 #include "PPPathFactory.h"
 #include "XMFile.h"
 
@@ -351,6 +352,8 @@ bool checkExtension(const char* ext, pp_uint32& width, pp_uint32& height)
 
 int main(int argc, const char* argv[])
 {
+	bool writeRawImage = true;
+
 	pp_int32 i = 0;
 	
 	// output
@@ -374,7 +377,7 @@ int main(int argc, const char* argv[])
 	while (entry)
 	{
 		if (!entry->isHidden() && entry->isFile())
-		{
+		{				
 			PPSystemString extension = entry->getName().getExtension();
 			extension.toUpper();
 			
@@ -457,6 +460,30 @@ int main(int argc, const char* argv[])
 						f << '"' << endl;
 						j = 0;
 					}
+				}
+				
+				if (writeRawImage)				
+				{
+					
+					PPSystemString file = currentFile.stripPath();
+					
+					file.append(".raw");
+					
+					cout << "Writing raw image: " << file << endl;
+					
+					char* rawImage = new char[256*width*height];
+					
+					Bitstream bitstream(data, size);
+					
+					for (pp_int32 j = 0; j < width*height*256; j++)
+						rawImage[j] = bitstream.read(j) ? 255 : 0;
+					
+					fstream bfstream(file,ios::out|ios::binary);
+			        bfstream.write(rawImage, 256*width*height);
+          			bfstream.close();					
+					
+					delete[] rawImage;
+					
 				}
 				
 				delete data;
