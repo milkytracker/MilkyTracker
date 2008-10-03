@@ -37,6 +37,7 @@
 
 class PPDisplayDevice : public PPDisplayDeviceBase
 {
+private:
 	struct GWorldWrapper
 	{
 		Rect		pictSize;
@@ -56,6 +57,10 @@ class PPDisplayDevice : public PPDisplayDeviceBase
 
 	GWorldWrapper* mainGWorld;
 	GWorldWrapper* waitGWorld;
+
+	CFDictionaryRef oldmode;
+	CFDictionaryRef mode;
+	Rect oldRc;
 	
 public:
 	PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_int32 width, pp_int32 height, pp_uint32 bpp = 32);
@@ -73,6 +78,7 @@ public:
 	virtual void setTitle(const PPSystemString& title);	
 	virtual void setSize(const PPSize& size);
 	virtual bool goFullScreen(bool b);
+	virtual PPSize getDisplayResolution() const;
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);

@@ -1271,9 +1271,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case LISTBOX_INSTRUMENTS:
 			{
 				pp_int32 index = *((pp_int32*)event->getDataPtr()) + 1;
-				selectInstrument(index);
-				for (pp_int32 i = 0; i < sections->size(); i++)
-					sections->get(i)->notifyInstrumentSelect(index);
+				selectInstrument(index);		
 				screen->update();
 				break;
 			}
@@ -2137,6 +2135,9 @@ void Tracker::selectInstrument(pp_int32 instrument)
 	updateSampleEditor(false);
 	// update instrument/sample editor
 	sectionInstruments->update(false);
+
+	for (pp_int32 i = 0; i < sections->size(); i++)
+		sections->get(i)->notifyInstrumentSelect(instrument);
 }
 
 void Tracker::fillInstrumentListBox(PPListBox* listBox, ModuleEditor* moduleEditor/* = NULL*/)

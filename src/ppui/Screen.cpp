@@ -769,6 +769,16 @@ bool PPScreen::isFullScreen() const
 	return false;
 }
 
+PPSize PPScreen::getDisplayResolution() const
+{
+	PPSize size(-1, -1);
+	
+	if (displayDevice)
+		size = displayDevice->getDisplayResolution();
+		
+	return size;
+}
+
 void PPScreen::signalWaitState(bool b, const PPColor& color)
 {
 	if (displayDevice)

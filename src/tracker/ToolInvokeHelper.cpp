@@ -143,8 +143,9 @@ pp_int32 ToolInvokeHelper::ActionOkay(PPObject* sender)
 			else
 			{
 				tracker.enableInstrument(true);
-				tracker.selectInstrument(value);
+				// set listbox index before calling Tracker::selectInstrument()
 				tracker.listBoxInstruments->setSelectedIndex(value-1, false);
+				tracker.selectInstrument(value);
 			}
 		}
 	}

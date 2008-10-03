@@ -150,6 +150,8 @@ public:
 	bool goFullScreen(bool b);
 	bool isFullScreen() const;
 	
+	PPSize getDisplayResolution() const;
+	
 	void signalWaitState(bool b, const PPColor& color);	
 	
 	void setMouseCursor(MouseCursorTypes type);

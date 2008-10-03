@@ -164,12 +164,13 @@ void PPDisplayDevice::GWorldWrapper::LockGWorldMemory()
 
 PPDisplayDevice::PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_int32 width, pp_int32 height, pp_uint32 bpp/* = 32*/) : 
 	PPDisplayDeviceBase(width, height),
+	mainWindow(mainWindow),
+	waitWindow(waitWindow),	
+	oldmode(NULL),
+	mode(NULL),
 	drawThread(NULL),
 	waitWindowVisible(false)
 {
-	this->mainWindow = mainWindow;
-	this->waitWindow = waitWindow;
-	
 	mainGWorld = new GWorldWrapper(width, height, bpp);
 	
 	pp_uint8* buffer;
@@ -340,10 +341,7 @@ void PPDisplayDevice::setSize(const PPSize& size)
 
 bool PPDisplayDevice::goFullScreen(bool b)
 {
-	static CFDictionaryRef  oldmode = NULL;
-	static CFDictionaryRef  mode	= NULL;
-	static Rect				oldRc;
-	OSStatus				err;
+	OSStatus err;
 	
 	if (b && !bFullScreen)
 		// switch display res
@@ -396,33 +394,74 @@ bool PPDisplayDevice::goFullScreen(bool b)
 	return false;
 }
 
+PPSize PPDisplayDevice::getDisplayResolution() const
+{
+	const int MAX_DISPLAYS = 32;
+	
+	CGDirectDisplayID displayArray [MAX_DISPLAYS];	
+	CGDisplayCount numDisplays;
+	
+	CFNumberRef number;	
+	CFBooleanRef booleanValue;
+	
+	long    height, width, refresh, mode, bpp, bps, spp, rowBytes, gui, ioflags;
+	
+	int     i;
+	
+	CGGetActiveDisplayList (MAX_DISPLAYS, displayArray, &numDisplays); 
+	
+	for (i = 0; i < numDisplays; i++) 
+	{ 		
+		width = CGDisplayPixelsWide (displayArray[i]);		
+		height = CGDisplayPixelsHigh (displayArray[i]);		
+
+		// we are only interested in display properties
+		//bpp = CGDisplayBitsPerPixel (displayArray[i]);		
+		//bps = CGDisplayBitsPerSample (displayArray[i]);		
+		//spp = CGDisplaySamplesPerPixel (displayArray[i]);		
+		//rowBytes = CGDisplayBytesPerRow (displayArray[i]);		
+		
+		//number = (CFNumberRef)CFDictionaryGetValue (CGDisplayCurrentMode (displayArray[i]), kCGDisplayMode);		
+		//CFNumberGetValue (number, kCFNumberLongType, &mode);
+		
+		//number =(CFNumberRef)CFDictionaryGetValue (CGDisplayCurrentMode (displayArray[i]), kCGDisplayRefreshRate);		
+		//CFNumberGetValue (number, kCFNumberLongType, &refresh);
+		
+		//booleanValue = (CFBooleanRef)CFDictionaryGetValue (CGDisplayCurrentMode(displayArray[i]), kCGDisplayModeUsableForDesktopGUI);		
+		//CFNumberGetValue (number, kCFNumberLongType, &gui);
+		
+		//number = (CFNumberRef)CFDictionaryGetValue (CGDisplayCurrentMode (displayArray[i]), kCGDisplayIOFlags);		
+		//CFNumberGetValue (number, kCFNumberLongType, &ioflags);		
+	}
+		
+	return PPSize(width, height);
+}
+
 void PPDisplayDevice::shutDown()
 {
 	HICommandExtended aCommand;
 	EventRef anEvent;
 	
-    // Event senden
+    // send quit event
     BlockZero(&aCommand, sizeof(aCommand));
     aCommand.attributes = kHICommandFromControl;
     aCommand.commandID = 'quit';
 	
-    (void) CreateEvent(
-					   NULL,
-					   kEventClassCommand,
-					   kEventCommandProcess,
-					   GetCurrentEventTime(),
-					   kEventAttributeUserEvent,
-					   &anEvent
-					   );
-    (void) SetEventParameter(
-							 anEvent,
-							 kEventParamDirectObject,
-							 typeHICommand,
-							 sizeof(aCommand),
-							 &aCommand
-							 );
-    (void) SendEventToWindow(anEvent, mainWindow);
-    (void) ReleaseEvent(anEvent);
+	CreateEvent(NULL,
+				kEventClassCommand,
+				kEventCommandProcess,
+				GetCurrentEventTime(),
+				kEventAttributeUserEvent,
+				&anEvent);
+				
+	SetEventParameter(anEvent,
+					  kEventParamDirectObject,
+					  typeHICommand,
+					  sizeof(aCommand),
+					  &aCommand);
+	
+    SendEventToWindow(anEvent, mainWindow);
+    ReleaseEvent(anEvent);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

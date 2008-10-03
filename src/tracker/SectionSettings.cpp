@@ -172,6 +172,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_FULLSCREEN,
 	LISTBOX_SETTINGS_RESOLUTIONS,
 	BUTTON_RESOLUTIONS_CUSTOM,
+	BUTTON_RESOLUTIONS_FULL,
 	LISTBOX_COLORS,
 	SLIDER_COLOR_RED,
 	SLIDER_COLOR_GREEN,
@@ -1053,9 +1054,14 @@ public:
 		
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Resolutions", true, true));
 		
-		PPButton* button = new PPButton(BUTTON_RESOLUTIONS_CUSTOM, screen, this, PPPoint(x2 + 115, y2 + 2), PPSize(39, 9));
+		PPButton* button = new PPButton(BUTTON_RESOLUTIONS_CUSTOM, screen, this, PPPoint(x2 + 92, y2 + 2), PPSize(37, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Custom");
+		container->addControl(button);
+
+		button = new PPButton(BUTTON_RESOLUTIONS_FULL, screen, this, PPPoint(x2 + 92 + 37 + 2, y2 + 2), PPSize(23, 9));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Full");
 		container->addControl(button);
 		
 		y2+=12;
@@ -2254,6 +2260,15 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_RESOLUTIONS_FULL:
+			{
+				if (event->getID() != eCommand)
+					break;
+					
+				retrieveDisplayResolution();
+				break;
+			}
+
 		}
 	}
 	else if (event->getID() == eValueChanged)
@@ -3117,5 +3132,27 @@ void SectionSettings::exportCurrentColorPalette()
 	}
 }
 
+void SectionSettings::retrieveDisplayResolution()
+{
+	PPSize size = tracker.screen->getDisplayResolution();
+	
+	if (size.width > 0 && size.height > 0)
+	{
+
+		if (size.width < MINWIDTH)
+			size.width = MINWIDTH;
+		if (size.height < MINHEIGHT)
+			size.height = MINHEIGHT;
+
+		tracker.settingsDatabase->store("XRESOLUTION", size.width);
+		tracker.settingsDatabase->store("YRESOLUTION", size.height);
+	
+		update();		
+	}
+	else
+	{
+		tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not retrieve display resolution", Tracker::MessageBox_OK);							
+	}
+}
 
 

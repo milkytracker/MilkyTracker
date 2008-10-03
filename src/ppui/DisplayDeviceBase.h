@@ -214,12 +214,20 @@ public:
 public:
 
 	virtual bool init()	{ return true; }
+
 	virtual void setTitle(const PPSystemString& title) { }	
+
 	virtual void setSize(const PPSize& size) { this->size = size; }
+
 	virtual bool goFullScreen(bool b) { return true; }
 	virtual bool isFullScreen() { return bFullScreen; }
+	
+	virtual PPSize getDisplayResolution() const { return PPSize(-1, -1); }
+	
 	virtual void shutDown()	= 0;
+
 	virtual void signalWaitState(bool b, const PPColor& color) { }
+
 	virtual void setMouseCursor(MouseCursorTypes type) { currentCursorType = type; }
 	virtual MouseCursorTypes getCurrentActiveMouseCursor() { return currentCursorType; }
 };

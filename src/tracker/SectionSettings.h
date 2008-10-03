@@ -159,6 +159,8 @@ private:
 	void importCurrentColorPalette();
 	void exportCurrentColorPalette();
 
+	void retrieveDisplayResolution();
+
 	// Responder should be friend
 	friend class DialogResponderSettings;	
 	
