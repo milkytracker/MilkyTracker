@@ -106,6 +106,8 @@ PlayerBase::~PlayerBase()
 	//	stopPlaying();
 	
 	ChannelMixer::closeDevice(); 
+	
+	delete[] timeRecord;
 }
 
 mp_sint32 PlayerBase::adjustFrequency(mp_uint32 frequency)
