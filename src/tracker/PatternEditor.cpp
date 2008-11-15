@@ -1525,16 +1525,18 @@ void PatternEditor::storeMacroFromCursor(pp_int32 slot)
 	if (cursor.inner >= 3 && cursor.inner <= 4)
 	{
 		patternTools.getEffect(0, eff, op);
-		if (!eff && !op)
-			return;
+		// feature shall also work with empty effects
+		//if (!eff && !op)
+		//	return;
 		effectMacros[slot].effect = (pp_uint8)eff;
 		effectMacros[slot].operand = (pp_uint8)op;
 	}
 	else if (cursor.inner > 4)
 	{
 		patternTools.getEffect(1, eff, op);
-		if (!eff && !op)
-			return;
+		// feature shall also work with empty effects
+		//if (!eff && !op)
+		//	return;
 		effectMacros[slot+10].effect = (pp_uint8)eff;
 		effectMacros[slot+10].operand = (pp_uint8)op;
 	}
@@ -1555,21 +1557,23 @@ void PatternEditor::writeMacroToCursor(pp_int32 slot, PatternAdvanceInterface* a
 	
 	if (cursor.inner >= 3 && cursor.inner <= 4)
 	{
-		if (!effectMacros[slot].effect && !effectMacros[slot].operand)
-			goto writeNothing;			
+		// feature shall also work with empty effects
+		//if (!effectMacros[slot].effect && !effectMacros[slot].operand)
+		//	goto writeNothing;			
 		patternTools.setEffect(0, effectMacros[slot].effect, effectMacros[slot].operand);
 	}
 	else if (cursor.inner > 4)
 	{
-		if (!effectMacros[slot+10].effect && !effectMacros[slot+10].operand)
-			goto writeNothing;
+		// feature shall also work with empty effects
+		//if (!effectMacros[slot+10].effect && !effectMacros[slot+10].operand)
+		//	goto writeNothing;
 		patternTools.setEffect(1, effectMacros[slot+10].effect, effectMacros[slot+10].operand);
 	}
 
 	if (advanceImpl)
 		advanceImpl->advance();
 
-writeNothing:
+//writeNothing:
 
 	finishUndo(LastChangeWriteMacro);
 }

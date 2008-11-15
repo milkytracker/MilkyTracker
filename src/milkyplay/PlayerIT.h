@@ -564,6 +564,19 @@ private:
 		mp_sint32 linfreq = getlinfreq(linper<<8);
 	
 		return (module->header.freqtab&1) ? linper : logper;*/
+
+		if (playModeFT2)
+		{
+			// FT2 doesn't support lower 3 bits
+			if (finetune > 0)
+				finetune &= ~3;
+			else if (finetune < 0)
+			{
+				finetune = -((-finetune + 7) & ~3);
+				if (finetune < -128)
+					finetune = -128;
+			}
+		}
 	
 		return (module->header.freqtab&1) ? getlinperiod(note,relnote,finetune) : getlogperiod(note,relnote,finetune);
 	}

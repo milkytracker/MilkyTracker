@@ -321,8 +321,20 @@ private:
 
 	mp_sint32		getperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 finetune)
 	{
-		if ((module->header.freqtab&1)) return getlinperiod(note,relnote,finetune);
-		else return getlogperiod(note,relnote,finetune);
+		if (playModeFT2)
+		{
+			// FT2 doesn't support lower 3 bits
+			if (finetune > 0)
+				finetune &= 0xF8;
+			else if (finetune < 0)
+			{
+				finetune = -((-finetune + 7) & 0xF8);
+				if (finetune < -128)
+					finetune = -128;
+			}
+		}
+	
+		return (module->header.freqtab&1) ? getlinperiod(note,relnote,finetune) : getlogperiod(note,relnote,finetune);
 	}
 	
 	mp_sint32		getvolume(mp_sint32 c,mp_sint32 nv)

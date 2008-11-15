@@ -485,11 +485,12 @@ void PlayerSTD::clearEffectMemory()
 void PlayerSTD::prenvelope(mp_sint32 c,TPrEnv *env,mp_sint32 keyon)
 {
 	if (env->envstruc!=NULL && (env->envstruc->type&1)) {
-		
-		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) && (keyon)) 
+		// if we're sitting on a sustain point and key is on, we don't advance further
+		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) && 
+			(env->step == env->envstruc->env[env->a][0]) && keyon) 
 			return;
 		
-		if ((env->step!=env->envstruc->env[env->b][0]) && (env->b < env->envstruc->num)) 
+		if ((env->step != env->envstruc->env[env->b][0]) && (env->b < env->envstruc->num)) 
 			env->step++;
 
 		if (env->step == env->envstruc->env[env->b][0]) {
@@ -2508,7 +2509,7 @@ void PlayerSTD::progressRow()
 					chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = module->smp[chnInf->smp].vol;
 					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 				}
-				if ((playMode == PlayMode_FastTracker2) &&
+				if (playModeFT2 &&
 					(module->smp[chnInf->smp].flags&2)) 
 					chnInf->pan = module->smp[chnInf->smp].pan;	
 				if ((module->smp[chnInf->smp].flags&4)) 

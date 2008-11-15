@@ -810,8 +810,9 @@ void PlayerIT::prenvelope(TPrEnv *env, bool keyon, bool timingIT)
 {
 	if (env->isEnabled()) 
 	{
-		// sustain point (XM)
-		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) && (keyon)) 
+		// if we're sitting on a sustain point and key is on, we don't advance further
+		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) && 
+			(env->step == env->envstruc->env[env->a][0]) && keyon) 
 			return;
 		
 		// IT-style envelopes count differently
@@ -3209,7 +3210,7 @@ void PlayerIT::progressRow()
 					chnInf->setVol(module->smp[smp].vol);
 					chnInf->adjustTremoloTremorVol();
 				}
-				if ((playMode == PlayMode_FastTracker2) &&
+				if (playModeFT2 &&
 					(module->smp[smp].flags&2)) 
 					chnInf->setPan(module->smp[smp].pan);	
 				if ((module->smp[smp].flags&4)) 
