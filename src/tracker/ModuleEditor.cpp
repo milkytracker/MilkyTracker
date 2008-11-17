@@ -1249,6 +1249,8 @@ bool ModuleEditor::loadSample(const SYSCHAR* fileName,
 
 	if (insIndex < module->header.insnum && smpIndex < 16)
 	{
+		enterCriticalSection();
+	
 		bool res = sampleLoader.loadSample(instruments[insIndex].usedSamples[smpIndex], channelIndex) == 0;
 		
 		if (res)
@@ -1275,6 +1277,8 @@ bool ModuleEditor::loadSample(const SYSCHAR* fileName,
 
 			changed = true;
 		}
+		
+		leaveCriticalSection();
 
 		return res;
 	}

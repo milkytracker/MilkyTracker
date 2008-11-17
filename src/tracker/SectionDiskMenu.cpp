@@ -1481,9 +1481,9 @@ void SectionDiskMenu::showOverwriteMessageBox()
 	}
 	
 	dialog = new PPDialogBase(tracker.screen, 
-											  responder, 
-											  RESPONDMESSAGEBOX_OVERWRITE, 
-											  "Overwrite existing file?");
+							  responder, 
+							  RESPONDMESSAGEBOX_OVERWRITE, 
+							  "Overwrite existing file?");
 	dialog->show();	
 }
 	
@@ -1654,7 +1654,8 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 	
 	ASSERT(sizeof(states)/sizeof(bool) == sizeof(IDs)/sizeof(pp_uint32));
 	
-	for (pp_uint32 i = 0; i < sizeof(IDs)/sizeof(pp_uint32); i++)
+	pp_uint32 i;
+	for (i = 0; i < sizeof(IDs)/sizeof(pp_uint32); i++)
 	{
 		bool b = states[i];
 		PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(IDs[i]));
@@ -1711,6 +1712,17 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 		if (repaint)
 			tracker.screen->paintControl(button);		
 	}
+	
+	// update directory buttons
+#if 0
+	for (i = DISKMENU_CLASSIC_BUTTON_DIR0; i <= DISKMENU_CLASSIC_BUTTON_DIR4; i++)
+	{
+		PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(i));		
+		PPString strKey = getKeyFromPredefPathButton(button);		
+		PPDictionaryKey* key = tracker.settingsDatabase->restore(strKey);		
+		button->enable(key != NULL);
+	}
+#endif
 }
 
 void SectionDiskMenu::next(bool repaint/* = true*/)
