@@ -2510,6 +2510,24 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 	}
 }
 
+void Tracker::prepareLoadSaveUI()
+{
+#ifdef __LOWRES__
+		// The bottom section fills up the entire screen 
+		// so we first need to hide the entire section before we can show the disk menu
+		screen->pauseUpdate(true);
+		sectionSwitcher->hideBottomSection();
+#endif
+}
+
+void Tracker::finishLoadSaveUI()
+{
+#ifdef __LOWRES__
+		screen->pauseUpdate(false);
+		screen->paint();
+#endif
+}
+
 bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 {
 	// we need to find out what file type this is
@@ -2830,18 +2848,12 @@ void Tracker::loadType(FileTypes eType)
 {
 	if (useClassicBrowser)
 	{
-#ifdef __LOWRES__
-		// The bottom section fills up the entire screen 
-		// so we first need to hide the entire section before we can show the disk menu
-		screen->pauseUpdate(true);
-		sectionSwitcher->hideBottomSection();
-#endif
+		prepareLoadSaveUI();
+
 		sectionDiskMenu->selectSaveType(eType);
 		eventKeyDownBinding_InvokeSectionDiskMenu();
-#ifdef __LOWRES__
-		screen->pauseUpdate(false);
-		screen->paint();
-#endif
+
+		finishLoadSaveUI();
 	}
 	else
 	{
@@ -3049,6 +3061,8 @@ void Tracker::saveType(FileTypes eType)
 {
 	if (useClassicBrowser)
 	{
+		prepareLoadSaveUI();
+	
 		sectionDiskMenu->selectSaveType(eType);
 		
 		if (eType == FileTypes::FileTypeSongWAV)
@@ -3058,6 +3072,8 @@ void Tracker::saveType(FileTypes eType)
 		
 		if (eType == FileTypes::FileTypeSongWAV)
 			sectionDiskMenu->setModuleTypeAdjust(true);
+	
+		finishLoadSaveUI();
 	}
 	else
 	{

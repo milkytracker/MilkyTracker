@@ -393,6 +393,9 @@ private:
 
 	static pp_uint32 fileTypeToHint(FileTypes type);
 
+	void prepareLoadSaveUI();
+	void finishLoadSaveUI();
+
 	bool loadGenericFileType(const PPSystemString& fileName);
 
 	bool prepareLoading(FileTypes eType, 

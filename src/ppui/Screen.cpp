@@ -368,13 +368,34 @@ void PPScreen::paintControl(PPControl* control, bool update/*= true*/)
 		return;
 
 	// modal control overlapping everything
-	if (modalControl && modalControl->isVisible() && 
-		  modalControl->getLocation().x == 0 &&
-		  modalControl->getLocation().y == 0 &&
-		  modalControl->getSize().width == getWidth() &&
-		  modalControl->getSize().height == getHeight())
-		return;
+	if (modalControl && modalControl->isVisible() &&
+		modalControl->getLocation().x == 0 &&
+		modalControl->getLocation().y == 0 &&
+		modalControl->getSize().width == getWidth() &&
+		modalControl->getSize().height == getHeight())
+	{
+		// see whether the control we shall paint is a child of the modal control
+		// if it's not, we don't need to paint it, because the modal control overlaps us 
+		PPControl* parent = control->getOwnerControl();		
+		
+		bool isModalControlChild = (parent == NULL);
 
+		while (parent != NULL)
+		{
+			if (parent == modalControl)
+			{
+				isModalControlChild = true;
+				break;
+			}
+			
+			control = parent;
+			parent = control->getOwnerControl();
+		}
+		
+		if (!isModalControlChild)
+			return;
+	}
+	
 	control->paint(g);	
 	
 	bool paintContextMenus = false; 
