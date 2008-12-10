@@ -62,7 +62,7 @@ private:
 	// remember mixing frequency
 	mp_uint32			frequency;
 	// overwrite default audiodriver
-	AudioDriverBase*	audioDriver;
+	AudioDriverInterface*	audioDriver;
 	// remember buffersize
 	mp_uint32			bufferSize;
 	// remember sample shift
@@ -121,7 +121,7 @@ public:
 	 * @param  frequency	output frequency for the mixer
 	 */
 						PlayerGeneric(mp_sint32 frequency, 
-									  AudioDriverBase* audioDriver = NULL);
+									  AudioDriverInterface* audioDriver = NULL);
 	/**
 	 * Destructor
 	 */	

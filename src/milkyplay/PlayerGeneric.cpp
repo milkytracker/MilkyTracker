@@ -148,7 +148,7 @@ PlayerBase*	PlayerGeneric::getPreferredPlayer(XModule* module) const
 	}
 }
 
-PlayerGeneric::PlayerGeneric(mp_sint32 frequency, AudioDriverBase* audioDriver/* = NULL*/) :
+PlayerGeneric::PlayerGeneric(mp_sint32 frequency, AudioDriverInterface* audioDriver/* = NULL*/) :
 	mixer(NULL),
 	player(NULL),
 	frequency(frequency),
