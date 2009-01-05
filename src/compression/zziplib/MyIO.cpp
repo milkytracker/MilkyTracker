@@ -1,6 +1,6 @@
 /*
  *  MyIO.cpp
- *  MilkyPlayerPSP
+ *  MilkyTracker
  *
  *  Created by Peter Barth on 03.12.07.
  *
@@ -17,6 +17,7 @@ __zzipfd Myopen(const zzip_char_t* name, int flags, ...)
 		delete f;
 		return (__zzipfd)-1;
 	}
+	//TODO: find a better solution
 	ASSERT(sizeof(f) == sizeof(__zzipfd));
 	return reinterpret_cast<__zzipfd>(f);
 }
