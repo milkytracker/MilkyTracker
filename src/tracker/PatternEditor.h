@@ -216,8 +216,7 @@ private:
 	TCommand effectMacros[20];
 
 	void prepareUndo();
-	bool finishUndo(LastChanges lastChange);
-	bool finishUndoNonRepeat(LastChanges lastChange);
+	bool finishUndo(LastChanges lastChange, bool nonRepeat = false);
 	
 	bool revoke(const PatternUndoStackEntry* stackEntry);
 

@@ -69,7 +69,7 @@ void PatternEditor::prepareUndo()
 	before = new PatternUndoStackEntry(*pattern, cursor.channel, cursor.row, cursor.inner, &undoUserData);
 }
 
-bool PatternEditor::finishUndo(LastChanges lastChange)
+bool PatternEditor::finishUndo(LastChanges lastChange, bool nonRepeat/* = false*/)
 {
 	bool result = false;
 
@@ -99,54 +99,16 @@ bool PatternEditor::finishUndo(LastChanges lastChange)
 		notifyListener(NotificationChanges);
 		if (undoStack) 
 		{ 
-			undoStack->Push(*before); 
+			if (nonRepeat && this->lastChange != lastChange)
+				undoStack->Push(*before); 	
+			else if (!nonRepeat)
+				undoStack->Push(*before); 				
 			undoStack->Push(after); 
 			undoStack->Pop(); 
 		} 
 	} 
 	this->lastChange = lastChange; 
 
-	return result;
-}
-
-bool PatternEditor::finishUndoNonRepeat(LastChanges lastChange) 
-{
-	bool result = false;
-
-	PatternEditorTools patternEditorTools(pattern); 
-	patternEditorTools.normalize(); 
-
-	undoUserData.clear();
-	notifyListener(NotificationFeedUndoData);
-
-	PatternUndoStackEntry after(*pattern, cursor.channel, cursor.row, cursor.inner, &undoUserData); 
-	if (*before != after) 
-	{ 
-		PatternEditorTools::Position afterPos;
-		afterPos.channel = after.getCursorPositionChannel();
-		afterPos.row = after.getCursorPositionRow();
-		afterPos.inner = after.getCursorPositionInner();
-
-		PatternEditorTools::Position beforePos;		
-		beforePos.channel = before->getCursorPositionChannel();
-		beforePos.row = before->getCursorPositionRow();
-		beforePos.inner = before->getCursorPositionInner();
-	
-		result = true;
-
-		lastOperationDidChangeRows = after.GetPattern().rows != before->GetPattern().rows;
-		lastOperationDidChangeCursor = beforePos != afterPos;
-		if (undoStack) 
-		{ 
-			if (this->lastChange != lastChange) 
-				undoStack->Push(*before);  
-			undoStack->Push(after); 
-			undoStack->Pop(); 
-		} 
-		notifyListener(NotificationChanges);
-	} 
-	this->lastChange = lastChange;
-	
 	return result;
 }
 
@@ -520,7 +482,7 @@ bool PatternEditor::resizePattern(pp_int32 newRowNum, bool withUndo /*= true*/)
 		// Special treatment for pattern resizing:
 		// If user resizes pattern and the last stack entry has already been
 		// a resize modification we don't store the current changes		
-		finishUndoNonRepeat(LastChangeResizePattern);		
+		finishUndo(LastChangeResizePattern, true);		
 	}
 	else
 	{
