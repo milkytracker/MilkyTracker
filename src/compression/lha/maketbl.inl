@@ -31,9 +31,6 @@ void CLhaArchive::make_table(unsigned int nchar, unsigned char *bitlen, unsigned
 	}
 	if ((total & 0xffff) != 0)
 	{
-	#ifdef _DEBUG
-		OutputDebugString(_T("Bad table (5)\n"));
-	#endif
 		return;
 	}
 
