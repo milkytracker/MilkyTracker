@@ -264,6 +264,7 @@ bool SampleEditor::revoke(const SampleUndoStackEntry* stackEntry)
 	leaveCriticalSection();
 	undoUserData = stackEntry->getUserData();
 	notifyListener(NotificationFetchUndoData);
+	notifyListener(NotificationChanges);
 	return true;
 }
 

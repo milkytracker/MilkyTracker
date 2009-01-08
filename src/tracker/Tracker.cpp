@@ -252,6 +252,10 @@ pp_int32 Tracker::getOrderListBoxIndex()
 
 void Tracker::setOrderListIndex(pp_int32 index)
 {
+	// do not accept values which exceed the current number of orders
+	if (index >= moduleEditor->getNumOrders())
+		index = moduleEditor->getNumOrders()-1;
+		
 	listBoxOrderList->setSelectedIndex(index);
 	updateOrderlist();
 	// fake selection from orderlist, so everything will be updated correctly

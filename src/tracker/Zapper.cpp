@@ -46,6 +46,7 @@ void Zapper::zapAll()
 										  true, 
 										  tracker.playerController->getPlayMode() == PlayerController::PlayMode_FastTracker2 ? 8 : 4);
 	tracker.moduleEditor->getModuleServices()->resetEstimatedSongLength();
+	tracker.moduleEditor->reloadCurrentPattern();
 	tracker.sectionHDRecorder->adjustOrders();
 	// stop song with resetting main volume
 	tracker.ensureSongStopped(true, false);
@@ -61,6 +62,7 @@ void Zapper::zapSong()
 								  false,
 								  tracker.playerController->getPlayMode() == PlayerController::PlayMode_FastTracker2 ? 8 : 4);
 	tracker.moduleEditor->getModuleServices()->resetEstimatedSongLength();
+	tracker.moduleEditor->reloadCurrentPattern();
 	tracker.sectionHDRecorder->adjustOrders();
 	// stop song with resetting main volume
 	tracker.ensureSongStopped(true, false);			

@@ -60,6 +60,29 @@ void QueryKeyModifiers()
 		clearKeyModifier(KeyModifierCTRL);
 }
 
+// filter key codes which have corresponding ASCII values
+pp_uint16 FilterVK(pp_uint16 keyCode)
+{
+	if ((keyCode >= 'A' && keyCode <= 'Z') ||
+		(keyCode >= '0' && keyCode <= '9'))
+	{
+		return keyCode;
+	}
+	
+	switch (keyCode)
+	{
+		case VK_BACK:
+		case VK_TAB:
+		case VK_CLEAR:
+		case VK_RETURN:
+		case VK_ESCAPE:
+		case VK_SPACE:
+			return keyCode;
+	}
+	
+	return 0;
+}
+
 pp_uint16 KeyCodeToVK(UInt32 keyCode)
 {
 
@@ -242,9 +265,9 @@ pp_uint16 KeyCodeToVK(UInt32 keyCode)
 			
 		default:
 			if (KeyCodeToAscii(keyCode) >= 'a' && KeyCodeToAscii(keyCode) <= 'z')
-				return KeyCodeToAscii(keyCode)-32;
+				return FilterVK(KeyCodeToAscii(keyCode)-32);
 			else
-				return KeyCodeToAscii(keyCode);
+				return FilterVK(KeyCodeToAscii(keyCode));
 
 	}
 

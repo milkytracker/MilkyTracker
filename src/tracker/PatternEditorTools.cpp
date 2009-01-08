@@ -241,7 +241,7 @@ bool PatternEditorTools::shrinkPattern()
 	if (pattern->patternData == NULL)
 		return false;
 
-	if (pattern->rows <= 2)
+	if (pattern->rows < 2)
 		return false;
 
 	mp_sint32 slotSize = pattern->effnum * 2 + 2;

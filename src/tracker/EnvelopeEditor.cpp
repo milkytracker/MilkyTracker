@@ -84,6 +84,7 @@ void EnvelopeEditor::revoke(const EnvelopeUndoStackEntry* stackEntry)
 	stackEntry->GetEnvelope(*envelope);
 	
 	notifyListener(NotificationUndoRedo);
+	notifyListener(NotificationChanges);
 }
 
 EnvelopeEditor::EnvelopeEditor() :

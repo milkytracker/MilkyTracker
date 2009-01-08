@@ -366,9 +366,8 @@ private:
 	
 	void executeMenuCommand(pp_int32 commandId);
 	
+	void handleDeleteKey(pp_uint16 keyCode, pp_int32& result);
 	void handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character);
-
-	static pp_int32 virtualKeyToHex(pp_uint16 keyCode);
 
 	// mark channel
 	void markChannel(pp_int32 channel, bool invert = true);

@@ -174,7 +174,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
 
-pp_int32 PatternEditorControl::virtualKeyToHex(pp_uint16 keyCode)
+static pp_int32 virtualKeyToHex(pp_uint16 keyCode)
 {
 	pp_int32 number = -1;
 	
@@ -262,7 +262,193 @@ pp_int32 PatternEditorControl::virtualKeyToHex(pp_uint16 keyCode)
 	}
 
 	return number;
+}
 
+static pp_int32 asciiToHex(pp_uint16 ascii)
+{
+	pp_int32 number = -1;
+	
+	switch (ascii)
+	{
+			// 0: 
+		case '0':
+			number = 0;
+			break;
+
+			// 1: 
+		case '1':
+			number = 1;
+			break;
+			
+			// 2: 
+		case '2':
+			number = 2;
+			break;
+			
+			// 3: 
+		case '3':
+			number = 3;
+			break;
+			
+			// 4: 
+		case '4':
+			number = 4;
+			break;
+			
+			// 5: 
+		case '5':
+			number = 5;
+			break;
+			
+			// 6: 
+		case '6':
+			number = 6;
+			break;
+			
+			// 7: 
+		case '7':
+			number = 7;
+			break;
+
+			// 8: 
+		case '8':
+			number = 8;
+			break;
+			
+			// 9: 
+		case '9':
+			number = 9;
+			break;
+			
+			// A: 
+		case 'A':
+		case 'a':
+			number = 0xA;
+			break;
+
+			// B: 
+		case 'B':
+		case 'b':
+			number = 0xB;
+			break;
+
+			// C: 
+		case 'C':
+		case 'c':
+			number = 0xC;
+			break;
+			
+			// D: 
+		case 'D':
+		case 'd':
+			number = 0xD;
+			break;
+			
+			// E: 
+		case 'E':
+		case 'e':
+			number = 0xE;
+			break;
+			
+			// F: 
+		case 'F':
+		case 'f':
+			number = 0xF;
+			break;
+	}
+
+	return number;
+}
+
+static pp_int32 asciiToHexExtended(pp_uint16 ascii)
+{
+	pp_int32 number = -1;
+
+	switch (ascii)
+	{
+		case 'G':
+		case 'g':
+			number = 0x10;
+			break;
+		case 'H':
+		case 'h':
+			number = 0x11;
+			break;
+		case 'I':
+		case 'i':
+			number = 0x12;
+			break;
+		case 'J':
+		case 'j':
+			number = 0x13;
+			break;
+		case 'K':
+		case 'k':
+			number = 0x14;
+			break;
+		case 'L':
+		case 'l':
+			number = 0x15;
+			break;
+		case 'M':
+		case 'm':
+			number = 0x16;
+			break;
+		case 'N':
+		case 'n':
+			number = 0x17;
+			break;
+		case 'O':
+		case 'o':
+			number = 0x18;
+			break;
+		case 'P':
+		case 'p':
+			number = 0x19;
+			break;
+		case 'Q':
+		case 'q':
+			number = 0x1A;
+			break;
+		case 'R':
+		case 'r':
+			number = 0x1B;
+			break;
+		case 'S':
+		case 's':
+			number = 0x1C;
+			break;
+		case 'T':
+		case 't':
+			number = 0x1D;
+			break;
+		case 'U':
+		case 'u':
+			number = 0x1E;
+			break;
+		case 'V':
+		case 'v':
+			number = 0x1F;
+			break;
+		case 'W':
+		case 'w':
+			number = 0x20;
+			break;
+		case 'X':
+		case 'x':
+			number = 0x21;
+			break;
+		case 'Y':
+		case 'y':
+			number = 0x22;
+			break;
+		case 'Z':
+		case 'z':
+			number = 0x23;
+			break;
+	}
+
+	return number;
 }
 
 pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
@@ -436,6 +622,26 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 	return -1;
 }
 
+void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
+{
+	if (result == -1 &&  ::getKeyModifier() == 0)
+	{	
+		switch (keyCode)
+		{
+			// Delete (only works in MilkyTracker edit mode)
+			// in FT2 mode this key combination is bound to a method
+			case VK_DELETE:
+				if (hasValidSelection())
+					patternEditor->clearSelection();
+				else
+				{
+					result = 0xFF;
+				}
+				break;
+		}			
+	}
+}
+
 // "C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-"
 void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character)
 {
@@ -517,53 +723,34 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	}
 
 	// prevent unnecessary screen refreshing through listener callback
+	// remember to reset this when leaving this function
 	patternEditor->setLazyUpdateNotifications(true);
 
-	if (cursor.inner == 0 && ::getKeyModifier() == 0)
+	if (cursor.inner == 0)
 	{
 		pp_int32 note = -1;
 		
-		switch (keyCode)
+		handleDeleteKey(keyCode, note);
+		
+		if (note == -1 && ::getKeyModifier() == 0)
 		{
-			// Delete (only works in MilkyTracker edit mode)
-			// in FT2 mode this key combination is bound to a method
-			case VK_DELETE:
-				if (hasValidSelection())
-					patternEditor->clearSelection();
-				else
-				{
-					note = 0xFF;
-				}
-				break;
-
-			default:
-			{
-				note = ScanCodeToNote(scanCode);
-			}
+			note = ScanCodeToNote(scanCode);
 		}
-				
+
 		patternEditor->writeNote(note, true, this);
 	}
-	else if ((cursor.inner == 1 || cursor.inner == 2) && ::getKeyModifier() == 0)
+	else if ((cursor.inner == 1 || cursor.inner == 2))
 	{
 		pp_int32 number = -1;
 
-		switch (keyCode)
+		handleDeleteKey(keyCode, number);
+		
+		// still not assigned, try if we map to a hexadecimal digit
+		if (number == -1)
 		{
-			// Delete (only works in MilkyTracker edit mode)
-			// in FT2 mode this key combination is bound to a method
-			case VK_DELETE:
-				if (hasValidSelection())
-					patternEditor->clearSelection();
-				else
-				{
-					number = 0xFF;
-				}
-				break;
-			default:
-				number = virtualKeyToHex(keyCode);
+			number = asciiToHex(character);
 		}
-
+		
 		if (number == 0xFF)
 		{
 			patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, 0, true, this);
@@ -676,29 +863,15 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 				goto stupid;
 		}
 
-		if (number == -1 &&  ::getKeyModifier() == 0)
-		{	
-			switch (keyCode)
-			{
-				// Delete (only works in MilkyTracker edit mode)
-				// in FT2 mode this key combination is bound to a method
-				case VK_DELETE:
-					if (hasValidSelection())
-						patternEditor->clearSelection();
-					else
-					{
-						number = 0xFF;
-					}
-					break;
-				
-				default:
+		handleDeleteKey(keyCode, number);
+
+		// still not assigned, try if we map to a hexadecimal digit
+		if (number == -1)
+		{
 stupid:
-					number = virtualKeyToHex(keyCode);
-					if (cursor.inner == 3 && number > 4)
-						goto cleanUp;
-					break;
-			}
-			
+			number = asciiToHex(character);
+			if (cursor.inner == 3 && number > 4)
+				goto cleanUp;
 		}
 
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
@@ -714,68 +887,21 @@ stupid:
 			}
 		}
 	}
-	else if (cursor.inner == 5 && ::getKeyModifier() == 0)
+	else if (cursor.inner == 5)
 	{
 		pp_int32 number = -1;
 
-		switch (keyCode)
+		handleDeleteKey(keyCode, number);
+
+		// still not assigned, try if we map to a hexadecimal digit
+		if (number == -1)
 		{
-			// Delete (only works in MilkyTracker edit mode)
-			// in FT2 mode this key combination is bound to a method
-			case VK_DELETE:
-				if (hasValidSelection())
-					patternEditor->clearSelection();
-				else
-				{
-					number = 0xFF;
-				}
-				break;
-
-			// G
-			case 0x47:
-			// H
-			case 0x48:
-			// I
-			case 0x49:
-			// J
-			case 0x4A:
-			// K
-			case 0x4B:
-			// L
-			case 0x4C:
-			// M
-			case 0x4D:
-			// N
-			case 0x4E:
-			// O
-			case 0x4F:
-			// P
-			case 0x50:
-			// Q
-			case 0x51:
-			// R
-			case 0x52:
-			// S
-			case 0x53:
-			// T
-			case 0x54:
-			// U
-			case 0x55:
-			// V
-			case 0x56:
-			// W
-			case 0x57:
-			// X
-			case 0x58:
-			// Y
-			case 0x59:
-			// Z
-			case 0x5A:
-				number = (keyCode - 0x47) + 0x10;
-				break;
-
-			default:
-				number = virtualKeyToHex(keyCode);	
+			number = asciiToHex(character);
+		
+			if (number == -1)
+			{
+				number = asciiToHexExtended(character);
+			}
 		}
 
 		if (number == 0xFF || (number >= 0 && number <= 0x23))
@@ -783,26 +909,16 @@ stupid:
 			patternEditor->writeEffectNumber(number, true, this);
 		}
 	}
-	else if ((cursor.inner == 6 || cursor.inner == 7) && ::getKeyModifier() == 0)
+	else if ((cursor.inner == 6 || cursor.inner == 7))
 	{
-
 		pp_int32 number = -1;
-		switch (keyCode)
-		{
-			// Delete (only works in MilkyTracker edit mode)
-			// in FT2 mode this key combination is bound to a method
-			case VK_DELETE:
-				if (hasValidSelection())
-					patternEditor->clearSelection();
-				else
-				{
-					number = 0xFF;
-				}
-				break;
+		
+		handleDeleteKey(keyCode, number);
 
-			default:
-				number = virtualKeyToHex(keyCode);
-				break;
+		// still not assigned, try if we map to a hexadecimal digit
+		if (number == -1)
+		{
+			number = asciiToHex(character);
 		}
 
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
@@ -1303,7 +1419,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
 	// if the track inner position is not the note column, we will first 
-	// set the position to the note before decrementing the track number
+	// set the position to the note before decrementing the track result
 	if (properties.tabToNote && cursor.inner > 0)
 	{
 		cursor.inner = 0;

@@ -324,7 +324,9 @@ bool PatternEditor::revoke(const PatternUndoStackEntry* stackEntry)
 
 		// keep over userdata
 		undoUserData = stackEntry->getUserData();
-		notifyListener(NotificationFetchUndoData);		
+		notifyListener(NotificationFetchUndoData);
+
+		notifyListener(NotificationChanges);
 		res = true;
 	}
 	
