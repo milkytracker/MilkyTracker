@@ -608,8 +608,6 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 #ifndef WIN32
 		case SC_1:
 #endif
-			if (editMode != EditModeFastTracker)
-				break;
 			return PatternTools::getNoteOffNote();
 
 		case SC_SMALLERGREATER:
