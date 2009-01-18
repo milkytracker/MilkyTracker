@@ -168,20 +168,24 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 	if (!sampleEditor->isValidSample())
 		return false;
 
-	bool res = false;
 	switch (type)
 	{
 		case ToolHandlerResponder::SampleToolTypeNew:
+		{
+			FilterParameters par(2);
 			lastValues.newSampleSize = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueOne();
-			res = sampleEditor->tool_newSample(lastValues.newSampleSize, sampleEditor->is16Bit() ? 16 : 8);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.newSampleSize));
+			par.setParameter(1, FilterParameters::Parameter(sampleEditor->is16Bit() ? 16 : 8));
+			sampleEditor->tool_newSample(&par);
 			break;
+		}
 
 		case ToolHandlerResponder::SampleToolTypeVolume:
 		{
 			lastValues.boostSampleVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.boostSampleVolume / 100.0f);
-			par.setParameter(1, lastValues.boostSampleVolume / 100.0f);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
@@ -191,8 +195,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.fadeSampleVolumeStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.fadeSampleVolumeEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.fadeSampleVolumeStart / 100.0f);
-			par.setParameter(1, lastValues.fadeSampleVolumeEnd / 100.0f);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.fadeSampleVolumeStart / 100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.fadeSampleVolumeEnd / 100.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
@@ -201,7 +205,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		{
 			FilterParameters par(1);
 			lastValues.DCOffset = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			par.setParameter(0, lastValues.DCOffset / 100.0f);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.DCOffset / 100.0f));
 			sampleEditor->tool_DCOffsetSample(&par);
 			break;
 		}
@@ -212,9 +216,9 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.adjustFtAndRelnote = static_cast<DialogResample*>(dialog)->getAdjustFtAndRelnote();
 
 			FilterParameters par(3);
-			par.setParameter(0, static_cast<DialogResample*>(dialog)->getC4Speed());
-			par.setParameter(1, lastValues.resampleInterpolationType);
-			par.setParameter(2, lastValues.adjustFtAndRelnote ? 1 : 0);
+			par.setParameter(0, FilterParameters::Parameter(static_cast<DialogResample*>(dialog)->getC4Speed()));
+			par.setParameter(1, FilterParameters::Parameter(static_cast<pp_int32>(lastValues.resampleInterpolationType)));
+			par.setParameter(2, FilterParameters::Parameter(lastValues.adjustFtAndRelnote ? 1 : 0));
 			sampleEditor->tool_resampleSample(&par);
 			break;
 		}
@@ -243,7 +247,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 				float val = static_cast<DialogEQ*>(dialog)->getBandParam(i);
 				if (last)
 					last[i] = val;
-				par.setParameter(i, val);
+				par.setParameter(i, FilterParameters::Parameter(val));
 			}
 			sampleEditor->tool_eqSample(&par);
 			break;
@@ -252,7 +256,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeGenerateSilence:
 		{
 			FilterParameters par(1);
-			par.setParameter(0, (float)static_cast<DialogWithValues*>(dialog)->getValueOne());
+			par.setParameter(0, FilterParameters::Parameter((pp_int32)(static_cast<DialogWithValues*>(dialog)->getValueOne())));
 			sampleEditor->tool_generateSilence(&par);
 			break;
 		}
@@ -260,7 +264,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeGenerateNoise:
 		{
 			FilterParameters par(1);
-			par.setParameter(0, (float)static_cast<DialogGroupSelection*>(dialog)->getSelection());
+			par.setParameter(0, FilterParameters::Parameter((pp_int32)(static_cast<DialogGroupSelection*>(dialog)->getSelection())));
 			sampleEditor->tool_generateNoise(&par);
 			break;
 		}
@@ -270,8 +274,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.waveFormNumPeriods = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.waveFormVolume/100.0f);
-			par.setParameter(1, lastValues.waveFormNumPeriods);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume/100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateSine(&par);
 			break;
 		}
@@ -281,8 +285,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.waveFormNumPeriods = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.waveFormVolume/100.0f);
-			par.setParameter(1, lastValues.waveFormNumPeriods);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume/100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateSquare(&par);
 			break;
 		}
@@ -292,8 +296,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.waveFormNumPeriods = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.waveFormVolume/100.0f);
-			par.setParameter(1, lastValues.waveFormNumPeriods);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume/100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateTriangle(&par);
 			break;
 		}
@@ -303,13 +307,14 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.waveFormNumPeriods = static_cast<DialogWithValues*>(dialog)->getValueTwo();
 			FilterParameters par(2);
-			par.setParameter(0, lastValues.waveFormVolume/100.0f);
-			par.setParameter(1, lastValues.waveFormNumPeriods);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume/100.0f));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateSawtooth(&par);
 			break;
 		}
 	}
-	return res;
+	
+	return true;
 }
 
 SampleEditorControl::ToolHandlerResponder::ToolHandlerResponder(SampleEditorControl& theSampleEditorControl) :

@@ -77,19 +77,19 @@ public:
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case MESSAGEBOX_CLEARSAMPLE:
-				section.getSampleEditorControl()->getSampleEditor()->tool_clearSample();
+				section.getSampleEditorControl()->getSampleEditor()->clearSample();
 				break;
 
 			case MESSAGEBOX_CROPSAMPLE:
-				section.getSampleEditorControl()->getSampleEditor()->tool_cropSample();
+				section.getSampleEditorControl()->getSampleEditor()->cropSample();
 				break;
 				
 			case MESSAGEBOX_MINIMIZESAMPLE:
-				section.getSampleEditorControl()->getSampleEditor()->tool_minimizeSample();
+				section.getSampleEditorControl()->getSampleEditor()->minimizeSample();
 				break;
 				
 			case MESSAGEBOX_CONVERTSAMPLE:
-				section.getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(true);
+				section.getSampleEditorControl()->getSampleEditor()->convertSampleResolution(true);
 				section.getSampleEditorControl()->showAll();
 				break;
 		}
@@ -1333,7 +1333,7 @@ void SectionSamples::handleClearSample()
 	{
 		if (sampleEditor->isUndoStackEnabled())
 		{
-			sampleEditor->tool_clearSample();					
+			sampleEditor->clearSample();					
 		}
 		else
 		{
@@ -1353,7 +1353,7 @@ void SectionSamples::handleCropSample()
 	{
 		if (sampleEditor->isUndoStackEnabled())
 		{
-			sampleEditor->tool_cropSample();
+			sampleEditor->cropSample();
 		}
 		else
 		{
@@ -1373,7 +1373,7 @@ void SectionSamples::handleMinimizeSample()
 	{
 		if (sampleEditor->isUndoStackEnabled())
 		{
-			sampleEditor->tool_minimizeSample();
+			sampleEditor->minimizeSample();
 		}
 		else
 		{

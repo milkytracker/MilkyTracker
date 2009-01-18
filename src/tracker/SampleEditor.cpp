@@ -838,6 +838,37 @@ void SampleEditor::endDrawing()
 	finishUndo();
 }
 
+void SampleEditor::minimizeSample()
+{
+	FilterParameters par(0);
+	tool_minimizeSample(&par);
+}
+
+void SampleEditor::cropSample()
+{
+	FilterParameters par(0);
+	tool_cropSample(&par);
+}
+
+void SampleEditor::clearSample()
+{
+	FilterParameters par(0);
+	tool_clearSample(&par);
+}
+
+void SampleEditor::mixPasteSample()
+{
+	FilterParameters par(0);
+	tool_mixPasteSample(&par);
+}
+
+void SampleEditor::convertSampleResolution(bool convert)
+{
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(convert ? 1 : 0));
+	tool_convertSampleResolution(&par);
+}
+
 bool SampleEditor::cutSampleInternal()
 {
 	if (sample == NULL)
@@ -1103,14 +1134,16 @@ void SampleEditor::postFilter()
 	leaveCriticalSection();
 }
 
-bool SampleEditor::tool_newSample(pp_int32 numSamples, pp_int32 numBits)
+void SampleEditor::tool_newSample(const FilterParameters* par)
 {
 	if (!isValidSample())
-		return false;
+		return;
 
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
+
+	pp_int32 numSamples = par->getParameter(0).intPart, numBits = par->getParameter(1).intPart;
 
 	if (sample->sample)
 	{
@@ -1141,14 +1174,9 @@ bool SampleEditor::tool_newSample(pp_int32 numSamples, pp_int32 numBits)
 
 	lastOperation = OperationNew;
 	postFilter();
-	
-	if (sample->sample == NULL)
-		return false;
-		
-	return true;
 }
 
-void SampleEditor::tool_minimizeSample()
+void SampleEditor::tool_minimizeSample(const FilterParameters* par)
 {
 	if (isEmptySample())
 		return;
@@ -1172,7 +1200,7 @@ void SampleEditor::tool_minimizeSample()
 	postFilter();
 }
 
-void SampleEditor::tool_cropSample()
+void SampleEditor::tool_cropSample(const FilterParameters* par)
 {
 	if (isEmptySample())
 		return;
@@ -1231,7 +1259,7 @@ void SampleEditor::tool_cropSample()
 	postFilter();
 }
 
-void SampleEditor::tool_clearSample()
+void SampleEditor::tool_clearSample(const FilterParameters* par)
 {
 	preFilter(NULL, NULL);
 	
@@ -1248,11 +1276,13 @@ void SampleEditor::tool_clearSample()
 	postFilter();
 }
 
-void SampleEditor::tool_convertSampleResolution(bool convert)
+void SampleEditor::tool_convertSampleResolution(const FilterParameters* par)
 {
 	preFilter(NULL, NULL);
 
 	prepareUndo();
+
+	bool convert = (par->getParameter(0).intPart != 0);
 
 	if (sample->type & 16)
 	{
@@ -1310,7 +1340,7 @@ void SampleEditor::tool_convertSampleResolution(bool convert)
 	postFilter();
 }
 
-void SampleEditor::tool_mixPasteSample()
+void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 {
 	if (isEmptySample())
 		return;
@@ -1395,8 +1425,8 @@ void SampleEditor::tool_scaleSample(const FilterParameters* par)
 	
 	prepareUndo();
 	
-	float startScale = par->getParameter(0);
-	float endScale = par->getParameter(1);
+	float startScale = par->getParameter(0).floatPart;
+	float endScale = par->getParameter(1).floatPart;
 	
 	float step = (endScale - startScale) / (float)(sEnd - sStart);
 	
@@ -1440,7 +1470,7 @@ void SampleEditor::tool_normalizeSample(const FilterParameters* par)
 	
 	prepareUndo();
 	
-	float maxLevel = ((par == NULL)? 1.0f : par->getParameter(0));
+	float maxLevel = ((par == NULL)? 1.0f : par->getParameter(0).floatPart);
 	float peak = 0.0f;
 
 	pp_int32 i;
@@ -1836,22 +1866,22 @@ void SampleEditor::tool_resampleSample(const FilterParameters* par)
 
 	float c4spd = getc4spd(sample->relnote, sample->finetune);
 
-	pp_uint32 resamplerType = (pp_int32)par->getParameter(1);
+	pp_uint32 resamplerType = par->getParameter(1).intPart;
 
 	SampleEditorResampler resampler(*module, *sample, resamplerType);
 	
-	bool res = resampler.resample(c4spd, par->getParameter(0));
+	bool res = resampler.resample(c4spd, par->getParameter(0).floatPart);
 	
-	float step = c4spd / par->getParameter(0);
+	float step = c4spd / par->getParameter(0).floatPart;
 
 	if (res)
 	{
 		sample->loopstart = (mp_sint32)(sample->loopstart/step);
 		sample->looplen = (mp_sint32)(sample->looplen/step);
 	
-		if ((pp_int32)par->getParameter(2))
+		if (par->getParameter(2).intPart)
 		{
-			pp_uint32 c4spdi = (mp_uint32)par->getParameter(0);
+			pp_uint32 c4spdi = (mp_uint32)par->getParameter(0).floatPart;
 			mp_sbyte rn, ft;
 			XModule::convertc4spd((mp_uint32)c4spdi, &ft, &rn);
 			sample->relnote = rn;
@@ -1941,7 +1971,7 @@ void SampleEditor::tool_DCOffsetSample(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	float DC = par->getParameter(0);
+	float DC = par->getParameter(0).floatPart;
 	for (i = sStart; i < sEnd; i++)
 	{
 		setFloatSampleInWaveform(i, getFloatSampleFromWaveform(i) + DC);
@@ -2101,7 +2131,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i]*scale, EQConstants::EQ3bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i)));
+			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i]*scale, EQConstants::EQ3bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	// ten band EQ
@@ -2110,7 +2140,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i]*scale, EQConstants::EQ10bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i)));
+			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i]*scale, EQConstants::EQ10bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	else
@@ -2183,7 +2213,7 @@ void SampleEditor::tool_generateSilence(const FilterParameters* par)
 	
 	pp_int32 i, j;
 
-	pp_int32 size = (pp_int32)par->getParameter(0);
+	pp_int32 size = par->getParameter(0).intPart;
 
 	pp_int32 newSampleSize = (sample->samplen - sLen) + size;
 	
@@ -2269,7 +2299,7 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	pp_int32 type = (pp_int32)par->getParameter(0);
+	pp_int32 type = par->getParameter(0).intPart;
 
 	VRand rand;
 	rand.seed();
@@ -2327,8 +2357,8 @@ void SampleEditor::tool_generateSine(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	const float numPeriods = (float)(6.283185307179586476925286766559 * par->getParameter(1));
-	const float amplify = par->getParameter(0);
+	const float numPeriods = (float)(6.283185307179586476925286766559 * par->getParameter(1).floatPart);
+	const float amplify = par->getParameter(0).floatPart;
 
 	// generate sine wave here
 	for (i = sStart; i < sEnd; i++)
@@ -2374,8 +2404,8 @@ void SampleEditor::tool_generateSquare(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	const float numPeriods = par->getParameter(1);
-	const float amplify = par->getParameter(0);
+	const float numPeriods = par->getParameter(1).floatPart;
+	const float amplify = par->getParameter(0).floatPart;
 
 	// generate square wave here
 	for (i = sStart; i < sEnd; i++)
@@ -2422,8 +2452,8 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	const float numPeriods = par->getParameter(1);
-	const float amplify = par->getParameter(0);
+	const float numPeriods = par->getParameter(1).floatPart;
+	const float amplify = par->getParameter(0).floatPart;
 
 	// generate triangle wave here
 	for (i = sStart; i < sEnd; i++)
@@ -2475,8 +2505,8 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	const float numPeriods = par->getParameter(1);
-	const float amplify = par->getParameter(0);
+	const float numPeriods = par->getParameter(1).floatPart;
+	const float amplify = par->getParameter(0).floatPart;
 
 	// generate saw-tooth wave here
 	for (i = sStart; i < sEnd; i++)

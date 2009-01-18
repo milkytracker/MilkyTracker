@@ -1043,7 +1043,7 @@ bool EnvelopeEditorControl::invokeTool(EnvelopeToolTypes type)
 		{
 			lastValues.scaleEnvelope = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(1);
-			par.setParameter(0, lastValues.scaleEnvelope / 100.0f);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.scaleEnvelope / 100.0f));
 			envelopeEditor->tool_xScaleEnvelope(&par);
 			break;
 		}
@@ -1052,7 +1052,7 @@ bool EnvelopeEditorControl::invokeTool(EnvelopeToolTypes type)
 		{
 			lastValues.scaleEnvelope = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			FilterParameters par(1);
-			par.setParameter(0, lastValues.scaleEnvelope / 100.0f);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.scaleEnvelope / 100.0f));
 			envelopeEditor->tool_yScaleEnvelope(&par);
 			break;
 		}

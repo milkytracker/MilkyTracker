@@ -244,8 +244,14 @@ public:
 	void endDrawing();
 	
 	// --- operations --------------------------------------------------------	
+	// this is just for convenience, it delegates to the appropriate tool code
+	void minimizeSample();
+	void cropSample();
+	void clearSample();
+	void mixPasteSample();
+	void convertSampleResolution(bool convert);
+
 	// remember to stop playing before using this
-	bool cutSampleInternal();
 	void cut();
 	void copy();
 	void paste();
@@ -288,7 +294,9 @@ public:
 	void pasteOther(WorkSample& src);
 	
 private:
-	// -- sample tools
+	bool cutSampleInternal();
+
+	// -- sample tool stuff
 	float getFloatSampleFromWaveform(pp_int32 index, void* source = NULL, pp_int32 size = 0);
 	void setFloatSampleInWaveform(pp_int32 index, float singleSample, void* source = NULL);
 	
@@ -300,16 +308,16 @@ private:
 	void postFilter();
 	
 public: 
-	bool tool_newSample(pp_int32 numSamples, pp_int32 numBits);
-	void tool_minimizeSample();
-	void tool_cropSample();
-	void tool_clearSample();
-	void tool_mixPasteSample();
+	void tool_newSample(const FilterParameters* par);
+	void tool_minimizeSample(const FilterParameters* par);
+	void tool_cropSample(const FilterParameters* par);
+	void tool_clearSample(const FilterParameters* par);
+	void tool_mixPasteSample(const FilterParameters* par);
 	
 	// convert sample resolution
-	void tool_convertSampleResolution(bool convert);
+	void tool_convertSampleResolution(const FilterParameters* par);
 	
-	// filters (need the same signature)
+	// filters 
 	void tool_scaleSample(const FilterParameters* par);
 	void tool_normalizeSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);

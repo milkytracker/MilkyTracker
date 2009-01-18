@@ -568,7 +568,7 @@ void EnvelopeEditor::tool_xScaleEnvelope(const FilterParameters* par)
 {
 	prepareUndo();
 
-	float scale = par->getParameter(0);
+	float scale = par->getParameter(0).floatPart;
 
 	for (pp_int32 i = 0; i < envelope->num; i++)
 	{
@@ -582,7 +582,7 @@ void EnvelopeEditor::tool_yScaleEnvelope(const FilterParameters* par)
 {
 	prepareUndo();
 
-	float scale = par->getParameter(0);
+	float scale = par->getParameter(0).floatPart;
 
 	pp_int32 i;
 	

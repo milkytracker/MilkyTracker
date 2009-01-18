@@ -2435,13 +2435,13 @@ void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 		if ((smp->type & 16) && smp->sample && smp->samplen && convertTo8Bit)
 		{
 			if (!evaluate)
-				sampleEditor->tool_convertSampleResolution(true);
+				sampleEditor->convertSampleResolution(true);
 			numConvertedSamples++;
 		}
 		if (smp->sample && smp->samplen && smp->isMinimizable() && minimize)
 		{
 			if (!evaluate)
-				sampleEditor->tool_minimizeSample();
+				sampleEditor->minimizeSample();
 			numMinimizedSamples++;
 		}
 

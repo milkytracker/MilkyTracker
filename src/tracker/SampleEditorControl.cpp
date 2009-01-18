@@ -1586,12 +1586,12 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		// mix-paste
 		case MenuCommandIDMixPaste:
-			sampleEditor->tool_mixPasteSample();
+			sampleEditor->mixPasteSample();
 			break;
 
 		// crop
 		case MenuCommandIDCrop:
-			sampleEditor->tool_cropSample();
+			sampleEditor->cropSample();
 			break;		
 
 		// undo

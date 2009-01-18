@@ -33,24 +33,49 @@
 
 class FilterParameters
 {
+public:
+	union Parameter
+	{
+		float floatPart;
+		pp_int32 intPart;
+		
+		Parameter()
+		{
+			memset(this, 0, sizeof(Parameter));
+		}
+
+		Parameter(const Parameter& src)		
+		{
+			memcpy(this, &src, sizeof(Parameter));
+		}
+
+		explicit Parameter(float value) :
+			floatPart(value)
+		{
+		}
+
+		explicit Parameter(pp_int32 value) :
+			intPart(value)
+		{
+		}
+	};
+
 private:
-	float* parameters;
+	Parameter* parameters;
 	pp_int32 numParameters;
 	
 public:
 	FilterParameters(pp_int32 numParameters) :
-		numParameters(numParameters)
+		numParameters(numParameters),
+		parameters(new Parameter[numParameters])
 	{
-		parameters = new float[numParameters];
-		for (pp_int32 i = 0; i < numParameters; i++)
-			parameters[i] = 0.0f;
 	}
 
 	// Construction
 	FilterParameters(const FilterParameters& par) 
 	{
 		numParameters = par.numParameters;
-		parameters = new float[numParameters];		
+		parameters = new Parameter[numParameters];		
 		for (pp_int32 i = 0; i < numParameters; i++)
 			parameters[i] = par.parameters[i];
 	}
@@ -60,18 +85,18 @@ public:
 		delete[] parameters;
 	}
 		
-	void setParameter(pp_int32 index, float par)
+	void setParameter(pp_int32 index, const Parameter& par)
 	{
 		if (index >= 0 && index < numParameters)
 			parameters[index] = par;
 	}
 
-	float getParameter(pp_int32 index) const
+	Parameter getParameter(pp_int32 index) const
 	{
 		if (index >= 0 && index < numParameters)
 			return parameters[index];
 		
-		return 0.0f;
+		return Parameter();
 	}
 	
 	pp_int32 getNumParameters() const { return numParameters; }
