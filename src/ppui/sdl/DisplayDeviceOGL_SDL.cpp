@@ -20,6 +20,11 @@
  *
  */
 
+/* Using the OpenGL API for drawing/font operations turned out to be very CPU
+ * intensive.. This code left here for historic reasons (edit the relevant
+ * parts of src/tracker/Makefile.am if you want to play around).
+ */
+
 #include "DisplayDeviceOGL_SDL.h"
 #include "Graphics.h"
 

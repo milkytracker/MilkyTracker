@@ -6,7 +6,9 @@
  *
  */
  
+#ifdef VERBOSE
 #include <stdio.h>
+#endif
 #include "ZipExtractor.h"
 #include "XModule.h"
 #include "XMFile.h"

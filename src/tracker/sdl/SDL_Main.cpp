@@ -65,7 +65,9 @@
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
 #include "DisplayDeviceFB_SDL.h"
-#include "DisplayDeviceOGL_SDL.h"
+#ifdef __OPENGL__
+#include "DisplayDeviceOGL_SDL.h"  // <-- Experimental, slow
+#endif
 #include "Screen.h"
 #include "Tracker.h"
 #include "PPMutex.h"
@@ -111,8 +113,6 @@ static pp_uint32	rButtonDownStartTime;
 static pp_uint32	timerTicker				= 0;
 
 static PPPoint		p;
-
-static const bool	openGL					= false;
 
 // This needs to be visible from outside 
 pp_uint32 PPGetTickCount()
@@ -892,12 +892,13 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-	if (openGL)	
-		myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width, windowSize.height, 
-							   bpp, fullScreen, orientation, swapRedBlue);
-	else
-		myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width, windowSize.height, 
-							  bpp, fullScreen, orientation, swapRedBlue);		
+#ifdef __DISPLAYDEVICEOGL_H__
+myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width,
+		windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
+#else
+myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width,
+		windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
+#endif 
 
 	myDisplayDevice->init();
 
