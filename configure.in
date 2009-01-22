@@ -114,6 +114,7 @@ AC_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/compression/Makefile
+                 src/compression/zziplib/generic/Makefile
                  src/fx/Makefile
                  src/midi/Makefile
                  src/milkyplay/Makefile
