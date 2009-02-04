@@ -1126,91 +1126,104 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 }
 
 /*
- * This code is from:
+ * This code is almost from:
  * http://www.codeguru.com/cpp/w-p/win32/article.php/c1427/
  *
- **/
-class CmdLineArgs : public std::vector<TCHAR*>
+ * The original writer of the code did derive this class from public std::vector<TCHAR*>
+ * which is pretty bad ;)
+ */
+class CmdLineArgs
 {
 public:
-    CmdLineArgs ()
-    {
-        // Save local copy of the command line string, because
-        // ParseCmdLine() modifies this string while parsing it.
+	CmdLineArgs()
+	{
 		TCHAR* cmdline = GetCommandLine();
-        m_cmdline = new TCHAR[_tcslen (cmdline) + 1];
-        if (m_cmdline)
-        {
-            _tcscpy(m_cmdline, cmdline);
+		// Save local copy of the command line string, because
+		// ParseCmdLine() modifies this string while parsing it.
+		m_cmdline = new TCHAR[_tcslen (cmdline) + 1];
+		if (m_cmdline)
+		{
+			_tcscpy_s(m_cmdline, _tcslen (cmdline) + 1, cmdline);
 			ParseCmdLine();
-        }
-    }
-    ~CmdLineArgs()
-    {
-        delete[] m_cmdline;
-    }
+		}
+	}
+	~CmdLineArgs()
+	{
+		delete[] m_cmdline;
+	}
+
+	const TCHAR* operator[](size_t index) const
+	{
+		return m_args[index];
+	}
+
+	size_t size() const 
+	{
+		return m_args.size();
+	}
 
 private:
-    TCHAR* m_cmdline; // the command line string
+	TCHAR* m_cmdline; // the command line string
+	std::vector<TCHAR*> m_args;
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // Parse m_cmdline into individual tokens, which are delimited by spaces. If a
-    // token begins with a quote, then that token is terminated by the next quote
-    // followed immediately by a space or terminator.  This allows tokens to contain
-    // spaces.
-    // This input string:     This "is" a ""test"" "of the parsing" alg"o"rithm.
-    // Produces these tokens: This, is, a, "test", of the parsing, alg"o"rithm
-    ////////////////////////////////////////////////////////////////////////////////
-    void ParseCmdLine ()
-    {
-        enum { TERM  = '\0',
-               QUOTE = '\"' };
+	////////////////////////////////////////////////////////////////////////////////
+	// Parse m_cmdline into individual tokens, which are delimited by spaces. If a
+	// token begins with a quote, then that token is terminated by the next quote
+	// followed immediately by a space or terminator.  This allows tokens to contain
+	// spaces.
+	// This input string:     This "is" a ""test"" "of the parsing" alg"o"rithm.
+	// Produces these tokens: This, is, a, "test", of the parsing, alg"o"rithm
+	////////////////////////////////////////////////////////////////////////////////
+	void ParseCmdLine ()
+	{
+		enum { TERM  = '\0',
+			QUOTE = '\"' };
 
-        bool bInQuotes = false;
-        TCHAR* pargs = m_cmdline;
+		bool bInQuotes = false;
+		TCHAR* pargs = m_cmdline;
 
-        while (*pargs)
-        {
-            while (isspace (*pargs))        // skip leading whitespace
-                pargs++;
+		while (*pargs)
+		{
+			while (isspace (*pargs))        // skip leading whitespace
+				pargs++;
 
-            bInQuotes = (*pargs == QUOTE);  // see if this token is quoted
+			bInQuotes = (*pargs == QUOTE);  // see if this token is quoted
 
-            if (bInQuotes)                  // skip leading quote
-                pargs++;
+			if (bInQuotes)                  // skip leading quote
+				pargs++;
 
-            push_back (pargs);              // store position of current token
+			m_args.push_back (pargs);              // store position of current token
 
-            // Find next token.
-            // NOTE: Args are normally terminated by whitespace, unless the
-            // arg is quoted.  That's why we handle the two cases separately,
-            // even though they are very similar.
-            if (bInQuotes)
-            {
-                // find next quote followed by a space or terminator
-                while (*pargs &&
-                      !(*pargs == QUOTE && (isspace (pargs[1]) || pargs[1] == TERM)))
-                    pargs++;
-                if (*pargs)
-                {
-                    *pargs = TERM;  // terminate token
-                    if (pargs[1])   // if quoted token not followed by a terminator
-                        pargs += 2; // advance to next token
-                }
-            }
-            else
-            {
-                // skip to next non-whitespace character
-                while (*pargs && !isspace (*pargs))
-                    pargs++;
-                if (*pargs && isspace (*pargs)) // end of token
-                {
-                   *pargs = TERM;    // terminate token
-                    pargs++;         // advance to next token or terminator
-                }
-            }
-        } // while (*pargs)
-    } // ParseCmdLine()
+			// Find next token.
+			// NOTE: Args are normally terminated by whitespace, unless the
+			// arg is quoted.  That's why we handle the two cases separately,
+			// even though they are very similar.
+			if (bInQuotes)
+			{
+				// find next quote followed by a space or terminator
+				while (*pargs &&
+					!(*pargs == QUOTE && (isspace (pargs[1]) || pargs[1] == TERM)))
+					pargs++;
+				if (*pargs)
+				{
+					*pargs = TERM;  // terminate token
+					if (pargs[1])   // if quoted token not followed by a terminator
+						pargs += 2; // advance to next token
+				}
+			}
+			else
+			{
+				// skip to next non-whitespace character
+				while (*pargs && !isspace (*pargs))
+					pargs++;
+				if (*pargs && isspace (*pargs)) // end of token
+				{
+					*pargs = TERM;    // terminate token
+					pargs++;         // advance to next token or terminator
+				}
+			}
+		} // while (*pargs)
+	} // ParseCmdLine()
 }; // class CmdLineArgs
 
 /****************************************************************************

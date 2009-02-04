@@ -32,8 +32,8 @@ PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height) :
 	m_threadID(0)
 {
 	m_BitmapInfo.biSize = sizeof(BITMAPINFOHEADER);
-	m_BitmapInfo.biWidth = getWidth();
-	m_BitmapInfo.biHeight = -getHeight();
+	m_BitmapInfo.biWidth = getSize().width;
+	m_BitmapInfo.biHeight = -getSize().height;
 	m_BitmapInfo.biPlanes = 1;
 	m_BitmapInfo.biBitCount = 24;
 	m_BitmapInfo.biCompression = BI_RGB;
@@ -59,7 +59,7 @@ PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height) :
 	m_hDC = NULL;
 
 	// initialise graphics instance
-	currentGraphics = new PPGraphics_BGR24(getWidth(), getHeight(), (getWidth() * 24) / 8, m_pBits);
+	currentGraphics = new PPGraphics_BGR24(getSize().width, getSize().height, (getSize().width * 24) / 8, m_pBits);
 	currentGraphics->lock = true;
 }
 
@@ -108,7 +108,7 @@ void PPDisplayDevice::update()
 
 	m_hDC = ::GetDC(m_hWnd);
 
-	blit(m_hWnd, m_hDC, 0, 0, getWidth(), getHeight());
+	blit(m_hWnd, m_hDC, 0, 0, getSize().width, getSize().height);
 
 	::ReleaseDC(m_hWnd, m_hDC);
 

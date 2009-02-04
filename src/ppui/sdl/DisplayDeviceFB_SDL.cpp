@@ -104,7 +104,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(SDL_Surface*& screen,
 	{
 		temporaryBufferPitch = (width*bpp)/8;
 		temporaryBufferBPP = bpp;
-		temporaryBuffer = new pp_uint8[this->width*this->height*(bpp/8)];
+		temporaryBuffer = new pp_uint8[getSize().width*getSize().height*(bpp/8)];
 	}
 	
 	currentGraphics->lock = true;
@@ -156,7 +156,7 @@ void PPDisplayDeviceFB::update()
 		return;
 	}
 	
-	PPRect r(0, 0, getWidth(), getHeight());
+	PPRect r(0, 0, getSize().width, getSize().height);
 	swap(r);
 	
 	SDL_UpdateRect(theSurface, 0, 0, 0, 0);

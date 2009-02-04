@@ -294,9 +294,9 @@ public:
 	void pasteOther(WorkSample& src);
 	
 private:
+	// -- sample tool stuff
 	bool cutSampleInternal();
 
-	// -- sample tool stuff
 	float getFloatSampleFromWaveform(pp_int32 index, void* source = NULL, pp_int32 size = 0);
 	void setFloatSampleInWaveform(pp_int32 index, float singleSample, void* source = NULL);
 	

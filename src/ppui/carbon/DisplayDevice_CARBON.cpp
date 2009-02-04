@@ -182,10 +182,10 @@ PPDisplayDevice::PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_
 	switch (bpp)
 	{
 		case 16:
-			currentGraphics = new PPGraphics_15BIT(getWidth(), getHeight(), pitch, buffer);
+			currentGraphics = new PPGraphics_15BIT(getSize().width, getSize().height, pitch, buffer);
 			break;
 		case 32:
-			currentGraphics = new PPGraphics_ARGB32(getWidth(), getHeight(), pitch, buffer);
+			currentGraphics = new PPGraphics_ARGB32(getSize().width, getSize().height, pitch, buffer);
 			break;
 	}
 	
@@ -272,8 +272,8 @@ void PPDisplayDevice::update(const PPRect& r)
     SetGWorld(GetWindowPort(mainWindow), GetGDevice());
     GetPortBounds(GetWindowPort(mainWindow), &windowRect);
     
-	float xScale = (float)(windowRect.right - windowRect.left)/(float)getWidth();
-	float yScale = (float)(windowRect.bottom - windowRect.top)/(float)getHeight();
+	float xScale = (float)(windowRect.right - windowRect.left) / (float)getSize().width;
+	float yScale = (float)(windowRect.bottom - windowRect.top) / (float)getSize().height;
 	
 	Rect srcRect;
 	srcRect.top = r.y1;

@@ -63,7 +63,7 @@ PPScreen::PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* e
 	
 	rootContainer = new PPTransparentContainer(-1, this, eventListener, 
 											   PPPoint(0, 0), 
-											   PPSize(displayDevice->getWidth(), displayDevice->getHeight()));
+											   PPSize(displayDevice->getSize()));
 }
 
 PPScreen::~PPScreen()
@@ -739,7 +739,7 @@ pp_int32 PPScreen::getWidth() const
 	if (displayDevice == NULL)
 		return -1;
 
-	return displayDevice->getWidth();
+	return displayDevice->getSize().width;
 }
 
 pp_int32 PPScreen::getHeight() const
@@ -747,7 +747,7 @@ pp_int32 PPScreen::getHeight() const
 	if (displayDevice == NULL)
 		return -1;
 
-	return displayDevice->getHeight();
+	return displayDevice->getSize().height;
 }
 
 pp_int32 PPScreen::getDefaultWidth()

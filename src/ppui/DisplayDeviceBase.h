@@ -144,25 +144,22 @@ class PPDisplayDeviceBase
 {
 protected:
 	PPGraphicsAbstract* currentGraphics;
+	PPSize size;
 	pp_int32 updateStackPtr;
 	pp_int32 disabledStackPtr;
-	pp_int32 width, height;
 	
 	// ----------------------------- ex. PPWindow ----------------------------
 	bool bFullScreen;
 	PPColor waitBarColor;
-	PPSize size;
 	MouseCursorTypes currentCursorType;
 	
 public:
 	PPDisplayDeviceBase(pp_int32 theWidth = DISPLAYDEVICE_WIDTH, pp_int32 theHeight = DISPLAYDEVICE_HEIGHT) : 
 		currentGraphics(0),
+		size(PPSize(DISPLAYDEVICE_WIDTH,DISPLAYDEVICE_HEIGHT)),
 		updateStackPtr(0),
 		disabledStackPtr(0),
-		width(theWidth),
-		height(theHeight),
 		bFullScreen(false),
-		size(PPSize(DISPLAYDEVICE_WIDTH,DISPLAYDEVICE_HEIGHT)),
 		currentCursorType(MouseCursorTypeStandard)
 	{
 	}
@@ -204,9 +201,9 @@ public:
 
 	virtual void update(const PPRect& r) = 0;
 
-	pp_int32 getWidth() const { return width; }
-	pp_int32 getHeight() const { return height; }
-	
+	virtual void setSize(const PPSize& size) { this->size = size; }
+	virtual const PPSize& getSize() const { return this->size; }
+
 	static pp_int32 getDefaultWidth() { return DISPLAYDEVICE_WIDTH; }
 	static pp_int32 getDefaultHeight() { return DISPLAYDEVICE_HEIGHT; }
 	
@@ -216,8 +213,6 @@ public:
 	virtual bool init()	{ return true; }
 
 	virtual void setTitle(const PPSystemString& title) { }	
-
-	virtual void setSize(const PPSize& size) { this->size = size; }
 
 	virtual bool goFullScreen(bool b) { return true; }
 	virtual bool isFullScreen() { return bFullScreen; }

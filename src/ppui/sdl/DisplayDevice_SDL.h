@@ -66,7 +66,7 @@ protected:
 	static Uint8 resizeRight_data[], resizeRight_mask[];
 	static Uint8 eggtimer_data[], eggtimer_mask[];
 	static Uint8 hand_data[], hand_mask[];
-	
+
 public:
 	PPDisplayDevice(SDL_Surface*& screen, 
 					pp_int32 width, 
@@ -77,6 +77,8 @@ public:
 				  
 	virtual ~PPDisplayDevice();
 
+	virtual void setSize(const PPSize& size);
+	
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
@@ -85,7 +87,6 @@ public:
 	
 	// ----------------------------- ex. PPWindow ----------------------------
 	virtual void setTitle(const PPSystemString& title);	
-	virtual void setSize(const PPSize& size);
 	virtual bool goFullScreen(bool b);
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
