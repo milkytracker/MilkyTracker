@@ -23,6 +23,8 @@
 #include "Graphics.h"
 #include "Font.h"
 
+#ifdef __OPENGL__
+
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #else
@@ -403,3 +405,5 @@ PPGraphics_OGL::FontCacheEntry::~FontCacheEntry()
 {
 	delete[] oglBitmapData;
 }
+
+#endif

@@ -886,20 +886,20 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
  	if (!fullScreen) 
 		fullScreen = myTracker->getFullScreenFlagFromDatabase();
+	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 
 #ifdef __LOWRES__
 	windowSize.width = DISPLAYDEVICE_WIDTH;
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-#ifdef __DISPLAYDEVICEOGL_H__
-myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width,
-		windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
+#ifdef __OPENGL__
+	myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width, windowSize.height, 1, bpp, fullScreen, orientation, swapRedBlue);
 #else
-myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width,
-		windowSize.height, bpp, fullScreen, orientation, swapRedBlue);
+	myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width, windowSize.height, scaleFactor, 
+											bpp, fullScreen, orientation, swapRedBlue);
 #endif 
-
+	
 	myDisplayDevice->init();
 
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);

@@ -63,7 +63,9 @@ private:
 	Rect oldRc;
 	
 public:
-	PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_int32 width, pp_int32 height, pp_uint32 bpp = 32);
+	PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, 
+					pp_int32 width, pp_int32 height, pp_int32 scaleFactor = 1,
+					pp_uint32 bpp = 32);
 	virtual ~PPDisplayDevice();
 
 	virtual PPGraphicsAbstract* open();
@@ -77,6 +79,8 @@ public:
 	virtual bool init();
 	virtual void setTitle(const PPSystemString& title);	
 	virtual void setSize(const PPSize& size);
+	virtual bool supportsScaling() const { return true; }
+	
 	virtual bool goFullScreen(bool b);
 	virtual PPSize getDisplayResolution() const;
 	virtual void shutDown();

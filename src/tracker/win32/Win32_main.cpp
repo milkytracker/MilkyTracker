@@ -1023,13 +1023,14 @@ static void InitTracker()
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
+	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
 #ifdef __LOWRES__
 	windowSize.width = 320;
 	windowSize.height = 240;
 #endif
 
-	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height);
+	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
 
 	// Change preferred window size
 	myDisplayDevice->setSize(windowSize);

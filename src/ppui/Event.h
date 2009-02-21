@@ -150,6 +150,30 @@ public:
 	pp_int32 getMetaData() const { return metaData; }
 	
 	void cancel() { ID = eInvalid; }
+
+	bool isMouseEvent() const
+	{
+		switch (ID)
+		{
+			case eLMouseDown:
+			case eLMouseUp:
+			case eLMouseDoubleClick:
+			case eLMouseDrag:
+			case eLMouseRepeat:
+			case eRMouseDown:
+			case eRMouseUp:
+			case eRMouseDoubleClick:
+			case eRMouseDrag:
+			case eRMouseRepeat:
+			case eMouseMoved:
+			case eMouseEntered:
+			case eMouseLeft:
+			case eMouseWheelMoved:
+				return true;
+		}
+
+		return false;
+	}
 };
 
 /////////////////////////////////////////////////////////////////

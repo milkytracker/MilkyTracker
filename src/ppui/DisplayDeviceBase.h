@@ -145,6 +145,8 @@ class PPDisplayDeviceBase
 protected:
 	PPGraphicsAbstract* currentGraphics;
 	PPSize size;
+	pp_int32 scaleFactor;
+
 	pp_int32 updateStackPtr;
 	pp_int32 disabledStackPtr;
 	
@@ -154,9 +156,12 @@ protected:
 	MouseCursorTypes currentCursorType;
 	
 public:
-	PPDisplayDeviceBase(pp_int32 theWidth = DISPLAYDEVICE_WIDTH, pp_int32 theHeight = DISPLAYDEVICE_HEIGHT) : 
+	PPDisplayDeviceBase(pp_int32 theWidth = DISPLAYDEVICE_WIDTH, 
+						pp_int32 theHeight = DISPLAYDEVICE_HEIGHT,
+						pp_int32 scaleFactor = 1) : 
 		currentGraphics(0),
-		size(PPSize(DISPLAYDEVICE_WIDTH,DISPLAYDEVICE_HEIGHT)),
+		size(PPSize(theWidth, theHeight)),
+		scaleFactor(scaleFactor),
 		updateStackPtr(0),
 		disabledStackPtr(0),
 		bFullScreen(false),
@@ -203,6 +208,9 @@ public:
 
 	virtual void setSize(const PPSize& size) { this->size = size; }
 	virtual const PPSize& getSize() const { return this->size; }
+
+	pp_int32 getScaleFactor() const { return scaleFactor; }
+	virtual bool supportsScaling() const { return false; }
 
 	static pp_int32 getDefaultWidth() { return DISPLAYDEVICE_WIDTH; }
 	static pp_int32 getDefaultHeight() { return DISPLAYDEVICE_HEIGHT; }

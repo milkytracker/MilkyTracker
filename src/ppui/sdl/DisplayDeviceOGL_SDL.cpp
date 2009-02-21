@@ -28,6 +28,8 @@
 #include "DisplayDeviceOGL_SDL.h"
 #include "Graphics.h"
 
+#ifdef __OPENGL__
+
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
 #endif
@@ -35,11 +37,12 @@
 PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen, 
 									   pp_int32 width, 
 									   pp_int32 height, 
+									   pp_int32 scaleFactor,
 									   pp_int32 bpp,
 									   bool fullScreen, 
 									   Orientations theOrientation/* = ORIENTATION_NORMAL*/, 
 									   bool swapRedBlue/* = false*/) :
-	PPDisplayDevice(screen, width, height, bpp, fullScreen, theOrientation)
+	PPDisplayDevice(screen, width, height, bpp, scaleFactor, fullScreen, theOrientation)
 {
 	const SDL_VideoInfo* videoinfo;
 
@@ -147,3 +150,4 @@ void PPDisplayDeviceOGL::update(const PPRect& r)
 	//SDL_UpdateRect(theSurface, r3.x1, r3.y1, r3.x2-r3.x1, r3.y2-r3.y1);
 }
 
+#endif

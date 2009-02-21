@@ -72,8 +72,27 @@ PPScreen::~PPScreen()
 	delete timerEventControls;
 }
 
+void PPScreen::adjustEventMouseCoordinates(PPEvent* event)
+{
+	if (!displayDevice->supportsScaling())
+		return;
+
+	const pp_int32 scaleFactor = displayDevice->getScaleFactor();
+
+	if (scaleFactor == 1)
+		return;
+
+	PPPoint* p = (PPPoint*)event->getDataPtr();
+
+	p->x /= scaleFactor;
+	p->y /= scaleFactor;
+}
+
 void PPScreen::raiseEvent(PPEvent* event)
 {
+	if (event->isMouseEvent())
+		adjustEventMouseCoordinates(event);
+
 	// route events to event listener first
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event);
 
@@ -773,6 +792,23 @@ void PPScreen::setSize(const PPSize& size)
 		
 	rootContainer->setSize(size);
 }
+
+bool PPScreen::supportsScaling() const
+{
+	if (displayDevice)
+		return displayDevice->supportsScaling();
+		
+	return false;
+}
+
+pp_int32 PPScreen::getScaleFactor() const
+{
+	if (displayDevice)
+		return displayDevice->getScaleFactor();
+
+	return 1;
+}
+
 
 bool PPScreen::goFullScreen(bool b)
 {

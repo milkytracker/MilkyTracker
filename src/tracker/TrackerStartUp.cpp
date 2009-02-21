@@ -78,6 +78,22 @@ bool Tracker::getFullScreenFlagFromDatabase()
 	return fullScreen;
 }
 
+pp_int32 Tracker::getScreenScaleFactorFromDatabase()
+{
+	pp_int32 scaleFactor = 1;
+	
+	if (XMFile::exists(System::getConfigFileName()))
+	{
+		TrackerSettingsDatabase* settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);		
+		XMFile f(System::getConfigFileName());	
+		settingsDatabaseCopy->serialize(f);			
+		scaleFactor = settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue();
+		delete settingsDatabaseCopy;
+	}
+
+	return scaleFactor;
+}
+
 bool Tracker::getShowSplashFlagFromDatabase()
 {
 	bool showSplash = true;

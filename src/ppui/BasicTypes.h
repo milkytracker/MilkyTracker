@@ -127,6 +127,14 @@ struct PPRect
 	pp_int32 width() const { return x2-x1; }
 	pp_int32 height() const { return y2-y1; }
 	
+	void scale(pp_int32 scaleFactor)
+	{
+		x1 *= scaleFactor;
+		y1 *= scaleFactor;
+		x2 *= scaleFactor;
+		y2 *= scaleFactor;
+	}
+	
 	bool intersect(const PPRect& rc) const
 	{
 		pp_int32 left1, left2;

@@ -105,6 +105,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("XRESOLUTION", PPScreen::getDefaultWidth());
 	settingsDatabase->store("YRESOLUTION", PPScreen::getDefaultHeight());
 
+	settingsDatabase->store("SCREENSCALEFACTOR", 1);
+
 	settingsDatabase->store("ENVELOPEEDITORSCALE", 256);
 
 	for (i = 0; i < PPFont::FONT_LAST; i++)

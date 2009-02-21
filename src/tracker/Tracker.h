@@ -445,6 +445,7 @@ public:
 	
 	PPSize getWindowSizeFromDatabase();
 	bool getFullScreenFlagFromDatabase();
+	pp_int32 getScreenScaleFactorFromDatabase();
 	bool getShowSplashFlagFromDatabase();
 
 	void showSplash();

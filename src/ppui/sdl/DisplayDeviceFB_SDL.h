@@ -33,6 +33,7 @@
 class PPDisplayDeviceFB : public PPDisplayDevice
 {
 private:
+	bool needsTemporaryBuffer;
 	pp_uint8* temporaryBuffer;
 	pp_uint32 temporaryBufferPitch, temporaryBufferBPP;
 	
@@ -43,12 +44,15 @@ public:
 	PPDisplayDeviceFB(SDL_Surface*& screen, 
 					  pp_int32 width, 
 					  pp_int32 height, 
+					  pp_int32 scaleFactor,
 					  pp_int32 bpp, 
 					  bool fullScreen,
 					  Orientations theOrientation = ORIENTATION_NORMAL, 
 					  bool swapRedBlue = false);
 				  
 	virtual ~PPDisplayDeviceFB();
+
+	virtual bool supportsScaling() const { return true; }
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();

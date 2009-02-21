@@ -269,6 +269,7 @@ void initTracker()
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
+	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
 #ifdef __LOWRES__
 	windowSize.width = 320;
@@ -281,6 +282,7 @@ void initTracker()
 										  waitWindow, 
 										  windowSize.width, 
 										  windowSize.height, 
+										  scaleFactor,
 										  sixteenBitColorDepth ? 16 : 32);
 	
 	myDisplayDevice->init();
@@ -834,12 +836,15 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(keyModifiers), NULL, &keyModifiers);
 			
 			GetPortBounds(GetWindowPort(mainWindow),&windowRect);
-			double xScale = (double)myDisplayDevice->getSize().width / (windowRect.right - windowRect.left);
-			double yScale = (double)myDisplayDevice->getSize().height / (windowRect.bottom - windowRect.top);
-			
+			//double xScale = (double)myDisplayDevice->getSize().width / (windowRect.right - windowRect.left);
+			//double yScale = (double)myDisplayDevice->getSize().height / (windowRect.bottom - windowRect.top);
+
 			GlobalToLocal(&mousePoint);
-			localMouseX = (int)(mousePoint.h*xScale);
-			localMouseY = (int)(mousePoint.v*yScale);
+			//localMouseX = (int)(mousePoint.h*xScale);
+			//localMouseY = (int)(mousePoint.v*yScale);
+			
+			localMouseX = mousePoint.h;
+			localMouseY = mousePoint.v;
 			
 			switch (eventKind) 
 			{

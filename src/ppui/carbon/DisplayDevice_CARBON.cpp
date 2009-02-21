@@ -162,8 +162,10 @@ void PPDisplayDevice::GWorldWrapper::LockGWorldMemory()
     UnlockPixels((PixMapHandle)ppixMap);
 }
 
-PPDisplayDevice::PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_int32 width, pp_int32 height, pp_uint32 bpp/* = 32*/) : 
-	PPDisplayDeviceBase(width, height),
+PPDisplayDevice::PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, 
+								 pp_int32 width, pp_int32 height, pp_int32 scaleFactor/* = 1*/,
+								 pp_uint32 bpp/* = 32*/) : 
+	PPDisplayDeviceBase(width, height, scaleFactor),
 	mainWindow(mainWindow),
 	waitWindow(waitWindow),	
 	oldmode(NULL),
@@ -191,7 +193,7 @@ PPDisplayDevice::PPDisplayDevice(WindowPtr mainWindow, WindowPtr waitWindow, pp_
 	
 	this->size.width = width;
 	this->size.height = height;
-	SizeWindow(mainWindow, width, height, false);
+	SizeWindow(mainWindow, width * scaleFactor, height * scaleFactor, false);
 	
 	currentGraphics->lock = true;	
 }
@@ -331,7 +333,7 @@ void PPDisplayDevice::setTitle(const PPSystemString& title)
 
 void PPDisplayDevice::setSize(const PPSize& size)
 {
-	SizeWindow(mainWindow, size.width, size.height, false);
+	SizeWindow(mainWindow, size.width * scaleFactor, size.height * scaleFactor, false);
 	
 	if (!bFullScreen)
 		RepositionWindow (mainWindow, NULL, kWindowCenterOnMainScreen);
@@ -350,7 +352,7 @@ bool PPDisplayDevice::goFullScreen(bool b)
 		CGDirectDisplayID display=CGMainDisplayID();
 		boolean_t exact;
 		oldmode = CGDisplayCurrentMode(display);
-		mode = CGDisplayBestModeForParametersAndRefreshRate(display,32,size.width,size.height,75.0,&exact);
+		mode = CGDisplayBestModeForParametersAndRefreshRate(display, 32, size.width * scaleFactor, size.height * scaleFactor, 75.0, &exact);
 		
 		if (exact) 
 		{
@@ -364,7 +366,7 @@ bool PPDisplayDevice::goFullScreen(bool b)
 			r1 = oldRc;
 			r2 = r1;
 			
-			SInt32 dh = (r1.bottom - r1.top) - size.height;
+			SInt32 dh = (r1.bottom - r1.top) - size.height * scaleFactor;
 			
 			r2.left-=r1.left;
 			r2.top-=r1.top+dh;

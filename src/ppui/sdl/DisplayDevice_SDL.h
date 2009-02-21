@@ -54,7 +54,7 @@ protected:
 	SDL_Surface* theSurface;
 	Orientations orientation;
 	
-	SDL_Surface* CreateScreen(Uint16 w, Uint16 h, Uint8 bpp, Uint32 flags);
+	SDL_Surface* CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
 
 	// used for rotating coordinates etc.
 	void adjust(pp_int32& x, pp_int32& y);
@@ -71,6 +71,7 @@ public:
 	PPDisplayDevice(SDL_Surface*& screen, 
 					pp_int32 width, 
 					pp_int32 height, 
+					pp_int32 scaleFactor,
 					pp_int32 bpp, 
 					bool fullScreen,
 					Orientations theOrientation = ORIENTATION_NORMAL);

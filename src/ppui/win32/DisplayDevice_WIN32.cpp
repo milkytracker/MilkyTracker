@@ -25,8 +25,8 @@
 #include "WaitWindow_WIN32.h"
 #include "PPSystem.h"
 
-PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height) :
-	PPDisplayDeviceBase(width, height),
+PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height, pp_int32 scaleFactor/* = 1*/) :
+	PPDisplayDeviceBase(width, height, scaleFactor),
 	m_waitWindowVisible(false),
 	m_hThread(NULL),
 	m_threadID(0)
@@ -87,7 +87,10 @@ void PPDisplayDevice::blit(HWND hWnd, HDC pDC, pp_int32 x, pp_int32 y, pp_int32 
 	HDC hBitmapDC = ::CreateCompatibleDC(NULL);
 	HBITMAP hOldBitmap = (HBITMAP)::SelectObject(hBitmapDC, m_hBitmap);
  
-	::BitBlt(pDC, x, y, width, height, hBitmapDC, x, y, SRCCOPY);
+	if (scaleFactor == 1)
+		::BitBlt(pDC, x, y, width, height, hBitmapDC, x, y, SRCCOPY);
+	else
+		::StretchBlt(pDC, x*scaleFactor, y*scaleFactor, width*scaleFactor, height*scaleFactor, hBitmapDC, x, y, width, height, SRCCOPY);
 
 	::SelectObject(hBitmapDC, hOldBitmap);
 	::DeleteDC(hBitmapDC);
@@ -149,8 +152,8 @@ void PPDisplayDevice::setSize(const PPSize& size)
 
 	RECT rc;
 
-	pp_int32 modexs = size.width +::GetSystemMetrics(SM_CXEDGE)*2+2;
-	pp_int32 modeys = size.height + ::GetSystemMetrics(SM_CYCAPTION)+2+::GetSystemMetrics(SM_CYEDGE)*2;
+	pp_int32 modexs = size.width * scaleFactor +::GetSystemMetrics(SM_CXEDGE) * 2 + 2;
+	pp_int32 modeys = size.height * scaleFactor + ::GetSystemMetrics(SM_CYCAPTION) + 2 + ::GetSystemMetrics(SM_CYEDGE) * 2;
 
 	::GetWindowRect(m_hWnd, &rc);
 
@@ -209,7 +212,7 @@ bool PPDisplayDevice::goFullScreen(bool b)
 	{
 		::GetWindowRect(m_hWnd, &m_lastRect);
 
-		if (::SetFullScreen(m_hWnd, size.width, size.height))
+		if (::SetFullScreen(m_hWnd, size.width * scaleFactor, size.height * scaleFactor))
 		{
 			m_lastWindowStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
 			m_lastWindowExStyle = ::GetWindowLong(m_hWnd, GWL_EXSTYLE);

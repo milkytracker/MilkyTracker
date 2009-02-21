@@ -36,6 +36,7 @@ public:
 	PPDisplayDeviceOGL(SDL_Surface*& screen, 
 					   pp_int32 width, 
 					   pp_int32 height, 
+					   pp_int32 scaleFactor,
 					   pp_int32 bpp, 
 					   bool fullScreen,
 					   Orientations theOrientation = ORIENTATION_NORMAL, 

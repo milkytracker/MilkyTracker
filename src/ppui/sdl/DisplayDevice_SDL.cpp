@@ -23,17 +23,29 @@
 #include "DisplayDevice_SDL.h"
 #include "Graphics.h"
 
-SDL_Surface* PPDisplayDevice::CreateScreen(Uint16 w, Uint16 h, Uint8 bpp, Uint32 flags)
+SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
 	SDL_Surface *screen;
-	int i;
-
+	
 	/* Set the video mode */
 	screen = SDL_SetVideoMode(w, h, bpp, flags);
 	if (screen == NULL) 
 	{
 		fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
-		return NULL;
+		fprintf(stderr, "Retrying with default size...");
+
+		w = getDefaultWidth();
+		h = getDefaultHeight();
+		
+		screen = SDL_SetVideoMode(w, h, bpp, flags);
+		
+		if (screen == NULL) 
+		{
+			fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
+			fprintf(stderr, "Giving up.");
+			
+			return NULL;
+		}
 	}
 
 	return screen;
@@ -42,10 +54,11 @@ SDL_Surface* PPDisplayDevice::CreateScreen(Uint16 w, Uint16 h, Uint8 bpp, Uint32
 PPDisplayDevice::PPDisplayDevice(SDL_Surface*& screen, 
 								 pp_int32 width, 
 								 pp_int32 height, 
+								 pp_int32 scaleFactor,
 								 pp_int32 bpp,
 								 bool fullScreen, 
 								 Orientations theOrientation/* = ORIENTATION_NORMAL*/) :
-	PPDisplayDeviceBase(width, height),
+	PPDisplayDeviceBase(width, height, scaleFactor),
 	realWidth(width), realHeight(height),
 	orientation(theOrientation)
 {
@@ -63,8 +76,6 @@ PPDisplayDevice::~PPDisplayDevice()
 
 void PPDisplayDevice::adjust(pp_int32& x, pp_int32& y)
 {
-	pp_int32 h;
-
 	switch (orientation)
 	{
 		case ORIENTATION_NORMAL:
@@ -73,11 +84,16 @@ void PPDisplayDevice::adjust(pp_int32& x, pp_int32& y)
 			
 		case ORIENTATION_ROTATE90CCW:
 		case ORIENTATION_ROTATE90CW:
-			h = x;
+		{
+			pp_int32 h = x;
 			x = y;
 			y = h;
 			break;
+		}
 	}	
+	
+	x *= scaleFactor;
+	y *= scaleFactor;
 }
 
 void PPDisplayDevice::transform(pp_int32& x, pp_int32& y)

@@ -75,6 +75,8 @@ private:
 	
 	void paintDragHighlite(PPGraphicsAbstract* g);
 
+	void adjustEventMouseCoordinates(PPEvent* event);
+
 public:
 	PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* eventListener = NULL);
 
@@ -143,14 +145,17 @@ public:
 	static pp_int32 getDefaultWidth();
 	static pp_int32 getDefaultHeight();
 	
-	void setTitle(const PPSystemString& title);
-	
 	void setSize(const PPSize& size);
+
+	bool supportsScaling() const;
+	pp_int32 getScaleFactor() const;
 
 	bool goFullScreen(bool b);
 	bool isFullScreen() const;
 	
 	PPSize getDisplayResolution() const;
+	
+	void setTitle(const PPSystemString& title);
 	
 	void signalWaitState(bool b, const PPColor& color);	
 	

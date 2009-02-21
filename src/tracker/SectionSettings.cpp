@@ -173,6 +173,8 @@ enum ControlIDs
 	LISTBOX_SETTINGS_RESOLUTIONS,
 	BUTTON_RESOLUTIONS_CUSTOM,
 	BUTTON_RESOLUTIONS_FULL,
+	STATICTEXT_SETTINGS_MAGNIFY,
+	RADIOGROUP_SETTINGS_MAGNIFY,
 	LISTBOX_COLORS,
 	SLIDER_COLOR_RED,
 	SLIDER_COLOR_GREEN,
@@ -249,6 +251,7 @@ enum ControlIDs
 	PAGE_LAYOUT_1,
 	PAGE_LAYOUT_2,
 	PAGE_LAYOUT_3,
+	PAGE_LAYOUT_4,
 
 	PAGE_FONTS_1,
 	PAGE_FONTS_2,
@@ -371,7 +374,7 @@ public:
 	bool isVisible() const { return visible; }
 
 	virtual void init(PPScreen* screen) = 0;
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor) = 0;
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor) = 0;
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event)
 	{
@@ -472,7 +475,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_BUFFERSIZE));
 		PPSlider* slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_BUFFERSIZE));
@@ -612,7 +615,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// mixer resolution
 		pp_int32 v = settingsDatabase->restore("MIXERFREQ")->getIntValue();
@@ -693,7 +696,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_VIRTUALCHANNELS));
 		
@@ -809,7 +812,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));		
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// spacing slider
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPACING));
@@ -1013,7 +1016,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// Update color from sliders
 		PPSlider* slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_COLOR_RED));
@@ -1046,11 +1049,7 @@ public:
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
-		
-		// Colors
 		pp_int32 y2 = y;	
-		
-		pp_int32 lbheight = container->getSize().height - (y2 - y) - 66;
 		
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Resolutions", true, true));
 		
@@ -1066,7 +1065,7 @@ public:
 		
 		y2+=12;
 		
-		lbheight = container->getSize().height - (y2 - y) - (12+18);
+		pp_int32 lbheight = container->getSize().height - (y2 - y) - (18);
 		PPListBox* listBox;
 		listBox = new PPListBox(LISTBOX_SETTINGS_RESOLUTIONS, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		listBox->setBorderColor(TrackerConfig::colorThemeMain);
@@ -1076,25 +1075,27 @@ public:
 		for (i = 0; i < NUMRESOLUTIONS; i++)
 			listBox->addItem(resolutions[i].name);
 		container->addControl(listBox);	
+
+
+		y2+=lbheight + 6;
 		
-		y2+=listBox->getSize().height+2;
+		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MAGNIFY, NULL, NULL, PPPoint(x2 + 2, y2), "Scale:", true));
 		
-		// Next page: fullscreen
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Global", true, true));
-		
-		y2+=4+11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Fullscreen:", true));
-		
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 11*8 + 4, y2-1)));
-		
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
+		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MAGNIFY, screen, this, PPPoint(x2 + 2 + 7*8, y2 - 4), PPSize(120, 16));
+		radioGroup->setColor(TrackerConfig::colorThemeMain);
+		radioGroup->setFont(PPFont::getFont(PPFont::FONT_TINY));
+
+		radioGroup->setHorizontal(true);
+		radioGroup->addItem("x1");
+		radioGroup->addItem("x2");
+		radioGroup->addItem("x4");
+		radioGroup->addItem("x8");
+
+		container->addControl(radioGroup);
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
-		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
-		
 		pp_int32 width = settingsDatabase->restore("XRESOLUTION")->getIntValue();
 		pp_int32 height = settingsDatabase->restore("YRESOLUTION")->getIntValue();
 		
@@ -1111,6 +1112,62 @@ public:
 		
 		if (!found)
 			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SETTINGS_RESOLUTIONS))->setSelectedIndex(NUMRESOLUTIONS-1, false, false);
+
+		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_MAGNIFY))->enable(screen->supportsScaling());
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MAGNIFY))->enable(screen->supportsScaling());
+
+		pp_int32 screenScaleFactor = settingsDatabase->restore("SCREENSCALEFACTOR")->getIntValue();
+		pp_int32 index = 0;
+		switch (screenScaleFactor)
+		{
+			case 2:
+				index = 1;
+				break;
+			case 4:
+				index = 2;
+				break;
+			case 8:
+				index = 3;
+				break;
+		}
+		
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MAGNIFY))->setChoice(index);
+	}
+	
+};
+
+class TabPageLayout_4 : public TabPage
+{
+public:
+	TabPageLayout_4(pp_uint32 id, SectionSettings& sectionSettings) :
+		TabPage(id, sectionSettings)
+	{
+	}
+
+	virtual void init(PPScreen* screen)
+	{
+		pp_int32 i;
+		
+		pp_int32 x = 0;
+		pp_int32 y = 0;
+		
+		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+
+		pp_int32 x2 = x;		
+		pp_int32 y2 = y;	
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Global", true, true));
+		
+		y2+=4+11;
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Fullscreen:", true));
+		
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+	}
+	
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	{
+		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
 	}
 	
 };
@@ -1164,7 +1221,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("PATTERNFONT")->getIntValue();
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_PATTERNFONT))->setChoice(v);	
@@ -1230,7 +1287,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{	
 		PPString str = settingsDatabase->restore(PPFont::getFamilyInternalName((PPFont::FontID)sectionSettings.listBoxFontFamilies->getSelectedIndex()))->getStringValue();
 		sectionSettings.listBoxFontEntries->setSelectedIndexByItem(str, false);
@@ -1284,7 +1341,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));		
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("EDITMODE")->getIntValue();
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_EDITMODE))->setChoice(v);		
@@ -1376,7 +1433,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("PATTERNAUTORESIZE")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTORESIZE))->checkIt(v!=0);
@@ -1465,7 +1522,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("AUTOESTPLAYTIME")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOESTPLAYTIME))->checkIt(v!=0);
@@ -1542,7 +1599,7 @@ public:
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));	
 	}
 	
-	virtual void update(TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("TABS_STOPBACKGROUNDBEHAVIOUR")->getIntValue();
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR))->setChoice(v);			
@@ -1643,7 +1700,8 @@ pp_int32 SectionSettings::getColorIndex()
 void SectionSettings::showRestartMessageBox()
 {
 	if (tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue() ||
-		tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue())
+		tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue() ||
+		tracker.settingsDatabase->restore("SCREENSCALEFACTOR")->getIntValue() != tracker.settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue())
 	{
 		SystemMessage message(*tracker.screen, SystemMessage::MessageResChangeRestart);
 		message.show();
@@ -2404,6 +2462,14 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
+
+			case RADIOGROUP_SETTINGS_MAGNIFY:
+			{
+				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+				tracker.settingsDatabase->store("SCREENSCALEFACTOR", 1 << v);
+				update();
+				break;
+			}
 			
 			case LISTBOX_SETTINGS_RESOLUTIONS:
 			{
@@ -2569,6 +2635,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(1)->add(new TabPageLayout_2(PAGE_LAYOUT_2, *this));
 #ifndef __LOWRES__
 	tabPages.get(1)->add(new TabPageLayout_3(PAGE_LAYOUT_3, *this));
+	tabPages.get(1)->add(new TabPageLayout_4(PAGE_LAYOUT_4, *this));
 #endif
 
 	tabPages.get(2)->add(new TabPageFonts_1(PAGE_FONTS_1, *this));
@@ -2771,7 +2838,7 @@ void SectionSettings::update(bool repaint/* = true*/)
 		for (j = 0; j < tabPages.get(i)->size(); j++)
 			if (tabPages.get(i)->get(j)-isVisible())
 			{
-				tabPages.get(i)->get(j)->update(tracker.settingsDatabase, *tracker.moduleEditor);
+				tabPages.get(i)->get(j)->update(tracker.screen, tracker.settingsDatabase, *tracker.moduleEditor);
 			}
 
 	}
