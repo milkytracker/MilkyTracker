@@ -1,7 +1,7 @@
 /*
  *  milkyplay/drivers/jack/AudioDriver_JACK.cpp
  *
- *  Copyright 2008 Christopher O'Neill
+ *  Copyright 2009 Christopher O'Neill
  *
  *  This file is part of Milkytracker.
  *

@@ -1,7 +1,7 @@
 /*
  *  milkyplay/drivers/osx/AudioDriver_COREAUDIO.h
  *
- *  Copyright 2008 Peter Barth
+ *  Copyright 2009 Peter Barth
  *
  *  This file is part of Milkytracker.
  *

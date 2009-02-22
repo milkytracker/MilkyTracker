@@ -1,7 +1,7 @@
 /*
  *  milkyplay/drivers/ALSA/AudioDriver_ALSA.cpp
  *
- *  Copyright 2008 Peter Barth, Christopher O'Neill
+ *  Copyright 2009 Peter Barth, Christopher O'Neill
  *
  *  This file is part of Milkytracker.
  *

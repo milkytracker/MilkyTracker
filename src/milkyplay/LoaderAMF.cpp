@@ -1,7 +1,7 @@
 /*
  *  milkyplay/LoaderAMF.cpp
  *
- *  Copyright 2008 Peter Barth
+ *  Copyright 2009 Peter Barth
  *
  *  Thanks to Grom PE for the additional DMF loader which is a DSMI AMF variant
  *  used in the Tronic, game by Webfoot Technologies inc.

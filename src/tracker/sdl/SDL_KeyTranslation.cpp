@@ -1,7 +1,7 @@
 /*
  *  tracker/sdl/SDL_KeyTranslation.cpp
  *
- *  Copyright 2008 Peter Barth, Christopher O'Neill
+ *  Copyright 2009 Peter Barth, Christopher O'Neill
  *
  *  This file is part of Milkytracker.
  *

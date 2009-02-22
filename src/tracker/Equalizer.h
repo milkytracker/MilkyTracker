@@ -1,7 +1,7 @@
 /*
  *  tracker/Equalizer.h
  *
- *  Copyright 2008 David Ross (david_ross@hotmail.co.uk)
+ *  Copyright 2009 David Ross (david_ross@hotmail.co.uk)
  *
  *  This file is part of Milkytracker.
  *
