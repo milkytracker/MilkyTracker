@@ -31,13 +31,17 @@
 #include "XMFile.h"
 #include "Font.h"
 
+#define FLIP
+
 #define NUMCHARS	99
-#define CHARWIDTH	12
-#define CHARHEIGHT	12
+#define CHARWIDTH	8
+#define CHARHEIGHT	8
 #define CHARSIZE	(CHARWIDTH*CHARHEIGHT)	
 
 static pp_uint8 dstFont[CHARSIZE*256/8];
 static pp_uint8 src[CHARSIZE*NUMCHARS];
+
+#ifdef FLIP
 
 #define CONVERT_LARGE_CHAR \
 	for (y = 0; y < CHARHEIGHT; y++) \
@@ -46,10 +50,26 @@ static pp_uint8 src[CHARSIZE*NUMCHARS];
 		{ \
 			if (src[k*CHARSIZE+y*CHARWIDTH+x]) \
 			{ \
-				bitstream->write(i*CHARSIZE+y*CHARWIDTH+/*(CHARWIDTH-1-x)*/x, true); \
+				bitstream->write(i*CHARSIZE+y*CHARWIDTH+(CHARWIDTH-1-x), true); \
 			} \
 		} \
 	}
+	
+#else
+
+#define CONVERT_LARGE_CHAR \
+	for (y = 0; y < CHARHEIGHT; y++) \
+	{ \
+		for (x = 0; x < CHARWIDTH; x++) \
+		{ \
+			if (src[k*CHARSIZE+y*CHARWIDTH+x]) \
+			{ \
+				bitstream->write(i*CHARSIZE+y*CHARWIDTH+x, true); \
+			} \
+		} \
+	}
+
+#endif
 
 void convert(const char* infile, const char* outfile)
 {
@@ -121,13 +141,13 @@ void convert(const char* infile, const char* outfile)
 
 int main()
 {
-	//convert("IDC-Harmonica.raw", "IDC-Harmonica.8X8");
+	convert("IDC-Harmonica.raw", "IDC-Harmonica.8X8");
 	//convert("IDC-Hoodlum.raw", "IDC-Hoodlum.8X8");
 	//convert("IDC-MicroKnight.raw", "IDC-MicroKnight.8X8");
 	//convert("REZ-ASCII.raw", "REZ-ASCII.8X8");
 
-	convert("IDC-Harmonica12.raw", "IDC-Harmonica.12X12");
-	convert("IDC-MicroKnight12.raw", "IDC-MicroKnight.12X12");
+	//convert("IDC-Harmonica12.raw", "IDC-Harmonica.12X12");
+	//convert("IDC-MicroKnight12.raw", "IDC-MicroKnight.12X12");
 
 	return 0;
 }
