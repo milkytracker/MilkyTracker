@@ -1,24 +1,31 @@
 /*
-	IASIOThiscallResolver.cpp see the comments in iasiothiscallresolver.h for
-    the top level description - this comment describes the technical details of
-    the implementation.
-
-    The latest version of this file is available from:
-    http://www.audiomulch.com/~rossb/code/calliasio
-
-    please email comments to Ross Bencina <rossb@audiomulch.com>
-
-    BACKGROUND
-
-    The IASIO interface declared in the Steinberg ASIO 2 SDK declares
-    functions with no explicit calling convention. This causes MSVC++ to default
-    to using the thiscall convention, which is a proprietary convention not
-    implemented by some non-microsoft compilers - notably borland BCC,
-    C++Builder, and gcc. MSVC++ is the defacto standard compiler used by
-    Steinberg. As a result of this situation, the ASIO sdk will compile with
-    any compiler, however attempting to execute the compiled code will cause a
-    crash due to different default calling conventions on non-Microsoft
-    compilers.
+ * Copyright (c) 2009, The MilkyTracker Team.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
+ * - Neither the name of the <ORGANIZATION> nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 
     IASIOThiscallResolver solves the problem by providing an adapter class that
     delegates to the IASIO interface using the correct calling convention
