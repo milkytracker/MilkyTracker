@@ -1,31 +1,24 @@
-/*
- * Copyright (c) 2009, The MilkyTracker Team.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- * - Neither the name of the <ORGANIZATION> nor the names of its contributors
- *   may be used to endorse or promote products derived from this software
- *   without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// ****************************************************************************
+//
+// Changed:         I have modified this file slightly (includes) to work  with
+//                  RtAudio. RtAudio.cpp must include this file after asio.h.                                                    
+//
+// File:			IASIOThiscallResolver.h
+// Description:     The IASIOThiscallResolver class implements the IASIO
+//					interface and acts as a proxy to the real IASIO interface by
+//                  calling through its vptr table using the thiscall calling
+//                  convention. To put it another way, we interpose
+//                  IASIOThiscallResolver between ASIO SDK code and the driver.
+//                  This is necessary because most non-Microsoft compilers don't
+//                  implement the thiscall calling convention used by IASIO.
+//
+//					iasiothiscallresolver.cpp contains the background of this
+//					problem plus a technical description of the vptr
+//                  manipulations.
+//
+//					In order to use this mechanism one simply has to add
+//					iasiothiscallresolver.cpp to the list of files to compile
+//                  and #include <iasiothiscallresolver.h>
 //
 //					Note that this #include must come after the other ASIO SDK
 //                  #includes, for example:
