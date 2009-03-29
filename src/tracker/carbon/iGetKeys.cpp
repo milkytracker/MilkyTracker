@@ -124,11 +124,10 @@ short AsciiToKeyCode(Ascii2KeyCodeTable *ttable, short asciiCode) {
 }
 
 char KeyCodeToAscii(short virtualKeyCode) {
-	unsigned long state;
+	static unsigned long state = 0;
 	long keyTrans;
 	char charCode;
 	Ptr kchr;
-	state = 0;
 	kchr = (Ptr) GetScriptVariable(smCurrentScript, smKCHRCache);
 	keyTrans = KeyTranslate(kchr, virtualKeyCode, &state);
 	charCode = keyTrans;

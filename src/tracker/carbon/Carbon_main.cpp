@@ -551,7 +551,8 @@ int main(int argc, char* argv[])
 		{kEventClassMouse,kEventMouseWheelMoved},
 		{kEventClassTextInput,kEventUnicodeForKeyEvent},
 		{kEventClassWindow,kEventWindowDrawContent},
-		{kEventClassWindow,kEventWindowBoundsChanged}
+		{kEventClassWindow,kEventWindowBoundsChanged},
+		{kEventClassWindow,kEventWindowClose}
 	};
 	
     // Create a Nib reference passing the name of the nib file (without the .nib extension)
@@ -605,7 +606,7 @@ int main(int argc, char* argv[])
 	
 	loopRef = GetMainEventLoop();	    
 	InstallEventLoopTimer(loopRef, 0.0f, 20.0f/1000.0f, TimerEventHandler, NULL, NULL);
-    
+
     // Call the event loop
     RunApplicationEventLoop();
 
@@ -694,6 +695,7 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 					{
 						case 'quit':
 						{
+							// Shouldn't really handle this event, handle AppQuit instead
 							PPEvent event(eAppQuit);
 							RaiseEventSynchronized(&event);
 							bool res = myTracker->shutDown();
@@ -757,7 +759,24 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 				{
 					myTrackerScreen->update();
 					break;
-				} 
+				}
+				case kEventWindowClose:
+				{
+					// This is a single window app, so quit when the window is closed.
+					// This could be simplified if we handled AppQuit instead of hooking the
+					// quit command above.
+					PPEvent event(eAppQuit);
+					RaiseEventSynchronized(&event);
+					bool res = myTracker->shutDown();
+					if (res)
+					{
+						EventRef quitEvent;
+						CreateEvent(NULL, kEventClassApplication, kEventAppQuit, 0, kEventAttributeNone, &quitEvent);
+						PostEventToQueue(GetMainEventQueue(), quitEvent, kEventPriorityStandard);
+					}
+					result = noErr;
+					break;
+				}
 			}
 			break;
 		}
