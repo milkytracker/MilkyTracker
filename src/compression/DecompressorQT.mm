@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorQT.mm
+ *  compression/DecompressorQT.mm
  *
  *  Copyright 2009 Peter Barth
  *

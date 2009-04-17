@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorGZIP.cpp
+ *  compression/DecompressorGZIP.cpp
  *
  *  Copyright 2009 Peter Barth
  *

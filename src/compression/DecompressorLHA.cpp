@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorLHA.cpp
+ *  compression/DecompressorLHA.cpp
  *
  *  Copyright 2009 Peter Barth
  *

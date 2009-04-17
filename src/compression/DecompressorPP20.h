@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorPP20.h
+ *  compression/DecompressorPP20.h
  *
  *  Copyright 2009 Peter Barth
  *

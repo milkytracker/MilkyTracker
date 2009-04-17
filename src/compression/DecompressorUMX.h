@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorUMX.h
+ *  compression/DecompressorUMX.h
  *
  *  Copyright 2009 Peter Barth
  *

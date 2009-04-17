@@ -1,5 +1,5 @@
 /*
- *  compression/DecompressorGZIP.h
+ *  compression/DecompressorLZX.h
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,38 +21,37 @@
  */
 
 /*
- *  DecompressorGZIP.h
+ *  DecompressorLZX.h
  *  milkytracker_universal
  *
- *  Created by Peter Barth on 22.06.08.
+ *  Created by Peter Barth on 17.04.09.
  *
  */
 
-#ifndef __DECOMPRESSOR_GZIP_H__
-#define __DECOMPRESSOR_GZIP_H__
+#ifndef __DECOMPRESSOR_LZX_H__
+#define __DECOMPRESSOR_LZX_H__
 
 #include "Decompressor.h"
 
 /*****************************************************************************
- * gzip decompression
+ * LZX decompressor
  *****************************************************************************/
-class DecompressorGZIP : public DecompressorBase
+class DecompressorLZX : public DecompressorBase
 {
 public:
-	DecompressorGZIP(const PPSystemString& fileName);
+	DecompressorLZX(const PPSystemString& filename);
 
 	virtual bool identify(XMFile& f);
 	
-	// this type of archive can contain any file type
-	virtual bool doesServeHint(Hints hint) { return true; }
+	// this type of archive only contain modules
+	virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintModules); }
 	
 	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
-	
-	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
+
+	virtual bool decompress(const PPSystemString& outFilename, Hints hint);
 	
 	virtual DecompressorBase* clone();
 };
-
 
 #endif
 

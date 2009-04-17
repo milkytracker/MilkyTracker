@@ -1,5 +1,5 @@
 /*
- *  tracker/DecompressorQT.h
+ *  compression/DecompressorQT.h
  *
  *  Copyright 2009 Peter Barth
  *
