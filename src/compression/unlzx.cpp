@@ -10,6 +10,10 @@
 #include "unlzx.h"
 #include "XMFile.h"
 
+#if defined(WIN32) && !defined(_WIN32_WCE)
+#include <cctype>
+#endif
+
 #ifdef AMIGA
 static unsigned char *version_string = "$VER: UnLZX " UNLZX_VERSION " (" UNLZX_VERDATE ")";
 #endif /* AMIGA */
