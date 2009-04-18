@@ -1144,7 +1144,7 @@ public:
 		m_cmdline = new TCHAR[_tcslen (cmdline) + 1];
 		if (m_cmdline)
 		{
-			_tcscpy_s(m_cmdline, _tcslen (cmdline) + 1, cmdline);
+			_tcscpy(m_cmdline, cmdline);
 			ParseCmdLine();
 		}
 	}
