@@ -1,6 +1,13 @@
 #include "unlha32.h"
 
 #include "lharc.h"
+
+#undef CHAR_BIT
+#undef UCHAR_MAX
+#undef USHRT_MAX
+#undef SHRT_MAX
+#undef SHRT_MIN
+
 #include "slidehuf.h"
 #include "header.inl"
 #include "lhext.inl"
