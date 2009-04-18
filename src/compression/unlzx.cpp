@@ -262,7 +262,7 @@ signed long Unlzx::make_decode_table(signed long number_symbols, signed long tab
 				next_symbol = 1 << bit_num;
 				do
 				{
-					table[leaf] = symbol;
+					table[leaf] = (unsigned short)symbol;
 					leaf += next_symbol;
 				} while (--fill);
 			}
@@ -272,7 +272,7 @@ signed long Unlzx::make_decode_table(signed long number_symbols, signed long tab
 	}
 	if ((!abort) && (pos != table_mask))
 	{
-		for (symbol = pos; symbol < table_mask; symbol++)
+		for (symbol = pos; symbol < (signed)table_mask; symbol++)
 		{
 			reverse = symbol;
 			leaf = 0;
@@ -302,18 +302,18 @@ signed long Unlzx::make_decode_table(signed long number_symbols, signed long tab
 						leaf = (leaf << 1)+(reverse & 1);
 						reverse >>= 1;
 					} while (--fill);
-					for (fill = 0; fill < bit_num - table_size; fill++)
+					for (fill = 0; fill < (unsigned)(bit_num - table_size); fill++)
 					{
 						if (!table[leaf])
 						{
 							table[(next_symbol << 1)] = 0;
 							table[(next_symbol << 1) + 1] = 0;
-							table[leaf] = next_symbol++;
+							table[leaf] = (unsigned short)(next_symbol++);
 						}
-						leaf = table[leaf] << 1;
+						leaf = (unsigned short)(table[leaf] << 1);
 						leaf += (pos >> (15 - fill)) & 1;
 					}
-					table[leaf] = symbol;
+					table[leaf] = (unsigned short)symbol;
 					if ((pos += bit_mask) > table_mask)
 					{
 						abort = 1;
@@ -352,7 +352,7 @@ signed long Unlzx::read_literal_table(struct UnLZX *unlzx)
 	{
 		for (temp = 0; temp < 8; temp++)
 		{
-			unlzx->offset_len[temp] = control & 7;
+			unlzx->offset_len[temp] = (unsigned char)(control & 7);
 			control >>= 3;
 			if ((shift -= 3) < 0)
 			{
@@ -399,7 +399,7 @@ signed long Unlzx::read_literal_table(struct UnLZX *unlzx)
 		{
 			for (temp = 0; temp < 20; temp++)
 			{
-				unlzx->huffman20_len[temp] = control & 15;
+				unlzx->huffman20_len[temp] = (unsigned char)(control & 15);
 				control >>= 4;
 				if ((shift -= 4) < 0)
 				{
@@ -497,11 +497,11 @@ signed long Unlzx::read_literal_table(struct UnLZX *unlzx)
 							control += *unlzx->source++ << shift;
 						}
 						symbol = table_four[unlzx->literal_len[pos] + 17 - symbol];
-						while ((pos < max_symbol) && (count--)) unlzx->literal_len[pos++] = symbol;
+						while ((pos < max_symbol) && (count--)) unlzx->literal_len[pos++] = (unsigned char)symbol;
 						break;
 						default:
 						symbol = table_four[unlzx->literal_len[pos] + 17 - symbol];
-						unlzx->literal_len[pos++] = symbol;
+						unlzx->literal_len[pos++] = (unsigned char)symbol;
 						break;
 				}
 			} while(pos < max_symbol);
@@ -557,7 +557,7 @@ void Unlzx::decrunch(struct UnLZX *unlzx)
 		}
 		if (symbol < 256)
 		{
-			*unlzx->destination++ = symbol;
+			*unlzx->destination++ = (unsigned char)symbol;
 		}
 		else
 		{
@@ -614,7 +614,6 @@ void Unlzx::decrunch(struct UnLZX *unlzx)
 
 XMFile* Unlzx::open_output(const PPSystemString& filename)
 {
-	unsigned long temp;
 	XMFile *file = new XMFile(filename, true);
 	
 	if (!file->isOpenForWriting())
