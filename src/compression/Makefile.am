@@ -1,13 +1,15 @@
-SUBDIRS = zziplib/generic
+#SUBDIRS = zziplib/generic
 noinst_LIBRARIES = libcompression.a
 
 libcompression_a_SOURCES =  PP20.cpp ZipExtractor.cpp zziplib/MyIO.cpp \
 Decompressor.cpp DecompressorUMX.cpp DecompressorPP20.cpp lha/unlha.cpp \
-DecompressorZIP.cpp DecompressorLHA.cpp DecompressorGZIP.cpp
+DecompressorZIP.cpp DecompressorLHA.cpp DecompressorGZIP.cpp \
+DecompressorLZX.cpp unlzx.cpp
 
 noinst_HEADERS =  PP20.h ZipExtractor.h zziplib/MyIO.h DecompressorLHA.h \
 DecompressorUMX.h DecompressorGZIP.h AIFFWriter.h Decompressor.h \
-DecompressorPP20.h DecompressorQT.h lha/lharc.h DecompressorZIP.h
+DecompressorPP20.h DecompressorQT.h lha/lharc.h DecompressorZIP.h \
+DecompressorLZX.h unlzx.h
 
 EXTRA_DIST = DecompressorQT.mm AIFFWriter.m
 

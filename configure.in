@@ -15,6 +15,12 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 AC_PROG_MKDIR_P
 
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files are missing]))
+# AC_CHECK_HEADER(zzip/lib.h,,AC_MSG_ERROR("Cannot find zzip/lib.h"))
+
 # Checks for libraries.
 AC_ARG_WITH([alsa],
 	[AS_HELP_STRING([--with-alsa],
@@ -35,16 +41,12 @@ if test "x$with_alsa" != xno; then
 		fi])
 fi
 
-AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
+#AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
+#AC_CHECK_LIB(zzip, zzip_file_open,,AC_MSG_ERROR("Cannot find -lzzip"))
 
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 CPPFLAGS="$CPPFLAGS -D__FORCE_SDL_AUDIO__"
-
-# Checks for header files.
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files are missing]))
 
 # Check that SDL supports the X11 wm
 AC_MSG_CHECKING([whether SDL supports X11])
@@ -58,8 +60,7 @@ AC_COMPILE_IFELSE(
 	[AC_MSG_RESULT([no])])
 CPPFLAGS=$OLDCPPFLAGS
 
-
-# Jack is dynamically linked (to ease binary portability)
+# Jack is dynamically linked to ease binary portability (no longer required)
 AC_ARG_WITH([jack],
 	[AS_HELP_STRING([--with-jack],
 	[Enable JACK support @<:@default=check@:>@])],

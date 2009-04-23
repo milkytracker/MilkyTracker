@@ -10,7 +10,7 @@
 #include "unlzx.h"
 #include "XMFile.h"
 
-#if defined(WIN32) && !defined(_WIN32_WCE)
+#if !defined(_WIN32_WCE)
 #include <cctype>
 #endif
 
