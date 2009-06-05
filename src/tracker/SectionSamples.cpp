@@ -101,7 +101,7 @@ public:
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
 		{
 			case MESSAGEBOX_CONVERTSAMPLE:
-				section.getSampleEditorControl()->getSampleEditor()->tool_convertSampleResolution(false);
+				section.getSampleEditorControl()->getSampleEditor()->convertSampleResolution(false);
 				section.getSampleEditorControl()->showAll();
 				break;
 		}
@@ -1395,7 +1395,7 @@ void SectionSamples::handleConvertSampleResolution()
 	}
 	else
 	{
-		sampleEditor->tool_convertSampleResolution(false);				
+		sampleEditor->convertSampleResolution(false);				
 		update();
 	}
 }
