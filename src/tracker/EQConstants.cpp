@@ -20,6 +20,24 @@
  *
  */
 
+/*  
+ * 10 BandsEQ fix by Kmuland
+ * ------------------------------------
+ *
+ * 12000.0f*0.25f means that the band frequency of 16000.0f have a 
+ * gaussian bell of 12000hz centered at 16000hz of frequency. 
+ * The 16000hz band affect to freqs between 10000hz and 22000hz.
+ *
+ * The *0.25f is the Q of each band. A  *0.25f creates a very thin bell arround the
+ * center frequency. Higher values like 0.5f create a wider gaussian bell.
+ *
+ * Note about 31.25hz band: subfreqs. You need subwoofer equipment to 
+ * notice changes. This band at the 19.43hz on left tail of bell is not audible. 
+ * In the right tail of the bell, the 42,97hz is boosted lightly. If you need extra
+ * boost of sub freqs 30-40hz increase the *0.25f value.
+ *
+ */
+
 #include "EQConstants.h"
 
 const float EQConstants::EQ3bands[3] = 
@@ -52,14 +70,14 @@ const float EQConstants::EQ10bands[10] =
 
 const float EQConstants::EQ10bandwidths[10] = 
 {
-	15.625f*0.25f,
-	31.25f*0.25f,
-	62.5f*0.25f,
-	125.0f*0.25f,
-	250.0f*0.25f,
-	500.0f*0.25f,
-	1000.0f*0.25f,
-	2000.0f*0.25f,
-	4000.0f*0.25f,
-	5000.0f*0.25f
+	23.44f*0.25f,
+	46.87f*0.30f,
+	93.75f*0.35f,
+	187.5f*0.40f,
+	375.0f*0.45f,
+	750.0f*0.50f,
+	1500.0f*0.55f,
+	3000.0f*0.50f,
+	6000.0f*0.30f,
+	12000.0f*0.25f
 };
