@@ -1191,6 +1191,7 @@ bool RtApiCore :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
 
   // Allocate our CoreHandle structure for the stream.
   CoreHandle *handle = 0;
+  long unsigned int bufferBytes = 0;
   if ( stream_.apiHandle == 0 ) {
     try {
       handle = new CoreHandle;
@@ -1212,7 +1213,7 @@ bool RtApiCore :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
   handle->id[mode] = id;
 
   // Allocate necessary internal buffers.
-  unsigned long bufferBytes = stream_.nUserChannels[mode] * *bufferSize * formatBytes( stream_.userFormat );
+  bufferBytes = stream_.nUserChannels[mode] * *bufferSize * formatBytes( stream_.userFormat );
   stream_.userBuffer[mode] = (char *) calloc( bufferBytes, 1 );
   if ( stream_.userBuffer[mode] == NULL ) {
     errorText_ = "RtApiCore::probeDeviceOpen: error allocating user buffer memory.";
@@ -1521,6 +1522,8 @@ bool RtApiCore :: callbackEvent( AudioDeviceID deviceId,
       handle->internalDrain = true;
   }
 
+  AudioDeviceID inputDevice;
+
   if ( stream_.mode == OUTPUT || ( stream_.mode == DUPLEX && deviceId == outputDevice ) ) {
 
     if ( handle->drainCounter > 1 ) { // write zeros to the output stream
@@ -1577,7 +1580,7 @@ bool RtApiCore :: callbackEvent( AudioDeviceID deviceId,
     }
   }
 
-  AudioDeviceID inputDevice = handle->id[1];
+  inputDevice = handle->id[1];
   if ( stream_.mode == INPUT || ( stream_.mode == DUPLEX && deviceId == inputDevice ) ) {
 
     if ( stream_.doConvertBuffer[1] ) {
