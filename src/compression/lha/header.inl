@@ -64,7 +64,7 @@ bool CLhaArchive::get_header(pp_uint32 &fp, LzHeader *hdr)
 			Log("packed_size = %d\n", hdr->packed_size);
 			Log("original_size = %d\n", hdr->original_size);
 		#endif
-			if ((hdr->header_level < 0) || (hdr->header_level > 3)
+			if ((hdr->header_level > 3)
 			 || (hdr->packed_size > hdr->original_size)) return false;
 		}
 		name_length	= get_byte();

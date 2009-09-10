@@ -1654,12 +1654,12 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 
 void Tracker::initAdvEdit()
 {	
-	static pp_int32 buttonIDs[4] = {PP_MESSAGEBOX_BUTTON_USER1, 
+	const pp_int32 buttonIDs[4] =  {PP_MESSAGEBOX_BUTTON_USER1, 
 									PP_MESSAGEBOX_BUTTON_USER2, 
 									PP_MESSAGEBOX_BUTTON_USER3, 
 									PP_MESSAGEBOX_BUTTON_USER4};
 
-	static char* buttonTexts[4] = {"Track",
+	const char* buttonTexts[4] =  {"Track",
 								   "Pattern",
 								   "Song",
 								   "Block"};

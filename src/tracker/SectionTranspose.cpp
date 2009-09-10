@@ -431,22 +431,22 @@ void SectionTranspose::init(pp_int32 px, pp_int32 py)
 	container->setColor(TrackerConfig::colorThemeMain);	
 	tracker.screen->addControl(container);
 
-	static pp_int32 buttonIDs[4] = {TRANSPOSE_BUTTON_AMOUNT_NOTEUP, 
+	const pp_int32 buttonIDs[4] =  {TRANSPOSE_BUTTON_AMOUNT_NOTEUP, 
 									TRANSPOSE_BUTTON_AMOUNT_NOTEDOWN, 
 									TRANSPOSE_BUTTON_AMOUNT_OCTAVEUP, 
 									TRANSPOSE_BUTTON_AMOUNT_OCTAVEDOWN};
 
-	static char* buttonTexts[4] = {"Note Up",
+	const char* buttonTexts[4] =  {"Note Up",
 								   "Note Dn",
 								   "Octave Up",
 								   "Octave Dn"};
 
-	static pp_int32 buttonIDs2[4] = {TRANSPOSE_BUTTON_USER1, 
+	const pp_int32 buttonIDs2[4] = {TRANSPOSE_BUTTON_USER1, 
 									TRANSPOSE_BUTTON_USER2, 
 									TRANSPOSE_BUTTON_USER3, 
 									TRANSPOSE_BUTTON_USER4};
 
-	static char* buttonTexts2[4] = {"Track",
+	const char* buttonTexts2[4] = {"Track",
 								   "Pattern",
 								   "Song",
 								   "Block"};

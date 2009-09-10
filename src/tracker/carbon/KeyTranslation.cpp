@@ -543,7 +543,7 @@ pp_uint16 KeyCodeToSC(UInt32 keyCode)
 			return 0;
 		
 		default:
-			printf("Pressed unknown key: %i\n",keyCode);
+			printf("Pressed unknown key: %u\n",static_cast<unsigned int>(keyCode));
 			return 0;
 
 	}

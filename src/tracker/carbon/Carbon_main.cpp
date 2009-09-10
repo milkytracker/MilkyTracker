@@ -98,14 +98,14 @@ static void crashHandler(int signum)
 	if(num != 100) 
 	{
 		myTracker->saveModule(buffer);
-		fprintf(stderr, "\n");
+		fputs("\n", stderr);
 		fprintf(stderr, "\nA backup has been saved to %s\n\n", buffer);
 	}
 
 	if(signum == 15)
 	{
 		snprintf(message, sizeof(message), "TERM signal received.\n");
-		fprintf(stderr, message);
+		fputs(message, stderr);
 	}
 	else
 	{
@@ -114,7 +114,7 @@ static void crashHandler(int signum)
 				"the time of the crash, as well as the above signal number.  "
 				"Also note if it is possible to reproduce this crash.\n", signum);
 		fprintf(stderr, "\n");
-		fprintf(stderr, message);
+		fputs(message, stderr);
 		
 		PPMessageBox infoBox(myTrackerScreen, "Error", message);
 		infoBox.runModal();
