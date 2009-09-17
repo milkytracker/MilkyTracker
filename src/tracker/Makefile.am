@@ -74,7 +74,14 @@ $(top_builddir)/src/ppui/osinterface/libosinterface.a \
 $(top_builddir)/src/ppui/libppui.a \
 $(top_builddir)/src/ppui/osinterface/libosinterface.a \
 $(top_builddir)/src/fx/libfx.a $(compressionLib) $(RTMIDI) $(SDL_LIBS) \
-$(top_builddir)/src/compression/zziplib/generic/libzzip.a
+$(top_builddir)/src/compression/zziplib/generic/libzzip.a \
+$(Z_LIBS)
+#$(ZZIP_LIBS) read below
+
+# NOTE: The MilkyTracker source contains a MODIFIED version of the zzip
+# library, which is statically linked to the executable.  Simply changing the
+# build scripts to link against the system libzzip will result in non-working
+# zip support!
 
 EXTRA_DIST = carbon/Carbon_Definitions.h carbon/Carbon_main.cpp \
 carbon/InfoPlist.strings carbon/KeyTranslation.cpp carbon/KeyTranslation.h \
