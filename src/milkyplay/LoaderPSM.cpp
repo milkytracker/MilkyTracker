@@ -1030,7 +1030,7 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 			delete[] pattern;
 			return -7;				
 		}
-		memset(packed,size-4+5,0);
+		memset(packed,0,size-4+5);
 		
 		MEMREAD(packed,1,size-4);
 		

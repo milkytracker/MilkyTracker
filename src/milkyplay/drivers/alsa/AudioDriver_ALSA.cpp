@@ -155,7 +155,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 periodSizeAsSamples, const mp_u
 		(2000000 * static_cast<unsigned long long> (periodSizeAsSamples)) / mixFrequency)) < 0)
 			// period size in uS
 	{
-		fprintf(stderr, "ALSA: Playback open error (%s)\nALSA: Is your mixer frequency correct? Try 48000Hz\n", snd_strerror(err));
+		fprintf(stderr, "ALSA: Playback open error (%s)\nALSA: Is your mixer frequency correct? Try 48000Hz\nALSA: If you are seeing \"Access type not available for PLAYBACK\" then your audio driver does not support MMAP access, and will not work with this version of MilkyTracker using the ALSA driver (try SDL instead).\n", snd_strerror(err));
 		return -1;
 	}
 
