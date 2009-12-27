@@ -41,18 +41,14 @@
 
 #include "AudioDriver_RTAUDIO.h"
 
-AudioDriver_RTAUDIO::AudioDriver_RTAUDIO(Api audioApi/* = UNSPECIFIED*/, Version version/* = V4*/) :
+AudioDriver_RTAUDIO::AudioDriver_RTAUDIO(Api audioApi/* = UNSPECIFIED*/) :
 	impl(0)
 {
-	switch (version)
-	{
-		case V3:
-			createRt3Instance(audioApi);
-			break;
-		case V4:
-			createRt4Instance(audioApi);
-			break;
-	}
+#ifdef __OSX_PANTHER__
+	createRt3Instance(audioApi);
+#else
+	createRt4Instance(audioApi);
+#endif
 }
 
 AudioDriver_RTAUDIO::~AudioDriver_RTAUDIO() 

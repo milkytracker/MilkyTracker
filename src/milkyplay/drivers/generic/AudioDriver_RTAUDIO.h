@@ -56,19 +56,8 @@ public:
 		WINDOWS_DS,     /*!< The Microsoft Direct Sound API. */
 		RTAUDIO_DUMMY   /*!< A compilable but non-functional API. */
 	};
-	
-	enum Version
-	{
-		V3,
-		V4
-	};
-	
-	
-#ifdef __OSX_PANTHER__
-				AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED, Version version = V3);
-#else
-				AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED, Version version = V4);
-#endif
+
+	AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED);
 
 	virtual		~AudioDriver_RTAUDIO();
 			
