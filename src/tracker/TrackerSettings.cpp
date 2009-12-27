@@ -109,12 +109,16 @@ void Tracker::buildDefaultSettings()
 
 	settingsDatabase->store("ENVELOPEEDITORSCALE", 256);
 
-	for (i = 0; i < PPFont::FONT_LAST; i++)
-	{
-		const char* keyName = PPFont::getFamilyInternalName((PPFont::FontID)i);
-		const char* valueName = PPFont::getCurrentFontFace((PPFont::FontID)i);
-		settingsDatabase->store(keyName, valueName);
-	}
+	//for (i = 0; i < PPFont::FONT_LAST; i++)
+	//{
+	//	const char* keyName = PPFont::getFamilyInternalName((PPFont::FontID)i);
+	//	const char* valueName = PPFont::getCurrentFontFace((PPFont::FontID)i);
+	//	settingsDatabase->store(keyName, valueName);
+	//}
+	settingsDatabase->store("FONT_TINY", "TINY_UPPERCASE");
+	settingsDatabase->store("FONT_SYSTEM", "J-FLUX");
+	settingsDatabase->store("FONT_LARGE", "ATHENA");
+	settingsDatabase->store("FONT_HUGE", "J-FLUX");
 
 #ifdef __LOWRES__
 	settingsDatabase->store("PATTERNFONT", PPFont::FONT_TINY);

@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
+#include <ctype.h>
 #include "Win32_resource.h"
 #include "ThreadTimer.h"
 #include "PreferencesDialog.h"

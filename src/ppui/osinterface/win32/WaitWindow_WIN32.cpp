@@ -110,7 +110,7 @@ WaitWindow::WaitWindow()
 	WNDCLASS wc;
 
 	wc.hCursor        = NULL;
-	wc.hIcon          = (HICON)::LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION));
+	wc.hIcon          = (HICON)::LoadIcon(NULL, IDI_APPLICATION);
 	wc.lpszMenuName   = NULL;
 	wc.lpszClassName  = szClassName;
 	wc.hbrBackground  = 0;
