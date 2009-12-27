@@ -4587,6 +4587,7 @@ void RtApiDs :: callbackEvent()
     nextWritePos = handle->bufferPointer[0];
 
     DWORD endWrite;
+	MUTEX_UNLOCK( &stream_.mutex ); // MilkyTracker: Prevent hang on exit (mutex is re-locked further down)
     while ( true ) {
       // Find out where the read and "safe write" pointers are.
       result = dsBuffer->GetCurrentPosition( &currentWritePos, &safeWritePos );
@@ -4620,8 +4621,9 @@ void RtApiDs :: callbackEvent()
         static int nOverruns = 0;
         ++nOverruns;
       }
-      Sleep( (DWORD) millis );
+      Sleep( (DWORD) millis ); // MilkyTracker: Hang on exit was occurring here
     }
+    MUTEX_LOCK( &stream_.mutex ); // MilkyTracker: Re-lock stream here
 
     //if ( statistics.writeDeviceSafeLeadBytes < dsPointerDifference( safeWritePos, currentWritePos, handle->dsBufferSize[0] ) ) {
     //  statistics.writeDeviceSafeLeadBytes = dsPointerDifference( safeWritePos, currentWritePos, handle->dsBufferSize[0] );
