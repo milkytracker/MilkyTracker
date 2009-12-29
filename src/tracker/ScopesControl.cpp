@@ -547,7 +547,7 @@ void ScopesControl::handleUnmuteAll()
 {
 	for (pp_uint32 i = 0; i < sizeof(muteChannels)/sizeof(pp_uint8); i++)
 		muteChannels[i] = false;
-	PPEvent e(eValueChanged, &recChannels, sizeof(recChannels), ChangeValueRecording);						
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);						
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
