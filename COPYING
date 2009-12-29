@@ -1,3 +1,8 @@
+Note: Since the 0.90.85 release, Milkyplay (the player library used by
+MilkyTracker) is now licensed under the New-BSD license.  The rest of
+MilkyTracker remains covered by the GPL:
+
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
