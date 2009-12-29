@@ -1550,9 +1550,9 @@ pp_uint8 PPFont::bigFont[256*16*16/8];
 
 PPFont::FontFamilyDescription PPFont::fontFamilyDescriptions[FONT_LAST] = {
 	FontFamilyDescription(PPSize(6,5), "Tiny (6x5)", "FONT_TINY", 35, 35, -1), 
-	FontFamilyDescription(PPSize(8,8), "System (8x8)", "FONT_SYSTEM", 21, 21, -1), 
+	FontFamilyDescription(PPSize(8,8), "System (8x8)", "FONT_SYSTEM", 23, 23, -1), 
 	FontFamilyDescription(PPSize(12,12), "Large (12x12)", "FONT_LARGE", 1, 1, -1),
-	FontFamilyDescription(PPSize(16,16), "Huge (16x16)", "FONT_HUGE", 21, 21, -1)
+	FontFamilyDescription(PPSize(16,16), "Huge (16x16)", "FONT_HUGE", 23, 23, -1)
 };
 
 pp_int32 PPFont::enumerationIndex = -1;
