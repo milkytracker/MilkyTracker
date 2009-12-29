@@ -1391,12 +1391,14 @@ void PatternEditorControl::switchEditMode(EditModes mode)
 		}
 
 		case EditModeFastTracker:
+		{
 			// Assign keyboard bindings
 			eventKeyDownBindings = eventKeyDownBindingsFastTracker;
 			scanCodeBindings = scanCodeBindingsFastTracker;
 
 			selectionKeyModifier = KeyModifierALT;
 			break;
+		}
 	}
 
 	editMode = mode;
@@ -1412,10 +1414,7 @@ void PatternEditorControl::unmuteAll()
 
 void PatternEditorControl::setRecordMode(bool b)
 {
-	if (b)
-		cursorColor = &TrackerConfig::colorPatternEditorCursorLineHighLight;
-	else
-		cursorColor = &TrackerConfig::colorPatternEditorCursorLine;
+	cursorColor = b ? &TrackerConfig::colorPatternEditorCursorLineHighLight : &TrackerConfig::colorPatternEditorCursorLine;
 }
 
 void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::EditorNotifications notification)
