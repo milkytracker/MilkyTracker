@@ -25,8 +25,8 @@ To build MilkyTracker you will need the following development libraries:
 ALSA (optional)
 JACK (optional)
 SDL
-zzip
+libz
 
-Note to package maintainers: MilkyTracker contains an internal copy of zlib,
-it has been modified for use with MilkyTracker; An externally linked zlib will
-not work correctly (ZIP support will be broken).
+Note to package maintainers: MilkyTracker contains an internal copy of
+libzzip that has been modified for use with MilkyTracker; An externally
+linked libzzip will not work correctly (ZIP support will be broken).
