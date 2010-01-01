@@ -1,4 +1,4 @@
 /* Localized versions of Info.plist keys */
 CFBundleNAme = "MilkyTracker";
 CFBundleShortVersionString = "MilkyTracker version 0.90.85";
-CFBundleGetInfoString = "MilkyTracker v0.90.85, Copyright 2004-2009";
+CFBundleGetInfoString = "MilkyTracker v0.90.85, Copyright 2004-2010";
