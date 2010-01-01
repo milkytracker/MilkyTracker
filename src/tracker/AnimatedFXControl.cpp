@@ -53,15 +53,12 @@
 #endif
 
 static const char* text = 
-"Yes! We've finally made it. A new MilkyTracker release brought to you by the MilkyTracker crew and TiTAN! "
-"All we gotta say is: This is a huge leap from the previous versions. Enjoy loading multiple modules in different "
-"tabs and even play them at the same time. Copying over data from other modules has never been easier. "
-"For the high fidelity folks a bunch of new resamplers have been added to guarantee crystal clear audio output. "
-"Also many issues have been fixed, overall stability has been greatly improved and some other features are waiting to be "
-"discovered. Go ahead and check them out.      " 
-"With this release MilkyTracker is also going open source. So what does that mean? Linux distributions "
-"can finally include MilkyTracker in their software trees and people interested in porting and maintaining MilkyTracker "
-"are encouraged to do so.      "
+"Another year, another release!  "
+"Actually, almost 20 months have passed since the previous release - but better late than never ;)  In this "
+"time we have fixed many bugs and made some small improvements (see the ChangeLog.html for full details).  We "
+"have also modified the library of MilkyPlay (MilkyTracker's player routines) from GPL to BSD, which means "
+"that you can now use MilkyTracker's playback code in your own applications/games/demos without having to "
+"open-source them.      "
 "Now heads up for some credits!      " 
 "MilkyTracker contains code from the following people: "
 "Antti S. Lankila (Amiga filter algorithm/coefficients), "

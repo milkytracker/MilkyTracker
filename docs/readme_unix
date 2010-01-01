@@ -8,7 +8,8 @@ MilkyTracker.  Please read this file in addition to MilkyTracker.html
 Milkytracker should in theory compile and run on any posix compatible operating
 system. However, the build system requires a working C++ compiler and associated
 libraries/includes, Bash compatible shell interpreter and compatible version of
-Gnu Make.
+Gnu Make.  Please read the README file in the top-level source directory for
+build instructions.
 
 Currently the following platforms have been tested:
 

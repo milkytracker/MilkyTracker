@@ -15,3 +15,18 @@ behaviour can be over-ridden using the following arguments to configure:
 Note that the configure scripts plus associated Makefiles are designed
 to build the SDL version of MilkyTracker only. Build files for other
 targets (OSX, win32, wince) can be found in the 'platforms' directory.
+
+
+Dependencies
+============
+
+To build MilkyTracker you will need the following development libraries:
+
+ALSA (optional)
+JACK (optional)
+SDL
+zzip
+
+Note to package maintainers: MilkyTracker contains an internal copy of zlib,
+it has been modified for use with MilkyTracker; An externally linked zlib will
+not work correctly (ZIP support will be broken).
