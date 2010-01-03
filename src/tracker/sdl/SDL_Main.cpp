@@ -751,8 +751,8 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 		case SDLUserEventLMouseRepeat:
 		{
 			PPPoint p;
-			p.x = (pp_int32)event.data1;
-			p.y = (pp_int32)event.data2;
+			p.x = reinterpret_cast<intptr_t> (event.data1);
+			p.y = reinterpret_cast<intptr_t> (event.data2);
 			PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));		
 			RaiseEventSerialized(&myEvent);
 			break;
@@ -761,8 +761,8 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 		case SDLUserEventRMouseRepeat:
 		{
 			PPPoint p;
-			p.x = (pp_int32)event.data1;
-			p.y = (pp_int32)event.data2;
+			p.x = reinterpret_cast<intptr_t> (event.data1);
+			p.y = reinterpret_cast<intptr_t> (event.data2);
 			PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
 			RaiseEventSerialized(&myEvent);
 			break;
@@ -770,8 +770,8 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 
 		case SDLUserEventMidiKeyDown:
 		{
-			pp_int32 note = (pp_int32)event.data1;
-			pp_int32 volume = (pp_int32)event.data2;
+			pp_int32 note = reinterpret_cast<intptr_t> (event.data1);
+			pp_int32 volume = reinterpret_cast<intptr_t> (event.data2);
 			globalMutex->lock();
 			myTracker->sendNoteDown(note, volume);
 			globalMutex->unlock();
@@ -780,7 +780,7 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 
 		case SDLUserEventMidiKeyUp:
 		{
-			pp_int32 note = (pp_int32)event.data1;
+			pp_int32 note = reinterpret_cast<intptr_t> (event.data1);
 			globalMutex->lock();
 			myTracker->sendNoteUp(note);
 			globalMutex->unlock();
