@@ -102,23 +102,29 @@ mp_sint32 AudioDriver_JACK::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mi
 	// Each function has to be cast.. surely there must be an easier way?
 	dlerror();
 	jack_port_get_buffer = (void* (*)(jack_port_t*, jack_nframes_t))
-			dlsym(libJack, "jack_port_get_buffer");
+		dlsym(libJack, "jack_port_get_buffer");
 	jack_client_new = (jack_client_t* (*)(const char*))
-			dlsym(libJack, "jack_client_new");
+		dlsym(libJack, "jack_client_new");
 	jack_port_register = (jack_port_t* (*)(jack_client_t*, const char*, const char*, long unsigned int, long unsigned int))
-			dlsym(libJack, "jack_port_register");
+		dlsym(libJack, "jack_port_register");
 	jack_set_process_callback = (int (*)(jack_client_t*, int (*)(jack_nframes_t, void*), void*))
-			dlsym(libJack, "jack_set_process_callback");
+		dlsym(libJack, "jack_set_process_callback");
 	jack_get_buffer_size = (jack_nframes_t (*)(jack_client_t*))
-			dlsym(libJack, "jack_get_buffer_size");
+		dlsym(libJack, "jack_get_buffer_size");
 	jack_deactivate = (int (*)(jack_client_t*))
-			dlsym(libJack, "jack_deactivate");
+		dlsym(libJack, "jack_deactivate");
 	jack_client_close = (int (*)(jack_client_t*))
-			dlsym(libJack, "jack_client_close");
+		dlsym(libJack, "jack_client_close");
 	jack_activate = (int (*)(jack_client_t*))
-			dlsym(libJack, "jack_activate");
+		dlsym(libJack, "jack_activate");
 	jack_get_sample_rate = (jack_nframes_t (*)(jack_client_t *))
-			dlsym(libJack, "jack_get_sample_rate");
+		dlsym(libJack, "jack_get_sample_rate");
+	jack_get_ports = (const char** (*)(jack_client_t *, const char *, const char *, unsigned long)) 
+		dlsym(libJack, "jack_get_ports");
+	jack_connect = (int (*)(jack_client_t *, const char *source_port, const char *destination_port))
+		dlsym(libJack, "jack_connect");
+	jack_port_name = (const char* (*)(const jack_port_t *))
+		dlsym(libJack, "jack_port_name");
 	if(dlerror()) {
 		fprintf(stderr, "JACK: An error occured whilst loading symbols, aborting.\n");
 		return -1;
@@ -179,6 +185,12 @@ mp_sint32 AudioDriver_JACK::closeDevice()
 
 mp_sint32 AudioDriver_JACK::start()
 {
+	jack_get_ports = (const char** (*)(jack_client_t *, const char *, const char *, unsigned long)) 
+		dlsym(libJack, "jack_get_ports");
+	jack_connect = (int (*)(jack_client_t *, const char *source_port, const char *destination_port))
+		dlsym(libJack, "jack_connect");
+	jack_port_name = (const char* (*)(const jack_port_t *))
+		dlsym(libJack, "jack_port_name");
 	jack_activate(hJack);
 	deviceHasStarted = true;
 	return 0;

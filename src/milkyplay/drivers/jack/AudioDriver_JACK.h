@@ -57,18 +57,27 @@ private:
 	jack_client_t *(*jack_client_new) (const char *client_name);
 	int (*jack_client_close) (jack_client_t *client);
 	int (*jack_set_process_callback) (jack_client_t *client,
-									  JackProcessCallback process_callback,
-									  void *arg);
+					JackProcessCallback process_callback,
+					void *arg);
 	int (*jack_activate) (jack_client_t *client);
 	int (*jack_deactivate) (jack_client_t *client);
 	jack_port_t *(*jack_port_register) (jack_client_t *client,
-									 const char *port_name,
-									 const char *port_type,
-									 unsigned long flags,
-									 unsigned long buffer_size);
+					const char *port_name,
+					const char *port_type,
+					unsigned long flags,
+					unsigned long buffer_size);
 	void *(*jack_port_get_buffer) (jack_port_t *, jack_nframes_t);
 	jack_nframes_t (*jack_get_buffer_size) (jack_client_t *);
 	jack_nframes_t (*jack_get_sample_rate) (jack_client_t *);
+	const char ** (*jack_get_ports) (jack_client_t *, 
+					const char *port_name_pattern, 
+					const char *type_name_pattern, 
+					unsigned long flags);
+	int (*jack_connect) (jack_client_t *, 
+					const char *source_port, 
+					const char *destination_port);
+	const char* (*jack_port_name) (const jack_port_t *);  
+
 
 public:
 				AudioDriver_JACK();
