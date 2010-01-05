@@ -49,17 +49,18 @@
 				{
 					questions = document.getElementsByTagName('a');
 					answers = document.getElementsByTagName('ul');
-					for (i = 1; i <= questions.length; i++)
+					q = 0;
+					for (i = 0; i < questions.length; i++)
 					{
-						questions.item(i-1).id = "q"+i;
-						var question = questions.item(i-1).id;
-						document.getElementById(question).href="javascript:flip('a"+i+"')";
+						if(questions.item(i).href != "") continue;
+						questions.item(i).id = "q"+q;
+						questions.item(i).href="javascript:flip('a"+q+"')";
+						q++;
 					}
-					for (i = 1; i <= answers.length; i++)
+					for (i = 0; i < answers.length; i++)
 					{
-						answers.item(i-1).id = "a"+i;
-						var answer = answers.item(i-1).id;
-						document.getElementById(answer).style.display="none";
+						answers.item(i).id = "a"+i;
+						answers.item(i).style.display="none";
 					}
 				}
 			}
@@ -87,10 +88,10 @@
 		<ol>
 
 			<li>
-				<a>Where can I find a list of all the effect codes?</a>
+				<a id="question">Where can I find a list of all the effect codes?</a>
 				<ul>
 					<li>
-						Read the manual: <a href="milkytracker.html">milkytracker.html</a>
+						Read the manual: <a href="MilkyTracker.html">milkytracker.html</a>
 					</li>
 				</ul>
 			</li>
@@ -99,7 +100,7 @@
 				<a>Where can I find a list of all the keyboard shortcuts?</a>
 				<ul>
 					<li>
-						Read the manual: <a href="milkytracker.html">milkytracker.html</a>
+						Read the manual: <a href="MilkyTracker.html">milkytracker.html</a>
 					</li>
 				</ul>
 
