@@ -24,8 +24,6 @@ LOCAL_CFLAGS := $(foreach D, $(CG_SUBDIRS), -I$(LOCAL_PATH)/$(D)) \
 				-I$(LOCAL_PATH)/src/ppui/osinterface/posix \
 				-I$(LOCAL_PATH) \
 				-I$(LOCAL_PATH)/../sdl/include \
-				-I$(LOCAL_PATH)/../sdl_mixer \
-				-I$(LOCAL_PATH)/../stlport/stlport \
 				-DHAVE_CONFIG_H -DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX -D_GNU_SOURCE=1 -D_REENTRANT -D__LOWRES__ -D__FORCE_SDL_AUDIO__
 
 #Change C++ file extension as appropriate
@@ -37,7 +35,7 @@ LOCAL_SRC_FILES += src/ppui/osinterface/posix/PPSystem_POSIX.cpp src/ppui/osinte
 # Uncomment to also add C sources
 # LOCAL_SRC_FILES += $(foreach F, $(CG_SUBDIRS), $(addprefix $(F)/,$(notdir $(wildcard $(LOCAL_PATH)/$(F)/*.c))))
 
-LOCAL_STATIC_LIBRARIES := sdl_mixer sdl stlport
+LOCAL_STATIC_LIBRARIES := sdl
 
 LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog -lz
 

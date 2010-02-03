@@ -3,11 +3,10 @@ MilkyTracker port to Android
 
 This should be compiled with Android 1.6 SDK and NDK.
 
-You'll need to install Eclipse or Ant too
-Then symlink this dir to <android-ndk>/apps under the name "milkytracker":
-	ln -s <milkytracker>/platforms/android <android-ndk>/apps/milkytracker
-Then make symling of <milkytracker>/src dir into <milkytracker>/project/jni/milkytracker/src - this should be absolute path:
-	ln -s <milkytracker>/src <milkytracker>/project/jni/milkytracker/src
+You'll need to install Eclipse or Ant too.
+
+Change your current directory to platforms/android and start the setup.sh script to load, patch SDL and set some symbolic links
+
 Then go to <android-ndk> dir and execute:
 	make APP=milkytracker V=1
 Hopefully it will compile the file project/libs/armeabi/libmilkytracker.so
@@ -18,7 +17,7 @@ Then you'll have to compile Android .apk package with Java wrapper code for this
 --------------------------------------
 
 * Add the Android SDK plugin to Eclipse (http://developer.android.com/intl/de/sdk/eclipse-adt.html)
-* Create a new Android project "from existing source": set the <milkytracker>/project directory
+* Create a new Android project "from existing source": set the <milkytracker>/platforms/android/project directory
 * Generate an .apk file with help of the Android tools
 
  Create an application from the command line
@@ -28,7 +27,7 @@ Then you'll have to compile Android .apk package with Java wrapper code for this
 	> android update project -p .
 	> ant debug
 	
-* That will create file <milkytracker>/project/bin/MainActivity-debug.apk
+* That will create file <milkytracker>/platforms/android/project/bin/MainActivity-debug.apk
 * Use "adb install" to test it
  > adb install MainActivity-debug.apk
 
