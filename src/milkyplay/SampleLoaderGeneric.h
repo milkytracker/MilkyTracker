@@ -51,7 +51,7 @@ public:
 		OutputFiletypeRAW
 	};
 
-	SampleLoaderGeneric(const SYSCHAR* fileName, XModule& module);
+	SampleLoaderGeneric(const SYSCHAR* fileName, XModule& module, bool supportRawLoading = true);
 
 	virtual bool identifySample();
 
@@ -65,6 +65,8 @@ public:
 
 private:
 	SampleLoaderAbstract* getSuitableLoader();
+	
+	bool supportRawLoading;
 }; 
 
 #endif

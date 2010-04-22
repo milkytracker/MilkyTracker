@@ -30,6 +30,8 @@
 
 #include "DecompressorQT.h"
 #include "XMFile.h"
+#include "XModule.h"
+#include "SampleLoaderGeneric.h"
 
 #import <Foundation/NSAutoreleasePool.h>
 #import <QTKit/QTKit.h>
@@ -43,7 +45,22 @@ DecompressorQT::DecompressorQT(const PPSystemString& filename) :
 
 bool DecompressorQT::identify(XMFile& f)
 {
-	bool res = true;
+	bool res = false;
+
+	// me misuse the generic sample loader of MilkyPlay to determine whether 
+	// we use an internal loader even if Quicktime could actually load this
+	// file type (i.e. aiff, wav and probably others)
+	{
+		XModule* module = new XModule();
+		SampleLoaderGeneric sampleLoader(f.getFileName(), *module, false);
+		res = sampleLoader.identifySample();
+		delete module;
+	}
+
+	if (res)
+	{
+		return false;
+	}
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	

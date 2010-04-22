@@ -41,8 +41,9 @@
 #include "SampleLoaderAIFF.h"
 #include "SampleLoaderALL.h"
 
-SampleLoaderGeneric::SampleLoaderGeneric(const SYSCHAR* fileName, XModule& module) :
-	SampleLoaderAbstract(fileName, module)
+SampleLoaderGeneric::SampleLoaderGeneric(const SYSCHAR* fileName, XModule& module, bool supportRawLoading/* = true*/) 
+	: SampleLoaderAbstract(fileName, module)
+	, supportRawLoading(supportRawLoading)
 {
 }
 
@@ -91,10 +92,10 @@ mp_sint32 SampleLoaderGeneric::loadSample(mp_sint32 index, mp_sint32 channelInde
 {
 	SampleLoaderAbstract* loader = getSuitableLoader();
 
-	loader->setPreferredDefaultName(this->preferredDefaultName);
-
 	if (loader)
 	{
+		loader->setPreferredDefaultName(this->preferredDefaultName);
+
 		mp_sint32 res = loader->loadSample(index, channelIndex);
 		delete loader;
 		return res;
@@ -122,6 +123,8 @@ mp_sint32 SampleLoaderGeneric::saveSample(const SYSCHAR* fileName, mp_sint32 ind
 			break;
 
 		case OutputFiletypeRAW:
+			if (!supportRawLoading)
+				break;
 			loader = new SampleLoaderALL(theFileName, theModule);
 			break;
 	}
@@ -159,10 +162,13 @@ SampleLoaderAbstract* SampleLoaderGeneric::getSuitableLoader()
 	
 	delete loader;
 	
-	// Try to find something else
-	loader = new SampleLoaderALL(theFileName, theModule);
-	if (loader && loader->identifySample())
-		return loader;
+	if (supportRawLoading)
+	{
+		// Try to find something else
+		loader = new SampleLoaderALL(theFileName, theModule);
+		if (loader && loader->identifySample())
+			return loader;
+	}
 
 	delete loader;
 	return NULL;
