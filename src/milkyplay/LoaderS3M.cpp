@@ -296,8 +296,18 @@ static mp_sint32 convertS3MPattern(TXMPattern* XMPattern,
 			dstSlot+=6;
 		}
 			
-			return 0;	
+	return 0;
+}
+
+static inline mp_ubyte safeRead(const mp_ubyte* buffer, mp_uint32& index, mp_uint32 size, mp_ubyte errorValue = 0)
+{
+	if (index < size)
+	{
+		return buffer[index++];
+	}
 	
+	index++;
+	return errorValue;
 }
 
 mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
@@ -576,72 +586,88 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 		{
 			f.seekWithBaseOffset(patOffs);
 			
-			mp_uint32 size = f.readWord()-2;
+			mp_uint32 size = f.readWord();
 			
-			mp_ubyte* packed = new mp_ubyte[size+5];
-			if (packed == NULL)
+			if (size > 2)
 			{
-				delete[] insParaPtrs;
-				delete[] patParaPtrs;
-				delete[] samplePtrs;
-				delete[] pattern;
-				return -7;				
+				size-=2;
+				
+				mp_ubyte* packed = new mp_ubyte[size+5];
+				if (packed == NULL)
+				{
+					delete[] insParaPtrs;
+					delete[] patParaPtrs;
+					delete[] samplePtrs;
+					delete[] pattern;
+					return -7;				
+				}
+				
+				memset(packed, 0, size);
+				f.read(packed, 1, size);
+				
+				mp_uint32 index = 0;
+				mp_uint32 row = 0;
+				
+				while (index<size)
+				{
+					
+					mp_ubyte pi = safeRead(packed, index, size);
+					
+					if (pi == 0) 
+					{
+						row++;
+						// one more safety net for incorrectly saved pattern sizes
+						if (row >= 64)
+						{
+							int i = 0;
+							i++;
+							i--;
+							break;
+						}
+						continue;
+					}
+					
+					mp_uint32 chn = pi&31;
+					
+					if (chn>maxChannels && (pi & (32+64+128)))
+					{
+						maxChannels = chn;
+					}
+					
+					mp_ubyte* slot = pattern+(row*32*5)+chn*5;
+					
+					if (pi & 32)
+					{
+						slot[0] = safeRead(packed, index, size, 0xFF);
+						slot[1] = safeRead(packed, index, size);
+					}
+					if (pi & 64)
+					{
+						slot[2] = safeRead(packed, index, size, 0xFF);
+					}
+					if (pi & 128)
+					{
+						slot[3] = safeRead(packed, index, size, 0xFF);
+						slot[4] = safeRead(packed, index, size);
+					}
+					
+				}
+				
+				maxChannels++;
+				
+				if (maxChannels > header->channum)
+					maxChannels = header->channum;
+				
+				delete[] packed;
 			}
 			
-			f.read(packed,1,size);
+			if (maxChannels > songMaxChannels)
+				songMaxChannels = maxChannels;
 			
-			mp_uint32 index = 0;
-			mp_uint32 row = 0;
-			
-			while (index<size)
-			{
-				
-				mp_ubyte pi = packed[index++];
-				
-				if (pi == 0) {
-					row++;
-					continue;
-				}
-				
-				mp_uint32 chn = pi&31;
-				
-				if (chn>maxChannels && (pi & (32+64+128)))
-				{
-					maxChannels = chn;
-				}
-				
-				mp_ubyte* slot = pattern+(row*32*5)+chn*5;
-				
-				if (pi & 32)
-				{
-					slot[0] = packed[index++];
-					slot[1] = packed[index++];
-				}
-				if (pi & 64)
-				{
-					slot[2] = packed[index++];
-				}
-				if (pi & 128)
-				{
-					slot[3] = packed[index++];
-					slot[4] = packed[index++];
-				}
-				
-			}
-			
-			maxChannels++;
-			
-			if (maxChannels > header->channum)
-				maxChannels = header->channum;
-			
-			delete[] packed;
 		}
 		
-		if (maxChannels > songMaxChannels)
-			songMaxChannels = maxChannels;
-		
 		convertS3MPattern(&phead[i], pattern, maxChannels, i);
-			
+		
 		
 	}
 	
