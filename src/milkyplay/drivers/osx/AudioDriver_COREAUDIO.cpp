@@ -43,9 +43,9 @@
 	if (RESULT != kAudioHardwareNoError) \
 	{ \
 		lastError = ERRNO; \
-		return -1; \
+		return MP_DEVICE_ERROR; \
 	}
-	
+
 #define SET_PROPS() \
 	if (AudioDeviceSetProperty (soundDeviceID, NULL, 0, 0, \
 								kAudioDevicePropertyStreamFormat, \
@@ -69,72 +69,80 @@
 #define MPERR_OUT_OF_MEMORY				-7
 #define MPERR_OSX_DEVICE_START			-8
 
-OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice, 
-													  const AudioTimeStamp* inNow,
-													  const AudioBufferList* inInputData,
-													  const AudioTimeStamp* inInputTime,
-													  AudioBufferList* outOutputData, 
-													  const AudioTimeStamp* inOutputTime,
-													  void *inClientData)
+OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
+        const AudioTimeStamp* inNow,
+        const AudioBufferList* inInputData,
+        const AudioTimeStamp* inInputTime,
+        AudioBufferList* outOutputData,
+        const AudioTimeStamp* inOutputTime,
+        void *inClientData)
 {
     register float*	myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
-    
-	AudioDriver_COREAUDIO* audioDriver = reinterpret_cast<AudioDriver_COREAUDIO*>(inClientData);
+
+    AudioDriver_COREAUDIO* audioDriver = reinterpret_cast<AudioDriver_COREAUDIO*>(inClientData);
 
     MasterMixer* mixer = audioDriver->mixer;
-	
+
     register SInt16* myInBuffer = (SInt16*)audioDriver->compensateBuffer;
-    register UInt32	size = (outOutputData->mBuffers[0].mDataByteSize / 
-							outOutputData->mBuffers[0].mNumberChannels) / 
-								sizeof(float);
-	
-	audioDriver->sampleCounter+=size;	
-	
+    register UInt32	size = (outOutputData->mBuffers[0].mDataByteSize /
+                            outOutputData->mBuffers[0].mNumberChannels) /
+                           sizeof(float);
+
+    audioDriver->sampleCounter+=size;
+
     if (audioDriver->isMixerActive())
+    {
         mixer->mixerHandler(myInBuffer);
-	else
-		memset(myInBuffer, 0, size*MP_NUMCHANNELS*sizeof(mp_sword));
-		
+    }
+    else
+    {
+        memset(myInBuffer, 0, size*MP_NUMCHANNELS*sizeof(mp_sword));
+    }
+
     register UInt32	i;
 
-	if (audioDriver->mono)
-	{
-		for (i = 0; i < size; i++)
-			myOutBuffer[i] = (myInBuffer[i*2]+myInBuffer[i*2+1])*(1.0f/(32768.0f*2.0f));			
-	}
-	else
-	{
-		for (i = 0; i < size; i++)
-		{
-			myOutBuffer[i*2] = (myInBuffer[i*2])*(1.0f/32768.0f);			
-			myOutBuffer[i*2+1] = (myInBuffer[i*2+1])*(1.0f/32768.0f);			
-		}
-	}
-	
+    if (audioDriver->mono)
+    {
+        for (i = 0; i < size; i++)
+        {
+            myOutBuffer[i] = (myInBuffer[i*2]+myInBuffer[i*2+1])*(1.0f/(32768.0f*2.0f));
+        }
+    }
+    else
+    {
+        for (i = 0; i < size; i++)
+        {
+            myOutBuffer[i*2] = (myInBuffer[i*2])*(1.0f/32768.0f);
+            myOutBuffer[i*2+1] = (myInBuffer[i*2+1])*(1.0f/32768.0f);
+        }
+    }
+
     return noErr;
 }
 
 AudioDriver_COREAUDIO::AudioDriver_COREAUDIO() :
-	AudioDriverBase(),
-	sampleCounter(0),
-	compensateBuffer(NULL),
-	IOProcIsInstalled(0),
-	deviceHasStarted(false)
+    AudioDriverBase(),
+    sampleCounter(0),
+    compensateBuffer(NULL),
+    IOProcIsInstalled(0),
+    deviceHasStarted(false)
 {
 }
 
-AudioDriver_COREAUDIO::~AudioDriver_COREAUDIO() 
+AudioDriver_COREAUDIO::~AudioDriver_COREAUDIO()
 {
-	delete[] compensateBuffer;
+    delete[] compensateBuffer;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
 {
-	mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
-	if (res < 0)
-		return res;
-	
-	sampleCounter = 0;
+    mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
+    if (res < 0)
+    {
+        return res;
+    }
+
+    sampleCounter = 0;
 
     AudioStreamBasicDescription mySoundBasicDescription;
     UInt32 myPropertySize, myBufferByteCount;
@@ -147,11 +155,11 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
         AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice,
                                   &myPropertySize, &soundDeviceID)
     );
-	
+
     if (soundDeviceID == kAudioDeviceUnknown)
     {
         lastError = MPERR_OSX_UNKNOWN_DEVICE;
-        return -1;
+        return MP_DEVICE_ERROR;
     }
 
     // get the device format...
@@ -172,17 +180,17 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
     }
 
     // try selected channels, if failure select native channels...
-	if (mySoundBasicDescription.mChannelsPerFrame != 2)
-	{
-		mySoundBasicDescription.mChannelsPerFrame = 2;
-		SET_PROPS();
-	}
+    if (mySoundBasicDescription.mChannelsPerFrame != 2)
+    {
+        mySoundBasicDescription.mChannelsPerFrame = 2;
+        SET_PROPS();
+    }
 
     // linear PCM is required...
     if (mySoundBasicDescription.mFormatID != kAudioFormatLinearPCM)
     {
         lastError = MPERR_OSX_UNSUPPORTED_FORMAT;
-        return -1;
+        return MP_DEVICE_ERROR;
     }
 
     // get the device format again and verify if we could set the settings
@@ -194,52 +202,60 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
                                 &myPropertySize, &mySoundBasicDescription)
     );
 
-	if (mySoundBasicDescription.mChannelsPerFrame > 2 ||
-		mySoundBasicDescription.mChannelsPerFrame < 1)
-		return -1;
+    if (mySoundBasicDescription.mChannelsPerFrame > 2 ||
+            mySoundBasicDescription.mChannelsPerFrame < 1)
+    {
+        return MP_DEVICE_ERROR;
+    }
 
-	// force some stereo -> mono conversion
-	if (mySoundBasicDescription.mChannelsPerFrame == 1)
-		mono = true;
+    // force some stereo -> mono conversion
+    if (mySoundBasicDescription.mChannelsPerFrame == 1)
+    {
+        mono = true;
+    }
 
-	// couldn't set sample rate, fall back
-	if (mySoundBasicDescription.mSampleRate != mixFrequency)
-		this->mixFrequency = (mp_uint32)mySoundBasicDescription.mSampleRate;
+    // couldn't set sample rate, fall back
+    if (mySoundBasicDescription.mSampleRate != mixFrequency)
+    {
+        this->mixFrequency = (mp_uint32)mySoundBasicDescription.mSampleRate;
+    }
 
-	gAudioIOProc = OSX_AudioIOProc16Bit;	
-    
-	myBufferByteCount = (bufferSizeInWords >> (mono ? 1 : 0))* sizeof(float);
+    gAudioIOProc = OSX_AudioIOProc16Bit;
+
+    myBufferByteCount = (bufferSizeInWords >> (mono ? 1 : 0))* sizeof(float);
     CHECK_ERROR
     (
         MPERR_OSX_BUFFER_ALLOC,
         AudioDeviceSetProperty (soundDeviceID, NULL, 0, 0, kAudioDevicePropertyBufferSize,
                                 sizeof(myBufferByteCount), &myBufferByteCount)
     );
-    
+
     // add our audio IO procedure....
     CHECK_ERROR
     (
         MPERR_OSX_ADD_IO_PROC,
         AudioDeviceAddIOProc (soundDeviceID, gAudioIOProc, (void*)this)
     );
-	
+
     IOProcIsInstalled = 1;
 
-	deviceHasStarted = false;
+    deviceHasStarted = false;
 
-	if (compensateBuffer)
-		delete[] compensateBuffer;
-	compensateBuffer = new mp_sword[bufferSizeInWords];
+    if (compensateBuffer)
+    {
+        delete[] compensateBuffer;
+    }
+    compensateBuffer = new mp_sword[bufferSizeInWords];
 
-	return 0;
+    return MP_OK;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::stop()
 {
-	AudioDeviceStop (soundDeviceID, gAudioIOProc);
+    AudioDeviceStop (soundDeviceID, gAudioIOProc);
 
-	deviceHasStarted = false;
-	return 0;
+    deviceHasStarted = false;
+    return MP_OK;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::closeDevice()
@@ -247,42 +263,42 @@ mp_sint32 AudioDriver_COREAUDIO::closeDevice()
     if (IOProcIsInstalled)
     {
         AudioDeviceRemoveIOProc (soundDeviceID, gAudioIOProc);
-		deviceHasStarted = false;
+        deviceHasStarted = false;
     }
 
-	return 0;
+    return MP_OK;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::start()
 {
-	// start the audio IO Proc...
-	if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
-	{
-		lastError = MPERR_OSX_DEVICE_START;
-		return -1;
-	}
-	deviceHasStarted = true;
-	return 0;
+    // start the audio IO Proc...
+    if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
+    {
+        lastError = MPERR_OSX_DEVICE_START;
+        return MP_DEVICE_ERROR;
+    }
+    deviceHasStarted = true;
+    return MP_OK;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::pause()
 {
-	AudioDeviceStop (soundDeviceID, gAudioIOProc);
-	deviceHasStarted = false;
-	return 0;
+    AudioDeviceStop (soundDeviceID, gAudioIOProc);
+    deviceHasStarted = false;
+    return MP_OK;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::resume()
 {
-	if (!deviceHasStarted)
-	{
-		// start the audio IO Proc...
-		if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
-		{
-			lastError = MPERR_OSX_DEVICE_START;
-			return -1;
-		}
-		deviceHasStarted = true;
-     }	
-	return 0;
+    if (!deviceHasStarted)
+    {
+        // start the audio IO Proc...
+        if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
+        {
+            lastError = MPERR_OSX_DEVICE_START;
+            return MP_DEVICE_ERROR;
+        }
+        deviceHasStarted = true;
+    }
+    return MP_OK;
 }
