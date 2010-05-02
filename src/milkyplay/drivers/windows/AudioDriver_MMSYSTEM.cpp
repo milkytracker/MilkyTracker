@@ -100,7 +100,7 @@ AudioDriver_MMSYSTEM::~AudioDriver_MMSYSTEM()
 mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* pMixer)
 {
 	mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, pMixer);
-	if (res != 0)
+	if (res != MP_OK)
 		return res;
 
 	sampleRate = mixFrequency;
@@ -125,7 +125,7 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 	}
 
 	if (!modeFound)
-		return -4;
+		return MP_DEVICE_ERROR;
 
 	WAVEFORMATEX format;
 
@@ -143,7 +143,7 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 
 		if (devid == ::waveOutGetNumDevs())
 		{
-			return -1;
+			return MP_DEVICE_ERROR;
 		}
 
 		
@@ -162,7 +162,7 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 
 	UINT waveOutID;
 	if (::waveOutGetID(hwo,(LPUINT)&waveOutID) != MMSYSERR_NOERROR) {
-		return -2;
+		return MP_DEVICE_ERROR;
 	}
 
 	MMRESULT r = ::waveOutGetDevCaps((UINT)waveOutID,
@@ -171,19 +171,19 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 
 	if (r != MMSYSERR_NOERROR) 
 	{
-		return -3;
+		return MP_DEVICE_ERROR;
 	}
 
 	if (!(waveoutcaps.dwFormats & dwFormat))
 	{
-		return -4;
+		return MP_DEVICE_ERROR;
 	}
 
 	::waveOutReset(hwo);
 
 	if (::waveOutClose(hwo)!= MMSYSERR_NOERROR) 
 	{
-		return -5;
+		return MP_DEVICE_ERROR;
 	}
 
 	if (::waveOutOpen(&hwo,
@@ -193,7 +193,7 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 					  (LONG)this,
 					  CALLBACK_FUNCTION) != MMSYSERR_NOERROR) 
 	{
-		return -6;
+		return MP_DEVICE_ERROR;
 	}
 	
 	lastSampleIndex = 0;
@@ -209,13 +209,13 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 	deviceHasStarted = false;
 	sampleCounterTotal = 0;
 
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::stop()
 {
 	if (!deviceHasStarted)
-		return 0;
+		return MP_OK;
 
 	bool resetVolume = false; 
 	DWORD dwVol;
@@ -270,7 +270,7 @@ mp_sint32 AudioDriver_MMSYSTEM::stop()
 	lastSampleIndex = 0;
 	sampleCounterTotal = 0;
 
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::closeDevice()
@@ -279,10 +279,10 @@ mp_sint32 AudioDriver_MMSYSTEM::closeDevice()
 
 	if (::waveOutClose(hwo)!=MMSYSERR_NOERROR) 
 	{
-		return -5;
+		return MP_DEVICE_ERROR;
 	}
 
-	return 0;
+	return MP_OK;
 }
 
 void AudioDriver_MMSYSTEM::kick()
@@ -322,21 +322,21 @@ mp_sint32 AudioDriver_MMSYSTEM::start()
 		timeInSamples = sampleCounter = 0;
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::pause()
 {
 	::waveOutPause(hwo);
 	paused = true;
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_MMSYSTEM::resume()
 {
 	::waveOutRestart(hwo);
 	paused = false;
-	return 0;
+	return MP_OK;
 }
 
 mp_uint32 AudioDriver_MMSYSTEM::getNumPlayedSamples() const
