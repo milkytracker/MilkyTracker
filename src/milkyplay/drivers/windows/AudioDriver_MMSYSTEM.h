@@ -96,7 +96,7 @@ public:
 
 	virtual		mp_uint32	getNumPlayedSamples() const;
 	virtual		mp_uint32	getBufferPos() const;
-	virtual		bool		supportsTimeQuery() { return true; }
+	virtual		bool		supportsTimeQuery() const { return true; }
 
 	virtual		const char* getDriverID() { return timeEmulation ? "WaveOut (Vista)" : "WaveOut (old)"; }
 

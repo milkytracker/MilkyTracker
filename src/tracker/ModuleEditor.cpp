@@ -667,12 +667,12 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	mp_sint32 nRes = module->loadModule(fileName);
 	
 	// unknown format
-	if (nRes == -9)
+	if (nRes == MP_UNKNOWN_FORMAT)
 	{
 		return false;
 	}
 
-	bool res = (nRes == 0);
+	bool res = (nRes == MP_OK);
 
 	XModule::ModuleTypes type = XModule::ModuleType_NONE;
 
@@ -698,11 +698,11 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	
 		PPSystemString tempFile(getTempFilename());
 	
-		res = module->saveExtendedModule(tempFile) == 0;
+		res = module->saveExtendedModule(tempFile) == MP_OK;
 		if (!res)
 			return res;
 
-		res = module->loadModule(tempFile) == 0;
+		res = module->loadModule(tempFile) == MP_OK;
 	
 		// restore one shot looping flag
 		if (type == XModule::ModuleType_MOD)
@@ -1058,10 +1058,9 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 
 }
 
+#if 0
 mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 {
-	return 0;
-
 	if (index < 0) 
 		return -1;
 
@@ -1143,6 +1142,7 @@ mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 	return 0;
 
 }
+#endif
 
 void ModuleEditor::finishSamples()
 {

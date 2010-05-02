@@ -70,7 +70,7 @@ public:
 	virtual		mp_sint32   resume();
 	virtual		mp_uint32	getNumPlayedSamples() const;
 	virtual		mp_uint32	getBufferPos() const;
-	virtual		bool		supportsTimeQuery();
+	virtual		bool		supportsTimeQuery() const;
 	virtual		const char* getDriverID();
 	virtual		void		advance();
 	virtual		mp_sint32	getPreferredSampleRate() const;

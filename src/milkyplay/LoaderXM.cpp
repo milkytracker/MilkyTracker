@@ -59,9 +59,6 @@ const char* LoaderXM::identifyModule(const mp_ubyte* buffer)
 
 //////////////////////////////////////////////////////
 // load fasttracker II extended module
-// return:   0 = no error
-//			-7 = out of memory
-//			-8 = other
 //////////////////////////////////////////////////////
 mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 {
@@ -80,7 +77,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	fileSize = f.sizeWithBaseOffset();
 	
@@ -94,7 +91,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 	if (header->ver != 0x102 && 
 		header->ver != 0x103 && // untested
 		header->ver != 0x104)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	f.readDwords(&header->hdrsize,1);
 	
@@ -159,7 +156,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			memset(insData, 0, 230);
 			
 			if (instr[y].size - 33 > 230)
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			
 			f.read(insData, 1, instr[y].size - 33);
 						
@@ -223,8 +220,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					penv.env[l][1]<<=2;
 				}
 				
-				if (!module->addVolumeEnvelope(venv)) return -7;
-				if (!module->addPanningEnvelope(penv)) return -7;
+				if (!module->addVolumeEnvelope(venv)) 
+					return MP_OUT_OF_MEMORY;
+				if (!module->addPanningEnvelope(penv)) 
+					return MP_OUT_OF_MEMORY;
 				
 				mp_sint32 g=0, sc;
 				for (sc=0;sc<instr[y].samp;sc++) {
@@ -335,7 +334,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[y].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[y].patternData,0,phead[y].rows*header->channum*6);
@@ -346,7 +345,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			// out of memory?
 			if (buffer == NULL)
 			{
-				return -7;			
+				return MP_OUT_OF_MEMORY;			
 			}
 			
 			f.read(buffer,1,phead[y].patdata);
@@ -585,8 +584,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					penv.env[l][1]<<=2;
 				}
 				
-				if (!module->addVolumeEnvelope(venv)) return -7;
-				if (!module->addPanningEnvelope(penv)) return -7;
+				if (!module->addVolumeEnvelope(venv)) 
+					return MP_OUT_OF_MEMORY;
+				if (!module->addPanningEnvelope(penv)) 
+					return MP_OUT_OF_MEMORY;
 				
 				mp_sint32 g=0, sc;
 				for (sc=0;sc<instr[y].samp;sc++) {
@@ -664,11 +665,12 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 							smp[s].looplen>>=1;
 						}
 						
-						if (module->loadModuleSample(f, s, 
+						mp_sint32 result = module->loadModuleSample(f, s, 
 													 adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA, 
 													 adpcm ? (XModule::ST_PACKING_ADPCM | XModule::ST_16BIT) : (XModule::ST_DELTA | XModule::ST_16BIT), 
-													 oldSize) != 0)
-							return -7;					
+													 oldSize);
+						if (result != MP_OK)
+							return result;					
 						
 						if (adpcm)
 							smp[s].res = 0;
@@ -677,7 +679,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					s++;
 					
 					if (s>=MP_MAXSAMPLES)
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					
 				}
 
@@ -717,14 +719,15 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						smp[s].looplen>>=1;
 					}
 					
-					if (module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT, oldSize) != 0)
-						return -7;					
+					mp_sint32 result = module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT, oldSize);
+					if (result != MP_OK)
+						return result;					
 				}
 				
 				s++;
 				
 				if (s>=MP_MAXSAMPLES)
-					return -7;				
+					return MP_OUT_OF_MEMORY;				
 			}
 			
 #ifdef MILKYTRACKER
@@ -810,7 +813,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				// out of memory?
 				if (phead[i].patternData == NULL)
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 		
 				memset(phead[i].patternData,0,phead[i].rows*header->channum*6);
@@ -835,5 +838,5 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

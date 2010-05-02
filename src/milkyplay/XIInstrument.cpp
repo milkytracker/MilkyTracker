@@ -178,17 +178,17 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 	}
 
 	if (memcmp(sig,"Extended Instrument: ",21) != 0)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	f.read(name, 1, 22);
 	
 	if (f.readByte() != 0x1A)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	f.read(tracker, 1, 20);
 	
 	if (f.readWord() != 0x102)	// read version
-		return -8;	
+		return MP_LOADER_FAILED;	
 	
 	// read note instrument table
 	f.read(nbu, 1, 96);
@@ -275,14 +275,14 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 			
 			if (smp[k].sample == NULL)
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			owner = true;			
 			
 			if (!XModule::loadSample(f,smp[k].sample,smp[k].samplen,smp[k].samplen,XModule::ST_DELTA))
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}					
 		}
 		else if (smp[k].samplen)
@@ -291,14 +291,14 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 			
 			if (smp[k].sample == NULL)
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 
 			owner = true;			
 			
 			if (!XModule::loadSample(f,smp[k].sample,smp[k].samplen,smp[k].samplen>>1,XModule::ST_DELTA | XModule::ST_16BIT))
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}					
 			
 			smp[k].samplen>>=1;
@@ -307,7 +307,7 @@ mp_sint32 XIInstrument::load(const SYSCHAR* fileName)
 		}
 	}	
 	
-	return 0;
+	return MP_OK;
 }
 
 static mp_sint32 gusFreqToFT2Note(mp_dword freq)
@@ -529,7 +529,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 			if (smp[i].sample == NULL)
 			{
 				PAT_CLEAN;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			owner = true;			
@@ -539,7 +539,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 				if (!XModule::loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen,XModule::ST_UNSIGNED))
 				{
 					PAT_CLEAN;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 			else
@@ -547,7 +547,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 				if (!XModule::loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen))
 				{
 					PAT_CLEAN;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 		}
@@ -558,7 +558,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 			if (smp[i].sample == NULL)
 			{
 				PAT_CLEAN;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 
 			owner = true;			
@@ -568,7 +568,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 				if (!XModule::loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen>>1,XModule::ST_16BIT | XModule::ST_UNSIGNED))
 				{
 					PAT_CLEAN;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 			else
@@ -576,7 +576,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 				if (!XModule::loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen>>1,XModule::ST_16BIT))
 				{
 					PAT_CLEAN;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 			
@@ -589,7 +589,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 	
 	PAT_CLEAN;
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
@@ -711,7 +711,7 @@ mp_sint32 XIInstrument::save(const SYSCHAR* fileName)
 		}
 	}	
 	
-	return 0;
+	return MP_OK;
 }
 
 XIInstrument& XIInstrument::operator=(const XIInstrument& source)

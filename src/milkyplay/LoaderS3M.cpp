@@ -58,7 +58,7 @@ static mp_sint32 convertS3MPattern(TXMPattern* XMPattern,
 	
 	if (XMPattern->patternData == NULL)
 	{
-		return -1;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(XMPattern->patternData,0,maxChannels*6*64);
@@ -296,7 +296,7 @@ static mp_sint32 convertS3MPattern(TXMPattern* XMPattern,
 			dstSlot+=6;
 		}
 			
-	return 0;
+	return MP_OK;
 }
 
 static inline mp_ubyte safeRead(const mp_ubyte* buffer, mp_uint32& index, mp_uint32 size, mp_ubyte errorValue = 0)
@@ -322,12 +322,13 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(&header->name,1,28);
 	header->whythis1a = f.readByte();
 	
-	if (f.readByte() != 16) return -8;	// no ST3 module
+	if (f.readByte() != 16) 
+		return MP_LOADER_FAILED;	// no ST3 module
 	
 	f.readByte(); // skip something
 	f.readByte(); // skip something
@@ -335,7 +336,8 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 	header->ordnum = f.readWord(); // number of positions in order list (songlength)
 	
 	mp_ubyte* orders = new mp_ubyte[header->ordnum];
-	if (orders == NULL) return -7;
+	if (orders == NULL) 
+		return MP_OUT_OF_MEMORY;
 	
 	header->insnum = f.readWord(); // number of instruments
 	header->patnum = f.readWord(); // number of patterns	
@@ -400,7 +402,7 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 	mp_uword* insParaPtrs = new mp_uword[header->insnum];
 	
 	if (insParaPtrs == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.readWords(insParaPtrs,header->insnum);
 	
@@ -409,7 +411,7 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 	if (patParaPtrs == NULL)
 	{
 		delete[] insParaPtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	f.readWords(patParaPtrs,header->patnum);
@@ -427,7 +429,7 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 	{
 		delete[] insParaPtrs;
 		delete[] patParaPtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(samplePtrs,0,sizeof(mp_uint32)*header->insnum);
@@ -562,7 +564,7 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 		delete[] insParaPtrs;
 		delete[] patParaPtrs;
 		delete[] samplePtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	mp_uint32 songMaxChannels = 1;
@@ -599,7 +601,7 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 					delete[] patParaPtrs;
 					delete[] samplePtrs;
 					delete[] pattern;
-					return -7;				
+					return MP_OUT_OF_MEMORY;				
 				}
 				
 				memset(packed, 0, size);
@@ -692,12 +694,13 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 
 			bool adpcm = (smp[s].res == 0xAD);
 
-			if (module->loadModuleSample(f, s, 
+			mp_sint32 result = module->loadModuleSample(f, s, 
 										  adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_UNSIGNED, 
-										  adpcm ? (XModule::ST_16BIT | XModule::ST_PACKING_ADPCM) : (XModule::ST_16BIT | XModule::ST_UNSIGNED)) != 0)
+										  adpcm ? (XModule::ST_16BIT | XModule::ST_PACKING_ADPCM) : (XModule::ST_16BIT | XModule::ST_UNSIGNED));
+			if (result != MP_OK)
 			{
 				delete[] samplePtrs;
-				return -7;
+				return result;
 			}
 			
 			if (adpcm)
@@ -720,5 +723,5 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
+	return MP_OK;	
 }

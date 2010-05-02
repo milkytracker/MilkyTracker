@@ -60,32 +60,32 @@ mp_sint32 AudioDriver_NULL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mi
 	delete[] compensateBuffer;
 	compensateBuffer = new mp_sword[bufferSizeInWords];
 
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_NULL::stop()
 {
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_NULL::closeDevice()
 {
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_NULL::start()
 {
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_NULL::pause()
 {
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 AudioDriver_NULL::resume()
 {
-	return 0;
+	return MP_OK;
 }
 
 void AudioDriver_NULL::advance()

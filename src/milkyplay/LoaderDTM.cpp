@@ -99,7 +99,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	header->mainvol = 255;
 	header->tempo = 6;
@@ -136,7 +136,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 				mp_uword type = BigEndian::GET_WORD(buffer);
 				if (type)
 				{
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				f.read(buffer, 1, 4);
 				f.read(buffer, 1, 2);
@@ -150,7 +150,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 				
 				mp_ubyte* name = new mp_ubyte[len];
 				if (name == NULL)
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				
 				f.read(name, 1, len);
 				
@@ -204,7 +204,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 				else if (memcmp(buffer,"2.04",4) == 0)
 					patternFormat = DTStyle;
 				else
-					return -8;
+					return MP_LOADER_FAILED;
 													
 				f.seekWithBaseOffset(pos + chunkLen);
 				break;
@@ -409,7 +409,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 					s =	instr[i].snum[0];			
 
 					if (module->loadModuleSample(f, s, XModule::ST_DEFAULT, XModule::ST_16BIT | XModule::ST_BIGENDIAN) != 0)
-						return -7;
+						return MP_OUT_OF_MEMORY;
 				}
 		
 				f.seekWithBaseOffset(pos + chunkLen);
@@ -432,7 +432,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();	
 
-	return 0;
+	return MP_OK;
 }
 
 #define CLEAN_DTM_1 \
@@ -495,7 +495,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	bool hasSong = false, hasInfo = false, hasInit = false, hasInst = false, hasTrak = false, hasSamp = false;
 	bool insActive = false;
@@ -559,7 +559,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 				if (tracks == NULL)
 				{
 					CLEAN_DTM_1
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 
 				memset(tracks, 0, sizeof(mp_ubyte*)*numTracks);
@@ -588,7 +588,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 				if (trackSeq == NULL)
 				{
 					CLEAN_DTM_1
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 
 				f.readWords(trackSeq, header->patnum * header->channum);
@@ -659,7 +659,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 						if (module->loadModuleSample(f, s) != 0)
 						{
 							CLEAN_DTM_1
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						s++;
@@ -684,14 +684,14 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 				if (t >= numTracks)
 				{
 					CLEAN_DTM_1
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				tracks[t] = new mp_ubyte[chunkLen];
 				
 				if (tracks[t] == NULL)
 				{
 					CLEAN_DTM_1
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				f.read(tracks[t], 1, chunkLen);
@@ -712,7 +712,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 	if (!hasSong || !hasInfo || !hasInit || !hasInst || !hasTrak || !hasSamp)
 	{
 		CLEAN_DTM_1
-		return -8;
+		return MP_LOADER_FAILED;
 	}
 		
 	mp_ubyte lTab[256];
@@ -751,7 +751,7 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			CLEAN_DTM_1
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*6);
@@ -861,5 +861,5 @@ mp_sint32 LoaderDTM_1::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }

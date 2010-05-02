@@ -101,7 +101,7 @@ mp_uint32	AudioDriver_RTAUDIO::getBufferPos() const
 	return impl->getBufferPos();
 }
 
-bool		AudioDriver_RTAUDIO::supportsTimeQuery()
+bool		AudioDriver_RTAUDIO::supportsTimeQuery() const
 {
 	return impl->supportsTimeQuery();
 }

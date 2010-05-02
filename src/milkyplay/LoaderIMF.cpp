@@ -277,7 +277,7 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	memcpy(header->sig, "IM10", 4);
 	
@@ -349,7 +349,7 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 		mp_sint32 rows = f.readWord();
 	
 		if (size < 0 || rows > 256)
-			return -8;
+			return MP_LOADER_FAILED;
 		
 		phead[i].rows = rows;
 		phead[i].effnum = 2;
@@ -363,7 +363,7 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[i].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));		
@@ -513,7 +513,8 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 			venv.loope = ins.volend;
 			venv.type = ins.volflg;
 			
-			if (!module->addVolumeEnvelope(venv)) return -7;
+			if (!module->addVolumeEnvelope(venv)) 
+				return MP_OUT_OF_MEMORY;
 		}
 
 		if (ins.panflg)
@@ -535,7 +536,8 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 			penv.loope = ins.panend;
 			penv.type = ins.panflg;
 			
-			if (!module->addPanningEnvelope(penv)) return -7;
+			if (!module->addPanningEnvelope(penv)) 
+				return MP_OUT_OF_MEMORY;
 		}
 
 		/*if (ins.pitflg)
@@ -557,7 +559,8 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 			vibenv.loope = ins.pitend;
 			vibenv.type = ins.pitflg + (2<<6);
 			
-			if (!module->addVibratoEnvelope(vibenv)) return -7;
+			if (!module->addVibratoEnvelope(vibenv)) 
+				return MP_OUT_OF_MEMORY;
 		}
 		
 		printf("%i\n",ins.pitflg);*/
@@ -617,8 +620,9 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 				smp[s].looplen>>=1;
 			}
 			
-			if (module->loadModuleSample(f, s) != 0)
-				return -7;
+			mp_sint32 result = module->loadModuleSample(f, s);
+			if (result != MP_OK)
+				return result;
 			
 			s++;
 		
@@ -638,5 +642,5 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

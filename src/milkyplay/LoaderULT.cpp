@@ -105,7 +105,7 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 
 	mp_sint32 i,j,k;
 	
@@ -249,7 +249,7 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 	
 	if (trackSeq == NULL)
 	{
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 
 	k = 0;
@@ -264,7 +264,7 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 	if (tracks == NULL)
 	{
 		delete[] trackSeq;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 
 	// decode tracks
@@ -323,7 +323,7 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 		{
 			delete[] tracks;
 			delete[] trackSeq;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*slotSize);
@@ -419,8 +419,9 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 	delete[] trackSeq;
 	delete[] tracks;
 	
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 	
 	header->speed=125;
 	header->tempo=6;
@@ -430,5 +431,5 @@ mp_sint32 LoaderULT::load(XMFileBase& f, XModule* module)
 
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }

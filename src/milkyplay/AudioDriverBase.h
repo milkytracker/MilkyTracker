@@ -38,6 +38,7 @@
 #define __AUDIODRIVERBASE_H__
 
 #include "MilkyPlayTypes.h"
+#include "MilkyPlayResults.h"
 
 // WAV Header & mixing buffer info
 #define MP_NUMCHANNELS 2
@@ -85,7 +86,7 @@ public:
 	virtual		mp_uint32	getBufferPos() const = 0;
 	// if the device supports query of how many samples are played since 
 	// start has been called, return true here
-	virtual		bool		supportsTimeQuery() = 0;
+	virtual		bool		supportsTimeQuery() const = 0;
 
 	// should be kinda unique
 	virtual		const char* getDriverID() = 0;
@@ -110,17 +111,7 @@ public:
 // different audio driver implementations on the same plattform
 // accessing the same audio device without interfering each other.
 // -------------------------------------------------------------------------
-// all critical functions are supposed to return win32 waveOut legacy API 
-// error codes which are:
-//  0 = no error
-// -1 = no free device
-// -2 = can't get device ID
-// -3 = can't get device capabilities
-// -4 = device can't handle requested format
-// -5 = can't close device
-// -6 = can't open device
-// -7 = out of memory
-// -8 = unknown error
+// For error codes see MilkyPlayResults.h
 // -------------------------------------------------------------------------
 class AudioDriverBase : public AudioDriverInterface
 {
@@ -152,7 +143,7 @@ public:
 		this->mixer = mixer; 
 		bufferSize = bufferSizeInWords;
 		this->mixFrequency = mixFrequency;
-		return 0; 
+		return MP_OK; 
 	}
 	
 				mp_uint32	getMixFrequency() const { return mixFrequency; }
@@ -164,7 +155,7 @@ public:
 	virtual		mp_uint32	getBufferPos() const { return 0; }
 	// if the device supports query of how many samples are played since 
 	// start has been called, return true here
-	virtual		bool		supportsTimeQuery() { return false; }
+	virtual		bool		supportsTimeQuery() const { return false; }
 
 	// required by wav/null drivers, ignore if you're not writing a wav writer
 	virtual		void		advance() { }

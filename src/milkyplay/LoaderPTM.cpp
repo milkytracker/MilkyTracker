@@ -58,7 +58,7 @@ static mp_sint32 convertPTMPattern(TXMPattern* XMPattern,
 	
 	if (XMPattern->patternData == NULL)
 	{
-		return -1;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(XMPattern->patternData,0,maxChannels*6*64);
@@ -222,8 +222,7 @@ static mp_sint32 convertPTMPattern(TXMPattern* XMPattern,
 			dstSlot+=6;
 		}
 			
-		return 0;	
-	
+	return MP_OK;	
 }
 
 mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
@@ -242,12 +241,13 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(&header->name,1,28);
 	header->whythis1a = f.readByte();
 	
-	if (f.readWord() != 0x203) return -8;	// can't read this one
+	if (f.readWord() != 0x203) 
+		return MP_LOADER_FAILED;	// can't read this one
 	
 	f.readByte(); // skip something
 	
@@ -377,7 +377,7 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 	mp_ubyte* pattern = new mp_ubyte[64*32*5];
 	if (pattern == NULL)
 	{
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (i = 0; i < header->patnum; i++)
@@ -406,7 +406,7 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 			if (packed == NULL)
 			{
 				delete[] pattern;
-				return -7;				
+				return MP_OUT_OF_MEMORY;				
 			}
 			
 			f.read(packed,1,size);
@@ -482,8 +482,9 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 		{
 			f.seekWithBaseOffset(smpOffs);
 			
-			if (module->loadModuleSample(f, i, XModule::ST_DELTA, XModule::ST_16BIT | XModule::ST_DELTA_PTM) != 0)
-				return -7;
+			mp_sint32 result = module->loadModuleSample(f, i, XModule::ST_DELTA, XModule::ST_16BIT | XModule::ST_DELTA_PTM);
+			if (result != MP_OK)
+				return result;
 		}
 	}
 	
@@ -493,5 +494,5 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
+	return MP_OK;	
 }

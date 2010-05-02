@@ -327,7 +327,7 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	mp_sint32 i,j;
 
@@ -508,7 +508,7 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 					if (!module->addVolumeEnvelope(venv)) 
 					{
 						CLEAN_DBM;
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 				}				
 				break;
@@ -535,7 +535,7 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 					if (!module->addPanningEnvelope(penv)) 
 					{
 						CLEAN_DBM;
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 				}				
 				break;
@@ -578,7 +578,7 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			CLEAN_DBM;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, phead[i].rows*header->channum*bps);
@@ -724,5 +724,5 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();	
 
-	return 0;
+	return MP_OK;
 }

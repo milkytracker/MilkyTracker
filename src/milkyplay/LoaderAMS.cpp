@@ -207,7 +207,7 @@ static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 				
 				if (packedData == NULL)
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				f.seekWithBaseOffset(pos);
@@ -219,7 +219,7 @@ static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 				if (smp[i].sample == NULL)
 				{
 					delete[] packedData;				
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				UnpackMethod1(packedData, (mp_ubyte*)smp[i].sample, packedSize);
@@ -245,12 +245,12 @@ static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 					
 					if (smp[i].sample == NULL)
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 					
 					if (!module->loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen))
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}					
 				}
 				else {
@@ -259,12 +259,12 @@ static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 					
 					if (smp[i].sample == NULL)
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 					
 					if (!module->loadSample(f,smp[i].sample, smp[i].samplen*2, smp[i].samplen, XModule::ST_16BIT))
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}									
 				}
 			}
@@ -272,7 +272,7 @@ static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 		}
 	}
 
-	return 0;
+	return MP_OK;
 }
 
 const char* LoaderAMSv1::identifyModule(const mp_ubyte* buffer)
@@ -300,12 +300,12 @@ mp_sint32 LoaderAMSv1::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 7);
 
 	if (f.readWord() != 0x130)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	header->mainvol = 0xff;
 	
@@ -496,7 +496,7 @@ mp_sint32 LoaderAMSv1::load(XMFileBase& f, XModule* module)
 		
 		if (phead[i].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, slotSize * phead[i].channum * phead[i].rows);
@@ -507,7 +507,7 @@ mp_sint32 LoaderAMSv1::load(XMFileBase& f, XModule* module)
 		
 			if (pattern == NULL)
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			memset(pattern, 0xff, patSize*2);
@@ -632,15 +632,16 @@ mp_sint32 LoaderAMSv1::load(XMFileBase& f, XModule* module)
 			delete[] pattern;
 		}
 	}
-	
-	if (loadAMSSamples(module, f) != 0)
-		return -7;
+
+	mp_sint32 result = loadAMSSamples(module, f);
+	if (result != MP_OK)
+		return result;
 
 	module->setDefaultPanning();
 	
 	module->postProcessSamples();	
 	
-	return 0;
+	return MP_OK;
 }
 
 const char* LoaderAMSv2::identifyModule(const mp_ubyte* buffer)
@@ -668,7 +669,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 6);
 	f.readByte();
@@ -679,7 +680,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 	
 	mp_sint32 ver = f.readWord();
 	if ((ver != 0x202) && (ver != 0x201))
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	header->mainvol = 0xff;	
 	memcpy(header->tracker, "Velvet Studio", 13);
@@ -768,7 +769,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 				if (!module->addVolumeEnvelope(env)) 
 				{
 					delete[] shadowInsLut;
-					return -7;							
+					return MP_OUT_OF_MEMORY;							
 				}
 			}
 			
@@ -802,7 +803,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 				if (!module->addPanningEnvelope(env)) 
 				{
 					delete[] shadowInsLut;
-					return -7;			
+					return MP_OUT_OF_MEMORY;			
 				}
 			}
 
@@ -836,7 +837,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 				if (!module->addVibratoEnvelope(env)) 
 				{
 					delete[] shadowInsLut;				
-					return -7;			
+					return MP_OUT_OF_MEMORY;			
 				}
 			}			
 
@@ -1109,7 +1110,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] shadowInsLut;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, slotSize * phead[i].channum * phead[i].rows);
@@ -1127,7 +1128,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 			if (pattern == NULL)
 			{
 				delete[] shadowInsLut;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			memset(pattern, 0xff, patSize*2);
@@ -1256,7 +1257,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 	if (loadAMSSamples(module, f) != 0)
 	{
 		delete[] shadowInsLut;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 
 	// duplicate shadowed samples
@@ -1295,7 +1296,7 @@ mp_sint32 LoaderAMSv2::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();	
 	
-	return 0;
+	return MP_OK;
 	
 }
 

@@ -104,19 +104,19 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	mp_ubyte sig[5];
 	f.read(&sig,1,5);
 	
 	if (memcmp(sig,"DMDL",4)) {
-		return -8;
+		return MP_LOADER_FAILED;
 	}
 	
 	mp_ubyte hVer = sig[4]>>4;
 	
 	if (hVer > 1) {
-		return -8;
+		return MP_LOADER_FAILED;
 	}
 	
 	memcpy(header->sig,sig,4);
@@ -138,7 +138,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 		if (mdlsamp) delete[] mdlsamp;
 		if (trackseq) delete[] trackseq;
 		
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(mdlins,0,sizeof(tmdlins)*16*256);
@@ -216,7 +216,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 					if (mdlsamp) delete[] mdlsamp;
 					if (trackseq) delete[] trackseq;
 					
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				memset(phead[p].patternData,0,phead[p].rows*phead[p].channum*8);
@@ -236,7 +236,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (buffer) delete[] buffer;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			for (mp_uint32 t=0;t<numtracks;t++) {
@@ -298,7 +298,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 					if (buffer) delete[] buffer;
 					if (tracks) delete[] tracks;
 					
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				
 			}
@@ -316,7 +316,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 					if (mdlsamp) delete[] mdlsamp;
 					if (trackseq) delete[] trackseq;
 
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				
 				f.read(&instr[insnum-1].name,1,32);
@@ -379,7 +379,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 								if (trackseq) delete[] trackseq;
 								if (tracks) delete[] tracks;
 								
-								return -7;
+								return MP_OUT_OF_MEMORY;
 							}
 							
 							if (!module->loadSample(f,mdlsamp[s].smp,mdlsamp[s].samplen,mdlsamp[s].samplen))
@@ -389,7 +389,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 								if (trackseq) delete[] trackseq;
 								if (tracks) delete[] tracks;
 								
-								return -7;
+								return MP_OUT_OF_MEMORY;
 							}
 							
 						}
@@ -404,7 +404,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 								if (trackseq) delete[] trackseq;
 								if (tracks) delete[] tracks;
 								
-								return -7;
+								return MP_OUT_OF_MEMORY;
 							}
 							
 							if (!module->loadSample(f,mdlsamp[s].smp,mdlsamp[s].samplen,mdlsamp[s].samplen>>1,XModule::ST_16BIT))
@@ -414,7 +414,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 								if (trackseq) delete[] trackseq;
 								if (tracks) delete[] tracks;
 								
-								return -7;
+								return MP_OUT_OF_MEMORY;
 							}
 							
 							//mp_uint32 samplen = mdlsamp[s].samplen>>1;
@@ -435,7 +435,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 							if (trackseq) delete[] trackseq;
 							if (tracks) delete[] tracks;
 							
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						if (!module->loadSample(f,mdlsamp[s].smp,size,mdlsamp[s].samplen,XModule::ST_PACKING_MDL))
@@ -445,7 +445,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 							if (trackseq) delete[] trackseq;
 							if (tracks) delete[] tracks;
 							
-							return -7;								
+							return MP_OUT_OF_MEMORY;								
 						}
 						
 					}; break;
@@ -462,7 +462,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 							if (trackseq) delete[] trackseq;
 							if (tracks) delete[] tracks;
 							
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						mp_uint32 samplen = mdlsamp[s].samplen>>1;
@@ -476,7 +476,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 							if (trackseq) delete[] trackseq;
 							if (tracks) delete[] tracks;
 							
-							return -7;								
+							return MP_OUT_OF_MEMORY;								
 						}
 																								
 					}; break;
@@ -496,7 +496,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			f.read(envelopes,33,numenvs);
@@ -522,7 +522,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			memset(module->venvs, 0, sizeof(TEnvelope)*(lastEnv+1));
 			module->numVEnvsAlloc = lastEnv+1;
@@ -573,7 +573,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			f.read(envelopes,33,numenvs);
@@ -599,7 +599,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			memset(module->penvs, 0, sizeof(TEnvelope)*(lastEnv+1));
 			module->numPEnvsAlloc = lastEnv+1;
@@ -650,7 +650,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			f.read(envelopes,33,numenvs);
@@ -676,7 +676,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			memset(module->fenvs, 0, sizeof(TEnvelope)*(lastEnv+1));
 			module->numFEnvsAlloc = lastEnv+1;
@@ -726,7 +726,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (mdlsamp) delete[] mdlsamp;
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 
 			// read song message
@@ -743,7 +743,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 				if (trackseq) delete[] trackseq;
 				if (tracks) delete[] tracks;
 				
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			f.read(buffer,1,blocklen);
@@ -790,7 +790,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 			if (trackseq) delete[] trackseq;
 			if (tracks) delete[] tracks;
 			
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		header->volenvnum++;
@@ -1166,6 +1166,5 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 
 	module->postProcessSamples();
 
-	return 0;
-
+	return MP_OK;
 }

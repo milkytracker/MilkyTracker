@@ -444,7 +444,7 @@ mp_sint32 PlayerIT::allocateStructures()
 	chninfo			= new TModuleChannel[numModuleChannels];
 	vchninfo		= new TVirtualChannel[numVirtualChannels];
 	attick			= new mp_ubyte[numModuleChannels];
-	return 0;
+	return MP_OK;
 }
 
 void PlayerIT::freeMemory() 
@@ -471,7 +471,8 @@ void PlayerIT::freeMemory()
 ///////////////////////////////////////////////////////////////////////////////////
 void PlayerIT::clearEffectMemory()
 {
-	if (!module || !chninfo) return;
+	if (!module || !chninfo) 
+		return;
 	
 	ticker = 0;
 	

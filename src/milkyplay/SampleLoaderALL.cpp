@@ -75,7 +75,7 @@ mp_sint32 SampleLoaderALL::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen);
 	
 	if (smp->sample == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	smp->type = 0;
 	smp->flags = 3;
@@ -85,7 +85,7 @@ mp_sint32 SampleLoaderALL::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	
 	// assuming signed data
 	theModule.loadSample(f, smp->sample, smp->samplen, smp->samplen);
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 SampleLoaderALL::saveSample(const SYSCHAR* fileName, mp_sint32 index)
@@ -104,5 +104,5 @@ mp_sint32 SampleLoaderALL::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 		for (mp_uint32 i = 0; i < smp->samplen; i++)
 			f.writeByte(smp->getSampleValue(i));
 	}
-	return 0;
+	return MP_OK;
 }

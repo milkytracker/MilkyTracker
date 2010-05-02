@@ -439,8 +439,8 @@ void TXMSample::setSampleValue(mp_ubyte* sample, mp_uint32 index, mp_sint32 valu
 }
 
 
-#define FUNCTION_SUCCESS 0
-#define FUNCTION_FAILED -1
+#define FUNCTION_SUCCESS	MP_OK
+#define FUNCTION_FAILED		MP_LOADER_FAILED
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1177,7 +1177,7 @@ mp_sint32 TXMPattern::decompress(mp_ubyte* src, mp_sint32 len)
 		}
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 #ifdef MILKYTRACKER
@@ -1574,12 +1574,12 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 		
 		if (smp[index].sample == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags16))
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 	}
 	else
@@ -1590,16 +1590,16 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 		
 		if (smp[index].sample == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags8))
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}		
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 XModule::loadModuleSamples(XMFileBase& f, mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/)
@@ -1607,10 +1607,10 @@ mp_sint32 XModule::loadModuleSamples(XMFileBase& f, mp_sint32 flags8/* = ST_DEFA
 	for (mp_sint32 i = 0; i < header.smpnum; i++) 
 	{		
 		mp_sint32 res = loadModuleSample(f, i, flags8, flags16);
-		if (res != 0)
+		if (res != MP_OK)
 			return res;
 	}	
-	return 0;
+	return MP_OK;
 }
 
 ////////////////////////////////////////////
@@ -1982,14 +1982,14 @@ mp_sint32 XModule::loadModule(XMFileBase& f, bool scanForSubSongs/* = false*/)
 			// try to load module
 			f.seekWithBaseOffset(0);
 			mp_sint32 err = loaderInfo->loader->load(f, this);
-			if (err == 0)
+			if (err == MP_OK)
 			{
 				moduleLoaded = true;
 				
 				bool res = validate();
 
 				if (!res)
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				
 				type = loaderInfo->moduleType;
 				if (scanForSubSongs)
@@ -2002,9 +2002,9 @@ mp_sint32 XModule::loadModule(XMFileBase& f, bool scanForSubSongs/* = false*/)
 	}
 	
 #ifdef MILKYTRACKER
-	return -9;
+	return MP_UNKNOWN_FORMAT;
 #else
-	return -8;
+	return MP_UNSPECIFIED;
 #endif
 
 }
@@ -2148,7 +2148,8 @@ void XModule::addSongMessageLine(const char* line)
 	if (!message)
 	{
 		allocateSongMessage();
-		if (!message) return;
+		if (!message) 
+			return;
 	}
 
 	mp_uint32 oSize = (mp_uint32)strlen(message) + 1;
@@ -2168,7 +2169,8 @@ void XModule::addSongMessageLine(const char* line)
 			delete[] message;
 			message = tempMessage;
 		}
-		else return;
+		else 
+			return;
 	}
 
 	// if this is not the first line in song message,

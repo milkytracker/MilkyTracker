@@ -59,7 +59,7 @@ mp_sint32 LoaderFAR::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	mp_sint32 i,j;
 	
@@ -159,7 +159,7 @@ mp_sint32 LoaderFAR::load(XMFileBase& f, XModule* module)
 			// out of memory?
 			if (phead[i].patternData == NULL)
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -317,7 +317,7 @@ mp_sint32 LoaderFAR::load(XMFileBase& f, XModule* module)
 			}
 			
 			if (module->loadModuleSample(f, s) != 0)
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			
 			s++;
 		}
@@ -331,5 +331,5 @@ mp_sint32 LoaderFAR::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

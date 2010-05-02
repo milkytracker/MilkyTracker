@@ -65,9 +65,6 @@ const char* LoaderPLM::identifyModule(const mp_ubyte* buffer)
 
 //////////////////////////////////////////////////////
 // Load DisorderTracker II module
-// return:   0 = no error
-//			-7 = out of memory
-//			-8 = other
 //////////////////////////////////////////////////////
 mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 {
@@ -83,7 +80,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	///////////////////////////////////////////////////
 	// read header
@@ -96,7 +93,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 	mp_ubyte ver = f.readByte();
 
 	if (ver != 0x10)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	f.read(header->name, 1, 32);
 
@@ -180,7 +177,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 				
 				delete[] smpOffsets;
 				delete[] patOffsets;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			f.read(patterns[i], 1, size);
@@ -229,7 +226,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 			delete[] smpOffsets;
 			delete[] patOffsets;
 			
-			return -8;
+			return MP_LOADER_FAILED;
 		}
 
 		mp_uint32 sHdrSize = f.readByte();
@@ -299,7 +296,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 				
 				delete[] smpOffsets;
 				delete[] patOffsets;
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			if (flags&1)
@@ -636,5 +633,5 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 
 	module->postProcessSamples(true);
 
-	return 0;
+	return MP_OK;
 }

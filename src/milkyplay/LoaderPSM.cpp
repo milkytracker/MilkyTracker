@@ -96,19 +96,19 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	// size for 1024 patterns
 	// should be enough, really
 	mp_ubyte** patterns = new mp_ubyte*[1024];
 	if (patterns == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	mp_uint32* patternSizes = new mp_uint32[1024];
 	if (patternSizes == NULL)
 	{
 		delete[] patterns;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (mp_sint32 j = 0; j < 1024; j++)
@@ -302,7 +302,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 				{
 					delete[] buffer;
 					RELEASE_PATTERNS;
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				
 				//header->ordnum = 0;
@@ -420,7 +420,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						{
 							delete[] buffer;
 							RELEASE_PATTERNS;
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						//if (sinaria)
@@ -448,7 +448,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 #ifdef VERBOSE
 				printf("Unknown chunk: %X\n",ID);
 #endif
-				return -8;
+				return MP_LOADER_FAILED;
 				break;
 				
 		}
@@ -463,7 +463,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 	if (pattern == NULL)
 	{
 		RELEASE_PATTERNS;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (mp_uint32 i = 0; i < patIndex; i++)
@@ -482,7 +482,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		if (!PATTTest(patterns[i]+4, patIDSize))
 		{
 			RELEASE_PATTERNS;
-			return -7;
+			return MP_LOADER_FAILED;
 		}
 		
 		mp_sint32 offset = 6+patIDSize;
@@ -586,7 +586,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		{
 			delete[] pattern;
 			RELEASE_PATTERNS;
-			return -7;							
+			return MP_OUT_OF_MEMORY;							
 		}
 		
 		memset(phead[i].patternData,0,maxChannels*8*phead[i].rows);
@@ -854,7 +854,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 	
 	strcpy(header->tracker,"Epic Megagames MASI <new>");
 	
-	return 0;
+	return MP_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -897,12 +897,12 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	mp_ubyte* buffer = new mp_ubyte[f.sizeWithBaseOffset()];
 	
 	if (buffer == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(buffer,1,f.sizeWithBaseOffset());
 	
@@ -999,7 +999,7 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 	if (pattern == NULL)
 	{
 		delete[] buffer;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (i = 0; i < header->patnum; i++)
@@ -1028,7 +1028,7 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 		{
 			delete[] buffer;
 			delete[] pattern;
-			return -7;				
+			return MP_OUT_OF_MEMORY;				
 		}
 		memset(packed,0,size-4+5);
 		
@@ -1092,7 +1092,7 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 		{
 			delete[] buffer;
 			delete[] pattern;
-			return -7;							
+			return MP_OUT_OF_MEMORY;							
 		}
 		
 		memset(phead[i].patternData,0,maxChannels*8*phead[i].rows);
@@ -1339,7 +1339,7 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 		if (smp[i].sample == NULL)
 		{
 			delete[] buffer;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		MEMREAD(smp[i].sample,1,smp[i].samplen);
@@ -1358,5 +1358,5 @@ mp_sint32 LoaderPSMv1::load(XMFileBase& f, XModule* module)
 	
 	strcpy(header->tracker,"Epic Megagames MASI <old>");
 	
-	return 0;
+	return MP_OK;
 }

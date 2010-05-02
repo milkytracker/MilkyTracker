@@ -273,7 +273,7 @@ public:
 	TXMPattern* getPattern(mp_sint32 index, bool cleanUnusedPatterns = false);
 
 	// allocate new sample within given instrument (obsolete)
-	mp_sint32 allocateSample(mp_sint32 index);
+	//mp_sint32 allocateSample(mp_sint32 index);
 
 	// free last sample within given instrument (obsolete)
 	void freeSample(mp_sint32 index);

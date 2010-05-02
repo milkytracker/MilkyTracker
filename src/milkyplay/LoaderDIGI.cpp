@@ -140,7 +140,7 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 
 	mp_sint32 i,j;
 	mp_ubyte buffer[31*4];
@@ -155,7 +155,7 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 	mp_ubyte ver = f.readByte();
 	if (ver < 0x10 ||
 		ver > 0x17)
-		return -8;
+		return MP_LOADER_FAILED;
 	// read numchannels
 	header->channum = f.readByte();
 	// packenable
@@ -251,7 +251,7 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[i].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*4);
@@ -262,7 +262,7 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 			f.read(buffer, 1, 2);
 			pSize = BigEndian::GET_WORD(buffer);
 			if (pSize && pSize < 64)
-				return -8;
+				return MP_LOADER_FAILED;
 			// read packing mask
 			f.read(buffer, 1, 64);
 		}
@@ -277,7 +277,7 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 		mp_ubyte* pattern = new mp_ubyte[pSize-64];
 		
 		if (pattern == NULL)
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		
 		f.read(pattern, 1, pSize-64);
 		
@@ -391,8 +391,9 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 		
 	} 
 
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 
 	header->speed = 125;
 	header->tempo = 6;
@@ -404,5 +405,5 @@ mp_sint32 LoaderDIGI::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

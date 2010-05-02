@@ -35,7 +35,7 @@
  *			Version History:
  *  --------------------------------
  *  26/03/06: PLM Far position jump fix & effects are relocated to other channels if possible
- *  01/01/06: Happy new year ;) MilkyTracker XMs are now even smaller then FT2 XMs
+ *  01/01/06: Happy new year ;) MilkyTracker XMs are now even smaller than FT2 XMs
  *  02/12/05: Fixed problems with last operand restoration for S3M and MDL commands. VERY SLOW(!!) but working
  *  06/02/05: Added simulation of multitracker behaviour with FT2 features
  *  05/02/05: Added simulation of protracker behaviour with FT2 features
@@ -1240,7 +1240,7 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 	delete[] swapBuffer;
 	delete[] effectBuffer;
 
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 packPattern(const mp_ubyte* pattern, mp_ubyte* outputPattern, mp_sint32 numRows, mp_sint32 numChannels)
@@ -1365,7 +1365,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	XMFile f(fileName, true);
 	
 	if (!f.isOpenForWriting())
-		return -1;
+		return MP_DEVICE_ERROR;
 
 	f.write("Extended Module: ",1,17);
 	
@@ -1817,7 +1817,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	}
 	
 
-	return 0;
+	return MP_OK;
 }
 
 static mp_uword swap(mp_uword x)
@@ -1853,7 +1853,7 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 	XMFile f(fileName, true);
 
 	if (!f.isOpenForWriting())
-		return -1;
+		return MP_DEVICE_ERROR;
 
 	f.write(header.name,1,20);
 	
@@ -1969,7 +1969,7 @@ unused:
 	mp_uword numChannels = header.channum&1 ? header.channum+1 : header.channum;	
 	
 	if (numChannels < 2 || numChannels > 32)
-		return -8;
+		return MP_UNSUPPORTED;
 	
 	f.write(modIDs[(numChannels >> 1)-1], 1, 4);
 	
@@ -2092,7 +2092,7 @@ unused:
 		}
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 #ifdef MILKYTRACKER

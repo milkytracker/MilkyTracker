@@ -278,7 +278,7 @@ mp_sint32 PlayerGeneric::adjustFrequency(mp_uint32 frequency)
 {
 	this->frequency = frequency;
 	
-	mp_sint32 res = 0;
+	mp_sint32 res = MP_OK;
 	
 	if (mixer)
 		res = mixer->setSampleRate(frequency);
@@ -340,7 +340,7 @@ mp_sint32 PlayerGeneric::setPowerOfTwoCompensationFlag(bool b)
 		setBufferSize(bufferSize);
 	}
 
-	return 0;
+	return MP_OK;
 }
 
 bool PlayerGeneric::getPowerOfTwoCompensationFlag() const
@@ -599,7 +599,7 @@ mp_sint32 PlayerGeneric::startPlaying(XModule* module,
 	}
 
 
-	return 0;
+	return MP_OK;
 }
 
 void PlayerGeneric::setPatternToPlay(mp_sint32 patternIndex)
@@ -616,7 +616,7 @@ mp_sint32 PlayerGeneric::stopPlaying()
 	if (mixer)
 		return mixer->stop();
 		
-	return 0;
+	return MP_OK;
 }
 
 bool PlayerGeneric::hasSongHalted() const
@@ -663,7 +663,7 @@ mp_sint32 PlayerGeneric::pausePlaying()
 	if (mixer)
 		return mixer->pause();
 		
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 PlayerGeneric::resumePlaying()
@@ -676,7 +676,7 @@ mp_sint32 PlayerGeneric::resumePlaying()
 	else if (mixer && !mixer->isPlaying())
 		return mixer->start();
 
-	return 0;
+	return MP_OK;
 }
 
 bool PlayerGeneric::isPaused() const
@@ -937,7 +937,7 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 		if (!static_cast<WAVWriter*>(wavWriter)->isOpen())
 		{
 			delete wavWriter;
-			return -1;
+			return MP_DEVICE_ERROR;
 		}
 	}
 	

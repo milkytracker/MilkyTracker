@@ -151,7 +151,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	
 	f.read(ID, 4, 1);
 	if (memcmp(ID, "FORM", 4) != 0)
-		return -8;
+		return MP_LOADER_FAILED;
 		
 	f.seek(0);
 					
@@ -216,7 +216,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 						delete[] name;
 					if (anno)
 						delete[] anno;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				f.read(name, 1, chunkLen);
@@ -238,7 +238,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 						delete[] name;
 					if (anno)
 						delete[] anno;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				f.read(anno, 1, chunkLen);
@@ -259,7 +259,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 						delete[] name;
 					if (anno)
 						delete[] anno;
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				
 				f.read(buffer, 1, 4);
@@ -321,7 +321,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 								delete[] name;
 							if (anno)
 								delete[] anno;
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						memset(sampleData, 0, sampleDataLen);
 						
@@ -353,7 +353,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 								delete[] name;
 							if (anno)
 								delete[] anno;
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						f.read(Body, 1, chunkLen);
@@ -369,7 +369,7 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 								delete[] name;
 							if (anno)
 								delete[] anno;
-							return -7;
+							return MP_OUT_OF_MEMORY;
 						}
 						
 						/* Fibonacci Delta Decompression */
@@ -447,7 +447,7 @@ bail:
 				delete[] name;
 			if (anno)
 				delete[] anno;
-			return -7;						
+			return MP_OUT_OF_MEMORY;						
 		}
 
 		memcpy(smp->sample, sampleData, sampleDataLen);
@@ -502,14 +502,14 @@ bail:
 		if (smp->samplen > vhdr.Oneshothi)
 			smp->samplen = vhdr.Oneshothi;
 								
-		return 0;
+		return MP_OK;
 	}
 
 	delete[] name;
 	
 	delete[] sampleData;
 
-	return -8;
+	return MP_LOADER_FAILED;
 }
 
 static inline mp_uword swapW(mp_uword x)
@@ -575,5 +575,5 @@ mp_sint32 SampleLoaderIFF::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 			f.writeByte(smp->getSampleValue(i));
 	}
 	
-	return 0;
+	return MP_OK;
 }

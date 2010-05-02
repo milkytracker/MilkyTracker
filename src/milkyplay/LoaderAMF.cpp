@@ -204,8 +204,9 @@ mp_sint32 LoaderAMF_1::load(XMFileBase& f, XModule* module)
 		
 	}
 	
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 	
 	strcpy(header->tracker,"..converted..");
 	
@@ -213,7 +214,7 @@ mp_sint32 LoaderAMF_1::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }
 
 #if 0
@@ -731,8 +732,9 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 	
 	CLEAN_UP
 
-	if (module->loadModuleSamples(f, XModule::ST_UNSIGNED) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_UNSIGNED);
+	if (result != MP_OK)
+		return result;
 
 	// --- kick out duplicate patterns ---
 	mp_ubyte patReloc[255];
@@ -775,7 +777,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }
 
 // ---------------
@@ -826,7 +828,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
  
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
  
 	// ---- read header info ----
  
@@ -998,7 +1000,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 				if (row>=64)
 				{
 					CLEAN_UP
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				if (cmd<0x7f) 
 				{
@@ -1037,7 +1039,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 					if (cmd > 0x97)
 					{
 						CLEAN_UP
-						return -8;
+						return MP_LOADER_FAILED;
 					}
 					track[row].effect[track[row].fxcnt]=cmd&0x7f;
 					track[row].parameter[track[row].fxcnt]=arg;
@@ -1046,7 +1048,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 				else
 				{
 					CLEAN_UP
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 			}
 	}
@@ -1066,7 +1068,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			CLEAN_UP
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
  
 		memset(phead[i].patternData, 0, patSize);
@@ -1300,8 +1302,9 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
  
 	CLEAN_UP
  
-	if (module->loadModuleSamples(f, XModule::ST_DEFAULT) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_DEFAULT);
+	if (result != MP_OK)
+		return result;
  
 	// --- kick out duplicate patterns ---
 	mp_ubyte patReloc[255];
@@ -1344,7 +1347,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
  
 	module->postProcessSamples();
  
-	return 0;
+	return MP_OK;
 }
 
 #endif

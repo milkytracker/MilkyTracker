@@ -65,7 +65,7 @@ mp_sint32 LoaderSTM::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	f.read(buffer,1,48);
 	
@@ -156,7 +156,7 @@ mp_sint32 LoaderSTM::load(XMFileBase& f, XModule* module)
 
 	mp_ubyte* srcPattern = new mp_ubyte[64*4*4];
 	if (srcPattern == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	for (i = 0; i < header->patnum;i++) 
 	{
@@ -172,7 +172,7 @@ mp_sint32 LoaderSTM::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] srcPattern;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*6);
@@ -324,8 +324,9 @@ mp_sint32 LoaderSTM::load(XMFileBase& f, XModule* module)
 		{
 			f.seekWithBaseOffset(smpOffs);
 
-			if (module->loadModuleSample(f, i) != 0)
-				return -7;
+			mp_sint32 result = module->loadModuleSample(f, i);
+			if (result != MP_OK)
+				return result;
 		}
 	}
 	
@@ -335,5 +336,5 @@ mp_sint32 LoaderSTM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

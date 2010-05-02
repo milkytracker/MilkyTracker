@@ -172,7 +172,7 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	
 	f.read(ID, 4, 1);
 	if (memcmp(ID, "FORM", 4) != 0)
-		return -8;
+		return MP_LOADER_FAILED;
 		
 	f.seek(0);
 					
@@ -252,7 +252,7 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 				if ((commChunk.compressionType != 0) &&
 					(commChunk.compressionType != 0x4E4F4E45/*NONE*/))
 				{
-					return -8;
+					return MP_LOADER_FAILED;
 				}
 				
 				break;
@@ -299,7 +299,7 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 			{
 				if (sampleData)
 					delete[] sampleData;
-				return -7;						
+				return MP_OUT_OF_MEMORY;						
 			}
 			
 			if (commChunk.sampleSize == 8)
@@ -402,16 +402,16 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 			
 			XModule::convertc4spd(commChunk.sampleRate, &smp->finetune, &smp->relnote);
 					 
-			return 0;
+			return MP_OK;
 		}
 	}
 
 	delete[] sampleData;
 
-	return -8;
+	return MP_LOADER_FAILED;
 }
 
 mp_sint32 SampleLoaderAIFF::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 {
-	return 0;
+	return MP_UNSUPPORTED;
 }

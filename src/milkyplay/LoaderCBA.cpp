@@ -194,7 +194,7 @@ mp_sint32 LoaderCBA::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 3);
 	f.readByte();   // skip 0xF9
@@ -272,7 +272,7 @@ mp_sint32 LoaderCBA::load(XMFileBase& f, XModule* module)
 	
 	mp_ubyte* pattern = new mp_ubyte[header->channum*64*5];
 	if (pattern == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	for (i = 0; i < header->patnum;i++) 
 	{
@@ -289,7 +289,7 @@ mp_sint32 LoaderCBA::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] pattern;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -336,8 +336,9 @@ mp_sint32 LoaderCBA::load(XMFileBase& f, XModule* module)
 	
 	delete[] pattern;
 	
-	if (module->loadModuleSamples(f, XModule::ST_DELTA) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_DELTA);
+	if (result != MP_OK)
+		return result;
 
 	module->allocateSongMessage(songMsgLen+1);
 			
@@ -353,5 +354,5 @@ mp_sint32 LoaderCBA::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

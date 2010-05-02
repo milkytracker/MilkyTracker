@@ -482,7 +482,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(uniheader.FileID, 1, 4);
 	
@@ -497,7 +497,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 		uniVersion = 5;
 		
 	if (uniVersion == -1)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	if (uniVersion == 5)
 		uniheader.RepeatPos = f.readWord();
@@ -516,7 +516,8 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 
 	i = f.readWord();
 	mp_ubyte* text = new mp_ubyte[i];
-	if (text == NULL) return -7;
+	if (text == NULL) 
+		return MP_OUT_OF_MEMORY;
 	f.read(text, 1, i);
 	if (i > 32) i = 32;
 	memcpy(header->name, text, i);
@@ -524,7 +525,8 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 
 	i = f.readWord();
 	text = new mp_ubyte[i];	
-	if (text == NULL) return -7;
+	if (text == NULL) 
+		return MP_OUT_OF_MEMORY;
 	f.read(text, 1, i);
 	if (i > 16) i = 16;
 	memcpy(header->sig, text, i);
@@ -570,7 +572,8 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 	
 		mp_sint32 len = f.readWord();
 		text = new mp_ubyte[len];	
-		if (text == NULL) return -7;
+		if (text == NULL) 
+			return MP_OUT_OF_MEMORY;
 		f.read(text, 1, len);
 		if (len > 32) len = 32;
 		memcpy(instr[i].name, text, len);
@@ -617,8 +620,10 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 		venv.type = uniinstrument.volflg;
 		penv.type = uniinstrument.panflg;				
 		
-		if (!module->addVolumeEnvelope(venv)) return -7;
-		if (!module->addPanningEnvelope(penv)) return -7;
+		if (!module->addVolumeEnvelope(venv)) 
+			return MP_OUT_OF_MEMORY;
+		if (!module->addPanningEnvelope(penv)) 
+			return MP_OUT_OF_MEMORY;
 				
 		for (j = 0; j < uniinstrument.NumSamps; j++)
 		{
@@ -633,7 +638,8 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 			
 			mp_sint32 len = f.readWord();
 			text = new mp_ubyte[len];	
-			if (text == NULL) return -7;
+			if (text == NULL) 
+				return MP_OUT_OF_MEMORY;
 			f.read(text, 1, len);
 			if (len > 32) len = 32;
 			memcpy(smp[s].name, text, len);
@@ -838,7 +844,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 			delete[] trackSeq;
 			
 			delete[] patternRows;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, phead[i].rows*header->channum * slotSize);		
@@ -904,7 +910,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 		
 		if (smp[i].sample == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		mp_sint32 loadFlags = XModule::ST_DEFAULT;
@@ -921,7 +927,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 		{
 			if (!module->loadSample(f,smp[i].sample,smp[i].samplen<<1,smp[i].samplen,loadFlags))
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 		}
 		// 8bit sample
@@ -929,7 +935,7 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 		{
 			if (!module->loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen,loadFlags))
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 		}
 		
@@ -944,5 +950,5 @@ mp_sint32 LoaderUNI::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }

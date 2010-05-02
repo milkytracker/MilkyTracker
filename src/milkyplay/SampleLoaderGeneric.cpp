@@ -101,7 +101,7 @@ mp_sint32 SampleLoaderGeneric::loadSample(mp_sint32 index, mp_sint32 channelInde
 		return res;
 	}
 	
-	return -9999;
+	return MP_UNSUPPORTED_FORMAT;
 }
 
 mp_sint32 SampleLoaderGeneric::saveSample(const SYSCHAR* fileName, mp_sint32 index, OutputFiletypes type)
@@ -136,7 +136,7 @@ mp_sint32 SampleLoaderGeneric::saveSample(const SYSCHAR* fileName, mp_sint32 ind
 		return res;
 	}
 	
-	return -9999;
+	return MP_UNSUPPORTED_FORMAT;
 }
 
 SampleLoaderAbstract* SampleLoaderGeneric::getSuitableLoader()

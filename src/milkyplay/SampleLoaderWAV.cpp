@@ -54,18 +54,18 @@ bool SampleLoaderWAV::identifySample()
 mp_sint32 SampleLoaderWAV::parseFMTChunk(XMFile& f, TWAVHeader& hdr)
 {
 	if (hdr.fmtDataLength < 16)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	hdr.encodingTag = f.readWord();
 	
 	if (hdr.encodingTag != 0x1 &&
 		hdr.encodingTag != 0x3)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	hdr.numChannels = f.readWord();
 	
 	if (hdr.numChannels < 1 || hdr.numChannels > 2)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	hdr.sampleRate = f.readDword();
 	hdr.bytesPerSecond = f.readDword();
@@ -76,13 +76,13 @@ mp_sint32 SampleLoaderWAV::parseFMTChunk(XMFile& f, TWAVHeader& hdr)
 		hdr.numBits != 16 && 
 		hdr.numBits != 24 &&
 		hdr.numBits != 32)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	// skip rest of format structure if greater than 16
 	for (mp_uint32 i = 0; i < hdr.fmtDataLength - 16; i++)
 		f.readByte();
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 index, mp_sint32 channelIndex)
@@ -104,14 +104,14 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				mp_sbyte* buffer = new mp_sbyte[smp->samplen];						
 				if (buffer == NULL)
-					return -7;						
+					return MP_OUT_OF_MEMORY;						
 				theModule.loadSample(f, buffer, smp->samplen, smp->samplen, XModule::ST_UNSIGNED);						
 				smp->samplen>>=1;						
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen);						
 				if (smp->sample == NULL)
 				{
 					delete[] buffer;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}						
 				// Downmix channels
 				if (channelIndex < 0)
@@ -143,7 +143,7 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen);						
 				if (smp->sample == NULL)
-					return -7;						
+					return MP_OUT_OF_MEMORY;						
 				theModule.loadSample(f, smp->sample, smp->samplen, smp->samplen, XModule::ST_UNSIGNED);
 			}					
 			smp->type = 0;
@@ -160,14 +160,14 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				mp_sword* buffer = new mp_sword[smp->samplen];						
 				if (buffer == NULL)
-					return -7;						
+					return MP_OUT_OF_MEMORY;						
 				theModule.loadSample(f, buffer, hdr.dataLength, smp->samplen, XModule::ST_16BIT);						
 				smp->samplen>>=1;						
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 				if (smp->sample == NULL)
 				{
 					delete[] buffer;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}						
 				mp_sword* sample = (mp_sword*)smp->sample;
 				// Downmix channels
@@ -200,7 +200,7 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 				if (smp->sample == NULL)
-					return -7;						
+					return MP_OUT_OF_MEMORY;						
 				theModule.loadSample(f, smp->sample, hdr.dataLength, smp->samplen, XModule::ST_16BIT);
 			}					
 			smp->type = 16;
@@ -217,14 +217,14 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				mp_ubyte* buffer = new mp_ubyte[smp->samplen*3];						
 				if (buffer == NULL)
-					return -7;												
+					return MP_OUT_OF_MEMORY;												
 				f.read(buffer, 3, smp->samplen);
 				smp->samplen>>=1;						
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 				if (smp->sample == NULL)
 				{
 					delete[] buffer;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}						
 				mp_sword* sample = (mp_sword*)smp->sample;
 				// Downmix channels
@@ -257,10 +257,10 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 			{
 				smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 				if (smp->sample == NULL)
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				mp_ubyte* buffer = new mp_ubyte[smp->samplen*3];						
 				if (buffer == NULL)
-					return -7;												
+					return MP_OUT_OF_MEMORY;												
 				f.read(buffer, 3, smp->samplen);
 				mp_sword* sample = (mp_sword*)smp->sample;
 				for (mp_uint32 i = 0; i < smp->samplen; i++)
@@ -285,14 +285,14 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 				{
 					mp_sint32* buffer = new mp_sint32[smp->samplen];						
 					if (buffer == NULL)
-						return -7;												
+						return MP_OUT_OF_MEMORY;												
 					f.readDwords((mp_dword*)buffer, smp->samplen);
 					smp->samplen>>=1;						
 					smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 					if (smp->sample == NULL)
 					{
 						delete[] buffer;
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}						
 					mp_sword* sample = (mp_sword*)smp->sample;
 					// Downmix channels
@@ -325,10 +325,10 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 				{
 					smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 					if (smp->sample == NULL)
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					mp_sint32* buffer = new mp_sint32[smp->samplen];						
 					if (buffer == NULL)
-						return -7;												
+						return MP_OUT_OF_MEMORY;												
 					f.readDwords((mp_dword*)buffer, smp->samplen);
 					mp_sword* sample = (mp_sword*)smp->sample;
 					for (mp_uint32 i = 0; i < smp->samplen; i++)
@@ -349,14 +349,14 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 				{
 					float* buffer = new float[smp->samplen];						
 					if (buffer == NULL)
-						return -7;												
+						return MP_OUT_OF_MEMORY;												
 					f.readDwords(reinterpret_cast<mp_dword*>(buffer), smp->samplen);
 					smp->samplen>>=1;						
 					smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 					if (smp->sample == NULL)
 					{
 						delete[] buffer;
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}						
 					mp_sword* sample = (mp_sword*)smp->sample;
 					// Downmix channels
@@ -389,10 +389,10 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 				{
 					smp->sample = (mp_sbyte*)theModule.allocSampleMem(smp->samplen*2);						
 					if (smp->sample == NULL)
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					float* buffer = new float[smp->samplen];						
 					if (buffer == NULL)
-						return -7;												
+						return MP_OUT_OF_MEMORY;												
 					f.readDwords(reinterpret_cast<mp_dword*>(buffer), smp->samplen);
 					mp_sword* sample = (mp_sword*)smp->sample;
 					for (mp_uint32 i = 0; i < smp->samplen; i++)
@@ -413,7 +413,7 @@ mp_sint32 SampleLoaderWAV::parseDATAChunk(XMFile& f, TWAVHeader& hdr, mp_sint32 
 		smp->flags = 3;
 	}			
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 SampleLoaderWAV::parseSMPLChunk(XMFile& f, TWAVHeader& hdr, 
@@ -429,7 +429,7 @@ mp_sint32 SampleLoaderWAV::parseSMPLChunk(XMFile& f, TWAVHeader& hdr,
 	}
 
 	f.seek(pos);
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 SampleLoaderWAV::getNumChannels()
@@ -496,13 +496,13 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	f.read(hdr.RIFF, 1, 4);
 	
 	if (memcmp(hdr.RIFF, "RIFF", 4))
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	hdr.length = f.readDword();
 	f.read(hdr.WAVE, 1, 4);	
 
 	if (memcmp(hdr.WAVE, "WAVE", 4))
-		return -8;
+		return MP_LOADER_FAILED;
 
 	// Start looking for "fmt " chunk
 	hdr.numChannels = 0;
@@ -534,7 +534,7 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 
 	// check if we found a "fmt " chunk, otherwise the number of channels will be 0
 	if (hdr.numChannels == 0)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	// process remaining chunks
 	
@@ -577,7 +577,7 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 	} while (f.pos() < f.size());
 	
 	if (!hasData)
-		return -8;
+		return MP_LOADER_FAILED;
 	
 	if (hasSamplerChunk && samplerChunk.cSampleLoops)
 	{
@@ -605,7 +605,7 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 		}
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 SampleLoaderWAV::saveSample(const SYSCHAR* fileName, mp_sint32 index)
@@ -692,5 +692,5 @@ mp_sint32 SampleLoaderWAV::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 		delete[] dst;
 	}
 	
-	return 0;
+	return MP_OK;
 }

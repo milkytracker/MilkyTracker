@@ -89,7 +89,7 @@ mp_sint32 Loader669::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(buffer,1,0x1f1);
 	
@@ -209,7 +209,7 @@ mp_sint32 Loader669::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[i].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -304,8 +304,9 @@ mp_sint32 Loader669::load(XMFileBase& f, XModule* module)
 		
 	}
 	
-	if (module->loadModuleSamples(f, XModule::ST_UNSIGNED) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_UNSIGNED);
+	if (result != MP_OK)
+		return result;
 
 	strcpy(header->tracker,"Composer669");
 	
@@ -313,5 +314,5 @@ mp_sint32 Loader669::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples(true);
 	
-	return 0;
+	return MP_OK;
 }

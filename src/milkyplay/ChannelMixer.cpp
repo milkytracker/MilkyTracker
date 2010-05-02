@@ -1159,7 +1159,7 @@ mp_sint32 ChannelMixer::initDevice()
 
 	initialized = true;
 
-	return 0;
+	return MP_OK;
 }
 
 void ChannelMixer::stop()
@@ -1183,27 +1183,27 @@ mp_sint32 ChannelMixer::closeDevice()
 		initialized = false;
 	}
 
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 ChannelMixer::pause()
 {
 	paused = true;
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 ChannelMixer::resume()
 {
 	paused = false;
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 ChannelMixer::adjustFrequency(mp_uint32 frequency)
 {
 	if (frequency == mixFrequency)
-		return 0;
+		return MP_OK;
 
-	mp_sint32 err = 0;
+	mp_sint32 err = MP_OK;
 	if (initialized)
 	{
 		err = closeDevice();
@@ -1226,12 +1226,12 @@ mp_sint32 ChannelMixer::beatPacketsToBufferSize(mp_uint32 mixFrequency, mp_uint3
 mp_sint32 ChannelMixer::setBufferSize(mp_uint32 bufferSize)
 {
 	if (this->mixBufferSize == bufferSize)
-		return 0;
+		return MP_OK;
 
 	if (initialized)
 	{
 		mp_sint32 err = closeDevice();
-		if (err != 0)
+		if (err != MP_OK)
 			return err;
 	}
 	
@@ -1241,7 +1241,7 @@ mp_sint32 ChannelMixer::setBufferSize(mp_uint32 bufferSize)
 	// update those too
 	reallocChannels();
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 ChannelMixer::getNumActiveChannels()

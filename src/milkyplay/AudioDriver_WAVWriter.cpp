@@ -125,13 +125,13 @@ mp_sint32 WAVWriter::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFreque
 		return res;
 
 	mixFreq = mixFrequency;
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 WAVWriter::closeDevice()
 {
 	if (!f)
-		return -1;
+		return MP_DEVICE_ERROR;
 		
 	TWAVHeader hdr;
 	
@@ -154,7 +154,7 @@ mp_sint32 WAVWriter::closeDevice()
 
 	writeWAVHeader(f, hdr);
 	
-	return 0;
+	return MP_OK;
 }
 
 void WAVWriter::advance()

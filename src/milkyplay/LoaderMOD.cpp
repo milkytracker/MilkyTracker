@@ -147,14 +147,14 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	char block[2048];
 	f.read(block, 1, 2048);
 
 	const char* id = identifyModule((mp_ubyte*)block);
 	if (!id)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	ModuleTypes moduleType = ModuleTypeUnknown;
 	if (strcmp(id, "M15") == 0)
@@ -163,7 +163,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 		moduleType = ModuleTypeIns31;
 
 	if (moduleType == ModuleTypeUnknown)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	f.seekWithBaseOffset(0);
 	
@@ -178,7 +178,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 			header->insnum = 31;
 			break;
 		default:
-			return -8;
+			return MP_LOADER_FAILED;
 	}
 	
 #ifdef VERBOSE
@@ -305,8 +305,9 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	else if (moduleType == ModuleTypeIns15)
 		header->channum = 4;
 	
-	if (!header->channum) {
-		return -8;
+	if (!header->channum) 
+	{
+		return MP_LOADER_FAILED;
 	}
 	
 	//mp_sint32 patternsize = modhead.numchannels*modhead.numrows*5;
@@ -316,7 +317,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	
 	if (buffer == NULL) 
 	{
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (i=0;i<header->patnum;i++) {
@@ -332,7 +333,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] buffer;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*4);
@@ -400,8 +401,9 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 				f.seekWithBaseOffset(f.posWithBaseOffset() - 5);
 		}
 					
-		if (module->loadModuleSample(f, i, adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DEFAULT) != 0)
-			return -7;
+		mp_sint32 result = module->loadModuleSample(f, i, adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DEFAULT);
+		if (result != MP_OK)
+			return result;
 	}
 
 	header->speed=125;
@@ -438,7 +440,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	printf("%i / %i\n", f.pos(), f.size());
 #endif
 
-	return 0;
+	return MP_OK;
 }
 
 const char* LoaderGMC::identifyModule(const mp_ubyte* buffer)
@@ -495,7 +497,7 @@ mp_sint32 LoaderGMC::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 
 	mp_sint32 i,j,k;
 
@@ -597,7 +599,7 @@ mp_sint32 LoaderGMC::load(XMFileBase& f, XModule* module)
 	
 	if (buffer == NULL) 
 	{
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for ( i = 0; i < header->patnum; i++) {
@@ -613,7 +615,7 @@ mp_sint32 LoaderGMC::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] buffer;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, phead[i].rows*header->channum*4);
@@ -671,8 +673,9 @@ mp_sint32 LoaderGMC::load(XMFileBase& f, XModule* module)
 	}
 	delete[] buffer;
 	
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 
 	header->speed = 125;
 	header->tempo = 6;
@@ -698,7 +701,7 @@ mp_sint32 LoaderGMC::load(XMFileBase& f, XModule* module)
 	
 	strcpy(header->tracker,"Game Music Creator");
 
-	return 0;
+	return MP_OK;
 }
 
 const char* LoaderSFX::identifyModule(const mp_ubyte* buffer)
@@ -729,7 +732,7 @@ mp_sint32 LoaderSFX::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 
 	mp_sint32 i,j,k;
 
@@ -831,7 +834,7 @@ mp_sint32 LoaderSFX::load(XMFileBase& f, XModule* module)
 	
 	if (buffer == NULL) 
 	{
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for ( i = 0; i < header->patnum; i++) {
@@ -847,7 +850,7 @@ mp_sint32 LoaderSFX::load(XMFileBase& f, XModule* module)
 		if (phead[i].patternData == NULL)
 		{
 			delete[] buffer;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData, 0, phead[i].rows*header->channum*4);
@@ -946,8 +949,9 @@ mp_sint32 LoaderSFX::load(XMFileBase& f, XModule* module)
 	
 	delete[] buffer;
 	
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 
 	// Amiga panning LRRL
 	for (i = 0; i < header->channum; i++)
@@ -969,5 +973,5 @@ mp_sint32 LoaderSFX::load(XMFileBase& f, XModule* module)
 	
 	strcpy(header->tracker,"SoundFX");
 
-	return 0;
+	return MP_OK;
 }

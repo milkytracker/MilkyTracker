@@ -157,7 +157,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 8);
 
@@ -185,7 +185,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				f.read(buffer, 4, 1);
 				
 				if (BigEndian::GET_DWORD(buffer) != 8)
-					return -8;
+					return MP_LOADER_FAILED;
 					
 				for (mp_sint32 i = 0; i < 4; i++)
 				{
@@ -246,7 +246,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				f.read(buffer, 4, 1);
 				
 				if (BigEndian::GET_DWORD(buffer) != 2)
-					return -8;
+					return MP_LOADER_FAILED;
 				
 				f.read(buffer, 2, 1);				
 				
@@ -260,7 +260,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				f.read(buffer, 4, 1);			
 
 				if (BigEndian::GET_DWORD(buffer) != 2)
-					return -8;
+					return MP_LOADER_FAILED;
 					
 				f.read(buffer, 2, 1);				
 				
@@ -274,7 +274,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				f.read(buffer, 4, 1);			
 
 				if (BigEndian::GET_DWORD(buffer) != 2)
-					return -8;
+					return MP_LOADER_FAILED;
 					
 				f.read(buffer, 2, 1);				
 				
@@ -288,7 +288,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				f.read(buffer, 4, 1);			
 
 				if (BigEndian::GET_DWORD(buffer) > 256)
-					return -8;
+					return MP_LOADER_FAILED;
 					
 				f.read(header->ord, 1, BigEndian::GET_DWORD(buffer));				
 				
@@ -316,7 +316,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 					// out of memory?
 					if (phead[i].patternData == NULL)
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 					
 					memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -375,7 +375,7 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 					// out of memory?
 					if (phead[i].patternData == NULL)
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 					
 					memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -401,12 +401,12 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 				
 				if (smp[sc].sample == NULL)
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 				
 				if (!module->loadSample(f,smp[sc].sample,sampLen,sampLen))
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 			
 				sc++;
@@ -423,5 +423,5 @@ mp_sint32 LoaderOKT::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;
+	return MP_OK;
 }

@@ -253,7 +253,7 @@ mp_sint32 PlayerSTD::adjustFrequency(mp_uint32 frequency)
 		
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
-		return 0;
+		return MP_OK;
 
 	res = allocateStructures();
 	
@@ -271,7 +271,7 @@ mp_sint32 PlayerSTD::setBufferSize(mp_uint32 bufferSize)
 		
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
-		return 0;
+		return MP_OK;
 
 	res = allocateStructures();
 	
@@ -433,7 +433,7 @@ mp_sint32 PlayerSTD::allocateStructures()
 		chninfo[i].reallocTimeRecord(getNumBeatPackets()+1);
 #endif	
 	
-	return 0;
+	return MP_OK;
 }
 
 void PlayerSTD::freeMemory() 
@@ -461,7 +461,8 @@ void PlayerSTD::freeMemory()
 ///////////////////////////////////////////////////////////////////////////////////
 void PlayerSTD::clearEffectMemory()
 {
-	if (!module || !chninfo) return;
+	if (!module || !chninfo) 
+		return;
 	
 	ticker = 0;
 	

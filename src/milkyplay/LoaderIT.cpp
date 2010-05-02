@@ -173,7 +173,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 4);
 	f.read(header->name, 1, 26);
@@ -267,7 +267,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 		// should match "IMPI"
 		if (LittleEndian::GET_DWORD(ins.sig) != 0x49504D49)
-			return -8;
+			return MP_LOADER_FAILED;
 
 		f.read(ins.dosName, 1, 12);
 
@@ -377,7 +377,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			if (!module->addVolumeEnvelope(venv)) 
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			instr[i].venvnum = ++header->volenvnum;
@@ -386,7 +386,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			if (!module->addPanningEnvelope(penv)) 
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			instr[i].penvnum = ++header->panenvnum;
@@ -398,7 +398,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			if (!module->addPitchEnvelope(pitchenv)) 
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			instr[i].pitchenvnum = ++header->pitchenvnum;
@@ -469,7 +469,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			if (!module->addVolumeEnvelope(venv)) 
 			{
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			instr[i].venvnum = ++header->volenvnum;
@@ -532,7 +532,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 		// should match "IMPS"
 		if (LittleEndian::GET_DWORD(itSmp.sig) != 0x53504D49)
-			return -8;
+			return MP_LOADER_FAILED;
 
 		f.read(itSmp.dosName, 1, 12);
 
@@ -625,19 +625,19 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 				if (smp[i].sample == NULL)
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 
 				if (itSmp.Flg & 8)
 				{
 					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, cmwt==0x215 ? XModule::ST_PACKING_IT215 : XModule::ST_PACKING_IT))
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 				}
 				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen, cwt<=0x201 ? XModule::ST_UNSIGNED : XModule::ST_DEFAULT))
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 			else {
@@ -646,19 +646,19 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 				if (smp[i].sample == NULL)
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 
 				if (itSmp.Flg & 8)
 				{
 					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, cmwt==0x215 ? (XModule::ST_PACKING_IT215 | XModule::ST_16BIT) : (XModule::ST_PACKING_IT | XModule::ST_16BIT)))
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 				}
 				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen<<1,smp[i].samplen, XModule::ST_16BIT | (cwt <= 0x201 ? XModule::ST_UNSIGNED : XModule::ST_DEFAULT)))
 				{
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}					
 			}
 		}
@@ -768,7 +768,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			// out of memory?
 			if (phead[i].patternData == NULL)
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			
 			memset(phead[i].patternData, 0, phead[i].rows*header->channum*6);
 
@@ -1168,7 +1168,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 			
 			// out of memory?
 			if (phead[i].patternData == NULL)
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			
 			memset(phead[i].patternData, 0, phead[i].rows*header->channum*6);
 		}
@@ -1180,7 +1180,7 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 		module->allocateSongMessage(messageLength+1);
 		
 		if (module->message == NULL)
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		
 		// read song message
 		f.read(module->message, 1, messageLength);			
@@ -1194,5 +1194,5 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
+	return MP_OK;	
 }

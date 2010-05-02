@@ -47,7 +47,8 @@
 /////////////////////////////////////////////////////
 // MXM structures
 /////////////////////////////////////////////////////
-struct TMXMHeader {
+struct TMXMHeader 
+{
 	mp_uint32 sig;
 	mp_uint32 ordnum;
 	mp_uint32 restart;
@@ -65,7 +66,8 @@ struct TMXMHeader {
 	mp_ubyte panpos[32];
 };
 
-struct TMXMInstrument {
+struct TMXMInstrument 
+{
 	mp_uint32 sampnum;
 	mp_ubyte snum[96];
 	mp_uword volfade;
@@ -77,7 +79,8 @@ struct TMXMInstrument {
 	mp_ubyte res[46];
 };
 
-struct TMXMSample {
+struct TMXMSample 
+{
 	mp_uword gusstartl;
 	mp_ubyte gusstarth;
 	mp_uword gusloopstl;
@@ -102,7 +105,8 @@ struct TMXMSample {
 	mp_ubyte  res;
 };*/
 
-struct TNoteSlot {
+struct TNoteSlot 
+{
 	mp_ubyte Note,Ins,Vol,Eff,Op;
 };
 
@@ -118,12 +122,6 @@ const char* LoaderMXM::identifyModule(const mp_ubyte* buffer)
 	return NULL;
 }
 
-//////////////////////////////////////////////////////
-// load fasttracker II extended module
-// return:   0 = no error
-//			-7 = out of memory
-//			-8 = other
-//////////////////////////////////////////////////////
 mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 {
 	TMXMHeader		MXMHeader;
@@ -142,7 +140,7 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 	mp_uint32*	smpofs = new mp_uint32[2048];
 
 	if (smpofs == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	mp_uint32	inscnt,smpcnt,patcnt,rowcnt,x,y,z;
 	mp_uint32	numrows,j,i;
@@ -157,14 +155,14 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	mp_uword* lut = new mp_uword[65536];
 
 	if (lut == NULL)
 	{
 		delete[] smpofs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 
 	// calculate nifty table :)
@@ -380,13 +378,13 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 		{
 			delete[] lut;
 			delete[] smpofs;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		if (!module->addPanningEnvelope(penv)) 
 		{
 			delete[] lut;
 			delete[] smpofs;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		//XMIns.volfade=MXMIns.volfade;
@@ -469,7 +467,7 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 			{
 				delete[] lut;
 				delete[] smpofs;
-				return -8;
+				return MP_LOADER_FAILED;
 			}
 			
 			//fread(&MXMSmp,1,sizeof(MXMSmp),f);
@@ -562,7 +560,7 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 		if (phead[patcnt].patternData == NULL)
 		{
 			delete[] smpofs;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[patcnt].patternData,0,phead[patcnt].rows*header->channum*6);
@@ -731,7 +729,7 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 			
 			delete[] smpofs;
 			
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 	}
  
@@ -756,7 +754,7 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 			
 			delete[] smpofs;
 
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 	}
 	
@@ -895,7 +893,7 @@ hack:
 				
 				delete[] smpofs;
 				
-				return -8;
+				return MP_LOADER_FAILED;
 			}
 			
 		}
@@ -926,7 +924,7 @@ hack:
 				
 				delete[] smpofs;
 					
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 
 			memcpy(smp[smpcnt].sample,smpbuffer+gusstart[smpcnt],smp[smpcnt].samplen);
@@ -952,7 +950,7 @@ hack:
 				
 				delete[] smpofs;
 					
-				return -7;
+				return MP_OUT_OF_MEMORY;
 			}
 			
 			memcpy(smp[smpcnt].sample,smpbuffer16+gusstart[smpcnt],smp[smpcnt].samplen*2);
@@ -975,5 +973,5 @@ hack:
 
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }

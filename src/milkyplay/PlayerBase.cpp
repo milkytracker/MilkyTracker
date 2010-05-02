@@ -44,7 +44,7 @@ mp_sint32 PlayerBase::kick()
 	if (!isInitialized())
 	{
 		mp_sint32 err = initDevice();		
-		if (err!=0)
+		if (err != MP_OK)
 		{
 			return err;
 		}
@@ -70,10 +70,9 @@ mp_sint32 PlayerBase::kick()
 	// mix buffers
 	startMixer();
 	
-	//SetThreadPriority(hThread,THREAD_PRIORITY_NORMAL);
 	// reset sample counters
 	sampleCounter = 0;
-	return 0;
+	return MP_OK;
 }
 
 PlayerBase::PlayerBase(mp_uint32 frequency) : 
@@ -128,11 +127,11 @@ mp_sint32 PlayerBase::adjustFrequency(mp_uint32 frequency)
 	
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
-		return 0;
+		return MP_OK;
 				
 	reallocTimeRecord();
 	
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 PlayerBase::setBufferSize(mp_uint32 bufferSize)
@@ -146,11 +145,11 @@ mp_sint32 PlayerBase::setBufferSize(mp_uint32 bufferSize)
 		
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
-		return 0;
+		return MP_OK;
 
 	reallocTimeRecord();
 	
-	return 0;
+	return MP_OK;
 }
 
 void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 0*/, bool resetMixer/* = true*/, const mp_ubyte* customPanningTable/* = NULL*/, bool playOneRowOnly /* = false*/)
@@ -184,14 +183,6 @@ void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* =
 
 //////////////////////////////////////////////////////
 // setup mixer and start playing
-// return:   0 = no error
-//			-1 = no free device
-//			-2 = can't get device ID
-//			-3 = can't get device capabilities
-//			-4 = device can't handle requested format
-//			-5 = can't close device
-//			-6 = can't open device
-//			-7 = out of memory
 //////////////////////////////////////////////////////
 mp_sint32 PlayerBase::startPlaying(XModule *module,
 							   bool repeat /* = false*/,
@@ -217,7 +208,7 @@ mp_sint32 PlayerBase::startPlaying(XModule *module,
 	
 	mp_sint32 res = allocateStructures();
 	
-	if (res != 0)
+	if (res != MP_OK)
 		return res;
 
 	patternIndexToPlay = patternIndex;
@@ -246,7 +237,7 @@ mp_sint32 PlayerBase::pausePlaying()
 		
 		paused = true;
 	}
-	return 0;
+	return MP_OK;
 }
 
 mp_sint32 PlayerBase::resumePlaying(bool unpause/* = true*/)
@@ -264,7 +255,7 @@ mp_sint32 PlayerBase::resumePlaying(bool unpause/* = true*/)
 		if (!isInitialized())
 		{
 			mp_sint32 err = initDevice();
-			if (err!=0)
+			if (err != MP_OK)
 			{
 				return err;
 			}
@@ -276,12 +267,13 @@ mp_sint32 PlayerBase::resumePlaying(bool unpause/* = true*/)
 		
 	}
 	
-	return 0;
+	return MP_OK;
 }
 
 void PlayerBase::nextPattern()
 {
-	if (!module) return;
+	if (!module) 
+		return;
 
 	if (startPlay && !paused)
 	{
@@ -299,7 +291,8 @@ void PlayerBase::nextPattern()
 
 void PlayerBase::lastPattern()
 {
-	if (!module) return;
+	if (!module) 
+		return;
 
 	if (startPlay && !paused)
 	{
@@ -318,7 +311,8 @@ void PlayerBase::lastPattern()
 void PlayerBase::setPatternPos(mp_uint32 pos, mp_uint32 row/* = 0*/, bool resetChannels/* = true*/, bool resetFXMemory/* = true*/)
 {
 	
-	if (!module) return;
+	if (!module) 
+		return;
 
 	if (startPlay && !paused && (pos < module->header.ordnum))
 	{

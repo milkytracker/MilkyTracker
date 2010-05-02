@@ -98,7 +98,7 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 
 	tgdmheader GDMHeader;
 	tgdmsample GDMSmp;
@@ -217,11 +217,11 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 		mp_ubyte* tempPattern = new mp_ubyte[phead[i].rows*header->channum*slotSize];
 
 		if (tempPattern == NULL)
-			return -7;
+			return MP_OUT_OF_MEMORY;
 
 		// out of memory?
 		//if (phead[i].patternData == NULL)
-		//	return -7;
+		//	return MP_OUT_OF_MEMORY;
 		
 		//memset(phead[i].patternData,0,phead[i].rows*header->channum*slotSize);
 
@@ -231,7 +231,7 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 			mp_ubyte* packed=new mp_ubyte[patsize*2];
 
 			if (packed==NULL) 
-				return -7;
+				return MP_OUT_OF_MEMORY;
 
 			memset(packed, 0, patsize*2);
 			
@@ -377,7 +377,7 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 
 			// out of memory?
 			if (phead[i].patternData == NULL)
-				return -7;
+				return MP_OUT_OF_MEMORY;
 
 			memset(phead[i].patternData,0,phead[i].rows*header->channum*newSlotSize);
 
@@ -399,8 +399,9 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 				
 	f.seekWithBaseOffset(GDMHeader.samplepos);
 
-	if (module->loadModuleSamples(f, XModule::ST_UNSIGNED) != 0)
-		return -7;	
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_UNSIGNED);
+	if (result != MP_OK)
+		return result;	
 
 	strcpy(header->tracker,"General Digimusic");
 	
@@ -408,6 +409,5 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
-
+	return MP_OK;	
 }	

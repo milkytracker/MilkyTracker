@@ -60,7 +60,7 @@ mp_sint32 LoaderDSm::load(XMFileBase& f, XModule* module)
 	
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	strcpy(header->tracker,"Dynamic Studio");
 
@@ -68,7 +68,7 @@ mp_sint32 LoaderDSm::load(XMFileBase& f, XModule* module)
 	f.readByte();
 
 	if (f.readByte() != 0x20)
-		return -8;
+		return MP_LOADER_FAILED;
 		
 	f.read(header->name, 1, 20);
 	
@@ -171,7 +171,7 @@ mp_sint32 LoaderDSm::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[i].patternData == NULL)
 		{
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum * (phead[i].effnum * 2 + 2));
@@ -296,14 +296,15 @@ mp_sint32 LoaderDSm::load(XMFileBase& f, XModule* module)
 		
 	}	
 	
-	if (module->loadModuleSamples(f) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f);
+	if (result != MP_OK)
+		return result;
 	
 	//module->setDefaultPanning();
 	
 	module->postProcessSamples();
 	
-	return 0;		
+	return MP_OK;		
 }
 
 /////////////////////////////////////////////////
@@ -334,7 +335,7 @@ static mp_sint32 convertDSMPattern(TXMPattern* XMPattern,
 	
 	if (XMPattern->patternData == NULL)
 	{
-		return -1;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(XMPattern->patternData,0,maxChannels*6*64);
@@ -396,8 +397,7 @@ static mp_sint32 convertDSMPattern(TXMPattern* XMPattern,
 			dstSlot+=6;
 		}
 			
-	return 0;	
-	
+	return MP_OK;	
 }
 
 mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
@@ -414,7 +414,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	f.read(header->sig,3,1);
 	
@@ -440,7 +440,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 	mp_uword* insParaPtrs = new mp_uword[header->insnum];
 	
 	if (insParaPtrs == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.readWords(insParaPtrs,header->insnum);
 	
@@ -449,7 +449,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 	if (patParaPtrs == NULL)
 	{
 		delete[] insParaPtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	f.readWords(patParaPtrs,header->patnum);
@@ -467,7 +467,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 	{
 		delete[] insParaPtrs;
 		delete[] patParaPtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	memset(samplePtrs,0,sizeof(mp_uint32)*header->insnum);
@@ -543,7 +543,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 		delete[] insParaPtrs;
 		delete[] patParaPtrs;
 		delete[] samplePtrs;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 	
 	for (i = 0; i < header->patnum; i++)
@@ -574,7 +574,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 				delete[] patParaPtrs;
 				delete[] samplePtrs;
 				delete[] pattern;
-				return -7;				
+				return MP_OUT_OF_MEMORY;				
 			}
 			
 			f.read(packed,1,size);
@@ -648,7 +648,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 		if (module->loadModuleSample(f,i) != 0)
 		{
 			delete[] samplePtrs;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}			
 	}
 	
@@ -658,7 +658,7 @@ mp_sint32 LoaderDSMv1::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
+	return MP_OK;	
 }
 
 /////////////////////////////////////////////////
@@ -688,7 +688,7 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;	
+		return MP_OUT_OF_MEMORY;	
 	
 	// Even though the new DSM format is chunk based we don't read it  
 	// in a real chunk fashion i.e. we're assuming fixed structure
@@ -701,7 +701,7 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 	// skip "SONG" & chunk length
 	f.readDword();
 	if (f.readDword() != 0xC0)
-		return -8;
+		return MP_LOADER_FAILED;
 		
 	f.read(header->name, 1, 28);
 	
@@ -744,7 +744,7 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 				mp_ubyte* packed = new mp_ubyte[size];
 				if (packed == NULL)
 				{
-					return -7;				
+					return MP_OUT_OF_MEMORY;				
 				}			
 				
 				f.read(packed, 1, size);
@@ -753,7 +753,7 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 				if (pattern == NULL)
 				{
 					delete[] packed;
-					return -7;
+					return MP_OUT_OF_MEMORY;
 				}
 	
 				for (j = 0; j < 32*64; j++)
@@ -863,12 +863,12 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 				
 					if (s->sample == NULL)
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}
 				
 					if (!module->loadSample(f, s->sample, length, length, (flags & 2) ? XModule::ST_DEFAULT : XModule::ST_UNSIGNED))
 					{
-						return -7;
+						return MP_OUT_OF_MEMORY;
 					}					
 				
 					smpcnt++;
@@ -887,5 +887,5 @@ mp_sint32 LoaderDSMv2::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 	
-	return 0;	
+	return MP_OK;	
 }

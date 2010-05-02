@@ -59,12 +59,12 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	
 	f.read(header->sig, 1, 3);	// read signature
 
 	if (f.readByte() != 0x10)
-		return -8;
+		return MP_LOADER_FAILED;
 
 	f.read(header->name, 1, 20);
 
@@ -148,7 +148,7 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 	mp_ubyte* tracks = new mp_ubyte[trackSize*numTracks];
 
 	if (tracks == NULL)
-		return -7;
+		return MP_OUT_OF_MEMORY;
 
 	f.read(tracks, trackSize, numTracks);
 
@@ -157,7 +157,7 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 	if (trackSeq == NULL)
 	{
 		delete[] tracks;
-		return -7;
+		return MP_OUT_OF_MEMORY;
 	}
 
 	f.readWords(trackSeq, header->patnum * 32);
@@ -177,7 +177,7 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 		{
 			delete[] tracks;
 			delete[] trackSeq;
-			return -7;
+			return MP_OUT_OF_MEMORY;
 		}
 		
 		memset(phead[i].patternData,0,phead[i].rows*header->channum*4);
@@ -304,8 +304,9 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 
 	}
 	
-	if (module->loadModuleSamples(f, XModule::ST_UNSIGNED) != 0)
-		return -7;
+	mp_sint32 result = module->loadModuleSamples(f, XModule::ST_UNSIGNED);
+	if (result != MP_OK)
+		return result;
 
 	strcpy(header->tracker,"Multitracker");
 
@@ -313,5 +314,5 @@ mp_sint32 LoaderMTM::load(XMFileBase& f, XModule* module)
 	
 	module->postProcessSamples();
 
-	return 0;
+	return MP_OK;
 }
