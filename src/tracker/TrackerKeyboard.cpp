@@ -253,6 +253,14 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding(VK_DECIMAL, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsFastTracker->addBinding(VK_DIVIDE, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 
+
+    // Contributed by 8ch (http://modarchive.org/forums/index.php?topic=2713.0):
+    eventKeyDownBindingsFastTracker->addBinding('R', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_ToggleFT2Edit);
+    eventKeyDownBindingsFastTracker->addBinding(VK_F9, KeyModifierCTRL, &Tracker::eventKeyDownBinding_DelCurOrderPosition);
+    eventKeyDownBindingsFastTracker->addBinding(VK_F10, KeyModifierCTRL, &Tracker::eventKeyDownBinding_InsNewOrderPosition);
+    eventKeyDownBindingsFastTracker->addBinding(VK_F11, KeyModifierCTRL, &Tracker::eventKeyDownBinding_DecCurOrderPattern);
+    eventKeyDownBindingsFastTracker->addBinding(VK_F12, KeyModifierCTRL, &Tracker::eventKeyDownBinding_IncCurOrderPattern);
+
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
 
@@ -973,3 +981,28 @@ void Tracker::eventKeyDownBinding_ExitApplication()
 		showQuitMessageBox("Quit MilkyTracker?", NULL, NULL);
 }
 
+
+// Contributed by 8ch (http://modarchive.org/forums/index.php?topic=2713.0):
+void Tracker::eventKeyDownBinding_DelCurOrderPosition()
+{
+	moduleEditor->deleteOrderPosition(getOrderListBoxIndex());
+	updateOrderlist();
+}
+
+void Tracker::eventKeyDownBinding_InsNewOrderPosition()
+{
+	moduleEditor->insertNewOrderPosition(getOrderListBoxIndex());
+	updateOrderlist();
+}
+
+void Tracker::eventKeyDownBinding_DecCurOrderPattern()
+{
+	moduleEditor->decreaseOrderPosition(getOrderListBoxIndex());
+	updateOrderlist();
+}
+
+void Tracker::eventKeyDownBinding_IncCurOrderPattern()
+{
+	moduleEditor->increaseOrderPosition(getOrderListBoxIndex());
+	updateOrderlist();
+}

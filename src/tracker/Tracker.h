@@ -573,6 +573,13 @@ private:
 	
 	void eventKeyDownBinding_ExitApplication();
 
+    // Contributed by 8ch (http://modarchive.org/forums/index.php?topic=2713.0):
+    void eventKeyDownBinding_DelCurOrderPosition();
+    void eventKeyDownBinding_InsNewOrderPosition();
+    void eventKeyDownBinding_DecCurOrderPattern();
+    void eventKeyDownBinding_IncCurOrderPattern();
+
+
 private:
 	// - friend classes --------------------------------------------------------
 	friend class SectionAbstract;
