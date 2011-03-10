@@ -1249,7 +1249,13 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 					if (ticker == 0)
 						r = 0;
 					else
-						r = myMod(ticker-tickSpeed,3);
+                    {
+                        // Emulate FT2 behaviour (thanks Saga_Musix/OpenMPT)
+                        if((tickSpeed > 18) && (tickSpeed - ticker > 16))
+                          r = 2; // swedish tracker logic, I love it
+                        else
+                          r = myMod(ticker-tickSpeed,3);
+                    }
 
 					arpegLUT[0] = 0; arpegLUT[1] = 2; arpegLUT[2] = 1; 
 				}
