@@ -59,7 +59,6 @@ private:
 	};
 	
 	PPContainer* sectionContainer;
-	PPContainer* currentActivePageContainer;
 
 	PPListBox* listBoxColors;
 	PPListBox* listBoxFontFamilies;

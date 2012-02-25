@@ -1619,7 +1619,6 @@ public:
 SectionSettings::SectionSettings(Tracker& theTracker) :
 	SectionAbstract(theTracker, NULL, new DialogResponderSettings(*this)),
 	sectionContainer(NULL),
-	currentActivePageContainer(NULL),
 	listBoxColors(NULL),
 	listBoxFontFamilies(NULL),
 	listBoxFontEntries(NULL),
@@ -2232,7 +2231,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					predefinedColorPalettes->store(i, pal);
 					storePalette = !storePalette;
 					
-					PPButton* button = static_cast<PPButton*>(currentActivePageContainer->getControlByID(BUTTON_COLOR_PREDEF_STORE));
+					PPButton* button = static_cast<PPButton*>(sectionContainer->getControlByID(BUTTON_COLOR_PREDEF_STORE));
 					if (!button)
 						break;
 					button->setPressed(storePalette);
