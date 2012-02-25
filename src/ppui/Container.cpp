@@ -32,6 +32,7 @@ PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInter
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorContainer)),
 	focusedControl(NULL),
 	lastMouseOverControl(NULL),
+	lastMousePoint(PPPoint(0,0)),
 	caughtControl(NULL),
 	currentlyPressedMouseButtons(0)
 {

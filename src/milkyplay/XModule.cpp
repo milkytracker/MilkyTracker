@@ -173,10 +173,10 @@ void TXMSample::postProcessSamples()
 		// calculate new loop length
 		looplen = loopend - loopstart;
 		// no more looping if loop length is 0
-		if (looplen == 0)
-			type &= ~3;
 	}
 	
+	if (looplen == 0)
+		type &= ~3;
 	if (sample == NULL)
 		return;
 	

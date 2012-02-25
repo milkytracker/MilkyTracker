@@ -54,8 +54,8 @@ AC_MSG_CHECKING([whether SDL supports X11])
 OLDCPPFLAGS=$CPPFLAGS
 CPPFLAGS=$SDL_CFLAGS
 AC_COMPILE_IFELSE(
-	[#include<SDL_syswm.h>
-	const int test = SDL_SYSWM_X11;],
+	[AC_LANG_SOURCE([#include<SDL_syswm.h>
+	const int test = SDL_SYSWM_X11;])],
 	[AC_MSG_RESULT([yes])]
 	AC_DEFINE([HAVE_X11], [1], [SDL supports X11 features]),
 	[AC_MSG_RESULT([no])])

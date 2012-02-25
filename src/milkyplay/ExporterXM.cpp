@@ -1445,7 +1445,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 				
 	}
 	
-	delete lastIns;
+	delete[] lastIns;
 	
 	for (i = 0; i < insNum; i++)
 	{
