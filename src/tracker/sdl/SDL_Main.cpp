@@ -824,8 +824,14 @@ void crashHandler(int signum)
 
 	if (num != 100) 
 	{
-		myTracker->saveModule(buffer);
-		fprintf(stderr, "\nA backup has been saved to %s\n\n", buffer);
+		if (myTracker->saveModule(buffer) == MP_DEVICE_ERROR)
+		{
+			fprintf(stderr, "\nUnable to save backup (read-only filesystem?)\n\n");
+		}
+		else
+		{
+			fprintf(stderr, "\nA backup has been saved to %s\n\n", buffer);
+		}
 	}
 	
 	// Try and quit SDL

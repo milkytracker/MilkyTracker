@@ -788,9 +788,9 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 	return res;
 }
 
-void ModuleEditor::saveBackup(const SYSCHAR* fileName)
+mp_sint32 ModuleEditor::saveBackup(const SYSCHAR* fileName)
 {
-	module->saveExtendedModule(fileName);
+	return module->saveExtendedModule(fileName);
 }
 
 

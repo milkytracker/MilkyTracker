@@ -124,120 +124,123 @@ bool Tracker::shutDown()
 
 	XMFile f(System::getConfigFileName(), true);
 
-	// ----------- Save last settings -----------
-	// store version string to database
-	settingsDatabase->store("VERSION", TrackerConfig::version);
-
-	char buffer[100];
-	// playmode settings
-	const char* playModeStrings[5] = {"AUTO", "PROTRACKER2", "PROTRACKER3", "SCREAMTRACKER3", "FASTTRACKER2"};
-
-	pp_int32 playMode = playerController->getPlayMode();
-
-	ASSERT(playMode >= 0 && playMode < 5);
-	
-	settingsDatabase->store("PLAYMODEKEEPSETTINGS", sectionQuickOptions->keepSettings());
-	settingsDatabase->store("PLAYMODE", sectionQuickOptions->keepSettings() ? playModeStrings[playMode] : playModeStrings[4]);
-
-	settingsDatabase->store("PLAYMODE_ADVANCED_ALLOW8xx", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionPanning8xx));
-	settingsDatabase->store("PLAYMODE_ADVANCED_ALLOWE8x", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionPanningE8x));
-	// Only affects protracker playmodes
-	settingsDatabase->store("PLAYMODE_ADVANCED_PTPITCHLIMIT", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionForcePTPitchLimit));
-
-	// save default panning for protracker playmodes
-	pp_uint8* panning = new pp_uint8[TrackerConfig::numPlayerChannels];
-	for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
-		panning[i] = playerController->getPanning((pp_uint8)i);
-	
-	settingsDatabase->store("PLAYMODE_ADVANCED_PTPANNING", PPTools::encodeByteArray(panning, TrackerConfig::numPlayerChannels));
-	delete[] panning;
-
-	// quick options
-	settingsDatabase->store("PROSPECTIVE", getProspectiveMode() ? 1 : 0);
-	settingsDatabase->store("WRAPAROUND", getCursorWrapAround() ? 1 : 0);
-	settingsDatabase->store("FOLLOWSONG", getFollowSong() ? 1 : 0);
-	settingsDatabase->store("LIVESWITCH", playerLogic->getLiveSwitch() ? 1 : 0);
-
-	// Disk Operations
-	settingsDatabase->store("INTERNALDISKBROWSERSETTINGS", sectionDiskMenu->getConfigUInt32());	
-	settingsDatabase->store("INTERNALDISKBROWSERLASTPATH", sectionDiskMenu->getCurrentPathASCII());
-
-	// HD recorder
-	settingsDatabase->store("HDRECORDER_MIXFREQ", sectionHDRecorder->getSettingsFrequency());
-	settingsDatabase->store("HDRECORDER_MIXERVOLUME", sectionHDRecorder->getSettingsMixerVolume());
-	settingsDatabase->store("HDRECORDER_MIXERSHIFT", sectionHDRecorder->getSettingsMixerShift());
-	settingsDatabase->store("HDRECORDER_RAMPING", sectionHDRecorder->getSettingsRamping() ? 1 : 0);
-	settingsDatabase->store("HDRECORDER_INTERPOLATION", sectionHDRecorder->getSettingsResampler());
-	settingsDatabase->store("HDRECORDER_ALLOWMUTING", sectionHDRecorder->getSettingsAllowMuting() ? 1 : 0);
-	
-	// sample editor
-	settingsDatabase->store("SAMPLEEDITORDECIMALOFFSETS", sectionSamples->getOffsetFormat());
-	// Sample editor contol will store last used values here
-	PPDictionary dictonary = sectionSamples->getSampleEditorControl()->getLastValues().convertToDictionary();
-	PPString lastValues = dictonary.serializeToString();
-	settingsDatabase->store("SAMPLEEDITORLASTVALUES", lastValues);
-
-	// Optimizer
-	for (i = 0; i < (signed)SectionOptimize::getNumFlagGroups(); i++)
+	if(f.isOpenForWriting())
 	{
-		sprintf(buffer, "OPTIMIZER_%i",i);
-		settingsDatabase->store(buffer, sectionOptimize->getOptimizeCheckBoxFlags(i));
-	}
-	
-	// Scale of envelope editor
-	settingsDatabase->store("ENVELOPEEDITORSCALE", sectionInstruments->getEnvelopeEditorControl()->getScale());
-	
-	// Orderlist was expanded?
-	settingsDatabase->store("EXTENDEDORDERLIST", extendedOrderlist ? 1 : 0);
-	
-	// Current row insert add value
-	settingsDatabase->store("ROWINSERTADD", getPatternEditorControl()->getRowInsertAdd());
+		// ----------- Save last settings -----------
+		// store version string to database
+		settingsDatabase->store("VERSION", TrackerConfig::version);
 
-	// Current visible title page
-	TitlePageManager titlePageManager(*screen);
-	settingsDatabase->store("TITLEPAGE", titlePageManager.getCurrentTitlePage());
+		char buffer[100];
+		// playmode settings
+		const char* playModeStrings[5] = {"AUTO", "PROTRACKER2", "PROTRACKER3", "SCREAMTRACKER3", "FASTTRACKER2"};
 
-	// Save colors
-	TColorPalette palette;
-	palette.numColors = GlobalColorConfig::ColorLast;
-	for (i = 0; i < palette.numColors; i++)
-		palette.colors[i] = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);	
+		pp_int32 playMode = playerController->getPlayMode();
 
-	settingsDatabase->store("ACTIVECOLORS", ColorPaletteContainer::encodePalette(palette));
+		ASSERT(playMode >= 0 && playMode < 5);
 
-	// store predefined envelopes
-	for (i = 0; i < sectionInstruments->getNumPredefinedEnvelopes(); i++)
-	{
-		sprintf(buffer, "PREDEFENVELOPEVOLUME_%i",i);
-		settingsDatabase->store(buffer, sectionInstruments->getEncodedEnvelope(SectionInstruments::EnvelopeTypeVolume, i));
-	}
+		settingsDatabase->store("PLAYMODEKEEPSETTINGS", sectionQuickOptions->keepSettings());
+		settingsDatabase->store("PLAYMODE", sectionQuickOptions->keepSettings() ? playModeStrings[playMode] : playModeStrings[4]);
 
-	for (i = 0; i < sectionInstruments->getNumPredefinedEnvelopes(); i++)
-	{
-		sprintf(buffer, "PREDEFENVELOPEPANNING_%i",i);		
-		settingsDatabase->store(buffer, sectionInstruments->getEncodedEnvelope(SectionInstruments::EnvelopeTypePanning, i));
-	}
-	
-	// store effect macros from pattern editor control
-	for (i = 0; i < NUMEFFECTMACROS; i++)
-	{
-		sprintf(buffer, "EFFECTMACRO_%i",i);
-		
-		pp_uint8 eff, op;
-		getPatternEditor()->getMacroOperands(i, eff, op);
-		
-		pp_int32 val = (((pp_int32)eff) << 8) + (pp_int32)op;
-		
-		settingsDatabase->store(buffer, val);
-	}
+		settingsDatabase->store("PLAYMODE_ADVANCED_ALLOW8xx", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionPanning8xx));
+		settingsDatabase->store("PLAYMODE_ADVANCED_ALLOWE8x", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionPanningE8x));
+		// Only affects protracker playmodes
+		settingsDatabase->store("PLAYMODE_ADVANCED_PTPITCHLIMIT", playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionForcePTPitchLimit));
 
-	for (i = 0; i < sectionSettings->getNumPredefinedColorPalettes(); i++)
-	{
-		sprintf(buffer, "PREDEFCOLORPALETTE_%i",i);		
-		settingsDatabase->store(buffer, sectionSettings->getEncodedPalette(i));
-	}
-	
-	settingsDatabase->serialize(f);
+		// save default panning for protracker playmodes
+		pp_uint8* panning = new pp_uint8[TrackerConfig::numPlayerChannels];
+		for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
+			panning[i] = playerController->getPanning((pp_uint8)i);
+
+		settingsDatabase->store("PLAYMODE_ADVANCED_PTPANNING", PPTools::encodeByteArray(panning, TrackerConfig::numPlayerChannels));
+		delete[] panning;
+
+		// quick options
+		settingsDatabase->store("PROSPECTIVE", getProspectiveMode() ? 1 : 0);
+		settingsDatabase->store("WRAPAROUND", getCursorWrapAround() ? 1 : 0);
+		settingsDatabase->store("FOLLOWSONG", getFollowSong() ? 1 : 0);
+		settingsDatabase->store("LIVESWITCH", playerLogic->getLiveSwitch() ? 1 : 0);
+
+		// Disk Operations
+		settingsDatabase->store("INTERNALDISKBROWSERSETTINGS", sectionDiskMenu->getConfigUInt32());	
+		settingsDatabase->store("INTERNALDISKBROWSERLASTPATH", sectionDiskMenu->getCurrentPathASCII());
+
+		// HD recorder
+		settingsDatabase->store("HDRECORDER_MIXFREQ", sectionHDRecorder->getSettingsFrequency());
+		settingsDatabase->store("HDRECORDER_MIXERVOLUME", sectionHDRecorder->getSettingsMixerVolume());
+		settingsDatabase->store("HDRECORDER_MIXERSHIFT", sectionHDRecorder->getSettingsMixerShift());
+		settingsDatabase->store("HDRECORDER_RAMPING", sectionHDRecorder->getSettingsRamping() ? 1 : 0);
+		settingsDatabase->store("HDRECORDER_INTERPOLATION", sectionHDRecorder->getSettingsResampler());
+		settingsDatabase->store("HDRECORDER_ALLOWMUTING", sectionHDRecorder->getSettingsAllowMuting() ? 1 : 0);
+
+		// sample editor
+		settingsDatabase->store("SAMPLEEDITORDECIMALOFFSETS", sectionSamples->getOffsetFormat());
+		// Sample editor contol will store last used values here
+		PPDictionary dictonary = sectionSamples->getSampleEditorControl()->getLastValues().convertToDictionary();
+		PPString lastValues = dictonary.serializeToString();
+		settingsDatabase->store("SAMPLEEDITORLASTVALUES", lastValues);
+
+		// Optimizer
+		for (i = 0; i < (signed)SectionOptimize::getNumFlagGroups(); i++)
+		{
+			sprintf(buffer, "OPTIMIZER_%i",i);
+			settingsDatabase->store(buffer, sectionOptimize->getOptimizeCheckBoxFlags(i));
+		}
+
+		// Scale of envelope editor
+		settingsDatabase->store("ENVELOPEEDITORSCALE", sectionInstruments->getEnvelopeEditorControl()->getScale());
+
+		// Orderlist was expanded?
+		settingsDatabase->store("EXTENDEDORDERLIST", extendedOrderlist ? 1 : 0);
+
+		// Current row insert add value
+		settingsDatabase->store("ROWINSERTADD", getPatternEditorControl()->getRowInsertAdd());
+
+		// Current visible title page
+		TitlePageManager titlePageManager(*screen);
+		settingsDatabase->store("TITLEPAGE", titlePageManager.getCurrentTitlePage());
+
+		// Save colors
+		TColorPalette palette;
+		palette.numColors = GlobalColorConfig::ColorLast;
+		for (i = 0; i < palette.numColors; i++)
+			palette.colors[i] = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);	
+
+		settingsDatabase->store("ACTIVECOLORS", ColorPaletteContainer::encodePalette(palette));
+
+		// store predefined envelopes
+		for (i = 0; i < sectionInstruments->getNumPredefinedEnvelopes(); i++)
+		{
+			sprintf(buffer, "PREDEFENVELOPEVOLUME_%i",i);
+			settingsDatabase->store(buffer, sectionInstruments->getEncodedEnvelope(SectionInstruments::EnvelopeTypeVolume, i));
+		}
+
+		for (i = 0; i < sectionInstruments->getNumPredefinedEnvelopes(); i++)
+		{
+			sprintf(buffer, "PREDEFENVELOPEPANNING_%i",i);		
+			settingsDatabase->store(buffer, sectionInstruments->getEncodedEnvelope(SectionInstruments::EnvelopeTypePanning, i));
+		}
+
+		// store effect macros from pattern editor control
+		for (i = 0; i < NUMEFFECTMACROS; i++)
+		{
+			sprintf(buffer, "EFFECTMACRO_%i",i);
+
+			pp_uint8 eff, op;
+			getPatternEditor()->getMacroOperands(i, eff, op);
+
+			pp_int32 val = (((pp_int32)eff) << 8) + (pp_int32)op;
+
+			settingsDatabase->store(buffer, val);
+		}
+
+		for (i = 0; i < sectionSettings->getNumPredefinedColorPalettes(); i++)
+		{
+			sprintf(buffer, "PREDEFCOLORPALETTE_%i",i);		
+			settingsDatabase->store(buffer, sectionSettings->getEncodedPalette(i));
+		}
+
+		settingsDatabase->serialize(f);
+	} // isOpenForWriting
 
 	return true;
 }
@@ -246,8 +249,8 @@ bool Tracker::shutDown()
 // The os dependent layer can call this and it will save a backup of the current
 // module
 // TO-DO: Doesn't handle tabs properly yet, will only save the current tab
-void Tracker::saveModule(const PPSystemString& fileName)
+mp_sint32 Tracker::saveModule(const PPSystemString& fileName)
 {
-	moduleEditor->saveBackup(fileName);
+	return moduleEditor->saveBackup(fileName);
 }
 

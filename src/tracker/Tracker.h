@@ -457,7 +457,7 @@ public:
 	// Tracker shutdown
 	bool shutDown();
 	
-	void saveModule(const PPSystemString& fileName);
+	mp_sint32 saveModule(const PPSystemString& fileName);
 
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);

@@ -238,7 +238,7 @@ public:
 						 
 	bool openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFileName = NULL);	
 	bool saveSong(const SYSCHAR* fileName, ModSaveTypes saveType = ModSaveTypeXM);
-	void saveBackup(const SYSCHAR* fileName);
+	mp_sint32 saveBackup(const SYSCHAR* fileName);
 	
 	void increaseSongLength();
 	void decreaseSongLength();
