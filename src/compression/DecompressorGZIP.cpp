@@ -61,7 +61,7 @@ bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 	int len = 0;
 	pp_uint8 *buf;
 	
-	if ((gz_input_file = (void **)gzopen (fileName.getStrBuffer(), "r")) == NULL)
+	if ((gz_input_file = (gzFile*)gzopen (fileName.getStrBuffer(), "r")) == NULL)
 		return false;
 	
 	if ((buf = new pp_uint8[0x10000]) == NULL)
@@ -71,7 +71,7 @@ bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 	
     while (true) 
 	{
-        len = gzread (gz_input_file, buf, 0x10000);
+        len = gzread (*gz_input_file, buf, 0x10000);
 		
         if (len < 0) 
 		{
@@ -84,7 +84,7 @@ bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 		fOut.write(buf, 1, len);
     }
 	
-    if (gzclose (gz_input_file) != Z_OK)
+    if (gzclose (*gz_input_file) != Z_OK)
 	{
 	    delete[] buf;
         return false;
