@@ -27,6 +27,7 @@
 #include "Event.h"
 #include "EditModes.h"
 #include "FileTypes.h"
+#include "XModule.h"
 
 #define INPUTCONTAINERHEIGHT_DEFAULT	(25+SCROLLBUTTONSIZE+4)
 #define INPUTCONTAINERHEIGHT_EXTENDED	(25+SCROLLBUTTONSIZE+4+13)

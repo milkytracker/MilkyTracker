@@ -1267,7 +1267,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 #endif
 				screen->update();
 				
-				playerLogic->continuePlayingSong();
+				if (playerController->isPlayingPattern())
+					playerLogic->continuePlayingPattern();
+				else
+					playerLogic->continuePlayingSong();
 				break;
 			}
 
