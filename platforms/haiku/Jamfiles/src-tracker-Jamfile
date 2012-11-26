@@ -1,0 +1,116 @@
+SubDir TOP src tracker ;
+
+SubDirHdrs $(PathCompression) ;
+SubDirHdrs $(PathFX) ;
+SubDirHdrs $(PathMidi) haiku ;
+SubDirHdrs $(PathMilkyPlay) ;
+SubDirHdrs $(PathOSInterface) ;
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathPPUI) ;
+SubDirHdrs $(PathPPUI) haiku ;
+SubDirHdrs $(PathTracker) haiku ;
+SubDirHdrs - ;
+
+LINKLIBS on MilkyTracker = -lbe -lgame -lmedia -lmidi2 -ltextencoding -ltracker ;
+
+LinkLibraries MilkyTracker :
+	libcompression
+	libzzip
+	libfx
+	libmilkyplay
+	libppui
+	libmidi
+	libosinterface
+	;
+
+Main MilkyTracker :
+	AnimatedFXControl.cpp
+	ColorExportImport.cpp
+	ColorPaletteContainer.cpp
+	DialogChannelSelector.cpp
+	DialogEQ.cpp
+	DialogGroupSelection.cpp
+	DialogHandlers.cpp
+	DialogListBox.cpp
+	DialogPanning.cpp
+	DialogQuickChooseInstrument.cpp
+	DialogResample.cpp
+	DialogWithValues.cpp
+	DialogZap.cpp
+	EditorBase.cpp
+	EnvelopeContainer.cpp
+	EnvelopeEditor.cpp
+	EnvelopeEditorControl.cpp
+	EQConstants.cpp
+	Equalizer.cpp
+	FileExtProvider.cpp
+	FileIdentificator.cpp
+	GlobalColorConfig.cpp
+	InputControlListener.cpp
+	LogoBig.cpp
+	LogoSmall.cpp
+	ModuleEditor.cpp
+	ModuleServices.cpp
+	PatternEditor.cpp
+	PatternEditorClipBoard.cpp
+	PatternEditorControl.cpp
+	PatternEditorControlEventListener.cpp
+	PatternEditorControlKeyboard.cpp
+	PatternEditorControlTransposeHandler.cpp
+	PatternEditorTools.cpp
+	PatternTools.cpp
+	PeakLevelControl.cpp
+	Piano.cpp
+	PianoControl.cpp
+	PlayerController.cpp
+	PlayerLogic.cpp
+	PlayerMaster.cpp
+	RecorderLogic.cpp
+	RecPosProvider.cpp
+	ResamplerHelper.cpp
+	SampleEditor.cpp
+	SampleEditorControl.cpp
+	SampleEditorControlToolHandler.cpp
+	SampleEditorResampler.cpp
+	SamplePlayer.cpp
+	ScopesControl.cpp
+	SectionAbout.cpp
+	SectionAbstract.cpp
+	SectionAdvancedEdit.cpp
+	SectionDiskMenu.cpp
+	SectionHDRecorder.cpp
+	SectionInstruments.cpp
+	SectionOptimize.cpp
+	SectionQuickOptions.cpp
+	SectionSamples.cpp
+	SectionSettings.cpp
+	SectionSwitcher.cpp
+	SectionTranspose.cpp
+	SectionUpperLeft.cpp
+	SongLengthEstimator.cpp
+	SystemMessage.cpp
+	TabHeaderControl.cpp
+	TabManager.cpp
+	TabTitleProvider.cpp
+	TitlePageManager.cpp
+	ToolInvokeHelper.cpp
+	Tracker.cpp
+	TrackerConfig.cpp
+	TrackerInit.cpp
+	TrackerKeyboard.cpp
+	TrackerSettings.cpp
+	TrackerSettingsDatabase.cpp
+	TrackerShortCuts.cpp
+	TrackerShutDown.cpp
+	TrackerStartUp.cpp
+	TrackerUpdate.cpp
+	Undo.cpp
+	VRand.cpp
+	Zapper.cpp
+	# --- Haiku specific ---
+	haiku/Haiku_main.cpp
+	haiku/Tools.cpp
+	haiku/MilkyApplication.cpp
+	;
+
+FinishExecutable MilkyTracker : haiku/MilkyTracker.rdef ;

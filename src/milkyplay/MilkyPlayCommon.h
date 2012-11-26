@@ -97,6 +97,8 @@
 	#define DRIVER_UNIX
 #elif defined(__PSP__) && !defined(__FORCE_SDL_AUDIO__)
 	#define DRIVER_PSP
+#elif defined(__HAIKU__) && !defined(__FORCE_SDL_AUDIO__)
+	#define DRIVER_HAIKU
 #else
 	#define DRIVER_SDL
 #endif

@@ -1,0 +1,24 @@
+SubDir TOP src compression ;
+
+SubDirHdrs $(PathCompression) lha ;
+SubDirHdrs $(PathMilkyPlay) ;
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathPPUI) ;
+SubDirHdrs $(PathZZIP) ;
+SubDirHdrs - ;
+SubDirHdrs $(PathZZIP) generic ;
+
+Library libcompression :
+	Decompressor.cpp
+	DecompressorGZIP.cpp
+	DecompressorLHA.cpp
+	DecompressorLZX.cpp
+	DecompressorPP20.cpp
+	DecompressorUMX.cpp
+	DecompressorZIP.cpp
+	PP20.cpp
+	unlzx.cpp
+	ZipExtractor.cpp
+	lha/unlha.cpp
+	zziplib/MyIO.cpp
+	;

@@ -181,6 +181,19 @@ AudioDriverManager::AudioDriverManager() :
 	driverList[0] = new AudioDriver_PSP();
 }
 
+#elif defined(DRIVER_HAIKU)
+//////////////////////////////////////////////////////////////////
+//					   Haiku implementation
+//////////////////////////////////////////////////////////////////
+#include "AudioDriver_Haiku.h"
+
+AudioDriverManager::AudioDriverManager() :
+	defaultDriverIndex(0)
+{
+	ALLOC_DRIVERLIST(1);
+	driverList[0] = new AudioDriver_Haiku();
+}
+
 #endif
 
 AudioDriverInterface* AudioDriverManager::getPreferredAudioDriver()

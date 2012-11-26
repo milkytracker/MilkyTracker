@@ -1,0 +1,13 @@
+SubDir TOP src tracker haiku MilkySettings ;
+
+LINKLIBS on MilkySettings = -lbe -lmidi2 ;
+
+Main MilkySettings :
+	MilkySettingsApplication.cpp
+	SettingsWindow.cpp
+	InterfaceSettingsView.cpp
+	MidiSettingsView.cpp
+	main.cpp
+	;
+
+# FinishExecutable MilkySettings : MilkySettings.rdef ;

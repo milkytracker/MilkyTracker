@@ -1,0 +1,15 @@
+SubDir TOP src midi ;
+
+SubDirHdrs $(PathTracker) ;
+SubDirHdrs $(PathMidi) ;
+SubDirHdrs $(PathMidi) haiku ;
+SubDirHdrs $(PathMilkyPlay) ;
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathPPUI) ;
+SubDirHdrs - ;
+
+Library libmidi :
+	# --- Haiku specific ---
+	haiku/MilkyMidiConsumer.cpp
+	haiku/MidiSetup.cpp
+	;

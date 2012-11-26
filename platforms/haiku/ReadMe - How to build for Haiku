@@ -1,0 +1,20 @@
+How to build MilkyTracker for Haiku
+
+(1) Open a terminal in platforms/haiku (the directory where this ReadMe is in)
+
+(2) Run Add_Jamfiles.sh which copies Jamfiles into the source directories
+	$> ./Add_Jamfiles.sh
+
+(3) Go two directory levels up, into the root of the sources
+	$> cd ../..
+
+(4) Run jam to build
+	$> jam
+
+(5) After a while it should complete successfully. The binaries are now at:
+	src/tracker/MilkyTracker and
+	src/tracker/haiku/MilkySettings/MilkySettings
+
+If you want to clean up the source tree again you can use
+	jam clean
+and the Remove_Jamfiles.sh script from the platforms/haiku directory.

@@ -1,0 +1,26 @@
+SubDir TOP src fx ;
+
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathPPUI) ;
+SubDirHdrs - ;
+
+Library libfx :
+	Camera.cpp
+	Filter.cpp
+	Fire.cpp
+	fpmath.cpp
+	Math3d.cpp
+	ParticleBlobs.cpp
+	ParticleEmitter.cpp
+	ParticleFun.cpp
+	ParticleFX.cpp
+	ParticleScene.cpp
+	Starfield.cpp
+	TCBSpline.cpp
+	TCBSplineTest.cpp
+	Texture.cpp
+	TexturedGrid.cpp
+	TexturedPlane.cpp
+	Twister.cpp
+	TwisterFX.cpp
+	;

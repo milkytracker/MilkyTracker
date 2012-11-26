@@ -1,0 +1,51 @@
+SubDir TOP src ppui ;
+
+SubDirHdrs $(PathMilkyPlay) ;
+SubDirHdrs $(PathOSInterface) ;
+SubDirHdrs $(PathOSInterface) haiku ;
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathPPUI) haiku ;
+SubDirHdrs $(PathTracker) ;
+SubDirHdrs $(PathTracker) haiku ;
+SubDirHdrs - ;
+
+Library libppui :
+	Button.cpp
+	CheckBox.cpp
+	Container.cpp
+	ContextMenu.cpp
+	Control.cpp
+	DialogBase.cpp
+	DialogFileSelector.cpp
+	Dictionary.cpp
+	DictionaryKey.cpp
+	Event.cpp
+	Font.cpp
+#	Graphics_15BIT.cpp
+#	Graphics_16BIT.cpp
+#	Graphics_24bpp_generic.cpp
+	Graphics_32bpp_generic.cpp
+#	Graphics_ARGB32.cpp
+#	Graphics_BGR24_SLOW.cpp
+#	Graphics_BGR24.cpp
+#	Graphics_OGL.cpp
+	KeyboardBindingHandler.cpp
+	ListBox.cpp
+	ListBoxFileBrowser.cpp
+	Menu.cpp
+	MessageBoxContainer.cpp
+	PPUIConfig.cpp
+	RadioGroup.cpp
+	Screen.cpp
+	Scrollbar.cpp
+	Seperator.cpp
+	Slider.cpp
+	StaticText.cpp
+	Tools.cpp
+	TransparentContainer.cpp
+	# --- Haiku specific ---
+	haiku/DisplayDevice_Haiku.cpp
+	haiku/MilkyView.cpp
+	haiku/MilkyWindow.cpp
+	haiku/KeyCodeMap.cpp
+	;

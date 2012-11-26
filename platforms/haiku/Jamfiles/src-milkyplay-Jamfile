@@ -1,0 +1,56 @@
+SubDir TOP src milkyplay ;
+
+SubDirHdrs $(PathMilkyPlay) drivers haiku ;
+
+Library libmilkyplay :
+	AudioDriver_NULL.cpp
+	AudioDriver_WAVWriter.cpp
+	AudioDriverBase.cpp
+	AudioDriverManager.cpp
+	ChannelMixer.cpp
+	ExporterXM.cpp
+	LittleEndian.cpp
+	Loader669.cpp
+	LoaderAMF.cpp
+	LoaderAMS.cpp
+	LoaderCBA.cpp
+	LoaderDBM.cpp
+	LoaderDIGI.cpp
+	LoaderDSM.cpp
+	LoaderDTM.cpp
+	LoaderFAR.cpp
+	LoaderGDM.cpp
+	LoaderIMF.cpp
+	LoaderIT.cpp
+	LoaderMDL.cpp
+	LoaderMOD.cpp
+	LoaderMTM.cpp
+	LoaderMXM.cpp
+	LoaderOKT.cpp
+	LoaderPLM.cpp
+	LoaderPSM.cpp
+	LoaderPTM.cpp
+	LoaderS3M.cpp
+	LoaderSTM.cpp
+	LoaderULT.cpp
+	LoaderUNI.cpp
+	LoaderXM.cpp
+	MasterMixer.cpp
+	PlayerBase.cpp
+	PlayerFAR.cpp
+	PlayerGeneric.cpp
+	PlayerIT.cpp
+	PlayerSTD.cpp
+	ResamplerFactory.cpp
+	SampleLoaderAbstract.cpp
+	SampleLoaderAIFF.cpp
+	SampleLoaderALL.cpp
+	SampleLoaderGeneric.cpp
+	SampleLoaderIFF.cpp
+	SampleLoaderWAV.cpp
+	XIInstrument.cpp
+	XMFile.cpp
+	XModule.cpp
+	# --- Haiku specific ---
+	drivers/haiku/AudioDriver_Haiku.cpp
+	;

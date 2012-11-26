@@ -1,0 +1,15 @@
+SubDir TOP src compression zziplib generic ;
+
+SubDirHdrs $(PathZZIP) ;
+
+Library libzzip :
+	dir.cpp
+	err.cpp
+	fetch.cpp
+	file.cpp
+	fseeko.cpp
+	info.cpp
+	plugin.cpp
+	stat.cpp
+	zip.cpp
+	;

@@ -44,6 +44,13 @@
 #include <sys/syslimits.h>
 #endif
 
+#ifdef __HAIKU__
+#include <Directory.h>
+#include <Entry.h>
+#include <FindDirectory.h>
+#include <Path.h>
+#endif
+
 SYSCHAR System::buffer[PATH_MAX+1];
 
 const SYSCHAR* System::getTempFileName()
@@ -73,6 +80,22 @@ const SYSCHAR* System::getTempFileName()
 
 const SYSCHAR* System::getConfigFileName()
 {
+#ifdef __HAIKU__
+	BPath path;
+	find_directory(B_USER_SETTINGS_DIRECTORY, &path);
+	path.Append("MilkyTracker");
+	
+	BEntry dirEntry(path.Path());
+	if (!dirEntry.Exists()) {
+		// MilkyTracker settings dir doesn't exist, create it
+		BDirectory temp;
+		temp.CreateDirectory(path.Path(), NULL);
+	}
+	
+	path.Append("milkytracker_config");
+	strcpy(buffer, path.Path());	
+	return buffer;
+#endif
 	char *home = getenv("HOME");
 	if(home)
 	{

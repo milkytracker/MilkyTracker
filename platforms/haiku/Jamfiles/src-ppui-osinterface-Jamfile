@@ -1,0 +1,24 @@
+SubDir TOP src ppui osinterface ;
+
+SubDirHdrs $(PathMilkyPlay) ;
+SubDirHdrs $(PathOSInterface) posix ;
+SubDirHdrs $(PathOSInterface) haiku ;
+SubDirHdrs $(PathPPUI) ;
+SubDirHdrs $(PathPPUI) haiku ;
+SubDirHdrs $(PathTracker) haiku ;
+SubDirHdrs - ;
+
+Library libosinterface :
+	PPPathFactory.cpp
+	posix/PPMutex.cpp
+	posix/PPPath_POSIX.cpp
+	posix/PPSystem_POSIX.cpp
+	# --- Haiku specific ---
+	haiku/SynchronousFilePanel.cpp
+	haiku/PPMessageBox_Haiku.cpp
+	haiku/PPOpenPanel_Haiku.cpp
+	haiku/PPQuitSaveAlert_Haiku.cpp
+	haiku/PPSavePanel_Haiku.cpp
+	haiku/WaitView.cpp
+	haiku/WaitWindow.cpp
+	;

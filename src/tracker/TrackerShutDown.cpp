@@ -83,6 +83,10 @@ bool Tracker::checkForChanges(ModuleEditor* moduleEditor/* = NULL*/)
 					moduleEditor->saveSong(file);
 				}
 			}
+			else if (err == PPSavePanel::ReturnCodeCANCEL)
+			{
+				return false;
+			}
 			
 		}
 		else if (err == PPSavePanel::ReturnCodeCANCEL)
