@@ -630,12 +630,12 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 				if (itSmp.Flg & 8)
 				{
-					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, cmwt==0x215 ? XModule::ST_PACKING_IT215 : XModule::ST_PACKING_IT))
+					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, (itSmp.Cvt & 4) ? XModule::ST_PACKING_IT215 : XModule::ST_PACKING_IT))
 					{
 						return MP_OUT_OF_MEMORY;
 					}
 				}
-				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen, cwt<=0x201 ? XModule::ST_UNSIGNED : XModule::ST_DEFAULT))
+				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen,smp[i].samplen, (itSmp.Cvt & 1) ? XModule::ST_DEFAULT : XModule::ST_UNSIGNED))
 				{
 					return MP_OUT_OF_MEMORY;
 				}					
@@ -651,12 +651,12 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 
 				if (itSmp.Flg & 8)
 				{
-					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, cmwt==0x215 ? (XModule::ST_PACKING_IT215 | XModule::ST_16BIT) : (XModule::ST_PACKING_IT | XModule::ST_16BIT)))
+					if (!module->loadSample(f, smp[i].sample, smp[i].samplen, smp[i].samplen, (itSmp.Cvt & 4) ? (XModule::ST_PACKING_IT215 | XModule::ST_16BIT) : (XModule::ST_PACKING_IT | XModule::ST_16BIT)))
 					{
 						return MP_OUT_OF_MEMORY;
 					}
 				}
-				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen<<1,smp[i].samplen, XModule::ST_16BIT | (cwt <= 0x201 ? XModule::ST_UNSIGNED : XModule::ST_DEFAULT)))
+				else if (!module->loadSample(f,smp[i].sample,smp[i].samplen<<1,smp[i].samplen, XModule::ST_16BIT | ((itSmp.Cvt & 1) ? XModule::ST_DEFAULT : XModule::ST_UNSIGNED)))
 				{
 					return MP_OUT_OF_MEMORY;
 				}					
