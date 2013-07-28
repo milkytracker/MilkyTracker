@@ -1272,7 +1272,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				
 				
 				// Perform note clipping for XM note range if necessary
-				if ((arpegLUT[r] != 0) && // Only done for arpeggio tick 1 & 2
+				if ((r != 0) && // Only done for arpeggio tick 1 & 2
 					(module->header.flags & XModule::MODULE_XMNOTECLIPPING) && // Only when enabled
 					(note + relnote > 96)) // Only when exceeding range
 				{
