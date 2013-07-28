@@ -1217,8 +1217,6 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 		{
 			if (chnInf->note)
 			{
-				mp_ubyte arpegLUT[3];
-				
 				mp_sint32 r = 0;
 				mp_sint32 note = 0, onote = chnInf->note;
 				//mp_sint32 c4spd = chnInf->c4spd;
@@ -1233,48 +1231,41 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				
 				if (playModeFT2)
 				{
-					// dammit, FT2 arpeggios are so screwed:
-					// the first 11 tick speeds and their arpeggio patterns (0 is note, 3 is fx digit 3, 2 is fx digit 2): 
-					// 0: Totally fucked up. Just test it. 
-					// 1: 0 
-					// 2: 02 
-					// 3: 032 
-					// 4: 0032 
-					// 5: 02320 
-					// 6: 032032 
-					// 7: 0032032 
-					// 8: 02032032 
-					// 9: 032032032 
-					// A: 0032032032 				
+					// Comment from Saga Musix/OpenMPT:
+					// FT2 arpeggio is really screwed because the arpeggio note offset is computed using a LUT
+					// instead of simply doing tick%3 or whatever. The problem is... this LUT only has 16 elements
+					// so with more than 16 ticks/row, it overflows. The vibrato table happens to be placed right
+					// after the arpeggio table in FT2, so it reads values from that table. The first value in the
+					// vibrato table is 0, all values after that are greater than 1, which is interpreted as the
+					// second arpeggio note.
+					// Since FT2 counts ticks backwards, this also explains why arpeggio is "upside down" in FT2
+					// compared to e.g. MOD, S3M, IT - the LUT is read back to front.
+					// Arpeggio at speed 0 is not emulated properly.
 					if (ticker == 0)
 						r = 0;
 					else
-                    {
-                        // Emulate FT2 behaviour (thanks Saga_Musix/OpenMPT)
-                        if((tickSpeed > 18) && (tickSpeed - ticker > 16))
-                          r = 2; // swedish tracker logic, I love it
-                        else
-                          r = myMod(ticker-tickSpeed,3);
-                    }
-
-					arpegLUT[0] = 0; arpegLUT[1] = 2; arpegLUT[2] = 1; 
+					{
+						// Emulate FT2 behaviour (thanks Saga_Musix/OpenMPT)
+						r = tickSpeed - ticker;
+						if(r > 16) r = 2;
+						else if(r == 16) r = 0;
+					    else r %= 3;
+					}
 				}
 				else
 				{
 					r = (ticker)%3;
-
-					arpegLUT[0] = 0; arpegLUT[1] = 1; arpegLUT[2] = 2; 
 				}
 				
-				if (arpegLUT[r] == 0)
+				if (r == 0)
 				{
 					note=chnInf->note; 
 				}
-				else if (arpegLUT[r] == 1)
+				else if (r == 1)
 				{
 					note=chnInf->note+x; 
 				}
-				else if (arpegLUT[r] == 2)
+				else if (r == 2)
 				{
 					note=chnInf->note+y; 
 				}
