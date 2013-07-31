@@ -19,7 +19,7 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  *  DecompressorGZIP.cpp
  *  milkytracker_universal
@@ -43,61 +43,61 @@ bool DecompressorGZIP::identify(XMFile& f)
 {
 	f.seek(0);
 	mp_dword id = f.readDword();
-	
+
 	// GZIP ID
 	return (id == 0x08088B1F);
 }
-	
+
 const PPSimpleVector<Descriptor>& DecompressorGZIP::getDescriptors(Hints hint) const
 {
 	descriptors.clear();
-	descriptors.add(new Descriptor("gz", "GZIP Archive")); 	
+	descriptors.add(new Descriptor("gz", "GZIP Archive"));
 	return descriptors;
-}	
-	
+}
+
 bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 {
-    gzFile *gz_input_file = NULL;
+	gzFile gz_input_file = NULL;
 	int len = 0;
 	pp_uint8 *buf;
-	
-	if ((gz_input_file = (gzFile*)gzopen (fileName.getStrBuffer(), "r")) == NULL)
+
+	if ((gz_input_file = gzopen (fileName.getStrBuffer(), "r")) == NULL)
 		return false;
-	
+
 	if ((buf = new pp_uint8[0x10000]) == NULL)
 		return false;
-	
+
 	XMFile fOut(outFileName, true);
-	
-    while (true) 
+
+	while (true)
 	{
-        len = gzread (*gz_input_file, buf, 0x10000);
-		
-        if (len < 0) 
+		len = gzread (gz_input_file, buf, 0x10000);
+
+		if (len < 0)
 		{
-	        delete[] buf;
-            return false;
-        }
-        
+			delete[] buf;
+			return false;
+		}
+
 		if (len == 0) break;
-		
+
 		fOut.write(buf, 1, len);
-    }
-	
-    if (gzclose (*gz_input_file) != Z_OK)
+	}
+
+	if (gzclose (gz_input_file) != Z_OK)
 	{
-	    delete[] buf;
-        return false;
-    }
-	
+		delete[] buf;
+		return false;
+	}
+
 	delete[] buf;
-	
+
 	return true;
 }
 
 DecompressorBase* DecompressorGZIP::clone()
 {
 	return new DecompressorGZIP(fileName);
-}	
+}
 
 static Decompressor::RegisterDecompressor<DecompressorGZIP> registerDecompressor;
