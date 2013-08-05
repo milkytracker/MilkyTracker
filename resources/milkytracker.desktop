@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=MilkyTracker
+Comment=Fast Tracker II inspired music tracker
+Exec=milkytracker
+Icon=milkytracker
+Terminal=false
+StartupNotify=false
+Categories=AudioVideo;Audio;AudioVideoEditing;;
