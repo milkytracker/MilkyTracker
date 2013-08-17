@@ -25,12 +25,12 @@ SampleLoaderIFF.h SampleLoaderWAV.h XIInstrument.h XMFile.h XModule.h \
 computed-blep.h drivers/alsa/AudioDriver_ALSA.h \
 drivers/jack/AudioDriver_JACK.h drivers/sdl/AudioDriver_SDL.h
 
-INCLUDES = -I$(top_srcdir)/src/milkyplay \
+AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay \
 -I$(top_srcdir)/src/milkyplay/drivers/generic \
 -I$(top_srcdir)/src/milkyplay/drivers/jack \
 -I$(top_srcdir)/src/milkyplay/drivers/sdl
 
-AM_CPPFLAGS=-DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX ${SDL_CFLAGS}
+AM_CPPFLAGS+=-DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX ${SDL_CFLAGS}
  \
 EXTRA_DIST = PlayerFAR.cpp PlayerFAR.h PlayerIT.cpp PlayerIT.h \
 drivers/generic/AudioDriver_PORTAUDIO.cpp \

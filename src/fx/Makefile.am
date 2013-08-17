@@ -10,5 +10,5 @@ ParticleBlobs.h ParticleEmitter.h ParticleFX.h ParticleFun.h ParticleScene.h \
 PictureGlow.h Starfield.h TCBSpline.h TCBSplineTest.h Texture.h TexturedGrid.h \
 TexturedPlane.h Twister.h TwisterFX.h fpmath.h
 
-INCLUDES = -I$(top_srcdir)/src/ppui -I$(top_srcdir)/src/ppui/osinterface \
+AM_CPPFLAGS = -I$(top_srcdir)/src/ppui -I$(top_srcdir)/src/ppui/osinterface \
 -I$(top_srcdir)/src/ppui/osinterface/posix

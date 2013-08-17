@@ -16,9 +16,9 @@ lha/slide.inl lha/unlha32.h
 
 EXTRA_DIST = DecompressorQT.mm AIFFWriter.m
 
-INCLUDES = -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
+AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 -I$(top_srcdir)/src/ppui/osinterface/posix/ \
 -I$(top_srcdir)/src/compression/lha -I$(top_srcdir)/src/compression/zziplib/ \
 -I$(top_srcdir)/src/compression/zziplib/generic
 
-#INCLUDES = -I../ppui -I../ppui/osinterface -I../ppui/osinterface/posix
+#AM_CPPFLAGS = -I../ppui -I../ppui/osinterface -I../ppui/osinterface/posix

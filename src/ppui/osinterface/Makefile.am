@@ -21,7 +21,7 @@ win32/WaitWindow_WIN32.cpp win32/WaitWindow_WIN32.h \
 wince/PPOpenPanel_WINCE.cpp wince/PPQuitSaveAlert_WINCE.cpp \
 wince/PPSavePanel_WINCE.cpp
 
-INCLUDES = -I$(top_srcdir)/src/ppui -I$(top_srcdir)/src/ppui/osinterface/posix \
+AM_CPPFLAGS = -I$(top_srcdir)/src/ppui -I$(top_srcdir)/src/ppui/osinterface/posix \
 -I$(top_srcdir)/src/ppui/osinterface/sdl
 
-AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}
+AM_CPPFLAGS += -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}

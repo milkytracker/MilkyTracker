@@ -8,4 +8,4 @@ zzip___dirent.h zzip_fetch.h zzip_file.h zzip___fnmatch.h zzip_format.h \
 zzip_fseeko.h zzip.h zzip___hints.h zzip_info.h zzip_lib.h zzip___mmap.h \
 zzip__msvc.h zzip_plugin.h zzip_stdint.h zzip_types.h
 
-INCLUDES = -I$(top_srcdir)/src/compression/zziplib
+AM_CPPFLAGS = -I$(top_srcdir)/src/compression/zziplib

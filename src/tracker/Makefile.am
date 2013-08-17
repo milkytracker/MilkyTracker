@@ -50,7 +50,7 @@ TrackerSettingsDatabase.h Undo.h VRand.h Zapper.h sdl/SDL_KeyTranslation.h
 
 AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}
 
-INCLUDES = -I$(top_srcdir)/src/${RTMIDI_DIR} -I$(top_srcdir)/src/compression \
+AM_CPPFLAGS += -I$(top_srcdir)/src/${RTMIDI_DIR} -I$(top_srcdir)/src/compression \
 -I$(top_srcdir)/src/fx -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 -I$(top_srcdir)/src/tracker -I$(top_srcdir)/src/midi/posix -I../midi/rtmidi \
 -I$(top_srcdir)/src/ppui/osinterface -I$(top_srcdir)/src/ppui/osinterface/sdl \
