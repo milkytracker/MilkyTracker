@@ -2075,19 +2075,23 @@ unused:
 		delete[] srcPattern;
 		delete[] dstPattern;	
 	}
-	
+
 	for (i = 0; i < header.smpnum; i++) 
 	{
 		mp_uint32 smplen = prep(smp[i].samplen) << 1;
+
+		// Ensure first 2 bytes are zero (for Protracker/Amiga
+		// compatibility)
+		f.writeWord(0);
 		
 		if (smp[i].type & 16)
 		{
-			for (mp_uint32 j = 0; j < smplen; j++)
+			for (mp_uint32 j = 2; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j) >> 8);
 		}
 		else
 		{
-			for (mp_uint32 j = 0; j < smplen; j++)
+			for (mp_uint32 j = 2; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j));
 		}
 	}
