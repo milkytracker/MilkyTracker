@@ -40,6 +40,7 @@
 #include "Seperator.h"
 #include "Container.h"
 #include "DialogPanning.h"
+#include "PatternEditorControl.h"
 
 #include "ControlIDs.h"
 
@@ -115,6 +116,7 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 
 				b = tracker.playerController->isPlayModeOptionEnabled(PlayerController::PlayModeOptionForcePTPitchLimit);
 				tracker.playerController->enablePlayModeOption(PlayerController::PlayModeOptionForcePTPitchLimit, !b);
+				tracker.getPatternEditorControl()->setPtNoteLimit(!b);
 				break;
 			
 			case QUICKOPTIONS_BUTTON_SETDEFAULTPANNING:
@@ -168,6 +170,7 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 						tracker.playerController->switchPlayMode(PlayerController::PlayMode_ProTracker3, !keepSettings());						
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(true);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(true);
+						tracker.getPatternEditorControl()->setPtNoteLimit(true);
 
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(true);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_BUTTON_SETDEFAULTPANNING)->enable(true);

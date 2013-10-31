@@ -102,6 +102,7 @@ private:
 		ScrollModes scrollMode;
 		pp_uint32 muteFade;
 		char zeroEffectCharacter;
+		bool ptNoteLimit;
 		
 		Properties() :
 			showFocus(true), 
@@ -120,7 +121,8 @@ private:
 			multiChannelEdit(false),
 			scrollMode(ScrollModeToEnd),
 			muteFade(32768),
-			zeroEffectCharacter('\xf4')
+			zeroEffectCharacter('\xf4'),
+			ptNoteLimit(false)
 		{
 		}
 	} properties;
@@ -280,6 +282,8 @@ public:
 	bool getAutoResize() { return patternEditor->getAutoResize(); }
 	// multichannel edit
 	void setMultiChannelEdit(bool b) { properties.multiChannelEdit = b; }
+	// Highlight notes outside the PT 3 octave limit
+	void setPtNoteLimit(bool l) { properties.ptNoteLimit = l; }
 
 	void setRowAdvance(bool b) { properties.rowAdvance = b; }
 	

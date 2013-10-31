@@ -599,18 +599,25 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 				g->drawHLine(px + cursorPositions[cursor.inner], px + cursorPositions[cursor.inner]+cursorSizes[cursor.inner], py + font->getCharHeight());
 			}
 
+			patternTools->setPosition(pattern, j, row);
+
+			PPColor noteCol = noteColor;
+
+			// Show notes in red if outside PT 3 octaves
+			if(properties.ptNoteLimit
+			   && ((patternTools->getNote() >= 71 && patternTools->getNote() < patternTools->getNoteOffNote())
+				   || patternTools->getNote() < 36))
+			{
+				noteCol.set(0xff,00,00);
+			}
+
 			if (muteChannels[j])
 			{
-				PPColor noteCol = noteColor;
 				noteCol.scaleFixed(properties.muteFade);
-				g->setColor(noteCol);
 			}
-			else
-				g->setColor(noteColor);
 
-			patternTools->setPosition(pattern, j, row);
+			g->setColor(noteCol);
 			patternTools->getNoteName(name, patternTools->getNote());
-
 			g->drawString(name,px, py);
 
 			px += fontCharWidth3x + properties.spacing;
