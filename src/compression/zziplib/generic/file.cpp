@@ -46,7 +46,7 @@
 int 
 zzip_file_close(ZZIP_FILE * fp)
 {
-    auto int self;
+    int self;
     ZZIP_DIR * dir = fp->dir;
     
     if (fp->method)
@@ -151,7 +151,7 @@ static int zzip_inflate_init(ZZIP_FILE *, struct zzip_dir_hdr *);
 ZZIP_FILE * 
 zzip_file_open(ZZIP_DIR * dir, zzip_char_t* name, int o_mode)
 {
-    auto int self;
+    int self;
     zzip_error_t err = (zzip_error_t)0;
     struct zzip_file * fp = 0;
     struct zzip_dir_hdr * hdr = dir->hdr0;

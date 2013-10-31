@@ -180,7 +180,7 @@ __zzip_fetch_disk_trailer(__zzipfd fd, zzip_off_t filesize,
     register int e;
     
 #ifndef _LOWSTK
-    auto char buffer[2*ZZIP_BUFSIZ];
+    char buffer[2*ZZIP_BUFSIZ];
     char* buf = buffer;
 #else
     char* buf = malloc(2*ZZIP_BUFSIZ);
@@ -362,7 +362,7 @@ __zzip_parse_root_directory(__zzipfd fd,
     struct zzip_dir_hdr ** hdr_return,
     zzip_plugin_io_t io)
 {
-    auto struct zzip_disk_entry dirent;
+    struct zzip_disk_entry dirent;
     struct zzip_dir_hdr * hdr;
     struct zzip_dir_hdr * hdr0;
     uint16_t * p_reclen = 0;
@@ -669,7 +669,7 @@ int
 __zzip_try_open(zzip_char_t* filename, int filemode, 
                 zzip_strings_t* ext, zzip_plugin_io_t io)
 {
-    auto char file[PATH_MAX];
+    char file[PATH_MAX];
     __zzipfd fd;
     zzip_size_t len = strlen (filename);
     
