@@ -410,8 +410,8 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 							{ 
 								chn->flags &= ~MP_SAMPLE_ONESHOT; 
 								chn->flags |= 1; 
-								chn->loopstart = chn->loopendcopy; 
-								chn->smppos = chn->loopend - myMod(chn->loopend - chn->smppos, chn->loopend-chn->loopstart); 
+								chn->loopstart = chn->loopendcopy;
+								chn->smppos = chn->smplen - myMod(chn->smplen - chn->smppos, chn->loopend-chn->loopstart); 
 							} 
 							else 
 								chn->flags&=~MP_SAMPLE_PLAY; 
@@ -479,7 +479,7 @@ void ChannelMixer::ResamplerBase::addChannel(TMixerChannel* chn, mp_sint32* buff
 								chn->flags |= 1; 
 								chn->loopend = chn->loopendcopy; 
 								/*ASSERT(chn->loopend-chn->loopstart > 0);*/
-								chn->smppos = ((chn->smppos - chn->loopstart)%(chn->loopend-chn->loopstart))+chn->loopstart; 
+								chn->smppos = ((chn->smppos - chn->smplen)%(chn->loopend-chn->loopstart))+chn->loopstart; 
 							} 
 							else 
 								chn->flags&=~MP_SAMPLE_PLAY; 
