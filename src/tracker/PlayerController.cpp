@@ -1011,7 +1011,7 @@ void PlayerController::setPanning(mp_ubyte chn, mp_ubyte pan)
 	
 	if (player && player->isPlaying())
 	{
-		for (mp_sint32 i = 0; i < numPlayerChannels; i++)
+		for (mp_sint32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 			player->setPanning((mp_ubyte)i, panning[i]);
 	}
 }
