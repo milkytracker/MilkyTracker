@@ -24,7 +24,6 @@
 		5A1DF3800D0EC52200231BCC /* TabTitleProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A1DF37E0D0EC52100231BCC /* TabTitleProvider.cpp */; };
 		5A33C2850CEE03A30065D11F /* PatternEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A33C2840CEE03A30065D11F /* PatternEditor.cpp */; };
 		5A35378F0D0D1AD80027B7B2 /* TabHeaderControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A35378D0D0D1AD80027B7B2 /* TabHeaderControl.cpp */; };
-		5A4D9AEB0CE4A94B00501C7C /* carton.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5A4D9AEA0CE4A94B00501C7C /* carton.icns */; };
 		5A4D9AEE0CE4A95500501C7C /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4D9AEC0CE4A95500501C7C /* main.nib */; };
 		5A4D9B060CE4A9CF00501C7C /* Carbon_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A4D9AFD0CE4A9CE00501C7C /* Carbon_main.cpp */; };
 		5A4D9B070CE4A9CF00501C7C /* iGetKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A4D9AFE0CE4A9CE00501C7C /* iGetKeys.cpp */; };
@@ -201,8 +200,6 @@
 		5AC0DDEE0D13F83900357B01 /* AudioDriverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AC0DDED0D13F83900357B01 /* AudioDriverBase.cpp */; };
 		5AC162CC0DA9285D00B12F15 /* RtAudio4Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AC162CB0DA9285D00B12F15 /* RtAudio4Impl.cpp */; };
 		5AC1657A0DA9306C00B12F15 /* RtAudio4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AC165770DA9306C00B12F15 /* RtAudio4.cpp */; };
-		5AC165A00DA93CB700B12F15 /* RtAudio3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AC1659D0DA93CB700B12F15 /* RtAudio3.cpp */; };
-		5AC165B00DA93CF500B12F15 /* RtAudio3Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AC165AF0DA93CF500B12F15 /* RtAudio3Impl.cpp */; };
 		5AE0124B09E6C0DC00C44BC3 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AE0124A09E6C0DC00C44BC3 /* CoreMIDI.framework */; };
 		5AE9FF620D22BC7B00F4FF6C /* Zapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AE9FF610D22BC7B00F4FF6C /* Zapper.cpp */; };
 		5AF0E1500D30D0FD000A4171 /* SampleEditorResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E14F0D30D0FD000A4171 /* SampleEditorResampler.cpp */; };
@@ -257,6 +254,7 @@
 		83190A2F18252C6F00CB69DF /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83190A2E18252C6F00CB69DF /* QuickTime.framework */; };
 		83190A3518252C9B00CB69DF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83190A3418252C9B00CB69DF /* AudioToolbox.framework */; };
 		83190A3B18252CBC00CB69DF /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83190A3A18252CBC00CB69DF /* QTKit.framework */; };
+		839AE90D18257F1D00C11BF6 /* carton.icns in Resources */ = {isa = PBXBuildFile; fileRef = 839AE90C18257F1D00C11BF6 /* carton.icns */; };
 		8D0C4E920486CD37000505A6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
@@ -304,7 +302,6 @@
 		5A35378E0D0D1AD80027B7B2 /* TabHeaderControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TabHeaderControl.h; path = ../../../src/tracker/TabHeaderControl.h; sourceTree = SOURCE_ROOT; };
 		5A4A5DB20D2EB46C0004B853 /* ResamplerCubic.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ResamplerCubic.h; path = ../../../src/milkyplay/ResamplerCubic.h; sourceTree = SOURCE_ROOT; };
 		5A4A5DB30D2EB46C0004B853 /* ResamplerSinc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ResamplerSinc.h; path = ../../../src/milkyplay/ResamplerSinc.h; sourceTree = SOURCE_ROOT; };
-		5A4D9AEA0CE4A94B00501C7C /* carton.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = carton.icns; sourceTree = "<group>"; };
 		5A4D9AED0CE4A95500501C7C /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/main.nib; sourceTree = "<group>"; };
 		5A4D9AFB0CE4A9B500501C7C /* milkytracker_universal.pch */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = milkytracker_universal.pch; sourceTree = "<group>"; };
 		5A4D9AFC0CE4A9CE00501C7C /* Carbon_Definitions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Carbon_Definitions.h; path = ../../../src/tracker/carbon/Carbon_Definitions.h; sourceTree = SOURCE_ROOT; };
@@ -652,10 +649,6 @@
 		5AC165770DA9306C00B12F15 /* RtAudio4.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio4.cpp; sourceTree = "<group>"; };
 		5AC165780DA9306C00B12F15 /* RtAudio4.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RtAudio4.h; sourceTree = "<group>"; };
 		5AC165790DA9306C00B12F15 /* RtError4.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RtError4.h; sourceTree = "<group>"; };
-		5AC1659D0DA93CB700B12F15 /* RtAudio3.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio3.cpp; sourceTree = "<group>"; };
-		5AC1659E0DA93CB700B12F15 /* RtAudio3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RtAudio3.h; sourceTree = "<group>"; };
-		5AC1659F0DA93CB700B12F15 /* RtError3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RtError3.h; sourceTree = "<group>"; };
-		5AC165AF0DA93CF500B12F15 /* RtAudio3Impl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio3Impl.cpp; sourceTree = "<group>"; };
 		5AE0124A09E6C0DC00C44BC3 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		5AE8460C0D25075600098708 /* fastfill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fastfill.h; path = ../../../src/ppui/fastfill.h; sourceTree = SOURCE_ROOT; };
 		5AE9FF600D22BC7B00F4FF6C /* Zapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Zapper.h; path = ../../../src/tracker/Zapper.h; sourceTree = SOURCE_ROOT; };
@@ -755,6 +748,7 @@
 		83190A2E18252C6F00CB69DF /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		83190A3418252C9B00CB69DF /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		83190A3A18252CBC00CB69DF /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		839AE90C18257F1D00C11BF6 /* carton.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = carton.icns; path = ../../../resources/pictures/carton.icns; sourceTree = SOURCE_ROOT; };
 		8D0C4E960486CD37000505A6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* MilkyTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MilkyTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -827,7 +821,7 @@
 			isa = PBXGroup;
 			children = (
 				5A4D9AEC0CE4A95500501C7C /* main.nib */,
-				5A4D9AEA0CE4A94B00501C7C /* carton.icns */,
+				839AE90C18257F1D00C11BF6 /* carton.icns */,
 				8D0C4E960486CD37000505A6 /* Info.plist */,
 				5A4D9D150CE4AB7600501C7C /* InfoPlist.strings */,
 			);
@@ -1248,7 +1242,6 @@
 				5A4D9B1F0CE4AA1800501C7C /* AudioDriver_RTAUDIO.cpp */,
 				5A4D9B200CE4AA1800501C7C /* AudioDriver_RTAUDIO.h */,
 				5AC162CB0DA9285D00B12F15 /* RtAudio4Impl.cpp */,
-				5AC165AF0DA93CF500B12F15 /* RtAudio3Impl.cpp */,
 				5A4D9B230CE4AA1800501C7C /* rtaudio */,
 			);
 			path = generic;
@@ -1257,9 +1250,6 @@
 		5A4D9B230CE4AA1800501C7C /* rtaudio */ = {
 			isa = PBXGroup;
 			children = (
-				5AC1659D0DA93CB700B12F15 /* RtAudio3.cpp */,
-				5AC1659E0DA93CB700B12F15 /* RtAudio3.h */,
-				5AC1659F0DA93CB700B12F15 /* RtError3.h */,
 				5AC165770DA9306C00B12F15 /* RtAudio4.cpp */,
 				5AC165780DA9306C00B12F15 /* RtAudio4.h */,
 				5AC165790DA9306C00B12F15 /* RtError4.h */,
@@ -1562,7 +1552,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A4D9AEB0CE4A94B00501C7C /* carton.icns in Resources */,
 				5A4D9AEE0CE4A95500501C7C /* main.nib in Resources */,
 				5A4D9D160CE4AB7600501C7C /* InfoPlist.strings in Resources */,
 				831909D91825271900CB69DF /* dhuf.inl in Resources */,
@@ -1576,6 +1565,7 @@
 				831909E11825271900CB69DF /* slide.inl in Resources */,
 				831909E31825271900CB69DF /* Makefile.am in Resources */,
 				831909E41825271900CB69DF /* Makefile.in in Resources */,
+				839AE90D18257F1D00C11BF6 /* carton.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1797,8 +1787,6 @@
 				5AFD263B0D98188600BCE269 /* TitlePageManager.cpp in Sources */,
 				5AC162CC0DA9285D00B12F15 /* RtAudio4Impl.cpp in Sources */,
 				5AC1657A0DA9306C00B12F15 /* RtAudio4.cpp in Sources */,
-				5AC165A00DA93CB700B12F15 /* RtAudio3.cpp in Sources */,
-				5AC165B00DA93CF500B12F15 /* RtAudio3Impl.cpp in Sources */,
 				5A0E39220DACA9C600EE0166 /* SectionSwitcher.cpp in Sources */,
 				5A0E3CD00DACB80000EE0166 /* RecorderLogic.cpp in Sources */,
 				8319097A1825242700CB69DF /* FileExtProvider.cpp in Sources */,
