@@ -1827,11 +1827,13 @@ static mp_uword swap(mp_uword x)
 
 static mp_uword prep(mp_sint32 v)
 {
+	const int MAXSIZE = 0xffff; // 64k maximum Amiga sample size (mod
+								// format will handle 128k however!)
 	if (v&1) v++;
-	if (v >= 65536*2)
-		v = 65536*2-1;
-		
-	return (mp_uword)(v>>1);
+	if (v > MAXSIZE)
+		v = MAXSIZE;
+
+	return (mp_uword)(v >> 1);
 }
 
 mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
