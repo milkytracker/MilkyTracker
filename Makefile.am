@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = src
 
 EXTRA_DIST = docs/ChangeLog.html docs/EqualizerDesign.doc docs/FAQ.html \

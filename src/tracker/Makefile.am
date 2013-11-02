@@ -64,9 +64,10 @@ $(top_builddir)/src/compression/DecompressorLHA.o \
 $(top_builddir)/src/compression/DecompressorPP20.o \
 $(top_builddir)/src/compression/DecompressorUMX.o \
 $(top_builddir)/src/compression/DecompressorZIP.o \
-$(top_builddir)/src/compression/MyIO.o $(top_builddir)/src/compression/PP20.o \
+$(top_builddir)/src/compression/zziplib/MyIO.o \
+$(top_builddir)/src/compression/PP20.o \
 $(top_builddir)/src/compression/ZipExtractor.o \
-$(top_builddir)/src/compression/unlha.o
+$(top_builddir)/src/compression/lha/unlha.o
 
 # add -lGL for experimental OpenGL support (and see ../ppui/Makefile.am)
 milkytracker_LDADD = $(top_builddir)/src/milkyplay/libmilkyplay.a \
