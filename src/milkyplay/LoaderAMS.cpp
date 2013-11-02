@@ -182,7 +182,7 @@ static void convertAMSEffects(mp_ubyte& effect, mp_ubyte& operand)
 
 mp_uint32 UnpackMethod1(mp_ubyte* input, mp_ubyte* output, mp_uint32 inputsize);
 
-static const mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
+static mp_sint32 loadAMSSamples(XModule* module, XMFileBase& f)
 {
 	// this will make code much easier to read
 	TXMHeader*		header = &module->header;

@@ -79,7 +79,7 @@ public:
 		}
 	}
 
-	PPSimpleVector* const clone()
+	PPSimpleVector* clone()
 	{
 		PPSimpleVector* clonedVector = new PPSimpleVector(numValuesAllocated, true);		
 		for (pp_int32 i = 0; i < numValues; i++)
