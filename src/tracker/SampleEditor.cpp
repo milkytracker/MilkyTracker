@@ -1531,7 +1531,7 @@ void SampleEditor::tool_reverseSample(const FilterParameters* par)
 		float h = f2;
 		f2 = f1; f1 = h;
 		setFloatSampleInWaveform(sStart + i, f1);
-		setFloatSampleInWaveform(sEnd - i, f2);
+		setFloatSampleInWaveform(sEnd - 1 - i, f2);
 	}
 				
 	finishUndo();	
