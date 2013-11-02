@@ -31,10 +31,14 @@
  *    Small fix in toSC
  *    Various keys added to toVK - rewritten to use array instead of select
  */
+#ifdef __APPLE__
+#define NOT_PC_KB
+#endif
+
+#include "SDL_KeyTranslation.h"
 
 bool isX11 = false;
 bool stdKb = true;
-#include "SDL_KeyTranslation.h"
 
 static const pp_uint16 sdl_keysym_to_vk[] = {
 	SDLK_CARET, 0xC0,
