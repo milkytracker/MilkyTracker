@@ -31,15 +31,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay \
 -I$(top_srcdir)/src/milkyplay/drivers/sdl
 
 AM_CPPFLAGS+=-DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX ${SDL_CFLAGS}
- \
+
 EXTRA_DIST = PlayerFAR.cpp PlayerFAR.h PlayerIT.cpp PlayerIT.h \
 drivers/generic/AudioDriver_PORTAUDIO.cpp \
 drivers/generic/AudioDriver_PORTAUDIO.h \
 drivers/generic/AudioDriver_RTAUDIO.cpp drivers/generic/AudioDriver_RTAUDIO.h \
-drivers/generic/RtAudio3Impl.cpp drivers/generic/RtAudio4Impl.cpp \
-drivers/generic/portaudio/portaudio.h drivers/generic/rtaudio/RtAudio3.cpp \
-drivers/generic/rtaudio/RtAudio3.h drivers/generic/rtaudio/RtAudio4.cpp \
-drivers/generic/rtaudio/RtAudio4.h drivers/generic/rtaudio/RtError3.h \
+drivers/generic/RtAudio4Impl.cpp drivers/generic/portaudio/portaudio.h \
+drivers/generic/rtaudio/RtAudio4.cpp drivers/generic/rtaudio/RtAudio4.h  \
 drivers/generic/rtaudio/RtError4.h drivers/generic/rtaudio/asio/asio.cpp \
 drivers/generic/rtaudio/asio/asio.h \
 drivers/generic/rtaudio/asio/asiodrivers.cpp \
@@ -47,8 +45,7 @@ drivers/generic/rtaudio/asio/asiodrivers.h \
 drivers/generic/rtaudio/asio/asiodrvr.h \
 drivers/generic/rtaudio/asio/asiolist.cpp \
 drivers/generic/rtaudio/asio/asiolist.h drivers/generic/rtaudio/asio/asiosys.h \
-drivers/generic/rtaudio/asio/ginclude.h \
-drivers/generic/rtaudio/asio/iasiodrv.h \
+drivers/generic/rtaudio/asio/ginclude.h drivers/generic/rtaudio/asio/iasiodrv.h \
 drivers/generic/rtaudio/asio/iasiothiscallresolver.cpp \
 drivers/generic/rtaudio/asio/iasiothiscallresolver.h \
 drivers/generic/rtaudio/oss/soundcard.h drivers/osx/AudioDriver_COREAUDIO.cpp \
