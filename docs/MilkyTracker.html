@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
-		<title>MilkyTracker Manual v0.90.85</title>
+		<title>MilkyTracker Manual v0.90.86</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<style type="text/css">
 			html, body
@@ -11,7 +11,7 @@
 				background-color: #fff;
 				color: #000;
 			}
-			
+
 			body
 			{
 				margin: auto;
@@ -79,16 +79,16 @@
  			{
 				vertical-align: top;
  			}
- 			
+
  			tr.even
  			{
  			}
- 			
+
 			tr.odd
 			{
-				background-color: #eee;	
+				background-color: #eee;
  			}
- 
+
  			td
 			{
 				padding-right: 0;
@@ -173,6 +173,12 @@
 				margin-top: 0 !important;
 			}
 
+			.tooltip
+			{
+				border-bottom: 1px dotted;
+				cursor: help;
+			}
+
 			.email
 			{
 				direction: rtl;
@@ -181,12 +187,12 @@
 		</style>
 	</head>
 	<body>
-		<h1>MilkyTracker Manual <span id="version" style="font-size: 10pt; font-weight: normal;">v0.90.85</span></h1>
+		<h1>MilkyTracker Manual <span id="version" style="font-size: 10pt; font-weight: normal;">v0.90.86</span></h1>
 		<p>
 			Hello and welcome to MilkyTracker, an open source multi-platform Fasttracker II compatible music tracker program. This document holds a lot of valuable information about the tracker but it's not a tracking manual. If you want to learn more about tracking and how it's done, the Internet is your friend. We host some resources on <a href="http://www.milkytracker.org/">MilkyTracker.org</a> as well.
 		</p>
 		<h4>Disclaimer:</h4>
-		<p>	
+		<p>
 			MilkyTracker is under development so use it at your own risk. The team is not responsible for any loss of data and/or hardware damage caused by MilkyTracker.
 		</p>
 		<p>
@@ -239,12 +245,14 @@
 			MilkyTracker currently runs on the following platforms:
 		</p>
 		<ul>
+			<li>AmigaOS 4</li>
+			<li>AROS</li>
 			<li>*BSD</li>
 			<li>GNU/Linux</li>
+			<li>Haiku</li>
 			<li>Mac OS X</li>
 			<li>Microsoft Windows 9x/NT/Me/200x/XP/Vista</li>
 			<li>Microsoft Windows CE 3.0+/Mobile</li>
-			<li>AmigaOS 4</li>
 		</ul>
 		<p>
 			It has also been known to run on:
@@ -420,12 +428,12 @@
 			</tr>
 		</table>
 		<p>
-			MilkyTracker's song export options are the same as Fasttracker II's but it is notable that, unlike FT2, <em>Milky saves Amiga compatible 4-channel .MODs</em>. MilkyTracker also features ProTracker 2.x and 3.x playback modes for .MODs.
+			MilkyTracker's song export options are the same as Fasttracker II's<!-- but it is notable that, unlike FT2, <em>Milky saves Amiga compatible 4-channel .MODs</em>-->. MilkyTracker also features ProTracker 2.x and 3.x playback modes for .MODs.
 		</p>
 		<h4>Export:</h4>
 		<table>
 			<tr class="even">
-				<td><em>.MOD</em></td><td>ProTracker boundaries, although can save 2&ndash;32 channels</td>
+				<td><em>.MOD</em></td><td>ProTracker boundaries (including 64kb max sample length), although can save 2&ndash;32 channels</td>
 			</tr>
 			<tr class="odd">
 				<td><em>.WAV</em></td><td>Microsoft/IBM PCM Waveform audio rendering</td>
@@ -473,18 +481,18 @@
 			MilkyTracker can load and save FT2's eXtended Instrument (<em>.XI</em>) format
 			and additionally import Gravis Ultrasound GF1 Patch (<em>.PAT</em>) files.
 		</p>
-		
 
 
 
-		
+
+
 		<h3><a id="patsntracks">IV. Patterns and Tracks</a></h3>
 		<p>
 			MilkyTracker handles FT2's eXtended Pattern (<em>.XP</em>) and eXtended Track (<em>.XT</em>) files with full compatibility.
 		</p>
-		
-		
-		
+
+
+
 		<h2><a id="shortcuts">5. Keyboard shortcuts</a></h2>
 		<p>
 			By user request, MilkyTracker features two edit modes. You can switch between these in the Config screen (Misc. tab). To learn about the differences and which might better suit you, read the appropriate sections below. There are a couple of shortcuts that are the same for both modes so let's clear those out of the way first:
@@ -506,18 +514,18 @@
 				<td><em>Ctrl-Shift-M</em></td><td>Invert muting</td>
 			</tr>
 			<tr class="even">
-				<td><em>Ctrl-Shift-T</em></td><td>Open a new tab</td>
-			</tr>
-			<tr class="odd">
 				<td><em>Shift-U</em></td><td>Un-mute all</td>
 			</tr>
 			<tr class="odd">
-				<td><em>Ctrl-Shift-W</em></td><td>Close current tab</td>
+				<td><em>Ctrl-Shift-T</em></td><td>Open a new tab</td>
 			</tr>
 			<tr class="even">
-				<td><em>Ctrl-Shift-Left</em></td><td>Select previous tab</td>
+				<td><em>Ctrl-Shift-W</em></td><td>Close current tab</td>
 			</tr>
 			<tr class="odd">
+				<td><em>Ctrl-Shift-Left</em></td><td>Select previous tab</td>
+			</tr>
+			<tr class="even">
 				<td><em>Ctrl-Shift-Right</em></td><td>Select next tab</td>
 			</tr>
 		</table>
@@ -895,10 +903,16 @@
 				<td><em>Ctrl-F10</em></td><td>Insert new order position</td>
 			</tr>
 			<tr class="even">
-				<td><em>Ctrl-F11</em></td><td>Decrease current order pattern number</td>
+				<td><em>Ctrl-F11</em></td><td>Decrease
+				current order pattern number</td>
 			</tr>
 			<tr class="odd">
 				<td><em>Ctrl-F12</em></td><td>Increase current order pattern number</td>
+			<tr class="even">
+				<td><em>Key below ESC</em></td><td>Increase Add value</td>
+			</tr>
+			<tr class="odd">
+				<td><em>Shift-key below ESC</em></td><td>Decrease Add value</td>
 			</tr>
 			<tr class="even">
 				<td><em>Ctrl-F</em></td><td>Toggle song follow</td>
@@ -913,10 +927,10 @@
 				<td><em>Ctrl-L</em></td><td>Toggle pattern change behavior (live mode)</td>
 			</tr>
 			<tr class="even">
-				<td><em>Shift-R</em></td><td>Toggle record mode</td>
+				<td><em>Shift-Ctrl-L</em></td><td>Load song</td>
 			</tr>
 			<tr class="odd">
-				<td><em>Shift-Ctrl-L</em></td><td>Load song</td>
+				<td><em>Shift-R</em></td><td>Toggle record mode</td>
 			</tr>
 			<tr class="even">
 				<td><em>Shift-Ctrl-S</em></td><td>Save song</td>
@@ -1018,13 +1032,19 @@
 				<td><em>Alt-F5</em></td><td>Paste block</td>
 			</tr>
 			<tr class="odd">
-				<td><em>Shift-F3</em></td><td>Cut track</td>
+				<td><em>Alt-F6</em></td><td>Porous paste block</td>
 			</tr>
 			<tr class="even">
-				<td><em>Shift-F4</em></td><td>Copy track</td>
+				<td><em>Shift-F3</em></td><td>Cut track</td>
 			</tr>
 			<tr class="odd">
+				<td><em>Shift-F4</em></td><td>Copy track</td>
+			</tr>
+			<tr class="even">
 				<td><em>Shift-F5</em></td><td>Paste track</td>
+			</tr>
+			<tr class="odd">
+				<td><em>Shift-F6</em></td><td>Porous paste track</td>
 			</tr>
 			<tr class="even">
 				<td><em>Ctrl-F3</em></td><td>Cut pattern</td>
@@ -1034,6 +1054,9 @@
 			</tr>
 			<tr class="even">
 				<td><em>Ctrl-F5</em></td><td>Paste pattern</td>
+			</tr>
+			<tr class="odd">
+				<td><em>Ctrl-F6</em></td><td>Porous paste pattern</td>
 			</tr>
 		</table>
 		<h4>Additional shortcuts (not found in FT2):</h4>
@@ -1196,7 +1219,7 @@
 				<td><em>Speed (Spd.)</em></td><td>Number of ticks per row.</td>
 			</tr>
 		</table>
-		
+
 		<h3><a id="commands">II. Effect commands</a></h3>
 		<h4>Standard commands (.MOD &amp;.XM)</h4>
 		<ul class="fx">
@@ -1302,21 +1325,20 @@
 					</p>
 					<h4>ProTracker 2/3</h4>
 					<p>
-						Base note is played for tick 0, then the semitone offset <em><code>x</code></em> for tick 1, then semitone offset <em><code>y</code></em> for tick 2. 
+						Base note is played for tick 0, then the semitone offset <em><code>x</code></em> for tick 1, then semitone offset <em><code>y</code></em> for tick 2.
 					</p>
 					<h4>Fasttracker II</h4>
 					<p>
-						Base note is played for tick 0, then the semitone offset <em><code>y</code></em> for tick 1, then semitone offset <em><code>x</code></em> for tick 2. 
+						Base note is played for tick 0, then the semitone offset <em><code>y</code></em> for tick 1, then semitone offset <em><code>x</code></em> for tick 2.
 					</p>
 				</td>
 			</tr>
 			<tr class="odd">
 				<td><em>Notes:</em></td>
 				<td>
-					<ul>
-						<li>Doesn't have effect memory and cannot be used without parameters.</li>
-						<li>In Fasttracker II, arpeggio logic fails when song speed is 16 (0x10) or higher. Using arpeggio at such speeds may cause unpredictable results across different players.</li>
-					</ul>
+						<p>In MilkyTracker <span class="tooltip" title="The pattern dots ARE zeroes. Bricks shat, I know right.">you don't have to</span> and indeed you CAN'T enter the effect digit 0. Just start with the parameter digits and the effect digit will be filled in.</p>
+						<p>Doesn't have effect memory and cannot be used without parameters.</p>
+						<p>In Fasttracker II, arpeggio logic fails when song speed is 16 (0x10) or higher. Using arpeggio at such speeds may cause unpredictable results across different players.</p>
 				</td>
 			</tr>
 			<tr>
@@ -1357,7 +1379,7 @@
 					</p>
 					<h4>Amiga frequencies</h4>
 					<p>
-						The slide speed also depends on the sample frequency. 
+						The slide speed also depends on the sample frequency.
 					</p>
 				</td>
 			</tr>
@@ -1606,7 +1628,7 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Sets the note stereo panning from far left <em><code>00</code></em> to far right <em><code>FF</code></em> overriding sample panning setting. 
+						Sets the note stereo panning from far left <em><code>00</code></em> to far right <em><code>FF</code></em> overriding sample panning setting.
 					</p>
 				</td>
 			</tr>
@@ -1764,7 +1786,7 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Sets the note volume <em><code>00</code></em> &ndash; <em><code>40</code></em> overriding sample volume setting. 
+						Sets the note volume <em><code>00</code></em> &ndash; <em><code>40</code></em> overriding sample volume setting.
 					</p>
 				</td>
 			</tr>
@@ -1810,7 +1832,7 @@
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
-						Unlike with the majority of effect parameters, here <em><code>xx</code></em> is a decimal value rather than hexadecimal. Hexadecimal values are converted to decimal (<em><code>D0F</code></em> jumps to row 15).
+						Unlike with the majority of effect parameters, here <em><code>xx</code></em> is a decimal value rather than hexadecimal. Hexadecimal values are accepted but the first digit is still interpreted as decimal so it's best to avoid hex this time.
 					</p>
 					<p>
 						The highest row number you can jump to is 63.
@@ -1989,7 +2011,7 @@
 							<td><em><code>x</code></em></td><td>ProTracker 2/3</td><td>Fasttracker II</td>
 						</tr>
 						<tr>
-							<td><em><code>0</code></em></td><td class="center">0</td><td class="center">-8</td>
+							<td><em><code>0</code></em></td><td class="center">0</td><td class="center">-128</td>
 						</tr>
 						<tr>
 							<td><em><code>1</code></em></td><td class="center">+16</td><td class="center">-112</td>
@@ -2004,37 +2026,37 @@
 							<td><em><code>4</code></em></td><td class="center">+64</td><td class="center">-64</td>
 						</tr>
 						<tr>
-							<td><em><code>5</code></em></td><td class="center">+80</td><td class="center">-32</td>
+							<td><em><code>5</code></em></td><td class="center">+80</td><td class="center">-48</td>
 						</tr>
 						<tr>
-							<td><em><code>6</code></em></td><td class="center">+96</td><td class="center">-16</td>
+							<td><em><code>6</code></em></td><td class="center">+96</td><td class="center">-32</td>
 						</tr>
 						<tr>
-							<td><em><code>7</code></em></td><td class="center">+112</td><td class="center">0</td>
+							<td><em><code>7</code></em></td><td class="center">+112</td><td class="center">-16</td>
 						</tr>
 						<tr>
-							<td><em><code>8</code></em></td><td class="center">-128</td><td class="center">+16</td>
+							<td><em><code>8</code></em></td><td class="center">-128</td><td class="center">0</td>
 						</tr>
 						<tr>
-							<td><em><code>9</code></em></td><td class="center">-112</td><td class="center">+32</td>
+							<td><em><code>9</code></em></td><td class="center">-112</td><td class="center">+16</td>
 						</tr>
 						<tr>
-							<td><em><code>A</code></em></td><td class="center">-96</td><td class="center">+48</td>
+							<td><em><code>A</code></em></td><td class="center">-96</td><td class="center">+32</td>
 						</tr>
 						<tr>
-							<td><em><code>B</code></em></td><td class="center">-80</td><td class="center">+64</td>
+							<td><em><code>B</code></em></td><td class="center">-80</td><td class="center">+48</td>
 						</tr>
 						<tr>
-							<td><em><code>C</code></em></td><td class="center">-64</td><td class="center">+80</td>
+							<td><em><code>C</code></em></td><td class="center">-64</td><td class="center">+64</td>
 						</tr>
 						<tr>
-							<td><em><code>D</code></em></td><td class="center">-48</td><td class="center">+96</td>
+							<td><em><code>D</code></em></td><td class="center">-48</td><td class="center">+80</td>
 						</tr>
 						<tr>
-							<td><em><code>E</code></em></td><td class="center">-32</td><td class="center">+112</td>
+							<td><em><code>E</code></em></td><td class="center">-32</td><td class="center">+96</td>
 						</tr>
 						<tr>
-							<td><em><code>F</code></em></td><td class="center">-16</td><td class="center">+128</td>
+							<td><em><code>F</code></em></td><td class="center">-16</td><td class="center">+112</td>
 						</tr>
 					</table>
 				</td>
@@ -2072,7 +2094,7 @@
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
-						The loop points need to be set on the same channel for them to work correctly. 
+						The loop points need to be set on the same channel for them to work correctly.
 					</p>
 					<h4>Fasttracker II</h4>
 					<p>
@@ -2382,7 +2404,7 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Sets the global song note volume <em><code>00</code></em> &ndash; <em><code>40</code></em>. 
+						Sets the global song note volume <em><code>00</code></em> &ndash; <em><code>40</code></em>.
 					</p>
 				</td>
 			</tr>
@@ -2600,10 +2622,10 @@
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>T</code></em></td>
 			</tr>
 			<tr>
-				<td><em><code>x</code></em> = ticks on</td>
+				<td><em><code>x</code></em> + 1 = ticks on</td>
 			</tr>
 			<tr>
-				<td><em><code>y</code></em> = ticks off</td>
+				<td><em><code>y</code></em> + 1 = ticks off</td>
 			</tr>
 			<tr class="odd">
 				<td><em>Example:</em></td>
@@ -2620,7 +2642,7 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Rapidly alters note volume from full to zero, <em><code>x</code></em> and <em><code>y</code></em> setting the duration of the states in ticks.
+						Rapidly alters note volume from full to zero, <em><code>x</code></em> + 1 and <em><code>y</code></em> + 1 setting the duration of the states in ticks.
 					</p>
 				</td>
 			</tr>
@@ -2662,7 +2684,7 @@
 				</td>
 			</tr>
 		</table>
-		
+
 		<h3><a id="fxX2x"><em>X2x</em> Extra fine portamento down</a></h3>
 		<table>
 			<tr>
@@ -2871,7 +2893,7 @@
 				</td>
 			</tr>
 		</table>
-		
+
 		<h3><a id="fxPx"><em>Px</em> Set note panning position</a></h3>
 		<table>
 			<tr>
@@ -3061,7 +3083,6 @@
 			MilkyTracker aims for full Fasttracker II compatibility in its replay but this goal is easier set than achieved. Some of the original effect implementations defy all documentation and logic. Here's a list of current replay differences between FT2 and Milky:
 		</p>
 		<ul>
-			<li><em><code>0xy</code></em> arpeggio when song speed is greater than or equal to 16</li>
 			<li><em><code>E3x</code></em> glissando control is not implemented.</li>
 			<li><em><code>E4x</code></em> vibrato control is not implemented.</li>
 			<li><em><code>E7x</code></em> tremolo control is not implemamented.</li>
@@ -3081,18 +3102,14 @@
 		</h4>
 		<table>
 			<tr>
-		
+
 				<td><em>pailes</em></td><td>main code</td>
 			</tr>
 			<tr>
-				<td><em>Deltafire</em></td><td>SDL port and additional code</td>
-			</tr>
-			<tr>
-				<td><em>jua</em></td><td>Haiku port</td>
+				<td><em>Deltafire</em></td><td>maintainer since v0.90.85</td>
 			</tr>
 			<tr>
 				<td><em>kenet</em></td><td>graphics</td>
-		
 			</tr>
 			<tr>
 				<td><em>raina</em></td><td>website, documentation maintenance and additional graphics</td>
@@ -3100,7 +3117,6 @@
 			<tr>
 				<td><em>Kmuland</em></td><td>promotion, support and additional web graphics</td>
 			</tr>
-		
 			<tr>
 				<td><em>Strobe</em></td><td>IRC channel administration, demo videos, winning compos</td>
 			</tr>
@@ -3111,6 +3127,7 @@
 		<p>
 			Thanks to the following people for their contribution to the project:
 			Varthall/<a href="http://www.uprough.net/">Up Rough</a> for the AmigaOS port,
+			jua for the Haiku port,
 			tarzeau for Debian and Ubuntu packaging,
 			ehaupt for FreeBSD port,
 			Gary P. Scavone for RtAudio and RtMidi,
@@ -3124,6 +3141,7 @@
 			jix,
 			Evil-Ville,
 			Spot,
+			sverx,
 
 			the entire Titan crew for support
 			and everybody who donated or dropped a letter.
@@ -3134,11 +3152,12 @@
 
 		<h2><a id="contact">10. Contact</a></h2>
 		<p>
-			You can contact the MilkyTracker team through the forum at <a href="http://www.milkytracker.org/?community">http://www.milkytracker.org/?community</a> or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
+			You can contact the MilkyTracker team by email (<span class="email">ten.rekcartyklim@troppus</span>), through the forum at <a href="http://www.milkytracker.org/?community">http://www.milkytracker.org/?community</a> or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
 		</p>
 
 
-
+<!-- Removed; not sure this address still works and pailes is
+		currently missing.
 		<h2><a id="donations">11. Donations</a></h2>
 		<p>
 			A word from pailes:
@@ -3148,8 +3167,8 @@
 			The PayPal account is <span class="email">ten.enobxn@retep</span>. Donations of any amount are appreciated and they keep me going. Also, when you donate, your feature requests will always be on top of my list - isn't that a neat offer?
 		</p>
 		<p>
-			Don't worry, MilkyTracker will always be free because I really enjoy working on it, but you should remember that FT2 wasn't real freeware either. 
-		</p>
+			Don't worry, MilkyTracker will always be free because I really enjoy working on it, but you should remember that FT2 wasn't real freeware either.
+		</p-->
 
 
 
