@@ -1827,8 +1827,7 @@ static mp_uword swap(mp_uword x)
 
 static mp_uword prep(mp_sint32 v)
 {
-	const int MAXSIZE = 0xffff; // 64k maximum Amiga sample size (mod
-								// format will handle 128k however!)
+	const int MAXSIZE = 0x1ffff;
 	if (v&1) v++;
 	if (v > MAXSIZE)
 		v = MAXSIZE;

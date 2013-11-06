@@ -3162,7 +3162,7 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 									 "Song contains incompatible samples \n\n"\
 									 "Check for the following conditions:\n"\
 									 "* No 16 bit samples                \n"\
-									 "* All samples are below 128kb      \n"\
+									 "* All samples are below 64kb      \n"\
 									 "* No ping-pong looping             \n"\
 									 "* Panning is set to 0x80 (middle)  \n"\
 									 "* Relative note is C-4 (number 0)  \n\nSave anyway?",

@@ -3128,7 +3128,7 @@ insFound:
 	// step 3: incompatible samples
 	for (i = 0; i < MP_MAXSAMPLES; i++)
 	{
-		if (smp[i].samplen >= 128*1024 || (smp[i].samplen &&
+		if (smp[i].samplen >= 0xffff || (smp[i].samplen &&
 			((smp[i].type & 16) || (smp[i].type & 3) == 2 ||
 			smp[i].relnote || smp[i].pan != 0x80)))
 			return IsPTCompatibleErrorCodeIncompatibleSamples;
