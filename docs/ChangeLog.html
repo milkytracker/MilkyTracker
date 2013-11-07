@@ -57,6 +57,54 @@
 	<body>
 		<h1>MilkyTracker ChangeLog</h1>
 
+		<h2>07/11/13 ( v0.90.86):</h2>
+
+		<h3>Whats New:</h3>
+		<ul>
+			<li>Unsafe notes now shown in red when "PT 3 octave limit"
+			option enabled</li>
+			<li>Haiku port (thanks jua)</li>
+			<li>Additional FT2 shortcuts
+				(<a href="http://modarchive.org/forums/index.php?topic=2713.0">forum
+				post</a>)</li>
+			<li>Android port (thanks guillaum1)</li>
+			<li>Jack driver now connects to first available physical
+			device</li>
+			<li>MilkyTracker source code now hosted on <a href="https://github.com/Deltafire/MilkyTracker">GitHub</a>
+		</ul>
+
+		<h3>Bugs Fixed:</h3>
+		<ul>
+			<li>Loss of data when using 'backward' sample filter
+			(<a href="http://forums.modarchive.org/index.php?topic=3093.0">forum post</a>)</li>
+			<li>Warning displayed when exporting .mod
+				files with samples over 64k
+				(<a href="http://forums.modarchive.org/index.php?topic=3235.0">forum post</a>)</li>
+			<li>Default panning settings applied when adding channels
+			(<a href="http://forums.modarchive.org/index.php?topic=3399.0">forum post</a>)</li>
+			<li>One-shot looping now works correctly
+			(<a href="http://forums.modarchive.org/index.php?topic=3391.0">forum post</a>)</li>
+			<li>First 2 bytes of samples cleared to zero when exporting to
+				MOD (Amiga compatibility)</li>
+			<li>FT2 weirdness emulated when using the arpreggio command
+			(thanks Saga_Musix)</li>
+			<li>In live mode, don't switch from pattern to song play when
+			selecting a new pattern from the order list</li>
+			<li>Check config file is open for writing before attempting to save
+				to it.</li>
+			<li>Don't assume BACKUPxx.XM has been saved</li>
+			<li>Crash when storing colour
+					presets (<a href="http://forums.modarchive.org/index.php?topic=3054.0">forum
+					post</a>)</li>
+			<li>Segfault when loading XMs with zero-length loop
+				(<a href="http://forums.modarchive.org/index.php?topic=3063.0">forum
+				post</a>)</li>
+			<li>Emulate FT2 behaviour for arpregios when speed&gt;18</li>
+			<li>Able to load some non-standard S3M files</li>
+			<li>Incorrect sample format assumptions in IT loader (thanks Saga_Musix)</li>
+			<li>Various build warnings and errors</li>
+		</ul>
+
 		<h2>01/01/10 (v0.90.85):</h2>
 
 		<h3>Whats New:</h3>

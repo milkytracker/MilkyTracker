@@ -7,7 +7,8 @@ LoaderDBM.cpp LoaderDIGI.cpp LoaderDSM.cpp LoaderDTM.cpp LoaderFAR.cpp \
 LoaderGDM.cpp LoaderIMF.cpp LoaderIT.cpp LoaderMDL.cpp LoaderMOD.cpp \
 LoaderMTM.cpp LoaderMXM.cpp LoaderOKT.cpp LoaderPLM.cpp LoaderPSM.cpp \
 LoaderPTM.cpp LoaderS3M.cpp LoaderSTM.cpp LoaderULT.cpp LoaderUNI.cpp \
-LoaderXM.cpp MasterMixer.cpp PlayerBase.cpp PlayerGeneric.cpp PlayerSTD.cpp \
+LoaderXM.cpp MasterMixer.cpp PlayerBase.cpp PlayerGeneric.cpp PlayerFAR.cpp \
+PlayerIT.cpp PlayerSTD.cpp \
 ResamplerFactory.cpp SampleLoaderAIFF.cpp SampleLoaderALL.cpp \
 SampleLoaderAbstract.cpp SampleLoaderGeneric.cpp SampleLoaderIFF.cpp \
 SampleLoaderWAV.cpp XIInstrument.cpp XMFile.cpp XModule.cpp \
@@ -17,7 +18,8 @@ drivers/sdl/AudioDriver_SDL.cpp
 noinst_HEADERS = AudioDriverBase.h AudioDriverManager.h \
 AudioDriver_COMPENSATE.h AudioDriver_NULL.h AudioDriver_WAVWriter.h \
 ChannelMixer.h LittleEndian.h Loaders.h MasterMixer.h MilkyPlay.h \
-MilkyPlayCommon.h MilkyPlayTypes.h Mixable.h PlayerBase.h PlayerGeneric.h \
+MilkyPlayCommon.h MilkyPlayResults.h MilkyPlayTypes.h Mixable.h \
+PlayerBase.h PlayerGeneric.h PlayerFAR.h PlayerIT.h \
 PlayerSTD.h ResamplerAmiga.h ResamplerCubic.h ResamplerFactory.h \
 ResamplerFast.h ResamplerMacros.h ResamplerSinc.h SampleLoaderAIFF.h \
 SampleLoaderALL.h SampleLoaderAbstract.h SampleLoaderGeneric.h \
@@ -32,8 +34,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay \
 
 AM_CPPFLAGS+=-DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX ${SDL_CFLAGS}
 
-EXTRA_DIST = PlayerFAR.cpp PlayerFAR.h PlayerIT.cpp PlayerIT.h \
-drivers/generic/AudioDriver_PORTAUDIO.cpp \
+EXTRA_DIST = drivers/generic/AudioDriver_PORTAUDIO.cpp \
 drivers/generic/AudioDriver_PORTAUDIO.h \
 drivers/generic/AudioDriver_RTAUDIO.cpp drivers/generic/AudioDriver_RTAUDIO.h \
 drivers/generic/RtAudio4Impl.cpp drivers/generic/portaudio/portaudio.h \
