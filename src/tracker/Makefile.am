@@ -91,7 +91,22 @@ carbon/iGetKeys.h win32/PreferencesDialog.cpp win32/PreferencesDialog.h \
 win32/ThreadTimer.cpp win32/ThreadTimer.h win32/Win32_main.cpp \
 win32/Win32_resource.h win32/Win32_resources.rc wince/ButtonMapper.cpp \
 wince/ButtonMapper.h wince/VirtualKeyToScanCodeTable.cpp \
+wince/Logger.cpp wince/Logger.h wince/Simple.h \
 wince/VirtualKeyToScanCodeTable.h wince/WaitStateThread.cpp \
 wince/WaitStateThread.h wince/WinCE_NEWRES.H wince/WinCE_ThreadTimer.cpp \
 wince/WinCE_ThreadTimer.h wince/WinCE_main.cpp wince/WinCE_main.h \
 wince/WinCE_resource.h
+
+# Haiku
+EXTRA_DIST += haiku/Haiku_main.cpp haiku/MilkyApplication.cpp \
+haiku/MilkyApplication.h \
+haiku/MilkySettings/InterfaceSettingsView.cpp \
+haiku/MilkySettings/InterfaceSettingsView.h \
+haiku/MilkySettings/MidiSettingsView.cpp \
+haiku/MilkySettings/MidiSettingsView.h \
+haiku/MilkySettings/MilkySettingsApplication.cpp \
+haiku/MilkySettings/MilkySettingsApplication.h \
+haiku/MilkySettings/SettingsMessages.h \
+haiku/MilkySettings/SettingsWindow.cpp \
+haiku/MilkySettings/SettingsWindow.h haiku/MilkySettings/main.cpp \
+haiku/MilkyTracker.rdef haiku/Tools.cpp

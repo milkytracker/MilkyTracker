@@ -1,0 +1,19 @@
+C++ = g++ ;
+C++FLAGS = -O2 -DMILKYTRACKER -D__HAIKU__ ;
+LINKFLAGS = -Xlinker -soname=_APP_ ;
+
+# Paths to sources, used as include paths
+PathCompression = $(TOP)/src/compression ;
+PathZZIP        = $(TOP)/src/compression/zziplib ;
+PathFX          = $(TOP)/src/fx ;
+PathMidi        = $(TOP)/src/midi ;
+PathMilkyPlay   = $(TOP)/src/milkyplay ;
+PathPPUI        = $(TOP)/src/ppui ;
+PathOSInterface = $(TOP)/src/ppui/osinterface ;
+PathTracker     = $(TOP)/src/tracker ;
+
+actions FinishExecutable {
+	rc $(2) -o resources.rsrc
+	xres -o $(1) resources.rsrc
+	mimeset -f $(1)
+}

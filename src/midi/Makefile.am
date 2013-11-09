@@ -15,4 +15,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 
 EXTRA_DIST = win32/LongMsg.cpp win32/LongMsg.h win32/MIDIInDevice.cpp \
 win32/MIDIInDevice.h win32/MIDIMsg.h win32/MidiReceiver_win32.cpp \
-win32/MidiReceiver_win32.h win32/ShortMsg.cpp win32/ShortMsg.h win32/midi.h
+win32/MidiReceiver_win32.h win32/ShortMsg.cpp win32/ShortMsg.h \
+win32/midi.h haiku/MidiSetup.cpp haiku/MidiSetup.h \
+haiku/MilkyMidiConsumer.cpp haiku/MilkyMidiConsumer.h

@@ -53,3 +53,7 @@ drivers/generic/rtaudio/oss/soundcard.h drivers/osx/AudioDriver_COREAUDIO.cpp \
 drivers/osx/AudioDriver_COREAUDIO.h drivers/psp/AudioDriver_PSP.cpp \
 drivers/psp/AudioDriver_PSP.h drivers/windows/AudioDriver_MMSYSTEM.cpp \
 drivers/windows/AudioDriver_MMSYSTEM.h
+
+# Haiku
+EXTRA_DIST += drivers/haiku/AudioDriver_Haiku.cpp \
+drivers/haiku/AudioDriver_Haiku.h

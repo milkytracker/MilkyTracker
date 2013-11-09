@@ -58,6 +58,8 @@ platforms/android/setup.sh
 # Haiku
 EXTRA_DIST += \
 platforms/haiku/Add_Jamfiles.sh \
+platforms/haiku/Jamfiles/Jamfile \
+platforms/haiku/Jamfiles/Jamrules \
 platforms/haiku/Jamfiles/src-compression-Jamfile \
 platforms/haiku/Jamfiles/src-compression-zzlib-generic-Jamfile \
 platforms/haiku/Jamfiles/src-fx-Jamfile \
@@ -67,7 +69,8 @@ platforms/haiku/Jamfiles/src-ppui-Jamfile \
 platforms/haiku/Jamfiles/src-ppui-osinterface-Jamfile \
 platforms/haiku/Jamfiles/src-tracker-haiku-MilkySettings-Jamfile \
 platforms/haiku/Jamfiles/src-tracker-Jamfile \
-platforms/haiku/ReadMe_-_How_to_build_for_Haiku
+platforms/haiku/ReadMe_-_How_to_build_for_Haiku \
+platforms/haiku/Remove_Jamfiles.sh
 
 # OSX
 EXTRA_DIST += \
@@ -76,6 +79,7 @@ platforms/osx/milkytracker_sdl.zip \
 platforms/osx/milkytracker_universal/English.lproj/main.nib/classes.nib \
 platforms/osx/milkytracker_universal/English.lproj/main.nib/info.nib \
 platforms/osx/milkytracker_universal/English.lproj/main.nib/objects.xib \
+platforms/osx/milkytracker_universal/Info.plist \
 platforms/osx/milkytracker_universal/milkytracker_universal.pch \
 platforms/osx/milkytracker_universal/milkytracker_universal.xcodeproj/project.pbxproj \
 platforms/osx/milkytracker_universal/version.plist
@@ -117,4 +121,52 @@ resources/pictures/IDC-MicroKnight.bmp \
 resources/pictures/milky2.png \
 resources/pictures/milkytracker.png \
 resources/pictures/oldschool.icns \
-resources/pictures/Setup_Blue_Screen.ico
+resources/pictures/Setup_Blue_Screen.ico \
+resources/pictures/athena_ft2_style_12x12.png \
+resources/fonts/ARIEL.8X8 \
+resources/fonts/ATHENA.12X12 \
+resources/fonts/ATHENA_SPACED.12X12 \
+resources/fonts/DISORDERTRACKER2.8X8 \
+resources/fonts/DX-FUTUR.8X8 \
+resources/fonts/EK-MAC.8X8 \
+resources/fonts/EK-SPACE.8X8 \
+resources/fonts/FINELINE.8X8 \
+resources/fonts/FN-ICE.8X8 \
+resources/fonts/FN-LOWER.8X8 \
+resources/fonts/FN-ROUND.8X8 \
+resources/fonts/GRAFPAPR.8X8 \
+resources/fonts/GTHS-BUG.8X8 \
+resources/fonts/IDC-Harmonica.12X12 \
+resources/fonts/IDC-Harmonica.8X8 \
+resources/fonts/IDC-Hoodlum.8X8 \
+resources/fonts/IDC-MicroKnight.12X12 \
+resources/fonts/IDC-MicroKnight.8X8 \
+resources/fonts/IDC-Topaz1.3.8X8 \
+resources/fonts/IDC-Topaz2.0.8X8 \
+resources/fonts/INVERSE.8X8 \
+resources/fonts/J-CURSE.8X8 \
+resources/fonts/J-ELECTR.8X8 \
+resources/fonts/J-FLUX.8X8 \
+resources/fonts/J-TERMO.8X8 \
+resources/fonts/KANAFONT.8X8 \
+resources/fonts/MOTIF.8X8 \
+resources/fonts/NOTCH.8X8 \
+resources/fonts/PEANUT.8X8 \
+resources/fonts/PERISOFT.8X8 \
+resources/fonts/REZ-ASCII.8X8 \
+resources/fonts/SCRIPT.8X8 \
+resources/fonts/SMALLCAP.8X8 \
+resources/fonts/THICK.8X8 \
+resources/fonts/TINY.6X5 \
+resources/fonts/TINY_UPPERCASE.6x5 \
+resources/fonts/XTSAMP.8X8 \
+resources/fonts/ZERO.8X8 \
+resources/fonts/ZIRCFONT.8X8 \
+resources/milkytracker.desktop \
+resources/music/milky.xm \
+resources/music/slumberjack.xm \
+resources/music/sv_ttt.xm \
+resources/music/theday.xm \
+resources/music/universalnetwork2_real.xm \
+resources/pictures/16note2.ico
+

@@ -31,6 +31,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/ppui/osinterface \
 # probably required)
 AM_CPPFLAGS += ${SDL_CFLAGS} -DMILKYTRACKER -D__LINUX__ -D__THREADTIMER__
 
-EXTRA_DIST = carbon/DisplayDevice_CARBON.cpp carbon/DisplayDevice_CARBON.h \
+EXTRA_DIST = carbon/DisplayDevice_CARBON.cpp \
+carbon/DisplayDevice_CARBON.h Graphics_OGL.cpp Graphics_OGL.h \
 win32/DisplayDevice_WIN32.cpp win32/DisplayDevice_WIN32.h \
-wince/DisplayDevice_GAPI.cpp wince/DisplayDevice_GAPI.h
+wince/DisplayDevice_GAPI.cpp wince/DisplayDevice_GAPI.h	\
+haiku/DisplayDevice_Haiku.cpp haiku/DisplayDevice_Haiku.h \
+haiku/KeyCodeMap.cpp haiku/KeyCodeMap.h haiku/MilkyView.cpp \
+haiku/MilkyView.h haiku/MilkyWindow.cpp haiku/MilkyWindow.h \
+sdl/DisplayDeviceOGL_SDL.cpp sdl/DisplayDeviceOGL_SDL.h
+

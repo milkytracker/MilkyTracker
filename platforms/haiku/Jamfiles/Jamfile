@@ -1,0 +1,11 @@
+SubDir TOP ;
+
+SubInclude TOP src compression ;
+SubInclude TOP src compression zziplib generic ;
+SubInclude TOP src fx ;
+SubInclude TOP src midi ;
+SubInclude TOP src milkyplay ;
+SubInclude TOP src ppui ;
+SubInclude TOP src ppui osinterface ;
+SubInclude TOP src tracker ;
+SubInclude TOP src tracker haiku MilkySettings ;

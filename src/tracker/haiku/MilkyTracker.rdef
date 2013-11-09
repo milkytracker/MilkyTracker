@@ -1,0 +1,66 @@
+resource app_signature "application/x-vnd.Milky-MilkyTracker";
+
+resource app_flags B_MULTIPLE_LAUNCH;
+
+resource app_version
+{
+	major = 0,
+	middle = 90,
+	minor = 85,
+	variety = B_APPV_DEVELOPMENT,
+	internal = 0,
+	short_info = "MilkyTracker",
+	long_info = "MilkyTracker"
+};
+
+resource file_types message
+{
+	"types" = "audio/x-669",
+	"types" = "audio/x-amf",
+	"types" = "audio/x-ams",
+	"types" = "audio/x-cba",
+	"types" = "audio/x-dbm",
+	"types" = "audio/x-digi",
+	"types" = "audio/x-dsm",
+	"types" = "audio/x-dtm",
+	"types" = "audio/x-far",
+	"types" = "audio/x-gdm",
+	"types" = "audio/x-gmc",
+	"types" = "audio/x-imf",
+	"types" = "audio/x-it",
+	"types" = "audio/x-mdl",
+	"types" = "audio/x-mod",
+	"types" = "audio/x-mtm",
+	"types" = "audio/x-mxm",
+	"types" = "audio/x-okt",
+	"types" = "audio/x-plm",
+	"types" = "audio/x-psm",
+	"types" = "audio/x-ptm",
+	"types" = "audio/x-s3m",
+	"types" = "audio/x-sfx",
+	"types" = "audio/x-stm",
+	"types" = "audio/x-ult",
+	"types" = "audio/x-uni",
+	"types" = "audio/x-xm"
+};
+
+/* Vector icon created by PulkoMandy */
+resource vector_icon {
+	$"6E63696609050004017402000602B772D83D38A6BD97CCB7D8B64A71894A689C"
+	$"00D4F5F5FF46D3EC0200060238E9203CA6E8BD037C394EBB4B224D4A495A0013"
+	$"9FB8FF048AA202000602BA5D113612D8B936AEBDA9B54AFE784B9845000FA6C2"
+	$"FF0B778A0200060234E5DA38ADBFBB9EB437EA864AFEE34B2C5E000499B4FF22"
+	$"BAD502000202B504C13BBEB1BD9B53B6E83E4A1A204B5E8900FBFFC083FF00A7"
+	$"FFC902000202B5818638F95EBD4FAAB9E7414A06ED4A930F00FFDAC0D4FFFFAF"
+	$"89FF0117007FED0C0608B6A626325131572B54375A405E4E5031442A2E240606"
+	$"FE0F40604A604A60C45760C66D5DC553CC0B555D5B565F57CC59C694584C5C4A"
+	$"5649504A5348504A0605B60126345131572B54375A405E3B0A162952264C2647"
+	$"2A522C52263F263328BAC52E5330542E363538335635573C3A403B404438583A"
+	$"59404E40553B5B0A04405E44544536403B0A0444544E504E3145360A03405E44"
+	$"544E500204323F3740B82D3E2A422A3F2A45324AB822C30E384C3C473C4B3C43"
+	$"0A0E283A284A2C4C2C403042304C344E3442384438503C523C44384238400804"
+	$"403C4E30442A403C08042634403C442A2E240808424642404E364E3C4A404A4C"
+	$"465046420A0A010101000A0001001001178400040A0202020A000A060103081F"
+	$"FF0A0201071001178400040A0701070813FF0A030104000A04020509000A0501"
+	$"06000A0802080B00"
+};
