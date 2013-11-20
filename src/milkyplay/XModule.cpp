@@ -160,6 +160,7 @@ void TXMSample::postProcessSamples()
 {
 	mp_ubyte buffer[8];
 	mp_sint32 loopend = loopstart + looplen;
+	mp_sint32 samplen = this->samplen;
 
 	// this is in fact not good
 	if (loopend > samplen)
