@@ -126,7 +126,7 @@ void Tracker::showSplash()
 		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
 #endif
 		shade+=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
+		deltaT = abs((signed)::PPGetTickCount() - startTime);
 		if (!deltaT) deltaT++;
 	}
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
@@ -157,7 +157,7 @@ void Tracker::hideSplash()
 		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
 #endif
 		shade-=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
+		deltaT = abs((signed)::PPGetTickCount() - startTime);
 		if (!deltaT) deltaT++;
 	}
 	screen->clear(); 	

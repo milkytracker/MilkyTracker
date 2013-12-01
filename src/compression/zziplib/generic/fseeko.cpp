@@ -144,7 +144,7 @@ zzip_entry_strdup_name(ZZIP_ENTRY* entry)
 	name[len] = '\0';
 	return name;
     }
-    ___ auto struct zzip_file_header header;
+    ___ struct zzip_file_header header;
     if (zzip_entry_fread_file_header (entry, &header) 
 	&& ( len = zzip_file_header_namlen(&header) )) {
 	char* name = (char*)malloc (len+1);
