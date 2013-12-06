@@ -2083,7 +2083,7 @@ unused:
 
 		// Ensure first 2 bytes are zero (for Protracker/Amiga
 		// compatibility)
-		f.writeWord(0);
+		if(smplen >= 2) f.writeWord(0);
 		
 		if (smp[i].type & 16)
 		{
