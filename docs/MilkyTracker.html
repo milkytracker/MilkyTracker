@@ -1,27 +1,23 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-		<title>MilkyTracker Manual v0.90.86</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>MilkyTracker Manual v0.90.86.1</title>
+		<meta charset="UTF-8" />
 		<style type="text/css">
-			html, body
-			{
+			html, body {
 				font-family: sans-serif, serif;
 				background-color: #fff;
 				color: #000;
 			}
 
-			body
-			{
+			body {
 				margin: auto;
 				margin: 1em;
 				font-size: 10pt;
 				max-width: 52em;
 			}
 
-			h1, h2, h3, h4
-			{
+			h1, h2, h3, h4 {
 				font-size: 16pt;
 				margin: 0;
 				margin-bottom: 1em;
@@ -29,21 +25,18 @@
 				text-decoration: underline;
 			}
 
-			h2
-			{
+			h2 {
 				font-size: 14pt;
 				margin-top: 2em;
 			}
 
-			h3
-			{
+			h3 {
 				font-size: 12pt;
 				margin-top: 2em;
 				margin-left: 1.5em;
 			}
 
-			h4
-			{
+			h4 {
 				font-size: 10pt;
 				font-weight: normal;
 				margin: 0;
@@ -51,143 +44,116 @@
 				margin-left: 2em;
 			}
 
-			em
-			{
+			em {
 				font-weight: bold;
 				font-style: normal;
 				text-decoration: none;
 			}
 
-			p, table
-			{
+			p, table {
 				margin: 0;
 				margin-bottom: 1em;
 				margin-left: 2em;
 			}
 
-			table
-			{
+			table {
 				border-collapse: collapse;
 			}
 
-			table table
-			{
+			table table {
 				margin: 0;
 			}
 
-			tr, td
- 			{
+			tr, td {
 				vertical-align: top;
- 			}
+			}
 
- 			tr.even
- 			{
- 			}
-
-			tr.odd
-			{
+			tr.odd {
 				background-color: #eee;
  			}
 
- 			td
-			{
+			td {
 				padding-right: 0;
 			}
 
- 			td:first-child
-			{
+			td:first-child {
 				padding-right: 2em;
 			}
 
-			.center
-			{
+			.center {
 				text-align: center;
 			}
 
-			.header td
-			{
+			.header td {
 				text-decoration: underline;
 			}
 
-			ul, ol
-			{
+			ul, ol {
 				list-style-position: outside;
 				margin: 0;
 				padding: 0;
 				padding-left: 3.5em;
 			}
 
-			ol ol
-			{
+			ol ol {
 				list-style-type: upper-roman;
 				padding-left: 2em;
 			}
 
-			ul ul
-			{
+			ul ul {
 				padding-left: 0;
 			}
 
-			ul.fx
-			{
+			ul.fx {
 				list-style-type: none;
 				padding-left: 2em;
 			}
 
-			h4 + ul
-			{
+			h4 + ul {
 				margin-top: 0;
 			}
 
-			.example
-			{
+			.example {
 				margin: 0;
 				font-family: monospace;
 				display: block;
 			}
 
-			td ul
-			{
+			td ul {
 				margin: 0;
 				padding: 0;
 				list-style-type: none;
 			}
 
-			td ul h4 + li + li
-			{
+			td ul h4 + li + li {
 				margin-top: 1em;
 			}
 
-			td h4, td p
-			{
+			td h4, td p {
 				margin: 0;
 			}
 
-			td p + h4,  td ul + h4, td p + p, ul + p, table + h4
-			{
+			td p + h4,  td ul + h4, td p + p, ul + p, table + h4 {
 				margin-top: 1em !important;
 			}
 
-			table + h4
-			{
+			table + h4 {
 				margin-top: 0 !important;
 			}
 
-			.tooltip
-			{
+			.tooltip {
 				border-bottom: 1px dotted;
 				cursor: help;
 			}
 
-			.email
-			{
+			.email {
 				direction: rtl;
 				unicode-bidi: bidi-override;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>MilkyTracker Manual <span id="version" style="font-size: 10pt; font-weight: normal;">v0.90.86</span></h1>
+		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v0.90.86.1</span></h1>
 		<p>
 			Hello and welcome to MilkyTracker, an open source multi-platform Fasttracker II compatible music tracker program. This document holds a lot of valuable information about the tracker but it's not a tracking manual. If you want to learn more about tracking and how it's done, the Internet is your friend. We host some resources on <a href="http://www.milkytracker.org/">MilkyTracker.org</a> as well.
 		</p>
@@ -216,7 +182,7 @@
 					<li><a href="#modules">Modules</a></li>
 					<li><a href="#samples">Samples</a></li>
 					<li><a href="#instruments">Instruments</a></li>
-					<li><a href="#patsandtracks">Patterns and Tracks</a></li>
+					<li><a href="#patterns">Patterns and Tracks</a></li>
 				</ol>
 			</li>
 			<li><a href="#shortcuts">Keyboard shortcuts</a>
@@ -302,7 +268,7 @@
 		</ul>
 		<h3><a id="resamplers">Resamplers</a></h3>
 		<p>
-			MilkyTracker offers various resampling options for playback, rendering and sample processing. These are:
+			MilkyTracker offers various resampling options for module playback, rendering and sample processing. These are:
 		</p>
 		<ul>
 			<li>No interpolation</li>
@@ -317,7 +283,7 @@
 			<li>Amiga 1200 LED</li>
 		</ul>
 		<p>
-			The different modes were added for completeness and while the choice of resampler is a matter of personal taste, you should keep in mind that <em>Linear interpolation</em> represents the highest quality option available in Fasttracker II so that's what the majority of .XM files were made (to be played) with. Also, the Amiga modes are meant to be used with 4 channel .MODs only. <em>Precise Sinc</em> is a CPU killer - great for resampling in the sample editor but don't expect hot real-time performance.
+			While the choice of resampler is a matter of personal taste, you should keep in mind that <em>Linear interpolation</em> represents the highest quality option available in Fasttracker II so that's what the majority of .XM files were probably made (to be played) with. Many chiptunes will however sound very muffled with interpolation because of their short samples and therefore relatively greater impact of interpolation. The Amiga modes are meant to be used with 4 channel .MODs only. <em>Precise Sinc</em> is a CPU killer - great for resampling in the sample editor but don't expect hot real-time performance.
 		</p>
 		<h3><a id="tabs">Tabs</a></h3>
 		<p>
@@ -486,7 +452,7 @@
 
 
 
-		<h3><a id="patsntracks">IV. Patterns and Tracks</a></h3>
+		<h3><a id="patterns">IV. Patterns and Tracks</a></h3>
 		<p>
 			MilkyTracker handles FT2's eXtended Pattern (<em>.XP</em>) and eXtended Track (<em>.XT</em>) files with full compatibility.
 		</p>
@@ -1362,7 +1328,7 @@
 			</tr>
 			<tr class="odd">
 				<td><em>Example:</em></td>
-				<td colspan="2">
+				<td>
 					<code class="example">
 						C-4 &middot;1 &middot;&middot; 103<br />
 						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 103<br />
@@ -1373,7 +1339,7 @@
 			</tr>
 			<tr>
 				<td><em>Explanation:</em></td>
-				<td colspan="2">
+				<td>
 					<p>
 						Portamento is used to slide the note pitch up or down. The higher the <em><code>xx</code></em>, the faster it goes. Effect is applied on every tick.
 					</p>
@@ -1385,7 +1351,7 @@
 			</tr>
 			<tr class="odd">
 				<td><em>Notes:</em></td>
-				<td colspan="2">
+				<td>
 					<h4>ProTracker 2/3</h4>
 					<p>
 						Doesn't have effect memory and cannot be used without parameters.
@@ -2718,7 +2684,7 @@
 		<h3><a id="fxxx"><em>xx</em> Set note volume</a></h3>
 		<table>
 			<tr>
-				<td><em><code>xx</code></em> = volume</td>
+				<td><em>Syntax:</em></td><td><em><code>xx</code></em> = volume</td>
 			</tr>
 			<tr class="odd">
 				<td><em>Example:</em></td>
