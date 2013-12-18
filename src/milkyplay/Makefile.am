@@ -32,7 +32,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay \
 -I$(top_srcdir)/src/milkyplay/drivers/jack \
 -I$(top_srcdir)/src/milkyplay/drivers/sdl
 
-AM_CPPFLAGS+=-DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX ${SDL_CFLAGS}
+AM_CPPFLAGS += -DMILKYTRACKER -D__THREADTIMER__ -DDRIVER_UNIX
+
+AM_CPPFLAGS += ${SDL_CFLAGS} ${ALSA_CFLAGS}
 
 EXTRA_DIST = drivers/generic/AudioDriver_PORTAUDIO.cpp \
 drivers/generic/AudioDriver_PORTAUDIO.h \

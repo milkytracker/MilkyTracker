@@ -5,8 +5,8 @@ libmidi_a_SOURCES = posix/MidiReceiver_pthread.cpp rtmidi/RtMidi.cpp
 noinst_HEADERS = posix/MidiReceiver_pthread.h rtmidi/RtError.h rtmidi/RtMidi.h \
 MidiTools.h
 
-AM_CPPFLAGS=-D__LINUX_ALSASEQ__ -D__LINUX__ -DMILKYTRACKER ${ALSA_CFLAGS} \
-${SDL_CFLAGS}
+AM_CPPFLAGS = -D__LINUX_ALSASEQ__ -D__LINUX__ -DMILKYTRACKER \
+${SDL_CFLAGS} ${ALSA_CFLAGS}
 
 AM_CPPFLAGS += -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 -I$(top_srcdir)/src/tracker -I$(top_srcdir)/src/ppui/osinterface \
