@@ -2080,19 +2080,24 @@ unused:
 	for (i = 0; i < header.smpnum; i++) 
 	{
 		mp_uint32 smplen = prep(smp[i].samplen) << 1;
+		mp_uint32 j = 0;
 
-		// Ensure first 2 bytes are zero (for Protracker/Amiga
-		// compatibility)
-		if(smplen >= 2) f.writeWord(0);
-		
+		// Ensure first 2 bytes are zero in non-looping
+		// samples (for Protracker/Amiga compatibility)
+		if(!(smp[i].type & 0xef) && smplen >= 2)
+		{
+			f.writeWord(0);
+			j = 2;;
+		}
+
 		if (smp[i].type & 16)
 		{
-			for (mp_uint32 j = 2; j < smplen; j++)
+			for (; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j) >> 8);
 		}
 		else
 		{
-			for (mp_uint32 j = 2; j < smplen; j++)
+			for (; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j));
 		}
 	}
