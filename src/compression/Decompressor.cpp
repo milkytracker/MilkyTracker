@@ -122,7 +122,8 @@ bool Decompressor::decompress(const PPSystemString& outFileName, Hints hint)
 		if (decompressors.get(i)->identify())
 		{
 			result = decompressors.get(i)->decompress(outFileName, hint);
-			break;
+			if (result)
+				break;
 		}
 	}
 	
