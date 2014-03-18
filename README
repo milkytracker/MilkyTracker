@@ -1,6 +1,12 @@
 Notes on building MilkyTracker
 ==============================
 
+If you have obtained the MilkyTracker sources from the version control
+repository, the autotools generated files (INSTALL, configure, etc) will
+be missing. To obtain these either generate them using 'autoreconf -i'
+(requires autoconf/automake to be installed) or obtain them from the
+release package.
+
 See INSTALL for a more general explanation of how 'configure' works.
 
 The configure scripts try to check for everything needed, and will also
