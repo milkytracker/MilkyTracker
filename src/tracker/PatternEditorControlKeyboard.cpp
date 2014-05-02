@@ -1721,6 +1721,9 @@ void PatternEditorControl::eventKeyCharBinding_Paste()
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, false, menuInvokeChannel);
 	else
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, false);
+	// If row count changed, call notifyUpdate to refresh pattern length indicator
+	if (patternEditor->getLastOperationDidChangeRows())
+		notifyUpdate();
 }
 
 void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
@@ -1729,6 +1732,9 @@ void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, true, menuInvokeChannel);
 	else
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, true);
+	// If row count changed, call notifyUpdate to refresh pattern length indicator
+	if (patternEditor->getLastOperationDidChangeRows())
+		notifyUpdate();
 }
 
 void PatternEditorControl::eventKeyCharBinding_SelectAll()
