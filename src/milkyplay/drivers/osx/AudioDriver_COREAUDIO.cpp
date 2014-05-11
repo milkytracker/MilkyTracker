@@ -47,16 +47,20 @@
 	}
 
 #define SET_PROPS() \
-	if (AudioDeviceSetProperty (soundDeviceID, NULL, 0, 0, \
-								kAudioDevicePropertyStreamFormat, \
-								myPropertySize, &mySoundBasicDescription)) \
+    if (AudioObjectSetPropertyData (soundDeviceID, \
+                                    &mySoundPropertyAddress, \
+                                    0, \
+                                    NULL, \
+                                    myPropertySize, &mySoundBasicDescription)) \
 	{ \
 		CHECK_ERROR \
 		( \
 			MPERR_OSX_BAD_PROPERTY, \
-			AudioDeviceGetProperty (soundDeviceID, 0, 0, \
-									kAudioDevicePropertyStreamFormat, \
-									&myPropertySize, &mySoundBasicDescription) \
+			AudioObjectSetPropertyData (soundDeviceID, \
+                                        &mySoundPropertyAddress, \
+                                        0, \
+                                        NULL, \
+                                        myPropertySize, &mySoundBasicDescription) \
 		); \
 	}
 
@@ -145,15 +149,22 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
     sampleCounter = 0;
 
     AudioStreamBasicDescription mySoundBasicDescription;
+    AudioObjectPropertyAddress mySoundPropertyAddress;
     UInt32 myPropertySize, myBufferByteCount;
 
     // get the device...
     myPropertySize = sizeof (soundDeviceID);
+    mySoundPropertyAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+    mySoundPropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
+    mySoundPropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
     CHECK_ERROR
     (
         MPERR_DETECTING_DEVICE,
-        AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice,
-                                  &myPropertySize, &soundDeviceID)
+        AudioObjectGetPropertyData (kAudioObjectSystemObject,
+                                    &mySoundPropertyAddress,
+                                    0,  NULL,
+                                    &myPropertySize, &soundDeviceID)
     );
 
     if (soundDeviceID == kAudioDeviceUnknown)
@@ -164,11 +175,14 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 
     // get the device format...
     myPropertySize = sizeof (mySoundBasicDescription);
+    mySoundPropertyAddress.mSelector = kAudioDevicePropertyStreamFormat;
     CHECK_ERROR
     (
         MPERR_OSX_BAD_PROPERTY,
-        AudioDeviceGetProperty (soundDeviceID, 0, 0, kAudioDevicePropertyStreamFormat,
-                                &myPropertySize, &mySoundBasicDescription)
+        AudioObjectGetPropertyData (soundDeviceID,
+                                    &mySoundPropertyAddress,
+                                    0,  NULL,
+                                    &myPropertySize, &mySoundBasicDescription)
     );
 
     // try the selected mix frequency, if failure, fall back to native frequency...
@@ -198,8 +212,10 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
     CHECK_ERROR
     (
         MPERR_OSX_BAD_PROPERTY,
-        AudioDeviceGetProperty (soundDeviceID, 0, 0, kAudioDevicePropertyStreamFormat,
-                                &myPropertySize, &mySoundBasicDescription)
+        AudioObjectGetPropertyData (soundDeviceID,
+                                    &mySoundPropertyAddress,
+                                    0,  NULL,
+                                    &myPropertySize, &mySoundBasicDescription)
     );
 
     if (mySoundBasicDescription.mChannelsPerFrame > 2 ||
@@ -223,19 +239,25 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
     gAudioIOProc = OSX_AudioIOProc16Bit;
 
     myBufferByteCount = (bufferSizeInWords >> (mono ? 1 : 0))* sizeof(float);
+    mySoundPropertyAddress.mSelector = kAudioDevicePropertyBufferSize;
     CHECK_ERROR
     (
         MPERR_OSX_BUFFER_ALLOC,
-        AudioDeviceSetProperty (soundDeviceID, NULL, 0, 0, kAudioDevicePropertyBufferSize,
-                                sizeof(myBufferByteCount), &myBufferByteCount)
+        AudioObjectSetPropertyData (soundDeviceID,
+                                    &mySoundPropertyAddress,
+                                    0,  NULL,
+                                    sizeof(myBufferByteCount), &myBufferByteCount)
     );
 
     // add our audio IO procedure....
     CHECK_ERROR
     (
         MPERR_OSX_ADD_IO_PROC,
-        AudioDeviceAddIOProc (soundDeviceID, gAudioIOProc, (void*)this)
+        AudioDeviceCreateIOProcID (soundDeviceID, gAudioIOProc, (void*)this, &gAudioIOProcID)
     );
+    
+    // If the IOProcID is null, something went wrong
+    assert (gAudioIOProcID != NULL);
 
     IOProcIsInstalled = 1;
 
@@ -252,7 +274,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 
 mp_sint32 AudioDriver_COREAUDIO::stop()
 {
-    AudioDeviceStop (soundDeviceID, gAudioIOProc);
+    AudioDeviceStop (soundDeviceID, gAudioIOProcID);
 
     deviceHasStarted = false;
     return MP_OK;
@@ -262,7 +284,7 @@ mp_sint32 AudioDriver_COREAUDIO::closeDevice()
 {
     if (IOProcIsInstalled)
     {
-        AudioDeviceRemoveIOProc (soundDeviceID, gAudioIOProc);
+        AudioDeviceDestroyIOProcID (soundDeviceID, gAudioIOProcID);
         deviceHasStarted = false;
     }
 
@@ -272,7 +294,7 @@ mp_sint32 AudioDriver_COREAUDIO::closeDevice()
 mp_sint32 AudioDriver_COREAUDIO::start()
 {
     // start the audio IO Proc...
-    if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
+    if (AudioDeviceStart (soundDeviceID, gAudioIOProcID))
     {
         lastError = MPERR_OSX_DEVICE_START;
         return MP_DEVICE_ERROR;
@@ -283,7 +305,7 @@ mp_sint32 AudioDriver_COREAUDIO::start()
 
 mp_sint32 AudioDriver_COREAUDIO::pause()
 {
-    AudioDeviceStop (soundDeviceID, gAudioIOProc);
+    AudioDeviceStop (soundDeviceID, gAudioIOProcID);
     deviceHasStarted = false;
     return MP_OK;
 }
@@ -293,7 +315,7 @@ mp_sint32 AudioDriver_COREAUDIO::resume()
     if (!deviceHasStarted)
     {
         // start the audio IO Proc...
-        if (AudioDeviceStart (soundDeviceID, gAudioIOProc))
+        if (AudioDeviceStart (soundDeviceID, gAudioIOProcID))
         {
             lastError = MPERR_OSX_DEVICE_START;
             return MP_DEVICE_ERROR;

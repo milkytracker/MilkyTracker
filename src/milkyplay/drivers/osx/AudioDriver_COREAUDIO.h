@@ -54,6 +54,8 @@ private:
 	OSStatus		(*gAudioIOProc) (AudioDeviceID, const AudioTimeStamp *,
 									 const AudioBufferList *, const AudioTimeStamp *,
 									 AudioBufferList *, const AudioTimeStamp *, void *);
+    
+    AudioDeviceIOProcID gAudioIOProcID = NULL;
 									 
 	static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 										  const AudioTimeStamp* inNow,
