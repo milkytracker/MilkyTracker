@@ -207,17 +207,6 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
         return MP_DEVICE_ERROR;
     }
 
-    // get the device format again and verify if we could set the settings
-    myPropertySize = sizeof (mySoundBasicDescription);
-    CHECK_ERROR
-    (
-        MPERR_OSX_BAD_PROPERTY,
-        AudioObjectGetPropertyData (soundDeviceID,
-                                    &mySoundPropertyAddress,
-                                    0,  NULL,
-                                    &myPropertySize, &mySoundBasicDescription)
-    );
-
     if (mySoundBasicDescription.mChannelsPerFrame > 2 ||
             mySoundBasicDescription.mChannelsPerFrame < 1)
     {
@@ -228,12 +217,6 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
     if (mySoundBasicDescription.mChannelsPerFrame == 1)
     {
         mono = true;
-    }
-
-    // couldn't set sample rate, fall back
-    if (mySoundBasicDescription.mSampleRate != mixFrequency)
-    {
-        this->mixFrequency = (mp_uint32)mySoundBasicDescription.mSampleRate;
     }
 
     gAudioIOProc = OSX_AudioIOProc16Bit;
