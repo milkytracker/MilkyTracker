@@ -1,7 +1,7 @@
 /*
  *  ppui/sdl/DisplayDevice_SDL.h
  *
- *  Copyright 2009 Peter Barth
+ *  Copyright 2009 Peter Barth, Dale Whinham
  *
  *  This file is part of Milkytracker.
  *
@@ -18,6 +18,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *  12/5/14 - Dale Whinham
+ *    - Port to SDL2
  */
 
 /////////////////////////////////////////////////////////////////
@@ -51,7 +53,10 @@ public:
 
 protected:
 	pp_int32 realWidth, realHeight;
+	SDL_Window* theWindow;
 	SDL_Surface* theSurface;
+	SDL_Texture* theTexture;
+	SDL_Renderer* theRenderer;
 	Orientations orientation;
 	
 	SDL_Surface* CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
@@ -68,8 +73,7 @@ protected:
 	static Uint8 hand_data[], hand_mask[];
 
 public:
-	PPDisplayDevice(SDL_Surface*& screen, 
-					pp_int32 width, 
+	PPDisplayDevice(pp_int32 width,
 					pp_int32 height, 
 					pp_int32 scaleFactor,
 					pp_int32 bpp, 
@@ -83,12 +87,21 @@ public:
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
+
+#ifdef HIDPI_SUPPORT
+	// Hi-DPI letterbox workaround
+	bool needsDeLetterbox;
+	void deLetterbox(pp_int32& x, pp_int32& y);
+#endif
 	
 	Orientations getOrientation() { return orientation; }
 	
+	SDL_Window* getWindow();
+
 	// ----------------------------- ex. PPWindow ----------------------------
 	virtual void setTitle(const PPSystemString& title);	
 	virtual bool goFullScreen(bool b);
+	virtual PPSize getDisplayResolution() const;
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);
