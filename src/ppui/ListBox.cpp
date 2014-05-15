@@ -416,20 +416,22 @@ pp_int32 PPListBox::dispatchEvent(PPEvent* event)
 		}
 		case eMouseWheelMoved:
 		{
-
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0 && vScrollbar)
+			// Vertical scrolling takes priority over horizontal scrolling and is mutually
+			// exclusive from horizontal scrolling.
+			if (vScrollbar && params->deltaY)
 			{
-				PPEvent e(eBarScrollUp);
-				handleEvent(reinterpret_cast<PPObject*>(vScrollbar), &e);
-			}
-			else if (params->delta < 0 && vScrollbar)
-			{
-				PPEvent e(eBarScrollDown);
+				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
 				handleEvent(reinterpret_cast<PPObject*>(vScrollbar), &e);
 			}
 			
+			else if (hScrollbar && params->deltaX)
+			{
+				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
+			}
+
 			event->cancel();
 			
 			break;

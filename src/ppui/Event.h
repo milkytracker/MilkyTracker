@@ -42,7 +42,8 @@ enum KeyModifiers
 struct TMouseWheelEventParams
 {
 	PPPoint pos;
-	pp_int32 delta;
+	pp_int32 deltaX;
+	pp_int32 deltaY;
 };
 
 void setKeyModifier(KeyModifiers eModifier);

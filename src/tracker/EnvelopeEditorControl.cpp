@@ -701,17 +701,28 @@ pp_int32 EnvelopeEditorControl::dispatchEvent(PPEvent* event)
 		// mouse wheel
 		case eMouseWheelMoved:
 		{
-
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0)
+			// Horizontal scrolling takes priority over vertical scrolling (zooming) and is
+			// mutually exclusive so that we are less likely to accidentally zoom while scrolling
+			if (params->deltaX)
 			{
-				setScale(xScale << 1);
-				parentScreen->paintControl(this);
+				// Deltas greater than 1 generate multiple events for scroll acceleration
+				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				
+				params->deltaX = abs(params->deltaX);
+				params->deltaX = params->deltaX > 20 ? 20 : params->deltaX;
+				
+				while (params->deltaX)
+				{
+					handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
+					params->deltaX--;
+				}
 			}
-			else if (params->delta < 0)
+			
+			else if (params->deltaY)
 			{
-				setScale(xScale >> 1);
+				setScale(params->deltaY > 0 ? xScale << 1 : xScale >> 1);
 				parentScreen->paintControl(this);
 			}
 			

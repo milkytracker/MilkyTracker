@@ -87,15 +87,18 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 		{
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0)
+			// Vertical scrolling takes priority over horizontal scrolling and is mutually
+			// exclusive from horizontal scrolling.
+			if (params->deltaY)
 			{
-				PPEvent e(eBarScrollUp);
+				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
 				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
 			}
-			else if (params->delta < 0)
+			
+			else if (params->deltaX)
 			{
-				PPEvent e(eBarScrollDown);
-				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
+				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				handleEvent(reinterpret_cast<PPObject*>(hBottomScrollbar), &e);
 			}
 			
 			event->cancel();
@@ -759,7 +762,7 @@ markSelection:
 				keyCode == VK_TAB)
 			{
 				if ((::getKeyModifier() == (unsigned)selectionKeyModifier) && 
-				    !keyboardStartSelection && 
+					!keyboardStartSelection && 
 					!keyboadStartSelectionFlipped)
 				{
 					patternEditor->getSelection().end = patternEditor->getCursor();
