@@ -920,16 +920,28 @@ selectingAndResizing:
 		// mouse wheel
 		case eMouseWheelMoved:
 		{
-
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
-			
-			if (params->delta > 0)
+
+			// Horizontal scrolling takes priority over vertical scrolling (zooming) and is
+			// mutually exclusive so that we are less likely to accidentally zoom while scrolling
+			if (params->deltaX)
 			{
-				scrollWheelZoomOut(&params->pos);
+				// Deltas greater than 1 generate multiple events for scroll acceleration
+				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				
+				params->deltaX = abs(params->deltaX);
+				params->deltaX = params->deltaX > 20 ? 20 : params->deltaX;
+				
+				while (params->deltaX)
+				{
+					handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
+					params->deltaX--;
+				}
 			}
-			else if (params->delta < 0)
+			
+			else if (params->deltaY)
 			{
-				scrollWheelZoomIn(&params->pos);
+				params->deltaY > 0 ? scrollWheelZoomOut(&params->pos) : scrollWheelZoomIn(&params->pos);
 			}
 			
 			event->cancel();			
@@ -1820,4 +1832,3 @@ void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::Edi
 
 	}
 }
-

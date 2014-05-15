@@ -875,7 +875,8 @@ pascal OSStatus MainWindowEventHandler(EventHandlerCallRef myHandler,EventRef ev
 					TMouseWheelEventParams mouseWheelParams;
 					mouseWheelParams.pos.x = localMouseX;
 					mouseWheelParams.pos.y = localMouseY;
-					mouseWheelParams.delta = wheelDelta;
+					mouseWheelParams.deltaX = 0;
+					mouseWheelParams.deltaY = wheelDelta;
 					
 					PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));						
 					RaiseEventSynchronized(&myEvent);				

@@ -99,52 +99,52 @@ static MidiReceiver*		myMidiReceiver		= NULL;
    #define WM_MOUSELEAVE   WM_USER+2
    #define TME_LEAVE               1
 
-   typedef struct tagTRACKMOUSEEVENT {
-       DWORD cbSize;
-       DWORD dwFlags;
-       HWND  hwndTrack;
-   } TRACKMOUSEEVENT, *LPTRACKMOUSEEVENT;
+typedef struct tagTRACKMOUSEEVENT {
+	DWORD cbSize;
+	DWORD dwFlags;
+	HWND  hwndTrack;
+} TRACKMOUSEEVENT, *LPTRACKMOUSEEVENT;
 
-   VOID CALLBACK
-   TrackMouseTimerProc(HWND hWnd,UINT uMsg,UINT idEvent,DWORD dwTime) {
-      RECT rect;
-      POINT pt;
+VOID CALLBACK
+TrackMouseTimerProc(HWND hWnd,UINT uMsg,UINT idEvent,DWORD dwTime) {
+	RECT rect;
+	POINT pt;
+	
+	GetClientRect(hWnd,&rect);
+	MapWindowPoints(hWnd,NULL,(LPPOINT)&rect,2);
+	GetCursorPos(&pt);
+	if (!PtInRect(&rect,pt) || (WindowFromPoint(pt) != hWnd)) {
+		if (!KillTimer(hWnd,idEvent)) {
+			// Error killing the timer!
+		}
+		
+		PostMessage(hWnd,WM_MOUSELEAVE,0,0);
+	}
+}
 
-      GetClientRect(hWnd,&rect);
-      MapWindowPoints(hWnd,NULL,(LPPOINT)&rect,2);
-      GetCursorPos(&pt);
-      if (!PtInRect(&rect,pt) || (WindowFromPoint(pt) != hWnd)) {
-         if (!KillTimer(hWnd,idEvent)) {
-            // Error killing the timer!
-         }
-
-         PostMessage(hWnd,WM_MOUSELEAVE,0,0);
-      }
-   }
-
-   BOOL
-   TrackMouseEvent(LPTRACKMOUSEEVENT ptme) {
-      OutputDebugString(_T("TrackMouseEvent\n"));
-
-      if (!ptme || ptme->cbSize < sizeof(TRACKMOUSEEVENT)) {
-         OutputDebugString(_T("TrackMouseEvent: invalid TRACKMOUSEEVENT structure\n"));
-         return FALSE;
-      }
-
-      if (!IsWindow(ptme->hwndTrack)) {
-         OutputDebugString(
-            _T("TrackMouseEvent: invalid hwndTrack\n"));
-         return FALSE;
-      }
-
-      if (!(ptme->dwFlags & TME_LEAVE)) {
-         OutputDebugString(_T("TrackMouseEvent: invalid dwFlags\n"));
-         return FALSE;
-      }
-
-      return SetTimer(ptme->hwndTrack, ptme->dwFlags,
-                      100,(TIMERPROC)TrackMouseTimerProc);
-   }
+BOOL
+TrackMouseEvent(LPTRACKMOUSEEVENT ptme) {
+	OutputDebugString(_T("TrackMouseEvent\n"));
+	
+	if (!ptme || ptme->cbSize < sizeof(TRACKMOUSEEVENT)) {
+		OutputDebugString(_T("TrackMouseEvent: invalid TRACKMOUSEEVENT structure\n"));
+		return FALSE;
+	}
+	
+	if (!IsWindow(ptme->hwndTrack)) {
+		OutputDebugString(
+						  _T("TrackMouseEvent: invalid hwndTrack\n"));
+		return FALSE;
+	}
+	
+	if (!(ptme->dwFlags & TME_LEAVE)) {
+		OutputDebugString(_T("TrackMouseEvent: invalid dwFlags\n"));
+		return FALSE;
+	}
+	
+	return SetTimer(ptme->hwndTrack, ptme->dwFlags,
+					100,(TIMERPROC)TrackMouseTimerProc);
+}
 #endif // WIN32_WINNT
 
 #endif // MOUSETRACKING
@@ -480,7 +480,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetUnhandledExceptionFilter(CrashHandler); 
 #endif
 			fInWindow = FALSE;
-            fInMenu = FALSE;
+			fInMenu = FALSE;
 			break;
 
 		case WM_PAINT:
@@ -503,14 +503,16 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			{
 				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left);
 				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top);
-				mouseWheelParams.delta = ((signed short)HIWORD(wParam))/60;
 			}
 			else
 			{
 				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
 				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
-				mouseWheelParams.delta = ((signed short)HIWORD(wParam))/60;
 			}
+			
+			mouseWheelParams.deltaX = 0;
+			mouseWheelParams.deltaY = ((signed short)HIWORD(wParam))/60;
+			
 			PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));	
 			
 			RaiseEventSynchronized(&myEvent);				
@@ -526,8 +528,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			if (lMouseDown)
 			{
-                p.x = -1;
-			    p.y = -1;
+				p.x = -1;
+				p.y = -1;
 				PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));				
 				RaiseEventSynchronized(&myEvent);
 				lMouseDown = false;
@@ -576,8 +578,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			if (rMouseDown)
 			{
-                p.x = -1;
-			    p.y = -1;
+				p.x = -1;
+				p.y = -1;
 				PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));				
 				RaiseEventSynchronized(&myEvent);
 				rMouseDown = false;
@@ -706,8 +708,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		
 #ifdef MOUSETRACKING
 		case WM_MOUSELEAVE:
-            fInWindow = FALSE;
-            if (!fInMenu)
+			fInWindow = FALSE;
+			if (!fInMenu)
 			{
 				PPPoint p(-1000, -1000);
 				if (lMouseDown)
@@ -726,12 +728,12 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 
 		case WM_ENTERMENULOOP:
-            fInMenu = TRUE;
-            break;
+			fInMenu = TRUE;
+			break;
 
-        case WM_EXITMENULOOP:
-            fInMenu = FALSE;
-            break;
+		case WM_EXITMENULOOP:
+			fInMenu = FALSE;
+			break;
 #endif
 
 		case WM_MOUSEMOVE:
@@ -748,7 +750,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 						TEXT("TrackMouseEvent Failed"),
 						TEXT("Mouse Leave"),MB_OK);
 				}
-            }
+			}
 #endif			
 			if (!myTrackerScreen)
 				break;
@@ -811,7 +813,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			BYTE keyState[256];
 			WORD keyBuf[2] = {0,0};
- 			GetKeyboardState((PBYTE)&keyState);
+			GetKeyboardState((PBYTE)&keyState);
 			if (ToAscii(wParam, (lParam>>16)&255, (PBYTE)&keyState, keyBuf, 0) != 1)
 				keyBuf[0] = keyBuf[1] = 0;
 
@@ -860,7 +862,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			BYTE keyState[256];
 			WORD keyBuf[2] = {0,0};
- 			GetKeyboardState((PBYTE)&keyState);
+			GetKeyboardState((PBYTE)&keyState);
 			if (ToAscii(wParam, (lParam>>16)&255, (PBYTE)&keyState, keyBuf, 0) != 1)
 				keyBuf[0] = keyBuf[1] = 0;
 
