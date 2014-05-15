@@ -54,16 +54,16 @@ public:
 
 	virtual		~AudioDriver_SDL();
 			
-	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
-	virtual     mp_sint32   closeDevice();
+	virtual		mp_sint32	initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
+	virtual		mp_sint32	closeDevice();
 
-	virtual     mp_sint32	start();
-	virtual     mp_sint32   stop();
+	virtual		mp_sint32	start();
+	virtual		mp_sint32	stop();
 
-	virtual     mp_sint32   pause();
-	virtual     mp_sint32   resume();
+	virtual		mp_sint32	pause();
+	virtual		mp_sint32	resume();
 	
-	virtual		const char* getDriverID() { return "SDLAudio"; }
+	virtual		const char*	getDriverID() { return "SDLAudio"; }
 	virtual		mp_sint32	getPreferredBufferSize() const { return 2048; }	
 };
 
