@@ -1567,6 +1567,7 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	if (smp[index].type & 16)
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen*2;
+		if(finalSize < 8) finalSize = 8;
 		
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		
@@ -1583,6 +1584,7 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	else
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen;
+		if(finalSize < 4) finalSize = 4;
 		
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		
