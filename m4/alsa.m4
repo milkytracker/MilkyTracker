@@ -29,16 +29,16 @@ AC_ARG_WITH(alsa-inc-prefix,
 dnl Add any special include directories
 AC_MSG_CHECKING(for ALSA CFLAGS)
 if test "$alsa_inc_prefix" != "" ; then
-	ALSA_CFLAGS="$ALSA_CFLAGS -I$alsa_inc_prefix"
-	CFLAGS="$CFLAGS -I$alsa_inc_prefix"
+    ALSA_CFLAGS="$ALSA_CFLAGS -I$alsa_inc_prefix"
+    CFLAGS="$CFLAGS -I$alsa_inc_prefix"
 fi
 AC_MSG_RESULT($ALSA_CFLAGS)
 
 dnl add any special lib dirs
 AC_MSG_CHECKING(for ALSA LDFLAGS)
 if test "$alsa_prefix" != "" ; then
-	ALSA_LIBS="$ALSA_LIBS -L$alsa_prefix"
-	LDFLAGS="$LDFLAGS $ALSA_LIBS"
+    ALSA_LIBS="$ALSA_LIBS -L$alsa_prefix"
+    LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
 dnl add the alsa library
@@ -107,8 +107,8 @@ AC_LANG_RESTORE
 
 dnl Now that we know that we have the right version, let's see if we have the library and not just the headers.
 AC_CHECK_LIB([asound], [snd_ctl_open],,
-	[ifelse([$3], , [AC_MSG_ERROR(No linkable libasound was found.)])
-	 alsa_found=no]
+    [ifelse([$3], , [AC_MSG_ERROR(No linkable libasound was found.)])
+     alsa_found=no]
 )
 
 if test "x$alsa_found" = "xyes" ; then

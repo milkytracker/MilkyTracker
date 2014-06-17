@@ -39,18 +39,18 @@
 class DecompressorPP20 : public DecompressorBase
 {
 public:
-	DecompressorPP20(const PPSystemString& fileName);
+    DecompressorPP20(const PPSystemString& fileName);
 
-	virtual bool identify(XMFile& f);
-	
-	// this type of archive can contain any file type
-	virtual bool doesServeHint(Hints hint) { return true; }
+    virtual bool identify(XMFile& f);
 
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+    // this type of archive can contain any file type
+    virtual bool doesServeHint(Hints hint) { return true; }
 
-	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
+    virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
 
-	virtual DecompressorBase* clone();
+    virtual bool decompress(const PPSystemString& outFileName, Hints hint);
+
+    virtual DecompressorBase* clone();
 };
 
 #endif

@@ -15,11 +15,11 @@
 extern "C" {
 #endif
 
-__zzipfd		Myopen(const zzip_char_t* name, int flags, ...);
-int				Myclose(__zzipfd fd);
-zzip_ssize_t	Myread(__zzipfd fd, void *buffer, zzip_size_t count);
-zzip_off_t		Mylseek(__zzipfd fd, zzip_off_t offset, int origin);
-zzip_off_t		Myfsize(__zzipfd fd);
+__zzipfd        Myopen(const zzip_char_t* name, int flags, ...);
+int             Myclose(__zzipfd fd);
+zzip_ssize_t    Myread(__zzipfd fd, void *buffer, zzip_size_t count);
+zzip_off_t      Mylseek(__zzipfd fd, zzip_off_t offset, int origin);
+zzip_off_t      Myfsize(__zzipfd fd);
 
 #ifdef __cplusplus
 };

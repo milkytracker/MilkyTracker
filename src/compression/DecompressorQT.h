@@ -42,18 +42,18 @@
 class DecompressorQT : public DecompressorBase
 {
 public:
-	DecompressorQT(const PPSystemString& filename);
+    DecompressorQT(const PPSystemString& filename);
 
-	virtual bool identify(XMFile& f);
-	
-	// this type of archive can only contain samples
-	virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintSamples); }
+    virtual bool identify(XMFile& f);
 
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+    // this type of archive can only contain samples
+    virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintSamples); }
 
-	virtual bool decompress(const PPSystemString& outFilename, Hints hint);
-	
-	virtual DecompressorBase* clone();
+    virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+
+    virtual bool decompress(const PPSystemString& outFilename, Hints hint);
+
+    virtual DecompressorBase* clone();
 };
 
 #endif

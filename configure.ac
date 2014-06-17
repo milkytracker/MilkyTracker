@@ -24,22 +24,22 @@ AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h st
 
 # Checks for libraries.
 AC_ARG_WITH([alsa],
-	[AS_HELP_STRING([--with-alsa],
-	[Enable native ALSA sound/midi support @<:@default=check@:>@])],
-	[],
-	[with_alsa=check])
+    [AS_HELP_STRING([--with-alsa],
+    [Enable native ALSA sound/midi support @<:@default=check@:>@])],
+    [],
+    [with_alsa=check])
 
 if test "x$with_alsa" != xno; then
-	AM_PATH_ALSA([1.0.0],[
-		RTMIDI="../midi/libmidi.a"
-		RTMIDI_DIR="midi"
-		AC_SUBST(RTMIDI)
-		AC_SUBST(RTMIDI_DIR)],
-		[if test "x$with_alsa" != xcheck; then
-			AC_MSG_FAILURE([--with-alsa was given, but test for alsa failed])
-		else
-			AC_MSG_WARN([ALSA not found - midi support disabled])
-		fi])
+    AM_PATH_ALSA([1.0.0],[
+        RTMIDI="../midi/libmidi.a"
+        RTMIDI_DIR="midi"
+        AC_SUBST(RTMIDI)
+        AC_SUBST(RTMIDI_DIR)],
+        [if test "x$with_alsa" != xcheck; then
+            AC_MSG_FAILURE([--with-alsa was given, but test for alsa failed])
+        else
+            AC_MSG_WARN([ALSA not found - midi support disabled])
+        fi])
 fi
 
 AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
@@ -55,28 +55,28 @@ AC_MSG_CHECKING([whether SDL supports X11])
 OLDCPPFLAGS=$CPPFLAGS
 CPPFLAGS=$SDL_CFLAGS
 AC_COMPILE_IFELSE(
-	[AC_LANG_SOURCE([#include<SDL_syswm.h>
-	const int test = SDL_SYSWM_X11;])],
-	[AC_MSG_RESULT([yes])]
-	AC_DEFINE([HAVE_X11], [1], [SDL supports X11 features]),
-	[AC_MSG_RESULT([no])])
+    [AC_LANG_SOURCE([#include<SDL_syswm.h>
+    const int test = SDL_SYSWM_X11;])],
+    [AC_MSG_RESULT([yes])]
+    AC_DEFINE([HAVE_X11], [1], [SDL supports X11 features]),
+    [AC_MSG_RESULT([no])])
 CPPFLAGS=$OLDCPPFLAGS
 
 # Jack is dynamically linked to ease binary portability (no longer required)
 AC_ARG_WITH([jack],
-	[AS_HELP_STRING([--with-jack],
-	[Enable JACK support @<:@default=check@:>@])],
-	[],
-	[with_jack=check])
+    [AS_HELP_STRING([--with-jack],
+    [Enable JACK support @<:@default=check@:>@])],
+    [],
+    [with_jack=check])
 
 if test x$with_jack != xno; then
-	AC_CHECK_HEADERS([jack/jack.h],
-		[AC_SEARCH_LIBS(dlsym,dl,,[AC_MSG_ERROR([Dynamic library support not found - required for JACK support])])],
-		[if test x$with_jack != xcheck; then
-			AC_MSG_FAILURE([--with-jack was given, but JACK headers were not found])
-		else
-			AC_MSG_WARN([JACK headers not found, JACK support disabled])
-		fi])
+    AC_CHECK_HEADERS([jack/jack.h],
+        [AC_SEARCH_LIBS(dlsym,dl,,[AC_MSG_ERROR([Dynamic library support not found - required for JACK support])])],
+        [if test x$with_jack != xcheck; then
+            AC_MSG_FAILURE([--with-jack was given, but JACK headers were not found])
+        else
+            AC_MSG_WARN([JACK headers not found, JACK support disabled])
+        fi])
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.

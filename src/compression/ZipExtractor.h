@@ -36,12 +36,12 @@
 class ZipExtractor
 {
 private:
-	PPSystemString archivePath;
+    PPSystemString archivePath;
 
 public:
-	ZipExtractor(const PPSystemString& archivePath);
+    ZipExtractor(const PPSystemString& archivePath);
 
-	bool parseZip(pp_int32& err, bool extract, const PPSystemString* outFile);
+    bool parseZip(pp_int32& err, bool extract, const PPSystemString* outFile);
 };
 
 #endif
