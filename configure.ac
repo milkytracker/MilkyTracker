@@ -21,6 +21,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files are missing]))
 # AC_CHECK_HEADER(zzip/lib.h,,AC_MSG_ERROR("Cannot find zzip/lib.h"))
+AC_CHECK_HEADER(pthread.h,,[AC_MSG_ERROR("Cannot find pthread.h")])
 
 # Checks for libraries.
 AC_ARG_WITH([alsa],
@@ -46,6 +47,7 @@ AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have t
 #AC_CHECK_LIB(zzip, zzip_file_open,,AC_MSG_ERROR("Cannot find -lzzip"))
 #PKG_CHECK_MODULES([ZZIP],[zziplib >= 0.10.75])
 
+AC_CHECK_LIB(pthread, pthread_create,[LIBS="$LIBS -lpthread"],AC_MSG_ERROR("Cannot find -lpthread"))
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 CPPFLAGS="$CPPFLAGS -D__FORCE_SDL_AUDIO__"
