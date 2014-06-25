@@ -10,7 +10,7 @@
  * As a bonus, if any file is a PowerPacker data file, but not encrypted,
  * it will be decrunched anyway, and saved as <original filename>.decrunched
  *
- * - changed to work with UADE (mld) 
+ * - changed to work with UADE (mld)
  *   Thanks to Kyzer for help and support.
  */
 
@@ -29,7 +29,7 @@
  *   - implemeted "efficiency" checks
  *   - further detection based on code by Georg Hoermann
  */
- 
+
 /* changed into class to work with milkytracker
  */
 
@@ -41,36 +41,36 @@
 class PP20
 {
 public:
-    
+
     PP20();
-	
+
     bool isCompressed(const void* source, const pp_uint32 size);
-    
+
     // If successful, allocates a new buffer containing the
     // uncompresse data and returns the uncompressed length.
     // Else, returns 0.
-    pp_uint32 decompress(const void* source, 
-						  pp_uint32 size,
-						  pp_uint8** destRef);
-    
+    pp_uint32 decompress(const void* source,
+                          pp_uint32 size,
+                          pp_uint8** destRef);
+
 private:
-	bool checkEfficiency(const void* source);
+    bool checkEfficiency(const void* source);
 
-	pp_int32 ppDecrunch(pp_uint8 *src, pp_uint8 *dest, pp_uint8 *offset_lens,
-				   pp_uint32 src_len, pp_uint32 dest_len, pp_uint8 skip_bits);
+    pp_int32 ppDecrunch(pp_uint8 *src, pp_uint8 *dest, pp_uint8 *offset_lens,
+                   pp_uint32 src_len, pp_uint32 dest_len, pp_uint8 skip_bits);
 
-	pp_int32 ppValidate(pp_uint8 *src, pp_uint8 *offset_lens,
-				   pp_uint32 src_len, pp_uint32 dest_len, pp_uint8 skip_bits);
-	
-	pp_int32 ppcrack(pp_uint8** destRef, pp_uint8 *data, pp_uint32 len);
+    pp_int32 ppValidate(pp_uint8 *src, pp_uint8 *offset_lens,
+                   pp_uint32 src_len, pp_uint32 dest_len, pp_uint8 skip_bits);
 
-	pp_int32 ppdepack(pp_uint8 *src, pp_uint32 s, pp_uint8** destRef);
+    pp_int32 ppcrack(pp_uint8** destRef, pp_uint8 *data, pp_uint32 len);
+
+    pp_int32 ppdepack(pp_uint8 *src, pp_uint32 s, pp_uint8** destRef);
 
     static const char* PP_ID;
-	pp_uint8 efficiency[4];
+    pp_uint8 efficiency[4];
     bool globalError;           // exception-free version of code
-	
-	pp_uint32 key_start;
+
+    pp_uint32 key_start;
 };
 
 #endif  /* PP_DECOMPRESSOR_H */

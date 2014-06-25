@@ -35,69 +35,69 @@
 
 // -- GZIP --------------------------------------------------------------------
 DecompressorGZIP::DecompressorGZIP(const PPSystemString& fileName) :
-	DecompressorBase(fileName)
+    DecompressorBase(fileName)
 {
 }
 
 bool DecompressorGZIP::identify(XMFile& f)
 {
-	f.seek(0);
-	mp_dword id = f.readDword();
+    f.seek(0);
+    mp_dword id = f.readDword();
 
-	// GZIP ID
-	return (id == 0x08088B1F);
+    // GZIP ID
+    return (id == 0x08088B1F);
 }
 
 const PPSimpleVector<Descriptor>& DecompressorGZIP::getDescriptors(Hints hint) const
 {
-	descriptors.clear();
-	descriptors.add(new Descriptor("gz", "GZIP Archive"));
-	return descriptors;
+    descriptors.clear();
+    descriptors.add(new Descriptor("gz", "GZIP Archive"));
+    return descriptors;
 }
 
 bool DecompressorGZIP::decompress(const PPSystemString& outFileName, Hints hint)
 {
-	gzFile gz_input_file = NULL;
-	int len = 0;
-	pp_uint8 *buf;
+    gzFile gz_input_file = NULL;
+    int len = 0;
+    pp_uint8 *buf;
 
-	if ((gz_input_file = gzopen (fileName.getStrBuffer(), "r")) == NULL)
-		return false;
+    if ((gz_input_file = gzopen (fileName.getStrBuffer(), "r")) == NULL)
+        return false;
 
-	if ((buf = new pp_uint8[0x10000]) == NULL)
-		return false;
+    if ((buf = new pp_uint8[0x10000]) == NULL)
+        return false;
 
-	XMFile fOut(outFileName, true);
+    XMFile fOut(outFileName, true);
 
-	while (true)
-	{
-		len = gzread (gz_input_file, buf, 0x10000);
+    while (true)
+    {
+        len = gzread (gz_input_file, buf, 0x10000);
 
-		if (len < 0)
-		{
-			delete[] buf;
-			return false;
-		}
+        if (len < 0)
+        {
+            delete[] buf;
+            return false;
+        }
 
-		if (len == 0) break;
+        if (len == 0) break;
 
-		fOut.write(buf, 1, len);
-	}
+        fOut.write(buf, 1, len);
+    }
 
-	if (gzclose (gz_input_file) != Z_OK)
-	{
-		delete[] buf;
-		return false;
-	}
+    if (gzclose (gz_input_file) != Z_OK)
+    {
+        delete[] buf;
+        return false;
+    }
 
-	delete[] buf;
+    delete[] buf;
 
-	return true;
+    return true;
 }
 
 DecompressorBase* DecompressorGZIP::clone()
 {
-	return new DecompressorGZIP(fileName);
+    return new DecompressorGZIP(fileName);
 }
 
 static Decompressor::RegisterDecompressor<DecompressorGZIP> registerDecompressor;

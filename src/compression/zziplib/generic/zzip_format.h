@@ -1,12 +1,12 @@
 /*
- * Author: 
- *	Guido Draheim <guidod@gmx.de>
+ * Author:
+ *  Guido Draheim <guidod@gmx.de>
  *
- *	Copyright (c) 2000,2001,2002,2003 Guido Draheim
- * 	    All rights reserved
- *	    use under the restrictions of the
- *	    Lesser GNU General Public License
- *          or alternatively the restrictions 
+ *  Copyright (c) 2000,2001,2002,2003 Guido Draheim
+ *      All rights reserved
+ *      use under the restrictions of the
+ *      Lesser GNU General Public License
+ *          or alternatively the restrictions
  *          of the Mozilla Public License 1.1
  *
  *  The information was taken from appnote-981119-iz.zip
@@ -16,31 +16,31 @@
  */
 #ifndef _ZZIP_FORMAT_H /* zzipformat.h */
 #define _ZZIP_FORMAT_H
- 
+
 #include <zzip_types.h>
 /* we have ICO C 9X types defined */
 
-/* 
- * Overall zipfile format 
- *  [local file header + file data stream + checksum descriptor] ... 
+/*
+ * Overall zipfile format
+ *  [local file header + file data stream + checksum descriptor] ...
  *   ...  [disk central directory] [disk trailer record]
  */
- 
+
 # ifdef _MSC_VER
 # pragma pack(push, 1)
 # endif
 
-struct zzip_version 
-{ 
-    zzip_byte_t   version[1]; 
-    zzip_byte_t   ostype[1]; 
+struct zzip_version
+{
+    zzip_byte_t   version[1];
+    zzip_byte_t   ostype[1];
 } __zzip_attribute__((packed));
 
-struct zzip_dostime 
-{ 
-    zzip_byte_t   time[2]; 
-    zzip_byte_t   date[2]; 
-} __zzip_attribute__((packed)); 
+struct zzip_dostime
+{
+    zzip_byte_t   time[2];
+    zzip_byte_t   date[2];
+} __zzip_attribute__((packed));
 
 #ifdef ZZIP_NEED_PACKED
 /* if your compiler does interesting things about struct packing... */
@@ -77,7 +77,7 @@ struct zzip_file_header
 } __zzip_attribute__((packed));
 #define zzip_file_header_headerlength (4+2+2+2+4+4+4+4+2+2)
 
-/* B. data descriptor 
+/* B. data descriptor
  * the data descriptor exists only if bit 3 of z_flags is set. It is byte aligned
  * and immediately follows the last byte of compressed data. It is only used if
  * the output media of the compressor was not seekable, eg. standard output.
@@ -94,10 +94,10 @@ struct zzip_file_trailer
 #define zzip_file_trailer_headerlength (4+4+4+4)
 
 /* C. central directory structure:
-    [file header] . . . end of central dir record  
+    [file header] . . . end of central dir record
 */
 
-/* directory file header 
+/* directory file header
  * - a single entry including filename, extras and comment may not exceed 64k.
  */
 
@@ -124,7 +124,7 @@ struct zzip_disk_entry
     /* followed by filename (of variable size) */
     /* followed by extra field (of variable size) */
     /* followed by file comment (of variable size) */
-} __zzip_attribute__((packed)); 
+} __zzip_attribute__((packed));
 #define zzip_disk_entry_headerlength (4+2+2+2+2+4+4+4+4+2+2+2+2+2+4+4)
 
 
@@ -133,22 +133,22 @@ struct zzip_root_dirent
 #   define ZZIP_ROOT_DIRENT_MAGIC 0x02014b50
 #   define ZZIP_ROOT_DIRENT_CHECKMAGIC(__p) ZZIP_DISK_ENTRY_CHECKMAGIC(__p)
     zzip_byte_t    z_magic[4];
-    zzip_version_t z_encoder;                     
+    zzip_version_t z_encoder;
     zzip_version_t z_extract;
-    zzip_byte_t    z_flags[2];      
-    zzip_byte_t    z_compr[2];      
+    zzip_byte_t    z_flags[2];
+    zzip_byte_t    z_compr[2];
     zzip_dostime_t z_dostime;
-    zzip_byte_t    z_crc32[4];      
-    zzip_byte_t    z_csize[4];      
+    zzip_byte_t    z_crc32[4];
+    zzip_byte_t    z_csize[4];
     zzip_byte_t    z_usize[4];
-    zzip_byte_t    z_namlen[2];     
-    zzip_byte_t    z_extras[2];     
-    zzip_byte_t    z_comment[2];    
-    zzip_byte_t    z_diskstart[2];  
-    zzip_byte_t    z_filetype[2];   
+    zzip_byte_t    z_namlen[2];
+    zzip_byte_t    z_extras[2];
+    zzip_byte_t    z_comment[2];
+    zzip_byte_t    z_diskstart[2];
+    zzip_byte_t    z_filetype[2];
     zzip_byte_t    z_filemode[4];
     zzip_byte_t    z_off[4];
-} __zzip_attribute__((packed)); 
+} __zzip_attribute__((packed));
 
 
 /* end of central dir record */

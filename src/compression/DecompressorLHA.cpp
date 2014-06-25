@@ -19,7 +19,7 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  *  DecompressorLHA.cpp
  *  milkytracker_universal
@@ -37,127 +37,127 @@
 class XMFileStreamer : public CLhaArchive::StreamerBase
 {
 private:
-	XMFile& f;
+    XMFile& f;
 
-	pp_uint32 currentPos;
+    pp_uint32 currentPos;
 
 protected:
-	virtual pp_uint8 get(pp_uint32 pos)
-	{
-		pp_uint8 result;
-		if (currentPos != pos)
-		{
-			f.seek(pos);
-			result = f.readByte();
-			currentPos = f.pos();
-		}
-		else
-		{
-			result = f.readByte();
-			currentPos = f.pos();
-		}
-		
-		return result;
-	}
+    virtual pp_uint8 get(pp_uint32 pos)
+    {
+        pp_uint8 result;
+        if (currentPos != pos)
+        {
+            f.seek(pos);
+            result = f.readByte();
+            currentPos = f.pos();
+        }
+        else
+        {
+            result = f.readByte();
+            currentPos = f.pos();
+        }
 
-public:		
-	XMFileStreamer(XMFile& f) :
-		f(f)
-	{
-		currentPos = f.pos();
-	}
+        return result;
+    }
 
-	virtual void read(void* buffer, pp_uint32 from, pp_uint32 len)
-	{
-		if (currentPos != from)
-		{
-			f.seek(from);
-			f.read(buffer, 1, len);
-			currentPos = f.pos();
-		}
-		else
-		{
-			f.read(buffer, 1, len);
-			currentPos = f.pos();
-		}
-	}
+public:
+    XMFileStreamer(XMFile& f) :
+        f(f)
+    {
+        currentPos = f.pos();
+    }
+
+    virtual void read(void* buffer, pp_uint32 from, pp_uint32 len)
+    {
+        if (currentPos != from)
+        {
+            f.seek(from);
+            f.read(buffer, 1, len);
+            currentPos = f.pos();
+        }
+        else
+        {
+            f.read(buffer, 1, len);
+            currentPos = f.pos();
+        }
+    }
 };
 
-struct ModuleIdentifyNotifier : public CLhaArchive::IDNotifier 
+struct ModuleIdentifyNotifier : public CLhaArchive::IDNotifier
 {
-	virtual bool identify(void* buffer, pp_uint32 len) const
-	{
-		mp_ubyte buff[XModule::IdentificationBufferSize];
-		memset(buff, 0, sizeof(buff));
-		memcpy(buff, buffer, len > sizeof(buff) ? sizeof(buff) : len);
-		
-		return XModule::identifyModule(buff) != NULL;
-	}
+    virtual bool identify(void* buffer, pp_uint32 len) const
+    {
+        mp_ubyte buff[XModule::IdentificationBufferSize];
+        memset(buff, 0, sizeof(buff));
+        memcpy(buff, buffer, len > sizeof(buff) ? sizeof(buff) : len);
+
+        return XModule::identifyModule(buff) != NULL;
+    }
 };
 
 DecompressorLHA::DecompressorLHA(const PPSystemString& filename) :
-	DecompressorBase(filename)
+    DecompressorBase(filename)
 {
 }
 
 bool DecompressorLHA::identify(XMFile& f)
 {
-	f.seek(0);	
+    f.seek(0);
 
-	XMFileStreamer streamer(f);
+    XMFileStreamer streamer(f);
 
-	CLhaArchive archive(streamer, f.size(), NULL);
+    CLhaArchive archive(streamer, f.size(), NULL);
 
-	bool res = archive.IsArchive() != 0;
+    bool res = archive.IsArchive() != 0;
 
-	return res;
-}	
-	
+    return res;
+}
+
 const PPSimpleVector<Descriptor>& DecompressorLHA::getDescriptors(Hints hint) const
 {
-	descriptors.clear();
-	descriptors.add(new Descriptor("lha", "LHA Archive")); 	
-	return descriptors;
-}		
-	
+    descriptors.clear();
+    descriptors.add(new Descriptor("lha", "LHA Archive"));
+    return descriptors;
+}
+
 bool DecompressorLHA::decompress(const PPSystemString& outFilename, Hints hint)
 {
-	XMFile f(fileName);
-	
-	if (!f.isOpen())
-		return false;
+    XMFile f(fileName);
 
-	XMFileStreamer streamer(f);
+    if (!f.isOpen())
+        return false;
 
-	ModuleIdentifyNotifier idnotifier;
+    XMFileStreamer streamer(f);
 
-	CLhaArchive archive(streamer, f.size(), &idnotifier);
+    ModuleIdentifyNotifier idnotifier;
 
-	if (!archive.IsArchive())
-		return false;
+    CLhaArchive archive(streamer, f.size(), &idnotifier);
 
-	pp_uint32 result = archive.ExtractFile();
-	
-	if (result && archive.GetOutputFile())
-	{
-		const char* id = XModule::identifyModule(archive.GetOutputFile());
-		if (id)
-		{
-			XMFile outFile(outFilename, true);
-			if (!outFile.isOpenForWriting())
-				return false;
-				
-			outFile.write(archive.GetOutputFile(), 1, archive.GetOutputFileLength());						
-			return true;
-		}
-	}
-	
-	return false;
+    if (!archive.IsArchive())
+        return false;
+
+    pp_uint32 result = archive.ExtractFile();
+
+    if (result && archive.GetOutputFile())
+    {
+        const char* id = XModule::identifyModule(archive.GetOutputFile());
+        if (id)
+        {
+            XMFile outFile(outFilename, true);
+            if (!outFile.isOpenForWriting())
+                return false;
+
+            outFile.write(archive.GetOutputFile(), 1, archive.GetOutputFileLength());
+            return true;
+        }
+    }
+
+    return false;
 }
 
 DecompressorBase* DecompressorLHA::clone()
 {
-	return new DecompressorLHA(fileName);
-}	
+    return new DecompressorLHA(fileName);
+}
 
 static Decompressor::RegisterDecompressor<DecompressorLHA> registerDecompressor;

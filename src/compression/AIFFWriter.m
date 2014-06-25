@@ -4,8 +4,8 @@ File: AIFFWriter.m
 
 Author: QuickTime DTS
 
-Change History (most recent first): 
-    
+Change History (most recent first):
+
     <2> 03/24/06 must pass NSError objects to exportCompleted
     <1> 11/10/05 initial release
 
@@ -114,7 +114,7 @@ http://developer.apple.com/documentation/QuickTime/Conceptual/QT7UpdateGuide/Cha
 {
     [progressValue release];
     [exportStatus release];
-    
+
     [super dealloc];
 }
 
@@ -141,38 +141,38 @@ http://developer.apple.com/documentation/QuickTime/Conceptual/QT7UpdateGuide/Cha
 
 - (id)init;
 {
-	if (self = [super init]) {
-    
+    if (self = [super init]) {
+
         mLock = [[NSLock alloc] init];
         mProgressInfo = [[AIFFWriterProgressInfo alloc] init];
     }
 
-	return self;
+    return self;
 }
 
 - (void)dealloc
 {
-	if (mFileName) {
-    	[mFileName release];
+    if (mFileName) {
+        [mFileName release];
     }
-    
-	if (mAudioExtractionSession){
-		MovieAudioExtractionEnd(mAudioExtractionSession);
+
+    if (mAudioExtractionSession){
+        MovieAudioExtractionEnd(mAudioExtractionSession);
     }
-    
+
     if (mQTMovie) {
-    	[mQTMovie release];
+        [mQTMovie release];
     }
-    
+
     if (mExtractionLayoutPtr) {
-    	free(mExtractionLayoutPtr);
+        free(mExtractionLayoutPtr);
     }
-    
+
     [mLock release];
-    
+
     [mProgressInfo release];
-    
-    [super dealloc]; 
+
+    [super dealloc];
 }
 
 #pragma mark ---- public ----
@@ -185,59 +185,59 @@ http://developer.apple.com/documentation/QuickTime/Conceptual/QT7UpdateGuide/Cha
     BOOL continueExport = YES;
     Handle cloneHandle = NULL;
     NSString *directory;
-    
+
     OSStatus err = noErr;
-    
+
     // sanity
     if (nil == inMovie || nil == inFullPath) return paramErr;
-    
+
     // if we're busy already doing an export return
     if (![mLock tryLock]) return kObjectInUseErr;
-    
+
     mIsExporting = YES;
-    
+
     // if the client implemented a progress proc. call it now
     if (TRUE == mDelegateShouldContinueOp) {
         [mProgressInfo setPhase:AIFFWriterExportBegin];
         [mProgressInfo setProgressValue:nil];
         [mProgressInfo setExportStatus:nil];
-        
+
         continueExport = [[self delegate] shouldContinueOperationWithProgressInfo:mProgressInfo];
 
         if (NO == continueExport) goto bail;
     }
-    
+
     directory = [inFullPath stringByDeletingLastPathComponent];
-    
+
     mFileName = [[NSString alloc] initWithString:[inFullPath lastPathComponent]];
-    
-	// retain the QTMovie object passed in, we need it for the duration of
+
+    // retain the QTMovie object passed in, we need it for the duration of
     // the export regardless of what the client decides to do with it
     mQTMovie = [inMovie retain];
- 
+
     // if the file already exists, delete it
     err = FSPathMakeRef((const UInt8*)[inFullPath fileSystemRepresentation], &mFileRef, false);
     if (err == noErr) {
         err = FSDeleteObject(&mFileRef);
         if (err) goto bail;
     }
-    
+
     err = FSPathMakeRef((const UInt8*)[directory fileSystemRepresentation], &mParentRef, NULL);
     if (err) goto bail;
-    
+
     // set the movies extraction duration in floating-point seconds
     [self setMovieExtractionDuration];
-    
-	while (mIsExporting)
-		[self exportOnMainThreadCallBack:nil];
+
+    while (mIsExporting)
+        [self exportOnMainThreadCallBack:nil];
 
 bail:
 
     if (cloneHandle) DisposeHandle(cloneHandle);
-    
+
     if (err) [self exportCompletedNotification:err];
-    
-	return err;
+
+    return err;
 }
 
 - (BOOL) isExporting
@@ -252,166 +252,166 @@ bail:
 -(void)exportOnMainThreadCallBack:(id)inObject
 {
     BOOL continueExport = YES;
-    
-	OSStatus err;
-    
-	// prepare for extraction if this is the first entry
-	if (NULL == mAudioExtractionSession) {
-    
-		err = [self configureExtractionSessionWithMovie: [mQTMovie quickTimeMovie]];
+
+    OSStatus err;
+
+    // prepare for extraction if this is the first entry
+    if (NULL == mAudioExtractionSession) {
+
+        err = [self configureExtractionSessionWithMovie: [mQTMovie quickTimeMovie]];
         if (err) goto bail;
-	}
-     
+    }
+
     // create the file
     if (0 == mExportFileID) {
         err = AudioFileCreate(&mParentRef, (CFStringRef)mFileName, kAudioFileAIFFType, &mOutputASBD, 0, &mFileRef, &mExportFileID);
         if (err) goto bail;
 
-		// set the channel labels we grabbed from the source
-		if (NULL != mExtractionLayoutPtr) {
-            err = AudioFileSetProperty(mExportFileID, 
+        // set the channel labels we grabbed from the source
+        if (NULL != mExtractionLayoutPtr) {
+            err = AudioFileSetProperty(mExportFileID,
                                        kAudioFilePropertyChannelLayout,
                                        mExtractionLayoutSize,
                                        (void *)mExtractionLayoutPtr);
-        	if (err) goto bail;
+            if (err) goto bail;
         }
     }
-	
-	// on entry if there's no samples left we're done
+
+    // on entry if there's no samples left we're done
     if (mSamplesRemaining == 0) mExtractionComplete = YES;
-    
+
     // perform some extraction
     if (!mExtractionComplete) {
-    
+
         // if the client implemented a progress proc. call it now
         if (TRUE == mDelegateShouldContinueOp) {
-        	NSNumber *progressValue = [NSNumber numberWithFloat:(float)((float)mSamplesCompleated / (float)mTotalNumberOfSamples)];
-            
+            NSNumber *progressValue = [NSNumber numberWithFloat:(float)((float)mSamplesCompleated / (float)mTotalNumberOfSamples)];
+
             [mProgressInfo setPhase:AIFFWriterExportPercent];
             [mProgressInfo setProgressValue:progressValue];
             [mProgressInfo setExportStatus:nil];
-            
+
             continueExport = [[self delegate] shouldContinueOperationWithProgressInfo:mProgressInfo];
             if (NO == continueExport) { err = userCanceledErr; }
         }
-    
+
         // read numSamplesThisSlice number of samples
         SInt64 numSamplesThisSlice = mSamplesRemaining;
-        
+
         if ((numSamplesThisSlice > kMaxExtractionPacketCount) || (numSamplesThisSlice == -1))
             numSamplesThisSlice = kMaxExtractionPacketCount;
 
         // extract the audio and write it to the file
-        err = [self extractAudioToFile:&numSamplesThisSlice];	
+        err = [self extractAudioToFile:&numSamplesThisSlice];
         if (err) goto bail;
-        
+
         if (mSamplesRemaining != -1) {
             mSamplesRemaining -= numSamplesThisSlice;
             mSamplesCompleated += numSamplesThisSlice;
-            
+
             if (mSamplesRemaining == 0) mExtractionComplete = YES;
         }
     }
 
 bail:
-	if (err || mExtractionComplete) {
-	
+    if (err || mExtractionComplete) {
+
         // we're done either way so close the file
         if (mExportFileID) AudioFileClose(mExportFileID);
-        
+
         if (err && mExportFileID) {
             // if we erred out, delete the file
             FSDeleteObject(&mFileRef);
             mExportFileID = 0;
         }
-        
-		// call the completion routine to clean up
+
+        // call the completion routine to clean up
         [self exportCompletedNotification:[NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil]];
-        
-	}
-	/* else {
-    
-		// reschedule to perform this routine again on the next run loop cycle
-		[self performSelectorOnMainThread:@selector(exportOnMainThreadCallBack:)
-										  withObject:(id)nil
-										  waitUntilDone:NO];
-	}*/
+
+    }
+    /* else {
+
+        // reschedule to perform this routine again on the next run loop cycle
+        [self performSelectorOnMainThread:@selector(exportOnMainThreadCallBack:)
+                                          withObject:(id)nil
+                                          waitUntilDone:NO];
+    }*/
 }
 
 // this method will be performed on a background thread
 - (void)exportExtractionOnWorkerThread:(id)inObject
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     BOOL continueExport = YES;
-	
+
     OSStatus err;
 
-	[NSThread setThreadPriority:[NSThread threadPriority]+.1];
-    
-	// attach the movie to this thread
-	err = EnterMoviesOnThread(0);
-	if (err) goto bail;;
-	
-	err = AttachMovieToCurrentThread(mCloneMovie);
-	if (err) goto bail;
-    
-	// prepare for extraction
-	if (NULL == mAudioExtractionSession) {
-		 
-		err = [self configureExtractionSessionWithMovie:mCloneMovie];
+    [NSThread setThreadPriority:[NSThread threadPriority]+.1];
+
+    // attach the movie to this thread
+    err = EnterMoviesOnThread(0);
+    if (err) goto bail;;
+
+    err = AttachMovieToCurrentThread(mCloneMovie);
+    if (err) goto bail;
+
+    // prepare for extraction
+    if (NULL == mAudioExtractionSession) {
+
+        err = [self configureExtractionSessionWithMovie:mCloneMovie];
         if (err) goto done;
-	}
-     
+    }
+
     // create the file
     if (0 == mExportFileID) {
         err = AudioFileCreate(&mParentRef, (CFStringRef)mFileName, kAudioFileAIFFType, &mOutputASBD, 0, &mFileRef, &mExportFileID);
         if (err) goto done;
 
-		// set the channel labels we grabbed from the source
-		if (NULL != mExtractionLayoutPtr) {
-            err = AudioFileSetProperty(mExportFileID, 
+        // set the channel labels we grabbed from the source
+        if (NULL != mExtractionLayoutPtr) {
+            err = AudioFileSetProperty(mExportFileID,
                                        kAudioFilePropertyChannelLayout,
                                        mExtractionLayoutSize,
                                        (void *)mExtractionLayoutPtr);
-        	if (err) goto done;
+            if (err) goto done;
         }
     }
-    
+
     // loop until stopped from an external event, or finished the entire extraction
-	while (YES == continueExport && NO == mExtractionComplete) {
-	
+    while (YES == continueExport && NO == mExtractionComplete) {
+
         if (mSamplesRemaining == 0) mExtractionComplete = YES;
-        
+
         if (!mExtractionComplete) {
-        
+
             // if the client implemented a progress proc. call it now we wait for the
             // progress fuction to return before continuing so we can check the return code
             if (TRUE == mDelegateShouldContinueOp) {
                 NSNumber *progressValue = [NSNumber numberWithFloat:(float)((float)mSamplesCompleated / (float)mTotalNumberOfSamples)];
-                
+
                 [mProgressInfo setPhase:AIFFWriterExportPercent];
                 [mProgressInfo setProgressValue:progressValue];
                 [mProgressInfo setExportStatus:nil];
-                
+
                 [[self delegate] performSelectorOnMainThread:@selector(shouldContinueOperationWithProgressInfo:)
                                                 withObject:(id)mProgressInfo
-												waitUntilDone:YES];
-                
+                                                waitUntilDone:YES];
+
                 continueExport = [[self delegate] shouldContinueOperationWithProgressInfo:mProgressInfo];
                 if (NO == continueExport) { err = userCanceledErr; break; }
             }
-        
+
             // read numSamplesThisSlice number of samples
             SInt64 numSamplesThisSlice = mSamplesRemaining;
-            
+
             if ((numSamplesThisSlice > kMaxExtractionPacketCount) || (numSamplesThisSlice == -1))
                 numSamplesThisSlice = kMaxExtractionPacketCount;
 
             // extract the audio and write it to the file
-            err = [self extractAudioToFile:&numSamplesThisSlice];	
+            err = [self extractAudioToFile:&numSamplesThisSlice];
             if (err) break;
-            
+
             if (mSamplesRemaining != -1) {
                 mSamplesRemaining -= numSamplesThisSlice;
                 mSamplesCompleated += numSamplesThisSlice;
@@ -422,23 +422,23 @@ bail:
 done:
 
     // detach the exported movie from this thread
-	DetachMovieFromCurrentThread(mCloneMovie);
-    ExitMoviesOnThread(); 
-    
+    DetachMovieFromCurrentThread(mCloneMovie);
+    ExitMoviesOnThread();
+
     if (mExportFileID) AudioFileClose(mExportFileID);
- 	
+
     if (err && mExportFileID) {
-    	// if we erred out, delete the file
+        // if we erred out, delete the file
         FSDeleteObject(&mFileRef);
         mExportFileID = 0;
     }
 
 bail:
-	// call the completion routine to clean up on the main thread
-	[self performSelectorOnMainThread:@selector(exportCompletedNotification:)
+    // call the completion routine to clean up on the main thread
+    [self performSelectorOnMainThread:@selector(exportCompletedNotification:)
                                                 withObject:(id)[NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil]
-												waitUntilDone:NO];
-	
+                                                waitUntilDone:NO];
+
     [pool release];
 }
 
@@ -447,56 +447,56 @@ bail:
 // could be optimized by supplying a buffer, but for now it is simply allocated and released in each call
 - (OSStatus)extractAudioToFile:(SInt64 *)ioNumSamples
 {
-	AudioBufferList	bufList;		
-	UInt32			bufsize;
-	char			*buffer = NULL;
-	UInt32			flags;
-	UInt32			numFrames;
-    
-    OSStatus		err;
+    AudioBufferList bufList;
+    UInt32          bufsize;
+    char            *buffer = NULL;
+    UInt32          flags;
+    UInt32          numFrames;
 
-	numFrames = *ioNumSamples;
-	
-	bufsize = (numFrames * mOutputASBD.mBytesPerFrame);
-	buffer = (char *)malloc(bufsize);
-	if (NULL == buffer) {
-		err = memFullErr;
-		goto bail;
-	}
+    OSStatus        err;
 
-	// always extract interleaved data, since that's all we can write to an AIFF file
-	bufList.mNumberBuffers = 1;
-	bufList.mBuffers[0].mNumberChannels = mOutputASBD.mChannelsPerFrame;
-	bufList.mBuffers[0].mDataByteSize = bufsize;
-	bufList.mBuffers[0].mData = buffer;
+    numFrames = *ioNumSamples;
 
-	// read the number of requested samples from the movie
-	err = MovieAudioExtractionFillBuffer(mAudioExtractionSession, &numFrames, &bufList, &flags);
-	if (err) goto bail;
+    bufsize = (numFrames * mOutputASBD.mBytesPerFrame);
+    buffer = (char *)malloc(bufsize);
+    if (NULL == buffer) {
+        err = memFullErr;
+        goto bail;
+    }
 
-	// write it to the file
-	if (numFrames > 0) {
-		err = AudioFileWritePackets(mExportFileID,
-        							false,
+    // always extract interleaved data, since that's all we can write to an AIFF file
+    bufList.mNumberBuffers = 1;
+    bufList.mBuffers[0].mNumberChannels = mOutputASBD.mChannelsPerFrame;
+    bufList.mBuffers[0].mDataByteSize = bufsize;
+    bufList.mBuffers[0].mData = buffer;
+
+    // read the number of requested samples from the movie
+    err = MovieAudioExtractionFillBuffer(mAudioExtractionSession, &numFrames, &bufList, &flags);
+    if (err) goto bail;
+
+    // write it to the file
+    if (numFrames > 0) {
+        err = AudioFileWritePackets(mExportFileID,
+                                    false,
                                     numFrames * mOutputASBD.mBytesPerPacket,
-									NULL,
+                                    NULL,
                                     mLocationInFile,
                                     &numFrames,
                                     buffer);
-		if (err) goto bail;							
-		
+        if (err) goto bail;
+
         mLocationInFile += numFrames;
-	}
-		
+    }
+
 bail:
-	if (NULL != buffer) free(buffer);
-	
+    if (NULL != buffer) free(buffer);
+
     if (err) numFrames = 0;
-    
-	*ioNumSamples = numFrames;
-	
+
+    *ioNumSamples = numFrames;
+
     mExtractionComplete = (flags & kQTMovieAudioExtractionComplete);
-	
+
     return err;
 }
 
@@ -504,44 +504,44 @@ bail:
 // NOTE: the channel layout returned by this routine must be deallocated by the client
 // If 'asbd' is non-NULL, fill it with the default extraction asbd, which contains the
 // highest sample rate among the sound tracks that will be contributing.
-//	'outLayoutSize' and 'asbd' may be nil.
+//  'outLayoutSize' and 'asbd' may be nil.
 - (OSStatus)getDefaultExtractionInfo
 {
-	OSStatus err;
-	
-	// get the size of the extraction output layout
-	err = MovieAudioExtractionGetPropertyInfo(mAudioExtractionSession,
+    OSStatus err;
+
+    // get the size of the extraction output layout
+    err = MovieAudioExtractionGetPropertyInfo(mAudioExtractionSession,
                                               kQTPropertyClass_MovieAudioExtraction_Audio,
-											  kQTMovieAudioExtractionAudioPropertyID_AudioChannelLayout,
-											  NULL,
+                                              kQTMovieAudioExtractionAudioPropertyID_AudioChannelLayout,
+                                              NULL,
                                               &mExtractionLayoutSize,
                                               NULL);
-	if (err) goto bail;
+    if (err) goto bail;
 
-	// allocate memory for the layout
-	mExtractionLayoutPtr = (AudioChannelLayout *)calloc(1, mExtractionLayoutSize);
-	if (NULL == mExtractionLayoutPtr)  { err = memFullErr; goto bail; }
+    // allocate memory for the layout
+    mExtractionLayoutPtr = (AudioChannelLayout *)calloc(1, mExtractionLayoutSize);
+    if (NULL == mExtractionLayoutPtr)  { err = memFullErr; goto bail; }
 
-	// get the layout for the current extraction configuration
-	err = MovieAudioExtractionGetProperty(mAudioExtractionSession,
+    // get the layout for the current extraction configuration
+    err = MovieAudioExtractionGetProperty(mAudioExtractionSession,
                                           kQTPropertyClass_MovieAudioExtraction_Audio,
-										  kQTMovieAudioExtractionAudioPropertyID_AudioChannelLayout,
-										  mExtractionLayoutSize,
+                                          kQTMovieAudioExtractionAudioPropertyID_AudioChannelLayout,
+                                          mExtractionLayoutSize,
                                           mExtractionLayoutPtr,
                                           NULL);
-	if (err) goto bail;
-	
+    if (err) goto bail;
+
     // get the audio stream basic description
     err = MovieAudioExtractionGetProperty(mAudioExtractionSession,
                                           kQTPropertyClass_MovieAudioExtraction_Audio,
                                           kQTMovieAudioExtractionAudioPropertyID_AudioStreamBasicDescription,
                                           sizeof(AudioStreamBasicDescription),
                                           &mSourceASBD,
-                                          NULL);    
+                                          NULL);
 
 bail:
-	
-	return err;				
+
+    return err;
 }
 
 // this method prepare the specified movie for extraction by opening an extraction session, configuring
@@ -549,18 +549,18 @@ bail:
 // and calculates the total number of samples to export
 - (OSStatus) configureExtractionSessionWithMovie:(Movie)inMovie
 {
-	OSStatus err;
-	
-	// open a movie audio extraction session
-	err = MovieAudioExtractionBegin(inMovie, 0, &mAudioExtractionSession);
-	if (err) goto bail;
-	
+    OSStatus err;
+
+    // open a movie audio extraction session
+    err = MovieAudioExtractionBegin(inMovie, 0, &mAudioExtractionSession);
+    if (err) goto bail;
+
     err = [self getDefaultExtractionInfo];
-	if (err) goto bail;
-    
+    if (err) goto bail;
+
     // set the output ASBD to 16-bit interleaved PCM big-endian integers
     // we start with the default ASBD which has set the sample rate to the
-    // highest rate among all audio tracks 
+    // highest rate among all audio tracks
     mOutputASBD = mSourceASBD;
     mOutputASBD.mFormatID = kAudioFormatLinearPCM;
     mOutputASBD.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger |
@@ -571,44 +571,44 @@ bail:
     mOutputASBD.mBytesPerFrame = 2 * mOutputASBD.mChannelsPerFrame;
     mOutputASBD.mBytesPerPacket = 2 * mOutputASBD.mChannelsPerFrame;
 
-	// set the extraction ASBD
-	err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
+    // set the extraction ASBD
+    err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
                                           kQTPropertyClass_MovieAudioExtraction_Audio,
                                           kQTMovieAudioExtractionAudioPropertyID_AudioStreamBasicDescription,
                                           sizeof(mOutputASBD),
                                           &mOutputASBD);
-	if (err) goto bail;		
+    if (err) goto bail;
 
-	// set the output layout
-	if (mExtractionLayoutPtr) {
-		err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
+    // set the output layout
+    if (mExtractionLayoutPtr) {
+        err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
                                               kQTPropertyClass_MovieAudioExtraction_Audio,
                                               kQTMovieAudioExtractionAudioPropertyID_AudioChannelLayout,
                                               mExtractionLayoutSize,
                                               mExtractionLayoutPtr);
-		if (err) goto bail;
-	}
+        if (err) goto bail;
+    }
 
     // set the extraction start time - we always start at zero, but you don't have to
-	TimeRecord startTime = { 0, 0, GetMovieTimeScale(inMovie), GetMovieTimeBase(inMovie) };
-	
-   	err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
-    									  kQTPropertyClass_MovieAudioExtraction_Movie,
+    TimeRecord startTime = { 0, 0, GetMovieTimeScale(inMovie), GetMovieTimeBase(inMovie) };
+
+    err = MovieAudioExtractionSetProperty(mAudioExtractionSession,
+                                          kQTPropertyClass_MovieAudioExtraction_Movie,
                                           kQTMovieAudioExtractionMoviePropertyID_CurrentTime,
                                           sizeof(TimeRecord), &startTime);
-	if (err) goto bail;
-    
+    if (err) goto bail;
+
     // set the number of total samples to export
     mSamplesRemaining = mMovieDuration ? (mMovieDuration * mOutputASBD.mSampleRate) : -1;
     mTotalNumberOfSamples = mSamplesRemaining;
 
 bail:
-    	
-	return err;
+
+    return err;
 }
 
 // calculate the duration of the longest audio track in the movie
-// if the audio tracks end at time N and the movie is much 
+// if the audio tracks end at time N and the movie is much
 // longer we don't want to keep extracting - the API will happily
 // return zeroes until it reaches the movie duration
 -(void)setMovieExtractionDuration
@@ -617,7 +617,7 @@ bail:
     UInt8 i;
 
     SInt32 trackCount = GetMovieTrackCount([mQTMovie quickTimeMovie]);
-    
+
     if (trackCount) {
         for (i = 1; i < trackCount + 1; i++) {
             Track aTrack = GetMovieIndTrackType([mQTMovie quickTimeMovie],
@@ -626,11 +626,11 @@ bail:
                                                 movieTrackMediaType);
             if (aTrack) {
                 TimeValue aDuration = GetTrackDuration(aTrack);
-            
+
                 if (aDuration > maxDuration) maxDuration = aDuration;
             }
         }
-        
+
         mMovieDuration = (Float64)maxDuration / (Float64)GetMovieTimeScale([mQTMovie quickTimeMovie]);
     }
 }
@@ -643,63 +643,63 @@ bail:
 // and if an error occurs we pass it back to the client though the progress info object
 - (void) exportCompletedNotification:(NSError *)inError
 {
-    
-	/*if (noErr == [inError code]) {
-    	CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &mFileRef);
-    	
+
+    /*if (noErr == [inError code]) {
+        CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &mFileRef);
+
         NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-        
-		[ws openFile:[(NSURL *)url path] withApplication:@"QuickTime Player"];
-        
+
+        [ws openFile:[(NSURL *)url path] withApplication:@"QuickTime Player"];
+
         CFRelease(url);
     }*/
-    
-	if (mFileName) {
-    	[mFileName release];
+
+    if (mFileName) {
+        [mFileName release];
         mFileName = nil;
     }
-    
-	if (mAudioExtractionSession){
-		MovieAudioExtractionEnd(mAudioExtractionSession);
+
+    if (mAudioExtractionSession){
+        MovieAudioExtractionEnd(mAudioExtractionSession);
         mAudioExtractionSession = NULL;
     }
-    
+
     if (mQTMovie) {
-    	[mQTMovie release];
+        [mQTMovie release];
         mQTMovie = nil;
     }
-    
+
     mMovieDuration = 0;
-    
+
     if (mCloneMovie) {
         DisposeMovie(mCloneMovie);
         mCloneMovie = NULL;
     }
-    
+
     mExtractionComplete = NO;
     mIsExporting = NO;
     mLocationInFile = 0;
-	mSamplesRemaining = 0;
+    mSamplesRemaining = 0;
     mSamplesCompleated = 0;
     mTotalNumberOfSamples = 0;
-    
+
     if (mExtractionLayoutPtr) {
-    	free(mExtractionLayoutPtr);
+        free(mExtractionLayoutPtr);
         mExtractionLayoutPtr = NULL;
     }
-    
+
     mExtractionLayoutSize = 0;
-   	mExportFileID = 0;
-    
-	[mLock unlock];
+    mExportFileID = 0;
+
+    [mLock unlock];
 
     // if the client implemented a progress proc. call it now
     if (TRUE == mDelegateShouldContinueOp) {
-        
+
         [mProgressInfo setPhase:AIFFWriterExportEnd];
         [mProgressInfo setProgressValue:nil];
         [mProgressInfo setExportStatus:([inError code] ? inError : nil)];
-        
+
         [[self delegate] shouldContinueOperationWithProgressInfo:mProgressInfo];
     }
 }
@@ -715,7 +715,7 @@ bail:
 - (void)setDelegate:(id)inDelegate
 {
     mDelegate = inDelegate;
-    
+
     mDelegateShouldContinueOp = [mDelegate respondsToSelector:@selector(shouldContinueOperationWithProgressInfo:)];
 }
 

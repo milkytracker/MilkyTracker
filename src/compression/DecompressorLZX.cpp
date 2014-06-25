@@ -19,7 +19,7 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  *  DecompressorLZX.cpp
  *  milkytracker_universal
@@ -34,60 +34,60 @@
 #include "XModule.h"
 #include "unlzx.h"
 
-struct ModuleIdentificator : public Unlzx::FileIdentificator 
+struct ModuleIdentificator : public Unlzx::FileIdentificator
 {
-	virtual bool identify(const PPSystemString& filename) const
-	{
-		XMFile file(filename);
-		
-		mp_ubyte buff[XModule::IdentificationBufferSize];
-		memset(buff, 0, sizeof(buff));
+    virtual bool identify(const PPSystemString& filename) const
+    {
+        XMFile file(filename);
 
-		file.read(buff, 1, sizeof(buff));
-		
-		return XModule::identifyModule(buff) != NULL;
-	}
+        mp_ubyte buff[XModule::IdentificationBufferSize];
+        memset(buff, 0, sizeof(buff));
+
+        file.read(buff, 1, sizeof(buff));
+
+        return XModule::identifyModule(buff) != NULL;
+    }
 };
 
 DecompressorLZX::DecompressorLZX(const PPSystemString& filename) :
-	DecompressorBase(filename)
+    DecompressorBase(filename)
 {
 }
 
 bool DecompressorLZX::identify(XMFile& f)
 {
-	f.seek(0);	
+    f.seek(0);
 
-	char buffer[3];
+    char buffer[3];
 
-	f.read(buffer, 1, 3);
-	
-	return (buffer[0] == 76) && (buffer[1] == 90) && (buffer[2] == 88);
-}	
-	
+    f.read(buffer, 1, 3);
+
+    return (buffer[0] == 76) && (buffer[1] == 90) && (buffer[2] == 88);
+}
+
 const PPSimpleVector<Descriptor>& DecompressorLZX::getDescriptors(Hints hint) const
 {
-	descriptors.clear();
-	descriptors.add(new Descriptor("lzx", "LZX Archive")); 	
-	return descriptors;
-}		
-	
+    descriptors.clear();
+    descriptors.add(new Descriptor("lzx", "LZX Archive"));
+    return descriptors;
+}
+
 bool DecompressorLZX::decompress(const PPSystemString& outFilename, Hints hint)
 {
-	// If client requests something else than a module we can't deal we that
-	if (hint != HintAll &&
-		hint != HintModules)
-		return false;
+    // If client requests something else than a module we can't deal we that
+    if (hint != HintAll &&
+        hint != HintModules)
+        return false;
 
-	ModuleIdentificator identificator;
-	Unlzx unlzx(fileName, &identificator);
-	
-	return unlzx.extractFile(true, &outFilename);
+    ModuleIdentificator identificator;
+    Unlzx unlzx(fileName, &identificator);
+
+    return unlzx.extractFile(true, &outFilename);
 }
 
 DecompressorBase* DecompressorLZX::clone()
 {
-	return new DecompressorLZX(fileName);
-}	
+    return new DecompressorLZX(fileName);
+}
 
 static Decompressor::RegisterDecompressor<DecompressorLZX> registerDecompressor;

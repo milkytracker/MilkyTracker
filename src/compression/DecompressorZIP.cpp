@@ -19,7 +19,7 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  *  DecompressorZIP.cpp
  *  milkytracker_universal
@@ -34,49 +34,49 @@
 
 // -- ZIP --------------------------------------------------------------------
 DecompressorZIP::DecompressorZIP(const PPSystemString& filename) :
-	DecompressorBase(filename)
+    DecompressorBase(filename)
 {
 }
 
 bool DecompressorZIP::identify(XMFile& f)
 {
-	const PPSystemString filename(f.getFileName());
-	PPSystemString ext = filename.getExtension();
-	
-	if ((ext.compareToNoCase(".ZIP") != 0) &&
-		(ext.compareToNoCase(".MDZ") != 0))
-		return false;
+    const PPSystemString filename(f.getFileName());
+    PPSystemString ext = filename.getExtension();
 
-	ZipExtractor extractor(filename);
-	
-	pp_int32 error = 0;
-	bool res = extractor.parseZip(error, false, NULL);
-	return (res && error == 0);
-}	
-	
+    if ((ext.compareToNoCase(".ZIP") != 0) &&
+        (ext.compareToNoCase(".MDZ") != 0))
+        return false;
+
+    ZipExtractor extractor(filename);
+
+    pp_int32 error = 0;
+    bool res = extractor.parseZip(error, false, NULL);
+    return (res && error == 0);
+}
+
 const PPSimpleVector<Descriptor>& DecompressorZIP::getDescriptors(Hints hint) const
 {
-	descriptors.clear();
-	descriptors.add(new Descriptor("zip", "ZIP Archive")); 	
+    descriptors.clear();
+    descriptors.add(new Descriptor("zip", "ZIP Archive"));
 
-	if (hint == HintModules || hint == HintAll)
-		descriptors.add(new Descriptor("mdz", "Zipped Module")); 	
-		
-	return descriptors;
-}		
-	
+    if (hint == HintModules || hint == HintAll)
+        descriptors.add(new Descriptor("mdz", "Zipped Module"));
+
+    return descriptors;
+}
+
 bool DecompressorZIP::decompress(const PPSystemString& outFilename, Hints hint)
 {
-	ZipExtractor extractor(fileName);
-	
-	pp_int32 error = 0;
-	bool res = extractor.parseZip(error, true, &outFilename);
-	return (res && error == 0);
+    ZipExtractor extractor(fileName);
+
+    pp_int32 error = 0;
+    bool res = extractor.parseZip(error, true, &outFilename);
+    return (res && error == 0);
 }
 
 DecompressorBase* DecompressorZIP::clone()
 {
-	return new DecompressorZIP(fileName);
-}	
+    return new DecompressorZIP(fileName);
+}
 
 static Decompressor::RegisterDecompressor<DecompressorZIP> registerDecompressor;
