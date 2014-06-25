@@ -11,9 +11,9 @@
  *
  * Copyright (c) 2002,2003 Guido Draheim
  *          All rights reserved,
- *          use under the restrictions of the 
+ *          use under the restrictions of the
  *          Lesser GNU General Public License
- *          or alternatively the restrictions 
+ *          or alternatively the restrictions
  *          of the Mozilla Public License 1.1
  */
 
@@ -53,25 +53,25 @@
                  /* which assumes (sizeof(long) == sizeof(HANDLE)) */
 
 static size_t win32_getpagesize ()
-{ 
-    SYSTEM_INFO si; GetSystemInfo (&si); 
-    return si.dwAllocationGranularity; 
+{
+    SYSTEM_INFO si; GetSystemInfo (&si);
+    return si.dwAllocationGranularity;
 }
 static void*  win32_mmap (long* user, __zzipfd fd, zzip_off_t offs, size_t len)
 {
     if (! user || *user != 1) /* || offs % getpagesize() */
-	return 0;
+    return 0;
   {
     HANDLE hFile = (HANDLE)_get_osfhandle(fd);
     if (hFile)
-	*user = (int) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
+    *user = (int) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
     if (*user)
     {
-	char* p = 0;
-	p = MapViewOfFile(*(HANDLE*)user, FILE_MAP_READ, 0, offs, len);
-	if (p) return p + offs;
-	CloseHandle (*(HANDLE*)user); *user = 1;
-    } 
+    char* p = 0;
+    p = MapViewOfFile(*(HANDLE*)user, FILE_MAP_READ, 0, offs, len);
+    if (p) return p + offs;
+    CloseHandle (*(HANDLE*)user); *user = 1;
+    }
     return MAP_FAILED;
   }
 }

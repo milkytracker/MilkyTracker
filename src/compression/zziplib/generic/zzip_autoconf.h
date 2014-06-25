@@ -32,7 +32,7 @@
 #define ZZIP_BYTE_ORDER 1234
 #endif
 
-/* override ZZIP_WORDS_BIGENDIAN : macros ZZIP_GET16 / ZZIP_GET32 */ 
+/* override ZZIP_WORDS_BIGENDIAN : macros ZZIP_GET16 / ZZIP_GET32 */
 #ifdef ZZIP_BYTE_ORDER+0 == 1234
 #undef ZZIP_WORDS_BIGENDIAN
 #endif

@@ -39,45 +39,45 @@ class XMFile;
 class DecompressorBase
 {
 public:
-	enum Hints
-	{
-		HintAll,
-		HintModules,
-		HintInstruments,
-		HintSamples,
-		HintPatterns,
-		HintTracks
-	};
-	
-	DecompressorBase(const PPSystemString& fileName) :
-		fileName(fileName)
-	{
-	}
-	
-	virtual ~DecompressorBase()
-	{
-	}
-	
-	virtual bool identify(XMFile& f) = 0;
+    enum Hints
+    {
+        HintAll,
+        HintModules,
+        HintInstruments,
+        HintSamples,
+        HintPatterns,
+        HintTracks
+    };
 
-	virtual bool identify();
-	
-	virtual bool doesServeHint(Hints hint) = 0;
-	
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const = 0;
-	
-	virtual bool decompress(const PPSystemString& outFileName, Hints hint) = 0;
-	
-	static void removeFile(const PPSystemString& fileName);
-	
-	virtual void setFilename(const PPSystemString& filename);
+    DecompressorBase(const PPSystemString& fileName) :
+        fileName(fileName)
+    {
+    }
 
-	virtual DecompressorBase* clone() = 0;
-	
+    virtual ~DecompressorBase()
+    {
+    }
+
+    virtual bool identify(XMFile& f) = 0;
+
+    virtual bool identify();
+
+    virtual bool doesServeHint(Hints hint) = 0;
+
+    virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const = 0;
+
+    virtual bool decompress(const PPSystemString& outFileName, Hints hint) = 0;
+
+    static void removeFile(const PPSystemString& fileName);
+
+    virtual void setFilename(const PPSystemString& filename);
+
+    virtual DecompressorBase* clone() = 0;
+
 protected:
-	PPSystemString fileName;
+    PPSystemString fileName;
 
-	mutable PPSimpleVector<Descriptor> descriptors;
+    mutable PPSimpleVector<Descriptor> descriptors;
 };
 
 /*****************************************************************************
@@ -86,36 +86,36 @@ protected:
 class Decompressor : public DecompressorBase
 {
 public:
-	Decompressor(const PPSystemString& fileName);
+    Decompressor(const PPSystemString& fileName);
 
-	virtual bool identify(XMFile& f);
-	
-	virtual bool doesServeHint(Hints hint);
-	
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+    virtual bool identify(XMFile& f);
 
-	virtual bool decompress(const PPSystemString& outFileName, Hints hint);
-	
-	virtual DecompressorBase* clone();
+    virtual bool doesServeHint(Hints hint);
 
-	virtual void setFilename(const PPSystemString& filename);
-	
+    virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+
+    virtual bool decompress(const PPSystemString& outFileName, Hints hint);
+
+    virtual DecompressorBase* clone();
+
+    virtual void setFilename(const PPSystemString& filename);
+
 private:
-	void adjustFilenames(const PPSystemString& filename);	
+    void adjustFilenames(const PPSystemString& filename);
 
-	PPSimpleVector<DecompressorBase> decompressors;
-	
+    PPSimpleVector<DecompressorBase> decompressors;
+
 public:
-	static PPSimpleVector<DecompressorBase>& decompressorList();
+    static PPSimpleVector<DecompressorBase>& decompressorList();
 
-	template<class type>
-	struct RegisterDecompressor
-	{
-		RegisterDecompressor()
-		{
-			Decompressor::decompressorList().add(new type(""));
-		}
-	};
+    template<class type>
+    struct RegisterDecompressor
+    {
+        RegisterDecompressor()
+        {
+            Decompressor::decompressorList().add(new type(""));
+        }
+    };
 };
 
 #endif

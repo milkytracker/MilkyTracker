@@ -1,12 +1,12 @@
 /*
- * Author: 
+ * Author:
  *      Guido Draheim <guidod@gmx.de>
  *
  * Copyright (c) 2000,2001,2002,2003 Guido Draheim
  *          All rights reserved,
  *          use under the restrictions of the
  *          Lesser GNU General Public License
- *          or alternatively the restrictions 
+ *          or alternatively the restrictions
  *          of the Mozilla Public License 1.1
  */
 

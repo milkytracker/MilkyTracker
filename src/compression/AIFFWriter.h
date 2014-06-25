@@ -56,9 +56,9 @@ LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUC
 
 // constants for shouldContinueOperation delegate method
 typedef enum {
-	AIFFWriterExportBegin	 = 0,
-	AIFFWriterExportPercent  = 10,
-	AIFFWriterExportEnd		 = 20
+    AIFFWriterExportBegin    = 0,
+    AIFFWriterExportPercent  = 10,
+    AIFFWriterExportEnd      = 20
 } AIFFWriterExportOperationPhase;
 
 // ProgressInfo object passed back to the delegate
@@ -68,8 +68,8 @@ typedef enum {
 @interface AIFFWriterProgressInfo : NSObject
 {
 @private
-    AIFFWriterExportOperationPhase  phase;	// one of the state enums
-    NSNumber *progressValue;				// value is between 0 and 1.0 valid only for AIFFWriterExportPercent phase
+    AIFFWriterExportOperationPhase  phase;  // one of the state enums
+    NSNumber *progressValue;                // value is between 0 and 1.0 valid only for AIFFWriterExportPercent phase
     NSError  *exportStatus;
 }
 
@@ -93,34 +93,34 @@ typedef enum {
 @interface AIFFWriter : NSObject
 {
 @private
-	NSString 					*mFileName;                     // file name for the new .aiff file
-    FSRef	  					mFileRef;                       // file reference for this file
-    FSRef	  					mParentRef;                     
-    
-    QTMovie						*mQTMovie;                      // movie to extract audio from
-    Float64						mMovieDuration;                 // movie duration
-    Movie						mCloneMovie;                    // copy of the source movie for thread migration
-    
-	MovieAudioExtractionRef     mAudioExtractionSession;        // QT Audio Extraction Session Reference
+    NSString                    *mFileName;                     // file name for the new .aiff file
+    FSRef                       mFileRef;                       // file reference for this file
+    FSRef                       mParentRef;
+
+    QTMovie                     *mQTMovie;                      // movie to extract audio from
+    Float64                     mMovieDuration;                 // movie duration
+    Movie                       mCloneMovie;                    // copy of the source movie for thread migration
+
+    MovieAudioExtractionRef     mAudioExtractionSession;        // QT Audio Extraction Session Reference
     BOOL                        mExtractionComplete;            // are we done yet?
     BOOL                        mIsExporting;                   // is the object busy
-    SInt64						mLocationInFile;                // location to write new data
-    SInt64						mSamplesRemaining;              // how much more do we need to pull from the source?
-    SInt64						mSamplesCompleated;             // hom much have we done - used to drive progress UI
-    SInt64						mTotalNumberOfSamples;          // total number of samples to extract
-    
-	AudioStreamBasicDescription	mSourceASBD;                    // audio stream basic description of the source movie
-    AudioStreamBasicDescription	mOutputASBD;                    // the asbd we're asking for
-    AudioChannelLayout *		mExtractionLayoutPtr;           // the audio channel layout of the source
+    SInt64                      mLocationInFile;                // location to write new data
+    SInt64                      mSamplesRemaining;              // how much more do we need to pull from the source?
+    SInt64                      mSamplesCompleated;             // hom much have we done - used to drive progress UI
+    SInt64                      mTotalNumberOfSamples;          // total number of samples to extract
+
+    AudioStreamBasicDescription mSourceASBD;                    // audio stream basic description of the source movie
+    AudioStreamBasicDescription mOutputASBD;                    // the asbd we're asking for
+    AudioChannelLayout *        mExtractionLayoutPtr;           // the audio channel layout of the source
     UInt32                      mExtractionLayoutSize;          // the size of the audio chanel layout
-    AudioFileID					mExportFileID;                  // file identifier for the new .aiff file
-    
-    NSLock *					mLock;                          // lock protecting reentrance
-    
+    AudioFileID                 mExportFileID;                  // file identifier for the new .aiff file
+
+    NSLock *                    mLock;                          // lock protecting reentrance
+
     AIFFWriterProgressInfo *    mProgressInfo;                  // progress info object passed to the progress callback
-    
-    id							mDelegate;                      // a delegate object to call with progress info...
-    BOOL						mDelegateShouldContinueOp;      // ...but only if it actually implemented the callback
+
+    id                          mDelegate;                      // a delegate object to call with progress info...
+    BOOL                        mDelegateShouldContinueOp;      // ...but only if it actually implemented the callback
 }
 
 - (OSStatus)exportFromMovie:(QTMovie *)inMovie toFile:(NSString *)inFullPath;

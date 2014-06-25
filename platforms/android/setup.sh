@@ -24,7 +24,7 @@ if [ ! -d SDL-1.2.14 ]; then
     svn --quiet export http://svn.libsdl.org/tags/SDL/release-1.2.14 SDL-1.2.14 || exit 1
     echo "Applying Android patch to SDL 1.2.14 ..."
     cd SDL-1.2.14 && patch -p1 < $JNI_SOURCES/patch-sdl || exit 1
-    
+
     echo "Copying SDL-1.2.14 to the target directory : $JNI_SOURCES/sdl"
     cd $MT_ANDROID_HOME
     cp -rf tmp/SDL-1.2.14/* $JNI_SOURCES/sdl
@@ -35,7 +35,7 @@ echo "Creating symbolic links"
 if [ ! -d $JNI_SOURCES/milkytracker/src ]; then
     ln -s $MILKYTRACKER_ROOT/src $JNI_SOURCES/milkytracker/src || echo 1
     echo "Created link: $MILKYTRACKER_ROOT/src => $JNI_SOURCES/milkytracker/src"
-else 
+else
     echo "Directory $JNI_SOURCES/milkytracker/src already exists"
 fi
 
@@ -43,6 +43,6 @@ if [ ! -d $NDK_MT_APP ]; then
     ln -s $MILKYTRACKER_ROOT/platforms/android $NDK_MT_APP || exit 1
     echo "Created link: $MILKYTRACKER_ROOT/platforms/android => $NDK_MT_APP"
 else
-    echo "Directory $NDK_MT_APP already exists" 
+    echo "Directory $NDK_MT_APP already exists"
 fi
 

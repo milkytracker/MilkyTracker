@@ -8,7 +8,7 @@
  * a while now so perhaps some program sources have errnously taken
  * advantage of this file.
  *
- * Author: 
+ * Author:
  *      Guido Draheim <guidod@gmx.de>
  *      Tomi Ollila <Tomi.Ollila@tfi.net>
  *
@@ -16,7 +16,7 @@
  *          All rights reserved,
  *          use under the restrictions of the
  *          Lesser GNU General Public License
- *          or alternatively the restrictions 
+ *          or alternatively the restrictions
  *          of the Mozilla Public License 1.1
  */
 
@@ -62,7 +62,7 @@
 
 struct zzip_file
 {
-    struct zzip_dir* dir; 
+    struct zzip_dir* dir;
     __zzipfd fd;
     int method;
     zzip_size_t restlen;

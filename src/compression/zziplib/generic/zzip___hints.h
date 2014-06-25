@@ -18,7 +18,7 @@
 # if ZZIP_GNUC_ATLEAST(2,8)
 # define ZZIP_GNUC_EXTENSION __extension__
 # else
-# define ZZIP_GNUC_EXTENSION 
+# define ZZIP_GNUC_EXTENSION
 # endif
 #endif
 
@@ -153,10 +153,10 @@
 # elif  defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
 # define ZZIP_FUNC             __func__
 # define ZZIP_FUNCTION         ""
-# else   
+# else
 # define ZZIP_FUNC             0
 # define ZZIP_FUNCTION         ""
-# endif  
+# endif
 #endif
 
 #ifndef ZZIP_STRING

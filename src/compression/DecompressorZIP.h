@@ -39,18 +39,18 @@
 class DecompressorZIP : public DecompressorBase
 {
 public:
-	DecompressorZIP(const PPSystemString& filename);
+    DecompressorZIP(const PPSystemString& filename);
 
-	virtual bool identify(XMFile& f);
+    virtual bool identify(XMFile& f);
 
-	// this type of archive only contain modules
-	virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintModules); }
-	
-	virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
-	
-	virtual bool decompress(const PPSystemString& outFilename, Hints hint);
-	
-	virtual DecompressorBase* clone();
+    // this type of archive only contain modules
+    virtual bool doesServeHint(Hints hint) { return (hint == HintAll || hint == HintModules); }
+
+    virtual const PPSimpleVector<Descriptor>& getDescriptors(Hints hint) const;
+
+    virtual bool decompress(const PPSystemString& outFilename, Hints hint);
+
+    virtual DecompressorBase* clone();
 };
 
 #endif

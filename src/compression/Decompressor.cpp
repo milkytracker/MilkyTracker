@@ -33,127 +33,127 @@
 
 void DecompressorBase::removeFile(const PPSystemString& fileName)
 {
-	XMFile::remove(fileName);
+    XMFile::remove(fileName);
 }
 
 bool DecompressorBase::identify()
 {
-	XMFile f(fileName);
-	return identify(f);
+    XMFile f(fileName);
+    return identify(f);
 }
 
 void DecompressorBase::setFilename(const PPSystemString& filename)
 {
-	this->fileName = filename;
+    this->fileName = filename;
 }
 
 Decompressor::Decompressor(const PPSystemString& fileName) :
-	DecompressorBase(fileName)
+    DecompressorBase(fileName)
 {
-	for (pp_int32 i = 0; i < decompressorList().size(); i++)
-	{
-		DecompressorBase* decompressor = decompressorList().get(i)->clone();
-		decompressors.add(decompressor);
-	}
+    for (pp_int32 i = 0; i < decompressorList().size(); i++)
+    {
+        DecompressorBase* decompressor = decompressorList().get(i)->clone();
+        decompressors.add(decompressor);
+    }
 
-	adjustFilenames(fileName);
+    adjustFilenames(fileName);
 }
-	
+
 bool Decompressor::identify(XMFile& f)
 {
-	for (pp_int32 i = 0; i < decompressors.size(); i++)
-	{
-		if (decompressors.get(i)->identify(f))
-		{
-			return true;
-		}
-	}
-	
-	return false;
-}	
-	
+    for (pp_int32 i = 0; i < decompressors.size(); i++)
+    {
+        if (decompressors.get(i)->identify(f))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool Decompressor::doesServeHint(Hints hint)
 {
-	for (pp_int32 i = 0; i < decompressors.size(); i++)
-	{
-		if (decompressors.get(i)->doesServeHint(hint))
-			return true;
-	}
-	return false;
+    for (pp_int32 i = 0; i < decompressors.size(); i++)
+    {
+        if (decompressors.get(i)->doesServeHint(hint))
+            return true;
+    }
+    return false;
 }
 
 struct DescriptorSortRule : public PPSimpleVector<Descriptor>::SortRule
 {
-	virtual pp_int32 compare(const Descriptor& left, const Descriptor& right) const
-	{
-		return left.description.compareTo(right.description);
-	}
+    virtual pp_int32 compare(const Descriptor& left, const Descriptor& right) const
+    {
+        return left.description.compareTo(right.description);
+    }
 };
 
 const PPSimpleVector<Descriptor>& Decompressor::getDescriptors(Hints hint) const
 {
-	descriptors.clear();
+    descriptors.clear();
 
-	for (pp_int32 i = 0; i < decompressors.size(); i++)
-	{
-		if (decompressors.get(i)->doesServeHint(hint))
-		{
-			const PPSimpleVector<Descriptor>& src = decompressors.get(i)->getDescriptors(hint);
-		
-			for (pp_int32 j = 0; j < src.size(); j++)
-			{
-				descriptors.add(new Descriptor(*src.get(j))); 
-			}
-		}
-	}
-	
-	DescriptorSortRule sortRule;
-	
-	descriptors.sort(sortRule);
-	
-	return descriptors;
+    for (pp_int32 i = 0; i < decompressors.size(); i++)
+    {
+        if (decompressors.get(i)->doesServeHint(hint))
+        {
+            const PPSimpleVector<Descriptor>& src = decompressors.get(i)->getDescriptors(hint);
+
+            for (pp_int32 j = 0; j < src.size(); j++)
+            {
+                descriptors.add(new Descriptor(*src.get(j)));
+            }
+        }
+    }
+
+    DescriptorSortRule sortRule;
+
+    descriptors.sort(sortRule);
+
+    return descriptors;
 }
-	
+
 bool Decompressor::decompress(const PPSystemString& outFileName, Hints hint)
 {
-	bool result = false;
-	for (pp_int32 i = 0; i < decompressors.size(); i++)
-	{
-		if (decompressors.get(i)->identify())
-		{
-			result = decompressors.get(i)->decompress(outFileName, hint);
-			if (result)
-				break;
-		}
-	}
-	
-	if (!result)
-		removeFile(outFileName);
-	
-	return result;
+    bool result = false;
+    for (pp_int32 i = 0; i < decompressors.size(); i++)
+    {
+        if (decompressors.get(i)->identify())
+        {
+            result = decompressors.get(i)->decompress(outFileName, hint);
+            if (result)
+                break;
+        }
+    }
+
+    if (!result)
+        removeFile(outFileName);
+
+    return result;
 }
 
 DecompressorBase* Decompressor::clone()
 {
-	return new Decompressor(fileName);
+    return new Decompressor(fileName);
 }
 
 
 void Decompressor::setFilename(const PPSystemString& filename)
 {
-	DecompressorBase::setFilename(fileName);
-	
-	adjustFilenames(fileName);
+    DecompressorBase::setFilename(fileName);
+
+    adjustFilenames(fileName);
 }
-	
+
 void Decompressor::adjustFilenames(const PPSystemString& filename)
 {
-	for (pp_int32 i = 0; i < decompressors.size(); i++)
-		decompressors.get(i)->setFilename(filename);
+    for (pp_int32 i = 0; i < decompressors.size(); i++)
+        decompressors.get(i)->setFilename(filename);
 }
 
 PPSimpleVector<DecompressorBase>& Decompressor::decompressorList()
 {
-	static PPSimpleVector<DecompressorBase> decompressorList;
-	return decompressorList;
+    static PPSimpleVector<DecompressorBase> decompressorList;
+    return decompressorList;
 }
