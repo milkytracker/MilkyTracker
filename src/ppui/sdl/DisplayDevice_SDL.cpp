@@ -18,11 +18,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *  3/11/14 - Dale Whinham
+ *    - Use system mouse cursors
+ *
  *  12/5/14 - Dale Whinham
  *    - Port to SDL2
  *    - Test/fix/remove scale factor and orientation code
  *
- *    TODO: - Switch to SDL2's mouse cursors instead of rolling our own.
  */
 
 #include "DisplayDevice_SDL.h"
@@ -306,6 +308,7 @@ void PPDisplayDevice::signalWaitState(bool b, const PPColor& color)
 	setMouseCursor(b ? MouseCursorTypeWait : MouseCursorTypeStandard);
 }
 
+#ifdef SDL_CUSTOM_CURSORS
 // Mouse pointer data
 Uint8 PPDisplayDevice::resizeLeft_data[] = { 0, 0, 96, 0, 97, 128, 99, 0, 102, 0, 108, 0, 120, 0, 127, 254, 120, 0, 124, 0, 102, 0, 99, 0, 97, 128, 96, 0, 0, 0, 0, 0 };
 Uint8 PPDisplayDevice::resizeLeft_mask[] = { 240, 0, 241, 128, 243, 192, 247, 128, 255, 0, 254, 0, 255, 255, 255, 255, 255, 255, 254, 0, 255, 0, 247, 128, 243, 192, 241, 128, 240, 0, 0, 0 };
@@ -315,14 +318,22 @@ Uint8 PPDisplayDevice::eggtimer_data[] = { 0, 0, 127, 192, 32, 128, 32, 128, 17,
 Uint8 PPDisplayDevice::eggtimer_mask[] = { 255, 224, 255, 224, 127, 192, 127, 192, 63, 128, 63, 128, 31, 0, 14, 0, 14, 0, 31, 0, 63, 128, 63, 128, 127, 192, 127, 192, 255, 224, 255, 224 };
 Uint8 PPDisplayDevice::hand_data[] = {54, 192, 91, 64, 146, 64, 146, 112, 146, 104, 146, 104, 128, 40, 128, 40, 128, 8, 128, 8, 128, 16, 64, 16, 64, 32, 32, 32, 31, 192, 0, 0, };
 Uint8 PPDisplayDevice::hand_mask[] = {54, 192, 127, 192, 255, 192, 255, 240, 255, 248, 255, 248, 255, 248, 255, 248, 255, 248, 255, 248, 255, 240, 127, 240, 127, 224, 63, 224, 31, 192, 0, 0, };
+#endif
 
 void PPDisplayDevice::initMousePointers()
 {
+#ifdef SDL_CUSTOM_CURSORS
 	cursorResizeLeft = SDL_CreateCursor(resizeLeft_data, resizeLeft_mask, 16, 16, 2, 7);
 	cursorResizeRight = SDL_CreateCursor(resizeRight_data, resizeRight_mask, 16, 16, 13, 7);
 	cursorEggtimer = SDL_CreateCursor(eggtimer_data, eggtimer_mask, 16, 16, 5, 7);
 	cursorHand = SDL_CreateCursor(hand_data, hand_mask, 16, 16, 5, 5);
-
+#else
+	cursorResizeLeft = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+	cursorResizeRight = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+	cursorEggtimer = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+	cursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+#endif
+	
 	// The current cursor is used as the standard cursor;
 	// This might cause problems if the system if displaying some other cursor at
 	// the time, or it might not. It depends.
