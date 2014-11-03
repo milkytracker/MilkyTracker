@@ -18,8 +18,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  12/5/14 - Dale Whinham
- *    - Port to SDL2
  */
 
 /////////////////////////////////////////////////////////////////
@@ -65,12 +63,8 @@ protected:
 	void adjust(pp_int32& x, pp_int32& y);
 
 	// Mouse pointers
-	SDL_Cursor *cursorStandard, *cursorResizeLeft, *cursorResizeRight, *cursorEggtimer, *cursorHand;
+	SDL_Cursor *cursorStandard, *cursorResizeHoriz, *cursorEggtimer, *cursorHand;
 	void initMousePointers();
-	static Uint8 resizeLeft_data[], resizeLeft_mask[];
-	static Uint8 resizeRight_data[], resizeRight_mask[];
-	static Uint8 eggtimer_data[], eggtimer_mask[];
-	static Uint8 hand_data[], hand_mask[];
 
 public:
 	PPDisplayDevice(pp_int32 width,
