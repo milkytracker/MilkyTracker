@@ -162,6 +162,7 @@ resources/fonts/TINY_UPPERCASE.6x5 \
 resources/fonts/XTSAMP.8X8 \
 resources/fonts/ZERO.8X8 \
 resources/fonts/ZIRCFONT.8X8 \
+resources/milkytracker.appdata \
 resources/milkytracker.desktop \
 resources/music/milky.xm \
 resources/music/slumberjack.xm \
