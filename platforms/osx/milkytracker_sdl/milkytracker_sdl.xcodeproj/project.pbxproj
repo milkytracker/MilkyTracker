@@ -1944,6 +1944,7 @@
 				2D5B3C0F1A070C6500834B02 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DEBCA221A06F1E9000E7EAE /* Build configuration list for PBXProject "milkytracker_sdl" */ = {
 			isa = XCConfigurationList;
