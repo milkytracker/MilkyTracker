@@ -39,7 +39,7 @@ SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& b
 		w = getDefaultWidth();
 		h = getDefaultHeight();
 		
-		theWindow = SDL_CreateWindow("MilkyTracker SDL", NULL, NULL, w, h, flags);
+		theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
 		theSurface = SDL_GetWindowSurface(theWindow);
 		
 		if (theSurface == NULL) 

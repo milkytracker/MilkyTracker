@@ -54,7 +54,7 @@ public:
 				  
 	virtual ~PPDisplayDeviceFB();
 
-	virtual bool supportsScaling() const { return false; }
+	virtual bool supportsScaling() const { return true; }
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();
