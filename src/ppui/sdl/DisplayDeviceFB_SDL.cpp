@@ -86,7 +86,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 #ifdef HIDPI_SUPPORT
 	SDL_RenderSetLogicalSize(theRenderer, rendererW, rendererH);
 #else
-	SDL_RenderSetLogicalSize(theRenderer, width, height);
+	SDL_RenderSetLogicalSize(theRenderer, realWidth, realHeight);
 #endif
 
 	// Use linear filtering for the scaling (make this optional eventually)
@@ -94,7 +94,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 
 	// Streaming texture for rendering the UI
 	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format,
-								   SDL_TEXTUREACCESS_STREAMING, width, height);
+								   SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
 
 	if (bpp == -1)
 	{
@@ -209,6 +209,7 @@ void PPDisplayDeviceFB::update()
 	PPRect r(0, 0, getSize().width, getSize().height);
 	swap(r);
 	
+	// Update entire texture and copy to renderer
 	SDL_UpdateTexture(theTexture, NULL, theSurface->pixels, theSurface->pitch);
 	SDL_RenderClear(theRenderer);
 	SDL_RenderCopy(theRenderer, theTexture, NULL, NULL);
@@ -225,23 +226,20 @@ void PPDisplayDeviceFB::update(const PPRect& r)
 		return;
 	}
 
-	// The old method seems to use "dirty rectangles" here.
-	// We could consider re-implementing that, but updating the whole screen seems quick enough.
-
-	/*
-	PPRect r2(r);
-	swap(r2);
-
-	PPRect r3(r);
-	r3.scale(scaleFactor);
+	swap(r);
 	
-	transformInverse(r3);
+	PPRect r2(r);
+	r2.scale(scaleFactor);
+	
+	transformInverse(r2);
 
-	SDL_UpdateRect(theSurface, r3.x1, r3.y1, (r3.x2-r3.x1), (r3.y2-r3.y1));
-	*/
-
-	// SDL 2.x method
-	SDL_UpdateTexture(theTexture, NULL, theSurface->pixels, theSurface->pitch);
+	SDL_Rect r3 = { r2.x1, r2.y1, r2.width(), r2.height() };
+	
+	// Calculate destination pixel data offset based on row pitch and x coordinate
+	void* surfaceOffset = (char*) theSurface->pixels + r2.y1 * theSurface->pitch + r2.x1 * theSurface->format->BytesPerPixel;
+	
+	// Update dirty area of texture and copy to renderer
+	SDL_UpdateTexture(theTexture, &r3, surfaceOffset, theSurface->pitch);
 	SDL_RenderClear(theRenderer);
 	SDL_RenderCopy(theRenderer, theTexture, NULL, NULL);
 	SDL_RenderPresent(theRenderer);
