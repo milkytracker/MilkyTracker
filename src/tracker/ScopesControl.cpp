@@ -397,7 +397,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->setFont(smallFont);
 			g->setColor(0, 0, 0);
 			g->drawString("\xf0", sx, sy2+1);
-			g->setColor(TrackerConfig::colorRecordModeButtonText);
+			g->setColor(TrackerConfig::colorScopesRecordIndicator);
 			g->drawString("\xf0", sx-1, sy2);
 		}
 

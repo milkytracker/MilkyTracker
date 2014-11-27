@@ -1678,9 +1678,14 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 	colorMapping[14] = GlobalColorConfig::ColorPatternSelection;
 	colorMapping[15] = GlobalColorConfig::ColorButtons;
 	colorMapping[16] = GlobalColorConfig::ColorButtonText;
-	colorMapping[17] = GlobalColorConfig::ColorSelection;
-	colorMapping[18] = GlobalColorConfig::ColorListBoxBackground;
-	colorMapping[19] = GlobalColorConfig::ColorScopes;
+	colorMapping[17] = GlobalColorConfig::ColorRecordModeButtonText;
+	colorMapping[18] = GlobalColorConfig::ColorSelection;
+	colorMapping[19] = GlobalColorConfig::ColorListBoxBackground;
+	colorMapping[20] = GlobalColorConfig::ColorScrollBarBackground;
+	colorMapping[21] = GlobalColorConfig::ColorScopes;
+	colorMapping[22] = GlobalColorConfig::ColorScopesRecordIndicator;
+	colorMapping[23] = GlobalColorConfig::ColorPeakClipIndicator;
+	colorMapping[24] = GlobalColorConfig::ColorSampleEditorWaveform;
 }
 
 SectionSettings::~SectionSettings()

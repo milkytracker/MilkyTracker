@@ -132,7 +132,7 @@ bool Tracker::updatePeakLevelControl()
 	if (newPeak >= maxPeakThreshold)
 	{
 		TitlePageManager titlePageManager(*screen);
-		titlePageManager.setPeakControlHeadingColor(TrackerConfig::colorRecordModeButtonText, false);
+		titlePageManager.setPeakControlHeadingColor(TrackerConfig::colorPeakClipIndicator, false);
 		bUpdateEntire = true;
 	}
 	if (newPeak < oldPeak)

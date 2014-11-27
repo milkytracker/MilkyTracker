@@ -400,7 +400,7 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 			{
 				g->setColor(*borderColor);
 				g->setPixel(xOffset + x, yOffset);
-				g->setColor(255, 255, 128);
+				g->setColor(TrackerConfig::colorSampleEditorWaveform);
 			}
 			
 			float findex = ((startPos+x)*xScale);
