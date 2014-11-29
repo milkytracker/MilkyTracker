@@ -52,9 +52,12 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 
 	if (theSurface == NULL)
 	{
-		fprintf(stderr, "SDL: Could not create window: %s\n", SDL_GetError());
+		fprintf(stderr, "SDL: Could not create window.\n");
 		exit(EXIT_FAILURE);
 	}
+	
+	// We got a surface: update bpp value
+	bpp = theSurface->format->BitsPerPixel;
 
 #ifdef HIDPI_SUPPORT
 	// Feed SDL_RenderSetLogicalSize() with output size, not GUI surface size, otherwise mouse coordinates will be wrong for Hi-DPI
@@ -95,11 +98,6 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	// Streaming texture for rendering the UI
 	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format,
 								   SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
-
-	if (bpp == -1)
-	{
-		bpp = theSurface->format->BitsPerPixel > 16 ? theSurface->format->BitsPerPixel : 16;
-	}
 
 	switch (bpp)
 	{

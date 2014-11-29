@@ -25,36 +25,46 @@
 
 SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
-	SDL_Surface* theSurface;
-	
 	// Create SDL window
 	theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
-	theSurface = SDL_GetWindowSurface(theWindow);
 	
-	if (theSurface == NULL) 
+	if (theWindow == NULL)
 	{
-		fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
+		fprintf(stderr, "SDL: SDL_CreateWindow (width: %d, height: %d) failed: %s\n", w, h, SDL_GetError());
 		fprintf(stderr, "Retrying with default size...");
 
 		w = getDefaultWidth();
 		h = getDefaultHeight();
 		
 		theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
-		theSurface = SDL_GetWindowSurface(theWindow);
 		
-		if (theSurface == NULL) 
+		if (theWindow == NULL)
 		{
-			fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
-			fprintf(stderr, "Giving up.");
-			
+			fprintf(stderr, "SDL: SDL_CreateWindow (width: %d, height: %d) failed: %s\n", w, h, SDL_GetError());
+			fprintf(stderr, "Giving up.\n");
 			return NULL;
 		}
 	}
-
-	theRenderer = SDL_GetRenderer(theWindow);
-
+	
+	// Prevent window from being resized below minimum
 	SDL_SetWindowMinimumSize(theWindow, w, h);
 	fprintf(stderr, "SDL: Minimum window size set to %dx%d.\n", w, h);
+	
+	// Create renderer for the window
+	theRenderer = SDL_CreateRenderer(theWindow, -1, 0);
+	if (theRenderer == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
+		return NULL;
+	}
+
+	// Create surface for rendering graphics
+	SDL_Surface* theSurface = SDL_CreateRGBSurface(0, w, h, bpp == -1 ? 32 : bpp, 0, 0, 0, 0);
+	if (theSurface == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateSurface failed: %s\n", SDL_GetError());
+		return NULL;
+	}
 
 	return theSurface;
 }
