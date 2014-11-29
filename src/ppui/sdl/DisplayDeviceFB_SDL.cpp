@@ -53,7 +53,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	if (theSurface == NULL)
 	{
 		fprintf(stderr, "SDL: Could not create window: %s\n", SDL_GetError());
-		exit(2);
+		exit(EXIT_FAILURE);
 	}
 
 #ifdef HIDPI_SUPPORT
