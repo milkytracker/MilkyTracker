@@ -749,7 +749,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) 
 	{
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 				
 	// Enable drag and drop
@@ -939,7 +939,7 @@ unrecognizedCommandLineSwitch:
 			{
 				fprintf(stderr, 
 						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-fullscreen] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
-				exit(1);
+				exit(EXIT_FAILURE);
 			} 
 			else 
 			{
