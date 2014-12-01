@@ -43,21 +43,26 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	temporaryBuffer(NULL)
 {
 	// Create an SDL window and surface
-	theSurface = CreateScreen(realWidth, realHeight, bpp,
+	theWindow = CreateWindow(realWidth, realHeight, bpp,
 #ifdef HIDPI_SUPPORT
 							  SDL_WINDOW_ALLOW_HIGHDPI |							// Support for 'Retina'/Hi-DPI displays
 #endif
 							  SDL_WINDOW_RESIZABLE	 |								// MilkyTracker's window is resizable
 							  (bFullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));	// Use 'fake fullscreen' because we can scale
 
-	if (theSurface == NULL)
+	if (theWindow == NULL)
 	{
 		fprintf(stderr, "SDL: Could not create window.\n");
 		exit(EXIT_FAILURE);
 	}
 	
-	// We got a surface: update bpp value
-	bpp = theSurface->format->BitsPerPixel;
+	// Create renderer for the window
+	theRenderer = SDL_CreateRenderer(theWindow, -1, 0);
+	if (theRenderer == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 
 #ifdef HIDPI_SUPPORT
 	// Feed SDL_RenderSetLogicalSize() with output size, not GUI surface size, otherwise mouse coordinates will be wrong for Hi-DPI
@@ -76,6 +81,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	}
 #endif
 
+	// Log renderer capabilities
 	SDL_RendererInfo* theRendererInfo = new SDL_RendererInfo;
 	if (!SDL_GetRendererInfo(theRenderer, theRendererInfo))
 	{
@@ -95,10 +101,26 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	// Use linear filtering for the scaling (make this optional eventually)
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
+	// Create surface for rendering graphics
+	theSurface = SDL_CreateRGBSurface(0, realWidth, realHeight, bpp == -1 ? 32 : bpp, 0, 0, 0, 0);
+	if (theSurface == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateSurface failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	
 	// Streaming texture for rendering the UI
-	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format,
-								   SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
+	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format, SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
+	if (theTexture == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateTexture failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	
+	// We got a surface: update bpp value
+	bpp = theSurface->format->BitsPerPixel;
 
+	// Create a PPGraphics context based on bpp
 	switch (bpp)
 	{
 		case 16:
@@ -145,7 +167,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 			
 		default:
 			fprintf(stderr, "SDL: Unsupported color depth (%i), try either 16, 24 or 32", bpp);
-			exit(2);
+			exit(EXIT_FAILURE);
 	}
 	
 	if (needsTemporaryBuffer)
@@ -695,11 +717,21 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 				
 				default:
 					fprintf(stderr, "SDL: Unsupported color depth for requested orientation");
-					exit(2);
+					exit(EXIT_FAILURE);
 			}
 
 			SDL_UnlockSurface(theSurface);
 			break;
 		}
 	}
+	
+}
+
+// This is unused at the moment, could be useful if we manage to get the GUI resizable in the future.
+void PPDisplayDeviceFB::setSize(const PPSize& size)
+{
+	this->size = size;
+	theSurface = SDL_CreateRGBSurface(0, size.width, size.height, theSurface->format->BitsPerPixel, 0, 0, 0, 0);
+	theTexture = SDL_CreateTextureFromSurface(theRenderer, theSurface);
+	theRenderer = SDL_GetRenderer(theWindow);
 }

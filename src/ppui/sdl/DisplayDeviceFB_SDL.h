@@ -55,12 +55,17 @@ public:
 	virtual ~PPDisplayDeviceFB();
 
 	virtual bool supportsScaling() const { return true; }
+	virtual void setSize(const PPSize& size);
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();
 
 	void update();
 	void update(const PPRect& r);
+protected:
+	SDL_Surface* theSurface;
+	SDL_Texture* theTexture;
+	SDL_Renderer* theRenderer;
 };
 
 #endif
