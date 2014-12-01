@@ -23,10 +23,10 @@
 #include "DisplayDevice_SDL.h"
 #include "Graphics.h"
 
-SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
+SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
 	// Create SDL window
-	theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
+	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
 	
 	if (theWindow == NULL)
 	{
@@ -49,24 +49,8 @@ SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& b
 	// Prevent window from being resized below minimum
 	SDL_SetWindowMinimumSize(theWindow, w, h);
 	fprintf(stderr, "SDL: Minimum window size set to %dx%d.\n", w, h);
-	
-	// Create renderer for the window
-	theRenderer = SDL_CreateRenderer(theWindow, -1, 0);
-	if (theRenderer == NULL)
-	{
-		fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
-		return NULL;
-	}
 
-	// Create surface for rendering graphics
-	SDL_Surface* theSurface = SDL_CreateRGBSurface(0, w, h, bpp == -1 ? 32 : bpp, 0, 0, 0, 0);
-	if (theSurface == NULL)
-	{
-		fprintf(stderr, "SDL: SDL_CreateSurface failed: %s\n", SDL_GetError());
-		return NULL;
-	}
-
-	return theSurface;
+	return theWindow;
 }
 
 PPDisplayDevice::PPDisplayDevice(pp_int32 width,
@@ -192,11 +176,13 @@ void PPDisplayDevice::deLetterbox(pp_int32& mouseX, pp_int32& mouseY)
 {
 	if (needsDeLetterbox)
 	{
+		SDL_Renderer* theRenderer = SDL_GetRenderer(theWindow);
+		
 		int rendererW, rendererH;
 		SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
 
-		int surfaceW = theSurface->w;
-		int surfaceH = theSurface->h;
+		int surfaceW = realWidth;
+		int surfaceH = realHeight;
 
 		float aspectRenderer, aspectSurface;
 
@@ -214,15 +200,6 @@ void PPDisplayDevice::deLetterbox(pp_int32& mouseX, pp_int32& mouseY)
 	}
 }
 #endif
-
-// This is unused at the moment, could be useful if we manage to get the GUI resizable in the future.
-void PPDisplayDevice::setSize(const PPSize& size)
-{
-	this->size = size;
-	theSurface = SDL_CreateRGBSurface(0, size.width, size.height, 32, 0, 0, 0, 0);
-	theTexture = SDL_CreateTextureFromSurface(theRenderer, theSurface);
-	theRenderer = SDL_GetRenderer(theWindow);
-}
 
 void PPDisplayDevice::setTitle(const PPSystemString& title)
 {

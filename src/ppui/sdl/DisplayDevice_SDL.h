@@ -52,12 +52,9 @@ public:
 protected:
 	pp_int32 realWidth, realHeight;
 	SDL_Window* theWindow;
-	SDL_Surface* theSurface;
-	SDL_Texture* theTexture;
-	SDL_Renderer* theRenderer;
 	Orientations orientation;
 	
-	SDL_Surface* CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
+	SDL_Window* CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
 
 	// used for rotating coordinates etc.
 	void adjust(pp_int32& x, pp_int32& y);
@@ -75,8 +72,6 @@ public:
 					Orientations theOrientation = ORIENTATION_NORMAL);
 				  
 	virtual ~PPDisplayDevice();
-
-	virtual void setSize(const PPSize& size);
 	
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
