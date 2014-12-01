@@ -793,7 +793,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 #endif
 
 #ifdef __OPENGL__
-	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, 1, bpp, fullScreen, orientation, swapRedBlue);
+	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, scaleFactor, bpp, fullScreen, orientation, swapRedBlue);
 #else
 	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
 											bpp, fullScreen, orientation, swapRedBlue);
