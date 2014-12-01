@@ -33,8 +33,7 @@
 class PPDisplayDeviceOGL : public PPDisplayDevice
 {
 public:
-	PPDisplayDeviceOGL(SDL_Surface*& screen, 
-					   pp_int32 width, 
+	PPDisplayDeviceOGL(pp_int32 width,
 					   pp_int32 height, 
 					   pp_int32 scaleFactor,
 					   pp_int32 bpp, 
@@ -48,7 +47,9 @@ public:
 	virtual void close();
 
 	void update();
-	void update(const PPRect& r);	
+	void update(const PPRect& r);
+protected:
+	SDL_GLContext glContext;
 };
 
 #endif
