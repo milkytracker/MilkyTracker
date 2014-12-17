@@ -20,16 +20,8 @@
  *
  */
 
-/*
- *  PPOpenPanel_COCOA.mm
- *  MilkyTracker
- *
- *  Created by Dale Whinham on 11/05/2014.
- *
- */
-
-#include "PPOpenPanel.h"
 #include <Cocoa/Cocoa.h>
+#include "PPOpenPanel.h"
 
 PPOpenPanel::PPOpenPanel(PPScreen* screen, const char* caption) :
 PPModalDialog(screen)
@@ -53,31 +45,29 @@ void PPOpenPanel::addExtension(const PPString& ext, const PPString& desc)
 
 PPOpenPanel::ReturnCodes PPOpenPanel::runModal()
 {
-	@autoreleasepool {
-		ReturnCodes returnCode = ReturnCodeCANCEL;
-		NSOpenPanel* openDialog = [NSOpenPanel openPanel];
-		NSMutableArray* fileExtensions = [[NSMutableArray alloc] init];
+	ReturnCodes returnCode = ReturnCodeCANCEL;
+	NSOpenPanel* openDialog = [NSOpenPanel openPanel];
+	NSMutableArray* fileExtensions = [[NSMutableArray alloc] init];
 
-		// Add file extensions and descriptions to MutableArray
-		for (pp_int32 i = 0; i < items.size(); i++)
-		{
-			[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->extension.getStrBuffer()]];
-			[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->description.getStrBuffer()]];
-		}
-
-		// Set filters and options
-		[openDialog setTitle: [NSString stringWithUTF8String:caption]];
-		[openDialog setAllowedFileTypes: fileExtensions];
-		[openDialog setCanChooseFiles: YES];
-		[openDialog setCanChooseDirectories: NO];
-		[openDialog setAllowsMultipleSelection: NO];
-
-		// Open the dialog
-		if ([openDialog runModal] == NSOKButton) {
-			fileName = PPSystemString([[[openDialog URL] path] UTF8String]);
-			returnCode = ReturnCodeOK;
-		}
-
-		return returnCode;
+	// Add file extensions and descriptions to MutableArray
+	for (pp_int32 i = 0; i < items.size(); i++)
+	{
+		[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->extension.getStrBuffer()]];
+		[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->description.getStrBuffer()]];
 	}
+
+	// Set filters and options
+	[openDialog setTitle: [NSString stringWithUTF8String:caption]];
+	[openDialog setAllowedFileTypes: fileExtensions];
+	[openDialog setCanChooseFiles: YES];
+	[openDialog setCanChooseDirectories: NO];
+	[openDialog setAllowsMultipleSelection: NO];
+
+	// Open the dialog
+	if ([openDialog runModal] == NSModalResponseOK) {
+		fileName = PPSystemString([[[openDialog URL] path] UTF8String]);
+		returnCode = ReturnCodeOK;
+	}
+
+	return returnCode;
 }

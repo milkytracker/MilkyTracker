@@ -1,5 +1,5 @@
 /*
- *  ppui/osinterface/cocoa/PPMessageBox_COCOA.mm
+ *  tracker/cocoa/MTKeyTranslator.h
  *
  *  Copyright 2014 Dale Whinham
  *
@@ -20,20 +20,16 @@
  *
  */
 
-#include <Cocoa/Cocoa.h>
-#include "PPMessageBox.h"
+// ------- Cocoa/OpenGL -------
+#import <Foundation/NSObject.h>
+#import <HIToolbox/Events.h>
 
-PPMessageBox::ReturnCodes PPMessageBox::runModal()
-{
-	NSAlert *messageBox = [[NSAlert alloc] init];
+// ---------- Tracker ---------
+#import "BasicTypes.h"
+#import "ScanCodes.h"
+#import "VirtualKeys.h"
 
-	// Set message strings and style
-	[messageBox setMessageText:[NSString stringWithUTF8String:caption]];
-	[messageBox setInformativeText:[NSString stringWithUTF8String:content]];
-	[messageBox setAlertStyle:NSCriticalAlertStyle];
-
-	// Open the dialog
-	[messageBox runModal];
-
-	return ReturnCodeOK;
-}
+@interface MTKeyTranslator : NSObject
++ (pp_uint16)toVK:(unsigned short) keyCode;
++ (pp_uint16)toSC:(unsigned short) keyCode;
+@end

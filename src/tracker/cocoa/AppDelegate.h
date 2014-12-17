@@ -1,5 +1,5 @@
 /*
- *  ppui/osinterface/cocoa/PPMessageBox_COCOA.mm
+ *  tracker/cocoa/AppDelegate.h
  *
  *  Copyright 2014 Dale Whinham
  *
@@ -20,20 +20,26 @@
  *
  */
 
-#include <Cocoa/Cocoa.h>
-#include "PPMessageBox.h"
+// -------- Cocoa/OS X --------
+#import <Cocoa/Cocoa.h>
 
-PPMessageBox::ReturnCodes PPMessageBox::runModal()
-{
-	NSAlert *messageBox = [[NSAlert alloc] init];
+// ---------- Tracker ---------
+#import "BasicTypes.h"
+#import "DisplayDevice_COCOA.h"
+#import "Event.h"
+#import "PPMutex.h"
+#import "PPSystem.h"
+#import "PPUI.h"
+#import "Screen.h"
+#import "Tracker.h"
+#import "MTTrackerView.h"
 
-	// Set message strings and style
-	[messageBox setMessageText:[NSString stringWithUTF8String:caption]];
-	[messageBox setInformativeText:[NSString stringWithUTF8String:content]];
-	[messageBox setAlertStyle:NSCriticalAlertStyle];
+// Defined in main.mm
+void QueryKeyModifiers();
+pp_uint32 PPGetTickCount();
 
-	// Open the dialog
-	[messageBox runModal];
-
-	return ReturnCodeOK;
-}
+@interface AppDelegate : NSObject <NSApplicationDelegate>
+@property (assign) IBOutlet NSWindow* myWindow;
+@property (assign) IBOutlet MTTrackerView* myTrackerView;
+- (void) initTracker;
+@end
