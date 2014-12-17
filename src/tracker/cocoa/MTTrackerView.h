@@ -1,5 +1,5 @@
 /*
- *  ppui/osinterface/cocoa/PPMessageBox_COCOA.mm
+ *  tracker/cocoa/MTTrackerView.h
  *
  *  Copyright 2014 Dale Whinham
  *
@@ -20,20 +20,26 @@
  *
  */
 
-#include <Cocoa/Cocoa.h>
-#include "PPMessageBox.h"
+// ------- Cocoa/OpenGL -------
+#import <Cocoa/Cocoa.h>
+#import <OpenGL/gl3.h>
 
-PPMessageBox::ReturnCodes PPMessageBox::runModal()
-{
-	NSAlert *messageBox = [[NSAlert alloc] init];
+// ---------- Tracker ---------
+#import "Event.h"
+#import "MTKeyTranslator.h"
 
-	// Set message strings and style
-	[messageBox setMessageText:[NSString stringWithUTF8String:caption]];
-	[messageBox setInformativeText:[NSString stringWithUTF8String:content]];
-	[messageBox setAlertStyle:NSCriticalAlertStyle];
+@interface MTTrackerView : NSOpenGLView
 
-	// Open the dialog
-	[messageBox runModal];
+// ---- Surface Dimensions ----
+@property void* pixelData;
+@property int width;
+@property int height;
+@property int bpp;
 
-	return ReturnCodeOK;
-}
+// ---- Defined in main.mm ----
+void QueryKeyModifiers();
+void RaiseEventSynchronized(PPEvent* event);
+
+- (void)initTexture;
+
+@end

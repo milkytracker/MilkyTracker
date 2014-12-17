@@ -20,41 +20,32 @@
  *
  */
 
-/*
- *  PPSavePanel_COCOA.mm
- *  MilkyTracker
- *
- *  Created by Dale Whinham on 11/05/2014.
- *
- */
-
-#include "PPSavePanel.h"
 #include <Cocoa/Cocoa.h>
+#include "PPSavePanel.h"
 
 PPSavePanel::ReturnCodes PPSavePanel::runModal()
 {
-	@autoreleasepool {
-		ReturnCodes returnCode = ReturnCodeCANCEL;
-		NSSavePanel* saveDialog = [NSSavePanel savePanel];
-		NSMutableArray* fileExtensions = [[NSMutableArray alloc] init];
+	ReturnCodes returnCode = ReturnCodeCANCEL;
+	NSSavePanel* saveDialog = [NSSavePanel savePanel];
+	NSMutableArray* fileExtensions = [[NSMutableArray alloc] init];
 
-		// Add file extensions and descriptions to MutableArray
-		for (pp_int32 i = 0; i < items.size(); i++)
-		{
-			[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->extension.getStrBuffer()]];
-			[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->description.getStrBuffer()]];
-		}
-
-		// Set filters and options
-		[saveDialog setTitle: [NSString stringWithUTF8String:caption]];
-		[saveDialog setAllowedFileTypes: fileExtensions];
-
-		// Open the dialog
-		if ([saveDialog runModal] == NSOKButton) {
-			fileName = PPSystemString([[[saveDialog URL] path] UTF8String]);
-			returnCode = ReturnCodeOK;
-		}
-
-		return returnCode;
+	// Add file extensions and descriptions to MutableArray
+	for (pp_int32 i = 0; i < items.size(); i++)
+	{
+		[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->extension.getStrBuffer()]];
+		[fileExtensions addObject: [NSString stringWithUTF8String:items.get(i)->description.getStrBuffer()]];
 	}
+
+	// Set filters and options
+	[saveDialog setTitle: [NSString stringWithUTF8String:caption]];
+	[saveDialog setAllowedFileTypes: fileExtensions];
+
+	// Open the dialog
+	if ([saveDialog runModal] == NSModalResponseOK)
+	{
+		fileName = PPSystemString([[[saveDialog URL] path] UTF8String]);
+		returnCode = ReturnCodeOK;
+	}
+
+	return returnCode;
 }

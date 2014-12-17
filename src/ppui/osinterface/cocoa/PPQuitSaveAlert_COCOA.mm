@@ -20,41 +20,31 @@
  *
  */
 
-/*
- *  PPQuitSaveAlert_COCOA.mm
- *  MilkyTracker
- *
- *  Created by Dale Whinham on 11/05/2014.
- *
- */
-
-#include "PPQuitSaveAlert.h"
 #include <Cocoa/Cocoa.h>
+#include "PPQuitSaveAlert.h"
 
 PPQuitSaveAlert::ReturnCodes PPQuitSaveAlert::runModal()
 {
-	@autoreleasepool {
-		ReturnCodes returnCode = ReturnCodeCANCEL;
-		NSAlert *messageBox = [[NSAlert alloc] init];
+	ReturnCodes returnCode = ReturnCodeCANCEL;
+	NSAlert *messageBox = [[NSAlert alloc] init];
 
-		// Add buttons and message strings
-		[messageBox addButtonWithTitle:@"Save"];
-		[messageBox addButtonWithTitle:@"Cancel"];
-		[messageBox addButtonWithTitle:@"Don't Save"];
-		[messageBox setMessageText: @"Do you want to save the changes you made to this document?"];
-		[messageBox setInformativeText: @"Your changes will be lost if you don't save them."];
-		[messageBox setAlertStyle:NSWarningAlertStyle];
+	// Add buttons and message strings
+	[messageBox addButtonWithTitle:@"Save"];
+	[messageBox addButtonWithTitle:@"Cancel"];
+	[messageBox addButtonWithTitle:@"Don't Save"];
+	[messageBox setMessageText: @"Do you want to save the changes you made to this document?"];
+	[messageBox setInformativeText: @"Your changes will be lost if you don't save them."];
+	[messageBox setAlertStyle:NSWarningAlertStyle];
 
-		// Set return code
-		switch ([messageBox runModal])
-		{
-			case NSAlertFirstButtonReturn:
-				returnCode = ReturnCodeOK;
-				break;
-			case NSAlertThirdButtonReturn:
-				returnCode = ReturnCodeNO;
-		};
+	// Set return code
+	switch ([messageBox runModal])
+	{
+		case NSAlertFirstButtonReturn:
+			returnCode = ReturnCodeOK;
+			break;
+		case NSAlertThirdButtonReturn:
+			returnCode = ReturnCodeNO;
+	};
 
-		return returnCode;
-	}
+	return returnCode;
 }
