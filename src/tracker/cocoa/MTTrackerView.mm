@@ -62,6 +62,9 @@ static const GLuint elements[] =
 	2, 3, 0,	// second triangle
 };
 
+// --- Mouse/Key Variables ----
+pp_uint32 lastWheelEvent;
+
 // ----------------------------------------------
 //  Use inverted view coordinates for mouse etc.
 // ----------------------------------------------
@@ -346,6 +349,13 @@ static const GLuint elements[] =
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+	// Reduce sensitivity of wheel events
+	pp_uint32 time = PPGetTickCount();
+	if (time - lastWheelEvent < 15)
+		return;
+		
+	lastWheelEvent = PPGetTickCount();
+	
 	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
@@ -355,7 +365,8 @@ static const GLuint elements[] =
 	TMouseWheelEventParams mouseWheelParams;
 	mouseWheelParams.pos.x = curPoint.x;
 	mouseWheelParams.pos.y = curPoint.y;
-	mouseWheelParams.delta = theEvent.scrollingDeltaY;
+	mouseWheelParams.deltaX = -theEvent.scrollingDeltaX;
+	mouseWheelParams.deltaY = theEvent.scrollingDeltaY;
 	
 	PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(TMouseWheelEventParams));
 	RaiseEventSynchronized(&myEvent);
