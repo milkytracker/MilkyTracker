@@ -146,4 +146,12 @@ void RaiseEventSynchronized(PPEvent* event)
 	return NO;
 }
 
+- (void)windowDidResignKey:(NSNotification *)note
+{
+	// Clear modifier keys if window loses focus
+	clearKeyModifier(KeyModifierCTRL);
+	clearKeyModifier(KeyModifierALT);
+	clearKeyModifier(KeyModifierSHIFT);
+}
+
 @end
