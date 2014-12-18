@@ -22,15 +22,11 @@
 
 // -------- Cocoa/OS X --------
 #import <Cocoa/Cocoa.h>
-#import <CoreGraphics/CGEventSource.h>
-#import <CoreGraphics/CGEventTypes.h>
-#import <HIToolbox/Events.h>
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 
 // ---------- Tracker ---------
 #import "BasicTypes.h"
-#import "Event.h"
 
 // ----------------------------------------------------------
 //  Returns number of milliseconds elapsed since last reboot
@@ -52,30 +48,10 @@ pp_uint32 PPGetTickCount()
 	return (pp_uint32) (absTimeNanos / 1e6);
 }
 
-// ---------------------------------------------------------------
-//  Checks modifier key states and sets tracker state accordingly
-// ---------------------------------------------------------------
-void QueryKeyModifiers()
-{
-	CGEventSourceStateID eventSource = kCGEventSourceStateCombinedSessionState;
-	
-	if (CGEventSourceKeyState(eventSource, kVK_Shift) || CGEventSourceKeyState(eventSource, kVK_RightShift))
-		setKeyModifier(KeyModifierSHIFT);
-	else
-		clearKeyModifier(KeyModifierSHIFT);
-	
-	// Command is mapped to CTRL under OS X
-	if (CGEventSourceKeyState(eventSource, kVK_Command))
-		setKeyModifier(KeyModifierCTRL);
-	else
-		clearKeyModifier(KeyModifierCTRL);
-	
-	// Option is mapped to ALT under OS X
-	if (CGEventSourceKeyState(eventSource, kVK_Option) || CGEventSourceKeyState(eventSource, kVK_RightOption))
-		setKeyModifier(KeyModifierALT);
-	else
-		clearKeyModifier(KeyModifierALT);
-}
+// -------------------------------------------------------------------
+//  Dummy function; key modifiers are checked/set in MTTrackerView.mm
+// -------------------------------------------------------------------
+void QueryKeyModifiers() { }
 
 // --------------------------------------
 //  Entry point; start Cocoa application

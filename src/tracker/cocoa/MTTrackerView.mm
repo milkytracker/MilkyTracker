@@ -21,7 +21,6 @@
  */
 
 // TODO: Implement doubleclick
-// TODO: Implement/fix modifier keys
 
 #import "MTTrackerView.h"
 
@@ -452,43 +451,57 @@ pp_uint32 lastWheelEvent;
 - (void)flagsChanged:(NSEvent*)theEvent
 {
 	unsigned long flags = [theEvent modifierFlags];
-	
 	BOOL keyDown = NO;
 	
 	pp_uint16 chr[] = { [MTKeyTranslator toVK:theEvent.keyCode],
-						[MTKeyTranslator toSC:theEvent.keyCode],
-						0 };
+						[MTKeyTranslator toSC:theEvent.keyCode] };
 	
 	switch ([theEvent keyCode])
 	{
+		// Both Shift keys behave as modifiers
 		case kVK_Shift:
 		case kVK_RightShift:
-			keyDown = flags & NSShiftKeyMask ? YES : NO;
+			if (flags & NSShiftKeyMask)
+			{
+				keyDown = YES;
+				setKeyModifier(KeyModifierSHIFT);
+			}
+			else
+				clearKeyModifier(KeyModifierSHIFT);
 			break;
 			
+		// Only Left Command is used as a modifier
 		case kVK_Command:
+			if (flags & NSCommandKeyMask)
+				setKeyModifier(KeyModifierCTRL);
+			else
+				clearKeyModifier(KeyModifierCTRL);
+		case kVK_RightCommand:
 			keyDown = flags & NSCommandKeyMask ? YES : NO;
 			break;
 			
+		// Only Left Option is used as a modifier
 		case kVK_Option:
+			if (flags & NSAlternateKeyMask)
+				setKeyModifier(KeyModifierALT);
+			else
+				clearKeyModifier(KeyModifierALT);
 		case kVK_RightOption:
 			keyDown = flags & NSAlternateKeyMask ? YES : NO;
-			break;
-			
-		case kVK_Control:
-		case kVK_RightControl:
-			keyDown = flags & NSControlKeyMask ? YES : NO;
 			break;
 			
 		case kVK_CapsLock:
 			keyDown = YES;
 			break;
+			
+		default:
+			return;
 	}
 	
 	PPEvent myEvent(keyDown ? eKeyDown : eKeyUp, &chr, sizeof(chr));
 	
 #if DEBUG
-	NSLog(@"Modifier %s: Keycode=%d, VK=%d, SC=%d, Char=%c", keyDown ? "pressed" : "released", theEvent.keyCode, chr[0], chr[1], chr[2]);
+	NSLog(@"Modifier %s: Keycode=%d, VK=%d, SC=%d", keyDown ? "pressed" : "released", theEvent.keyCode, chr[0], chr[1]);
 #endif
 	
 	RaiseEventSynchronized(&myEvent);

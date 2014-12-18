@@ -29,6 +29,12 @@
 #import "ScanCodes.h"
 #import "VirtualKeys.h"
 
+// This keycode is missing from Events.h
+enum
+{
+	kVK_RightCommand = 0x36
+};
+
 @interface MTKeyTranslator : NSObject
 + (pp_uint16)toVK:(unsigned short) keyCode;
 + (pp_uint16)toSC:(unsigned short) keyCode;
