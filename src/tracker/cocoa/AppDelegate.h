@@ -35,7 +35,6 @@
 #import "MTTrackerView.h"
 
 // Defined in main.mm
-void QueryKeyModifiers();
 pp_uint32 PPGetTickCount();
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
