@@ -20,8 +20,6 @@
  *
  */
 
-// TODO: Implement doubleclick
-
 #import "MTTrackerView.h"
 
 // Nice macro for in-lining shader source
@@ -303,7 +301,7 @@ pp_uint32 lastWheelEvent;
 	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
-	NSLog(@"Mouse pressed at (%d, %d)", curPoint.x, curPoint.y);
+	NSLog(@"Left mouse pressed at (%d, %d)", curPoint.x, curPoint.y);
 #endif
 
 	PPEvent myEvent(eLMouseDown, &curPoint, sizeof(PPPoint));
@@ -314,8 +312,18 @@ pp_uint32 lastWheelEvent;
 {
 	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
 	
+	// Use OS double click tracking (respects user's double click speed setting)
+	if (theEvent.clickCount == 2)
+	{
 #if DEBUG
-	NSLog(@"Mouse released at (%d, %d)", curPoint.x, curPoint.y);
+		NSLog(@"Left mouse double clicked at (%d, %d)", curPoint.x, curPoint.y);
+#endif
+		PPEvent myEvent(eLMouseDoubleClick, &curPoint, sizeof(PPPoint));
+		RaiseEventSynchronized(&myEvent);
+	}
+	
+#if DEBUG
+	NSLog(@"Left mouse released at (%d, %d)", curPoint.x, curPoint.y);
 #endif
 	
 	PPEvent myEvent(eLMouseUp, &curPoint, sizeof(PPPoint));
@@ -325,6 +333,16 @@ pp_uint32 lastWheelEvent;
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
 	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	
+	// Use OS double click tracking (respects user's double click speed setting)
+	if (theEvent.clickCount == 2)
+	{
+#if DEBUG
+		NSLog(@"Right mouse double clicked at (%d, %d)", curPoint.x, curPoint.y);
+#endif
+		PPEvent myEvent(eRMouseDoubleClick, &curPoint, sizeof(PPPoint));
+		RaiseEventSynchronized(&myEvent);
+	}
 	
 #if DEBUG
 	NSLog(@"Right mouse pressed at (%d, %d)", curPoint.x, curPoint.y);
@@ -476,6 +494,7 @@ pp_uint32 lastWheelEvent;
 				setKeyModifier(KeyModifierCTRL);
 			else
 				clearKeyModifier(KeyModifierCTRL);
+			// Break omitted intentionally
 		case kVK_RightCommand:
 			keyDown = flags & NSCommandKeyMask ? YES : NO;
 			break;
@@ -486,6 +505,7 @@ pp_uint32 lastWheelEvent;
 				setKeyModifier(KeyModifierALT);
 			else
 				clearKeyModifier(KeyModifierALT);
+			// Break omitted intentionally
 		case kVK_RightOption:
 			keyDown = flags & NSAlternateKeyMask ? YES : NO;
 			break;
@@ -498,12 +518,11 @@ pp_uint32 lastWheelEvent;
 			return;
 	}
 	
-	PPEvent myEvent(keyDown ? eKeyDown : eKeyUp, &chr, sizeof(chr));
-	
 #if DEBUG
 	NSLog(@"Modifier %s: Keycode=%d, VK=%d, SC=%d", keyDown ? "pressed" : "released", theEvent.keyCode, chr[0], chr[1]);
 #endif
 	
+	PPEvent myEvent(keyDown ? eKeyDown : eKeyUp, &chr, sizeof(chr));
 	RaiseEventSynchronized(&myEvent);
 }
 @end
