@@ -49,7 +49,6 @@ public:
 	virtual void update(const PPRect& r);
 	
 	// Window handling
-	virtual bool init();
 	virtual void setTitle(const PPSystemString& title);	
 	virtual void setSize(const PPSize& size);
 	virtual bool supportsScaling() const { return false; }

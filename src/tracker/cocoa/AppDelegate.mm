@@ -69,8 +69,6 @@ void RaiseEventSynchronized(PPEvent* event)
 										  scaleFactor,
 										  32);
 	
-	myDisplayDevice->init();
-	
 	// Enable fullscreen mode if necessary
 	if (fullScreen) myDisplayDevice->goFullScreen(fullScreen);
 	
