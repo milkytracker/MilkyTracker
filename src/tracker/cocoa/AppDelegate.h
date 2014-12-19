@@ -40,5 +40,4 @@ pp_uint32 PPGetTickCount();
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 @property (assign) IBOutlet NSWindow* myWindow;
 @property (assign) IBOutlet MTTrackerView* myTrackerView;
-- (void) initTracker;
 @end

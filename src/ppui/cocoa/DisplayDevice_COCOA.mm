@@ -52,8 +52,11 @@ PPDisplayDevice::PPDisplayDevice(NSWindow* window, MTTrackerView* trackerView, p
 	[theWindow setAspectRatio:theWindow.frame.size];
 	
 	// Listen for mouse movement events
-	[theWindow makeFirstResponder:theTrackerView];
 	[theWindow setAcceptsMouseMovedEvents:YES];
+	
+	// Set responder and give window focus
+	[theWindow makeFirstResponder:theTrackerView];
+	[theWindow makeKeyAndOrderFront:nil];
 }
 
 PPDisplayDevice::~PPDisplayDevice()
@@ -88,11 +91,6 @@ void PPDisplayDevice::update(const PPRect& r)
 	// Partial screen update
 	NSRect r1 = NSMakeRect(r.x1, r.y1, r.width(), r.height());
 	[theTrackerView setNeedsDisplayInRect:r1];
-}
-
-bool PPDisplayDevice::init()
-{
-	return true;
 }
 
 void PPDisplayDevice::setTitle(const PPSystemString& title)

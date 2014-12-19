@@ -37,9 +37,7 @@
 @property int bpp;
 
 // ---- Defined in main.mm ----
-void QueryKeyModifiers();
 void RaiseEventSynchronized(PPEvent* event);
 
 - (void)initTexture;
-
 @end
