@@ -81,6 +81,13 @@
                                     <action selector="runToolbarCustomizationPalette:" target="-1" id="pQI-g3-MTW"/>
                                 </connections>
                             </menuItem>
+							<menuItem isSeparatorItem="YES" id="zec-7Q-Zv1"/>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="71C-tY-4El">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="yhk-fl-9wR"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

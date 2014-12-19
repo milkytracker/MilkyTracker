@@ -105,7 +105,12 @@ void PPDisplayDevice::setSize(const PPSize& size)
 
 bool PPDisplayDevice::goFullScreen(bool b)
 {
-	// Unused
+	if (b != bFullScreen)
+	{
+		[theWindow toggleFullScreen:nil];
+		bFullScreen = b;
+		return true;
+	}
 	return false;
 }
 
