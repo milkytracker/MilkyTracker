@@ -70,7 +70,7 @@ void RaiseEventSynchronized(PPEvent* event)
 										  32);
 	
 	// Enable fullscreen mode if necessary
-	if (fullScreen) myDisplayDevice->goFullScreen(fullScreen);
+	myDisplayDevice->goFullScreen(fullScreen);
 	
 	// Attach display to tracker
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
@@ -152,4 +152,15 @@ void RaiseEventSynchronized(PPEvent* event)
 	clearKeyModifier(KeyModifierSHIFT);
 }
 
+- (void)windowWillEnterFullScreen:(NSNotification *)notification
+{
+	PPEvent event(eFullScreen);
+	RaiseEventSynchronized(&event);
+}
+
+- (void)windowWillExitFullScreen:(NSNotification *)notification
+{
+	PPEvent event(eFullScreen);
+	RaiseEventSynchronized(&event);
+}
 @end
