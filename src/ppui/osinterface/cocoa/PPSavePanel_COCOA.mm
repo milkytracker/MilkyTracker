@@ -41,7 +41,7 @@ PPSavePanel::ReturnCodes PPSavePanel::runModal()
 	[saveDialog setAllowedFileTypes: fileExtensions];
 
 	// Open the dialog
-	if ([saveDialog runModal] == NSModalResponseOK)
+	if ([saveDialog runModal] == NSFileHandlingPanelOKButton)
 	{
 		fileName = PPSystemString([[[saveDialog URL] path] UTF8String]);
 		returnCode = ReturnCodeOK;

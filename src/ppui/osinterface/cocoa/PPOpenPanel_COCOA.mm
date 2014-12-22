@@ -64,7 +64,8 @@ PPOpenPanel::ReturnCodes PPOpenPanel::runModal()
 	[openDialog setAllowsMultipleSelection: NO];
 
 	// Open the dialog
-	if ([openDialog runModal] == NSModalResponseOK) {
+	if ([openDialog runModal] == NSFileHandlingPanelOKButton)
+	{
 		fileName = PPSystemString([[[openDialog URL] path] UTF8String]);
 		returnCode = ReturnCodeOK;
 	}
