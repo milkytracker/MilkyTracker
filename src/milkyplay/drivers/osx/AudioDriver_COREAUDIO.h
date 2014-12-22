@@ -37,6 +37,7 @@
 #ifndef __AUDIODRIVER_COREAUDIO_H__
 #define __AUDIODRIVER_COREAUDIO_H__
 
+#include <stdio.h>
 #include <CoreAudio/AudioHardware.h>
 
 #include "AudioDriverBase.h"
@@ -49,7 +50,7 @@ private:
 
 	AudioDeviceID	soundDeviceID;
 	mp_sint32		lastError;
-	Boolean			IOProcIsInstalled;
+	bool			IOProcIsInstalled;
 
 	OSStatus		(*gAudioIOProc) (AudioDeviceID, const AudioTimeStamp *,
 									 const AudioBufferList *, const AudioTimeStamp *,

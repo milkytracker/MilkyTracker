@@ -150,7 +150,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 
 	AudioStreamBasicDescription mySoundBasicDescription;
 	AudioObjectPropertyAddress mySoundPropertyAddress;
-	UInt32 myPropertySize, myBufferByteCount;
+	UInt32 myPropertySize, myBufferFrameSize;
 
 	// Get the default output device...
 	myPropertySize = sizeof (soundDeviceID);
@@ -219,17 +219,39 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	}
 
 	gAudioIOProc = OSX_AudioIOProc16Bit;
-
-	myBufferByteCount = (bufferSizeInWords >> (mono ? 1 : 0))* sizeof(float);
-	mySoundPropertyAddress.mSelector = kAudioDevicePropertyBufferSize;
+	
+	// Find valid frame size range
+	AudioValueRange frameSizeRange;
+	myPropertySize = sizeof(AudioValueRange);
+	mySoundPropertyAddress.mSelector = kAudioDevicePropertyBufferFrameSizeRange;
+	CHECK_ERROR
+	(
+		MPERR_OSX_BUFFER_ALLOC,
+		AudioObjectGetPropertyData(soundDeviceID,
+								   &mySoundPropertyAddress,
+								   0, NULL,
+								   &myPropertySize, &frameSizeRange)
+	 );
+	
+	// Number of frames = buffer size / 2
+	myBufferFrameSize = bufferSizeInWords >> 1 >> (mono ? 1 : 0);
+	
+	// If requested buffer size is too large, set it to the device's maximum
+	if (myBufferFrameSize > frameSizeRange.mMaximum)
+		myBufferFrameSize = frameSizeRange.mMaximum;
+	
+	// Set buffer size
+	mySoundPropertyAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
 	CHECK_ERROR
 	(
 		MPERR_OSX_BUFFER_ALLOC,
 		AudioObjectSetPropertyData (soundDeviceID,
 									&mySoundPropertyAddress,
 									0,  NULL,
-									sizeof(myBufferByteCount), &myBufferByteCount)
+									sizeof(myBufferFrameSize), &myBufferFrameSize)
 	);
+	
+	bufferSize = myBufferFrameSize;
 
 	// Add our audio IO procedure...
 	CHECK_ERROR
@@ -241,8 +263,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	// If the IOProcID is null, something went wrong
 	assert (gAudioIOProcID != NULL);
 
-	IOProcIsInstalled = 1;
-
+	IOProcIsInstalled = true;
 	deviceHasStarted = false;
 
 	if (compensateBuffer)
@@ -251,7 +272,11 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	}
 	compensateBuffer = new mp_sword[bufferSizeInWords];
 
-	return MP_OK;
+	printf("Core Audio: Wanted %d bytes, got %d\n", bufferSizeInWords / 2 * 4, myBufferFrameSize * 4);
+	
+	// If we got what we requested, return MP_OK,
+	// otherwise return the actual number of frames * number of channels
+	return bufferSizeInWords / 2 == (signed) bufferSize ? MP_OK : myBufferFrameSize * 2;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::stop()
@@ -275,7 +300,7 @@ mp_sint32 AudioDriver_COREAUDIO::closeDevice()
 
 mp_sint32 AudioDriver_COREAUDIO::start()
 {
-	// start the audio IO Proc...
+	// Start the audio IO Proc...
 	if (AudioDeviceStart (soundDeviceID, gAudioIOProcID))
 	{
 		lastError = MPERR_OSX_DEVICE_START;
@@ -296,7 +321,7 @@ mp_sint32 AudioDriver_COREAUDIO::resume()
 {
 	if (!deviceHasStarted)
 	{
-		// start the audio IO Proc...
+		// Start the audio IO Proc...
 		if (AudioDeviceStart (soundDeviceID, gAudioIOProcID))
 		{
 			lastError = MPERR_OSX_DEVICE_START;
