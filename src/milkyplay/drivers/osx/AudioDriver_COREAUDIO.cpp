@@ -121,11 +121,25 @@ OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 		}
 	}
 
-	return noErr;
+	return kAudioHardwareNoError;
 }
 
 AudioDriver_COREAUDIO::AudioDriver_COREAUDIO() :
 	AudioDriverBase(),
+	driverID(NULL),
+	defaultDevice(true),
+	sampleCounter(0),
+	compensateBuffer(NULL),
+	IOProcIsInstalled(0),
+	deviceHasStarted(false)
+{
+}
+
+AudioDriver_COREAUDIO::AudioDriver_COREAUDIO(AudioDeviceID deviceID) :
+	AudioDriverBase(),
+	driverID(NULL),
+	soundDeviceID(deviceID),
+	defaultDevice(false),
 	sampleCounter(0),
 	compensateBuffer(NULL),
 	IOProcIsInstalled(0),
@@ -136,6 +150,100 @@ AudioDriver_COREAUDIO::AudioDriver_COREAUDIO() :
 AudioDriver_COREAUDIO::~AudioDriver_COREAUDIO()
 {
 	delete[] compensateBuffer;
+}
+
+// --------------------------------------------------
+//  Get the name of the sound device from Core Audio
+// --------------------------------------------------
+const char* AudioDriver_COREAUDIO::getDriverID()
+{
+	if (defaultDevice)
+		return "Default Output Device";
+	
+	if (!driverID)
+	{
+		OSStatus err = noErr;
+		CFStringRef deviceName;
+		mp_uint32 dataSize = sizeof(CFStringRef);
+		
+		AudioObjectPropertyAddress myAudioPropertyAddress = { kAudioObjectPropertyName,
+			kAudioObjectPropertyScopeGlobal,
+			kAudioObjectPropertyElementMaster };
+		
+		err = AudioObjectGetPropertyData(soundDeviceID,
+										 &myAudioPropertyAddress,
+										 0, NULL,
+										 &dataSize,
+										 &deviceName);
+		
+		if (err != kAudioHardwareNoError)
+			return "Unnamed Device";
+		
+		CFIndex strLen = CFStringGetLength(deviceName);
+		CFIndex bufSize = CFStringGetMaximumSizeForEncoding(strLen, kCFStringEncodingUTF8);
+		driverID = new char[bufSize];
+		CFStringGetCString(deviceName, driverID, bufSize, kCFStringEncodingUTF8);
+		
+		CFRelease(deviceName);
+	}
+	
+	return driverID;
+}
+
+// ----------------------------------------------------------------------
+//  Gets number of output devices, creates an array of output device IDs
+// ----------------------------------------------------------------------
+OSStatus AudioDriver_COREAUDIO::getAudioDevices(mp_uint32 &numDevices, AudioDeviceID* &deviceIDs)
+{
+	OSStatus err = noErr;
+	mp_uint32 dataSize = 0;
+	mp_uint32 numAudioDevices = 0;
+	mp_uint32 numOutputDevices = 0;
+	
+	AudioObjectPropertyAddress propAddress = { kAudioHardwarePropertyDevices,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster };
+	
+	// Find out how many audio devices exist on the system (including input devices)
+	err = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propAddress, 0, NULL, &dataSize);
+	if (err) return err;
+	
+	// Temporary arrays to hold device IDs
+	numAudioDevices = dataSize / sizeof(AudioDeviceID);
+	AudioDeviceID allDeviceIDs[numAudioDevices];
+	AudioDeviceID outputDeviceIDs[numAudioDevices];
+	
+	// Get all of the device IDs
+	err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propAddress, 0, NULL, &dataSize, allDeviceIDs);
+	if (err) return err;
+	
+	// Check each device ID for output channels
+	propAddress.mSelector = kAudioDevicePropertyStreams;
+	propAddress.mScope = kAudioDevicePropertyScopeOutput;
+	for (int i = 0; i < numAudioDevices; i++)
+	{
+		dataSize = 0;
+		
+		err = AudioObjectGetPropertyDataSize(allDeviceIDs[i], &propAddress, 0, NULL, &dataSize);
+		if (err) return err;
+		
+		mp_uint32 numOutputChannels = dataSize / sizeof(AudioStreamID);
+		
+		// Skip this device ID if there are no output channels
+		if (numOutputChannels < 1)
+			continue;
+		
+		// Otherwise add it to our array
+		outputDeviceIDs[numOutputDevices] = allDeviceIDs[i];
+		numOutputDevices++;
+	}
+	
+	// Store device count and output device IDs
+	numDevices = numOutputDevices;
+	deviceIDs = new AudioDeviceID[numOutputDevices];
+	memcpy(deviceIDs, outputDeviceIDs, numOutputDevices * sizeof(AudioDeviceID));
+	
+	return kAudioHardwareNoError;
 }
 
 mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
@@ -151,26 +259,29 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	AudioStreamBasicDescription mySoundBasicDescription;
 	AudioObjectPropertyAddress mySoundPropertyAddress;
 	UInt32 myPropertySize, myBufferFrameSize;
-
-	// Get the default output device...
-	myPropertySize = sizeof (soundDeviceID);
-	mySoundPropertyAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+	
 	mySoundPropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
 	mySoundPropertyAddress.mElement = kAudioObjectPropertyElementMaster;
-	
-	CHECK_ERROR
-	(
-		MPERR_DETECTING_DEVICE,
-		AudioObjectGetPropertyData (kAudioObjectSystemObject,
-									&mySoundPropertyAddress,
-									0,  NULL,
-									&myPropertySize, &soundDeviceID)
-	);
 
-	if (soundDeviceID == kAudioDeviceUnknown)
+	if (defaultDevice)
 	{
-		lastError = MPERR_OSX_UNKNOWN_DEVICE;
-		return MP_DEVICE_ERROR;
+		// Get the default output device...
+		myPropertySize = sizeof (soundDeviceID);
+		mySoundPropertyAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+		CHECK_ERROR
+		(
+			MPERR_DETECTING_DEVICE,
+			AudioObjectGetPropertyData (kAudioObjectSystemObject,
+										&mySoundPropertyAddress,
+										0,  NULL,
+										&myPropertySize, &soundDeviceID)
+		);
+
+		if (soundDeviceID == kAudioDeviceUnknown)
+		{
+			lastError = MPERR_OSX_UNKNOWN_DEVICE;
+			return MP_DEVICE_ERROR;
+		}
 	}
 
 	// Get the device format...

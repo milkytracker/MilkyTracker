@@ -109,16 +109,36 @@ AudioDriverManager::AudioDriverManager() :
 AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
 {
-#ifdef __MACOSX_CORE__
-	ALLOC_DRIVERLIST(3);
+	mp_uint32 deviceCount = 0;
+	AudioDeviceID* deviceIDs = NULL;
+	OSStatus err = AudioDriver_COREAUDIO::getAudioDevices(deviceCount, deviceIDs);
+	
+	if (err)
+		fprintf(stderr, "Core Audio: Error while enumerating devices (%d)\n", err);
 
-	driverList[0] = new AudioDriver_COREAUDIO();
-	driverList[1] = new AudioDriver_RTAUDIO();
-	driverList[2] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::MACOSX_CORE);
+#ifdef __MACOSX_CORE__
+	ALLOC_DRIVERLIST(deviceCount + 3);
 #else
-	ALLOC_DRIVERLIST(1);
-	driverList[0] = new AudioDriver_COREAUDIO();
+	ALLOC_DRIVERLIST(deviceCount + 1);
 #endif
+
+	// First device: system default output
+	driverList[0] = new AudioDriver_COREAUDIO();
+	
+	// List all output devices
+	int i;
+	for (i = 0; i < deviceCount; i++)
+	{
+		driverList[i + 1] = new AudioDriver_COREAUDIO(deviceIDs[i]);
+	}
+	
+#ifdef __MACOSX_CORE__
+	driverList[i + 1] = new AudioDriver_RTAUDIO();
+	driverList[i + 2] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::MACOSX_CORE);
+#endif
+	
+	if (deviceIDs)
+		delete[] deviceIDs;
 }
 
 #elif defined(DRIVER_UNIX)

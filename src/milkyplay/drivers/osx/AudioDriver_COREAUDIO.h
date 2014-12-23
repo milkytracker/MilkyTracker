@@ -45,6 +45,8 @@
 class AudioDriver_COREAUDIO : public AudioDriverBase
 {
 private:
+	bool			defaultDevice;
+	char*			driverID;
 	mp_uint32		sampleCounter;
 	mp_sword*		compensateBuffer;
 
@@ -70,6 +72,7 @@ private:
 									 
 public:
 				AudioDriver_COREAUDIO();
+				AudioDriver_COREAUDIO(AudioDeviceID deviceID);
 	virtual		~AudioDriver_COREAUDIO();
 			
 	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
@@ -83,8 +86,10 @@ public:
 
 	virtual		mp_uint32	getNumPlayedSamples() const { return sampleCounter; }
 	
-	virtual		const char* getDriverID() { return "CoreAudio"; }
-	virtual		mp_sint32	getPreferredBufferSize() const { return 1024; }		
+	virtual		const char* getDriverID();
+	virtual		mp_sint32	getPreferredBufferSize() const { return 1024; }
+	
+	static		OSStatus	getAudioDevices(mp_uint32 &numDevices, AudioDeviceID* &deviceIDs);
 };
 
 #endif
