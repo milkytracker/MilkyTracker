@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
+        <development version="6000" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
@@ -81,7 +82,7 @@
                                     <action selector="runToolbarCustomizationPalette:" target="-1" id="pQI-g3-MTW"/>
                                 </connections>
                             </menuItem>
-							<menuItem isSeparatorItem="YES" id="zec-7Q-Zv1"/>
+                            <menuItem isSeparatorItem="YES" id="zec-7Q-Zv1"/>
                             <menuItem title="Enter Full Screen" keyEquivalent="f" id="71C-tY-4El">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
@@ -130,7 +131,7 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="MilkyTracker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="Npf-Gd-hAX" userLabel="MilkyTracker">
+        <window title="MilkyTracker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="Npf-Gd-hAX" userLabel="MilkyTracker">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <rect key="contentRect" x="131" y="158" width="640" height="480"/>

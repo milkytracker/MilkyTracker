@@ -83,19 +83,19 @@ void PPDisplayDevice::close()
 void PPDisplayDevice::update()
 {
 	// Full screen update
-	[theTrackerView setNeedsDisplay:YES];
+	[theTrackerView display];
 }
 
 void PPDisplayDevice::update(const PPRect& r)
 {
 	// Partial screen update
 	NSRect r1 = NSMakeRect(r.x1, r.y1, r.width(), r.height());
-	[theTrackerView setNeedsDisplayInRect:r1];
+	[theTrackerView displayRect:r1];
 }
 
 void PPDisplayDevice::setTitle(const PPSystemString& title)
 {
-	[theWindow setTitle:[NSString stringWithCString:title encoding:NSASCIIStringEncoding]];
+	[theWindow setTitle:[NSString stringWithCString:title encoding:NSUTF8StringEncoding]];
 }
 
 void PPDisplayDevice::setSize(const PPSize& size)

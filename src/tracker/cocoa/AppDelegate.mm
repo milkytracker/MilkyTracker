@@ -36,15 +36,15 @@ static NSTimer*				myTimer;
 
 static PPMutex*		globalMutex;
 
+static BOOL			startupAfterFullScreen;
+
 // TODO: Crash handler
 
 void RaiseEventSynchronized(PPEvent* event)
 {
-	if (globalMutex->tryLock())
+	if (myTrackerScreen && globalMutex->tryLock())
 	{
-		if (myTrackerScreen)
-			myTrackerScreen->raiseEvent(event);
-		
+		myTrackerScreen->raiseEvent(event);
 		globalMutex->unlock();
 	}
 }
@@ -52,6 +52,7 @@ void RaiseEventSynchronized(PPEvent* event)
 - (void)initTracker
 {
 	[myWindow setTitle:@"Loading MilkyTracker..."];
+	[myWindow display];
 	
 	// Instantiate the tracker
 	myTracker = new Tracker();
@@ -72,12 +73,21 @@ void RaiseEventSynchronized(PPEvent* event)
 	// Enable fullscreen mode if necessary
 	myDisplayDevice->goFullScreen(fullScreen);
 	
+	// Should we wait for fullscreen transition before completing startup?
+	startupAfterFullScreen = fullScreen;
+	
 	// Attach display to tracker
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
-	
-	// Initialize tracker
+}
+
+- (void)trackerStartUp
+{
+	// Perform startup
 	myTracker->startUp(false);
+	
+	// Timer frequency of 60Hz
+	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
 }
 
 - (void)timerCallback:(NSTimer*)theTimer
@@ -86,21 +96,17 @@ void RaiseEventSynchronized(PPEvent* event)
 		return;
 	
 	PPEvent e = PPEvent(eTimer);
-	myTrackerScreen->raiseEvent(&e);
+	RaiseEventSynchronized(&e);
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	//dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	// Initialisation
+	globalMutex = new PPMutex();
+	[self initTracker];
 	
-	//dispatch_async(queue, ^{
-		globalMutex = new PPMutex();
-		globalMutex->lock();
-		[self initTracker];
-		globalMutex->unlock();
-	//});
-
-	myTimer = [NSTimer scheduledTimerWithTimeInterval:0.01666666 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
+	if (!startupAfterFullScreen)
+		[self trackerStartUp];
 }
 
 #pragma mark Application events
@@ -125,7 +131,7 @@ void RaiseEventSynchronized(PPEvent* event)
 	char filePath[PATH_MAX + 1];
 	
 	// Convert to C string
-	[filename getCString:filePath maxLength:PATH_MAX encoding:NSASCIIStringEncoding];
+	[filename getCString:filePath maxLength:PATH_MAX encoding:NSUTF8StringEncoding];
 	
 	// Create system string from C string
 	PPSystemString sysString(filePath);
@@ -144,7 +150,7 @@ void RaiseEventSynchronized(PPEvent* event)
 	return NO;
 }
 
-- (void)windowDidResignKey:(NSNotification *)note
+- (void)windowDidResignKey:(NSNotification *)notification
 {
 	// Clear modifier keys if window loses focus
 	clearKeyModifier(KeyModifierCTRL);
@@ -162,5 +168,14 @@ void RaiseEventSynchronized(PPEvent* event)
 {
 	PPEvent event(eFullScreen);
 	RaiseEventSynchronized(&event);
+}
+
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
+{
+	if (startupAfterFullScreen)
+	{
+		[self trackerStartUp];
+		startupAfterFullScreen = NO;
+	}
 }
 @end
