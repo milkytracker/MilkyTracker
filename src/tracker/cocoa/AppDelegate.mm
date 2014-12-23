@@ -75,6 +75,9 @@ void RaiseEventSynchronized(PPEvent* event)
 	// Attach display to tracker
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
+	
+	// Initialize tracker
+	myTracker->startUp(false);
 }
 
 - (void)timerCallback:(NSTimer*)theTimer
@@ -88,18 +91,16 @@ void RaiseEventSynchronized(PPEvent* event)
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	// Initialisation
-	globalMutex = new PPMutex();
-	[self initTracker];
+	//dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	
-	// Timer frequency of 60Hz
-	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
-	
-	// Perform startup on separate thread so that splash screen doesn't block Cocoa
-	dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-	dispatch_async(queue, ^{
-		myTracker->startUp(false);
-	});
+	//dispatch_async(queue, ^{
+		globalMutex = new PPMutex();
+		globalMutex->lock();
+		[self initTracker];
+		globalMutex->unlock();
+	//});
+
+	myTimer = [NSTimer scheduledTimerWithTimeInterval:0.01666666 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
 }
 
 #pragma mark Application events
