@@ -58,11 +58,13 @@ public:
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);
+	void setImmediateUpdates(BOOL b) { immediateUpdates = b; };
 
 private:
 	NSWindow* theWindow;
 	MTTrackerView* theTrackerView;
 	char* pixelBuffer;
+	BOOL immediateUpdates;
 };
 
 #endif

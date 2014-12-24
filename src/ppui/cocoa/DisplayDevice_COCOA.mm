@@ -26,7 +26,8 @@
 PPDisplayDevice::PPDisplayDevice(NSWindow* window, MTTrackerView* trackerView, pp_int32 width, pp_int32 height, pp_int32 scaleFactor, pp_uint32 bpp) :
 	PPDisplayDeviceBase(width, height, scaleFactor),
 	theWindow(window),
-	theTrackerView(trackerView)
+	theTrackerView(trackerView),
+	immediateUpdates(NO)
 {
 	// Allocate a pixel buffer and create a PPGraphics context
 	pixelBuffer = new char[width * height * 3];
@@ -83,14 +84,21 @@ void PPDisplayDevice::close()
 void PPDisplayDevice::update()
 {
 	// Full screen update
-	[theTrackerView display];
+	if (immediateUpdates)
+		[theTrackerView display];
+	else
+		[theTrackerView setNeedsDisplay:YES];
 }
 
 void PPDisplayDevice::update(const PPRect& r)
 {
 	// Partial screen update
 	NSRect r1 = NSMakeRect(r.x1, r.y1, r.width(), r.height());
-	[theTrackerView displayRect:r1];
+	
+	if (immediateUpdates)
+		[theTrackerView displayRect:r1];
+	else
+		[theTrackerView setNeedsDisplayInRect:r1];
 }
 
 void PPDisplayDevice::setTitle(const PPSystemString& title)
