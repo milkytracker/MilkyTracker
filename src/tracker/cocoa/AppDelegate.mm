@@ -83,8 +83,14 @@ void RaiseEventSynchronized(PPEvent* event)
 
 - (void)trackerStartUp
 {
+	// Force immediate screen updates during splash screen because Cocoa loop is blocked
+	myDisplayDevice->setImmediateUpdates(YES);
+	
 	// Perform startup
 	myTracker->startUp(false);
+	
+	// Allow Cocoa to handle refresh again (keeps event processing smooth and responsive)
+	myDisplayDevice->setImmediateUpdates(NO);
 	
 	// Timer frequency of 60Hz
 	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
