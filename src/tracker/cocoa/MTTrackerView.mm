@@ -60,7 +60,13 @@ static const GLuint elements[] =
 };
 
 // --- Mouse/Key Variables ----
-pp_uint32 lastWheelEvent;
+static const double MOUSE_REPEAT_DELAY			= 0.5;
+static const double LEFT_MOUSE_REPEAT_INTERVAL	= 0.06;
+static const double RIGHT_MOUSE_REPEAT_INTERVAL = 0.02;
+static NSTimer* lMouseTimer;
+static NSTimer* rMouseTimer;
+static PPPoint curPoint;
+static pp_uint32 lastWheelEvent;
 
 // ----------------------------------------------
 //  Use inverted view coordinates for mouse etc.
@@ -298,7 +304,8 @@ pp_uint32 lastWheelEvent;
 #pragma mark Mouse events
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	lMouseTimer = [NSTimer scheduledTimerWithTimeInterval:MOUSE_REPEAT_DELAY target:self selector:@selector(mouseHeld:) userInfo:nil repeats:NO];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Left mouse pressed at (%d, %d)", curPoint.x, curPoint.y);
@@ -310,7 +317,10 @@ pp_uint32 lastWheelEvent;
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	// Cancel repeat timer
+	[lMouseTimer invalidate];
+	lMouseTimer = nil;
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 	// Use OS double click tracking (respects user's double click speed setting)
 	if (theEvent.clickCount == 2)
@@ -330,9 +340,17 @@ pp_uint32 lastWheelEvent;
 	RaiseEventSynchronized(&myEvent);
 }
 
+- (void)mouseHeld:(NSTimer *)timer
+{
+	lMouseTimer = [NSTimer scheduledTimerWithTimeInterval:LEFT_MOUSE_REPEAT_INTERVAL target:self selector:@selector(mouseHeld:) userInfo:nil repeats:NO];
+	PPEvent myEvent(eLMouseRepeat, &curPoint, sizeof(PPPoint));
+	RaiseEventSynchronized(&myEvent);
+}
+
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	rMouseTimer = [NSTimer scheduledTimerWithTimeInterval:MOUSE_REPEAT_DELAY target:self selector:@selector(rightMouseHeld:) userInfo:nil repeats:NO];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 	// Use OS double click tracking (respects user's double click speed setting)
 	if (theEvent.clickCount == 2)
@@ -354,13 +372,23 @@ pp_uint32 lastWheelEvent;
 
 - (void)rightMouseUp:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	// Cancel repeat timer
+	[rMouseTimer invalidate];
+	rMouseTimer = nil;
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Right mouse released at (%d, %d)", curPoint.x, curPoint.y);
 #endif
 	
 	PPEvent myEvent(eRMouseUp, &curPoint, sizeof(PPPoint));
+	RaiseEventSynchronized(&myEvent);
+}
+
+- (void)rightMouseHeld:(NSTimer *)timer
+{
+	rMouseTimer = [NSTimer scheduledTimerWithTimeInterval:RIGHT_MOUSE_REPEAT_INTERVAL target:self selector:@selector(rightMouseHeld:) userInfo:nil repeats:NO];
+	PPEvent myEvent(eRMouseRepeat, &curPoint, sizeof(PPPoint));
 	RaiseEventSynchronized(&myEvent);
 }
 
@@ -373,7 +401,7 @@ pp_uint32 lastWheelEvent;
 		
 	lastWheelEvent = PPGetTickCount();
 	
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Scroll wheel event: Delta x %.2f, y %.2f @ (%d,%d)", theEvent.scrollingDeltaX, theEvent.scrollingDeltaY, curPoint.x, curPoint.y);
@@ -391,7 +419,7 @@ pp_uint32 lastWheelEvent;
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Mouse moved to (%d, %d)", curPoint.x, curPoint.y);
@@ -403,7 +431,7 @@ pp_uint32 lastWheelEvent;
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Left mouse dragged to (%d, %d)", curPoint.x, curPoint.y);
@@ -415,7 +443,7 @@ pp_uint32 lastWheelEvent;
 
 - (void)rightMouseDragged:(NSEvent *)theEvent
 {
-	PPPoint curPoint = [self translateMouseCoordinates:theEvent];
+	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
 	NSLog(@"Right mouse dragged to (%d, %d)", curPoint.x, curPoint.y);
