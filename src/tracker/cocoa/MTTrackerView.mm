@@ -456,7 +456,7 @@ static pp_uint32 lastWheelEvent;
 #pragma mark Keyboard events
 - (void)keyDown:(NSEvent *)theEvent
 {
-	pp_uint16 character = [theEvent.characters characterAtIndex:0];
+	pp_uint16 character = theEvent.characters.length > 0 ? [theEvent.characters characterAtIndex:0] : 0;
 
 	// Remap backspace
 	if (character == NSDeleteCharacter)
@@ -464,7 +464,7 @@ static pp_uint32 lastWheelEvent;
 	
 	pp_uint16 chr[] = { [MTKeyTranslator toVK:theEvent.keyCode],
 						[MTKeyTranslator toSC:theEvent.keyCode],
-						 character};
+						 character };
 	
 #if DEBUG
 	NSLog(@"Key pressed: Keycode=%d, VK=%d, SC=%d, Char=%d (%c)", theEvent.keyCode, chr[0], chr[1], chr[2], chr[2]);
@@ -485,7 +485,7 @@ static pp_uint32 lastWheelEvent;
 {
 	pp_uint16 chr[] = { [MTKeyTranslator toVK:theEvent.keyCode],
 						[MTKeyTranslator toSC:theEvent.keyCode],
-						[theEvent.characters characterAtIndex:0] };
+						theEvent.characters.length > 0 ? [theEvent.characters characterAtIndex:0] : 0 };
 #if DEBUG
 	NSLog(@"Key released: Keycode=%d, VK=%d, SC=%d, Char=%c", theEvent.keyCode, chr[0], chr[1], chr[2]);
 #endif
