@@ -43,14 +43,14 @@ PPDisplayDevice::PPDisplayDevice(NSWindow* window, MTTrackerView* trackerView, p
 	[trackerView initTexture];
 	
 	// Resize window
-	NSRect frame = NSMakeRect(0, 0, width, height);
-	[theWindow setContentSize:frame.size];
+	NSSize size = NSMakeSize(width, height);
+	[theWindow setContentSize:size];
 	
 	// Set minimum size
 	[theWindow setMinSize:theWindow.frame.size];
 	
 	// Lock aspect ratio
-	[theWindow setAspectRatio:theWindow.frame.size];
+	[theWindow setContentAspectRatio:size];
 	
 	// Listen for mouse movement events
 	[theWindow setAcceptsMouseMovedEvents:YES];
