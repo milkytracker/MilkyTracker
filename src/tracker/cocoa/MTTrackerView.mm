@@ -66,7 +66,6 @@ static const double RIGHT_MOUSE_REPEAT_INTERVAL = 0.02;
 static NSTimer* lMouseTimer;
 static NSTimer* rMouseTimer;
 static PPPoint curPoint;
-static pp_uint32 lastWheelEvent;
 
 // ----------------------------------------------
 //  Use inverted view coordinates for mouse etc.
@@ -394,24 +393,17 @@ static pp_uint32 lastWheelEvent;
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-	// Reduce sensitivity of wheel events
-	pp_uint32 time = PPGetTickCount();
-	if (time - lastWheelEvent < 15)
-		return;
-		
-	lastWheelEvent = PPGetTickCount();
-	
 	curPoint = [self translateMouseCoordinates:theEvent];
 	
 #if DEBUG
-	NSLog(@"Scroll wheel event: Delta x %.2f, y %.2f @ (%d,%d)", theEvent.scrollingDeltaX, theEvent.scrollingDeltaY, curPoint.x, curPoint.y);
+	NSLog(@"Scroll wheel event: Delta x %.2f, y %.2f @ (%d,%d)", theEvent.deltaX, theEvent.deltaY, curPoint.x, curPoint.y);
 #endif
 	
 	TMouseWheelEventParams mouseWheelParams;
 	mouseWheelParams.pos.x = curPoint.x;
 	mouseWheelParams.pos.y = curPoint.y;
-	mouseWheelParams.deltaX = -theEvent.scrollingDeltaX;
-	mouseWheelParams.deltaY = theEvent.scrollingDeltaY;
+	mouseWheelParams.deltaX = -theEvent.deltaX;
+	mouseWheelParams.deltaY = theEvent.deltaY;
 	
 	PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(TMouseWheelEventParams));
 	RaiseEventSynchronized(&myEvent);
