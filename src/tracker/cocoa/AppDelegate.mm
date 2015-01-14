@@ -27,6 +27,8 @@
 // ---------- Display ---------
 @synthesize myWindow;
 @synthesize myTrackerView;
+@synthesize myProgressWindow;
+@synthesize myProgressIndicator;
 
 // ------ Tracker Globals -----
 static PPScreen*			myTrackerScreen;
@@ -84,13 +86,13 @@ void RaiseEventSynchronized(PPEvent* event)
 - (void)trackerStartUp
 {
 	// Force immediate screen updates during splash screen because Cocoa loop is blocked
-	myDisplayDevice->setImmediateUpdates(YES);
+	myDisplayDevice->setImmediateUpdates(true);
 	
 	// Perform startup
 	myTracker->startUp(false);
 	
 	// Allow Cocoa to handle refresh again (keeps event processing smooth and responsive)
-	myDisplayDevice->setImmediateUpdates(NO);
+	myDisplayDevice->setImmediateUpdates(false);
 	
 	// Timer frequency of 60Hz
 	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
@@ -113,6 +115,21 @@ void RaiseEventSynchronized(PPEvent* event)
 	
 	if (!startupAfterFullScreen)
 		[self trackerStartUp];
+}
+
+#pragma mark Progress window
+- (void)showProgress:(BOOL)yes
+{
+	if (yes)
+	{
+		[myProgressWindow makeKeyAndOrderFront:nil];
+		[myProgressIndicator startAnimation:nil];
+	}
+	else
+	{
+		[myProgressIndicator stopAnimation:nil];
+		[myProgressWindow orderOut:nil];
+	}
 }
 
 #pragma mark Application events
