@@ -40,4 +40,8 @@ pp_uint32 PPGetTickCount();
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 @property (assign) IBOutlet NSWindow* myWindow;
 @property (assign) IBOutlet MTTrackerView* myTrackerView;
+@property (assign) IBOutlet NSWindow* myProgressWindow;
+@property (assign) IBOutlet NSProgressIndicator* myProgressIndicator;
+
+- (void)showProgress:(BOOL)yes;
 @end

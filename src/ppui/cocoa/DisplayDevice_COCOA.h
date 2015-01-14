@@ -30,9 +30,11 @@
 
 #include "BasicTypes.h"
 #include "DisplayDeviceBase.h"
+#include "Graphics.h"
 #include "PPSystem.h"
 
 #include <Cocoa/Cocoa.h>
+#include "AppDelegate.h"
 #include "MTTrackerView.h"
 
 class PPDisplayDevice : public PPDisplayDeviceBase

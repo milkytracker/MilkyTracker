@@ -13,9 +13,10 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="aQq-q5-BQG" customClass="AppDelegate">
             <connections>
+                <outlet property="myProgressIndicator" destination="60u-8S-QRa" id="8Sz-GH-5nD"/>
+                <outlet property="myProgressWindow" destination="gBI-Wh-aci" id="gUY-ZW-Xd7"/>
                 <outlet property="myTrackerView" destination="JUZ-7t-KV8" id="uih-aw-FNT"/>
                 <outlet property="myWindow" destination="Npf-Gd-hAX" id="g88-d6-lD8"/>
             </connections>
@@ -70,19 +71,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="HyV-fh-RgO">
                         <items>
-                            <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="BXY-wc-z0C"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Customize Toolbar…" id="1UK-8n-QPP">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="pQI-g3-MTW"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="zec-7Q-Zv1"/>
                             <menuItem title="Enter Full Screen" keyEquivalent="f" id="71C-tY-4El">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
@@ -131,11 +119,11 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="MilkyTracker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="Npf-Gd-hAX" userLabel="MilkyTracker">
+        <window title="MilkyTracker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="MilkyTracker" animationBehavior="default" id="Npf-Gd-hAX" userLabel="MilkyTracker">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
-            <rect key="contentRect" x="131" y="158" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="contentRect" x="0.0" y="0.0" width="640" height="480"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <view key="contentView" id="JUZ-7t-KV8" customClass="MTTrackerView">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -143,6 +131,32 @@
             <connections>
                 <outlet property="delegate" destination="aQq-q5-BQG" id="e8m-d4-C9x"/>
             </connections>
+            <point key="canvasLocation" x="0.0" y="0.0"/>
+        </window>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="gBI-Wh-aci" userLabel="Progress Window" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" utility="YES"/>
+            <rect key="contentRect" x="0.0" y="0.0" width="320" height="83"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+            <view key="contentView" id="lsA-7Z-WBV">
+                <rect key="frame" x="0.0" y="-5" width="320" height="83"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <progressIndicator maxValue="100" indeterminate="YES" style="bar" id="60u-8S-QRa">
+                        <rect key="frame" x="20" y="19" width="280" height="20"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    </progressIndicator>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="9Xu-Is-ziC">
+                        <rect key="frame" x="18" y="46" width="86" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Please wait..." id="fcF-GK-44a">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="0.0" y="0.0"/>
         </window>
     </objects>
 </document>

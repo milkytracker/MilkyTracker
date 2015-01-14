@@ -21,7 +21,6 @@
  */
 
 #include "DisplayDevice_COCOA.h"
-#include "Graphics.h"
 
 PPDisplayDevice::PPDisplayDevice(NSWindow* window, MTTrackerView* trackerView, pp_int32 width, pp_int32 height, pp_int32 scaleFactor, pp_uint32 bpp) :
 	PPDisplayDeviceBase(width, height, scaleFactor),
@@ -131,13 +130,12 @@ PPSize PPDisplayDevice::getDisplayResolution() const
 
 void PPDisplayDevice::shutDown()
 {
-	NSApplication* app = [NSApplication sharedApplication];
-	[app terminate:app];
+	[NSApp terminate:[NSApplication sharedApplication]];
 }
 
 void PPDisplayDevice::signalWaitState(bool b, const PPColor& color)
 {
-	// Unused
+	[[NSApp delegate] showProgress:b];
 }
 
 void PPDisplayDevice::setMouseCursor(MouseCursorTypes type)
