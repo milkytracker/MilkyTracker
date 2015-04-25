@@ -163,6 +163,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\Debug_x64\</OutDir>
+    <IntDir>.\Debug_x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug MBCS|Win32'">
     <OutDir>.\PPUI_Win32___Win32_Debug_MBCS\</OutDir>
@@ -173,6 +175,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug MBCS|x64'">
     <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\PPUI_Win32___Win32_Debug_MBCS_x64\</OutDir>
+    <IntDir>.\PPUI_Win32___Win32_Debug_MBCS_x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PocketPC|Win32'">
     <OutDir>.\PPUI_Win32___Win32_PocketPC\</OutDir>
@@ -181,6 +185,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PocketPC|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\PPUI_Win32___Win32_PocketPC_x64\</OutDir>
+    <IntDir>.\PPUI_Win32___Win32_PocketPC_x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release MBCS|Win32'">
     <OutDir>.\PPUI_Win32___Win32_Release_MBCS\</OutDir>
@@ -189,6 +195,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release MBCS|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\PPUI_Win32___Win32_Release_MBCS_x64\</OutDir>
+    <IntDir>.\PPUI_Win32___Win32_Release_MBCS_x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\Release\</OutDir>
@@ -281,7 +289,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug\MilkyTracker.exe</OutputFile>
+      <OutputFile>.\Debug_x64\MilkyTracker.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/PPUI Win32.pdb</ProgramDatabaseFile>
@@ -375,7 +383,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug_MBCS\MilkyTracker.exe</OutputFile>
+      <OutputFile>.\Debug_MBCS_x64\MilkyTracker.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>D:\code\Microsoft DirectX SDK (March 2009)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -468,7 +476,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\PocketPC\MilkyTracker.exe</OutputFile>
+      <OutputFile>.\PocketPC_x64\MilkyTracker.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\PPUI_Win32___Win32_PocketPC/PPUI Win32.pdb</ProgramDatabaseFile>
@@ -559,7 +567,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Release_MBCS\MilkyTracker.exe</OutputFile>
+      <OutputFile>.\Release_MBCS_x64\MilkyTracker.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\PPUI_Win32___Win32_Release_MBCS/MilkyTracker.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
