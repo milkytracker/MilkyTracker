@@ -78,7 +78,6 @@ are the following command line options:
 -bpp N        Set N to either 16 or 24
 -swap         Swaps the red and blue values in 24 BPP mode
 -orientation  Valid arguments are NORMAL|ROTATE90CCW|ROTATE90CW
--fullscreen   Does what it says
 
 The screen size can be selected in the Config->Layout menu.  Fullscreen mode can
 be toggled using ALT+Return.  Note that these arguments are likely to be removed

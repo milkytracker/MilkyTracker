@@ -840,9 +840,9 @@ void crashHandler(int signum)
 #endif
 
 void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, 
-				 bool swapRedBlue, bool fullScreen, bool noSplash)
+				 bool swapRedBlue, bool noSplash)
 {
-	/* Initialize SDL */
+    /* Initialize SDL */
 	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) 
 	{
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
@@ -896,8 +896,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
- 	if (!fullScreen) 
-		fullScreen = myTracker->getFullScreenFlagFromDatabase();
+	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
 	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 
 #ifdef __LOWRES__
@@ -986,7 +985,7 @@ int main(int argc, char *argv[])
 	
 	pp_int32 defaultBPP = -1;
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
-	bool swapRedBlue = false, fullScreen = false, noSplash = false;
+	bool swapRedBlue = false, noSplash = false;
 	bool recVelocity = false;
 	
 	// Parse command line
@@ -1005,10 +1004,6 @@ int main(int argc, char *argv[])
 		else if ( strcmp(argv[argc], "-swap") == 0 ) 
 		{
 			swapRedBlue = true;
-		}
-		else if ( strcmp(argv[argc], "-fullscreen") == 0)
-		{
-			fullScreen = true;
 		}
 		else if ( strcmp(argv[argc-1], "-orientation") == 0 ) 
 		{
@@ -1042,7 +1037,7 @@ unrecognizedCommandLineSwitch:
 			if (argv[argc][0] == '-') 
 			{
 				fprintf(stderr, 
-						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-fullscreen] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
+						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
 				exit(1);
 			} 
 			else 
@@ -1066,7 +1061,7 @@ unrecognizedCommandLineSwitch:
 	PPSystemString oldCwd = path.getCurrent();
 	
 	globalMutex->lock();
-	initTracker(defaultBPP, orientation, swapRedBlue, fullScreen, noSplash);
+	initTracker(defaultBPP, orientation, swapRedBlue, noSplash);
 	globalMutex->unlock();
 
 #ifdef HAVE_LIBASOUND
