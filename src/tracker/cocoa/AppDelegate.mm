@@ -31,12 +31,14 @@
 // ------ Tracker Globals -----
 static PPScreen*			myTrackerScreen;
 static Tracker*				myTracker;
-static PPDisplayDevice*	    myDisplayDevice;
+static PPDisplayDevice*		myDisplayDevice;
 static NSTimer*				myTimer;
 
-static PPMutex*		globalMutex;
+static PPMutex*				globalMutex;
 
-static BOOL			startupAfterFullScreen;
+static BOOL					startupAfterFullScreen;
+static BOOL					startupComplete;
+static NSMutableArray*		filesToLoad;
 
 // TODO: Crash handler
 
@@ -94,6 +96,16 @@ void RaiseEventSynchronized(PPEvent* event)
 	
 	// Timer frequency of 60Hz
 	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
+	
+	// Signal startup complete
+	startupComplete = YES;
+	
+	// Handle deferred file loading
+	for (NSString* filename in filesToLoad)
+		[self application: NSApp openFile:filename];
+	
+	[filesToLoad removeAllObjects];
+	filesToLoad = nil;
 }
 
 - (void)timerCallback:(NSTimer*)theTimer
@@ -133,20 +145,39 @@ void RaiseEventSynchronized(PPEvent* event)
 #pragma mark File open events
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	// Temp buffer for file path
-	char filePath[PATH_MAX + 1];
+	// Startup not complete; hold onto the file path and load it later
+	if (!startupComplete)
+	{
+		if (!filesToLoad)
+			filesToLoad = [[NSMutableArray alloc] initWithObjects:filename, nil];
+		else
+			[filesToLoad addObject:filename];
+	}
+	else
+	{
+		// Temp buffer for file path
+		char filePath[PATH_MAX + 1];
+		
+		// Convert to C string
+		[filename getCString:filePath maxLength:PATH_MAX encoding:NSUTF8StringEncoding];
+		
+		// Create system string from C string
+		PPSystemString sysString(filePath);
+		PPSystemString* sysStrPtr = &sysString;
+		
+		// Raise file drop event
+		PPEvent event(eFileDragDropped, &sysStrPtr, sizeof(PPSystemString*));
+		RaiseEventSynchronized(&event);
+	}
 	
-	// Convert to C string
-	[filename getCString:filePath maxLength:PATH_MAX encoding:NSUTF8StringEncoding];
-	
-	// Create system string from C string
-	PPSystemString sysString(filePath);
-	PPSystemString* sysStrPtr = &sysString;
-	
-	// Raise file drop event
-	PPEvent event(eFileDragDropped, &sysStrPtr, sizeof(PPSystemString*));
-	RaiseEventSynchronized(&event);
 	return YES;
+}
+
+- (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames
+{
+	// Call the single openFile delegate method when multiple files are opened
+	for (NSString* filename in filenames)
+		[[NSApp delegate] application:NSApp openFile:filename];
 }
 
 #pragma mark Window events
