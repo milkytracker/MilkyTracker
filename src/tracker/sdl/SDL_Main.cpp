@@ -532,6 +532,22 @@ void preTranslateKey(SDL_Keysym& keysym)
 
 }
 
+void translateTextInputEvent(const SDL_Event& event)
+{
+#ifdef DEBUG
+	printf ("DEBUG: Text input: %s\n", event.text.text);
+#endif
+	
+	char character = event.text.text[0];
+	
+	// Only deal with ASCII characters
+	if (character >= 32 && character <= 127)
+	{
+		PPEvent myEvent(eKeyChar, &character, sizeof(character));
+		RaiseEventSerialized(&myEvent);
+	}
+}
+
 void translateKeyDownEvent(const SDL_Event& event)
 {
 	SDL_Keysym keysym = event.key.keysym;
@@ -546,13 +562,11 @@ void translateKeyDownEvent(const SDL_Event& event)
 	
 	preTranslateKey(keysym);
 
-	pp_uint32 character = event.key.keysym.sym;
-
 #ifdef DEBUG
-	printf ("DEBUG: Key pressed: VK: %d, SC: %d, Scancode: %d\n", toVK(keysym), toSC(keysym), character);
+	printf ("DEBUG: Key pressed: VK: %d, SC: %d, Scancode: %d\n", toVK(keysym), toSC(keysym), keysym.sym);
 #endif
 
-	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), character};
+	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
 
 #ifndef NOT_PC_KB
 	// Hack for azerty keyboards (num keys are shifted, so we use the scancodes)
@@ -567,14 +581,6 @@ void translateKeyDownEvent(const SDL_Event& event)
 	
 	PPEvent myEvent(eKeyDown, &chr, sizeof(chr));
 	RaiseEventSerialized(&myEvent);
-
-	if (character == 127) character = VK_BACK;
-	
-	if (character >= 32 && character <= 127)
-	{
-		PPEvent myEvent2(eKeyChar, &character, sizeof(character));
-		RaiseEventSerialized(&myEvent2);	
-	}
 }
 
 void translateKeyUpEvent(const SDL_Event& event)
@@ -583,9 +589,7 @@ void translateKeyUpEvent(const SDL_Event& event)
 
 	preTranslateKey(keysym);
 
-	pp_uint16 character = event.key.keysym.sym;
-
-	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), character};
+	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
 
 #ifndef NOT_PC_KB
 	if (stdKb) 
@@ -627,6 +631,10 @@ void processSDLEvents(const SDL_Event& event)
 			
 		case SDL_MOUSEWHEEL:
 			translateMouseWheelEvent(event.wheel.x, event.wheel.y);
+			break;
+			
+		case SDL_TEXTINPUT:
+			translateTextInputEvent(event);
 			break;
 			
 		case SDL_KEYDOWN:
@@ -815,8 +823,11 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	InitMidi();
 #endif
 
-	// try to create timer
+	// Try to create timer
 	timer = SDL_AddTimer(20, timerCallback, NULL);
+	
+	// Start capturing text input events
+	SDL_StartTextInput();
 
 	timerMutex->lock();
 	ticking = true;
