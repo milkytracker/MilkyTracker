@@ -92,7 +92,6 @@ static MidiReceiver*		myMidiReceiver		= NULL;
 
 // Okay what else do we need?
 PPMutex*			globalMutex				= NULL;
-static PPMutex*		timerMutex				= NULL;
 static bool			ticking					= false;
 
 static pp_uint32	lmyTime;
@@ -275,11 +274,8 @@ enum SDLUserEvents
 
 static SDLCALL Uint32 timerCallback(Uint32 interval)
 {
-	timerMutex->lock();
-
 	if (!myTrackerScreen || !myTracker || !ticking)
 	{
-		timerMutex->unlock();
 		return interval;
 	}
 	
@@ -325,8 +321,6 @@ static SDLCALL Uint32 timerCallback(Uint32 interval)
 		//RaiseEventSerialized(&myEvent);
 	}
 
-	timerMutex->unlock();
-		
 	return interval;
 }
 
@@ -749,8 +743,11 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 	{
 		case SDLUserEventTimer:
 		{
+			// Prevent new timer events being pushed while we are processing the current one
+			ticking = false;
 			PPEvent myEvent(eTimer);
 			RaiseEventSerialized(&myEvent);
+			ticking = true;
 			break;
 		}
 
@@ -937,9 +934,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	// try to create timer
 	SDL_SetTimer(20, timerCallback);	
 
-	timerMutex->lock();
 	ticking = true;
-	timerMutex->unlock();
 }
 
 static bool done;
@@ -1053,7 +1048,6 @@ unrecognizedCommandLineSwitch:
 	SDL_putenv("SDL_VIDEO_X11_WMCLASS=Milkytracker");
 #endif
 
-	timerMutex = new PPMutex();
 	globalMutex = new PPMutex();
 	
 	// Store current working path (init routine is likely to change it)
@@ -1122,13 +1116,9 @@ unrecognizedCommandLineSwitch:
 	SDL_JoystickClose(0);
 #endif
 
-	timerMutex->lock();
 	ticking = false;
-	timerMutex->unlock();
-
 	SDL_SetTimer(0, NULL);
 	
-	timerMutex->lock();
 	globalMutex->lock();
 #ifdef HAVE_LIBASOUND
 	delete myMidiReceiver;
@@ -1139,10 +1129,8 @@ unrecognizedCommandLineSwitch:
 	myTrackerScreen = NULL;
 	delete myDisplayDevice;
 	globalMutex->unlock();
-	timerMutex->unlock();
 	SDL_Quit();
 	delete globalMutex;
-	delete timerMutex;
 	
 	/* Quoting from README.Qtopia (Application Porting Notes):
 	One thing I have noticed is that applications sometimes don't exit
