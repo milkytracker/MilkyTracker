@@ -534,7 +534,9 @@ public:
 protected:
 	// timer procedure for mixing
 	virtual void	timerHandler(mp_sint32 currentBeatPacket) = 0;
-	
+	void		   	panToVol(ChannelMixer::TMixerChannel *chn, mp_sint32 &left, mp_sint32 &right);
+	static mp_sint32 panLUT[257];
+
 #ifdef MILKYTRACKER
 	friend class PlayerController;
 #endif

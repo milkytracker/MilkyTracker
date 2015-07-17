@@ -53,14 +53,34 @@ static inline mp_sint32 myMod(mp_sint32 a, mp_sint32 b)
 	return r < 0 ? b + r : r;
 }
 
+/*
+  "I've found out that FT2 uses the square root pan law, which is
+  close to the linear pan law, but it stresses samples that are played
+  on the far left and right. Note that its indices range from 0 to
+  256, while the internal panning ranges from 0 to 255, meaning that
+  there is no true 100% right panning, only 100% left is possible."
+
+  - Saga_Musix @ http://modarchive.org/forums/index.php?topic=3517.0
+*/
+mp_sint32 ChannelMixer::panLUT[257];
+void ChannelMixer::panToVol (ChannelMixer::TMixerChannel *chn, mp_sint32 &volL, mp_sint32 &volR)
+{
+	mp_sint32 pan = (((chn->pan - 128)*panningSeparation) >> 8) + 128;
+	if (pan < 0) pan = 0;
+	if (pan > 255) pan = 255;
+
+	volL = (chn->vol*panLUT[256-pan]*masterVolume);
+	volR = (chn->vol*panLUT[pan]*masterVolume);
+
+	if (chn->flags&MP_SAMPLE_MUTE)
+		volL = volR = 0;
+}
+
 void ChannelMixer::ResamplerBase::addChannelsNormal(ChannelMixer* mixer, mp_uint32 numChannels, mp_sint32* buffer32,mp_sint32 beatNum, mp_sint32 beatlength)
 {
 	ChannelMixer::TMixerChannel* channel = mixer->channel;
 	ChannelMixer::TMixerChannel* newChannel = mixer->newChannel;
 	
-	const mp_sint32 panningSeparation = mixer->panningSeparation;
-	const mp_sint32 masterVolume = mixer->masterVolume;
-
 	for (mp_uint32 c=0;c<numChannels;c++) 
 	{
 		ChannelMixer::TMixerChannel* chn = &channel[c];
@@ -93,25 +113,7 @@ void ChannelMixer::ResamplerBase::addChannelsNormal(ChannelMixer* mixer, mp_uint
 			}
 			default:
 			{
-				if (chn->flags&MP_SAMPLE_MUTE)
-				{
-					chn->finalvoll = 0;
-					chn->finalvolr = 0;
-				}
-				else
-				{
-					mp_sint32 pan = (((chn->pan - 128)*panningSeparation) >> 8) + 128;
-					if (pan < 0) pan = 0;
-					if (pan > 255) pan = 255;
-				
-					mp_sint32 left = 255-pan;
-					if (left>128) left=128;
-					mp_sint32 right = pan;
-					if (right>128) right=128;
-				
-					chn->finalvoll = (chn->vol*left*masterVolume)<<6;
-					chn->finalvolr = (chn->vol*right*masterVolume)<<6;
-				}
+				mixer->panToVol(chn, chn->finalvoll, chn->finalvolr);
 				break;
 			}
 		}
@@ -127,9 +129,6 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 	ChannelMixer::TMixerChannel* channel = mixer->channel;
 	ChannelMixer::TMixerChannel* newChannel = mixer->newChannel;
 	
-	const mp_sint32 panningSeparation = mixer->panningSeparation;
-	const mp_sint32 masterVolume = mixer->masterVolume;
-
 	for (mp_uint32 c=0;c<numChannels;c++) 
 	{	
 		ChannelMixer::TMixerChannel* chn = &channel[c];
@@ -169,20 +168,8 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 				if (beatl > maxramp || beatl <= 0)
 					beatl = maxramp;
 
-				mp_sint32 pan = (((chn->pan - 128)*panningSeparation) >> 8) + 128;
-				if (pan < 0) pan = 0;
-				if (pan > 255) pan = 255;
-				
-				mp_sint32 left = 255-pan;
-				if (left>128) left=128;
-				mp_sint32 right = pan;
-				if (right>128) right=128;
-				
-				mp_sint32 volL = (chn->vol*left*masterVolume)<<6;
-				mp_sint32 volR = (chn->vol*right*masterVolume)<<6;
-
-				if (chn->flags&MP_SAMPLE_MUTE)
-					volL = volR = 0;
+				mp_sint32 volL, volR;
+				mixer->panToVol(chn, volL, volR);
 				
 				chn->rampFromVolStepL = (volL-chn->finalvoll)/beatl;				
 				chn->rampFromVolStepR = (volR-chn->finalvolr)/beatl;
@@ -263,21 +250,9 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 				if (beatl > maxramp || beatl <= 0)
 					beatl = maxramp;
 				
-				mp_sint32 pan = (((chn->pan - 128)*panningSeparation) >> 8) + 128;
-				if (pan < 0) pan = 0;
-				if (pan > 255) pan = 255;
-				
-				mp_sint32 left = 255-pan;
-				if (left>128) left=128;
-				mp_sint32 right = pan;
-				if (right>128) right=128;
-				
-				mp_sint32 volL = (chn->vol*left*masterVolume)<<6;
-				mp_sint32 volR = (chn->vol*right*masterVolume)<<6;
+				mp_sint32 volL, volR;
+				mixer->panToVol(chn, volL, volR);
 
-				if (chn->flags&MP_SAMPLE_MUTE)
-					volL = volR = 0;
-				
 				chn->rampFromVolStepL = volL/beatl;				
 				chn->rampFromVolStepR = volR/beatl;
 
@@ -300,20 +275,8 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 			}
 			default:
 			{
-				mp_sint32 pan = (((chn->pan - 128)*panningSeparation) >> 8) + 128;
-				if (pan < 0) pan = 0;
-				if (pan > 255) pan = 255;
-				
-				mp_sint32 left = 255-pan;
-				if (left>128) left=128;
-				mp_sint32 right = pan;
-				if (right>128) right=128;
-				
-				mp_sint32 volL = (chn->vol*left*masterVolume)<<6;
-				mp_sint32 volR = (chn->vol*right*masterVolume)<<6;
-
-				if (chn->flags&MP_SAMPLE_MUTE)
-					volL = volR = 0;
+				mp_sint32 volL, volR;
+				mixer->panToVol(chn, volL, volR);
 				
 				chn->rampFromVolStepL = (volL-chn->finalvoll)/beatlength;				
 				chn->rampFromVolStepR = (volR-chn->finalvolr)/beatlength;
@@ -613,6 +576,11 @@ ChannelMixer::ChannelMixer(mp_uint32 numChannels,
 	setResamplerType(MIXER_NORMAL);
 
 	setBufferSize(BUFFERSIZE_DEFAULT);
+
+	// FT2 panning law
+	if (panLUT[1] == 0)
+		for (int i = 0; i <= 256; i++)
+			panLUT[i] = round (8192.0 * sqrt(i/256.0));
 }
 
 ChannelMixer::~ChannelMixer()
