@@ -799,8 +799,6 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 
 void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 {
-	pp_int32 i,j;
-
 	pp_int32 size = (screen->getWidth()-x) / 2 - 4;
 
 	if (size > 236)
@@ -1258,8 +1256,6 @@ void Tracker::initInstrumentChooser(pp_int32 id, const PPString& buttonText1, co
 									const PPString& userString1, const PPString& userString2, 
 									pp_int32 srcSelection/* = -1*/, pp_int32 srcSelection2/* = -1*/, pp_int32 srcSelection3/* = -1*/)
 {
-	pp_int32 i,j;
-
 	if (instrumentChooser)
 	{
 		delete instrumentChooser;
@@ -1674,9 +1670,7 @@ void Tracker::initAdvEdit()
 	{
 		PPString userString = buffer;
 		pp_int32 srcSelection = listBoxInstruments->getSelectedIndex();
-	
-		pp_int32 j;
-		
+
 		if (instrumentChooser)
 		{
 			delete instrumentChooser;

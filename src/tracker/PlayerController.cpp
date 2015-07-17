@@ -372,7 +372,7 @@ void PlayerController::attachModuleEditor(ModuleEditor* moduleEditor)
 	mixer->addDevice(player);
 }
 
-void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_ubyte* muteChannels)
+void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, bool* muteChannels)
 {
 	if (!player)
 		return;
@@ -413,7 +413,7 @@ void PlayerController::playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_
 	criticalSection->leave(false);
 }
 
-void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_sint32 rowPosition, mp_ubyte* muteChannels, bool playRowOnly/* = false*/)
+void PlayerController::playPattern(mp_sint32 index, mp_sint32 songPosition, mp_sint32 rowPosition, bool* muteChannels, bool playRowOnly/* = false*/)
 {
 	if (!player)
 		return;

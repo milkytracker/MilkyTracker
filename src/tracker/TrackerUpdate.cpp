@@ -565,7 +565,6 @@ void Tracker::updateSongInfo(bool repaint/* = true*/)
 
 void Tracker::updateInstrumentChooser(bool repaint/* = true*/)
 {
-	pp_int32 j;
 	PPContainer* container = static_cast<PPContainer*>(screen->getModalControl());
 
 	PPListBox* listBoxSrc = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC));

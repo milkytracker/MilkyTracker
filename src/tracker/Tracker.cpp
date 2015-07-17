@@ -194,7 +194,7 @@ Tracker::Tracker() :
 
 	pp_int32 i;
 	
-	muteChannels = new pp_uint8[TrackerConfig::numPlayerChannels];
+	muteChannels = new bool[TrackerConfig::numPlayerChannels];
 	
 	for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
 		muteChannels[i] = false;
@@ -1463,7 +1463,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			// channels have been muted/unmuted in pattern editor
 			case PATTERN_EDITOR:
 			{
-				const pp_uint8* muteChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+				const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
 				
 				for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				{
@@ -1485,7 +1485,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					case ScopesControl::ChangeValueMuting:
 					{
-						const pp_uint8* muteChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+						const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
@@ -1505,7 +1505,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					
 					case ScopesControl::ChangeValueRecording:
 					{
-						const pp_uint8* recordChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+						const pp_uint8* recordChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{

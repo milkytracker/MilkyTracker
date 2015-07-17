@@ -1146,8 +1146,6 @@ public:
 
 	virtual void init(PPScreen* screen)
 	{
-		pp_int32 i;
-		
 		pp_int32 x = 0;
 		pp_int32 y = 0;
 		

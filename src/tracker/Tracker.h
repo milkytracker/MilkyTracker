@@ -112,7 +112,7 @@ private:
 	pp_int32 MAXEDITORHEIGHT();
 #endif
 	
-	pp_uint8* muteChannels;
+	bool* muteChannels;
 	
 	TabManager* tabManager;
 	PlayerController* playerController;
