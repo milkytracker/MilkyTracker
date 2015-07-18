@@ -65,7 +65,7 @@ public:
 private:
 	NSWindow* theWindow;
 	MTTrackerView* theTrackerView;
-	char* pixelBuffer;
+	uint8_t* pixelBuffer;
 	BOOL immediateUpdates;
 };
 

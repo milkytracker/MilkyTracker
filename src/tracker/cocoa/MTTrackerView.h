@@ -31,7 +31,7 @@
 @interface MTTrackerView : NSOpenGLView
 
 // ---- Surface Dimensions ----
-@property void* pixelData;
+@property uint8_t* pixelData;
 @property int width;
 @property int height;
 @property int bpp;

@@ -29,7 +29,7 @@ PPDisplayDevice::PPDisplayDevice(NSWindow* window, MTTrackerView* trackerView, p
 	immediateUpdates(NO)
 {
 	// Allocate a pixel buffer and create a PPGraphics context
-	pixelBuffer = new char[width * height * 3];
+	pixelBuffer = new uint8_t[width * height * 3];
 	currentGraphics = static_cast<PPGraphicsAbstract*>(new PPGraphics_BGR24(width, height, 3 * width, pixelBuffer));
 	
 	// Set up the TrackerView with pointer to pixel buffer and dimensions

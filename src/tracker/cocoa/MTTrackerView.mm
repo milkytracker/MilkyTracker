@@ -25,6 +25,9 @@
 // Nice macro for in-lining shader source
 #define GLSL(src) "#version 150 core\n" #src
 
+// Width of border drawn when dragging and dropping
+#define FOCUS_RING_WIDTH 4
+
 @implementation MTTrackerView
 
 // ---- Surface Dimensions ----
@@ -36,27 +39,41 @@
 // ----- OpenGL Variables -----
 static BOOL textureReady = NO;
 
-static GLuint textureName;
-static GLuint vertexArrayName;
-static GLuint vertexBufferName;
-static GLuint elementBufferName;
+static GLuint uiVertexArrayName;
+static GLuint uiVertexBufferName;
+static GLuint uiTextureName;
+static GLuint focusRingVertexArrayName;
+static GLuint focusRingVertexBufferName;
 static GLuint shaderProgramName;
 
-static const GLfloat vertices[] =
+static GLint texCoordAttrib = -1;
+static GLint posAttrib = -1;
+static GLint colorUniform = -1;
+
+static const GLfloat uiVertices[] =
 {
-//   __Vertex__     _Texture_
+//   ___Pos.___     _Texture_
 //  /          \   /         \
 //    X      Y      U      V
-	-1.0f,  1.0f,  0.0f,  0.0f, // top left
-	 1.0f,  1.0f,  1.0f,  0.0f, // top right
-	 1.0f, -1.0f,  1.0f,  1.0f, // bottom right
 	-1.0f, -1.0f,  0.0f,  1.0f, // bottom left
+	-1.0f,  1.0f,  0.0f,  0.0f, // top left
+	 1.0f, -1.0f,  1.0f,  1.0f, // bottom right
+	 1.0f,  1.0f,  1.0f,  0.0f  // top right
 };
 
-static const GLuint elements[] =
+static GLfloat focusRingVertices[] =
 {
-	0, 1, 2,	// first triangle
-	2, 3, 0,	// second triangle
+//    X      Y
+	-1.0f, -1.0f,
+	-0.9f, -0.9f,
+	-1.0f,  1.0f,
+	-0.9f,  0.9f,
+	 1.0f,  1.0f,
+	 0.9f,  0.9f,
+	 1.0f, -1.0f,
+	 0.9f, -0.9f,
+	-1.0f, -1.0f,
+	-0.9f, -0.9f
 };
 
 // --- Mouse/Key Variables ----
@@ -66,6 +83,7 @@ static const double RIGHT_MOUSE_REPEAT_INTERVAL = 0.02;
 static NSTimer* lMouseTimer;
 static NSTimer* rMouseTimer;
 static PPPoint curPoint;
+static BOOL drawFocusRing;
 
 // ----------------------------------------------
 //  Use inverted view coordinates for mouse etc.
@@ -109,6 +127,24 @@ static PPPoint curPoint;
 	
 	// Enable Retina awareness
 	[self setWantsBestResolutionOpenGLSurface:YES];
+	
+	// Register as a drag and drop receiver
+	[self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+	
+	// Register to receive frame resize notifications
+	[self setPostsFrameChangedNotifications:YES];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(frameDidChangeNotification:)
+												 name:NSViewFrameDidChangeNotification
+											   object:self];
+}
+
+// --------------------------------------------------
+//  Updates focus ring vertices if view size changes
+// --------------------------------------------------
+- (void)frameDidChangeNotification:(NSNotification *)notification
+{
+	[self updateFocusRingVertices];
 }
 
 // ----------------------------------------------
@@ -118,33 +154,62 @@ static PPPoint curPoint;
 {
 	NSLog(@"Initialising OpenGL...");
 	
-	// Generate and bind VAO
-	glGenVertexArrays(1, &vertexArrayName);
-	glBindVertexArray(vertexArrayName);
-	
 	// Compile shaders
 	shaderProgramName = [self compileShaders];
 	glUseProgram(shaderProgramName);
 	
+	// Setup attributes
+	texCoordAttrib = glGetAttribLocation(shaderProgramName, "texCoord");
+	posAttrib = glGetAttribLocation(shaderProgramName, "position");
+	colorUniform = glGetUniformLocation(shaderProgramName, "color");
+	
+	// Generate and bind UI VAO
+	glGenVertexArrays(1, &uiVertexArrayName);
+	glBindVertexArray(uiVertexArrayName);
+	
 	// Generate and bind VBO
-	glGenBuffers(1, &vertexBufferName);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferName);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glGenBuffers(1, &uiVertexBufferName);
+	glBindBuffer(GL_ARRAY_BUFFER, uiVertexBufferName);
+	glBufferData(GL_ARRAY_BUFFER, sizeof uiVertices, uiVertices, GL_STATIC_DRAW);
 	
-	// Generate and bind EBO
-	glGenBuffers(1, &elementBufferName);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferName);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-	
-	// Setup pointer to position vertices
-	GLint posAttrib = glGetAttribLocation(shaderProgramName, "position");
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+	// Setup pointers to position and texture vertices
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof (GLfloat), 0);
+	glVertexAttribPointer(texCoordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof (GLfloat), (GLvoid*)(2 * sizeof (GLfloat)));
+	glEnableVertexAttribArray(texCoordAttrib);
 	glEnableVertexAttribArray(posAttrib);
 	
-	// Setup pointer to texture coordinates vertices
-	GLint texCoordAttrib = glGetAttribLocation(shaderProgramName, "texCoord");
-	glVertexAttribPointer(texCoordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(texCoordAttrib);
+	// Generate and bind focus ring VAO
+	glGenVertexArrays(1, &focusRingVertexArrayName);
+	glBindVertexArray(focusRingVertexArrayName);
+	
+	// Generate focus ring VBO
+	glGenBuffers(1, &focusRingVertexBufferName);
+
+	// Adjust focus ring vertices
+	[self updateFocusRingVertices];
+	
+	// Setup pointer to position vertices
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 2 * sizeof (GLfloat), 0);
+	glEnableVertexAttribArray(posAttrib);
+}
+
+// -------------------------------------------------------
+//  Recalculates focus ring vertices based on view bounds
+// -------------------------------------------------------
+-(void)updateFocusRingVertices
+{
+	GLfloat innerX = 1.0f - FOCUS_RING_WIDTH / [self bounds].size.width;
+	GLfloat innerY = 1.0f - FOCUS_RING_WIDTH / [self bounds].size.height;
+	
+	focusRingVertices[2] = focusRingVertices[6] = focusRingVertices[18] = -innerX;
+	focusRingVertices[3] = focusRingVertices[15] = focusRingVertices[19] = -innerY;
+	focusRingVertices[10] = focusRingVertices[14] = innerX;
+	focusRingVertices[7] = focusRingVertices[11] = innerY;
+	
+	// Select VAO/VBO and update vertices
+	glBindVertexArray(focusRingVertexArrayName);
+	glBindBuffer(GL_ARRAY_BUFFER, focusRingVertexBufferName);
+	glBufferData(GL_ARRAY_BUFFER, sizeof focusRingVertices, focusRingVertices, GL_STATIC_DRAW);
 }
 
 // ------------------------------------------------------
@@ -172,14 +237,16 @@ static PPPoint curPoint;
 	// Fragment shader program
 	static const GLchar* fragShaderSrc = GLSL
 	(
-		 uniform sampler2D s;
 		 in vec2 texCoord_out;
 		 
-		 out vec4 color;
+		 out vec4 fragColor;
+		 
+		 uniform vec4 color;
+		 uniform sampler2D s;
 		 
 		 void main()
 		 {
-			 color = texture(s, texCoord_out);
+			 fragColor = mix(texture(s, texCoord_out), color, color.w);
 		 }
 	);
 	
@@ -216,8 +283,8 @@ static PPPoint curPoint;
 {
 	// Generate a texture for display
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &textureName);
-	glBindTexture(GL_TEXTURE_2D, textureName);
+	glGenTextures(1, &uiTextureName);
+	glBindTexture(GL_TEXTURE_2D, uiTextureName);
 	
 	// Texture filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -259,11 +326,27 @@ static PPPoint curPoint;
 		// Set skip value for partial update
 		glPixelStorei(GL_UNPACK_SKIP_PIXELS, y * width + x);
 		
+		glBindVertexArray(uiVertexArrayName);
+		
 		// Update texture
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
 		
-		// Draw surface quad from 2 triangles
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// Draw surface quad from triangle strip
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		
+		// Draw focus ring if necessary
+		if (drawFocusRing)
+		{
+			// Set color uniform to system highlight color
+			NSColor* lineColor = [[NSColor selectedControlColor] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+			glUniform4f(colorUniform,  [lineColor redComponent], [lineColor greenComponent], [lineColor blueComponent], 1.0f);
+			
+			glBindVertexArray(focusRingVertexArrayName);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
+			
+			// Zero color uniform so we use texture color again
+			glUniform4f(colorUniform, 0.0f, 0.0f, 0.0f, 0.0f);
+		}
 	}
 	
 	// Flip buffers
@@ -310,7 +393,7 @@ static PPPoint curPoint;
 	NSLog(@"Left mouse pressed at (%d, %d)", curPoint.x, curPoint.y);
 #endif
 
-	PPEvent myEvent(eLMouseDown, &curPoint, sizeof(PPPoint));
+	PPEvent myEvent(eLMouseDown, &curPoint, sizeof (PPPoint));
 	RaiseEventSynchronized(&myEvent);
 }
 
@@ -327,7 +410,7 @@ static PPPoint curPoint;
 #if DEBUG
 		NSLog(@"Left mouse double clicked at (%d, %d)", curPoint.x, curPoint.y);
 #endif
-		PPEvent myEvent(eLMouseDoubleClick, &curPoint, sizeof(PPPoint));
+		PPEvent myEvent(eLMouseDoubleClick, &curPoint, sizeof (PPPoint));
 		RaiseEventSynchronized(&myEvent);
 	}
 	
@@ -335,14 +418,14 @@ static PPPoint curPoint;
 	NSLog(@"Left mouse released at (%d, %d)", curPoint.x, curPoint.y);
 #endif
 	
-	PPEvent myEvent(eLMouseUp, &curPoint, sizeof(PPPoint));
+	PPEvent myEvent(eLMouseUp, &curPoint, sizeof (PPPoint));
 	RaiseEventSynchronized(&myEvent);
 }
 
 - (void)mouseHeld:(NSTimer *)timer
 {
 	lMouseTimer = [NSTimer scheduledTimerWithTimeInterval:LEFT_MOUSE_REPEAT_INTERVAL target:self selector:@selector(mouseHeld:) userInfo:nil repeats:NO];
-	PPEvent myEvent(eLMouseRepeat, &curPoint, sizeof(PPPoint));
+	PPEvent myEvent(eLMouseRepeat, &curPoint, sizeof (PPPoint));
 	RaiseEventSynchronized(&myEvent);
 }
 
@@ -544,5 +627,42 @@ static PPPoint curPoint;
 	
 	PPEvent myEvent(keyDown ? eKeyDown : eKeyUp, &chr, sizeof(chr));
 	RaiseEventSynchronized(&myEvent);
+}
+
+#pragma mark Drag and drop events
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+	NSPasteboard* pboard = [sender draggingPasteboard];
+	
+	if ([[pboard types] containsObject:NSFilenamesPboardType])
+	{
+		drawFocusRing = YES;
+		[self setNeedsDisplay: YES];
+		return NSDragOperationGeneric;
+	}
+	
+	return NSDragOperationNone;
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender
+{
+	drawFocusRing = NO;
+	[self setNeedsDisplay: YES];
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+	NSPasteboard* pboard = [sender draggingPasteboard];
+ 
+	if ([[pboard types] containsObject:NSFilenamesPboardType])
+	{
+		drawFocusRing = NO;
+		[self setNeedsDisplay: YES];
+		NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
+		[[NSApp delegate] application:NSApp openFiles:files];
+		return YES;
+	}
+	
+	return NO;
 }
 @end
