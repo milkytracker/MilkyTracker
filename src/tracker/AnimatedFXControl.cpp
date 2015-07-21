@@ -35,8 +35,8 @@
 #include "ScrollBar.h"
 #include "TrackerConfig.h"
 #include "LogoSmall.h"
-#include "TrackerConfig.h"
 #include "Tools.h"
+#include "version.h"
 
 #undef FXTOGGLE
 
@@ -154,11 +154,11 @@ AnimatedFXControl::AnimatedFXControl(pp_int32 id,
 	lastTime = 0;
 	
 	milkyVersionString[0] = 'v';
-	PPTools::convertToHex(milkyVersionString+1, (TrackerConfig::version>>16)&0xF, 1);
+	PPTools::convertToHex(milkyVersionString+1, (MILKYTRACKER_VERSION>>16)&0xF, 1);
 	milkyVersionString[2] = '.';
-	PPTools::convertToHex(milkyVersionString+3, (TrackerConfig::version>>8)&0xFF, 2);
+	PPTools::convertToHex(milkyVersionString+3, (MILKYTRACKER_VERSION>>8)&0xFF, 2);
 	milkyVersionString[5] = '.';
-	PPTools::convertToHex(milkyVersionString+6, TrackerConfig::version&0xFF, 2);
+	PPTools::convertToHex(milkyVersionString+6, MILKYTRACKER_VERSION&0xFF, 2);
 	milkyVersionString[8] = '\0';
 }
 

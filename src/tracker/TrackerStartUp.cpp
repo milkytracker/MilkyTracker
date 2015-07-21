@@ -36,6 +36,7 @@
 #include "PatternEditorControl.h"
 #include "PlayerMaster.h"
 #include "SystemMessage.h"
+#include "version.h"
 
 // Logo picture
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
@@ -213,7 +214,7 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	applySettings(settingsDatabase, NULL, true, false);
 
 	// update version information
-	settingsDatabase->store("VERSION", TrackerConfig::version);
+	settingsDatabase->store("VERSION", MILKYTRACKER_VERSION);
 	
 	// Update info panels
 	updateSongInfo(false);

@@ -55,6 +55,7 @@
 #include "SectionQuickOptions.h"
 #include "Tools.h"
 #include "TitlePageManager.h"
+#include "version.h"
 
 bool Tracker::checkForChanges(ModuleEditor* moduleEditor/* = NULL*/)
 {
@@ -132,7 +133,7 @@ bool Tracker::shutDown()
 	{
 		// ----------- Save last settings -----------
 		// store version string to database
-		settingsDatabase->store("VERSION", TrackerConfig::version);
+		settingsDatabase->store("VERSION", MILKYTRACKER_VERSION );
 
 		char buffer[100];
 		// playmode settings

@@ -152,5 +152,3 @@ const PPSystemString TrackerConfig::untitledSong("Untitled");
 
 const pp_int32 TrackerConfig::numMixFrequencies = 4;
 const pp_int32 TrackerConfig::mixFrequencies[] = {11025, 22050, 44100, 48000};
-
-const pp_uint32 TrackerConfig::version = MILKYTRACKER_VERSION;

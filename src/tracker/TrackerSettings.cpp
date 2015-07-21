@@ -53,6 +53,7 @@
 #include "ColorPaletteContainer.h"
 #include "Tools.h"
 #include "TitlePageManager.h"
+#include "version.h"
 
 void Tracker::buildDefaultSettings()
 {
@@ -63,7 +64,7 @@ void Tracker::buildDefaultSettings()
 	char buffer[100];
 
 	// store version string to database
-	settingsDatabase->store("VERSION", TrackerConfig::version);
+	settingsDatabase->store("VERSION", MILKYTRACKER_VERSION);
 	// ---------- Mixer ---------- 
 #ifdef __DEFAULTBUFFERSIZE__
 	settingsDatabase->store("BUFFERSIZE", __DEFAULTBUFFERSIZE__);
@@ -683,7 +684,7 @@ void Tracker::applySettings(TrackerSettingsDatabase* newSettings,
 							bool applyMixerSettings/* = true*/,
 							bool allowMixerRestart/* = true*/)
 {
-	pp_uint32 version = TrackerConfig::version;
+	pp_uint32 version = MILKYTRACKER_VERSION;
 
 	PPDictionaryKey* versionKey = newSettings->restore("VERSION");
 	if (versionKey != NULL)
