@@ -1387,10 +1387,11 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 		f.write(header.name, 1, 20);
 	header.whythis1a = 0x1a;
 	f.writeByte(header.whythis1a);
-#ifndef MILKYTRACKER
-	f.write(header.tracker, 1, 20);
+#ifdef MILKYTRACKER
+#include "../tracker/version.h"
+	f.write(MILKYTRACKER_VERSION_STRING, 1, 20);
 #else
-	f.write("MilkyTracker        ", 1, 20);
+	f.write(header.tracker, 1, 20);
 #endif
 	header.ver = 0x104;
 	f.writeWord(header.ver);

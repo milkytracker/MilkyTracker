@@ -21,9 +21,7 @@
  */
 
 #include "TrackerConfig.h"
-
-#define MILKYTRACKER_HIVER ((0 << 8) + (0))
-#define MILKYTRACKER_LOVER ((0x90 << 8) + (0x86))
+#include "version.h"
 
 const PPString TrackerConfig::stringButtonPlus("+");
 const PPString TrackerConfig::stringButtonMinus("-");
@@ -155,4 +153,4 @@ const PPSystemString TrackerConfig::untitledSong("Untitled");
 const pp_int32 TrackerConfig::numMixFrequencies = 4;
 const pp_int32 TrackerConfig::mixFrequencies[] = {11025, 22050, 44100, 48000};
 
-const pp_uint32 TrackerConfig::version = (MILKYTRACKER_HIVER << 16) + (MILKYTRACKER_LOVER);
+const pp_uint32 TrackerConfig::version = MILKYTRACKER_VERSION;
