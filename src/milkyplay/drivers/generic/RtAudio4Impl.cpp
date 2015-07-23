@@ -40,14 +40,12 @@
 
 #ifndef __OSX_PANTHER__
 
-#include "RtAudio4.h"
+#include "RtAudio.h"
 
 #ifdef DRIVER_UNIX
 #include <sys/types.h>
 #include <unistd.h>
 #endif
-
-using namespace RtAudio4;
 
 class Rt4AudioDriverImpl : public AudioDriver_COMPENSATE
 {
@@ -165,7 +163,7 @@ public:
                               sampleRate, &bufferSize, &fill_audio, (void *)this);
         }
 #endif
-        catch (RtError &error)
+        catch (RtAudioError &error)
         {
             error.printMessage();
             return MP_DEVICE_ERROR;
@@ -190,7 +188,7 @@ public:
                 deviceHasStarted = false;
                 return MP_OK;
             }
-            catch (RtError &error)
+            catch (RtAudioError &error)
             {
                 error.printMessage();
                 return MP_DEVICE_ERROR;
@@ -210,7 +208,7 @@ public:
                 deviceHasStarted = false;
                 return MP_OK;
             }
-            catch (RtError &error)
+            catch (RtAudioError &error)
             {
                 error.printMessage();
                 return MP_DEVICE_ERROR;
@@ -230,7 +228,7 @@ public:
                 deviceHasStarted = true;
                 return MP_OK;
             }
-            catch (RtError &error)
+            catch (RtAudioError &error)
             {
                 error.printMessage();
                 return MP_DEVICE_ERROR;
@@ -249,7 +247,7 @@ public:
                 audio->stopStream();
                 return MP_OK;
             }
-            catch (RtError &error)
+            catch (RtAudioError &error)
             {
                 error.printMessage();
                 return MP_DEVICE_ERROR;
@@ -268,7 +266,7 @@ public:
                 audio->startStream();
                 return MP_OK;
             }
-            catch (RtError &error)
+            catch (RtAudioError &error)
             {
                 error.printMessage();
                 return MP_DEVICE_ERROR;
@@ -280,16 +278,19 @@ public:
 
     virtual		const char* getDriverID()
     {
+		// Needs to be kept synchronised with RtAudio.h
         static const char* driverNames[] =
         {
-            "Unspecified (RtAudio4)",
-            "Alsa (RtAudio4)",
-            "OSS (RtAudio4)",
-            "Jack (RtAudio4)",
-            "CoreAudio (RtAudio4)",
-            "ASIO (RtAudio4)",
-            "DirectSound (RtAudio4)",
-            "Dummy (RtAudio4)"
+            "Unspecified (RtAudio)",
+            "Alsa (RtAudio)",
+            "Pulse (RtAudio)",
+            "OSS (RtAudio)",
+            "Jack (RtAudio)",
+            "CoreAudio (RtAudio)",
+            "WASAPI (RtAudio)",
+            "ASIO (RtAudio)",
+            "DirectSound (RtAudio)",
+            "Dummy (RtAudio)"
         };
         return driverNames[selectedAudioApi];
     }
@@ -297,36 +298,11 @@ public:
 
 void AudioDriver_RTAUDIO::createRt4Instance(Api audioApi/* = UNSPECIFIED*/)
 {
-    RtAudio::Api rtApi = RtAudio::UNSPECIFIED;
-    switch (audioApi)
-    {
-    case LINUX_ALSA:
-        rtApi = RtAudio::LINUX_ALSA;
-        break;
-    case LINUX_OSS:
-        rtApi = RtAudio::LINUX_OSS;
-        break;
-    case UNIX_JACK:
-        rtApi = RtAudio::UNIX_JACK;
-        break;
-    case MACOSX_CORE:
-        rtApi = RtAudio::MACOSX_CORE;
-        break;
-    case WINDOWS_ASIO:
-        rtApi = RtAudio::WINDOWS_ASIO;
-        break;
-    case WINDOWS_DS:
-        rtApi = RtAudio::WINDOWS_DS;
-        break;
-    case RTAUDIO_DUMMY:
-        rtApi = RtAudio::RTAUDIO_DUMMY;
-        break;
-    }
     if (impl)
     {
         delete impl;
     }
-    impl = new Rt4AudioDriverImpl(rtApi);
+    impl = new Rt4AudioDriverImpl(static_cast<RtAudio::Api> (audioApi));
 }
 
 #else

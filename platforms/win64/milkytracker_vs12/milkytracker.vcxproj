@@ -220,7 +220,7 @@
     <ClCompile>
       <AdditionalOptions>/Zm500  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\src\fx;..\..\..\src\tracker;..\..\..\src\tracker\win32;..\..\..\src\compression;..\..\..\src\compression\zlib\generic;..\..\..\src\compression\zziplib;..\..\..\src\compression\zziplib\generic;..\..\..\src\compression\lha;..\..\..\src\ppui;..\..\..\src\ppui\win32;..\..\..\src\ppui\osinterface;..\..\..\src\ppui\osinterface\win32;..\..\..\src\milkyplay;..\..\..\src\milkyplay\drivers\windows;..\..\..\src\milkyplay\drivers\generic;..\..\..\src\milkyplay\drivers\generic\portaudio;..\..\..\src\milkyplay\drivers\generic\rtaudio;..\..\..\src\milkyplay\drivers\generic\rtaudio\asio;..\..\..\src\midi;..\..\..\src\midi\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\fx;..\..\..\src\tracker;..\..\..\src\tracker\win32;..\..\..\src\compression;..\..\..\src\compression\zlib\generic;..\..\..\src\compression\zziplib;..\..\..\src\compression\zziplib\generic;..\..\..\src\compression\lha;..\..\..\src\ppui;..\..\..\src\ppui\win32;..\..\..\src\ppui\osinterface;..\..\..\src\ppui\osinterface\win32;..\..\..\src\milkyplay;..\..\..\src\milkyplay\drivers\windows;..\..\..\src\milkyplay\drivers\generic;..\..\..\src\milkyplay\drivers\generic\portaudio;..\..\..\src\milkyplay\drivers\generic\rtaudio;..\..\..\src\milkyplay\drivers\generic\rtaudio\include;..\..\..\src\midi;..\..\..\src\midi\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;UNICODE;WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;MILKYTRACKER;__WINDOWS_ASIO__;__WINDOWS_DS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -674,6 +674,11 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asio.cpp" />
+    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiodrivers.cpp" />
+    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiolist.cpp" />
+    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\iasiothiscallresolver.cpp" />
+    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\RtAudio.cpp" />
     <ClCompile Include="..\..\..\src\tracker\win32\PreferencesDialog.cpp" />
     <ClCompile Include="..\..\..\src\tracker\win32\ThreadTimer.cpp" />
     <ClCompile Include="..\..\..\src\tracker\win32\Win32_main.cpp" />
@@ -761,11 +766,6 @@
     <ClCompile Include="..\..\..\src\milkyplay\XMFile.cpp" />
     <ClCompile Include="..\..\..\src\milkyplay\XModule.cpp" />
     <ClCompile Include="..\..\..\src\milkyplay\drivers\windows\AudioDriver_MMSYSTEM.cpp" />
-    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asio.cpp" />
-    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiodrivers.cpp" />
-    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiolist.cpp" />
-    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\iasiothiscallresolver.cpp" />
-    <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\RtAudio4.cpp" />
     <ClCompile Include="..\..\..\src\milkyplay\drivers\generic\RtAudio4Impl.cpp" />
     <ClCompile Include="..\..\..\src\tracker\AnimatedFXControl.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug MBCS|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
@@ -1241,6 +1241,16 @@
     <ClCompile Include="..\..\..\src\compression\zlib\generic\zutil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asio.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiodrivers.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiodrvr.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiolist.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\asiosys.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\dsound.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\ginclude.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\iasiodrv.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\include\iasiothiscallresolver.h" />
+    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\RtAudio.h" />
     <ClInclude Include="..\..\..\src\tracker\win32\PreferencesDialog.h" />
     <ClInclude Include="..\..\..\src\tracker\win32\ThreadTimer.h" />
     <ClInclude Include="..\..\..\src\tracker\win32\Win32_resource.h" />
@@ -1326,16 +1336,6 @@
     <ClInclude Include="..\..\..\src\milkyplay\XMFile.h" />
     <ClInclude Include="..\..\..\src\milkyplay\XModule.h" />
     <ClInclude Include="..\..\..\src\milkyplay\drivers\windows\AudioDriver_MMSYSTEM.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asio.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiodrivers.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiodrvr.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiolist.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\asiosys.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\ginclude.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\iasiodrv.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\asio\iasiothiscallresolver.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\RtAudio4.h" />
-    <ClInclude Include="..\..\..\src\milkyplay\drivers\generic\rtaudio\RtError4.h" />
     <ClInclude Include="..\..\..\src\tracker\AnimatedFXControl.h" />
     <ClInclude Include="..\..\..\src\tracker\DialogChannelSelector.h" />
     <ClInclude Include="..\..\..\src\tracker\DialogEQ.h" />

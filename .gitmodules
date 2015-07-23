@@ -1,0 +1,3 @@
+[submodule "src/milkyplay/drivers/generic/rtaudio"]
+	path = src/milkyplay/drivers/generic/rtaudio
+	url = https://github.com/thestk/rtaudio.git
