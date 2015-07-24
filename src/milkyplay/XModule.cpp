@@ -159,8 +159,8 @@ void TXMSample::restoreOriginalState()
 void TXMSample::postProcessSamples()
 {
 	mp_ubyte buffer[8];
-	mp_uint32 loopend = loopstart + looplen;
-	mp_uint32 samplen = this->samplen;
+	mp_sint32 loopend = loopstart + looplen;
+	mp_sint32 samplen = this->samplen;
 
 	// this is in fact not good
 	if (loopend > samplen)
@@ -1486,7 +1486,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	else
 	{
 		memset(buffer, 0, size);
-		f.read(buffer,1,size);
+		f.read(buffer,1,length);
 	}
 
 	// 16 bit sample 
