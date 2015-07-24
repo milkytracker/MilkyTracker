@@ -50,7 +50,7 @@ PPGraphics_OGL::PPGraphics_OGL(pp_int32 w, pp_int32 h) :
 {
 	setupOrtho(w, h);
 	
-	//glDrawBuffer(GL_FRONT_AND_BACK);
+	glDrawBuffer(GL_FRONT_AND_BACK);
 	
 	glEnable(GL_SCISSOR_TEST);
 	
@@ -177,9 +177,9 @@ void PPGraphics_OGL::drawString(const char* str, pp_int32 x, pp_int32 y, bool un
 
 	glColor3ub(currentColor.r, currentColor.g, currentColor.b);
 
-	pp_int32 charWidth = (signed)currentFont->getCharWidth();
-	pp_int32 charHeight = (signed)currentFont->getCharHeight();
-	const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
+//	pp_int32 charWidth = (signed)currentFont->getCharWidth();
+//	pp_int32 charHeight = (signed)currentFont->getCharHeight();
+//	const GLubyte* data = (const GLubyte*)fontCacheEntry->oglBitmapData;
 	
 	glRasterPos2d(x, y);
 

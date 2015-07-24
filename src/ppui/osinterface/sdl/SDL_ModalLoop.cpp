@@ -1,7 +1,7 @@
 /*
  *  ppui/osinterface/sdl/SDL_ModalLoop.cpp
  *
- *  Copyright 2009 Peter Barth
+ *  Copyright 2009 Peter Barth, Dale Whinham
  *
  *  This file is part of Milkytracker.
  *
@@ -26,6 +26,8 @@
  *
  *  Created by Peter Barth on 29.03.06.
  *
+ *  12/5/14 - Dale Whinham
+ *    - Port to SDL2
  */
 
 #include <SDL.h>
@@ -100,9 +102,9 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dial
 				// ignore old mouse motion events in the event queue
 				SDL_Event new_event;
 				
-				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0) 
+				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
 				{
-					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0);
+					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
 					processSDLEvents(new_event);
 				} 
 				else 

@@ -1,7 +1,7 @@
 /*
  *  ppui/sdl/DisplayDevice_SDL.h
  *
- *  Copyright 2009 Peter Barth
+ *  Copyright 2009 Peter Barth, Dale Whinham
  *
  *  This file is part of Milkytracker.
  *
@@ -51,25 +51,20 @@ public:
 
 protected:
 	pp_int32 realWidth, realHeight;
-	SDL_Surface* theSurface;
+	SDL_Window* theWindow;
 	Orientations orientation;
 	
-	SDL_Surface* CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
+	SDL_Window* CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
 
 	// used for rotating coordinates etc.
 	void adjust(pp_int32& x, pp_int32& y);
 
 	// Mouse pointers
-	SDL_Cursor *cursorStandard, *cursorResizeLeft, *cursorResizeRight, *cursorEggtimer, *cursorHand;
+	SDL_Cursor *cursorStandard, *cursorResizeHoriz, *cursorEggtimer, *cursorHand;
 	void initMousePointers();
-	static Uint8 resizeLeft_data[], resizeLeft_mask[];
-	static Uint8 resizeRight_data[], resizeRight_mask[];
-	static Uint8 eggtimer_data[], eggtimer_mask[];
-	static Uint8 hand_data[], hand_mask[];
 
 public:
-	PPDisplayDevice(SDL_Surface*& screen, 
-					pp_int32 width, 
+	PPDisplayDevice(pp_int32 width,
 					pp_int32 height, 
 					pp_int32 scaleFactor,
 					pp_int32 bpp, 
@@ -77,18 +72,25 @@ public:
 					Orientations theOrientation = ORIENTATION_NORMAL);
 				  
 	virtual ~PPDisplayDevice();
-
-	virtual void setSize(const PPSize& size);
 	
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
+
+#ifdef HIDPI_SUPPORT
+	// Hi-DPI letterbox workaround
+	bool needsDeLetterbox;
+	void deLetterbox(pp_int32& x, pp_int32& y);
+#endif
 	
 	Orientations getOrientation() { return orientation; }
 	
+	SDL_Window* getWindow();
+
 	// ----------------------------- ex. PPWindow ----------------------------
 	virtual void setTitle(const PPSystemString& title);	
 	virtual bool goFullScreen(bool b);
+	virtual PPSize getDisplayResolution() const;
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);

@@ -18,6 +18,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *  12/5/14 - Dale Whinham
+ *    - Port to SDL2
+ *
  */
 
 /////////////////////////////////////////////////////////////////
@@ -41,8 +44,7 @@ private:
 	void swap(const PPRect& r);
 
 public:
-	PPDisplayDeviceFB(SDL_Surface*& screen, 
-					  pp_int32 width, 
+	PPDisplayDeviceFB(pp_int32 width,
 					  pp_int32 height, 
 					  pp_int32 scaleFactor,
 					  pp_int32 bpp, 
@@ -53,12 +55,17 @@ public:
 	virtual ~PPDisplayDeviceFB();
 
 	virtual bool supportsScaling() const { return true; }
+	virtual void setSize(const PPSize& size);
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();
 
 	void update();
-	void update(const PPRect& r);	
+	void update(const PPRect& r);
+protected:
+	SDL_Surface* theSurface;
+	SDL_Texture* theTexture;
+	SDL_Renderer* theRenderer;
 };
 
 #endif

@@ -34,49 +34,36 @@
 #include <OpenGL/OpenGL.h>
 #endif
 
-PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen, 
-									   pp_int32 width, 
+PPDisplayDeviceOGL::PPDisplayDeviceOGL(pp_int32 width, 
 									   pp_int32 height, 
 									   pp_int32 scaleFactor,
 									   pp_int32 bpp,
 									   bool fullScreen, 
 									   Orientations theOrientation/* = ORIENTATION_NORMAL*/, 
 									   bool swapRedBlue/* = false*/) :
-	PPDisplayDevice(screen, width, height, bpp, scaleFactor, fullScreen, theOrientation)
+	PPDisplayDevice(width, height, bpp, scaleFactor, fullScreen, theOrientation)
 {
-	const SDL_VideoInfo* videoinfo;
-
-	/* Some SDL to get display format */
-	videoinfo = SDL_GetVideoInfo();
-	if (bpp == -1) 
+	/* Set a video mode */
+	theWindow = CreateWindow(width, height, bpp, SDL_WINDOW_OPENGL | (bFullScreen==true ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+	if (theWindow == NULL)
 	{
-		bpp = videoinfo->vfmt->BitsPerPixel > 16 ? videoinfo->vfmt->BitsPerPixel : 16;
+		fprintf(stderr, "SDL: Could not create window: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
 	}
-
-    Uint32 videoFlags = SDL_OPENGL;    /* Enable OpenGL in SDL          */
-    videoFlags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering       */
-    videoFlags |= SDL_HWPALETTE;       /* Store the palette in hardware */
-	//videoFlags |= SDL_ASYNCBLIT;
-
-    /* This checks to see if surfaces can be stored in memory */
-    if (videoinfo->hw_available)
-	videoFlags |= videoinfo->hw_available ? SDL_HWSURFACE : SDL_SWSURFACE;
-
-    /* This checks if hardware blits can be done */
-    if (videoinfo->blit_hw)
-		videoFlags |= SDL_HWACCEL;
+	
+	/* Get SDL OpenGL context */
+	glContext = SDL_GL_CreateContext(theWindow);
+	if (glContext == NULL)
+	{
+		fprintf(stderr, "SDL: Could not create OpenGL context: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 
     /* Sets up OpenGL double buffering */
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	/* Set a video mode */
-	theSurface = screen = CreateScreen(realWidth, realHeight, 
-									   bpp, videoFlags | (bFullScreen==true ? SDL_FULLSCREEN : 0));
-	if (NULL == screen) 
-	{
-		fprintf(stderr, "Could not set video mode: %s\n", SDL_GetError());	
-		exit(2);
-	}	
+	
+	/* Use immediate updates; don't wait for Vblank */
+	SDL_GL_SetSwapInterval(0);
 
 #if 0
 	CGLError err;
@@ -87,7 +74,7 @@ PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen,
 	
 	if (err != kCGLNoError )
 	{
-		exit(2);
+		exit(EXIT_FAILURE);
 	}    	
 #endif
 	
@@ -96,7 +83,8 @@ PPDisplayDeviceOGL::PPDisplayDeviceOGL(SDL_Surface*& screen,
 }
 
 PPDisplayDeviceOGL::~PPDisplayDeviceOGL()
-{	
+{
+	SDL_GL_DeleteContext(glContext);
 	// base class is responsible for deleting currentGraphics
 }
 
@@ -107,9 +95,6 @@ PPGraphicsAbstract* PPDisplayDeviceOGL::open()
 
 	if (currentGraphics->lock)
 	{
-		if (SDL_LockSurface(theSurface) < 0)
-			return NULL;
-
 		currentGraphics->lock = false;
 
 		return currentGraphics;
@@ -120,8 +105,6 @@ PPGraphicsAbstract* PPDisplayDeviceOGL::open()
 
 void PPDisplayDeviceOGL::close()
 {
-	SDL_UnlockSurface(theSurface);
-
 	currentGraphics->lock = true;
 }
 
@@ -130,24 +113,15 @@ void PPDisplayDeviceOGL::update()
 	if (!isUpdateAllowed() || !isEnabled())
 		return;
 	
-	if (theSurface->locked)
-	{
+	if (!currentGraphics->lock)
 		return;
-	}
 	
-	 SDL_GL_SwapBuffers();
-	
-	//SDL_UpdateRect(theSurface, 0, 0, 0, 0);
+	SDL_GL_SwapWindow(theWindow);
 }
 
 void PPDisplayDeviceOGL::update(const PPRect& r)
 {
 	update();
-
-	//PPRect r3 = r;
-	//transformInverse(r3);
-
-	//SDL_UpdateRect(theSurface, r3.x1, r3.y1, r3.x2-r3.x1, r3.y2-r3.y1);
 }
 
 #endif

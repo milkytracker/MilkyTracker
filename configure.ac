@@ -48,8 +48,8 @@ AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have t
 #PKG_CHECK_MODULES([ZZIP],[zziplib >= 0.10.75])
 
 AC_CHECK_LIB(pthread, pthread_create,[LIBS="$LIBS -lpthread"],AC_MSG_ERROR("Cannot find -lpthread"))
-SDL_VERSION=1.2.0
-AM_PATH_SDL($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
+SDL_VERSION=2.0.0
+AM_PATH_SDL2($SDL_VERSION,, AC_MSG_ERROR([Please install libSDL]))
 CPPFLAGS="$CPPFLAGS -D__FORCE_SDL_AUDIO__"
 
 # Check that SDL supports the X11 wm
