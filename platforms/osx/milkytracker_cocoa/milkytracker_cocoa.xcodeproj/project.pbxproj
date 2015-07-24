@@ -66,9 +66,6 @@
 		2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCADF1A06F27A000E7EAE /* AudioDriverBase.cpp */; };
 		2D5B3F7B1A07D4F500834B02 /* AudioDriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAE11A06F27A000E7EAE /* AudioDriverManager.cpp */; };
 		2D5B3F7C1A07D4F500834B02 /* ChannelMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAE31A06F27A000E7EAE /* ChannelMixer.cpp */; };
-		2D5B3F7D1A07D4F500834B02 /* AudioDriver_RTAUDIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5B3BBF1A07015A00834B02 /* AudioDriver_RTAUDIO.cpp */; };
-		2D5B3F7E1A07D4F500834B02 /* RtAudio4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5B3BD31A07015A00834B02 /* RtAudio4.cpp */; };
-		2D5B3F7F1A07D4F500834B02 /* RtAudio4Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5B3BD61A07015A00834B02 /* RtAudio4Impl.cpp */; };
 		2D5B3F801A07D4F500834B02 /* AudioDriver_COREAUDIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB0C1A06F27A000E7EAE /* AudioDriver_COREAUDIO.cpp */; };
 		2D5B3F821A07D4F500834B02 /* ExporterXM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB171A06F27A000E7EAE /* ExporterXM.cpp */; };
 		2D5B3F831A07D4F500834B02 /* LittleEndian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB181A06F27A000E7EAE /* LittleEndian.cpp */; };
@@ -258,13 +255,6 @@
 		2D5B3BB71A06FFD300834B02 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		2D5B3BB91A0700FD00834B02 /* trees.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trees.cpp; sourceTree = "<group>"; };
 		2D5B3BBA1A0700FD00834B02 /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
-		2D5B3BBF1A07015A00834B02 /* AudioDriver_RTAUDIO.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDriver_RTAUDIO.cpp; sourceTree = "<group>"; };
-		2D5B3BC01A07015A00834B02 /* AudioDriver_RTAUDIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioDriver_RTAUDIO.h; sourceTree = "<group>"; };
-		2D5B3BD21A07015A00834B02 /* soundcard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = soundcard.h; sourceTree = "<group>"; };
-		2D5B3BD31A07015A00834B02 /* RtAudio4.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio4.cpp; sourceTree = "<group>"; };
-		2D5B3BD41A07015A00834B02 /* RtAudio4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RtAudio4.h; sourceTree = "<group>"; };
-		2D5B3BD51A07015A00834B02 /* RtError4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RtError4.h; sourceTree = "<group>"; };
-		2D5B3BD61A07015A00834B02 /* RtAudio4Impl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio4Impl.cpp; sourceTree = "<group>"; };
 		2D5B3BDF1A0703D300834B02 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		2D5B3BE11A0703F200834B02 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		2D5B3BE61A0704B900834B02 /* PPPath_POSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPPath_POSIX.cpp; sourceTree = "<group>"; };
@@ -765,36 +755,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2D5B3BBC1A07015A00834B02 /* generic */ = {
-			isa = PBXGroup;
-			children = (
-				2D5B3BBF1A07015A00834B02 /* AudioDriver_RTAUDIO.cpp */,
-				2D5B3BC01A07015A00834B02 /* AudioDriver_RTAUDIO.h */,
-				2D5B3BC31A07015A00834B02 /* rtaudio */,
-				2D5B3BD61A07015A00834B02 /* RtAudio4Impl.cpp */,
-			);
-			path = generic;
-			sourceTree = "<group>";
-		};
-		2D5B3BC31A07015A00834B02 /* rtaudio */ = {
-			isa = PBXGroup;
-			children = (
-				2D5B3BD11A07015A00834B02 /* oss */,
-				2D5B3BD31A07015A00834B02 /* RtAudio4.cpp */,
-				2D5B3BD41A07015A00834B02 /* RtAudio4.h */,
-				2D5B3BD51A07015A00834B02 /* RtError4.h */,
-			);
-			path = rtaudio;
-			sourceTree = "<group>";
-		};
-		2D5B3BD11A07015A00834B02 /* oss */ = {
-			isa = PBXGroup;
-			children = (
-				2D5B3BD21A07015A00834B02 /* soundcard.h */,
-			);
-			path = oss;
-			sourceTree = "<group>";
-		};
 		2D5B3BE31A0704B900834B02 /* posix */ = {
 			isa = PBXGroup;
 			children = (
@@ -1199,7 +1159,6 @@
 		2DEBCAE61A06F27A000E7EAE /* drivers */ = {
 			isa = PBXGroup;
 			children = (
-				2D5B3BBC1A07015A00834B02 /* generic */,
 				2DEBCB0B1A06F27A000E7EAE /* osx */,
 			);
 			path = drivers;
@@ -1606,9 +1565,6 @@
 				2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */,
 				2D5B3F7B1A07D4F500834B02 /* AudioDriverManager.cpp in Sources */,
 				2D5B3F7C1A07D4F500834B02 /* ChannelMixer.cpp in Sources */,
-				2D5B3F7D1A07D4F500834B02 /* AudioDriver_RTAUDIO.cpp in Sources */,
-				2D5B3F7E1A07D4F500834B02 /* RtAudio4.cpp in Sources */,
-				2D5B3F7F1A07D4F500834B02 /* RtAudio4Impl.cpp in Sources */,
 				2D5B3F801A07D4F500834B02 /* AudioDriver_COREAUDIO.cpp in Sources */,
 				2D5B3F821A07D4F500834B02 /* ExporterXM.cpp in Sources */,
 				2D5B3F831A07D4F500834B02 /* LittleEndian.cpp in Sources */,
