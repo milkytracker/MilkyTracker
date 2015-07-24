@@ -406,7 +406,6 @@
 		2DEBCAC61A06F27A000E7EAE /* MidiTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiTools.h; sourceTree = "<group>"; };
 		2DEBCAC81A06F27A000E7EAE /* MidiReceiver_pthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiReceiver_pthread.cpp; sourceTree = "<group>"; };
 		2DEBCAC91A06F27A000E7EAE /* MidiReceiver_pthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiReceiver_pthread.h; sourceTree = "<group>"; };
-		2DEBCACB1A06F27A000E7EAE /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtError.h; sourceTree = "<group>"; };
 		2DEBCACC1A06F27A000E7EAE /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
 		2DEBCACD1A06F27A000E7EAE /* RtMidi.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = RtMidi.h; sourceTree = "<group>"; };
 		2DEBCADA1A06F27A000E7EAE /* AudioDriver_COMPENSATE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDriver_COMPENSATE.h; sourceTree = "<group>"; };
@@ -1058,7 +1057,6 @@
 		2DEBCACA1A06F27A000E7EAE /* rtmidi */ = {
 			isa = PBXGroup;
 			children = (
-				2DEBCACB1A06F27A000E7EAE /* RtError.h */,
 				2DEBCACC1A06F27A000E7EAE /* RtMidi.cpp */,
 				2DEBCACD1A06F27A000E7EAE /* RtMidi.h */,
 			);

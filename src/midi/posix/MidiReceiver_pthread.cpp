@@ -32,7 +32,6 @@
 #include "Tracker.h"
 #include "PPMutex.h"
 #include "RtMidi.h"
-#include "RtError.h"
 #include "PPSystem.h"
 #include <iostream>
 #include "MidiTools.h"
@@ -64,7 +63,7 @@ bool MidiReceiver::startRecording(unsigned int deviceID)
 		midiin = new RtMidiIn();
 		midiin->openPort(deviceID);
 	}
-	catch (RtError &error) 
+	catch (RtMidiError &error) 
 	{
 		error.printMessage();
 		goto cleanup;

@@ -1,3 +1,6 @@
 [submodule "src/milkyplay/drivers/generic/rtaudio"]
 	path = src/milkyplay/drivers/generic/rtaudio
 	url = https://github.com/thestk/rtaudio.git
+[submodule "src/midi/rtmidi"]
+	path = src/midi/rtmidi
+	url = https://github.com/thestk/rtmidi.git

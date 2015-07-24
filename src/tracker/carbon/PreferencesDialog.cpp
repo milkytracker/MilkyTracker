@@ -32,7 +32,6 @@
 #include "Carbon_Definitions.h"
 #include "TrackerSettingsDatabase.h"
 #include "RtMidi.h"
-#include "RtError.h"
 
 #define KEY_USEMIDI			"USEMIDI"
 #define KEY_RECORDVELOCITY	"RECORDVELOCITY"
@@ -199,7 +198,7 @@ PreferencesDialog::PreferencesDialog(WindowRef	windowRef, WindowRef mainWindowRe
 	{
 		midiin = new RtMidiIn();
 	}
-	catch (RtError &error) 
+	catch (RtMidiError &error) 
 	{
 		error.printMessage();
 		midiin = NULL;
@@ -477,7 +476,7 @@ void PreferencesDialog::initDialog()
 			{
 				portName = midiin->getPortName(i);
 			}
-			catch (RtError &error) 
+			catch (RtMidiError &error) 
 			{
 				error.printMessage();
 			}
@@ -579,7 +578,7 @@ void PreferencesDialog::storeMidiDeviceName(UInt32 deviceID)
 			std::string portName = midiin->getPortName(deviceID);
 			m_dataBase->restore(KEY_MIDIDEVICE)->store(portName.c_str());		
 		}
-		catch (RtError &error) 
+		catch (RtMidiError &error) 
 		{
 			error.printMessage();
 		}
@@ -628,7 +627,7 @@ UInt32 PreferencesDialog::getMidiDevIDFromString(const char* string)
 		{
 			portName = midiin->getPortName(i);
 		}
-		catch (RtError &error) 
+		catch (RtMidiError &error) 
 		{
 			error.printMessage();
 		}
