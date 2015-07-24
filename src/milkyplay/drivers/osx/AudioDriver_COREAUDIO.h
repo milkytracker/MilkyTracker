@@ -51,15 +51,17 @@ private:
 	mp_sword*		compensateBuffer;
 
 	AudioDeviceID	soundDeviceID;
+	UInt32			channelsPerFrame;
+
 	mp_sint32		lastError;
 	bool			IOProcIsInstalled;
 
 	OSStatus		(*gAudioIOProc) (AudioDeviceID, const AudioTimeStamp *,
 									 const AudioBufferList *, const AudioTimeStamp *,
 									 AudioBufferList *, const AudioTimeStamp *, void *);
-    
-    AudioDeviceIOProcID gAudioIOProcID = NULL;
-									 
+
+	AudioDeviceIOProcID gAudioIOProcID = NULL;
+
 	static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 										  const AudioTimeStamp* inNow,
 										  const AudioBufferList* inInputData,
@@ -67,26 +69,26 @@ private:
 										  AudioBufferList* outOutputData, 
 										  const AudioTimeStamp *inOutputTime,
 										  void* inClientData);
-										  
+
 	bool		deviceHasStarted;
-									 
+
 public:
 				AudioDriver_COREAUDIO();
 				AudioDriver_COREAUDIO(AudioDeviceID deviceID);
 	virtual		~AudioDriver_COREAUDIO();
 			
-	virtual     mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
-	virtual     mp_sint32   closeDevice();
+	virtual		mp_sint32	initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
+	virtual		mp_sint32	closeDevice();
 
-	virtual     mp_sint32	start();
-	virtual     mp_sint32   stop();
+	virtual		mp_sint32	start();
+	virtual		mp_sint32	stop();
 
-	virtual     mp_sint32   pause();
-	virtual     mp_sint32   resume();
+	virtual		mp_sint32	pause();
+	virtual		mp_sint32	resume();
 
 	virtual		mp_uint32	getNumPlayedSamples() const { return sampleCounter; }
 	
-	virtual		const char* getDriverID();
+	virtual		const char*	getDriverID();
 	virtual		mp_sint32	getPreferredBufferSize() const { return 1024; }
 	
 	static		OSStatus	getAudioDevices(mp_uint32 &numDevices, AudioDeviceID* &deviceIDs);

@@ -81,16 +81,16 @@ OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 		const AudioTimeStamp* inOutputTime,
 		void *inClientData)
 {
-	register float*	myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
+	float* myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
 
 	AudioDriver_COREAUDIO* audioDriver = reinterpret_cast<AudioDriver_COREAUDIO*>(inClientData);
 
 	MasterMixer* mixer = audioDriver->mixer;
 
-	register SInt16* myInBuffer = (SInt16*)audioDriver->compensateBuffer;
-	register UInt32	size = (outOutputData->mBuffers[0].mDataByteSize /
-							outOutputData->mBuffers[0].mNumberChannels) /
-							sizeof(float);
+	SInt16*	myInBuffer = (SInt16*)audioDriver->compensateBuffer;
+	UInt32	size = (outOutputData->mBuffers[0].mDataByteSize /
+					outOutputData->mBuffers[0].mNumberChannels) /
+					sizeof(float);
 
 	audioDriver->sampleCounter+=size;
 
@@ -103,7 +103,7 @@ OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 		memset(myInBuffer, 0, size*MP_NUMCHANNELS*sizeof(mp_sword));
 	}
 
-	register UInt32	i;
+	UInt32 i;
 
 	if (audioDriver->mono)
 	{
@@ -114,10 +114,12 @@ OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 	}
 	else
 	{
+		UInt32 channelsPerFrame = audioDriver->channelsPerFrame;
+
 		for (i = 0; i < size; i++)
 		{
-			myOutBuffer[i*2] = (myInBuffer[i*2])*(1.0f/32768.0f);
-			myOutBuffer[i*2+1] = (myInBuffer[i*2+1])*(1.0f/32768.0f);
+			myOutBuffer[i*channelsPerFrame] = (myInBuffer[i*2])*(1.0f/32768.0f);
+			myOutBuffer[i*channelsPerFrame+1] = (myInBuffer[i*2+1])*(1.0f/32768.0f);
 		}
 	}
 
@@ -303,13 +305,6 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 		SET_PROPS();
 	}
 
-	// Try selected channels, if failure return device error...
-	if (mySoundBasicDescription.mChannelsPerFrame != 2)
-	{
-		mySoundBasicDescription.mChannelsPerFrame = 2;
-		SET_PROPS();
-	}
-
 	// Linear PCM is required...
 	if (mySoundBasicDescription.mFormatID != kAudioFormatLinearPCM)
 	{
@@ -317,17 +312,15 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 		return MP_DEVICE_ERROR;
 	}
 
-	if (mySoundBasicDescription.mChannelsPerFrame > 2 ||
-			mySoundBasicDescription.mChannelsPerFrame < 1)
-	{
+	// Store driver's channels per frame
+	channelsPerFrame = mySoundBasicDescription.mChannelsPerFrame;
+
+	if (channelsPerFrame < 1)
 		return MP_DEVICE_ERROR;
-	}
 
 	// Force stereo -> mono conversion if driver only supports mono
-	if (mySoundBasicDescription.mChannelsPerFrame == 1)
-	{
+	if (channelsPerFrame == 1)
 		mono = true;
-	}
 
 	gAudioIOProc = OSX_AudioIOProc16Bit;
 	
