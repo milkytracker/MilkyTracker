@@ -2796,7 +2796,7 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 		{
 			if (!checkForChangesOpenModule())
 				return false;
-			openPanel = new PPOpenPanel(screen, "Open module");		
+			openPanel = new PPOpenPanel(screen, "Open Module");
 			openPanel->addExtensions(fileExtProvider.getModuleExtensions());
 			break;
 		}
