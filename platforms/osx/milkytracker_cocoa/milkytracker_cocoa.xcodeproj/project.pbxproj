@@ -243,6 +243,38 @@
 		2D5B404A1A07EC7500834B02 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D5B3F0E1A07C92900834B02 /* AppDelegate.mm */; };
 		2D5B404B1A07EC7800834B02 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D5B3F3C1A07CA0400834B02 /* main.mm */; };
 		2D5B40541A08143000834B02 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5B40531A08143000834B02 /* OpenGL.framework */; };
+		2D840BC11B640F8800717DD6 /* MilkyTracker-8SVX-Sample-IFF.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA11B640F8800717DD6 /* MilkyTracker-8SVX-Sample-IFF.icns */; };
+		2D840BC21B640F8800717DD6 /* MilkyTracker-8SVX-Sample.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA21B640F8800717DD6 /* MilkyTracker-8SVX-Sample.icns */; };
+		2D840BC31B640F8800717DD6 /* MilkyTracker-Asylum-Music-Format-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA31B640F8800717DD6 /* MilkyTracker-Asylum-Music-Format-Module.icns */; };
+		2D840BC41B640F8800717DD6 /* MilkyTracker-Composer-669-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA41B640F8800717DD6 /* MilkyTracker-Composer-669-Module.icns */; };
+		2D840BC51B640F8800717DD6 /* MilkyTracker-Cubic-Tiny-XM-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA51B640F8800717DD6 /* MilkyTracker-Cubic-Tiny-XM-Module.icns */; };
+		2D840BC61B640F8800717DD6 /* MilkyTracker-Digibooster-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA61B640F8800717DD6 /* MilkyTracker-Digibooster-Module.icns */; };
+		2D840BC71B640F8800717DD6 /* MilkyTracker-Digibooster-Pro-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA71B640F8800717DD6 /* MilkyTracker-Digibooster-Pro-Module.icns */; };
+		2D840BC81B640F8800717DD6 /* MilkyTracker-Digisound-Interface-Kit-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA81B640F8800717DD6 /* MilkyTracker-Digisound-Interface-Kit-Module.icns */; };
+		2D840BC91B640F8800717DD6 /* MilkyTracker-Digital-Tracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BA91B640F8800717DD6 /* MilkyTracker-Digital-Tracker-Module.icns */; };
+		2D840BCA1B640F8800717DD6 /* MilkyTracker-Digitracker-3.0-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAA1B640F8800717DD6 /* MilkyTracker-Digitracker-3.0-Module.icns */; };
+		2D840BCB1B640F8800717DD6 /* MilkyTracker-Disorder_Tracker-2-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAB1B640F8800717DD6 /* MilkyTracker-Disorder_Tracker-2-Module.icns */; };
+		2D840BCC1B640F8800717DD6 /* MilkyTracker-Epic-Megagames-MASI-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAC1B640F8800717DD6 /* MilkyTracker-Epic-Megagames-MASI-Module.icns */; };
+		2D840BCD1B640F8800717DD6 /* MilkyTracker-Farandole-Composer-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAD1B640F8800717DD6 /* MilkyTracker-Farandole-Composer-Module.icns */; };
+		2D840BCE1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Instrument.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAE1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Instrument.icns */; };
+		2D840BCF1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BAF1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Module.icns */; };
+		2D840BD01B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Pattern.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB01B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Pattern.icns */; };
+		2D840BD11B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Track.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB11B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Track.icns */; };
+		2D840BD21B640F8800717DD6 /* MilkyTracker-Game-Music-Creator-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB21B640F8800717DD6 /* MilkyTracker-Game-Music-Creator-Module.icns */; };
+		2D840BD31B640F8800717DD6 /* MilkyTracker-General-Digimusic-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB31B640F8800717DD6 /* MilkyTracker-General-Digimusic-Module.icns */; };
+		2D840BD41B640F8800717DD6 /* MilkyTracker-Gravis-Ultrasound-Patch.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB41B640F8800717DD6 /* MilkyTracker-Gravis-Ultrasound-Patch.icns */; };
+		2D840BD51B640F8800717DD6 /* MilkyTracker-Imago-Orpheus-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB51B640F8800717DD6 /* MilkyTracker-Imago-Orpheus-Module.icns */; };
+		2D840BD61B640F8800717DD6 /* MilkyTracker-Impulse-Tracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB61B640F8800717DD6 /* MilkyTracker-Impulse-Tracker-Module.icns */; };
+		2D840BD71B640F8800717DD6 /* MilkyTracker-MikMod-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB71B640F8800717DD6 /* MilkyTracker-MikMod-Module.icns */; };
+		2D840BD81B640F8800717DD6 /* MilkyTracker-Multitracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB81B640F8800717DD6 /* MilkyTracker-Multitracker-Module.icns */; };
+		2D840BD91B640F8800717DD6 /* MilkyTracker-Oktalyzer-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BB91B640F8800717DD6 /* MilkyTracker-Oktalyzer-Module.icns */; };
+		2D840BDA1B640F8800717DD6 /* MilkyTracker-PolyTracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBA1B640F8800717DD6 /* MilkyTracker-PolyTracker-Module.icns */; };
+		2D840BDB1B640F8800717DD6 /* MilkyTracker-Protracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBB1B640F8800717DD6 /* MilkyTracker-Protracker-Module.icns */; };
+		2D840BDC1B640F8800717DD6 /* MilkyTracker-ScreamTracker-2-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBC1B640F8800717DD6 /* MilkyTracker-ScreamTracker-2-Module.icns */; };
+		2D840BDD1B640F8800717DD6 /* MilkyTracker-ScreamTracker-3-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBD1B640F8800717DD6 /* MilkyTracker-ScreamTracker-3-Module.icns */; };
+		2D840BDE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns */; };
+		2D840BDF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */; };
+		2D840BE01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */; };
 		2DAC75091A210420004D52C9 /* DisplayDevice_COCOA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */; };
 		2DB910C41A313FB50062F0A0 /* PPMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB910C31A313FB50062F0A0 /* PPMutex.cpp */; };
 		2DB910C71A353D710062F0A0 /* MTKeyTranslator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB910C61A353D710062F0A0 /* MTKeyTranslator.mm */; };
@@ -275,6 +307,38 @@
 		2D5B40431A07E4F900834B02 /* PPSavePanel_COCOA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PPSavePanel_COCOA.mm; sourceTree = "<group>"; };
 		2D5B40481A07E63C00834B02 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		2D5B40531A08143000834B02 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		2D840BA11B640F8800717DD6 /* MilkyTracker-8SVX-Sample-IFF.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-8SVX-Sample-IFF.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-8SVX-Sample-IFF.icns"; sourceTree = "<group>"; };
+		2D840BA21B640F8800717DD6 /* MilkyTracker-8SVX-Sample.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-8SVX-Sample.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-8SVX-Sample.icns"; sourceTree = "<group>"; };
+		2D840BA31B640F8800717DD6 /* MilkyTracker-Asylum-Music-Format-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Asylum-Music-Format-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Asylum-Music-Format-Module.icns"; sourceTree = "<group>"; };
+		2D840BA41B640F8800717DD6 /* MilkyTracker-Composer-669-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Composer-669-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Composer-669-Module.icns"; sourceTree = "<group>"; };
+		2D840BA51B640F8800717DD6 /* MilkyTracker-Cubic-Tiny-XM-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Cubic-Tiny-XM-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Cubic-Tiny-XM-Module.icns"; sourceTree = "<group>"; };
+		2D840BA61B640F8800717DD6 /* MilkyTracker-Digibooster-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Digibooster-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Digibooster-Module.icns"; sourceTree = "<group>"; };
+		2D840BA71B640F8800717DD6 /* MilkyTracker-Digibooster-Pro-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Digibooster-Pro-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Digibooster-Pro-Module.icns"; sourceTree = "<group>"; };
+		2D840BA81B640F8800717DD6 /* MilkyTracker-Digisound-Interface-Kit-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Digisound-Interface-Kit-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Digisound-Interface-Kit-Module.icns"; sourceTree = "<group>"; };
+		2D840BA91B640F8800717DD6 /* MilkyTracker-Digital-Tracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Digital-Tracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Digital-Tracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BAA1B640F8800717DD6 /* MilkyTracker-Digitracker-3.0-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Digitracker-3.0-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Digitracker-3.0-Module.icns"; sourceTree = "<group>"; };
+		2D840BAB1B640F8800717DD6 /* MilkyTracker-Disorder_Tracker-2-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Disorder_Tracker-2-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Disorder_Tracker-2-Module.icns"; sourceTree = "<group>"; };
+		2D840BAC1B640F8800717DD6 /* MilkyTracker-Epic-Megagames-MASI-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Epic-Megagames-MASI-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Epic-Megagames-MASI-Module.icns"; sourceTree = "<group>"; };
+		2D840BAD1B640F8800717DD6 /* MilkyTracker-Farandole-Composer-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Farandole-Composer-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Farandole-Composer-Module.icns"; sourceTree = "<group>"; };
+		2D840BAE1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Instrument.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Fasttracker-2-Extended-Instrument.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Fasttracker-2-Extended-Instrument.icns"; sourceTree = "<group>"; };
+		2D840BAF1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Fasttracker-2-Extended-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Fasttracker-2-Extended-Module.icns"; sourceTree = "<group>"; };
+		2D840BB01B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Pattern.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Fasttracker-2-Extended-Pattern.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Fasttracker-2-Extended-Pattern.icns"; sourceTree = "<group>"; };
+		2D840BB11B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Track.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Fasttracker-2-Extended-Track.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Fasttracker-2-Extended-Track.icns"; sourceTree = "<group>"; };
+		2D840BB21B640F8800717DD6 /* MilkyTracker-Game-Music-Creator-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Game-Music-Creator-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Game-Music-Creator-Module.icns"; sourceTree = "<group>"; };
+		2D840BB31B640F8800717DD6 /* MilkyTracker-General-Digimusic-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-General-Digimusic-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-General-Digimusic-Module.icns"; sourceTree = "<group>"; };
+		2D840BB41B640F8800717DD6 /* MilkyTracker-Gravis-Ultrasound-Patch.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Gravis-Ultrasound-Patch.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Gravis-Ultrasound-Patch.icns"; sourceTree = "<group>"; };
+		2D840BB51B640F8800717DD6 /* MilkyTracker-Imago-Orpheus-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Imago-Orpheus-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Imago-Orpheus-Module.icns"; sourceTree = "<group>"; };
+		2D840BB61B640F8800717DD6 /* MilkyTracker-Impulse-Tracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Impulse-Tracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Impulse-Tracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BB71B640F8800717DD6 /* MilkyTracker-MikMod-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-MikMod-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-MikMod-Module.icns"; sourceTree = "<group>"; };
+		2D840BB81B640F8800717DD6 /* MilkyTracker-Multitracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Multitracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Multitracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BB91B640F8800717DD6 /* MilkyTracker-Oktalyzer-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Oktalyzer-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Oktalyzer-Module.icns"; sourceTree = "<group>"; };
+		2D840BBA1B640F8800717DD6 /* MilkyTracker-PolyTracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-PolyTracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-PolyTracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BBB1B640F8800717DD6 /* MilkyTracker-Protracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Protracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Protracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BBC1B640F8800717DD6 /* MilkyTracker-ScreamTracker-2-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-ScreamTracker-2-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-ScreamTracker-2-Module.icns"; sourceTree = "<group>"; };
+		2D840BBD1B640F8800717DD6 /* MilkyTracker-ScreamTracker-3-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-ScreamTracker-3-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-ScreamTracker-3-Module.icns"; sourceTree = "<group>"; };
+		2D840BBE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Ultratracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Ultratracker-Module.icns"; sourceTree = "<group>"; };
+		2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Velvet-Studio-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Velvet-Studio-Module.icns"; sourceTree = "<group>"; };
+		2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-WAV-Sample.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-WAV-Sample.icns"; sourceTree = "<group>"; };
 		2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayDevice_COCOA.mm; sourceTree = "<group>"; };
 		2DAC75081A210420004D52C9 /* DisplayDevice_COCOA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayDevice_COCOA.h; sourceTree = "<group>"; };
 		2DB910C31A313FB50062F0A0 /* PPMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPMutex.cpp; sourceTree = "<group>"; };
@@ -771,6 +835,7 @@
 		2D5B3F091A07132900834B02 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2D840BA01B63FD8600717DD6 /* Document Icons */,
 				2D5B3F071A07131E00834B02 /* carton.icns */,
 				2D5B3EFD1A070DEB00834B02 /* Info.plist */,
 			);
@@ -809,6 +874,45 @@
 				2D5B40431A07E4F900834B02 /* PPSavePanel_COCOA.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		2D840BA01B63FD8600717DD6 /* Document Icons */ = {
+			isa = PBXGroup;
+			children = (
+				2D840BA11B640F8800717DD6 /* MilkyTracker-8SVX-Sample-IFF.icns */,
+				2D840BA21B640F8800717DD6 /* MilkyTracker-8SVX-Sample.icns */,
+				2D840BA31B640F8800717DD6 /* MilkyTracker-Asylum-Music-Format-Module.icns */,
+				2D840BA41B640F8800717DD6 /* MilkyTracker-Composer-669-Module.icns */,
+				2D840BA51B640F8800717DD6 /* MilkyTracker-Cubic-Tiny-XM-Module.icns */,
+				2D840BA61B640F8800717DD6 /* MilkyTracker-Digibooster-Module.icns */,
+				2D840BA71B640F8800717DD6 /* MilkyTracker-Digibooster-Pro-Module.icns */,
+				2D840BA81B640F8800717DD6 /* MilkyTracker-Digisound-Interface-Kit-Module.icns */,
+				2D840BA91B640F8800717DD6 /* MilkyTracker-Digital-Tracker-Module.icns */,
+				2D840BAA1B640F8800717DD6 /* MilkyTracker-Digitracker-3.0-Module.icns */,
+				2D840BAB1B640F8800717DD6 /* MilkyTracker-Disorder_Tracker-2-Module.icns */,
+				2D840BAC1B640F8800717DD6 /* MilkyTracker-Epic-Megagames-MASI-Module.icns */,
+				2D840BAD1B640F8800717DD6 /* MilkyTracker-Farandole-Composer-Module.icns */,
+				2D840BAE1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Instrument.icns */,
+				2D840BAF1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Module.icns */,
+				2D840BB01B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Pattern.icns */,
+				2D840BB11B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Track.icns */,
+				2D840BB21B640F8800717DD6 /* MilkyTracker-Game-Music-Creator-Module.icns */,
+				2D840BB31B640F8800717DD6 /* MilkyTracker-General-Digimusic-Module.icns */,
+				2D840BB41B640F8800717DD6 /* MilkyTracker-Gravis-Ultrasound-Patch.icns */,
+				2D840BB51B640F8800717DD6 /* MilkyTracker-Imago-Orpheus-Module.icns */,
+				2D840BB61B640F8800717DD6 /* MilkyTracker-Impulse-Tracker-Module.icns */,
+				2D840BB71B640F8800717DD6 /* MilkyTracker-MikMod-Module.icns */,
+				2D840BB81B640F8800717DD6 /* MilkyTracker-Multitracker-Module.icns */,
+				2D840BB91B640F8800717DD6 /* MilkyTracker-Oktalyzer-Module.icns */,
+				2D840BBA1B640F8800717DD6 /* MilkyTracker-PolyTracker-Module.icns */,
+				2D840BBB1B640F8800717DD6 /* MilkyTracker-Protracker-Module.icns */,
+				2D840BBC1B640F8800717DD6 /* MilkyTracker-ScreamTracker-2-Module.icns */,
+				2D840BBD1B640F8800717DD6 /* MilkyTracker-ScreamTracker-3-Module.icns */,
+				2D840BBE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns */,
+				2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */,
+				2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */,
+			);
+			name = "Document Icons";
 			sourceTree = "<group>";
 		};
 		2DAC75061A210420004D52C9 /* cocoa */ = {
@@ -1491,8 +1595,40 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D840BD51B640F8800717DD6 /* MilkyTracker-Imago-Orpheus-Module.icns in Resources */,
+				2D840BD91B640F8800717DD6 /* MilkyTracker-Oktalyzer-Module.icns in Resources */,
+				2D840BC91B640F8800717DD6 /* MilkyTracker-Digital-Tracker-Module.icns in Resources */,
+				2D840BE01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns in Resources */,
 				2D5B40361A07D4F500834B02 /* Application.xib in Resources */,
+				2D840BD41B640F8800717DD6 /* MilkyTracker-Gravis-Ultrasound-Patch.icns in Resources */,
+				2D840BDA1B640F8800717DD6 /* MilkyTracker-PolyTracker-Module.icns in Resources */,
+				2D840BDE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns in Resources */,
+				2D840BC11B640F8800717DD6 /* MilkyTracker-8SVX-Sample-IFF.icns in Resources */,
+				2D840BCC1B640F8800717DD6 /* MilkyTracker-Epic-Megagames-MASI-Module.icns in Resources */,
+				2D840BD71B640F8800717DD6 /* MilkyTracker-MikMod-Module.icns in Resources */,
+				2D840BD01B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Pattern.icns in Resources */,
+				2D840BCF1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Module.icns in Resources */,
+				2D840BC71B640F8800717DD6 /* MilkyTracker-Digibooster-Pro-Module.icns in Resources */,
+				2D840BCA1B640F8800717DD6 /* MilkyTracker-Digitracker-3.0-Module.icns in Resources */,
+				2D840BC41B640F8800717DD6 /* MilkyTracker-Composer-669-Module.icns in Resources */,
+				2D840BDF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns in Resources */,
+				2D840BDD1B640F8800717DD6 /* MilkyTracker-ScreamTracker-3-Module.icns in Resources */,
 				2D5B40371A07D4F500834B02 /* carton.icns in Resources */,
+				2D840BD31B640F8800717DD6 /* MilkyTracker-General-Digimusic-Module.icns in Resources */,
+				2D840BC61B640F8800717DD6 /* MilkyTracker-Digibooster-Module.icns in Resources */,
+				2D840BDC1B640F8800717DD6 /* MilkyTracker-ScreamTracker-2-Module.icns in Resources */,
+				2D840BC81B640F8800717DD6 /* MilkyTracker-Digisound-Interface-Kit-Module.icns in Resources */,
+				2D840BDB1B640F8800717DD6 /* MilkyTracker-Protracker-Module.icns in Resources */,
+				2D840BCE1B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Instrument.icns in Resources */,
+				2D840BD81B640F8800717DD6 /* MilkyTracker-Multitracker-Module.icns in Resources */,
+				2D840BC51B640F8800717DD6 /* MilkyTracker-Cubic-Tiny-XM-Module.icns in Resources */,
+				2D840BC21B640F8800717DD6 /* MilkyTracker-8SVX-Sample.icns in Resources */,
+				2D840BD11B640F8800717DD6 /* MilkyTracker-Fasttracker-2-Extended-Track.icns in Resources */,
+				2D840BCD1B640F8800717DD6 /* MilkyTracker-Farandole-Composer-Module.icns in Resources */,
+				2D840BD21B640F8800717DD6 /* MilkyTracker-Game-Music-Creator-Module.icns in Resources */,
+				2D840BD61B640F8800717DD6 /* MilkyTracker-Impulse-Tracker-Module.icns in Resources */,
+				2D840BC31B640F8800717DD6 /* MilkyTracker-Asylum-Music-Format-Module.icns in Resources */,
+				2D840BCB1B640F8800717DD6 /* MilkyTracker-Disorder_Tracker-2-Module.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
