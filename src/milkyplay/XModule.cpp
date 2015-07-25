@@ -1486,7 +1486,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	else
 	{
 		memset(buffer, 0, size);
-		f.read(buffer,1,length);
+		f.read(buffer,flags & ST_16BIT ? 2 : 1, length);
 	}
 
 	// 16 bit sample 
