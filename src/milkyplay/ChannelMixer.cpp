@@ -42,7 +42,6 @@
 #include "ResamplerFactory.h"
 #include "ResamplerMacros.h"
 #include "AudioDriverManager.h"
-#include <math.h>
  
 // Ramp out will last (THEBEATLENGTH*RAMPDOWNFRACTION)>>8 samples
 #define RAMPDOWNFRACTION 256
@@ -580,7 +579,7 @@ ChannelMixer::ChannelMixer(mp_uint32 numChannels,
 	// FT2 panning law
 	if (panLUT[1] == 0)
 		for (int i = 0; i <= 256; i++)
-			panLUT[i] = round (8192.0 * sqrt(i/256.0));
+			panLUT[i] = static_cast<mp_sint32> (8192.0 * sqrt(i/256.0) + 0.5);
 }
 
 ChannelMixer::~ChannelMixer()
