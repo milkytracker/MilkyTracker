@@ -49,7 +49,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 	switch (type)
 	{
 		case ToolHandlerResponder::SampleToolTypeNew:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Create new sample"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Create new sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter size in samples:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0); 
 			if (lastValues.newSampleSize != SampleEditorControlLastValues::invalidIntValue())
@@ -59,14 +59,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 			
 		case ToolHandlerResponder::SampleToolTypeVolume:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Boost sample volume"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Boost sample volume" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter new volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeFade:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Fade sample"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Fade sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter start volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Enter end volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
@@ -76,7 +76,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 			
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter offset in percent [-100..100]");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-100, 100.0f, 2); 
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.DCOffset != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.DCOffset : 0.0f);
@@ -116,7 +116,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeGenerateSilence:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Insert silence"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Insert silence" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter size in samples:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0); 
 			if (lastValues.silenceSize != SampleEditorControlLastValues::invalidIntValue())
@@ -136,7 +136,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogGroupSelection(parentScreen, 
 											  toolHandlerResponder, 
 											  PP_DEFAULT_ID, 
-											  "Select noise type"PPSTR_PERIODS,
+											  "Select noise type" PPSTR_PERIODS,
 											  noiseFilterTypes);
 			break;
 		}
@@ -146,7 +146,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		case ToolHandlerResponder::SampleToolTypeGenerateTriangle:
 		case ToolHandlerResponder::SampleToolTypeGenerateSawtooth:
 		{
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Generate waveform"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Generate waveform" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Number of periods:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1000.0f, 1000.0f, 2); 

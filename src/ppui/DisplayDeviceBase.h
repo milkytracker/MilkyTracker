@@ -88,7 +88,7 @@ static void DrawWaitBar(const pp_int32 width, const pp_int32 height,
 	}
 
 	PPColor textColor(0,0,0);
-	::DrawString("please wait"PPSTR_PERIODS, (width>>1)-(14*4), (height>>1)-16, textColor, buffer, pitch, drawPixelFuncPtr);
+	::DrawString("please wait" PPSTR_PERIODS, (width>>1)-(14*4), (height>>1)-16, textColor, buffer, pitch, drawPixelFuncPtr);
 	
 	int hBarPos = (width >> 1) - (barWidth>>1);
 	int vBarPos = (height >> 1) - (barHeight>>1) + (height>>3);

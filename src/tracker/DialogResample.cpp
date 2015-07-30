@@ -96,9 +96,9 @@ DialogResample::DialogResample(PPScreen* screen,
 	adjustFtAndRelnote(true)
 {
 #ifdef __LOWRES__
-	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
 #else
-	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;

@@ -2741,7 +2741,7 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 					delete responder;
 					
 				responder = new SampleLoadChannelSelectionHandler(*this);				
-				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
+				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);	
 				
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)

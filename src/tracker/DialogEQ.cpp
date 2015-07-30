@@ -55,7 +55,7 @@ DialogEQ::DialogEQ(PPScreen* screen,
 	
 	char dummy[100];
 	
-	sprintf(dummy, "%i Band Equalizer"PPSTR_PERIODS, numSliders);
+	sprintf(dummy, "%i Band Equalizer" PPSTR_PERIODS, numSliders);
 	
 	initDialog(screen, responder, id, dummy, 300, 230, 26, "Ok", "Cancel");
 

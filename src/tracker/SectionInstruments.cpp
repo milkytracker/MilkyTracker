@@ -415,7 +415,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Copy ins. %x to %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Copy smp. %x to %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample"PPSTR_PERIODS, 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample" PPSTR_PERIODS, 
 											  buffer, buffer2, 
 											  tracker.listBoxInstruments->getSelectedIndex(), 
 											  tracker.listBoxSamples->getSelectedIndex(),
@@ -433,7 +433,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Swap ins. %x with %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Swap smp. %x with %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample"PPSTR_PERIODS, 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample" PPSTR_PERIODS, 
 											  buffer, buffer2, 
 											  tracker.listBoxInstruments->getSelectedIndex(), 
 											  tracker.listBoxSamples->getSelectedIndex(),

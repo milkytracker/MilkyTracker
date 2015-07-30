@@ -759,7 +759,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
 						PPSize(77>>1, bHeight-1));
 	
-	button->setText("As"PPSTR_PERIODS);
+	button->setText("As" PPSTR_PERIODS);
 	
 	container->addControl(button);
 	
