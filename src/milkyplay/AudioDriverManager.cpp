@@ -53,6 +53,7 @@
 
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
 #include "AudioDriver_RTAUDIO.h"
+#include <VersionHelpers.h>
 #endif
 #if !defined(_WIN32_WCE) && defined(__WASAPI__)
 #include "AudioDriver_PORTAUDIO.h"
@@ -61,7 +62,7 @@
 AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
 {
-	mp_sint32 driverListSize = 2;
+	mp_sint32 driverListSize = 1;
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
 	driverListSize+=3;
 #endif
@@ -72,22 +73,15 @@ AudioDriverManager::AudioDriverManager() :
 	mp_sint32 i = 0;
 	ALLOC_DRIVERLIST(driverListSize);
 	driverList[i++] = new AudioDriver_MMSYSTEM();
-	driverList[i++] = new AudioDriver_MMSYSTEM(true);
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
 	driverList[i++] = new AudioDriver_RTAUDIO();
 	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_ASIO);
 	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_DS);
 
-	// On windows vista we set the DS driver to the default
 #ifndef _WIN32_WCE
-	OSVERSIONINFOEX osVersion;
-	ZeroMemory(&osVersion, sizeof(osVersion));
-	osVersion.dwOSVersionInfoSize = sizeof(osVersion);
-	if (GetVersionEx((LPOSVERSIONINFO)&osVersion))
-	{
-		if (osVersion.dwMajorVersion > 5)
-			defaultDriverIndex = i-1;
-	}
+	// On Windows Vista we set the DS driver to be the default
+	if (IsWindowsVistaOrGreater())
+		defaultDriverIndex = i-1;
 #endif	
 	
 #endif

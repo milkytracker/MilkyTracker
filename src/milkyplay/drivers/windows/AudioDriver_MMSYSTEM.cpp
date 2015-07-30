@@ -30,53 +30,45 @@
 /*
  *  AudioDriver_MMSYSTEM.cpp
  *  MilkyPlay audiodriver
- *
- *	Sorry this is unfinished... (hacked)
  */
 #include "AudioDriver_MMSYSTEM.h"
 #include "MasterMixer.h"
 
-// some more formats
-#define WAVE_FORMAT_48S16       0x00008000       /* 48   kHz, Stereo, 16-bit */
-
-// hack trying to prevent AudioDriver_MMSYSTEM::waveOutProc to be called after device has been closed
-static bool deviceOpen = false;
-
-void CALLBACK AudioDriver_MMSYSTEM::waveOutProc(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD dwParam1,DWORD dwParam2)
+DWORD WINAPI AudioDriver_MMSYSTEM::ThreadProc(_In_ LPVOID lpParameter)
 {
-	if (uMsg==MM_WOM_DONE && deviceOpen) 
-	{		
-		LPWAVEHDR wavhdr = (LPWAVEHDR)dwParam1;
-		::waveOutUnprepareHeader(hwo,wavhdr,sizeof(WAVEHDR));
-		
-		AudioDriver_MMSYSTEM* audioDriver = (AudioDriver_MMSYSTEM*)dwInstance;
-		if (!audioDriver->deviceHasStarted)
-			return;
+	AudioDriver_MMSYSTEM* audioDriver = (AudioDriver_MMSYSTEM*)lpParameter;
 
-		EnterCriticalSection(&audioDriver->cs);
+	while (audioDriver->deviceOpen)
+	{
+		MSG msg;
 
-		MasterMixer* mixer = audioDriver->mixer; 
-		audioDriver->sampleCounterTotal+=audioDriver->bufferSize>>1;
+		// Blocks until message received from waveOut
+		GetMessage(&msg, NULL, 0, 0);
 
-		if (audioDriver->timeEmulation)
+		if (msg.message == WOM_DONE)
 		{
-			audioDriver->sampleCounter+=audioDriver->bufferSize>>1;
-			audioDriver->timeInSamples = audioDriver->sampleCounter;
+			::waveOutUnprepareHeader(audioDriver->hwo, &audioDriver->wavhdr[audioDriver->currentBufferIndex], sizeof(WAVEHDR));
+
+			if (!audioDriver->deviceHasStarted)
+				continue;
+
+			EnterCriticalSection(&audioDriver->cs);
+			audioDriver->sampleCounterTotal += audioDriver->bufferSize >> 1;
+			audioDriver->kick();
+			LeaveCriticalSection(&audioDriver->cs);
 		}
-
-		audioDriver->kick();
-
-		LeaveCriticalSection(&audioDriver->cs);
 	}
+
+	return 0;
 }
 
-AudioDriver_MMSYSTEM::AudioDriver_MMSYSTEM(bool timeEmulation/* = false*/) :
+AudioDriver_MMSYSTEM::AudioDriver_MMSYSTEM() :
 	AudioDriverBase(),
 	paused(false), 
+	deviceOpen(false),
 	deviceHasStarted(false),
 	currentBufferIndex(0),
-	sampleCounterTotal(0),
-	timeEmulation(timeEmulation)
+	sampleCounterTotal(0)
 {
 	memset(&mixbuff16, 0, sizeof(mixbuff16));
 	memset(&wavhdr, 0, sizeof(wavhdr));
@@ -105,10 +97,10 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 
 	sampleRate = mixFrequency;
 
-	mp_uint32 supportedFormats[] = {WAVE_FORMAT_48S16,48000,
-									WAVE_FORMAT_4S16,44100,
-									WAVE_FORMAT_2S16,22050,
-									WAVE_FORMAT_1S16,11025};
+	mp_uint32 supportedFormats[] = { WAVE_FORMAT_48S16, 48000,
+									 WAVE_FORMAT_4S16,  44100,
+									 WAVE_FORMAT_2S16,  22050,
+									 WAVE_FORMAT_1S16,  11025 };
 
 	bool modeFound = false;
 	DWORD dwFormat = 0;
@@ -142,16 +134,13 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 	{
 
 		if (devid == ::waveOutGetNumDevs())
-		{
 			return MP_DEVICE_ERROR;
-		}
 
-		
-		if (::waveOutOpen(&hwo, 
-						  WAVE_MAPPER, 
-						  &format, 
-						  0, 
-						  0, 
+		if (::waveOutOpen(&hwo,
+						  WAVE_MAPPER,
+						  &format,
+						  0,
+						  0,
 						  CALLBACK_NULL) == MMSYSERR_NOERROR)
 		{
 			// Usable device found, stop searching
@@ -161,38 +150,36 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 	}
 
 	UINT waveOutID;
-	if (::waveOutGetID(hwo,(LPUINT)&waveOutID) != MMSYSERR_NOERROR) {
+	if (::waveOutGetID(hwo,(LPUINT)&waveOutID) != MMSYSERR_NOERROR)
 		return MP_DEVICE_ERROR;
-	}
 
 	MMRESULT r = ::waveOutGetDevCaps((UINT)waveOutID,
 									 &waveoutcaps,
 									 sizeof(waveoutcaps));
 
 	if (r != MMSYSERR_NOERROR) 
-	{
 		return MP_DEVICE_ERROR;
-	}
 
 	if (!(waveoutcaps.dwFormats & dwFormat))
-	{
 		return MP_DEVICE_ERROR;
-	}
 
 	::waveOutReset(hwo);
 
 	if (::waveOutClose(hwo)!= MMSYSERR_NOERROR) 
-	{
 		return MP_DEVICE_ERROR;
-	}
+
+	// Setup thread to handle buffering
+	deviceOpen = true;
+	bufferThreadHandle = CreateThread(0, 0, &ThreadProc, this, 0, &bufferThreadId);
 
 	if (::waveOutOpen(&hwo,
 					  WAVE_MAPPER,
 					  &format,
-					  (LONG)&waveOutProc,
-					  (LONG)this,
-					  CALLBACK_FUNCTION) != MMSYSERR_NOERROR) 
+					  bufferThreadId,
+					  (DWORD_PTR)this,
+					  CALLBACK_THREAD) != MMSYSERR_NOERROR)
 	{
+		deviceOpen = false;
 		return MP_DEVICE_ERROR;
 	}
 	
@@ -205,7 +192,6 @@ mp_sint32 AudioDriver_MMSYSTEM::initDevice(mp_sint32 bufferSizeInWords, mp_uint3
 		mixbuff16[c] = new mp_sword[bufferSizeInWords];
 	}
 
-	deviceOpen = true;
 	deviceHasStarted = false;
 	sampleCounterTotal = 0;
 
@@ -240,21 +226,22 @@ mp_sint32 AudioDriver_MMSYSTEM::stop()
 		bool notDone = false;
 		for (mp_sint32 i = 0;  i < NUMBUFFERS; i++)
 		{
-			if (! (wavhdr[i].dwFlags & WHDR_DONE)) {
+			if (! (wavhdr[i].dwFlags & WHDR_DONE))
+			{
 				notDone = TRUE;
 				break;
-            }
+			}
 		}
 		
-		//timeCounter+=waitTime;
 		::Sleep(waitTime);		
 
 		if (!notDone) break;
-    }
+	}
 
 	for (mp_sint32 i = 0;  i < NUMBUFFERS; i++)
 	{
-		if (wavhdr[i].dwFlags & WHDR_PREPARED) {
+		if (wavhdr[i].dwFlags & WHDR_PREPARED)
+		{
 			::waveOutUnprepareHeader(hwo,&wavhdr[i],sizeof(WAVEHDR));
 			wavhdr[i].dwFlags &= ~WHDR_PREPARED;
 			break;
@@ -277,10 +264,8 @@ mp_sint32 AudioDriver_MMSYSTEM::closeDevice()
 {
 	deviceOpen = false;
 
-	if (::waveOutClose(hwo)!=MMSYSERR_NOERROR) 
-	{
+	if (waveOutClose(hwo)!=MMSYSERR_NOERROR) 
 		return MP_DEVICE_ERROR;
-	}
 
 	return MP_OK;
 }
@@ -296,12 +281,12 @@ void AudioDriver_MMSYSTEM::kick()
 	wavhdr[currentBufferIndex].dwBufferLength = (bufferSize*NUMBITS)/8;
 	wavhdr[currentBufferIndex].dwFlags = 0;
 	wavhdr[currentBufferIndex].dwLoops = 0;
-	wavhdr[currentBufferIndex].dwUser = (DWORD)mixbuff16[currentBufferIndex];
+	wavhdr[currentBufferIndex].dwUser = (DWORD_PTR)mixbuff16[currentBufferIndex];
 
-	if (::waveOutPrepareHeader(hwo,&wavhdr[currentBufferIndex],sizeof(WAVEHDR)) != MMSYSERR_NOERROR)
+	if (::waveOutPrepareHeader(hwo, &wavhdr[currentBufferIndex], sizeof(WAVEHDR)) != MMSYSERR_NOERROR)
 		return;
 
-	if (::waveOutWrite(hwo,&wavhdr[currentBufferIndex],sizeof(WAVEHDR)) != MMSYSERR_NOERROR)
+	if (::waveOutWrite(hwo, &wavhdr[currentBufferIndex], sizeof(WAVEHDR)) != MMSYSERR_NOERROR)
 		return;
 
 	currentBufferIndex = (currentBufferIndex+1) % NUMBUFFERS;
@@ -311,17 +296,10 @@ mp_sint32 AudioDriver_MMSYSTEM::start()
 {
 	deviceHasStarted = true;
 	for (int i = 0; i < NUMBUFFERS; i++)
-	{
 		kick();
-	}		
 
 	sampleCounterTotal = 0;
-	if (timeEmulation)
-	{
-		lastTimeInMillis = ::GetTickCount();
-		timeInSamples = sampleCounter = 0;
-	}
-	
+
 	return MP_OK;
 }
 
@@ -341,40 +319,23 @@ mp_sint32 AudioDriver_MMSYSTEM::resume()
 
 mp_uint32 AudioDriver_MMSYSTEM::getNumPlayedSamples() const
 {
-	if (timeEmulation)
+	EnterCriticalSection(&cs);
+
+	MMTIME mmtime;
+
+	mmtime.wType = TIME_SAMPLES;
+
+	if (::waveOutGetPosition(hwo,&mmtime,sizeof(mmtime)) == MMSYSERR_NOERROR)
 	{
-		EnterCriticalSection(&cs);
-
-		mp_uint32 currentMillis = ::GetTickCount();
-
-		this->timeInSamples+=(mp_uint32)((float)(currentMillis - lastTimeInMillis) * (sampleRate / 1000.0f));
-
-		lastTimeInMillis = currentMillis;
-
+		if (mmtime.u.sample > lastSampleIndex)
+			lastSampleIndex = mmtime.u.sample;
 		LeaveCriticalSection(&cs);
-
-		return timeInSamples;
-	}
-	else
-	{
-		EnterCriticalSection(&cs);
-
-		MMTIME mmtime;
-
-		mmtime.wType = TIME_SAMPLES;
-
-		if (::waveOutGetPosition(hwo,&mmtime,sizeof(mmtime)) == MMSYSERR_NOERROR)
-		{
-			if (mmtime.u.sample > lastSampleIndex)
-				lastSampleIndex = mmtime.u.sample;
-			LeaveCriticalSection(&cs);
-			return lastSampleIndex;
-		}
-
-		LeaveCriticalSection(&cs);
-
 		return lastSampleIndex;
 	}
+
+	LeaveCriticalSection(&cs);
+
+	return lastSampleIndex;
 }
 
 mp_uint32 AudioDriver_MMSYSTEM::getBufferPos() const
