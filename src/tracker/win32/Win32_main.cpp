@@ -492,6 +492,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 
 		case WM_MOUSEWHEEL:
+		case WM_MOUSEHWHEEL:
 		{
 			RECT rc;
 			GetWindowRect(hwnd, &rc);
@@ -512,8 +513,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
 			}
 			
-			mouseWheelParams.deltaX = 0;
-			mouseWheelParams.deltaY = ((signed short)HIWORD(wParam))/60;
+			mouseWheelParams.deltaX = msg == WM_MOUSEHWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
+			mouseWheelParams.deltaY = msg == WM_MOUSEWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
 			
 			PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));	
 			
