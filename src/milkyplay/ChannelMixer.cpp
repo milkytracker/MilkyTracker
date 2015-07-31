@@ -42,6 +42,7 @@
 #include "ResamplerFactory.h"
 #include "ResamplerMacros.h"
 #include "AudioDriverManager.h"
+#include <math.h>
  
 // Ramp out will last (THEBEATLENGTH*RAMPDOWNFRACTION)>>8 samples
 #define RAMPDOWNFRACTION 256
