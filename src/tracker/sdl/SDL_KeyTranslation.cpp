@@ -548,7 +548,7 @@ pp_uint16 toVK(const SDL_Keysym& keysym)
 	if (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9)
 		return (pp_uint16)keysym.sym;
 
-	for(int i=0; i < sizeof(sdl_keysym_to_vk)/2; i+=2)
+	for (int i = 0; i < sizeof sdl_keysym_to_vk / sizeof (pp_uint32); i += 2)
 		if(sdl_keysym_to_vk[i] == keysym.sym)
 			return sdl_keysym_to_vk[i+1];
 
@@ -561,9 +561,9 @@ pp_uint16 toSC(const SDL_Keysym& keysym)
 	// WARNING!!!!
 	// The next line will only work on X11 systems - I've no idea what will happen
 	// with anything else
-	if(isX11 && stdKb)
+	if (isX11 && stdKb)
 		return keysym.scancode - 8;
-	else if(stdKb)
+	else if (stdKb)
 		return keysym.scancode;
 #endif
 
@@ -577,7 +577,7 @@ pp_uint16 toSC(const SDL_Keysym& keysym)
 	}
 
 	// Range check
-	if (index > sizeof(sdl_keycode_to_pc_keycode) / sizeof(pp_uint32) || index < 0)
+	if (index > sizeof sdl_keycode_to_pc_keycode / sizeof (pp_uint32) || index < 0)
 	{
 		return 0;
 	}
