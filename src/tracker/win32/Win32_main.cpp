@@ -20,7 +20,8 @@
  *
  */
 
-#include <windows.h>
+#include <Windows.h>
+#include <Windowsx.h>
 #include <tchar.h>
 #include <shellapi.h>
 #include <stdio.h>
@@ -78,6 +79,7 @@ TCHAR						c_szClassName[]		= _T("MILKYTRACKERMAINCLASS");
 HINSTANCE					g_hinst				= NULL;       /* My instance handle */
 BOOL						g_fPaused			= TRUE;       /* Should I be paused? */
 HWND						hWnd				= NULL;
+BOOL						g_mouseDragging		= FALSE;
 
 PPMutex*					g_globalMutex		= NULL;
 
@@ -626,6 +628,11 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!myTrackerScreen || !lMouseDown)
 				break;
 
+			if (g_mouseDragging)
+			{
+				ReleaseCapture();
+				g_mouseDragging = FALSE;
+			}
 			lClickCount++;
 
 			if (lClickCount == 4)
@@ -757,8 +764,13 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			if ((wParam&MK_LBUTTON) && lMouseDown)
 			{
-				p.x = LOWORD(lParam);
-				p.y = HIWORD(lParam);
+				p.x = GET_X_LPARAM(lParam);
+				p.y = GET_Y_LPARAM(lParam);
+				if (!g_mouseDragging)
+				{
+					SetCapture(hWnd);
+					g_mouseDragging = TRUE;
+				}
 				
 				PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));
 				
