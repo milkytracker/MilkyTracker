@@ -67,9 +67,9 @@ struct TWorkBuffers
 
 	void clearBuffers()
 	{
-		memset(lastArpeggio, 0, sizeof(noteRangeRemapper));
-		memset(lastVolSlide, 0, sizeof(noteRangeRemapper));
-		memset(lastGVolSlide, 0, sizeof(noteRangeRemapper));
+		memset(lastArpeggio, 0, sizeof(lastArpeggio));
+		memset(lastVolSlide, 0, sizeof(lastVolSlide));
+		memset(lastGVolSlide, 0, sizeof(lastGVolSlide));
 		memset(lastPorta, 0, sizeof(lastPorta));
 		memset(lastTempoSlide, 0, sizeof(lastTempoSlide));
 		memset(lastIns, 0, sizeof(lastIns));
