@@ -109,7 +109,7 @@ void CLhaArchive::decode(LzInterfacing *pinterface)
 	{
 		fwrite_crc(text, loc, pinterface->outfile);
 	}
-	delete text;
+	delete[] text;
 #ifdef LHADEBUG
 	Log("Decoding Done!\n");
 #endif

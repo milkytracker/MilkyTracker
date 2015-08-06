@@ -51,8 +51,8 @@ public:
 
 	~PictureGlow()
 	{
-		delete glowBuffer1;
-		delete glowBuffer2;
+		delete[] glowBuffer1;
+		delete[] glowBuffer2;
 	}
 
 	void setScale(int scale) { this->scale = scale; }

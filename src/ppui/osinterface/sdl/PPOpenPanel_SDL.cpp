@@ -43,7 +43,7 @@ PPOpenPanel::PPOpenPanel(PPScreen* screen, const char* caption) :
 PPOpenPanel::~PPOpenPanel()
 {
 	if (caption)
-		delete caption;
+		delete[] caption;
 }
 
 void PPOpenPanel::addExtension(const PPString& ext, const PPString& desc)

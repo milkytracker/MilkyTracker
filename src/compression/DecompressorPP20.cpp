@@ -66,7 +66,7 @@ bool DecompressorPP20::decompress(const PPSystemString& outFileName, Hints hint)
 	
 	if (!pp20.isCompressed(buffer, size))
 	{
-		delete buffer;
+		delete[] buffer;
 		return false;
 	}
 	

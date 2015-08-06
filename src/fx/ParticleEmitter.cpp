@@ -121,7 +121,7 @@ ParticleEmitter::ParticleEmitter(int width, int height, int FOV, int numEmitters
 		flareTexture[2][i] = RGB2SHORT(texture[i*3+1],texture[i*3+2],texture[i*3]);
 	}
 
-	delete texture;
+	delete[] texture;
 
 	emitterTexture[0] = new unsigned short[64*64];
 #ifdef LENSE_REFLECTION
@@ -214,7 +214,7 @@ ParticleEmitter::ParticleEmitter(int width, int height, int FOV, int numEmitters
 	Texture::convert24to16(emitterTexture[5], texture, 64*64, 0);
 #endif
 
-	delete texture;
+	delete[] texture;
 
 	this->numEmitters = numEmitters;
 
@@ -259,7 +259,7 @@ ParticleEmitter::~ParticleEmitter()
 	delete emitterTexture[5];
 #endif
 
-	delete emitters;
+	delete[] emitters;
 }
 
 void ParticleEmitter::update(float syncFrac)

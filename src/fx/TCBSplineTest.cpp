@@ -60,7 +60,7 @@ TCBSplineTest::TCBSplineTest(int width, int height)
 
 TCBSplineTest::~TCBSplineTest()
 {
-	delete buffer;
+	delete[] buffer;
 }
 
 static void drawSplines(TCBSpline* spline, int maxDots, int maxTime, float* buffer, int width, int height, float r, float g, float b)
