@@ -50,6 +50,7 @@
 #include "SectionQuickOptions.h"
 #include "SectionOptimize.h"
 #include "TrackerConfig.h"
+#include "PPUIConfig.h"
 #include "ColorPaletteContainer.h"
 #include "Tools.h"
 #include "TitlePageManager.h"
@@ -595,10 +596,21 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 		TColorPalette pal;
 		PPString str = theKey->getStringValue();
 		pal = ColorPaletteContainer::decodePalette(str);
+
+		// Set colors added in 0.90.87 to default values if config file is from older version
+		if (version < 0x009087)
+		{
+			pal.colors[GlobalColorConfig::ColorScrollBarBackground] = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorScrollBarBackground);
+			pal.colors[GlobalColorConfig::ColorRecordModeButtonText] = TrackerConfig::colorRecordModeButtonText;
+			pal.colors[GlobalColorConfig::ColorScopesRecordIndicator] = TrackerConfig::colorScopesRecordIndicator;
+			pal.colors[GlobalColorConfig::ColorPeakClipIndicator] = TrackerConfig::colorPeakClipIndicator;
+			pal.colors[GlobalColorConfig::ColorSampleEditorWaveform] = TrackerConfig::colorSampleEditorWaveform;
+		}
+
 		for (pp_int32 i = 0; i < pal.numColors; i++)
 		{
 			if (i < GlobalColorConfig::ColorLast)
-				GlobalColorConfig::getInstance()->setColor((GlobalColorConfig::GlobalColors)i, pal.colors[i]);	
+				GlobalColorConfig::getInstance()->setColor((GlobalColorConfig::GlobalColors)i, pal.colors[i]);
 		}
 	}
 	else if (theKey->getKey().startsWith("PREDEFCOLORPALETTE_"))
