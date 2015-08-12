@@ -32,6 +32,7 @@
 #include "PlayerController.h"
 #include "DialogBase.h"
 
+#include <algorithm>
 #include <math.h>
 
 #define SCROLLBARWIDTH SCROLLBUTTONSIZE
@@ -89,6 +90,9 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	ourOwnBorderColor.set(192, 192, 192);
 
 	hScrollbar = new PPScrollbar(0, parentScreen, this, PPPoint(location.x, location.y + size.height - SCROLLBARWIDTH - 1), size.width - 1, true);
+
+	currentPosition.x = currentPosition.y = -1;
+	currentOffset = -1;
 
 	startPos = 0;
 	visibleWidth = size.width - 4;
@@ -277,6 +281,29 @@ void SampleEditorControl::formatMillis(char* buffer, pp_uint32 millis)
 	}
 	else
 		sprintf(buffer, "%ims", millis);	
+}
+
+void SampleEditorControl::formatMillisFraction(char* buffer, pp_uint32 millis, pp_uint32 totalMillis)
+{
+	if (totalMillis >= 1000)
+	{
+		pp_uint32 secs = millis / 1000;
+		pp_uint32 totalSecs = totalMillis / 1000;
+		millis %= 1000;
+		totalMillis %= 1000;
+		if (totalSecs >= 60)
+		{
+			pp_uint32 mins = secs / 60;
+			pp_uint32 totalMins = totalSecs / 60;
+			secs %= 60;
+			totalSecs %= 60;
+			sprintf(buffer, "%im%i.%is / %im%i.%is", mins, secs, millis, totalMins, totalSecs, totalMillis);
+		}
+		else
+			sprintf(buffer, "%i.%is / %i.%is", secs, millis, totalSecs, totalMillis);
+	}
+	else
+		sprintf(buffer, "%ims / %ims", millis, totalMillis);
 }
 
 void SampleEditorControl::paint(PPGraphicsAbstract* g)
@@ -490,15 +517,31 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 	mp_sint32 end = (mp_sint32)ceil((startPos+visibleWidth)*xScale);
 	if (end > sampleEditor->getSampleLen())
 		end = sampleEditor->getSampleLen();
-		
-	if (offsetFormat == OffsetFormatHex)
-		sprintf(buffer, "%x", end);
-	else if (offsetFormat == OffsetFormatDec)
-		sprintf(buffer, "%d", end);
-	else if (offsetFormat == OffsetFormatMillis)
+
+	if (currentPosition.x >= 0 && currentPosition.y >= 0)
 	{
-		pp_uint32 millis = sampleEditor->convertSmpPosToMillis(end, relativeNote);
-		formatMillis(buffer, millis);
+		if (offsetFormat == OffsetFormatHex)
+			sprintf(buffer, "%x / %x", positionToSample(currentPosition), end);
+		else if (offsetFormat == OffsetFormatDec)
+			sprintf(buffer, "%d / %d", positionToSample(currentPosition), end);
+		else if (offsetFormat == OffsetFormatMillis)
+		{
+			pp_uint32 millis = sampleEditor->convertSmpPosToMillis(positionToSample(currentPosition), relativeNote);
+			pp_uint32 totalMillis = sampleEditor->convertSmpPosToMillis(end, relativeNote);
+			formatMillisFraction(buffer, millis, totalMillis);
+		}
+	}
+	else
+	{
+		if (offsetFormat == OffsetFormatHex)
+			sprintf(buffer, "%x", end);
+		else if (offsetFormat == OffsetFormatDec)
+			sprintf(buffer, "%d", end);
+		else if (offsetFormat == OffsetFormatMillis)
+		{
+			pp_uint32 totalMillis = sampleEditor->convertSmpPosToMillis(end, relativeNote);
+			formatMillis(buffer, totalMillis);
+		}
 	}
 
 	g->setColor(0, 0, 0);
@@ -506,6 +549,47 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 	g->setColor(255, 0, 255);
 	g->drawString(buffer, location.x + 2 + visibleWidth - font->getStrWidth(buffer), location.y + 2);
 	
+	// Draw sample offset cursor is nearest to
+	if ((::getKeyModifier() & KeyModifierCTRL) && currentPosition.x >= 0 && currentPosition.y >= 0)
+	{
+		// Round to next lowest 256 samples
+		mp_sint32 offsetLeft = positionToSample(currentPosition) & ~0xFF;
+		mp_sint32 offsetRight = std::min(offsetLeft + 256, 65535);
+
+		if (offsetLeft >> 8 <= 0xFF)
+		{
+			mp_uint32 xLeft = currentPosition.x;
+			mp_uint32 xRight = currentPosition.x;
+
+			// Find nearest sample to cursor that is a multiple of 256
+			while (xLeft > 0 && positionToSample(PPPoint(xLeft, 0)) >= offsetLeft)
+				xLeft--;
+
+			while (xRight < visibleWidth & positionToSample(PPPoint(xRight, 0)) < offsetRight)
+				xRight++;
+
+			bool useLower = currentPosition.x - xLeft < xRight - currentPosition.x || xRight >= visibleWidth || positionToSample(PPPoint(xRight, 0)) >= 65535;
+			currentOffset = useLower ? offsetLeft : offsetRight;
+
+			// Draw vertical line
+			mp_sint32 offsetMarkerX = useLower ? xLeft + 1 : xRight;
+			g->setColor(0, 255, 0);
+			for (pp_int32 j = 0; j < visibleHeight; j+=2)
+				g->setPixel(offsetMarkerX, j + location.y);
+
+			// Draw value for 9xx command
+			sprintf(buffer, "Offset: %02x", currentOffset >> 8);
+
+			g->setColor(0, 0, 0);
+			g->drawString(buffer, location.x + 3 + visibleWidth - font->getStrWidth(buffer), location.y + font->getCharHeight() * 2 - 1);
+			g->setColor(0, 255, 0);
+			g->drawString(buffer, location.x + 2 + visibleWidth - font->getStrWidth(buffer), location.y + font->getCharHeight() * 2 - 2);
+		}
+		else
+		{
+			currentOffset = -1;
+		}
+	}
 }
 
 bool SampleEditorControl::hitsLoopstart(const PPPoint* p)
@@ -653,6 +737,12 @@ invokeContextMenuLabel:
 				caughtControl = hScrollbar;
 				caughtControl->dispatchEvent(event);
 			}
+			// Ctrl-clicked sample view
+			else if (::getKeyModifier() == KeyModifierCTRL)
+			{
+				PPEvent e = PPEvent(eLMouseDown, currentOffset);
+				eventListener->handleEvent(reinterpret_cast<PPObject *>(this), &e);
+			}
 			// Clicked on sample data -> select sample data
 			else
 			{
@@ -704,6 +794,12 @@ invokeContextMenuLabel:
 				caughtControl->dispatchEvent(event);
 				caughtControl = NULL;
 			}
+			// Ctrl-released sample view
+			else if (::getKeyModifier() == KeyModifierCTRL)
+			{
+				PPEvent e = PPEvent(eLMouseUp);
+				eventListener->handleEvent(reinterpret_cast<PPObject *>(this), &e);
+			}
 			else
 			{
 				if (drawMode || sampleEditor->isDrawing())
@@ -734,6 +830,7 @@ invokeContextMenuLabel:
 			}		
 
 			PPPoint* p = (PPPoint*)event->getDataPtr();
+			currentPosition = *p;
 
 			// check context menu stuff first
 			// for slowing down mouse pressed events
@@ -899,6 +996,7 @@ selectingAndResizing:
 				break;
 			}
 
+			currentPosition = *(PPPoint*)event->getDataPtr();
 			notifyUpdate();
 			break;
 		}
@@ -951,6 +1049,7 @@ selectingAndResizing:
 		case eMouseMoved:
 		{
 			PPPoint* p = (PPPoint*)event->getDataPtr();
+			currentPosition = *p;
 
 			MouseCursorTypes type = parentScreen->getCurrentActiveMouseCursor();
 
@@ -1001,6 +1100,7 @@ selectingAndResizing:
 			if (type != parentScreen->getCurrentActiveMouseCursor())
 				parentScreen->setMouseCursor(type);
 			
+			parentScreen->paintControl(this);
 			break;
 		}
 
@@ -1010,6 +1110,9 @@ selectingAndResizing:
 
 		case eMouseLeft:
 			parentScreen->setMouseCursor(MouseCursorTypeStandard);
+			currentPosition.x = currentPosition.y = -1;
+			currentOffset = -1;
+			parentScreen->paintControl(this);
 			break;		
 
 		default:
@@ -1156,7 +1259,6 @@ pp_int32 SampleEditorControl::positionToSample(PPPoint cp)
 		smppos = sampleEditor->getSampleLen();
 
 	return smppos;
-	
 }
 
 void SampleEditorControl::drawSample(const PPPoint& p)
