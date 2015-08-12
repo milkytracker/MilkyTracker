@@ -73,7 +73,7 @@ void SamplePlayer::playCurrentSampleSelectionRange(pp_uint32 note)
 	SampleEditor* sampleEditor = moduleEditor.getSampleEditor();
 	
 	if (sampleEditor->getLogicalSelectionStart() != -1 &&
-		sampleEditor->getLogicalSelectionStart() != -1)
+		sampleEditor->getLogicalSelectionEnd() != -1)
 	{
 		playSample(*sampleEditor->getSample(), 
 				   note, 
