@@ -55,6 +55,19 @@ void SamplePlayer::playCurrentSample(pp_uint32 note)
 	playSample(*moduleEditor.getSampleEditor()->getSample(), note);
 }
 
+void SamplePlayer::playCurrentSampleFromOffset(pp_uint32 offset, pp_uint32 note)
+{
+	SampleEditor* sampleEditor = moduleEditor.getSampleEditor();
+
+	if (offset != -1)
+	{
+		playSample(*sampleEditor->getSample(),
+				   note,
+				   offset,
+				   sampleEditor->getSampleLen());
+	}
+}
+
 void SamplePlayer::playCurrentSampleSelectionRange(pp_uint32 note)
 {
 	SampleEditor* sampleEditor = moduleEditor.getSampleEditor();
