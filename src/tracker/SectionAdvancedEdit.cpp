@@ -199,7 +199,7 @@ pp_int32 SectionAdvancedEdit::handleEvent(PPObject* sender, PPEvent* event)
 				if (res)
 					sprintf(buffer, "%i commands have been converted", res);
 				else
-					sprintf(buffer, "Nothing to do", res);
+					sprintf(buffer, "Nothing to do");
 				
 				tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, buffer, Tracker::MessageBox_OK);
 
@@ -222,7 +222,7 @@ pp_int32 SectionAdvancedEdit::handleEvent(PPObject* sender, PPEvent* event)
 				if (res)
 					sprintf(buffer, "%i commands have been erased", res);
 				else
-					sprintf(buffer, "Nothing to do", res);
+					sprintf(buffer, "Nothing to do");
 				
 				tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, buffer, Tracker::MessageBox_OK);
 	

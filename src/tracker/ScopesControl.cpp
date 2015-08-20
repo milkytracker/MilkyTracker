@@ -108,13 +108,6 @@ ScopesControl::~ScopesControl()
 	delete backgroundButton;
 }
 
-static inline pp_int32 myMod(pp_int32 a, pp_int32 b)
-{
-	pp_int32 res = a%b;
-	if (res<0) res+=b;
-	return res;
-}
-
 class ScopePainter : public PlayerController::SampleDataFetcher
 {
 private:
