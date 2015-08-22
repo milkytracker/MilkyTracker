@@ -547,6 +547,9 @@ mp_sint32 LoaderDBM::load(XMFileBase& f, XModule* module)
 		}
 	}
 
+	if (!(orderListLengths && srcIns && patterns && srcSmp))
+		return MP_LOADER_FAILED;
+
 	// Convert orderlist, subsongs are not supported yet
 	j = 0;
 	for (i = 0; i < orderListLengths[j]; i++)
