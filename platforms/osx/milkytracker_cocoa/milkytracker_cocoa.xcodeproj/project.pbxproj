@@ -276,6 +276,7 @@
 		2D840BDF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */; };
 		2D840BE01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */; };
 		2DAC75091A210420004D52C9 /* DisplayDevice_COCOA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */; };
+		2DAFB5051BA5B310002CC874 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAFB5041BA5B310002CC874 /* CoreVideo.framework */; };
 		2DB910C41A313FB50062F0A0 /* PPMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB910C31A313FB50062F0A0 /* PPMutex.cpp */; };
 		2DB910C71A353D710062F0A0 /* MTKeyTranslator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB910C61A353D710062F0A0 /* MTKeyTranslator.mm */; };
 /* End PBXBuildFile section */
@@ -341,6 +342,7 @@
 		2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-WAV-Sample.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-WAV-Sample.icns"; sourceTree = "<group>"; };
 		2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayDevice_COCOA.mm; sourceTree = "<group>"; };
 		2DAC75081A210420004D52C9 /* DisplayDevice_COCOA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayDevice_COCOA.h; sourceTree = "<group>"; };
+		2DAFB5041BA5B310002CC874 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		2DB910C31A313FB50062F0A0 /* PPMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPMutex.cpp; sourceTree = "<group>"; };
 		2DB910C51A313FBD0062F0A0 /* PPMutex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PPMutex.h; sourceTree = "<group>"; };
 		2DB910C61A353D710062F0A0 /* MTKeyTranslator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MTKeyTranslator.mm; path = cocoa/MTKeyTranslator.mm; sourceTree = "<group>"; };
@@ -806,12 +808,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D5B40541A08143000834B02 /* OpenGL.framework in Frameworks */,
 				2D5B40491A07E63C00834B02 /* AppKit.framework in Frameworks */,
 				2D5B40331A07D4F500834B02 /* AudioToolbox.framework in Frameworks */,
+				2D5B40321A07D4F500834B02 /* CoreAudio.framework in Frameworks */,
 				2D5B40301A07D4F500834B02 /* CoreFoundation.framework in Frameworks */,
 				2D5B40311A07D4F500834B02 /* CoreMIDI.framework in Frameworks */,
-				2D5B40321A07D4F500834B02 /* CoreAudio.framework in Frameworks */,
+				2DAFB5051BA5B310002CC874 /* CoreVideo.framework in Frameworks */,
+				2D5B40541A08143000834B02 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -931,10 +934,11 @@
 				2DEBCA281A06F1EA000E7EAE /* Products */,
 				2D5B3F091A07132900834B02 /* Resources */,
 				2D5B40481A07E63C00834B02 /* AppKit.framework */,
+				2D5B3BB51A06FF4A00834B02 /* AudioToolbox.framework */,
+				2D5B3BB71A06FFD300834B02 /* CoreAudio.framework */,
 				2D5B3BE11A0703F200834B02 /* CoreFoundation.framework */,
 				2D5B3BDF1A0703D300834B02 /* CoreMIDI.framework */,
-				2D5B3BB71A06FFD300834B02 /* CoreAudio.framework */,
-				2D5B3BB51A06FF4A00834B02 /* AudioToolbox.framework */,
+				2DAFB5041BA5B310002CC874 /* CoreVideo.framework */,
 				2D5B40531A08143000834B02 /* OpenGL.framework */,
 			);
 			sourceTree = "<group>";

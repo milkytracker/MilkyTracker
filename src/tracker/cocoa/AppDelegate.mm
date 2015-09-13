@@ -21,6 +21,7 @@
  */
 
 #import "AppDelegate.h"
+#import <dispatch/dispatch.h>
 
 @implementation AppDelegate
 
@@ -34,13 +35,14 @@
 static PPScreen*			myTrackerScreen;
 static Tracker*				myTracker;
 static PPDisplayDevice*		myDisplayDevice;
-static NSTimer*				myTimer;
 
 static PPMutex*				globalMutex;
 
 static BOOL					startupAfterFullScreen;
 static BOOL					startupComplete;
 static NSMutableArray*		filesToLoad;
+
+static CVDisplayLinkRef		displayLink;
 
 // TODO: Crash handler
 
@@ -51,6 +53,23 @@ void RaiseEventSynchronized(PPEvent* event)
 		myTrackerScreen->raiseEvent(event);
 		globalMutex->unlock();
 	}
+}
+
+static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp* now,
+									const CVTimeStamp* outputTime, CVOptionFlags flagsIn,
+									CVOptionFlags* flagsOut, void* displayLinkContext)
+{
+	// Raise the event on the main thread
+	dispatch_async(dispatch_get_main_queue(), ^
+	{
+		if (!myTrackerScreen)
+			return;
+
+		PPEvent e = PPEvent(eTimer);
+		RaiseEventSynchronized(&e);
+	});
+
+	return kCVReturnSuccess;
 }
 
 - (void)initTracker
@@ -96,9 +115,11 @@ void RaiseEventSynchronized(PPEvent* event)
 	// Allow Cocoa to handle refresh again (keeps event processing smooth and responsive)
 	myDisplayDevice->setImmediateUpdates(false);
 	
-	// Timer frequency of 60Hz
-	myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
-	
+	// CVDisplayLink gives us a callback synchronised with vertical blanking
+	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+	CVDisplayLinkSetOutputCallback(displayLink, &DisplayLinkCallback, NULL);
+	CVDisplayLinkStart(displayLink);
+
 	// Signal startup complete
 	startupComplete = YES;
 	
@@ -152,7 +173,6 @@ void RaiseEventSynchronized(PPEvent* event)
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-	[myTimer invalidate];
 	delete myTracker;
 	delete myTrackerScreen;
 	delete myDisplayDevice;
