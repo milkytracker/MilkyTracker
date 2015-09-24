@@ -20,8 +20,16 @@
  *
  */
 
-#import "AppDelegate.h"
+// -------- Cocoa/OS X --------
+#import <Cocoa/Cocoa.h>
 #import <dispatch/dispatch.h>
+
+// ---------- Tracker ---------
+#import "DisplayDevice_COCOA.h"
+#import "MidiReceiver_CoreMIDI.h"
+#import "PPMutex.h"
+#import "Screen.h"
+#import "Tracker.h"
 
 @implementation AppDelegate
 
@@ -35,6 +43,7 @@
 static PPScreen*			myTrackerScreen;
 static Tracker*				myTracker;
 static PPDisplayDevice*		myDisplayDevice;
+static MidiReceiver*		myMidiReceiver;
 
 static PPMutex*				globalMutex;
 
@@ -102,6 +111,10 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	// Attach display to tracker
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
+
+	// Init MIDI
+	myMidiReceiver = new MidiReceiver(*myTracker, *globalMutex);
+	myMidiReceiver->init();
 }
 
 - (void)trackerStartUp
@@ -110,7 +123,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	myDisplayDevice->setImmediateUpdates(true);
 	
 	// Perform startup
-	myTracker->startUp(false);
+	myTracker->startUp();
 	
 	// Allow Cocoa to handle refresh again (keeps event processing smooth and responsive)
 	myDisplayDevice->setImmediateUpdates(false);
@@ -173,6 +186,9 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+	myMidiReceiver->close();
+	delete myMidiReceiver;
+
 	delete myTracker;
 	delete myTrackerScreen;
 	delete myDisplayDevice;

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D3238D51A22667C0080CDA1 /* MTTrackerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3238D41A22667C0080CDA1 /* MTTrackerView.mm */; };
+		2D5AE0611BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AE05F1BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.mm */; };
 		2D5B3F431A07D4F500834B02 /* Decompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCA371A06F27A000E7EAE /* Decompressor.cpp */; };
 		2D5B3F441A07D4F500834B02 /* DecompressorGZIP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCA391A06F27A000E7EAE /* DecompressorGZIP.cpp */; };
 		2D5B3F451A07D4F500834B02 /* DecompressorLHA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCA3B1A06F27A000E7EAE /* DecompressorLHA.cpp */; };
@@ -59,8 +60,6 @@
 		2D5B3F731A07D4F500834B02 /* TexturedPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAB81A06F27A000E7EAE /* TexturedPlane.cpp */; };
 		2D5B3F741A07D4F500834B02 /* Twister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCABA1A06F27A000E7EAE /* Twister.cpp */; };
 		2D5B3F751A07D4F500834B02 /* TwisterFX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCABC1A06F27A000E7EAE /* TwisterFX.cpp */; };
-		2D5B3F761A07D4F500834B02 /* MidiReceiver_pthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAC81A06F27A000E7EAE /* MidiReceiver_pthread.cpp */; };
-		2D5B3F771A07D4F500834B02 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCACC1A06F27A000E7EAE /* RtMidi.cpp */; };
 		2D5B3F781A07D4F500834B02 /* AudioDriver_NULL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCADB1A06F27A000E7EAE /* AudioDriver_NULL.cpp */; };
 		2D5B3F791A07D4F500834B02 /* AudioDriver_WAVWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCADD1A06F27A000E7EAE /* AudioDriver_WAVWriter.cpp */; };
 		2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCADF1A06F27A000E7EAE /* AudioDriverBase.cpp */; };
@@ -284,6 +283,8 @@
 /* Begin PBXFileReference section */
 		2D3238D31A22667C0080CDA1 /* MTTrackerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTTrackerView.h; path = cocoa/MTTrackerView.h; sourceTree = "<group>"; };
 		2D3238D41A22667C0080CDA1 /* MTTrackerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MTTrackerView.mm; path = cocoa/MTTrackerView.mm; sourceTree = "<group>"; };
+		2D5AE05F1BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MidiReceiver_CoreMIDI.mm; sourceTree = "<group>"; };
+		2D5AE0601BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiReceiver_CoreMIDI.h; sourceTree = "<group>"; };
 		2D5B3BB51A06FF4A00834B02 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		2D5B3BB71A06FFD300834B02 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		2D5B3BB91A0700FD00834B02 /* trees.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trees.cpp; sourceTree = "<group>"; };
@@ -470,10 +471,6 @@
 		2DEBCABC1A06F27A000E7EAE /* TwisterFX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TwisterFX.cpp; sourceTree = "<group>"; };
 		2DEBCABD1A06F27A000E7EAE /* TwisterFX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwisterFX.h; sourceTree = "<group>"; };
 		2DEBCAC61A06F27A000E7EAE /* MidiTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiTools.h; sourceTree = "<group>"; };
-		2DEBCAC81A06F27A000E7EAE /* MidiReceiver_pthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiReceiver_pthread.cpp; sourceTree = "<group>"; };
-		2DEBCAC91A06F27A000E7EAE /* MidiReceiver_pthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiReceiver_pthread.h; sourceTree = "<group>"; };
-		2DEBCACC1A06F27A000E7EAE /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
-		2DEBCACD1A06F27A000E7EAE /* RtMidi.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = RtMidi.h; sourceTree = "<group>"; };
 		2DEBCADA1A06F27A000E7EAE /* AudioDriver_COMPENSATE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDriver_COMPENSATE.h; sourceTree = "<group>"; };
 		2DEBCADB1A06F27A000E7EAE /* AudioDriver_NULL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDriver_NULL.cpp; sourceTree = "<group>"; };
 		2DEBCADC1A06F27A000E7EAE /* AudioDriver_NULL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDriver_NULL.h; sourceTree = "<group>"; };
@@ -821,6 +818,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D5AE05E1BB08BA600ED96F2 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				2D5AE05F1BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.mm */,
+				2D5AE0601BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.h */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		2D5B3BE31A0704B900834B02 /* posix */ = {
 			isa = PBXGroup;
 			children = (
@@ -1146,29 +1152,10 @@
 		2DEBCABF1A06F27A000E7EAE /* midi */ = {
 			isa = PBXGroup;
 			children = (
+				2D5AE05E1BB08BA600ED96F2 /* osx */,
 				2DEBCAC61A06F27A000E7EAE /* MidiTools.h */,
-				2DEBCAC71A06F27A000E7EAE /* posix */,
-				2DEBCACA1A06F27A000E7EAE /* rtmidi */,
 			);
 			path = midi;
-			sourceTree = "<group>";
-		};
-		2DEBCAC71A06F27A000E7EAE /* posix */ = {
-			isa = PBXGroup;
-			children = (
-				2DEBCAC81A06F27A000E7EAE /* MidiReceiver_pthread.cpp */,
-				2DEBCAC91A06F27A000E7EAE /* MidiReceiver_pthread.h */,
-			);
-			path = posix;
-			sourceTree = "<group>";
-		};
-		2DEBCACA1A06F27A000E7EAE /* rtmidi */ = {
-			isa = PBXGroup;
-			children = (
-				2DEBCACC1A06F27A000E7EAE /* RtMidi.cpp */,
-				2DEBCACD1A06F27A000E7EAE /* RtMidi.h */,
-			);
-			path = rtmidi;
 			sourceTree = "<group>";
 		};
 		2DEBCAD91A06F27A000E7EAE /* milkyplay */ = {
@@ -1647,6 +1634,7 @@
 				2D5B3F431A07D4F500834B02 /* Decompressor.cpp in Sources */,
 				2D5B3F441A07D4F500834B02 /* DecompressorGZIP.cpp in Sources */,
 				2D5B3F451A07D4F500834B02 /* DecompressorLHA.cpp in Sources */,
+				2D5AE0611BB08BA600ED96F2 /* MidiReceiver_CoreMIDI.mm in Sources */,
 				2D5B3F461A07D4F500834B02 /* DecompressorLZX.cpp in Sources */,
 				2D5B3F471A07D4F500834B02 /* DecompressorPP20.cpp in Sources */,
 				2D5B3F481A07D4F500834B02 /* DecompressorUMX.cpp in Sources */,
@@ -1696,8 +1684,6 @@
 				2D5B3F731A07D4F500834B02 /* TexturedPlane.cpp in Sources */,
 				2D5B3F741A07D4F500834B02 /* Twister.cpp in Sources */,
 				2D5B3F751A07D4F500834B02 /* TwisterFX.cpp in Sources */,
-				2D5B3F761A07D4F500834B02 /* MidiReceiver_pthread.cpp in Sources */,
-				2D5B3F771A07D4F500834B02 /* RtMidi.cpp in Sources */,
 				2D5B3F781A07D4F500834B02 /* AudioDriver_NULL.cpp in Sources */,
 				2D5B3F791A07D4F500834B02 /* AudioDriver_WAVWriter.cpp in Sources */,
 				2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */,

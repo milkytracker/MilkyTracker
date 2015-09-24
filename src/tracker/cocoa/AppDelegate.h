@@ -25,17 +25,12 @@
 
 // ---------- Tracker ---------
 #import "BasicTypes.h"
-#import "DisplayDevice_COCOA.h"
-#import "Event.h"
-#import "PPMutex.h"
-#import "PPSystem.h"
-#import "PPUI.h"
-#import "Screen.h"
-#import "Tracker.h"
-#import "MTTrackerView.h"
 
 // Defined in main.mm
 pp_uint32 PPGetTickCount();
+
+// Forward declarations
+@class MTTrackerView;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 @property (assign) IBOutlet NSWindow* myWindow;
