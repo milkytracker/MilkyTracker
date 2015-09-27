@@ -37,6 +37,7 @@
  */
 #include "AudioDriver_COREAUDIO.h"
 #include "MasterMixer.h"
+#include <Foundation/Foundation.h>
 #include <memory.h>
 
 #define CHECK_ERROR(ERRNO, RESULT) \
@@ -152,6 +153,8 @@ AudioDriver_COREAUDIO::AudioDriver_COREAUDIO(AudioDeviceID deviceID) :
 AudioDriver_COREAUDIO::~AudioDriver_COREAUDIO()
 {
 	delete[] compensateBuffer;
+	if (driverID)
+		delete[] driverID;
 }
 
 // --------------------------------------------------
@@ -161,34 +164,34 @@ const char* AudioDriver_COREAUDIO::getDriverID()
 {
 	if (defaultDevice)
 		return "Default Output Device";
-	
+
 	if (!driverID)
 	{
 		OSStatus err = noErr;
 		CFStringRef deviceName;
 		mp_uint32 dataSize = sizeof(CFStringRef);
-		
+
 		AudioObjectPropertyAddress myAudioPropertyAddress = { kAudioObjectPropertyName,
 			kAudioObjectPropertyScopeGlobal,
 			kAudioObjectPropertyElementMaster };
-		
+
 		err = AudioObjectGetPropertyData(soundDeviceID,
 										 &myAudioPropertyAddress,
 										 0, NULL,
 										 &dataSize,
 										 &deviceName);
-		
+
 		if (err != kAudioHardwareNoError)
 			return "Unnamed Device";
-		
+
 		CFIndex strLen = CFStringGetLength(deviceName);
 		CFIndex bufSize = CFStringGetMaximumSizeForEncoding(strLen, kCFStringEncodingUTF8);
 		driverID = new char[bufSize];
 		CFStringGetCString(deviceName, driverID, bufSize, kCFStringEncodingUTF8);
-		
+
 		CFRelease(deviceName);
 	}
-	
+
 	return driverID;
 }
 
@@ -201,50 +204,50 @@ OSStatus AudioDriver_COREAUDIO::getAudioDevices(mp_uint32 &numDevices, AudioDevi
 	mp_uint32 dataSize = 0;
 	mp_uint32 numAudioDevices = 0;
 	mp_uint32 numOutputDevices = 0;
-	
+
 	AudioObjectPropertyAddress propAddress = { kAudioHardwarePropertyDevices,
 		kAudioObjectPropertyScopeGlobal,
 		kAudioObjectPropertyElementMaster };
-	
+
 	// Find out how many audio devices exist on the system (including input devices)
 	err = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propAddress, 0, NULL, &dataSize);
 	if (err) return err;
-	
+
 	// Temporary arrays to hold device IDs
 	numAudioDevices = dataSize / sizeof(AudioDeviceID);
 	AudioDeviceID allDeviceIDs[numAudioDevices];
 	AudioDeviceID outputDeviceIDs[numAudioDevices];
-	
+
 	// Get all of the device IDs
 	err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propAddress, 0, NULL, &dataSize, allDeviceIDs);
 	if (err) return err;
-	
+
 	// Check each device ID for output channels
 	propAddress.mSelector = kAudioDevicePropertyStreams;
 	propAddress.mScope = kAudioDevicePropertyScopeOutput;
 	for (int i = 0; i < numAudioDevices; i++)
 	{
 		dataSize = 0;
-		
+
 		err = AudioObjectGetPropertyDataSize(allDeviceIDs[i], &propAddress, 0, NULL, &dataSize);
 		if (err) return err;
-		
+
 		mp_uint32 numOutputChannels = dataSize / sizeof(AudioStreamID);
-		
+
 		// Skip this device ID if there are no output channels
 		if (numOutputChannels < 1)
 			continue;
-		
+
 		// Otherwise add it to our array
 		outputDeviceIDs[numOutputDevices] = allDeviceIDs[i];
 		numOutputDevices++;
 	}
-	
+
 	// Store device count and output device IDs
 	numDevices = numOutputDevices;
 	deviceIDs = new AudioDeviceID[numOutputDevices];
 	memcpy(deviceIDs, outputDeviceIDs, numOutputDevices * sizeof(AudioDeviceID));
-	
+
 	return kAudioHardwareNoError;
 }
 
@@ -261,7 +264,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	AudioStreamBasicDescription mySoundBasicDescription;
 	AudioObjectPropertyAddress mySoundPropertyAddress;
 	UInt32 myPropertySize, myBufferFrameSize;
-	
+
 	mySoundPropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
 	mySoundPropertyAddress.mElement = kAudioObjectPropertyElementMaster;
 
@@ -323,7 +326,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 		mono = true;
 
 	gAudioIOProc = OSX_AudioIOProc16Bit;
-	
+
 	// Find valid frame size range
 	AudioValueRange frameSizeRange;
 	myPropertySize = sizeof(AudioValueRange);
@@ -336,14 +339,14 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 								   0, NULL,
 								   &myPropertySize, &frameSizeRange)
 	 );
-	
+
 	// Number of frames = buffer size / 2
 	myBufferFrameSize = bufferSizeInWords >> 1 >> (mono ? 1 : 0);
-	
+
 	// If requested buffer size is too large, set it to the device's maximum
 	if (myBufferFrameSize > frameSizeRange.mMaximum)
 		myBufferFrameSize = frameSizeRange.mMaximum;
-	
+
 	// Set buffer size
 	mySoundPropertyAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
 	CHECK_ERROR
@@ -354,7 +357,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 									0,  NULL,
 									sizeof(myBufferFrameSize), &myBufferFrameSize)
 	);
-	
+
 	bufferSize = myBufferFrameSize;
 
 	// Add our audio IO procedure...
@@ -363,7 +366,7 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 		MPERR_OSX_ADD_IO_PROC,
 		AudioDeviceCreateIOProcID (soundDeviceID, gAudioIOProc, (void*)this, &gAudioIOProcID)
 	);
-	
+
 	// If the IOProcID is null, something went wrong
 	assert (gAudioIOProcID != NULL);
 
@@ -376,8 +379,8 @@ mp_sint32 AudioDriver_COREAUDIO::initDevice(mp_sint32 bufferSizeInWords, mp_uint
 	}
 	compensateBuffer = new mp_sword[bufferSizeInWords];
 
-	printf("Core Audio: Wanted %d bytes, got %d\n", bufferSizeInWords / 2 * 4, myBufferFrameSize * 4);
-	
+	NSLog(@"Core Audio: Wanted %d bytes, got %d\n", bufferSizeInWords / 2 * 4, myBufferFrameSize * 4);
+
 	// If we got what we requested, return MP_OK,
 	// otherwise return the actual number of frames * number of channels
 	return bufferSizeInWords / 2 == (signed) bufferSize ? MP_OK : myBufferFrameSize * 2;

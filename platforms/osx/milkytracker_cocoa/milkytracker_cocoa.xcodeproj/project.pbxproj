@@ -65,7 +65,6 @@
 		2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCADF1A06F27A000E7EAE /* AudioDriverBase.cpp */; };
 		2D5B3F7B1A07D4F500834B02 /* AudioDriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAE11A06F27A000E7EAE /* AudioDriverManager.cpp */; };
 		2D5B3F7C1A07D4F500834B02 /* ChannelMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCAE31A06F27A000E7EAE /* ChannelMixer.cpp */; };
-		2D5B3F801A07D4F500834B02 /* AudioDriver_COREAUDIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB0C1A06F27A000E7EAE /* AudioDriver_COREAUDIO.cpp */; };
 		2D5B3F821A07D4F500834B02 /* ExporterXM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB171A06F27A000E7EAE /* ExporterXM.cpp */; };
 		2D5B3F831A07D4F500834B02 /* LittleEndian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB181A06F27A000E7EAE /* LittleEndian.cpp */; };
 		2D5B3F841A07D4F500834B02 /* Loader669.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBCB1A1A06F27A000E7EAE /* Loader669.cpp */; };
@@ -274,6 +273,7 @@
 		2D840BDE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns */; };
 		2D840BDF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */; };
 		2D840BE01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */; };
+		2D8A1C221BB87B7D00BE7C80 /* AudioDriver_COREAUDIO.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D8A1C211BB87B7D00BE7C80 /* AudioDriver_COREAUDIO.mm */; settings = {ASSET_TAGS = (); }; };
 		2DAC75091A210420004D52C9 /* DisplayDevice_COCOA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */; };
 		2DAFB5051BA5B310002CC874 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAFB5041BA5B310002CC874 /* CoreVideo.framework */; };
 		2DB910C41A313FB50062F0A0 /* PPMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB910C31A313FB50062F0A0 /* PPMutex.cpp */; };
@@ -341,6 +341,7 @@
 		2D840BBE1B640F8800717DD6 /* MilkyTracker-Ultratracker-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Ultratracker-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Ultratracker-Module.icns"; sourceTree = "<group>"; };
 		2D840BBF1B640F8800717DD6 /* MilkyTracker-Velvet-Studio-Module.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-Velvet-Studio-Module.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-Velvet-Studio-Module.icns"; sourceTree = "<group>"; };
 		2D840BC01B640F8800717DD6 /* MilkyTracker-WAV-Sample.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "MilkyTracker-WAV-Sample.icns"; path = "../../../resources/pictures/docicons/osx/MilkyTracker-WAV-Sample.icns"; sourceTree = "<group>"; };
+		2D8A1C211BB87B7D00BE7C80 /* AudioDriver_COREAUDIO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioDriver_COREAUDIO.mm; sourceTree = "<group>"; };
 		2DAC75071A210420004D52C9 /* DisplayDevice_COCOA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayDevice_COCOA.mm; sourceTree = "<group>"; };
 		2DAC75081A210420004D52C9 /* DisplayDevice_COCOA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayDevice_COCOA.h; sourceTree = "<group>"; };
 		2DAFB5041BA5B310002CC874 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -483,7 +484,6 @@
 		2DEBCAE31A06F27A000E7EAE /* ChannelMixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelMixer.cpp; sourceTree = "<group>"; };
 		2DEBCAE41A06F27A000E7EAE /* ChannelMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelMixer.h; sourceTree = "<group>"; };
 		2DEBCAE51A06F27A000E7EAE /* computed-blep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "computed-blep.h"; sourceTree = "<group>"; };
-		2DEBCB0C1A06F27A000E7EAE /* AudioDriver_COREAUDIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDriver_COREAUDIO.cpp; sourceTree = "<group>"; };
 		2DEBCB0D1A06F27A000E7EAE /* AudioDriver_COREAUDIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDriver_COREAUDIO.h; sourceTree = "<group>"; };
 		2DEBCB171A06F27A000E7EAE /* ExporterXM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExporterXM.cpp; sourceTree = "<group>"; };
 		2DEBCB181A06F27A000E7EAE /* LittleEndian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LittleEndian.cpp; sourceTree = "<group>"; };
@@ -1260,8 +1260,8 @@
 		2DEBCB0B1A06F27A000E7EAE /* osx */ = {
 			isa = PBXGroup;
 			children = (
-				2DEBCB0C1A06F27A000E7EAE /* AudioDriver_COREAUDIO.cpp */,
 				2DEBCB0D1A06F27A000E7EAE /* AudioDriver_COREAUDIO.h */,
+				2D8A1C211BB87B7D00BE7C80 /* AudioDriver_COREAUDIO.mm */,
 			);
 			path = osx;
 			sourceTree = "<group>";
@@ -1631,6 +1631,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DB910C71A353D710062F0A0 /* MTKeyTranslator.mm in Sources */,
+				2D8A1C221BB87B7D00BE7C80 /* AudioDriver_COREAUDIO.mm in Sources */,
 				2D5B3F431A07D4F500834B02 /* Decompressor.cpp in Sources */,
 				2D5B3F441A07D4F500834B02 /* DecompressorGZIP.cpp in Sources */,
 				2D5B3F451A07D4F500834B02 /* DecompressorLHA.cpp in Sources */,
@@ -1689,7 +1690,6 @@
 				2D5B3F7A1A07D4F500834B02 /* AudioDriverBase.cpp in Sources */,
 				2D5B3F7B1A07D4F500834B02 /* AudioDriverManager.cpp in Sources */,
 				2D5B3F7C1A07D4F500834B02 /* ChannelMixer.cpp in Sources */,
-				2D5B3F801A07D4F500834B02 /* AudioDriver_COREAUDIO.cpp in Sources */,
 				2D5B3F821A07D4F500834B02 /* ExporterXM.cpp in Sources */,
 				2D5B3F831A07D4F500834B02 /* LittleEndian.cpp in Sources */,
 				2D5B3F841A07D4F500834B02 /* Loader669.cpp in Sources */,
