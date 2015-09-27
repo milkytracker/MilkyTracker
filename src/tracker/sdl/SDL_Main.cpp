@@ -66,19 +66,14 @@
 #include <sys/types.h>
 
 #include <SDL.h>
-#ifndef __QTOPIA__
 #ifdef HAVE_X11
 #include <SDL_syswm.h>
-#endif
 #endif
 #include "SDL_KeyTranslation.h"
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
 #include "DisplayDeviceFB_SDL.h"
-#ifdef __OPENGL__
-#include "DisplayDeviceOGL_SDL.h"  // <-- Experimental, slow
-#endif
 #include "Screen.h"
 #include "Tracker.h"
 #include "PPMutex.h"
@@ -196,8 +191,8 @@ static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 		(timerTicker - lButtonDownStartTime) > 25)
 	{
 		ev.code = SDLUserEventLMouseRepeat;
-		ev.data1 = (void*)p.x;
-		ev.data2 = (void*)p.y;
+		ev.data1 = reinterpret_cast<void*>(p.x);
+		ev.data2 = reinterpret_cast<void*>(p.y);
 		SDL_PushEvent((SDL_Event*)&ev);		
 
 		//PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));
@@ -208,8 +203,8 @@ static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 		(timerTicker - rButtonDownStartTime) > 25)
 	{
 		ev.code = SDLUserEventRMouseRepeat;
-		ev.data1 = (void*)p.x;
-		ev.data2 = (void*)p.y;
+		ev.data1 = reinterpret_cast<void*>(p.x);
+		ev.data2 = reinterpret_cast<void*>(p.y);
 		SDL_PushEvent((SDL_Event*)&ev);		
 
 		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
@@ -268,7 +263,6 @@ void StartMidiRecording(unsigned int devID)
 	StopMidiRecording();
 
 	myMidiReceiver = new MidiReceiver(midiEventHandler);
-
 	if (!myMidiReceiver->startRecording(devID))
 	{
 		// Deal with error
@@ -287,10 +281,6 @@ void translateMouseDownEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int3
 	if (mouseButton > 2 || !mouseButton)
 		return;
 
-#ifdef HIDPI_SUPPORT
-	// HACK: Attempting to work around a possible SDl2 bug in HiDPI mode; see DisplayDeviceFB_SDL.cpp
-	myDisplayDevice->deLetterbox(localMouseX, localMouseY);
-#endif
 	myDisplayDevice->transform(localMouseX, localMouseY);
 	
 	p.x = localMouseX;
@@ -365,10 +355,6 @@ void translateMouseUpEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 
 	if (mouseButton > 2 || !mouseButton)
 		return;
 	
-#ifdef HIDPI_SUPPORT
-	// HACK: Attempting to work around a possible SDl2 bug in HiDPI mode; see DisplayDeviceFB_SDL.cpp
-	myDisplayDevice->deLetterbox(localMouseX, localMouseY);
-#endif
 	myDisplayDevice->transform(localMouseX, localMouseY);
 
 	p.x = localMouseX;
@@ -448,10 +434,6 @@ void translateMouseWheelEvent(pp_int32 wheelX, pp_int32 wheelY) {
 
 void translateMouseMoveEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 localMouseY)
 {
-#ifdef HIDPI_SUPPORT
-	// HACK: Attempting to work around a possible SDl2 bug in HiDPI mode; see DisplayDeviceFB_SDL.cpp
-	myDisplayDevice->deLetterbox(localMouseX, localMouseY);
-#endif
 	myDisplayDevice->transform(localMouseX, localMouseY);
 
 	p.x = localMouseX;
@@ -522,6 +504,8 @@ void preTranslateKey(SDL_Keysym& keysym)
 					break;
 			}
 			break;
+			// ROTATE180 and UNKNOWN not handled
+			default: break;
 	}
 
 }
@@ -777,7 +761,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	sigaction(SIGSEGV, &act, &oldAct);
 #endif
 	
-#if defined(HAVE_X11) && !defined(__QTOPIA__)
+#if defined(HAVE_X11)
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWindowWMInfo(0, &info) && info.subsystem == SDL_SYSWM_X11)
@@ -870,7 +854,7 @@ int main(int argc, char *argv[])
 	
 	pp_int32 defaultBPP = -1;
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
-	bool swapRedBlue = false, fullScreen = false, noSplash = false;
+	bool swapRedBlue = false, noSplash = false;
 	bool recVelocity = false;
 	
 	// Parse command line
@@ -940,12 +924,6 @@ unrecognizedCommandLineSwitch:
 			}
 		}
 	}
-
-	// Workaround for seg-fault in SDL_Init on Eee PC (thanks nostromo)
-	// (see http://forum.eeeuser.com/viewtopic.php?pid=136945)
-#if HAVE_DECL_SDL_PUTENV
-	SDL_putenv("SDL_VIDEO_X11_WMCLASS=Milkytracker");
-#endif
 
 	globalMutex = new PPMutex();
 	
@@ -1041,16 +1019,5 @@ unrecognizedCommandLineSwitch:
 	SDL_Quit();
 	delete globalMutex;
 	
-	/* Quoting from README.Qtopia (Application Porting Notes):
-	One thing I have noticed is that applications sometimes don't exit
-	correctly. Their icon remains in the taskbar and they tend to
-	relaunch themselves automatically. I believe this problem doesn't
-	occur if you exit your application using the exit() method. However,
-	if you end main() with 'return 0;' or so, this seems to happen.
-	*/
-#ifdef __QTOPIA__
-	exit(0);
-#else
 	return 0;
-#endif
 }

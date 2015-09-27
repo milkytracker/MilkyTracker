@@ -68,17 +68,6 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	// Feed SDL_RenderSetLogicalSize() with output size, not GUI surface size, otherwise mouse coordinates will be wrong for Hi-DPI
 	int rendererW, rendererH;
 	SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
-
-	// If we got a renderer output size that isn't the same as the surface size, assume we have Hi-DPI and need the letterbox workaround
-	if (rendererW != width)
-	{
-		needsDeLetterbox = true;
-		fprintf(stderr, "SDL: Deletterbox hack enabled. (rendererW: %d, width: %d)\n", rendererW, width);
-	}
-	else
-	{
-		fprintf(stderr, "SDL: Deletterbox hack disabled. (rendererW: %d, width: %d)\n", rendererW, width);
-	}
 #endif
 
 	// Log renderer capabilities

@@ -77,12 +77,6 @@ public:
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
 
-#ifdef HIDPI_SUPPORT
-	// Hi-DPI letterbox workaround
-	bool needsDeLetterbox;
-	void deLetterbox(pp_int32& x, pp_int32& y);
-#endif
-	
 	Orientations getOrientation() { return orientation; }
 	
 	SDL_Window* getWindow();

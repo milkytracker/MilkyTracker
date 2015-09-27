@@ -165,42 +165,6 @@ void PPDisplayDevice::transformInverse(PPRect& r)
 	}	
 }
 
-// WORKAROUND/HACK for a possible bug in SDL2:
-// Because we use SDL_RenderSetLogicalSize() to lock the GUI surface aspect ratio,
-// this function corrects mouse coordinates for when the window aspect ratio does
-// not match MilkyTracker's surface aspect ratio (we have black bars/letterboxing),
-// AND we have a Hi-DPI output. The mouse coordinates are fine if the renderer size
-// matches the surface size (no Hi-DPI). Hopefully this can go away at some point.
-#ifdef HIDPI_SUPPORT
-void PPDisplayDevice::deLetterbox(pp_int32& mouseX, pp_int32& mouseY)
-{
-	if (needsDeLetterbox)
-	{
-		SDL_Renderer* theRenderer = SDL_GetRenderer(theWindow);
-		
-		int rendererW, rendererH;
-		SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
-
-		int surfaceW = realWidth;
-		int surfaceH = realHeight;
-
-		float aspectRenderer, aspectSurface;
-
-		aspectRenderer = (float)rendererW / rendererH;
-		aspectSurface  = (float)surfaceW  / surfaceH;
-
-		if (aspectSurface < aspectRenderer)
-		{
-			mouseX += (surfaceH * aspectRenderer - surfaceW) / 2;
-		}
-		else if (aspectSurface > aspectRenderer)
-		{
-			mouseY += (surfaceW / aspectRenderer - surfaceH) / 2;
-		}
-	}
-}
-#endif
-
 void PPDisplayDevice::setTitle(const PPSystemString& title)
 {
 	SDL_SetWindowTitle(theWindow, title);
