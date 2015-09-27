@@ -1,5 +1,27 @@
+About
+=====
+
+MilkyTracker is an multi-platform music application for creating .MOD
+and .XM module files. It attempts to recreate the module replay and
+user experience of the popular DOS program Fasttracker II, with
+special playback modes available for improved Amiga ProTracker 2/3
+compatibility.
+
+Refer to http://milkytracker.org/?about for further details.
+
+
 Notes on building MilkyTracker
 ==============================
+
+There are currently 3 different build systems being actively maintained:
+
+- OSX: XCode (Cocoa and SDL variants)
+- Unix: Autoconf/Automake (using SDL 2)
+- Windows: Visual Studio (DevCPP has been used for older releases)
+
+IDE project files can be found in the 'platforms' directory.  The
+remainder of this document describes the Autoconf/Automake build
+system.
 
 If you have obtained the MilkyTracker sources from the version control
 repository, the autotools generated files (INSTALL, configure, etc) will
@@ -9,7 +31,7 @@ release package.
 
 See INSTALL for a more general explanation of how 'configure' works.
 
-The configure scripts try to check for everything needed, and will also
+The configure scripts try to check for everything needed and will also
 auto-detect ALSA and JACK adding support automatically; However, this
 behaviour can be over-ridden using the following arguments to configure:
 
@@ -19,8 +41,7 @@ behaviour can be over-ridden using the following arguments to configure:
    Disable alsa/jack support.
 
 Note that the configure scripts plus associated Makefiles are designed
-to build the SDL version of MilkyTracker only. Build files for other
-targets (OSX, win32, wince) can be found in the 'platforms' directory.
+to build the SDL version of MilkyTracker only.
 
 
 Dependencies
@@ -28,10 +49,10 @@ Dependencies
 
 To build MilkyTracker you will need the following development libraries:
 
-ALSA (optional)
-JACK (optional)
-SDL
-libz
+- ALSA (optional)
+- JACK (optional)
+- SDL
+- libz
 
 Note to package maintainers: MilkyTracker contains an internal copy of
 libzzip that has been modified for use with MilkyTracker; An externally
