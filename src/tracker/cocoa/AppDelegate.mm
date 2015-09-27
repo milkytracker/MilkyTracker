@@ -189,6 +189,9 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	myMidiReceiver->close();
 	delete myMidiReceiver;
 
+	CVDisplayLinkStop(displayLink);
+	CVDisplayLinkRelease(displayLink);
+
 	delete myTracker;
 	delete myTrackerScreen;
 	delete myDisplayDevice;
