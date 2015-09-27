@@ -97,9 +97,9 @@ public:
             return 2048;
         case RtAudio::WINDOWS_WASAPI:
             return 1024;
+        default:
+            return 2048;
         }
-
-        return 2048;
     }
 
     // On error return a negative value

@@ -73,7 +73,7 @@ public:
 
 	PPSystemString(const char* str) :
 		strBuffer(new char[strlen(str) + 1]),
-		allocatedSize(strlen(str) + 1)		
+		allocatedSize(static_cast<pp_uint32> (strlen(str) + 1))
 	{
 		strcpy(strBuffer, str);		
 	}
@@ -162,7 +162,7 @@ public:
 
 	pp_uint32 length() const
 	{
-		return strlen(strBuffer);
+		return static_cast<pp_uint32> (strlen(strBuffer));
 	}
 
 	void insertAt(pp_uint32 i, const PPSystemString& s)
@@ -256,7 +256,7 @@ public:
 			PPSystemString str;
 		
 			delete[] str.strBuffer;
-			str.allocatedSize = (ptr-strBuffer)+1;
+			str.allocatedSize = static_cast<pp_uint32> (ptr-strBuffer+1);
 			str.strBuffer = new char[str.allocatedSize];
 			memcpy(str.strBuffer, strBuffer, (ptr-strBuffer));
 			str.strBuffer[(ptr-strBuffer)] = '\0';

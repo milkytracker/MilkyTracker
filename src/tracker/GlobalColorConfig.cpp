@@ -283,6 +283,10 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		case ColorSampleEditorWaveform:
 			TrackerConfig::colorSampleEditorWaveform = color;
 			break;
+            
+        case ColorLast:
+            // Not handled
+            break;
 	}
 }
 

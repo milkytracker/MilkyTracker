@@ -171,9 +171,9 @@ public:
 			case eMouseLeft:
 			case eMouseWheelMoved:
 				return true;
+            default:
+                return false;
 		}
-
-		return false;
 	}
 };
 

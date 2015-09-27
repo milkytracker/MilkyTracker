@@ -132,11 +132,10 @@ pp_int32 PPStaticText::dispatchEvent(PPEvent* event)
 				PPEvent e(eCommand);
 				return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 
 			}
-
 			return 0;
+        default:
+            return -1;
 	}
-
-	return -1;
 }
 
 void PPStaticText::setText(const PPString& text)

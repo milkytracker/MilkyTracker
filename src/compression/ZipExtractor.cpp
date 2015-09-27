@@ -44,7 +44,7 @@ ZipExtractor::ZipExtractor(const PPSystemString& archivePath) :
 
 bool ZipExtractor::parseZip(pp_int32& err, bool extract, const PPSystemString* outFile)
 {
-    int i;
+    zzip_ssize_t i;
 	__zzipfd fd;
     
 	ZZIP_DIR * dir;
@@ -145,10 +145,10 @@ bool ZipExtractor::parseZip(pp_int32& err, bool extract, const PPSystemString* o
 							if (extract)
 							{
 								XMFile f(*outFile, true);
-								f.write(buf, 1, i);								
+								f.write(buf, 1, static_cast<pp_uint32> (i));
 								while (0 < (i = zzip_file_read(fp, (char*)buf, 16384)))
 								{
-									f.write(buf, 1, i);
+									f.write(buf, 1, static_cast<pp_uint32> (i));
 								}
 								if (i < 0)
 								{

@@ -290,6 +290,8 @@ pp_int32 AnimatedFXControl::dispatchEvent(PPEvent* event)
 			eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 
 			break;
 		}
+
+        default: break;
 	}
 
 	return 0;
