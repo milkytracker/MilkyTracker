@@ -31,6 +31,12 @@ release package.
 
 See INSTALL for a more general explanation of how 'configure' works.
 
+You will also need to obtain RTAudio and RTMidi, which we provide as git
+submodules. To do this, 'cd' to the MilkyTracker source directory and use:
+
+ $ git submodule init
+ $ git submodule update
+
 The configure scripts try to check for everything needed and will also
 auto-detect ALSA and JACK adding support automatically; However, this
 behaviour can be over-ridden using the following arguments to configure:
