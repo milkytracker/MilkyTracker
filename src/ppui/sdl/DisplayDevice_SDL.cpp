@@ -26,7 +26,7 @@
 SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
 	// Create SDL window
-	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
+	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
 	
 	if (theWindow == NULL)
 	{
@@ -36,7 +36,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 		w = getDefaultWidth();
 		h = getDefaultHeight();
 		
-		theWindow = SDL_CreateWindow("MilkyTracker", NULL, NULL, w, h, flags);
+		theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
 		
 		if (theWindow == NULL)
 		{
