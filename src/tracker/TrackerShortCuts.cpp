@@ -274,6 +274,21 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 					keyCode = 0;
 				}
 				break;
+
+			// Increment/decrement instrument
+			case SC_SS:
+			case SC_TICK:
+				if (screen->getModalControl())
+					break;
+
+				if (::getKeyModifier() == KeyModifierCTRL ||
+					::getKeyModifier() == (KeyModifierSHIFT|KeyModifierCTRL))
+				{
+					getPatternEditorControl()->dispatchEvent(event);
+					event->cancel();
+					keyCode = 0;
+				}
+				break;
 		}
 	
 		switch (keyCode)

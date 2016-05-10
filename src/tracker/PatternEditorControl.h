@@ -469,6 +469,11 @@ private:
 	void eventKeyDownBinding_InsertLine();
 	void eventKeyDownBinding_DeleteNoteSlot();
 	void eventKeyDownBinding_DeleteLine();
+
+	void eventKeyDownBinding_InsIncSelection();
+	void eventKeyDownBinding_InsDecSelection();
+	void eventKeyDownBinding_InsIncTrack();
+	void eventKeyDownBinding_InsDecTrack();
 	
 	void eventKeyDownBinding_CutTrack();
 	void eventKeyDownBinding_CopyTrack();

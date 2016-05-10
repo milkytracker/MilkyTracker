@@ -658,6 +658,78 @@ pp_int32 PatternEditor::insRemapPattern(pp_int32 oldIns, pp_int32 newIns)
 	return resCnt;
 }
 
+pp_int32 PatternEditor::insIncSelection()
+{
+	if (pattern == NULL)
+		return 0;
+
+	if (pattern->patternData == NULL)
+		return 0;
+
+	prepareUndo();
+
+	PatternEditorTools patternEditorTools(pattern);
+	pp_int32 resCnt = patternEditorTools.insIncSelection(getSelection().start, getSelection().end);
+
+	finishUndo(LastChangeInsIncSelection);
+
+	return resCnt;
+}
+
+pp_int32 PatternEditor::insDecSelection()
+{
+	if (pattern == NULL)
+		return 0;
+
+	if (pattern->patternData == NULL)
+		return 0;
+
+	prepareUndo();
+
+	PatternEditorTools patternEditorTools(pattern);
+	pp_int32 resCnt = patternEditorTools.insDecSelection(getSelection().start, getSelection().end);
+
+	finishUndo(LastChangeInsDecSelection);
+
+	return resCnt;
+}
+
+pp_int32 PatternEditor::insIncTrack()
+{
+	if (pattern == NULL)
+		return 0;
+
+	if (pattern->patternData == NULL)
+		return 0;
+
+	prepareUndo();
+
+	PatternEditorTools patternEditorTools(pattern);
+	pp_int32 resCnt = patternEditorTools.insIncTrack(getCursor().channel);
+
+	finishUndo(LastChangeInsIncTrack);
+
+	return resCnt;
+}
+
+pp_int32 PatternEditor::insDecTrack()
+{
+	if (pattern == NULL)
+		return 0;
+
+	if (pattern->patternData == NULL)
+		return 0;
+
+	prepareUndo();
+
+	PatternEditorTools patternEditorTools(pattern);
+	pp_int32 resCnt = patternEditorTools.insDecTrack(getCursor().channel);
+
+	finishUndo(LastChangeInsDecTrack);
+
+	return resCnt;
+}
+
 pp_int32 PatternEditor::insRemapSelection(pp_int32 oldIns, pp_int32 newIns)
 {
 	if (pattern == NULL)

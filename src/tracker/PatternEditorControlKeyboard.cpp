@@ -70,6 +70,14 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Interpolate);
 
+	// Scancode bindings
+	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+
 	// Key-down bindings Fasttracker
 	eventKeyDownBindingsFastTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
 
@@ -170,6 +178,11 @@ void PatternEditorControl::initKeyBindings()
 	
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
@@ -1426,6 +1439,26 @@ void PatternEditorControl::eventKeyDownBinding_DeleteLine()
 		patternEditor->deleteLine(cursor.row);
 		patternEditor->setLazyUpdateNotifications(false);
 	}
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsIncSelection()
+{
+	patternEditor->insIncSelection();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsDecSelection()
+{
+	patternEditor->insDecSelection();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsIncTrack()
+{
+	patternEditor->insIncTrack();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsDecTrack()
+{
+	patternEditor->insDecTrack();
 }
 
 void PatternEditorControl::eventKeyDownBinding_CutTrack()

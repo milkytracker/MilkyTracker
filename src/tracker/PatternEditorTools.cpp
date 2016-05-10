@@ -269,6 +269,112 @@ bool PatternEditorTools::shrinkPattern()
 	return true;
 }
 
+pp_int32 PatternEditorTools::insIncSelection(const Position& ss, const Position& se)
+{
+	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
+		return 0;
+
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
+
+	if (!normalizeSelection(pattern, ss, se,
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
+		return 0;
+
+	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
+	pp_int32 selectionHeight = selectionEndRow - selectionStartRow + 1;
+
+	mp_sint32 slotSize = pattern->effnum * 2 + 2;
+	mp_sint32 rowSizeSrc = slotSize*pattern->channum;
+
+	pp_int32 resCnt = 0;
+
+	for (pp_int32 i = 0; i < selectionHeight; i++)
+		for (pp_int32 j = 0; j < selectionWidth; j++)
+		{
+			mp_ubyte* src = pattern->patternData + (selectionStartRow+i)*rowSizeSrc+(selectionStartChannel+j)*slotSize;
+
+			if (src[1] && src[1] < 0xFF)
+			{
+				src[1]++;
+				resCnt++;
+			}
+		}
+
+	return resCnt;
+}
+
+pp_int32 PatternEditorTools::insDecSelection(const Position& ss, const Position& se)
+{
+	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
+		return 0;
+
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
+
+	if (!normalizeSelection(pattern, ss, se,
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
+		return 0;
+
+	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
+	pp_int32 selectionHeight = selectionEndRow - selectionStartRow + 1;
+
+	mp_sint32 slotSize = pattern->effnum * 2 + 2;
+	mp_sint32 rowSizeSrc = slotSize*pattern->channum;
+
+	pp_int32 resCnt = 0;
+
+	for (pp_int32 i = 0; i < selectionHeight; i++)
+		for (pp_int32 j = 0; j < selectionWidth; j++)
+		{
+			mp_ubyte* src = pattern->patternData + (selectionStartRow+i)*rowSizeSrc+(selectionStartChannel+j)*slotSize;
+
+			if (src[1] > 1)
+			{
+				src[1]--;
+				resCnt++;
+			}
+		}
+
+	return resCnt;
+}
+
+pp_int32 PatternEditorTools::insIncTrack(pp_int32 track)
+{
+	Position ss, se = getMarkEnd();
+	ss.channel = track;
+	ss.inner = 0;
+	ss.row = 0;
+
+	se.channel = track;
+	se.inner = 7;
+
+	return insIncSelection(ss, se);
+}
+
+pp_int32 PatternEditorTools::insDecTrack(pp_int32 track)
+{
+	Position ss, se = getMarkEnd();
+	ss.channel = track;
+	ss.inner = 0;
+	ss.row = 0;
+
+	se.channel = track;
+	se.inner = 7;
+
+	return insDecSelection(ss, se);
+}
+
 pp_int32 PatternEditorTools::insRemapSelection(const Position& ss, const Position& se, pp_int32 oldIns, pp_int32 newIns)
 {
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
