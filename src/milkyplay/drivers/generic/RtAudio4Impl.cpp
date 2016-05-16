@@ -95,6 +95,8 @@ public:
             return 1024;
         case RtAudio::WINDOWS_DS:
             return 2048;
+        case RtAudio::WINDOWS_WASAPI:
+            return 1024;
         }
 
         return 2048;

@@ -64,7 +64,7 @@ AudioDriverManager::AudioDriverManager() :
 {
 	mp_sint32 driverListSize = 1;
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
-	driverListSize+=3;
+	driverListSize+=4;
 #endif
 #if !defined(_WIN32_WCE) && defined(__WASAPI__)
 	driverListSize++;
@@ -77,11 +77,12 @@ AudioDriverManager::AudioDriverManager() :
 	driverList[i++] = new AudioDriver_RTAUDIO();
 	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_ASIO);
 	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_DS);
+	driverList[i++] = new AudioDriver_RTAUDIO(AudioDriver_RTAUDIO::WINDOWS_WASAPI);
 
 #ifndef _WIN32_WCE
 	// On Windows Vista we set the DS driver to be the default
 	if (IsWindowsVistaOrGreater())
-		defaultDriverIndex = i-1;
+		defaultDriverIndex = i-2;
 #endif	
 	
 #endif
