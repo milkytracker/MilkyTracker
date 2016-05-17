@@ -1,4 +1,3 @@
-SUBDIRS = zziplib/generic
 noinst_LIBRARIES = libcompression.a
 
 libcompression_a_SOURCES =  PP20.cpp ZipExtractor.cpp zziplib/MyIO.cpp \
@@ -28,7 +27,6 @@ zlib/generic/zutil.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
 -I$(top_srcdir)/src/ppui/osinterface/posix \
--I$(top_srcdir)/src/compression/lha -I$(top_srcdir)/src/compression/zziplib \
--I$(top_srcdir)/src/compression/zziplib/generic
+-I$(top_srcdir)/src/compression/lha -I$(top_srcdir)/src/compression/zziplib
 
 #AM_CPPFLAGS = -I../ppui -I../ppui/osinterface -I../ppui/osinterface/posix

@@ -9,39 +9,51 @@
 #include "MyIO.h"
 #include "XMFile.h"
 
-__zzipfd Myopen(const zzip_char_t* name, int flags, ...)
+#define FILE_TABLE_ENTRIES 256
+static XMFile* file_table[FILE_TABLE_ENTRIES];
+
+int Myopen(const zzip_char_t* name, int flags, ...)
 {
 	XMFile* f = new XMFile((SYSCHAR*)name, (flags & O_WRONLY) ? true : false);
-	if (!f->isOpen())
+	if (f->isOpen())
 	{
-		delete f;
-		return (__zzipfd)-1;
+		// Find free space in the file table
+		//  zziplib has a bug where it forbid using fd 0, so skip it
+		for (int i = 1; i < FILE_TABLE_ENTRIES; i++)
+		{
+			if (file_table[i] == NULL)
+			{
+				file_table[i] = f;
+				return i;
+			}
+		}
 	}
-	//TODO: find a better solution
-	ASSERT(sizeof(f) == sizeof(__zzipfd));
-	return reinterpret_cast<__zzipfd>(f);
+
+	delete f;
+	return -1;
 }
 
-int Myclose(__zzipfd fd)
+int Myclose(int fd)
 {
-	if (fd == (__zzipfd)-1)
+	if (fd == -1)
 		return -1;
 
-	delete reinterpret_cast<XMFile*>(fd);
+	delete file_table[fd];
+	file_table[fd] = NULL;
 	return 0;
 }
 
-zzip_ssize_t Myread(__zzipfd fd, void *buffer, zzip_size_t count)
+zzip_ssize_t Myread(int fd, void *buffer, zzip_size_t count)
 {
-	if (fd == (__zzipfd)-1)
+	if (fd == -1)
 		return -1;
 
-	return reinterpret_cast<XMFile*>(fd)->read(buffer, 1, static_cast<mp_sint32> (count));
+	return file_table[fd]->read(buffer, 1, static_cast<mp_sint32> (count));
 }
 
-zzip_off_t Mylseek(__zzipfd fd, zzip_off_t offset, int origin)
+zzip_off_t Mylseek(int fd, zzip_off_t offset, int origin)
 {
-	if (fd == (__zzipfd)-1)
+	if (fd == -1)
 		return -1;
 
 	XMFile::SeekOffsetTypes moveMethod = XMFile::SeekOffsetTypeStart;
@@ -51,14 +63,14 @@ zzip_off_t Mylseek(__zzipfd fd, zzip_off_t offset, int origin)
 	else if (origin == SEEK_END)
 		moveMethod = XMFile::SeekOffsetTypeEnd;
 
-	reinterpret_cast<XMFile*>(fd)->seek(static_cast<mp_sint32> (offset), moveMethod);
-	return reinterpret_cast<XMFile*>(fd)->pos();
+	file_table[fd]->seek(offset, moveMethod);
+	return file_table[fd]->pos();
 }
 
-zzip_off_t Myfsize(__zzipfd fd)
+zzip_off_t Myfsize(int fd)
 {
-	if (fd == (__zzipfd)-1)
+	if (fd == -1)
 		return -1;
 	
-	return reinterpret_cast<XMFile*>(fd)->size();
+	return file_table[fd]->size();
 }
