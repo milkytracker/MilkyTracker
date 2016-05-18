@@ -21,6 +21,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE([fcntl.h inttypes.h limits.h malloc.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/time.h unistd.h],,AC_MSG_ERROR([One or more required header files are missing]))
 AC_CHECK_HEADER(zzip/lib.h,,AC_MSG_ERROR("Cannot find zzip/lib.h"))
+AC_CHECK_HEADER(liblhasa-1.0/lhasa.h,,AC_MSG_ERROR("Cannot find liblhasa-1.0/lhasa.h"))
 AC_CHECK_HEADER(pthread.h,,[AC_MSG_ERROR("Cannot find pthread.h")])
 
 # Checks for libraries.
@@ -51,6 +52,18 @@ fi
 AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
 AC_CHECK_LIB(zzip, zzip_file_open,,AC_MSG_ERROR("Cannot find -lzzip"))
 PKG_CHECK_MODULES([ZZIP],[zziplib >= 0.10.75])
+
+PKG_CHECK_MODULES([LHASA],[lhasa],,[
+	# Couldn't find package, try naive method
+	AC_CHECK_LIB(lhasa, lha_input_stream_new, [
+		LHASA_CFLAGS="-I/usr/include/liblhasa-1.0"
+		LHASA_LIBS="-llhasa"
+        AC_SUBST(LHASA_CFLAGS)
+        AC_SUBST(LHASA_LIBS)
+	],[
+		AC_MSG_ERROR("Cannot find -llhasa")
+	])
+])
 
 AC_CHECK_LIB(pthread, pthread_create,[LIBS="$LIBS -lpthread"],AC_MSG_ERROR("Cannot find -lpthread"))
 SDL_VERSION=2.0.0

@@ -28,72 +28,74 @@
  *
  */
 
+#include <lhasa.h>
+
 #include "DecompressorLHA.h"
 #include "XMFile.h"
 #include "XModule.h"
-#include "unlha32.h"
 
-// -- LHA --------------------------------------------------------------------
-class XMFileStreamer : public CLhaArchive::StreamerBase
+#define LHA_BUFFER_SIZE 0x10000
+
+namespace
 {
-private:
-	XMFile& f;
-
-	pp_uint32 currentPos;
-
-protected:
-	virtual pp_uint8 get(pp_uint32 pos)
+	static int lha_read_callback(void *handle, void *buf, size_t buf_len)
 	{
-		pp_uint8 result;
-		if (currentPos != pos)
-		{
-			f.seek(pos);
-			result = f.readByte();
-			currentPos = f.pos();
-		}
-		else
-		{
-			result = f.readByte();
-			currentPos = f.pos();
-		}
-		
-		return result;
+		return static_cast<XMFile*>(handle)->read(buf, 1, buf_len);
 	}
 
-public:		
-	XMFileStreamer(XMFile& f) :
-		f(f)
+	static const LHAInputStreamType lha_callbacks =
 	{
-		currentPos = f.pos();
-	}
+		lha_read_callback,
+		NULL,
+		NULL
+	};
 
-	virtual void read(void* buffer, pp_uint32 from, pp_uint32 len)
+	// Simple wrapper for lha_reader_*
+	class LHAReaderWrapper
 	{
-		if (currentPos != from)
+	public:
+		explicit LHAReaderWrapper(XMFile& file)
 		{
-			f.seek(from);
-			f.read(buffer, 1, len);
-			currentPos = f.pos();
-		}
-		else
-		{
-			f.read(buffer, 1, len);
-			currentPos = f.pos();
-		}
-	}
-};
+			// Open input stream
+			input_stream = lha_input_stream_new(&lha_callbacks, &file);
+			if (input_stream == NULL)
+				return;
 
-struct ModuleIdentifyNotifier : public CLhaArchive::IDNotifier 
-{
-	virtual bool identify(void* buffer, pp_uint32 len) const
-	{
-		mp_ubyte buff[XModule::IdentificationBufferSize];
-		memset(buff, 0, sizeof(buff));
-		memcpy(buff, buffer, len > sizeof(buff) ? sizeof(buff) : len);
-		
-		return XModule::identifyModule(buff) != NULL;
-	}
-};
+			// Open reader
+			reader = lha_reader_new(input_stream);
+		}
+
+		bool isOpen() const
+		{
+			return reader != NULL;
+		}
+
+		LHAFileHeader* nextFile()
+		{
+			return lha_reader_next_file(reader);
+		}
+
+		size_t read(void* buf, size_t length)
+		{
+			return lha_reader_read(reader, buf, length);
+		}
+
+		~LHAReaderWrapper()
+		{
+			if (reader != NULL)
+				lha_reader_free(reader);
+			if (input_stream != NULL)
+				lha_input_stream_free(input_stream);
+		}
+
+	private:
+		LHAInputStream* input_stream = NULL;
+		LHAReader* reader = NULL;
+
+		LHAReaderWrapper(const LHAReaderWrapper&) {}
+		LHAReaderWrapper& operator=(const LHAReaderWrapper&) {}
+	};
+}
 
 DecompressorLHA::DecompressorLHA(const PPSystemString& filename) :
 	DecompressorBase(filename)
@@ -102,15 +104,14 @@ DecompressorLHA::DecompressorLHA(const PPSystemString& filename) :
 
 bool DecompressorLHA::identify(XMFile& f)
 {
-	f.seek(0);	
+	f.seek(0);
 
-	XMFileStreamer streamer(f);
+	// Attempt to create the reader and read the header of the first file
+	LHAReaderWrapper reader(f);
+	if (!reader.isOpen())
+		return false;
 
-	CLhaArchive archive(streamer, f.size(), NULL);
-
-	bool res = archive.IsArchive() != 0;
-
-	return res;
+	return reader.nextFile() != NULL;
 }	
 	
 const PPSimpleVector<Descriptor>& DecompressorLHA::getDescriptors(Hints hint) const
@@ -127,31 +128,46 @@ bool DecompressorLHA::decompress(const PPSystemString& outFilename, Hints hint)
 	if (!f.isOpen())
 		return false;
 
-	XMFileStreamer streamer(f);
-
-	ModuleIdentifyNotifier idnotifier;
-
-	CLhaArchive archive(streamer, f.size(), &idnotifier);
-
-	if (!archive.IsArchive())
+	// Create reader object
+	LHAReaderWrapper reader(f);
+	if (!reader.isOpen())
 		return false;
 
-	pp_uint32 result = archive.ExtractFile();
-	
-	if (result && archive.GetOutputFile())
+	// Loop through each file until we find a sutible module
+	while (1)
 	{
-		const char* id = XModule::identifyModule(archive.GetOutputFile());
-		if (id)
+		LHAFileHeader* header = reader.nextFile();
+		if (header == NULL)
+			break;
+
+		// Skip directories and symlinks
+		if (strcmp(header->compress_method, LHA_COMPRESS_TYPE_DIR) == 0)
+			continue;
+
+		// Identify the current file
+		mp_ubyte buf[LHA_BUFFER_SIZE];
+		memset(buf, 0, sizeof(buf));
+		size_t bytes_read = reader.read(buf, sizeof(buf));
+
+		if (bytes_read > 0 && XModule::identifyModule(buf) != NULL)
 		{
+			// Write to output file
 			XMFile outFile(outFilename, true);
 			if (!outFile.isOpenForWriting())
 				return false;
-				
-			outFile.write(archive.GetOutputFile(), 1, archive.GetOutputFileLength());						
-			return true;
+
+			// Decompress into outFile
+			do
+			{
+				outFile.write(buf, 1, bytes_read);
+			}
+			while ((bytes_read = reader.read(buf, sizeof(buf))) > 0);
+
+			return (bytes_read == 0);
 		}
 	}
-	
+
+	// No sutible modules found
 	return false;
 }
 

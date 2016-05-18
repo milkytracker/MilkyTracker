@@ -67,8 +67,7 @@ $(top_builddir)/src/compression/DecompressorUMX.o \
 $(top_builddir)/src/compression/DecompressorZIP.o \
 $(top_builddir)/src/compression/zziplib/MyIO.o \
 $(top_builddir)/src/compression/PP20.o \
-$(top_builddir)/src/compression/ZipExtractor.o \
-$(top_builddir)/src/compression/lha/unlha.o
+$(top_builddir)/src/compression/ZipExtractor.o
 
 # add -lGL for experimental OpenGL support (and see ../ppui/Makefile.am)
 milkytracker_LDADD = $(top_builddir)/src/milkyplay/libmilkyplay.a \
@@ -76,7 +75,7 @@ $(top_builddir)/src/ppui/osinterface/libosinterface.a \
 $(top_builddir)/src/ppui/libppui.a \
 $(top_builddir)/src/ppui/osinterface/libosinterface.a \
 $(top_builddir)/src/fx/libfx.a $(COMPRESSION_LIB) $(MIDI_LIB) \
-$(SDL_LIBS) $(ALSA_LIBS) $(Z_LIBS) $(ZZIP_LIBS) $(RTMIDI_LIBS)
+$(SDL_LIBS) $(ALSA_LIBS) $(Z_LIBS) $(ZZIP_LIBS) $(RTMIDI_LIBS) $(LHASA_LIBS)
 
 EXTRA_DIST = carbon/Carbon_Definitions.h carbon/Carbon_main.cpp \
 carbon/InfoPlist.strings carbon/KeyTranslation.cpp carbon/KeyTranslation.h \
