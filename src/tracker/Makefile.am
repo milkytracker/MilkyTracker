@@ -48,17 +48,18 @@ TabHeaderControl.h TabManager.h TabTitleProvider.h TitlePageManager.h \
 TitlePageManager.h ToolInvokeHelper.h Tracker.h TrackerConfig.h \
 TrackerSettingsDatabase.h Undo.h VRand.h Zapper.h sdl/SDL_KeyTranslation.h
 
-AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ ${SDL_CFLAGS}
+AM_CPPFLAGS = -DMILKYTRACKER -D__THREADTIMER__ -D__LINUX__ $(SDL_CFLAGS) \
+$(RTMIDI_CFLAGS)
 
-AM_CPPFLAGS += -I$(top_srcdir)/src/${RTMIDI_DIR} -I$(top_srcdir)/src/compression \
--I$(top_srcdir)/src/fx -I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
--I$(top_srcdir)/src/tracker -I$(top_srcdir)/src/midi/posix -I../midi/rtmidi \
+AM_CPPFLAGS += -I$(top_srcdir)/src/compression -I$(top_srcdir)/src/fx \
+-I$(top_srcdir)/src/milkyplay -I$(top_srcdir)/src/ppui \
+-I$(top_srcdir)/src/tracker -I$(top_srcdir)/src/midi/posix \
 -I$(top_srcdir)/src/ppui/osinterface -I$(top_srcdir)/src/ppui/osinterface/sdl \
 -I$(top_srcdir)/src/ppui/osinterface/posix -I$(top_srcdir)/src/ppui/sdl -Isdl
 
 # The following cannot be linked as a static library, the linker will regard
 # the DecompressorXXX files as unused and therefore won't pull them in:
-compressionLib = $(top_builddir)/src/compression/Decompressor.o \
+COMPRESSION_LIB = $(top_builddir)/src/compression/Decompressor.o \
 $(top_builddir)/src/compression/DecompressorGZIP.o \
 $(top_builddir)/src/compression/DecompressorLHA.o \
 $(top_builddir)/src/compression/DecompressorPP20.o \
@@ -74,8 +75,8 @@ milkytracker_LDADD = $(top_builddir)/src/milkyplay/libmilkyplay.a \
 $(top_builddir)/src/ppui/osinterface/libosinterface.a \
 $(top_builddir)/src/ppui/libppui.a \
 $(top_builddir)/src/ppui/osinterface/libosinterface.a \
-$(top_builddir)/src/fx/libfx.a $(compressionLib) $(RTMIDI) $(SDL_LIBS) \
-$(ALSA_LIBS) $(Z_LIBS) $(ZZIP_LIBS)
+$(top_builddir)/src/fx/libfx.a $(COMPRESSION_LIB) $(MIDI_LIB) \
+$(SDL_LIBS) $(ALSA_LIBS) $(Z_LIBS) $(ZZIP_LIBS) $(RTMIDI_LIBS)
 
 EXTRA_DIST = carbon/Carbon_Definitions.h carbon/Carbon_main.cpp \
 carbon/InfoPlist.strings carbon/KeyTranslation.cpp carbon/KeyTranslation.h \

@@ -32,15 +32,20 @@ AC_ARG_WITH([alsa],
 
 if test "x$with_alsa" != xno; then
 	AM_PATH_ALSA([1.0.0],[
-		RTMIDI="../midi/libmidi.a"
-		RTMIDI_DIR="midi"
-		AC_SUBST(RTMIDI)
-		AC_SUBST(RTMIDI_DIR)],
-		[if test "x$with_alsa" != xcheck; then
+		# ALSA found, check for RtMidi
+		PKG_CHECK_MODULES([RTMIDI],[rtmidi])
+		MIDI_LIB="../midi/libmidi.a"
+		MIDI_LIB_DIR="midi"
+		AC_SUBST(MIDI_LIB)
+		AC_SUBST(MIDI_LIB_DIR)
+	],[
+		# ALSA not found
+		if test "x$with_alsa" != xcheck; then
 			AC_MSG_FAILURE([--with-alsa was given, but test for alsa failed])
 		else
 			AC_MSG_WARN([ALSA not found - midi support disabled])
-		fi])
+		fi
+	])
 fi
 
 AC_SEARCH_LIBS(gzopen, z, AC_DEFINE([HAVE_LIBZ], [1], [Define to 1 if you have the 'libz' library.]),)
