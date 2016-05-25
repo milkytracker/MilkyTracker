@@ -71,13 +71,13 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 #endif
 
 	// Log renderer capabilities
-	SDL_RendererInfo* theRendererInfo = new SDL_RendererInfo;
-	if (!SDL_GetRendererInfo(theRenderer, theRendererInfo))
+	SDL_RendererInfo theRendererInfo;
+	if (!SDL_GetRendererInfo(theRenderer, &theRendererInfo))
 	{
-		if (theRendererInfo->flags & SDL_RENDERER_SOFTWARE) printf("SDL: Using software renderer.\n");
-		if (theRendererInfo->flags & SDL_RENDERER_ACCELERATED) printf("SDL: Using accelerated renderer.\n");
-		if (theRendererInfo->flags & SDL_RENDERER_PRESENTVSYNC) printf("SDL: Vsync enabled.\n");
-		if (theRendererInfo->flags & SDL_RENDERER_TARGETTEXTURE) printf("SDL: Renderer supports rendering to texture.\n");
+		if (theRendererInfo.flags & SDL_RENDERER_SOFTWARE) printf("SDL: Using software renderer.\n");
+		if (theRendererInfo.flags & SDL_RENDERER_ACCELERATED) printf("SDL: Using accelerated renderer.\n");
+		if (theRendererInfo.flags & SDL_RENDERER_PRESENTVSYNC) printf("SDL: Vsync enabled.\n");
+		if (theRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) printf("SDL: Renderer supports rendering to texture.\n");
 	}
 
 	// Lock aspect ratio and scale the UI up to fit the window
@@ -171,6 +171,10 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 
 PPDisplayDeviceFB::~PPDisplayDeviceFB()
 {	
+	SDL_FreeSurface(theSurface);
+	SDL_DestroyRenderer(theRenderer);
+	SDL_DestroyWindow(theWindow);
+
 	delete[] temporaryBuffer;
 	// base class is responsible for deleting currentGraphics
 }

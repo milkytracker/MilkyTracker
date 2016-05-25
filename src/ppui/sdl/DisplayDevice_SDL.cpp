@@ -202,16 +202,14 @@ PPSize PPDisplayDevice::getDisplayResolution() const {
 	int currentDisplay = SDL_GetWindowDisplayIndex(theWindow);
 
 	// Structure to hold the display resolution
-	SDL_DisplayMode* displayMode = new SDL_DisplayMode;
+	SDL_DisplayMode displayMode;
 
 	// If this fails, return -1 dimensions (makes MilkyTracker display an error)
-	if (SDL_GetDesktopDisplayMode(currentDisplay, displayMode) != 0)
-	{
+	if (SDL_GetDesktopDisplayMode(currentDisplay, &displayMode) != 0)
 		return PPSize(-1, -1);
-	}
 
 	// Return the desktop size
-	return PPSize(displayMode->w, displayMode->h);
+	return PPSize(displayMode.w, displayMode.h);
 }
 
 void PPDisplayDevice::shutDown()
