@@ -1,0 +1,33 @@
+version: 0.90.87-{build}
+
+branches:
+    only:
+      - cmake_appveyor
+
+configuration:
+  - Debug
+  - Release
+
+platform:
+  - Win32
+  - x64
+
+install:
+  - git submodule update --init --recursive
+
+before_build:
+  - md c:\projects\milkytracker\build
+  - cd c:\projects\milkytracker\build
+  - if %platform% == Win32 cmake -G "Visual Studio 14" ..
+  - if %platform% == x64 cmake -G "Visual Studio 14 Win64" ..
+
+build:
+    project: c:\projects\milkytracker\build\MilkyTracker.sln
+
+after_build:
+  # https://github.com/chocolatey/chocolatey/issues/431
+  - cmake -E remove -f c:\programdata\chocolatey\bin\cpack.exe
+  - cpack -C %configuration%
+
+artifacts:
+  - path: build\milkytracker*.zip
