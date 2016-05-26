@@ -1,0 +1,34 @@
+language: cpp
+git:
+    submodules: false
+
+matrix:
+    include:
+      - os: linux
+        dist: trusty
+        sudo: required
+        addons:
+            apt:
+                packages:
+                   - libjack-dev
+                   - librtmidi-dev
+                   - libsdl2-dev
+                   - libzzip-dev
+        script: &cmake_build
+          - mkdir build
+          - pushd build
+          - cmake ..
+          - cmake --build .
+          - cpack
+          - popd
+      - os: osx
+        before_install:
+          - brew update
+          - brew install lhasa libzzip sdl2
+          - pushd resources/pictures/docicons/osx
+          - wget https://docerator.googlecode.com/files/docerator-2.0.zip
+          - unzip docerator-2.0.zip -d docerator
+          - rm docerator-2.0.zip
+          - python genicons.py
+          - popd
+        script: *cmake_build
