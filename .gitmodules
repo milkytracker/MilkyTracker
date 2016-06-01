@@ -7,3 +7,6 @@
 [submodule "src/compression/lhasa"]
 	path = src/compression/lhasa
 	url = https://github.com/fragglet/lhasa.git
+[submodule "src/compression/zlib/generic"]
+	path = src/compression/zlib/generic
+	url = https://github.com/madler/zlib.git
