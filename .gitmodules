@@ -10,3 +10,6 @@
 [submodule "src/compression/zlib/generic"]
 	path = src/compression/zlib/generic
 	url = https://github.com/madler/zlib.git
+[submodule "src/compression/zziplib/generic"]
+	path = src/compression/zziplib/generic
+	url = https://github.com/dwhinham/zziplib.git
