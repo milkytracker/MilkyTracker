@@ -4,3 +4,6 @@
 [submodule "src/midi/rtmidi"]
 	path = src/midi/rtmidi
 	url = https://github.com/thestk/rtmidi.git
+[submodule "src/compression/lhasa"]
+	path = src/compression/lhasa
+	url = https://github.com/fragglet/lhasa.git
