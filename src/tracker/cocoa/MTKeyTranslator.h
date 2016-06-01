@@ -22,7 +22,7 @@
 
 // ------- Cocoa/OpenGL -------
 #import <Foundation/NSObject.h>
-#import <HIToolbox/Events.h>
+#import <Carbon/Carbon.h>
 
 // ---------- Tracker ---------
 #import "BasicTypes.h"

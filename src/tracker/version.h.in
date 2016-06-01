@@ -1,0 +1,5 @@
+// 0xXYYZZ = X.YY.ZZ
+const int MILKYTRACKER_VERSION = 0x${VER_X}${VER_YY}${VER_ZZ};
+// Version string restricted to 20 chars for XM export!
+const char MILKYTRACKER_VERSION_STRING[] = "MilkyTracker ${VER_X}.${VER_YY}.${VER_ZZ}";
+//                                          012345678901234567890
