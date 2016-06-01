@@ -393,3 +393,12 @@ target_link_libraries(
     osinterface
     ppui
 )
+
+# OS X and Windows install to the root of the prefix, the others install to bin
+if(APPLE OR WIN32)
+    set(INSTALL_DEST .)
+else()
+    set(INSTALL_DEST bin)
+endif()
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_DEST})

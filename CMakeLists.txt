@@ -40,6 +40,33 @@ configure_file(
     ${PROJECT_BINARY_DIR}/src/tracker/version.h
 )
 
+# Packaging
+if(APPLE)
+    set(CPACK_GENERATOR DragNDrop)
+    set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME} ${VER_FULL}")
+    set(
+        CPACK_DMG_DS_STORE_SETUP_SCRIPT
+        ${PROJECT_SOURCE_DIR}/resources/packaging/osx/DMGSetup.scpt
+    )
+    set(
+        CPACK_DMG_BACKGROUND_IMAGE
+        ${PROJECT_SOURCE_DIR}/resources/packaging/osx/DMGBackground.tif
+    )
+elseif(WIN32)
+    set(CPACK_GENERATOR ZIP)
+else()
+    set(CPACK_GENERATOR TGZ)
+endif()
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
+set(CPACK_PACKAGE_VENDOR "MilkyTracker Team")
+set(CPACK_PACKAGE_CONTACT "support@milkyTracker.org")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${VER_FULL}")
+set(CPACK_PACKAGE_VERSION_MAJOR ${VER_X})
+set(CPACK_PACKAGE_VERSION_MINOR ${VER_YY})
+set(CPACK_PACKAGE_VERSION_PATCH ${VER_ZZ})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FastTracker II compatible music tracker")
+include(CPack)
+
 if(APPLE)
     # Set variables for generating the Info.plist file
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${VER_FULL}")
@@ -151,6 +178,8 @@ if(APPLE)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${SUFFIXES_ORIG})
 endif()
 
+add_subdirectory(docs)
+add_subdirectory(resources/music)
 add_subdirectory(src/compression)
 add_subdirectory(src/fx)
 add_subdirectory(src/milkyplay)
