@@ -37,11 +37,7 @@
 #include <SDL.h>
 #include "BasicTypes.h"
 
-// #define NOT_PC_KB	// Set this if you're using non-PC type keyboard
-
 pp_uint16 toVK(const SDL_Keysym& keysym);
 pp_uint16 toSC(const SDL_Keysym& keysym);
-extern bool isX11;
-extern bool stdKb;
 
 #endif

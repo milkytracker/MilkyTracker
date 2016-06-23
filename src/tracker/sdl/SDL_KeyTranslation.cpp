@@ -38,14 +38,8 @@
  *    - Small fix in toSC
  *    - Various keys added to toVK - rewritten to use array instead of select
  */
-#ifdef __APPLE__
-#define NOT_PC_KB
-#endif
 
 #include "SDL_KeyTranslation.h"
-
-bool isX11 = false;
-bool stdKb = true;
 
 static const pp_uint32 sdl_keysym_to_vk[] = {
 	SDLK_CARET,		0xC0,
@@ -544,7 +538,6 @@ pp_uint16 toVK(const SDL_Keysym& keysym)
 	if (keysym.sym >= SDLK_a && keysym.sym <= SDLK_z)
 		return (pp_uint16)keysym.sym-32;
 
-	// azerty keyboards won't work with this, they get fixed in SDL_Main.cpp
 	if (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9)
 		return (pp_uint16)keysym.sym;
 
@@ -557,16 +550,6 @@ pp_uint16 toVK(const SDL_Keysym& keysym)
 
 pp_uint16 toSC(const SDL_Keysym& keysym)
 {
-#ifndef NOT_PC_KB
-	// WARNING!!!!
-	// The next line will only work on X11 systems - I've no idea what will happen
-	// with anything else
-	if (isX11 && stdKb)
-		return keysym.scancode - 8;
-	else if (stdKb)
-		return keysym.scancode;
-#endif
-
 	int index = keysym.sym;
 
 	// Shift to upper range if key is not a printable character

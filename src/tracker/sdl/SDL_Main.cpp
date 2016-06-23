@@ -66,9 +66,6 @@
 #include <sys/types.h>
 
 #include <SDL.h>
-#ifdef HAVE_X11
-#include <SDL_syswm.h>
-#endif
 #include "SDL_KeyTranslation.h"
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
@@ -546,17 +543,6 @@ void translateKeyDownEvent(const SDL_Event& event)
 
 	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
 
-#ifndef NOT_PC_KB
-	// Hack for azerty keyboards (num keys are shifted, so we use the scancodes)
-	if (stdKb) 
-	{
-		if (chr[1] >= 2 && chr[1] <= 10)
-			chr[0] = chr[1] + 47;	// 1-9
-		else if (chr[1] == 11)
-			chr[0] = 48;			// 0
-	}
-#endif
-	
 	PPEvent myEvent(eKeyDown, &chr, sizeof(chr));
 	RaiseEventSerialized(&myEvent);
 }
@@ -569,16 +555,6 @@ void translateKeyUpEvent(const SDL_Event& event)
 
 	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
 
-#ifndef NOT_PC_KB
-	if (stdKb) 
-	{
-		if(chr[1] >= 2 && chr[1] <= 10)
-			chr[0] = chr[1] + 47;
-		else if(chr[1] == 11)
-			chr[0] = 48;
-	}
-#endif
-	
 	PPEvent myEvent(eKeyUp, &chr, sizeof(chr));	
 	RaiseEventSerialized(&myEvent);	
 }
@@ -761,13 +737,6 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	sigaction(SIGSEGV, &act, &oldAct);
 #endif
 	
-#if defined(HAVE_X11)
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if ( SDL_GetWindowWMInfo(0, &info) && info.subsystem == SDL_SYSWM_X11)
-		isX11 = true;	// Used in SDL_KeyTranslation.cpp
-#endif
-
 	// ------------ Initialise tracker ---------------
 	myTracker = new Tracker();
 
@@ -901,10 +870,6 @@ int main(int argc, char *argv[])
 				goto unrecognizedCommandLineSwitch;
 			--argc;
 		} 
-		else if ( strcmp(argv[argc], "-nonstdkb") == 0)
-		{
-			stdKb = false;
-		}
 		else if ( strcmp(argv[argc], "-recvelocity") == 0)
 		{
 			recVelocity = true;
@@ -915,7 +880,7 @@ unrecognizedCommandLineSwitch:
 			if (argv[argc][0] == '-') 
 			{
 				fprintf(stderr, 
-						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-nonstdkb] [-recvelocity]\n", argv[0]);
+						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-recvelocity]\n", argv[0]);
 				exit(1);
 			} 
 			else 
