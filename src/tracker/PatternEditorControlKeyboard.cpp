@@ -567,6 +567,7 @@ void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character)
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number = -1;
 
 	if (::getKeyModifier() == 0)
 	{
@@ -620,12 +621,12 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 				assureCursor = false;
 				notifyUpdate();
 				return;
-			
+
 			// F9
 			case VK_F9:
 				eventKeyDownBinding_HOME();
 				return;
-						
+
 			// F10
 			case VK_F10:
 				eventKeyDownBinding_FIRSTQUARTER();
@@ -649,147 +650,105 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 
 	if (cursor.inner == 0)
 	{
-		pp_int32 note = -1;
-		
-		handleDeleteKey(keyCode, note);
-		
-		if (note == -1 && ::getKeyModifier() == 0)
-		{
-			note = ScanCodeToNote(scanCode);
-		}
-
-		patternEditor->writeNote(note, true, this);
-	}
-	else if ((cursor.inner == 1 || cursor.inner == 2))
-	{
-		pp_int32 number = -1;
-
 		handleDeleteKey(keyCode, number);
-		
-		// still not assigned, try if we map to a hexadecimal digit
-		if (number == -1)
-		{
-			number = asciiToHex(character);
-		}
-		
+
+		if (number == -1 && ::getKeyModifier() == 0)
+			number = ScanCodeToNote(scanCode);
+
+		patternEditor->writeNote(number, true, this);
+	}
+	else
+		handleDeleteKey(keyCode, number);
+
+	patternEditor->setLazyUpdateNotifications(false);
+}
+
+void PatternEditorControl::handleKeyChar(pp_uint16 character)
+{
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number = -1;
+
+	// prevent unnecessary screen refreshing through listener callback
+	// remember to reset this when leaving this function
+	patternEditor->setLazyUpdateNotifications(true);
+
+	if ((cursor.inner == 1 || cursor.inner == 2))
+	{
+		number = asciiToHex(character);
+
 		if (number == 0xFF)
-		{
 			patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, 0, true, this);
-		}
 		else if (number >= 0 && number <= 0xF)
-		{			
+		{
 			if (cursor.inner == 1)
 				patternEditor->writeInstrument(PatternEditor::NibbleTypeHigh, number, true, this);
 			else if (cursor.inner == 2)
-				patternEditor->writeInstrument(PatternEditor::NibbleTypeLow, number, true, this);				
+				patternEditor->writeInstrument(PatternEditor::NibbleTypeLow, number, true, this);
 		}
-
 	}
 	else if (cursor.inner == 3 || cursor.inner == 4)
 	{
-		pp_int32 number = -1;
-
-		switch (character)
+		if (cursor.inner == 3)
 		{
-			// -: Volslide down
-			case '-':
-				if (cursor.inner == 3)
-				{
+			switch (character)
+			{
+				// -: Volslide down
+				case '-':
 					number = 5;
 					break;
-				}
-				goto stupid;
 
-			// +: Volslide up
-			case '+':
-				if (cursor.inner == 3)
-				{
+				// +: Volslide up
+				case '+':
 					number = 6;
 					break;
-				}
-				goto stupid;
-			
-			// D: Fine volslide down
-			case 'd':
-				if (cursor.inner == 3)
-				{
+
+				// D: Fine volslide down
+				case 'd':
 					number = 7;
 					break;
-				}
-				goto stupid;
-			
-			// U: Fine volslide up
-			case 'u':
-				if (cursor.inner == 3)
-				{
+
+				// U: Fine volslide up
+				case 'u':
 					number = 8;
 					break;
-				}
-				goto stupid;
 
-			// S: Vibrato rate
-			case 's':
-				if (cursor.inner == 3)
-				{
+				// S: Vibrato rate
+				case 's':
 					number = 9;
 					break;
-				}
-				goto stupid;
-			
-			// V: Vibrato depth
-			case 'v':
-				if (cursor.inner == 3)
-				{
+
+				// V: Vibrato depth
+				case 'v':
 					number = 0xA;
 					break;
-				}
-				goto stupid;
-			
-			// P: Set Panning
-			case 'p':
-				if (cursor.inner == 3)
-				{
+
+				// P: Set Panning
+				case 'p':
 					number = 0xB;
 					break;
-				}
-				goto stupid;
-			
-			// L: Panning slide left
-			case 'l':
-			case '<':
-				if (cursor.inner == 3)
-				{
+
+				// L: Panning slide left
+				case 'l':
+				case '<':
 					number = 0xC;
 					break;
-				}
-				goto stupid;
-			
-			// R: Panning slide right
-			case 'r':
-			case '>':
-				if (cursor.inner == 3)
-				{
+
+				// R: Panning slide right
+				case 'r':
+				case '>':
 					number = 0xD;
 					break;
-				}
-				goto stupid;
-			
-			// M: Portamento
-			case 'm':
-				if (cursor.inner == 3)
-				{
+
+				// M: Portamento
+				case 'm':
 					number = 0xE;
 					break;
-				}
-				goto stupid;
+			}
 		}
-
-		handleDeleteKey(keyCode, number);
 
 		// still not assigned, try if we map to a hexadecimal digit
 		if (number == -1)
 		{
-stupid:
 			number = asciiToHex(character);
 			if (cursor.inner == 3 && number > 4)
 				goto cleanUp;
@@ -798,65 +757,40 @@ stupid:
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
 		{
 			if (number == 0xFF)
-			{
 				patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, number, true, this);
-			}
-			else 
-			{
-				patternEditor->writeFT2Volume(cursor.inner == 3 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow, 
-												   number, true, this);
-			}
+			else
+				patternEditor->writeFT2Volume(cursor.inner == 3 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow,
+						number, true, this);
 		}
 	}
 	else if (cursor.inner == 5)
 	{
-		pp_int32 number = -1;
+		number = asciiToHex(character);
 
-		handleDeleteKey(keyCode, number);
-
-		// still not assigned, try if we map to a hexadecimal digit
 		if (number == -1)
-		{
-			number = asciiToHex(character);
-		
-			if (number == -1)
-			{
-				number = asciiToHexExtended(character);
-			}
-		}
+			number = asciiToHexExtended(character);
 
 		if (number == 0xFF || (number >= 0 && number <= 0x23))
-		{
 			patternEditor->writeEffectNumber(number, true, this);
-		}
 	}
 	else if ((cursor.inner == 6 || cursor.inner == 7))
 	{
-		pp_int32 number = -1;
-		
-		handleDeleteKey(keyCode, number);
-
-		// still not assigned, try if we map to a hexadecimal digit
-		if (number == -1)
-		{
-			number = asciiToHex(character);
-		}
+		number = asciiToHex(character);
 
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
-		{			
+		{
 			if (number == 0xFF)
-			{
 				patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, number, true, this);
-			}
-			else 
-			{
-				patternEditor->writeEffectOperand(cursor.inner == 6 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow, 
-													   number, true, this);
-			}
+			else
+				patternEditor->writeEffectOperand(cursor.inner == 6 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow,
+												  number, true, this);
 		}
-
 	}
-	
+
+	// If the input had an effect, ensure the PatternEditorControl is repainted
+	if (number != -1)
+		assureUpdate = true;
+
 cleanUp:
 	patternEditor->setLazyUpdateNotifications(false);
 }

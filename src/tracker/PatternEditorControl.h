@@ -371,6 +371,7 @@ private:
 	void executeMenuCommand(pp_int32 commandId);
 	
 	void handleDeleteKey(pp_uint16 keyCode, pp_int32& result);
+	void handleKeyChar(pp_uint16 character);
 	void handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character);
 
 	// mark channel

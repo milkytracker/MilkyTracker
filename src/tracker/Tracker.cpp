@@ -538,6 +538,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 		updateWindowTitle();
 	}
 	else if (event->getID() == eKeyDown ||
+			 event->getID() == eKeyChar ||
 			 event->getID() == eKeyUp) 
 	{	
 		processShortcuts(event);

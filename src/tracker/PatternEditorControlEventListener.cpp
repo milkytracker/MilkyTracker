@@ -787,6 +787,20 @@ markSelection:
 			break;
 		}
 
+		case eKeyChar:
+		{
+			assureUpdate = false;
+
+			pp_uint16 character = *((pp_uint16*)event->getDataPtr());
+
+			handleKeyChar(character);
+
+			if (assureUpdate)
+				parentScreen->paintControl(this);
+
+			break;
+		}
+
 		case eKeyUp:
 		{	
 			pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
