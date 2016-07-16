@@ -950,10 +950,12 @@ unrecognizedCommandLineSwitch:
 				SDL_free(event.drop.file);
 				break;
 
-			// Refresh GUI if window resized
+			// Refresh GUI if window is unhidden or resized
 			case SDL_WINDOWEVENT:
 				switch (event.window.event) {
+                    case SDL_WINDOWEVENT_EXPOSED:
 					case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT_SHOWN:
 						myTrackerScreen->update();
 				}
 				break;
