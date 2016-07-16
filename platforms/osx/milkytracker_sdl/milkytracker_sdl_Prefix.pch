@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'milkytracker_sdl' target in the 'milkytracker_sdl' project
-//
-
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif

@@ -1,5 +1,0 @@
-//
-// Prefix header for all source files of the 'PPUI_OSX_Universal' target in the 'PPUI_OSX_Universal' project.
-//
-
-#include <Carbon/Carbon.h>
