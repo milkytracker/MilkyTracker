@@ -1,15 +1,17 @@
-[submodule "src/milkyplay/drivers/generic/rtaudio"]
-	path = src/milkyplay/drivers/generic/rtaudio
+[submodule "rtaudio"]
+	path = src/submodules/rtaudio
 	url = https://github.com/thestk/rtaudio.git
-[submodule "src/midi/rtmidi"]
-	path = src/midi/rtmidi
+	branch = releases
+[submodule "rtmidi"]
+	path = src/submodules/rtmidi
 	url = https://github.com/thestk/rtmidi.git
-[submodule "src/compression/lhasa"]
-	path = src/compression/lhasa
+	branch = releases
+[submodule "lhasa"]
+	path = src/submodules/lhasa
 	url = https://github.com/fragglet/lhasa.git
-[submodule "src/compression/zlib/generic"]
-	path = src/compression/zlib/generic
+[submodule "zlib"]
+	path = src/submodules/zlib
 	url = https://github.com/madler/zlib.git
-[submodule "src/compression/zziplib/generic"]
-	path = src/compression/zziplib/generic
+[submodule "zziplib"]
+	path = src/submodules/zziplib
 	url = https://github.com/dwhinham/zziplib.git
