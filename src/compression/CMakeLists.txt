@@ -43,130 +43,139 @@ set(
 
 # Under Windows, build sources from Git submodules if present
 if(WIN32)
-    if(EXISTS ${PROJECT_SOURCE_DIR}/src/compression/lhasa/lib/public/lhasa.h)
+    set(LHASA_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/lhasa)
+    set(ZLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zlib)
+    set(ZZIPLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zziplib)
+
+    if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
         set(LHASA_FOUND ON)
-        set(LHASA_INCLUDE_DIRS lhasa/lib lhasa/lib/public)
-        set(LHASA_SOURCES
-            lhasa/lib/crc16.c
-            lhasa/lib/ext_header.c
-            lhasa/lib/lh1_decoder.c
-            lhasa/lib/lh5_decoder.c
-            lhasa/lib/lh6_decoder.c
-            lhasa/lib/lh7_decoder.c
-            lhasa/lib/lha_arch_unix.c
-            lhasa/lib/lha_arch_win32.c
-            lhasa/lib/lha_basic_reader.c
-            lhasa/lib/lha_decoder.c
-            lhasa/lib/lha_endian.c
-            lhasa/lib/lha_file_header.c
-            lhasa/lib/lha_input_stream.c
-            lhasa/lib/lha_reader.c
-            lhasa/lib/lhx_decoder.c
-            lhasa/lib/lz5_decoder.c
-            lhasa/lib/lzs_decoder.c
-            lhasa/lib/macbinary.c
-            lhasa/lib/null_decoder.c
-            lhasa/lib/pm1_decoder.c
-            lhasa/lib/pm2_decoder.c
+        set(
+            LHASA_INCLUDE_DIRS
+            ${LHASA_SUBMODULE_DIR}/lib
+            ${LHASA_SUBMODULE_DIR}/lib/public
+        )
+        set(
+            LHASA_SOURCES
+            ${LHASA_SUBMODULE_DIR}/lib/crc16.c
+            ${LHASA_SUBMODULE_DIR}/lib/ext_header.c
+            ${LHASA_SUBMODULE_DIR}/lib/lh1_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lh5_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lh6_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lh7_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_arch_unix.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_arch_win32.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_basic_reader.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_endian.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_file_header.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_input_stream.c
+            ${LHASA_SUBMODULE_DIR}/lib/lha_reader.c
+            ${LHASA_SUBMODULE_DIR}/lib/lhx_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lz5_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/lzs_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/macbinary.c
+            ${LHASA_SUBMODULE_DIR}/lib/null_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/pm1_decoder.c
+            ${LHASA_SUBMODULE_DIR}/lib/pm2_decoder.c
         )
         set(LHASA_HEADERS
-            lhasa/lib/crc16.h
-            lhasa/lib/ext_header.h
-            lhasa/lib/lha_arch.h
-            lhasa/lib/lha_basic_reader.h
-            lhasa/lib/lha_decoder.h
-            lhasa/lib/lha_endian.h
-            lhasa/lib/lha_file_header.h
-            lhasa/lib/lha_input_stream.h
-            lhasa/lib/macbinary.h
-            lhasa/lib/public/lha_decoder.h
-            lhasa/lib/public/lha_file_header.h
-            lhasa/lib/public/lha_input_stream.h
-            lhasa/lib/public/lha_reader.h
-            lhasa/lib/public/lhasa.h
+            ${LHASA_SUBMODULE_DIR}/lib/crc16.h
+            ${LHASA_SUBMODULE_DIR}/lib/ext_header.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_arch.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_basic_reader.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_decoder.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_endian.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_file_header.h
+            ${LHASA_SUBMODULE_DIR}/lib/lha_input_stream.h
+            ${LHASA_SUBMODULE_DIR}/lib/macbinary.h
+            ${LHASA_SUBMODULE_DIR}/lib/public/lha_decoder.h
+            ${LHASA_SUBMODULE_DIR}/lib/public/lha_file_header.h
+            ${LHASA_SUBMODULE_DIR}/lib/public/lha_input_stream.h
+            ${LHASA_SUBMODULE_DIR}/lib/public/lha_reader.h
+            ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h
         )
         source_group(lhasa FILES ${LHASA_SOURCES} ${LHASA_HEADERS})
         list(APPEND SOURCES ${LHASA_SOURCES})
         list(APPEND HEADERS ${LHASA_HEADERS})
     endif()
 
-    if(EXISTS ${PROJECT_SOURCE_DIR}/src/compression/zlib/generic/zlib.h)
+    if(EXISTS ${ZLIB_SUBMODULE_DIR}/zlib.h)
         set(ZLIB_FOUND ON)
-        set(ZLIB_INCLUDE_DIRS zlib/generic)
+        set(ZLIB_INCLUDE_DIRS ${ZLIB_SUBMODULE_DIR})
         set(ZLIB_SOURCES
-            zlib/generic/adler32.c
-            zlib/generic/compress.c
-            zlib/generic/crc32.c
-            zlib/generic/deflate.c
-            zlib/generic/gzclose.c
-            zlib/generic/gzlib.c
-            zlib/generic/gzread.c
-            zlib/generic/gzwrite.c
-            zlib/generic/infback.c
-            zlib/generic/inffast.c
-            zlib/generic/inflate.c
-            zlib/generic/inftrees.c
-            zlib/generic/trees.c
-            zlib/generic/uncompr.c
-            zlib/generic/zutil.c
+            ${ZLIB_SUBMODULE_DIR}/adler32.c
+            ${ZLIB_SUBMODULE_DIR}/compress.c
+            ${ZLIB_SUBMODULE_DIR}/crc32.c
+            ${ZLIB_SUBMODULE_DIR}/deflate.c
+            ${ZLIB_SUBMODULE_DIR}/gzclose.c
+            ${ZLIB_SUBMODULE_DIR}/gzlib.c
+            ${ZLIB_SUBMODULE_DIR}/gzread.c
+            ${ZLIB_SUBMODULE_DIR}/gzwrite.c
+            ${ZLIB_SUBMODULE_DIR}/infback.c
+            ${ZLIB_SUBMODULE_DIR}/inffast.c
+            ${ZLIB_SUBMODULE_DIR}/inflate.c
+            ${ZLIB_SUBMODULE_DIR}/inftrees.c
+            ${ZLIB_SUBMODULE_DIR}/trees.c
+            ${ZLIB_SUBMODULE_DIR}/uncompr.c
+            ${ZLIB_SUBMODULE_DIR}/zutil.c
         )
         set(ZLIB_HEADERS
-            zlib/generic/crc32.h
-            zlib/generic/deflate.h
-            zlib/generic/gzguts.h
-            zlib/generic/inffast.h
-            zlib/generic/inffixed.h
-            zlib/generic/inflate.h
-            zlib/generic/inftrees.h
-            zlib/generic/trees.h
-            zlib/generic/zlib.h
-            zlib/generic/zutil.h
+            ${ZLIB_SUBMODULE_DIR}/crc32.h
+            ${ZLIB_SUBMODULE_DIR}/deflate.h
+            ${ZLIB_SUBMODULE_DIR}/gzguts.h
+            ${ZLIB_SUBMODULE_DIR}/inffast.h
+            ${ZLIB_SUBMODULE_DIR}/inffixed.h
+            ${ZLIB_SUBMODULE_DIR}/inflate.h
+            ${ZLIB_SUBMODULE_DIR}/inftrees.h
+            ${ZLIB_SUBMODULE_DIR}/trees.h
+            ${ZLIB_SUBMODULE_DIR}/zlib.h
+            ${ZLIB_SUBMODULE_DIR}/zutil.h
         )
         source_group(zlib FILES ${ZLIB_SOURCES} ${ZLIB_HEADERS})
         list(APPEND SOURCES ${ZLIB_SOURCES})
         list(APPEND HEADERS ${ZLIB_HEADERS})
     endif()
 
-    if(EXISTS ${PROJECT_SOURCE_DIR}/src/compression/zziplib/generic/zzip/zzip.h)
+    if(EXISTS ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h)
         set(ZZIPLIB_FOUND ON)
-        set(ZZIPLIB_INCLUDE_DIRS zziplib/generic)
+        set(ZZIPLIB_INCLUDE_DIRS ${ZZIPLIB_SUBMODULE_DIR})
         set(ZZIPLIB_SOURCES
-            zziplib/generic/zzip/dir.c
-            zziplib/generic/zzip/err.c
-            zziplib/generic/zzip/fetch.c
-            zziplib/generic/zzip/file.c
-            zziplib/generic/zzip/fseeko.c
-            zziplib/generic/zzip/info.c
-            zziplib/generic/zzip/memdisk.c
-            zziplib/generic/zzip/mmapped.c
-            zziplib/generic/zzip/plugin.c
-            zziplib/generic/zzip/stat.c
-            zziplib/generic/zzip/write.c
-            zziplib/generic/zzip/zip.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/dir.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/err.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/fetch.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/file.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/fseeko.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/info.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/memdisk.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/mmapped.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/plugin.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/stat.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/write.c
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/zip.c
         )
         set(ZZIPLIB_HEADERS
-            zziplib/generic/zzip/__debug.h
-            zziplib/generic/zzip/__dirent.h
-            zziplib/generic/zzip/__fnmatch.h
-            zziplib/generic/zzip/__hints.h
-            zziplib/generic/zzip/__mmap.h
-            zziplib/generic/zzip/_msvc.h
-            zziplib/generic/zzip/autoconf.h
-            zziplib/generic/zzip/conf.h
-            zziplib/generic/zzip/fetch.h
-            zziplib/generic/zzip/file.h
-            zziplib/generic/zzip/format.h
-            zziplib/generic/zzip/fseeko.h
-            zziplib/generic/zzip/info.h
-            zziplib/generic/zzip/lib.h
-            zziplib/generic/zzip/memdisk.h
-            zziplib/generic/zzip/mmapped.h
-            zziplib/generic/zzip/plugin.h
-            zziplib/generic/zzip/stdint.h
-            zziplib/generic/zzip/types.h
-            zziplib/generic/zzip/write.h
-            zziplib/generic/zzip/zzip.h
-            zziplib/generic/zzip/zzip32.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/__debug.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/__dirent.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/__fnmatch.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/__hints.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/__mmap.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/_msvc.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/autoconf.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/conf.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/fetch.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/file.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/format.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/fseeko.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/info.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/lib.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/memdisk.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/mmapped.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/plugin.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/stdint.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/types.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/write.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h
+            ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip32.h
         )
         source_group(zziplib FILES ${ZZIPLIB_SOURCES} ${ZZIPLIB_HEADERS})
         list(APPEND SOURCES ${ZZIPLIB_SOURCES})

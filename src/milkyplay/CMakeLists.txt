@@ -126,38 +126,39 @@ elseif(WIN32)
     message(STATUS "Enabled WaveOut support")
 
     # Build sources from RtAudio Git submodule if present
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/drivers/generic/rtaudio/RtAudio.cpp)
+    set(RTAUDIO_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/rtaudio)
+    if(EXISTS ${RTAUDIO_SUBMODULE_DIR}/RtAudio.cpp)
         message(STATUS "Enabled RtAudio support")
         list(
             APPEND SOURCES
+            ${RTAUDIO_SUBMODULE_DIR}/include/asio.cpp
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrivers.cpp
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiolist.cpp
+            ${RTAUDIO_SUBMODULE_DIR}/include/iasiothiscallresolver.cpp
+            ${RTAUDIO_SUBMODULE_DIR}/RtAudio.cpp
             drivers/generic/AudioDriver_RTAUDIO.cpp
-            drivers/generic/rtaudio/include/asio.cpp
-            drivers/generic/rtaudio/include/asiodrivers.cpp
-            drivers/generic/rtaudio/include/asiolist.cpp
-            drivers/generic/rtaudio/include/iasiothiscallresolver.cpp
-            drivers/generic/rtaudio/RtAudio.cpp
             drivers/generic/RtAudio4Impl.cpp
         )
         list(
             APPEND HEADERS
+            ${RTAUDIO_SUBMODULE_DIR}/include/asio.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrivers.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrvr.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiolist.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/asiosys.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/dsound.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/FunctionDiscoveryKeys_devpkey.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/ginclude.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/iasiodrv.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/iasiothiscallresolver.h
+            ${RTAUDIO_SUBMODULE_DIR}/include/soundcard.h
+            ${RTAUDIO_SUBMODULE_DIR}/RtAudio.h
             drivers/generic/AudioDriver_RTAUDIO.h
-            drivers/generic/rtaudio/include/asio.h
-            drivers/generic/rtaudio/include/asiodrivers.h
-            drivers/generic/rtaudio/include/asiodrvr.h
-            drivers/generic/rtaudio/include/asiolist.h
-            drivers/generic/rtaudio/include/asiosys.h
-            drivers/generic/rtaudio/include/dsound.h
-            drivers/generic/rtaudio/include/FunctionDiscoveryKeys_devpkey.h
-            drivers/generic/rtaudio/include/ginclude.h
-            drivers/generic/rtaudio/include/iasiodrv.h
-            drivers/generic/rtaudio/include/iasiothiscallresolver.h
-            drivers/generic/rtaudio/include/soundcard.h
-            drivers/generic/rtaudio/RtAudio.h
         )
         include_directories(
             ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/generic
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/generic/rtaudio
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/generic/rtaudio/include
+            ${RTAUDIO_SUBMODULE_DIR}
+            ${RTAUDIO_SUBMODULE_DIR}/include
         )
         add_definitions(
             -D__WINDOWS_DS__
