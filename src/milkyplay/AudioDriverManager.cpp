@@ -53,7 +53,25 @@
 
 #if !defined(_WIN32_WCE) && !defined(__SKIPRTAUDIO__)
 #include "AudioDriver_RTAUDIO.h"
-#include <VersionHelpers.h>
+
+/* Taken from VersionHelpers.h in the Windows 8 SDK; not present in the XP-compatible SDKs */
+static bool IsWindowsVistaOrGreater()
+{
+	OSVERSIONINFOEXW osvi = { sizeof(osvi), 0, 0, 0, 0, { 0 }, 0, 0 };
+	DWORDLONG const dwlConditionMask = VerSetConditionMask(
+		VerSetConditionMask(
+		VerSetConditionMask(
+			0,	VER_MAJORVERSION, VER_GREATER_EQUAL),
+				VER_MINORVERSION, VER_GREATER_EQUAL),
+				VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+
+	osvi.dwMajorVersion = HIBYTE(_WIN32_WINNT_VISTA);
+	osvi.dwMinorVersion = LOBYTE(_WIN32_WINNT_VISTA);
+	osvi.wServicePackMajor = 0;
+
+	return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
+}
+
 #endif
 #if !defined(_WIN32_WCE) && defined(__WASAPI__)
 #include "AudioDriver_PORTAUDIO.h"
