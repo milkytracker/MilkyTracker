@@ -22,6 +22,16 @@
 cmake_minimum_required(VERSION 2.6)
 project(MilkyTracker)
 
+# Force SDL if requested
+option(FORCESDL "Force SDL instead of native" OFF)
+if(FORCESDL)
+    unset(APPLE)
+    unset(WIN32)
+    add_definitions(-D__FORCE_SDL_AUDIO__)
+    # Frameworks not supported by findSDL2.cmake
+    set(CMAKE_FIND_FRAMEWORK NEVER)
+endif()
+
 # Lowercase project name for binaries and packaging
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
@@ -59,7 +69,7 @@ else()
 endif()
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
 set(CPACK_PACKAGE_VENDOR "MilkyTracker Team")
-set(CPACK_PACKAGE_CONTACT "support@milkyTracker.org")
+set(CPACK_PACKAGE_CONTACT "support@milkytracker.org")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${VER_FULL}")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VER_X})
 set(CPACK_PACKAGE_VERSION_MINOR ${VER_YY})
@@ -137,7 +147,7 @@ else()
     # https://bugzilla.libsdl.org/show_bug.cgi?id=3295
     cmake_policy(SET CMP0004 OLD)
 
-    find_package(SDL2 REQUIRED)
+    find_package(SDL2 2 REQUIRED)
 endif()
 
 # Prefer static linkage under OS X for libraries located with find_package()
