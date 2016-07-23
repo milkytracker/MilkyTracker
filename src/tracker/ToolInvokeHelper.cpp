@@ -148,6 +148,8 @@ pp_int32 ToolInvokeHelper::ActionOkay(PPObject* sender)
 				tracker.selectInstrument(value);
 			}
 		}
+		case ToolTypeNone:
+			break;
 	}
 
 	return 0;

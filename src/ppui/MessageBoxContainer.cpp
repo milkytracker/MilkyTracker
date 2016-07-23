@@ -158,7 +158,9 @@ pp_int32 PPMessageBoxContainer::dispatchEvent(PPEvent* event)
 				captured = false;
 				return 0;
 			}
-			break;			
+			break;
+		default:
+			break;
 	}
 	
 	return PPContainer::dispatchEvent(event);

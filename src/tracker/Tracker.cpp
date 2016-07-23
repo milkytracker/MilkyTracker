@@ -2576,9 +2576,9 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 			return loadTypeFromFile(FileTypes::FileTypePatternXP, fileName);
 		case FileIdentificator::FileTypeTrack:
 			return loadTypeFromFile(FileTypes::FileTypeTrackXT, fileName);
+		default:
+			return false;
 	}
-	
-	return false;
 }
 
 bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bool suspendPlayer, bool repaint, bool saveCheck)

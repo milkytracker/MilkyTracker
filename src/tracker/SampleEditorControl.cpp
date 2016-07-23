@@ -657,6 +657,8 @@ void SampleEditorControl::startMarkerDragging(const PPPoint* p)
 				selecting = -1;
 				resizing = 3;
 				break;
+			case MouseCursorTypeWait:
+				break;
 		}
 	}
 	
@@ -1931,6 +1933,9 @@ void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::Edi
 		case SampleEditor::NotificationUpdateNoChanges:
 			notifyUpdate();
 			break;
-
+		case SampleEditor::NotificationUndoRedo:
+	case EditorBase::NotificationPrepareCritical:
+		case EditorBase::NotificationUnprepareCritical:
+			break;
 	}
 }

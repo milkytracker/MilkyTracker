@@ -457,6 +457,8 @@ unmuteAll:
 						case ScrollModeStayInCenter:
 							assureCursorVisible();
 							break;
+						case ScrollModeToEnd:
+							break;
 					}
 				}
 				
@@ -1001,6 +1003,8 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 				
 				break;
 			}
+			default:
+				break;
 		}
 		return 0;
 	}

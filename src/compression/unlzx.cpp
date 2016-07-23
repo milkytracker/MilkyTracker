@@ -119,7 +119,7 @@ struct Unlzx::UnLZX *Unlzx::unlzx_init(void)
 {
 	struct UnLZX *unlzx = NULL;
 	
-	if (unlzx = (struct UnLZX *)malloc(sizeof(struct UnLZX)))
+	if ((unlzx = (struct UnLZX *)malloc(sizeof(struct UnLZX))))
 	{
 		memset(unlzx, 0, sizeof(struct UnLZX));
 		unlzx->match_pattern[0] = '*';
@@ -406,7 +406,7 @@ signed long Unlzx::read_literal_table(struct UnLZX *unlzx)
 					control += *unlzx->source++ << shift;
 				}
 			}
-			if (abort = make_decode_table(20, 6, unlzx->huffman20_len, unlzx->huffman20_table)) break;
+			if ((abort = make_decode_table(20, 6, unlzx->huffman20_len, unlzx->huffman20_table))) break;
 			do
 			{
 				if ((symbol = unlzx->huffman20_table[control & 63]) >= 20)
@@ -670,7 +670,7 @@ signed long Unlzx::extract_normal(XMFile* in_file, struct UnLZX *unlzx, bool& fo
 				if(unlzx->source >= unlzx->source_end)
 				{
 					temp = unlzx->read_buffer;
-					if (count = temp - unlzx->source + 16384)
+					if ((count = temp - unlzx->source + 16384))
 					{
 						do
 						{
@@ -706,7 +706,7 @@ signed long Unlzx::extract_normal(XMFile* in_file, struct UnLZX *unlzx, bool& fo
 				}
 				if (unlzx->destination >= unlzx->decrunch_buffer + 65794)
 				{
-					if (count = unlzx->destination - unlzx->decrunch_buffer - 65536)
+					if ((count = unlzx-> destination - unlzx-> decrunch_buffer - 65536))
 					{
 						temp = (unlzx->destination = unlzx->decrunch_buffer) + 65536;
 						do
@@ -902,14 +902,14 @@ signed long Unlzx::extract_archive(XMFile *in_file, struct UnLZX *unlzx, bool& f
 										unlzx->pack_size = (unlzx->archive_header[9] << 24) + (unlzx->archive_header[8] << 16) + (unlzx->archive_header[7] << 8) + unlzx->archive_header[6];
 										unlzx->pack_mode = unlzx->archive_header[11];
 										unlzx->crc = (unlzx->archive_header[25] << 24) + (unlzx->archive_header[24] << 16) + (unlzx->archive_header[23] << 8) + unlzx->archive_header[22];
-										if (node = (struct filename_node *)malloc(sizeof(struct filename_node)))
+										if ((node = (struct filename_node *) malloc(sizeof(struct filename_node))))
 										{
 											*filename_next = node;
 											filename_next = &(node->next);
 											node->next = 0;
 											node->length = unlzx->unpack_size;
 											node->crc = unlzx->crc;
-											for (temp = 0; node->filename[temp] = unlzx->header_filename[temp]; temp++);
+											for (temp = 0; (node->filename[temp] = unlzx->header_filename[temp]); temp++);
 											
 											if (unlzx->pack_size)
 											{
@@ -934,7 +934,7 @@ signed long Unlzx::extract_archive(XMFile *in_file, struct UnLZX *unlzx, bool& f
 												
 												if (abort) break;
 												temp_node = unlzx->filename_list;
-												while (node = temp_node)
+												while ((node = temp_node))
 												{
 													temp_node = node->next;
 													free(node);
@@ -1010,7 +1010,7 @@ signed long Unlzx::extract_archive(XMFile *in_file, struct UnLZX *unlzx, bool& f
 #endif
 	} while(!abort);
 	temp_node = unlzx->filename_list;
-	while(node = temp_node)
+	while((node = temp_node))
 	{
 		temp_node = node->next;
 		free(node);
@@ -1327,7 +1327,7 @@ bool Unlzx::extractFile(bool extract, const PPSystemString* outFilename)
 {
 	int result = 0;
 	
-	if (unlzx = unlzx_init())
+	if ((unlzx = unlzx_init()))
 	{
 		if (extract)
 		{

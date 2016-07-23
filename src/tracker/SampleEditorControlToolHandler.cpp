@@ -155,7 +155,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
 			break;
 		}
-
+		default:
+			break;
 	}
 	
 	dialog->show();
@@ -312,6 +313,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_generateSawtooth(&par);
 			break;
 		}
+		default:
+			break;
 	}
 	
 	return true;

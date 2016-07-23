@@ -163,7 +163,6 @@ private:
 public:
 	enum EnvelopeToolTypes
 	{
-		EnvelopeToolTypeNone,
 		EnvelopeToolTypeScaleX,
 		EnvelopeToolTypeScaleY
 	};

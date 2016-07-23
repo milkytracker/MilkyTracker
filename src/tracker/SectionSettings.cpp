@@ -364,6 +364,8 @@ public:
 		visible(false)
 	{
 	}
+	
+	virtual ~TabPage() {}
 
 	PPTransparentContainer* getContainer() const { return container; }
 

@@ -112,7 +112,7 @@ ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes ty
 
 		case MIXER_DUMMY:
 			return new ResamplerDummy();
+		case MIXER_INVALID:
+			return NULL;
 	}
-	
-	return NULL;
 }

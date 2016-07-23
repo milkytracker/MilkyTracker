@@ -142,7 +142,7 @@ void Fire::render(pp_uint8* buffer)
 	
 	for (y = 0; y < h+1; y++)
 	{
-		*vptr++;
+		vptr++;
 		for (x = 1; x < w; x++)
 		{
 			pp_uint32 c = (vptr[w] + vptr[-1] + vptr[+1] + vptr[0]) >> 2;

@@ -534,7 +534,7 @@ mp_sint32 SampleLoaderIFF::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 	
 	bool hires = (smp->type & 16) != 0;
 	
-	mp_dword chunkLen = 70 + hires ? smp->samplen << 1 : smp->samplen;
+	mp_dword chunkLen = 70 + (hires ? smp-> samplen << 1 : smp-> samplen);
 	f.writeDword(swapDW(chunkLen));
 	
 	f.write(hires ? "16SV" : "8SVX", 1, 4);

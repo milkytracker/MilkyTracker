@@ -395,7 +395,7 @@ mp_sint32 SampleLoaderAIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 			smp->loopstart = 0;
 			smp->looplen = 0;
 			smp->type = 0;
-			if ((commChunk.sampleSize == 16))
+			if (commChunk.sampleSize == 16)
 				smp->type |= 16;		
 						
 			nameToSample(preferredDefaultName, smp);

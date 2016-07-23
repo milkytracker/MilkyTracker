@@ -65,6 +65,7 @@ public:
 	class EditorNotificationListener
 	{
 	public:
+		virtual ~EditorNotificationListener() {}
 		virtual void editorNotification(EditorBase* sender, EditorNotifications notification) = 0;
 	};
 	

@@ -52,7 +52,7 @@ void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 	snd_pcm_sframes_t avail, commitres;
 	snd_pcm_state_t state;
 	int first = 0, err;
-	
+
 	while (1) {
 		state = snd_pcm_state(handle);
 		if (state == SND_PCM_STATE_XRUN) {
@@ -99,7 +99,7 @@ void AudioDriver_ALSA::async_direct_callback(snd_async_handler_t *ahandler)
 		}
 
 		if(frames != audioDriver->period_size)
-			fprintf(stderr, "ALSA: Invalid buffer size: %i (should be %i), skipping..\n", frames, audioDriver->period_size);
+			fprintf(stderr, "ALSA: Invalid buffer size: %lu (should be %lu), skipping..\n", frames, audioDriver->period_size);
 			// Certain audio drivers will periodically request buffers of less than one period when
 			// soft-resampling (ie, not running at native frequency).  Milkytracker can't handle this,
 			// and bad things happen - so best to warn the user and not process.
@@ -131,7 +131,7 @@ AudioDriver_ALSA::~AudioDriver_ALSA()
 }
 
 // On error return a negative value
-// If the requested buffer size can be served return 0, 
+// If the requested buffer size can be served return 0,
 // otherwise return the number of 16 bit words contained in the obtained buffer
 mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 periodSizeAsSamples, const mp_uint32 mixFrequency, MasterMixer* mixer)
 {
@@ -145,7 +145,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 periodSizeAsSamples, const mp_u
 		fprintf(stderr, "ALSA: Failed to open device 'default' (%s)\n", snd_strerror(err));
 		return -1;
 	}
-	
+
 	if ((err = snd_pcm_set_params(pcm,
 		SND_PCM_FORMAT_S16,
 		SND_PCM_ACCESS_MMAP_INTERLEAVED,
@@ -163,7 +163,7 @@ mp_sint32 AudioDriver_ALSA::initDevice(mp_sint32 periodSizeAsSamples, const mp_u
 	period_size = periodSizeAsSamples * 2;
 	snd_pcm_get_params(pcm, &buffer_size, &period_size);
 	stream = new char[period_size * 2];
-	printf("ALSA: Period size = %i frames (requested %i), buffer size = %i frames\n", period_size, periodSizeAsSamples / 2, buffer_size);
+	printf("ALSA: Period size = %lu frames (requested %i), buffer size = %lu frames\n", period_size, periodSizeAsSamples / 2, buffer_size);
 
 	/* get the current swparams */
 	err = snd_pcm_sw_params_current(pcm, swparams);
@@ -216,7 +216,7 @@ mp_sint32 AudioDriver_ALSA::start()
 			// Sanity check
 			if (my_areas->step != 32 && my_areas->first != 0)
 				fprintf(stderr, "ALSA: Unsupported audio format.\n");
-				
+
 			memset(static_cast<char*> (my_areas->addr) + offset*4, 0, frames * 4);
 			int commitres = snd_pcm_mmap_commit(pcm, offset, frames);
 			if (err < 0 || (snd_pcm_uframes_t)commitres != frames) {
@@ -235,7 +235,7 @@ mp_sint32 AudioDriver_ALSA::start()
 		fprintf(stderr, "ALSA: Could not start PCM device (%s)\n", snd_strerror(err));
 		return -1;
 	}
-	
+
 	deviceHasStarted = true;
 	return 0;
 }

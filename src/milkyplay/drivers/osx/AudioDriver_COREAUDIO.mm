@@ -129,6 +129,7 @@ OSStatus AudioDriver_COREAUDIO::OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 
 AudioDriver_COREAUDIO::AudioDriver_COREAUDIO() :
 	AudioDriverBase(),
+	gAudioIOProcID(NULL),
 	driverID(NULL),
 	defaultDevice(true),
 	sampleCounter(0),

@@ -80,7 +80,6 @@ void PPDisplayDevice::adjust(pp_int32& x, pp_int32& y)
 	switch (orientation)
 	{
 		case ORIENTATION_NORMAL:
-		case ORIENTATION_ROTATE180:
 			break;
 			
 		case ORIENTATION_ROTATE90CCW:
@@ -112,9 +111,6 @@ void PPDisplayDevice::transform(pp_int32& x, pp_int32& y)
 			y = realWidth - 1 - h;
 			break;
 			
-		case ORIENTATION_ROTATE180:
-			break;
-			
 		case ORIENTATION_ROTATE90CCW:
 			h = x;
 			x = realHeight - 1 - y;
@@ -136,9 +132,6 @@ void PPDisplayDevice::transformInverse(pp_int32& x, pp_int32& y)
 			h = x;
 			x = realWidth - y;
 			y = h;
-			break;
-			
-		case ORIENTATION_ROTATE180:
 			break;
 			
 		case ORIENTATION_ROTATE90CCW:

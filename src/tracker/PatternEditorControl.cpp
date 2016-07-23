@@ -1481,7 +1481,6 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 		}
 
 		case PatternEditor::NotificationFetchUndoData:
-		{
 			if (sizeof(undoInfo) == patternEditor->getUndoUserDataLen())
 			{
 				memcpy(&undoInfo, patternEditor->getUndoUserData(), sizeof(undoInfo));
@@ -1493,7 +1492,8 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 				notifyUpdate();
 			}	
 			break;
-		}
+		default:
+			break;
 	}
 }
 

@@ -38,7 +38,7 @@ private:
 
 public:
 	PictureGlow(int w, int h, int rShift, unsigned short* picture) :
-		resShift(resShift),
+		resShift(0),
 		pictureBuffer(picture)
 	{
 		width = w;

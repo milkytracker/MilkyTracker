@@ -55,8 +55,6 @@ mp_sint32 PlayerBase::kick()
 	paused = false;
 	// playing => song has not stopped yet
 	halted = false;
-	// repeat mode
-	this->repeat = repeat;
 	// set idle mode
 	setIdle(idle);
 	

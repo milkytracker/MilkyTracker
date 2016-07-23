@@ -465,6 +465,8 @@ pp_int32 PianoControl::dispatchEvent(PPEvent* event)
 							eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 							break;
 						}
+						case ModeEdit:
+							break;
 					}
 					
 					parentScreen->paintControl(this);

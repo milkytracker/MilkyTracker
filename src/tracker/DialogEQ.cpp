@@ -44,13 +44,13 @@ DialogEQ::DialogEQ(PPScreen* screen,
 	PPDialogBase(),
 	numBands(numBands)
 {
-	numSliders = 3;
-	
 	switch (numBands)
 	{
 		case EQ10Bands:
 			numSliders = 10;
 			break;
+		case EQ3Bands:
+			numSliders = 3;
 	}
 	
 	char dummy[100];

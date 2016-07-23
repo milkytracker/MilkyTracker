@@ -86,8 +86,8 @@ private:
 			case EditorBase::NotificationUnprepareCritical:
 				moduleEditor.leaveCriticalSection();
 				break;
-
-
+			default:
+				break;
 		}
 	}
 	
@@ -767,6 +767,7 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 	
 	switch (saveType)
 	{
+		case ModSaveTypeDefault:
 		case ModSaveTypeXM:
 			res = module->saveExtendedModule(fileName) == 0;
 			break;

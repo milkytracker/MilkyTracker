@@ -60,6 +60,8 @@ void SectionSwitcher::showBottomSection(ActiveBottomSections section, bool paint
 		case ActiveBottomSectionSampleEditor:
 			tracker.sectionSamples->show(false);
 			break;
+		case ActiveBottomSectionNone:
+			break;
 	}
 
 	if (bottomSection != section)

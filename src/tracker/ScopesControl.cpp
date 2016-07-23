@@ -613,7 +613,8 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 			rMouseDownInChannel = -1;
 			break;
 		}
-		
+		default:
+			break;
 	}
 
 	return 0;

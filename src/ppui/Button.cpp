@@ -244,9 +244,10 @@ pp_int32 PPButton::dispatchEvent(PPEvent* event)
 				eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e); 
 			}
 			break;
+		default:
+			break;
 	}
-
-	return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event); 
+	return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event);
 }
 
 void PPButton::setText(const PPString& text) 

@@ -284,6 +284,7 @@ public:
 class PPPath
 {
 public:
+	virtual ~PPPath() {}
 	virtual const PPSystemString getCurrent() = 0;
 	
 	virtual bool change(const PPSystemString& path) = 0;

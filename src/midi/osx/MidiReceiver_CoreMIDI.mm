@@ -42,8 +42,8 @@ tracker(tracker),
 criticalSection(criticalSection),
 recordVelocity(true),
 velocityAmplify(100),
-clientRef(NULL),
-inputPortRef(NULL),
+clientRef(0),
+inputPortRef(0),
 numSourceEndpoints(0),
 sourceEndpoints(NULL)
 {

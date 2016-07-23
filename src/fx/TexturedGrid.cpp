@@ -188,7 +188,7 @@ void TexturedGrid::update(float syncFrac)
 			p.y = ((y-(gridSizeY>>1))<<16);
 			p.z = 0.0f;
 
-			/*int scale = 32768;
+			int scale = 32768;
 			for (int j = 0; j < numBlobs; j++) {
 				int dx = fpmul((blobs[j].x-p.x),blobs[j].strength);
 				int dy = fpmul((blobs[j].y-p.y),blobs[j].strength);

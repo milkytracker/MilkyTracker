@@ -1105,13 +1105,13 @@ void EnvelopeEditorControl::editorNotification(EditorBase* sender, EditorBase::E
 			notifyChanges();
 			break;
 		}
-			
+		default:
+			break;
 	}
 }
 
 EnvelopeEditorControl::ToolHandlerResponder::ToolHandlerResponder(EnvelopeEditorControl& theEnvelopeEditorControl) :
-	envelopeEditorControl(theEnvelopeEditorControl),
-	envelopeToolType(EnvelopeToolTypeNone)
+	envelopeEditorControl(theEnvelopeEditorControl)
 {
 }
 

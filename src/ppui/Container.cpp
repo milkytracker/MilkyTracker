@@ -110,7 +110,9 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 			case eMouseMoved:
 				res = control->dispatchEvent(event);
 				goto exit;
-		}		
+			default:
+				break;
+		}
 	}
 	
 	if (focusedControl)
@@ -134,6 +136,8 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 			case eMouseMoved:
 			case eMouseWheelMoved:
 				mouseEvent = true;
+				break;
+			default:
 				break;
 		}
 		
@@ -168,7 +172,6 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 		// and assign focus to that
 		case eFocusGainedNoRepaint:	
 		case eFocusGained:
-		{
 			if (focusedControl != NULL || caughtControl != NULL)
 				break;
 				
@@ -182,7 +185,8 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 				}
 			}
 			break;
-		}
+		default:
+			break;
 	}
 	
 	if (!handleEvent)
@@ -259,11 +263,12 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 					abortLoop = true;
 				}
 				break;
-		}
+			default:
+				break;
+}
 		
 		if (abortLoop || event->getID() == eInvalid)
 			break;
-		
 	}
 	
 exit:

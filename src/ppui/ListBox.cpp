@@ -469,6 +469,8 @@ pp_int32 PPListBox::dispatchEvent(PPEvent* event)
 						return 0;
 					case SelectReturnCodePlaceCursor:
 						goto placeCursor;
+					case SelectReturnCodeDefault:
+						break;
 				}
 			}
 			break;
@@ -520,6 +522,8 @@ dragorautoscroll:
 						return 0;
 					case SelectReturnCodePlaceCursor:
 						goto placeCursor;
+					case SelectReturnCodeDefault:
+						break;
 				}
 			}
 			else
@@ -561,6 +565,8 @@ dragorautoscroll:
 						return 0;
 					case SelectReturnCodePlaceCursor:
 						goto placeCursor;
+					case SelectReturnCodeDefault:
+						break;
 				}
 			}
 

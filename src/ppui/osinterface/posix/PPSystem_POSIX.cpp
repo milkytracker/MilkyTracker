@@ -56,18 +56,22 @@
 SYSCHAR System::buffer[PATH_MAX+1];
 
 const SYSCHAR* System::getTempFileName()
-{	
-	// Although tmpnam(3) generates names that are difficult to guess, it is 
-	// nevertheless possible that between the time that tmpnam(3) returns a pathname, 
-	// and the time that the program opens it, another program might create that 
-	// pathname using open(2), or create it as a symbolic link. This can lead to security holes. 
-	// To avoid such possibilities, use the open(2) O_EXCL flag to open the pathname. 
-	// Or better yet, use mkstemp(3) or tmpfile(3).
-	tmpnam(buffer);
-	// should not be the case, if it is the case, 
-	// create something that "might" work out
-	if (buffer == NULL)
+{
+	// Suppressed warning: "'tmpnam' is deprecated: This function is provided for
+	// compatibility reasons only. Due to security concerns inherent in the
+	// design of tmpnam(3), it is highly recommended that you use mkstemp(3)
+	// instead."
+
+	// Note: Replacing tmpnam() with mkstemp() requires modifying the module
+	// load, export and decompressor functions to accept a file handle (XMFILE)
+	// instead of a file name.
+#pragma clang diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	if ((tmpnam(buffer) == NULL))
+#pragma clang diagnostic pop
 	{
+		// should not be the case, if it is the case, create something that
+		// "might" work out
 		char *home = getenv("HOME");
 		if(home)
 		{
