@@ -155,7 +155,10 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
+	{
+		delete[] smpofs;
 		return MP_OUT_OF_MEMORY;
+	}
 
 	mp_uword* lut = new mp_uword[65536];
 

@@ -369,6 +369,8 @@ mp_sint32 SampleLoaderIFF::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 								delete[] name;
 							if (anno)
 								delete[] anno;
+							if (Body)
+								delete[] Body;
 							return MP_OUT_OF_MEMORY;
 						}
 						
