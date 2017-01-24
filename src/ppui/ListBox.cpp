@@ -1477,6 +1477,8 @@ void PPListBox::commitChanges()
 			delete editCopy;
 			editCopy = NULL;
 		}
+
+		startPos = 0;			// Reset horizontal scrollbar
 	}
 }
 
