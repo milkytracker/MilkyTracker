@@ -793,7 +793,7 @@ markSelection:
 		{
 			assureUpdate = false;
 
-			pp_uint16 character = *((pp_uint16*)event->getDataPtr());
+			pp_uint8 character = *((pp_uint8*)event->getDataPtr());
 
 			handleKeyChar(character);
 

@@ -187,7 +187,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
 
-static pp_int32 asciiToHex(pp_uint16 ascii)
+static pp_int32 asciiToHex(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
 	
@@ -283,7 +283,7 @@ static pp_int32 asciiToHex(pp_uint16 ascii)
 	return number;
 }
 
-static pp_int32 asciiToHexExtended(pp_uint16 ascii)
+static pp_int32 asciiToHexExtended(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
 
@@ -663,7 +663,7 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::handleKeyChar(pp_uint16 character)
+void PatternEditorControl::handleKeyChar(pp_uint8 character)
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	pp_int32 number = -1;
