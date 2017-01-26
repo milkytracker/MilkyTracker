@@ -1048,9 +1048,6 @@ static void InitTracker()
 
 	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
 
-	// Change preferred window size
-	myDisplayDevice->setSize(windowSize);
-	
 	if (fullScreen)
 		myDisplayDevice->goFullScreen(fullScreen);
 
