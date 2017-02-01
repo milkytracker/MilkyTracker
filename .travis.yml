@@ -26,9 +26,9 @@ matrix:
           - brew update
           - brew install lhasa libzzip sdl2
           - pushd resources/pictures/docicons/osx
-          - wget https://docerator.googlecode.com/files/docerator-2.0.zip
+          - wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/docerator/docerator-2.0.zip
           - unzip docerator-2.0.zip -d docerator
           - rm docerator-2.0.zip
-          - python genicons.py
+          - /usr/bin/python genicons.py
           - popd
         script: *cmake_build
