@@ -65,6 +65,11 @@ enum EEventDescriptor
 	eRMouseDoubleClick,
 	eRMouseDrag,
 	eRMouseRepeat,
+	eMMouseDown,
+	eMMouseUp,
+	eMMouseDoubleClick,
+	eMMouseDrag,
+	eMMouseRepeat,
 	eMouseMoved,
 	eMouseEntered,
 	eMouseLeft,
@@ -88,7 +93,7 @@ enum EEventDescriptor
 	ePreSelection,				// e.g. list box selection is about to change
 	eSelection,					// e.g. list box selection has been made
 	eValueChanged,
-	eUpdated,					
+	eUpdated,
 	eUpdateChanged,
 	eConfirmed,					// e.g. ok-press
 	eCanceled,					// e.g. cancel-press
@@ -121,20 +126,20 @@ public:
 		ID(ID),
 		dataSize(0),
 		metaData(theMetaData)
-	{ 
+	{
 	}
 
 	PPEvent(EEventDescriptor ID, void* dataPtr, pp_int32 dSize, pp_int32 theMetaData = 0) :
 		ID(ID),
 		dataSize(dSize),
 		metaData(theMetaData)
-	{ 
+	{
 		if (dSize <= (signed)sizeof(userData))
-			memcpy(userData, dataPtr, dataSize); 
+			memcpy(userData, dataPtr, dataSize);
 		else
 			exit(0);
 	}
-	
+
 	PPEvent(const PPEvent& event) :
 		ID(event.ID),
 		dataSize(event.dataSize),
@@ -145,11 +150,11 @@ public:
 
 	EEventDescriptor getID() const { return ID; }
 
-	const void* getDataPtr() const { return userData; }	
+	const void* getDataPtr() const { return userData; }
 	pp_int32 getDataSize() const { return dataSize; }
-	
+
 	pp_int32 getMetaData() const { return metaData; }
-	
+
 	void cancel() { ID = eInvalid; }
 
 	bool isMouseEvent() const
@@ -166,13 +171,18 @@ public:
 			case eRMouseDoubleClick:
 			case eRMouseDrag:
 			case eRMouseRepeat:
+			case eMMouseDown:
+			case eMMouseUp:
+			case eMMouseDoubleClick:
+			case eMMouseDrag:
+			case eMMouseRepeat:
 			case eMouseMoved:
 			case eMouseEntered:
 			case eMouseLeft:
 			case eMouseWheelMoved:
 				return true;
-            default:
-                return false;
+			default:
+				return false;
 		}
 	}
 };
