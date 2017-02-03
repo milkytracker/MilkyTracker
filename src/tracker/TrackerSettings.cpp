@@ -42,6 +42,7 @@
 #include "EnvelopeEditorControl.h"
 #include "SectionSamples.h"
 #include "SystemMessage.h"
+#include "ScopesControl.h"
 #include "SectionInstruments.h"
 #include "SectionSettings.h"
 #include "SectionSamples.h"
@@ -66,7 +67,7 @@ void Tracker::buildDefaultSettings()
 
 	// store version string to database
 	settingsDatabase->store("VERSION", MILKYTRACKER_VERSION);
-	// ---------- Mixer ---------- 
+	// ---------- Mixer ----------
 #ifdef __DEFAULTBUFFERSIZE__
 	settingsDatabase->store("BUFFERSIZE", __DEFAULTBUFFERSIZE__);
 #else
@@ -93,7 +94,7 @@ void Tracker::buildDefaultSettings()
 	// Only affects protracker playmodes
 	settingsDatabase->store("PLAYMODE_ADVANCED_PTPITCHLIMIT",1);
 	settingsDatabase->store("PLAYMODE_ADVANCED_PTPANNING", TrackerConfig::defaultProTrackerPanning);
-	
+
 	// ---------- Optimize --------
 	for (i = 0; i < (signed)SectionOptimize::getNumFlagGroups(); i++)
 	{
@@ -101,8 +102,9 @@ void Tracker::buildDefaultSettings()
 		settingsDatabase->store(buffer, SectionOptimize::getDefaultFlags(i));
 	}
 
-	// ---------- Layout ---------- 
+	// ---------- Layout ----------
 	settingsDatabase->store("FULLSCREEN", 0);
+	settingsDatabase->store("MIDDLECLICKSOLO", 0);
 
 	settingsDatabase->store("XRESOLUTION", PPScreen::getDefaultWidth());
 	settingsDatabase->store("YRESOLUTION", PPScreen::getDefaultHeight());
@@ -126,7 +128,7 @@ void Tracker::buildDefaultSettings()
 
 	// Scopes?
 	settingsDatabase->store("SCOPES", 1);
-	
+
 	// Pattern spacing
 	settingsDatabase->store("SPACING", 0);
 	// Trace instruments setting
@@ -208,11 +210,11 @@ void Tracker::buildDefaultSettings()
 	// disable note delay recording
 	settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", 0);
 
-	// ---------- Tabs ---------- 
+	// ---------- Tabs ----------
 	// Control playing of background tabs
 	settingsDatabase->store("TABS_STOPBACKGROUNDBEHAVIOUR", TabManager::StopTabsBehaviourNone);
-	settingsDatabase->store("TABS_TABSWITCHRESUMEPLAY", 0);	
-	settingsDatabase->store("TABS_LOADMODULEINNEWTAB", 0);	
+	settingsDatabase->store("TABS_TABSWITCHRESUMEPLAY", 0);
+	settingsDatabase->store("TABS_LOADMODULEINNEWTAB", 0);
 
 	settingsDatabase->store("ACTIVECOLORS", TrackerConfig::defaultColorPalette);
 
@@ -222,7 +224,7 @@ void Tracker::buildDefaultSettings()
 		sprintf(buffer, "PREDEFENVELOPEVOLUME_%i",i);
 		settingsDatabase->store(buffer, TrackerConfig::defaultPredefinedVolumeEnvelope);
 	}
-	
+
 	// Store panning envelopes
 	for (i = 0; i < TrackerConfig::numPredefinedEnvelopes; i++)
 	{
@@ -230,7 +232,7 @@ void Tracker::buildDefaultSettings()
 		settingsDatabase->store(buffer, TrackerConfig::defaultPredefinedPanningEnvelope);
 	}
 
-	// ---------- HD recorder last settings ---------- 
+	// ---------- HD recorder last settings ----------
 	settingsDatabase->store("HDRECORDER_MIXFREQ", 44100);
 	settingsDatabase->store("HDRECORDER_MIXERVOLUME", 256);
 	settingsDatabase->store("HDRECORDER_MIXERSHIFT", 1);
@@ -249,8 +251,8 @@ void Tracker::buildDefaultSettings()
 	{
 		sprintf(buffer, "PREDEFCOLORPALETTE_%i",i);
 		settingsDatabase->store(buffer, TrackerConfig::predefinedColorPalettes[i]);
-	}	
-	
+	}
+
 	//settingsDatabase->dump();
 }
 
@@ -312,7 +314,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 		{
 			playerController->switchPlayMode(PlayerController::PlayMode_ProTracker2, false);
 			// we set default to 4 channels so people will immediately be able to see
-			// which playmode is the active one 
+			// which playmode is the active one
 			setModuleNumChannels(4);
 		}
 		else if (str.compareTo("PROTRACKER3") == 0)
@@ -344,7 +346,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 			for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				playerController->setPanning((pp_uint8)i, panning[i]);
 		}
-		delete[] panning;		
+		delete[] panning;
 	}
 	// ---------------- Virtal channels -------------------
 	else if (theKey->getKey().compareTo("VIRTUALCHANNELS") == 0)
@@ -358,13 +360,18 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 		{
 			bool res = screen->goFullScreen(fullScreen);
 			theKey->store(screen->isFullScreen());
-			
+
 			if (!res)
 			{
 				SystemMessage message(*screen, SystemMessage::MessageFullScreenFailed);
 				message.show();
 			}
 		}
+	}
+	else if (theKey->getKey().compareTo("MIDDLECLICKSOLO") == 0)
+	{
+		if (scopesControl)
+			scopesControl->setMiddleClickSoloEnabled(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("ENVELOPEEDITORSCALE") == 0)
 	{
@@ -424,7 +431,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		if (patternEditorCtrl)
 			patternEditorCtrl->setAutoResize(v2 != 0);
-	}				
+	}
 	else if (theKey->getKey().compareTo("HEXCOUNT") == 0)
 	{
 		if (patternEditorCtrl)
@@ -468,12 +475,12 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("SAMPLEEDITORUNDOBUFFER") == 0)
 	{
 		if (sampleEditor)
-			sampleEditor->enableUndoStack(v2 != 0);					
+			sampleEditor->enableUndoStack(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("SAMPLEEDITORDECIMALOFFSETS") == 0)
 	{
 		if (sectionSamples)
-			sectionSamples->setOffsetFormat(v2);					
+			sectionSamples->setOffsetFormat(v2);
 	}
 	else if (theKey->getKey().compareTo("SAMPLEEDITORLASTVALUES") == 0)
 	{
@@ -482,7 +489,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 			PPDictionary* dict = PPDictionary::createFromString(theKey->getStringValue());
 			if (dict)
 				sampleEditorControl->getLastValues().restoreFromDictionary(*dict);
-				
+
 			delete dict;
 		}
 	}
@@ -622,7 +629,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 			str = theKey->getStringValue();
 			sectionSettings->setEncodedPalette(i, str);
 		}
-	}	
+	}
 	// ------------------ envelopes  --------------------
 	else if (theKey->getKey().startsWith("PREDEFENVELOPEVOLUME_"))
 	{
@@ -668,16 +675,16 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 		for (pp_uint32 i = 0; i < PPFont::FONT_LAST; i++)
 		{
 			const char* keyName = PPFont::getFamilyInternalName((PPFont::FontID)i);
-			
+
 			if (theKey->getKey().compareTo(keyName) == 0)
 			{
 				PPFont::selectFontFace((PPFont::FontID)i, theKey->getStringValue());
-			}			
+			}
 		}
 	}
 }
 
-void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings, 
+void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 										   TrackerSettingsDatabase& currentSettings)
 {
 	mixerSettings.mixFreq = currentSettings.restore("MIXERFREQ")->getIntValue();
@@ -691,8 +698,8 @@ void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 	mixerSettings.numVirtualChannels = currentSettings.restore("VIRTUALCHANNELS")->getIntValue();
 }
 
-void Tracker::applySettings(TrackerSettingsDatabase* newSettings, 
-							TrackerSettingsDatabase* currentSettings/* = NULL*/, 
+void Tracker::applySettings(TrackerSettingsDatabase* newSettings,
+							TrackerSettingsDatabase* currentSettings/* = NULL*/,
 							bool applyMixerSettings/* = true*/,
 							bool allowMixerRestart/* = true*/)
 {
@@ -711,20 +718,20 @@ void Tracker::applySettings(TrackerSettingsDatabase* newSettings,
 		if (currentSettings != NULL)
 		{
 			PPDictionaryKey* dKey = currentSettings->restore(theKey->getKey());
-			
+
 			if (dKey)
-			{		
+			{
 				if (theKey->getStringValue().compareTo(dKey->getStringValue()) != 0)
 				{
 					applySettingByKey(theKey, newMixerSettings, version);
-				}									
+				}
 			}
 		}
 		else
 		{
 			applySettingByKey(theKey, newMixerSettings, version);
 		}
-		
+
 		theKey = newSettings->getNextKey();
 	}
 
@@ -735,6 +742,6 @@ void Tracker::applySettings(TrackerSettingsDatabase* newSettings,
 		{
 			SystemMessage message(*screen, SystemMessage::MessageSoundDriverInitFailed);
 			message.show();
-		}		
+		}
 	}
 }

@@ -53,19 +53,19 @@ pp_int32 ScopesControl::WRAPCHANNELS()
 	if (parentScreen->getWidth() < 1024)
 	{
 		return 20;
-	}	
+	}
 	if (parentScreen->getWidth() < 1280)
 	{
 		return 22;
-	}	
+	}
 
 	return 32;
 }
 
-ScopesControl::ScopesControl(pp_int32 id, 
-							 PPScreen* parentScreen, 
-							 EventListenerInterface* eventListener, 
-							 const PPPoint& location, const PPSize& size, 
+ScopesControl::ScopesControl(pp_int32 id,
+							 PPScreen* parentScreen,
+							 EventListenerInterface* eventListener,
+							 const PPPoint& location, const PPSize& size,
 							 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	border(border),
@@ -74,7 +74,8 @@ ScopesControl::ScopesControl(pp_int32 id,
 	numChannels(0),
 	enabled(true),
 	appearance(AppearanceTypeNormal),
-	currentClickType(ClickTypeMute)
+	currentClickType(ClickTypeMute),
+	middleClickSoloEnabled(false)
 {
 	// default color
 	color.set(0, 0, 0);
@@ -89,7 +90,7 @@ ScopesControl::ScopesControl(pp_int32 id,
 
 	lastNumChannels = 0;
 	memset(onOffState, 0, sizeof(onOffState));
-	
+
 	memset(muteChannels, 0 ,sizeof(muteChannels));
 	memset(lastMuteChannels, 0 ,sizeof(lastMuteChannels));
 
@@ -150,53 +151,53 @@ public:
 		addr = (scopebColor.r - scopedColor.r) * 65536 / (count2/2);
 		addg = (scopebColor.g - scopedColor.g) * 65536 / (count2/2);
 		addb = (scopebColor.b - scopedColor.b) * 65536 / (count2/2);
-	
+
 		lasty = locy;
 		lastx = -1;
 	}
-	
+
 	virtual void fetchSampleData(mp_sint32 sample)
 	{
 		const pp_int32 y = (((-sample >> 10)*(signed)channelHeight)>>6) + locy;
 
-		g->setSafeColor(sr>>16, sg>>16, sb>>16); 
-		sr+=addr; sg+=addg; sb+=addb; 
-		if (flipCounter >= (count2>>1)-1 && !flipped) 
-		{ 
-			flipped = true; 
-			addr=-addr; 
-			addg=-addg; 
-			addb=-addb; 
-		} 
-		flipCounter+=flipCounterStep; 
-		
+		g->setSafeColor(sr>>16, sg>>16, sb>>16);
+		sr+=addr; sg+=addg; sb+=addb;
+		if (flipCounter >= (count2>>1)-1 && !flipped)
+		{
+			flipped = true;
+			addr=-addr;
+			addg=-addg;
+			addb=-addb;
+		}
+		flipCounter+=flipCounterStep;
+
 		switch (appearance)
 		{
 			case ScopesControl::AppearanceTypeNormal:
-				g->setPixel(locx, y); 
+				g->setPixel(locx, y);
 				g->setColor(0,0,0);
-				g->setPixel(locx, y+1); 
+				g->setPixel(locx, y+1);
 				break;
 
 			case ScopesControl::AppearanceTypeSolid:
-				if (y < locy) 
-				{ 
-					g->drawVLine(y, locy, locx); 
+				if (y < locy)
+				{
+					g->drawVLine(y, locy, locx);
 					g->setColor(0,0,0);
-					g->setPixel(locx, locy); 
-				} 
-				else if (y > locy) 
-				{ 
-					g->drawVLine(locy, y, locx); 
+					g->setPixel(locx, locy);
+				}
+				else if (y > locy)
+				{
+					g->drawVLine(locy, y, locx);
 					g->setColor(0,0,0);
-					g->setPixel(locx, y); 
-				} 
-				else 
-				{ 
-					g->setPixel(locx, y); 
+					g->setPixel(locx, y);
+				}
+				else
+				{
+					g->setPixel(locx, y);
 					g->setColor(0,0,0);
-					g->setPixel(locx, y+1); 
-				} 
+					g->setPixel(locx, y+1);
+				}
 				break;
 
 			case ScopesControl::AppearanceTypeLines:
@@ -204,9 +205,9 @@ public:
 				{
 					if (lastx == -1)
 					{
-						g->setPixel(locx, y); 
+						g->setPixel(locx, y);
 						g->setColor(0,0,0);
-						g->setPixel(locx, y+1); 
+						g->setPixel(locx, y+1);
 					}
 					else
 					{
@@ -216,12 +217,12 @@ public:
 					lastx = locx;
 				}
 				counter++;
-				
+
 		}
 
-		locx++;		
+		locx++;
 	}
-	
+
 	pp_int32 getLocx() const { return locx; }
 };
 
@@ -229,7 +230,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 {
 	if (!isVisible())
 		return;
-	
+
 	PPColor bColor = *borderColor, dColor = *borderColor;
 	// adjust dark color
 	dColor.scaleFixed(32768);
@@ -250,18 +251,18 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	}
 
 	g->setRect(location.x + 2, location.y + 2, location.x + size.width - 2, location.y + size.height - 2);
-	
+
 	//g->setColor(0,0,0);
 	//g->fill();
 
 	if (!playerController || numChannels < 2)
 		return;
-		
+
 	PPColor foregroundColor = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
-	
+
 	pp_int32 channelWidth = visibleWidth / numChannels;
 	pp_int32 channelHeight = visibleHeight;
-	
+
 	if (numChannels > WRAPCHANNELS())
 	{
 		channelWidth = visibleWidth / (numChannels>>1);
@@ -269,7 +270,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 
 		pp_int32 i;
 		pp_int32 r = visibleWidth % (numChannels>>1);
-		
+
 		for (i = 0; i < numChannels >> 1; i++)
 			channelWidthTable[i] = channelWidth;
 
@@ -304,20 +305,20 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	scopedColor.scaleFixed(32768);
 	PPColor tempCol = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground);
 	tempCol.scaleFixed(32768);
-	scopedColor+=tempCol;	
+	scopedColor+=tempCol;
 	scopedColor.scaleFixed(49192);
-	
+
 	for (pp_int32 c = 0; c < numChannels; c++)
 	{
 		char buffer[8];
 		PPTools::convertToDec(buffer, c + 1, PPTools::getDecNumDigits(c+1));
-	
+
 		mp_sint32 locy = location.y + yOffset + y*channelHeight + channelHeight / 2;
 		mp_sint32 locx = location.x + xOffset + x;
 		mp_sint32 cWidth = channelWidthTable[cn];
 
 		pp_int32 count = cWidth;
-		
+
 		// correct last channel
 		cn++;
 		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
@@ -335,13 +336,13 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 
 		pp_int32 sx = locx + 3;
 		pp_int32 sy = locy - channelHeight / 2 + 3;
-		
+
 		pp_int32 sy2 = locy + channelHeight / 2 - smallFont->getCharHeight() - 1;
-		
+
 		if (!muteChannels[c])
 		{
 			ScopePainter scopePainter(g, count, channelHeight, scopebColor, scopedColor, locx, locy, appearance);
-		
+
 			if (enabled)
 				playerController->grabSampleData(c, count, 160, scopePainter);
 			else
@@ -349,24 +350,24 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 				for (pp_int32 i = 0; i < count; i++)
 					scopePainter.fetchSampleData(0);
 			}
-					
+
 #ifdef PANNINGINDICATOR
 			pp_int32 panx = locx;
 			pp_int32 they = sy;
-			
+
 			g->drawHLine(panx + 3, panx + count2, they + channelHeight - 8);
 			g->drawHLine(panx + 3, panx + count2, they + channelHeight - 5);
-			g->drawVLine(they + channelHeight - 8, they + channelHeight - 5 + 1, panx + 2);			
-			g->drawVLine(they + channelHeight - 8, they + channelHeight - 5 + 1, panx + count2);			
-			
+			g->drawVLine(they + channelHeight - 8, they + channelHeight - 5 + 1, panx + 2);
+			g->drawVLine(they + channelHeight - 8, they + channelHeight - 5 + 1, panx + count2);
+
 			PPColor col = g->getColor();
 			g->setColor(TrackerConfig::colorHighLight);
 			pp_int32 thex = panx + 3 + (channel.pan*(count2 - 5)) / 255;
-			g->drawVLine(they + channelHeight - 7, they + channelHeight - 6 + 1, thex);			
-			g->drawVLine(they + channelHeight - 7, they + channelHeight - 6 + 1, thex+1);	
+			g->drawVLine(they + channelHeight - 7, they + channelHeight - 6 + 1, thex);
+			g->drawVLine(they + channelHeight - 7, they + channelHeight - 6 + 1, thex+1);
 			g->setColor(col);
 #endif
-			locx = scopePainter.getLocx();			
+			locx = scopePainter.getLocx();
 		}
 		else
 		{
@@ -384,7 +385,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->drawString(muteStr, x, y);
 			g->setColor(col);
 		}
-		
+
 		if (recChannels[c])
 		{
 			g->setFont(smallFont);
@@ -394,23 +395,23 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->drawString("\xf0", sx-1, sy2);
 		}
 
-		g->setFont((channelWidth < 40 || numChannels > WRAPCHANNELS()) ? smallFont : font);		
+		g->setFont((channelWidth < 40 || numChannels > WRAPCHANNELS()) ? smallFont : font);
 		g->setColor(0, 0, 0);
 		g->drawString(buffer, sx+1, sy+1);
 		g->setColor(foregroundColor);
 		g->drawString(buffer, sx, sy);
-		
+
 		if (cn == 0)
 			x = -cWidth;
 
 		x+=cWidth;
-				
+
 	}
-	
+
 	g->setRect(location.x + 1, location.y + 1, location.x + size.width - 1, location.y + size.height - 1);
 	x = location.x + xOffset + channelWidthTable[0];
 	for (cn = 0; cn < (visibleWidth / channelWidth) - 1; cn++)
-	{	
+	{
 		g->setColor(bColor);
 		g->drawVLine(location.y + yOffset-1, location.y + yOffset + visibleHeight, x-1);
 		g->setColor(*borderColor);
@@ -425,20 +426,20 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		x = location.x + xOffset;
 
 		for (cn = 0; cn < (visibleWidth / channelWidth); cn++)
-		{	
+		{
 			g->setColor(bColor);
 			g->drawHLine(x+1, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1)-1);
 
 			g->setColor(*borderColor);
 			g->drawHLine(x, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1));
-			
+
 			g->setColor(dColor);
 			g->drawHLine(x+1, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1)+1);
 
 			x+=channelWidthTable[cn];
 		}
 	}
-	
+
 }
 
 void ScopesControl::attachSource(PlayerController* playerController)
@@ -453,7 +454,7 @@ bool ScopesControl::needsUpdate()
 	if (playerController == NULL ||
 		(numChannels == 0 && lastNumChannels == 0))
 		return false;
-		
+
 	if (numChannels != lastNumChannels)
 	{
 		lastNumChannels = numChannels;
@@ -468,28 +469,28 @@ bool ScopesControl::needsUpdate()
 			lastMuteChannels[c] = muteChannels[c];
 			res = true;
 		}
-	
+
 		if (recChannels[c] != lastRecChannels[c])
 		{
 			lastRecChannels[c] = recChannels[c];
 			res = true;
 		}
-	
+
 		bool bPlay = enabled ? playerController->hasSampleData(c) : false;
 
 		if (bPlay != onOffState[c] || bPlay)
 			res = true;
-			
+
 		onOffState[c] = bPlay;
 	}
-	
+
 	return res;
 }
 
 void ScopesControl::handleMute(pp_int32 channel)
 {
 	muteChannels[channel] = !muteChannels[channel];
-	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);						
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
@@ -507,14 +508,14 @@ void ScopesControl::handleSolo(pp_int32 channel)
 			muteChannels[i] = true;
 		muteChannels[channel] = false;
 	}
-	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);						
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
 void ScopesControl::handleRec(pp_int32 channel)
 {
 	recChannels[channel] = !recChannels[channel];
-	PPEvent e(eValueChanged, &recChannels, sizeof(recChannels), ChangeValueRecording);						
+	PPEvent e(eValueChanged, &recChannels, sizeof(recChannels), ChangeValueRecording);
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
@@ -532,7 +533,7 @@ void ScopesControl::handleSingleRec(pp_int32 channel)
 			recChannels[i] = false;
 		recChannels[channel] = true;
 	}
-	PPEvent e(eValueChanged, &recChannels, sizeof(recChannels), ChangeValueRecording);						
+	PPEvent e(eValueChanged, &recChannels, sizeof(recChannels), ChangeValueRecording);
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
@@ -540,12 +541,12 @@ void ScopesControl::handleUnmuteAll()
 {
 	for (pp_uint32 i = 0; i < sizeof(muteChannels)/sizeof(pp_uint8); i++)
 		muteChannels[i] = false;
-	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);						
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels), ChangeValueMuting);
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
 pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
-{ 
+{
 	if (eventListener == NULL)
 		return -1;
 
@@ -556,15 +557,24 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 			lMouseDownInChannel = pointToChannel(*(PPPoint*)event->getDataPtr());
 			break;
 
-		case eRMouseDown:	
+		case eRMouseDown:
 			didSoloChannel = false;
 			rMouseDownInChannel = pointToChannel(*(PPPoint*)event->getDataPtr());
 			break;
-	
+
+		case eMMouseUp:
+		{
+			if (middleClickSoloEnabled) {
+				pp_int32 channel = pointToChannel(*(PPPoint*)event->getDataPtr());
+				handleSolo(channel);
+			}
+			break;
+		}
+
 		case eLMouseUp:
 		{
 			pp_int32 channel = pointToChannel(*(PPPoint*)event->getDataPtr());
-			
+
 			// left-right combined mouse click
 			if (channel != -1 && lMouseDownInChannel == channel && rMouseDownInChannel == channel)
 			{
@@ -592,7 +602,7 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 						ASSERT(false);
 				}
 			}
-			
+
 			lMouseDownInChannel = -1;
 			break;
 		}
@@ -600,7 +610,7 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 		case eRMouseUp:
 		{
 			pp_int32 channel = pointToChannel(*(PPPoint*)event->getDataPtr());
-			
+
 			if (channel != -1 && channel == rMouseDownInChannel && lMouseDownInChannel == -1 && !didSoloChannel)
 			{
 				if ((::getKeyModifier() & KeyModifierSHIFT))
@@ -609,7 +619,7 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 				}
 				else handleRec(channel);
 			}
-			
+
 			rMouseDownInChannel = -1;
 			break;
 		}
@@ -626,10 +636,10 @@ bool ScopesControl::isSoloChannel(pp_int32 c) const
 	for (pp_int32 j = 0; j < numChannels; j++)
 		if (muteChannels[j])
 			i++;
-			
+
 	if (!muteChannels[c] && i == numChannels-1)
 		return true;
-		
+
 	return false;
 }
 
@@ -639,10 +649,10 @@ bool ScopesControl::isSingleRecChannel(pp_int32 c) const
 	for (pp_int32 j = 0; j < numChannels; j++)
 		if (!recChannels[j])
 			i++;
-			
+
 	if (recChannels[c] && i == numChannels-1)
 		return true;
-		
+
 	return false;
 }
 
@@ -656,7 +666,7 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 
 	pp_int32 channelWidth = visibleWidth / numChannels;
 	pp_int32 channelHeight = visibleHeight;
-	
+
 	if (numChannels > WRAPCHANNELS())
 	{
 		channelWidth = visibleWidth / (numChannels>>1);
@@ -664,7 +674,7 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 
 		pp_int32 i;
 		pp_int32 r = visibleWidth % (numChannels>>1);
-		
+
 		for (i = 0; i < numChannels >> 1; i++)
 			channelWidthTable[i] = channelWidth;
 
@@ -694,7 +704,7 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 	pp_int32 cn = 0;
 	pp_int32 y = 0;
 	pp_int32 x = 0;
-	
+
 	for (pp_int32 c = 0; c < numChannels; c++)
 	{
 		mp_sint32 locy = location.y + yOffset + y*channelHeight;
@@ -702,7 +712,7 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 		mp_sint32 cWidth = channelWidthTable[cn];
 
 		pp_int32 count = cWidth;
-		
+
 		// correct last channel
 		cn++;
 		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
@@ -715,16 +725,15 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 		{
 			count+=visibleWidth - (xOffset + x);
 		}
-		
+
 		if (pt.x > locx+1 && pt.y+1 > locy && pt.x < locx + count - 1 && pt.y < locy + channelHeight - 1)
 			return c;
-		
+
 		if (cn == 0)
 			x = -cWidth;
 
-		x+=cWidth;				
+		x+=cWidth;
 	}
-	
+
 	return -1;
 }
-
