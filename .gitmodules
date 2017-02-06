@@ -2,10 +2,6 @@
 	path = src/submodules/rtaudio
 	url = https://github.com/thestk/rtaudio.git
 	branch = releases
-[submodule "rtmidi"]
-	path = src/submodules/rtmidi
-	url = https://github.com/thestk/rtmidi.git
-	branch = releases
 [submodule "lhasa"]
 	path = src/submodules/lhasa
 	url = https://github.com/fragglet/lhasa.git
