@@ -1032,35 +1032,6 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 }
 
-static void InitTracker()
-{
-	myPreferenceDialog = new CPreferencesDialog(hWnd, g_hinst);
-
-	myTracker = new Tracker();
-
-	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
-	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
-	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
-#ifdef __LOWRES__
-	windowSize.width = 320;
-	windowSize.height = 240;
-#endif
-
-	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
-
-	if (fullScreen)
-		myDisplayDevice->goFullScreen(fullScreen);
-
-	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
-
-	myTracker->setScreen(myTrackerScreen);
-
-	// Startup procedure
-	myTracker->startUp();
-
-	HandleMidiRecording();
-}
-
 /****************************************************************************
  *
  *      AppInit
@@ -1099,13 +1070,23 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	wc.cbWndExtra     = 0;
 
 	if (!RegisterClass(&wc)) return FALSE;
+
+	myTracker = new Tracker();
+
+	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
+	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
+	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
+#ifdef __LOWRES__
+	windowSize.width = 320;
+	windowSize.height = 240;
+#endif
  
 #ifdef FULLSCREEN
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
 							 WS_POPUP/*|WS_SYSMENU/*|WS_MAXIMIZEBOX|WS_MINIMIZEBOX*/,CW_USEDEFAULT,CW_USEDEFAULT,
-							 DISPLAYDEVICE_WIDTH + ::GetSystemMetrics(SM_CXEDGE)*2,
-							 DISPLAYDEVICE_HEIGHT + ::GetSystemMetrics(SM_CYCAPTION)+::GetSystemMetrics(SM_CYEDGE)*2,
+							 windowSize.width + ::GetSystemMetrics(SM_CXEDGE)*2,
+							 windowSize.height + ::GetSystemMetrics(SM_CYCAPTION)+::GetSystemMetrics(SM_CYEDGE)*2,
 							 NULL,
 							 NULL,
 							 g_hinst,
@@ -1114,8 +1095,8 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
 							 WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,
-							 DISPLAYDEVICE_WIDTH + ::GetSystemMetrics(SM_CXEDGE)*2+2,
-							 DISPLAYDEVICE_HEIGHT + ::GetSystemMetrics(SM_CYCAPTION)+2+::GetSystemMetrics(SM_CYEDGE)*2,
+							 windowSize.width + ::GetSystemMetrics(SM_CXEDGE)*2+2,
+							 windowSize.height + ::GetSystemMetrics(SM_CYCAPTION)+2+::GetSystemMetrics(SM_CYEDGE)*2,
 							 NULL,
 							 NULL,
 							 g_hinst,
@@ -1130,12 +1111,25 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	AppendMenu(hMenu, MF_STRING, IDM_FULLSCREEN, _T("Fullscreen	ALT+RETURN"));
 	AppendMenu(hMenu, MF_SEPARATOR, 0xFFFFFFFF, NULL);
 	AppendMenu(hMenu, MF_STRING, IDM_PREFERENCES, _T("Preferences..."));
+	myPreferenceDialog = new CPreferencesDialog(hWnd, g_hinst);
 
 	DWORD style = GetWindowLong(hWnd, GWL_EXSTYLE);
 
 	ShowWindow(hWnd, nCmdShow);
 
-	InitTracker();
+	// Tracker init
+	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
+
+	if (fullScreen)
+		myDisplayDevice->goFullScreen(fullScreen);
+
+	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
+	myTracker->setScreen(myTrackerScreen);
+
+	// Startup procedure
+	myTracker->startUp();
+	HandleMidiRecording();
+
 	return TRUE;
 }
 
