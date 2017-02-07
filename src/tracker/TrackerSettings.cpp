@@ -104,7 +104,6 @@ void Tracker::buildDefaultSettings()
 
 	// ---------- Layout ----------
 	settingsDatabase->store("FULLSCREEN", 0);
-	settingsDatabase->store("MIDDLECLICKSOLO", 0);
 
 	settingsDatabase->store("XRESOLUTION", PPScreen::getDefaultWidth());
 	settingsDatabase->store("YRESOLUTION", PPScreen::getDefaultHeight());
@@ -367,11 +366,6 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 				message.show();
 			}
 		}
-	}
-	else if (theKey->getKey().compareTo("MIDDLECLICKSOLO") == 0)
-	{
-		if (scopesControl)
-			scopesControl->setMiddleClickSoloEnabled(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("ENVELOPEEDITORSCALE") == 0)
 	{

@@ -74,8 +74,7 @@ ScopesControl::ScopesControl(pp_int32 id,
 	numChannels(0),
 	enabled(true),
 	appearance(AppearanceTypeNormal),
-	currentClickType(ClickTypeMute),
-	middleClickSoloEnabled(false)
+	currentClickType(ClickTypeMute)
 {
 	// default color
 	color.set(0, 0, 0);
@@ -564,10 +563,8 @@ pp_int32 ScopesControl::dispatchEvent(PPEvent* event)
 
 		case eMMouseUp:
 		{
-			if (middleClickSoloEnabled) {
-				pp_int32 channel = pointToChannel(*(PPPoint*)event->getDataPtr());
-				handleSolo(channel);
-			}
+			pp_int32 channel = pointToChannel(*(PPPoint*)event->getDataPtr());
+			handleSolo(channel);
 			break;
 		}
 

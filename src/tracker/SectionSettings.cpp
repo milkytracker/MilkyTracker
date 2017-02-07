@@ -170,7 +170,6 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_HEXCOUNT,
 	CHECKBOX_SETTINGS_SHOWZEROEFFECT,
 	CHECKBOX_SETTINGS_FULLSCREEN,
-	CHECKBOX_SETTINGS_MIDDLE_CLICK_SOLO,
 	LISTBOX_SETTINGS_RESOLUTIONS,
 	BUTTON_RESOLUTIONS_CUSTOM,
 	BUTTON_RESOLUTIONS_FULL,
@@ -1163,20 +1162,12 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Fullscreen:", true));
 
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-
-		y2+=12;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Mid. click solo:", true));
-
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MIDDLE_CLICK_SOLO, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
-
-		v = settingsDatabase->restore("MIDDLECLICKSOLO")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_MIDDLE_CLICK_SOLO))->checkIt(v!=0);
 	}
 
 };
@@ -1970,16 +1961,6 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("FULLSCREEN", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
-				update();
-				break;
-			}
-
-			case CHECKBOX_SETTINGS_MIDDLE_CLICK_SOLO:
-			{
-				if (event->getID() != eCommand)
-					break;
-
-				tracker.settingsDatabase->store("MIDDLECLICKSOLO", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}

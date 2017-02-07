@@ -97,8 +97,6 @@ private:
 
 	ClickTypes currentClickType;
 
-	bool middleClickSoloEnabled;
-
 public:
 	enum ChangeValueTypes
 	{
@@ -149,9 +147,6 @@ public:
 
 	void setAppearance(AppearanceTypes appearance) { this->appearance = appearance; }
 	AppearanceTypes getAppearance() const { return appearance; }
-
-	void setMiddleClickSoloEnabled(bool b) { middleClickSoloEnabled = b; }
-	bool getMiddleClickSoloEnabled() const { return middleClickSoloEnabled; }
 
 private:
 	pp_int32 pointToChannel(const PPPoint& pt);
