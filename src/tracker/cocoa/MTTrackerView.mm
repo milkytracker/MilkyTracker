@@ -474,6 +474,18 @@ static BOOL drawFocusRing;
 	RaiseEventSynchronized(&myEvent);
 }
 
+- (void)otherMouseDown:(NSEvent *)theEvent
+{
+	PPEvent myEvent(eMMouseDown, &curPoint, sizeof(PPPoint));
+	RaiseEventSynchronized(&myEvent);
+}
+
+- (void)otherMouseUp:(NSEvent *)theEvent
+{
+	PPEvent myEvent(eMMouseUp, &curPoint, sizeof(PPPoint));
+	RaiseEventSynchronized(&myEvent);
+}
+
 - (void)scrollWheel:(NSEvent *)theEvent
 {
 	curPoint = [self translateMouseCoordinates:theEvent];
