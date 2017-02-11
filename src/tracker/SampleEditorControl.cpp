@@ -1045,6 +1045,10 @@ selectingAndResizing:
 			
 			else if (params->deltaY)
 			{
+				if (invertMWheelZoom)
+				{
+					params->deltaY = -params->deltaY;
+				}
 				params->deltaY > 0 ? scrollWheelZoomOut(&params->pos) : scrollWheelZoomIn(&params->pos);
 			}
 			

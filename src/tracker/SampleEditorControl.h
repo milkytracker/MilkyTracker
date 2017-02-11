@@ -95,6 +95,7 @@ private:
 	bool drawMode;
 
 	bool hasDragged;
+	bool invertMWheelZoom;
 
 	// selection
 	pp_int32 selectionTicker;
@@ -190,6 +191,8 @@ public:
 
 		notifyUpdate();
 	}
+
+	void setInvertMWheelZoom(bool invert) { invertMWheelZoom = invert; }
 	
 	void showAll();
 

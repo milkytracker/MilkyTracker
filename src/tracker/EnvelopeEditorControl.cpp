@@ -726,6 +726,10 @@ pp_int32 EnvelopeEditorControl::dispatchEvent(PPEvent* event)
 			
 			else if (params->deltaY)
 			{
+				if (invertMWheelZoom)
+				{
+					params->deltaY = -params->deltaY;
+				}
 				setScale(params->deltaY > 0 ? xScale << 1 : xScale >> 1);
 				parentScreen->paintControl(this);
 			}
