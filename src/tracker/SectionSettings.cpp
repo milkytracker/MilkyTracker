@@ -80,16 +80,16 @@ public:
 	}
 
 	virtual void paint(PPGraphicsAbstract* g)
-	{		
+	{
 		PPButton::paint(g);
-	
+
 		PPFont* font = PPFont::getFont(PPFont::FONT_TINY);
 		g->setFont(font);
-		
+
 		PPPoint p = this->getLocation();
 		p.x+=1;
 		p.y+=2;
-		
+
 		g->setColor(255^getColor()->r, 255^getColor()->g, 255^getColor()->b);
 
 		char buffer[100];
@@ -100,7 +100,7 @@ public:
 		sprintf(buffer, "G:%02X", getColor()->g);
 		g->drawString(buffer, p.x, p.y, false);
 		p.y+=font->getCharHeight();
-		sprintf(buffer, "B:%02X", getColor()->b);		
+		sprintf(buffer, "B:%02X", getColor()->b);
 		g->drawString(buffer, p.x, p.y, false);
 	}
 };
@@ -227,17 +227,17 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_CLICKTOCURSOR,
 	RADIOGROUP_SETTINGS_EDITMODE,
 	RADIOGROUP_SETTINGS_SCROLLMODE,
-	
+
 	CHECKBOX_SETTINGS_SAMPLEEDITORUNDO,
 	CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES,
 	CHECKBOX_SETTINGS_INTERNALDISKBROWSER,
 	CHECKBOX_SETTINGS_AUTOESTPLAYTIME,
 	CHECKBOX_SETTINGS_SHOWSPLASH,
 	CHECKBOX_SETTINGS_SCOPES,
-	
+
 	STATICTEXT_SETTINGS_SCOPESAPPEARANCE,
 	RADIOGROUP_SETTINGS_SCOPESAPPEARANCE,
-	
+
 	// Page V (only on desktop version)
 	RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR,
 	CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY,
@@ -281,12 +281,12 @@ struct TScreenRes
 #define MINWIDTH		640
 #define MINHEIGHT		480
 
-static TScreenRes resolutions[NUMRESOLUTIONS] = 
+static TScreenRes resolutions[NUMRESOLUTIONS] =
 {
 	{640, 480, "640x480"},
 	{720, 480, "720x480"},
 	{800, 480, "800x480"},
-	{800, 500, "800x500"},										
+	{800, 500, "800x500"},
 	{800, 600, "800x600"},
 	{1024, 768, "1024x768"},
 	{1152, 864, "1152x864"},
@@ -303,13 +303,13 @@ class DialogResponderSettings : public DialogResponder
 {
 private:
 	SectionSettings& section;
-	
+
 public:
 	DialogResponderSettings(SectionSettings& section) :
 		section(section)
 	{
 	}
-	
+
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
@@ -330,7 +330,7 @@ public:
 				section.storeAudioDriver(listBox->getItem(listBox->getSelectedIndex()));
 				break;
 			}
-			
+
 			case RESPONDMESSAGEBOX_SELECTRESAMPLER:
 			{
 				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
@@ -349,13 +349,13 @@ protected:
 	SectionSettings& sectionSettings;
 	PPTransparentContainer* container;
 	bool visible;
-	
-	enum 
+
+	enum
 	{
 		PageWidth = 160,
 		PageHeight = UPPERFRAMEHEIGHT
 	};
-	
+
 public:
 	TabPage(pp_uint32 id, SectionSettings& sectionSettings) :
 		id(id),
@@ -364,7 +364,7 @@ public:
 		visible(false)
 	{
 	}
-	
+
 	virtual ~TabPage() {}
 
 	PPTransparentContainer* getContainer() const { return container; }
@@ -382,15 +382,15 @@ public:
 	{
 		return sectionSettings.handleEvent(sender, event);
 	}
-	
+
 	PPPoint getLocation() { return container->getLocation(); }
-	
+
 	void setLocation(const PPPoint& p)
 	{
 		if (container->getLocation().x != p.x || container->getLocation().y != p.y)
 		{
 			pp_int32 dx = p.x - container->getLocation().x;
-			pp_int32 dy = p.y - container->getLocation().y;		
+			pp_int32 dy = p.y - container->getLocation().y;
 			container->move(PPPoint(dx, dy));
 		}
 	}
@@ -408,9 +408,9 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
-	
+
 		pp_int32 y2 = y;
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 4), "Driver:", true));
@@ -476,26 +476,26 @@ public:
 
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_BUFFERSIZE));
 		PPSlider* slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_BUFFERSIZE));
-		
+
 		char buffer[100];
 		char buffer2[100];
-		
+
 		// buffersize
 		bool forcePowerOfTwo = settingsDatabase->restore("FORCEPOWEROFTWOBUFFERSIZE")->getBoolValue();
 		pp_int32 v = settingsDatabase->restore("BUFFERSIZE")->getIntValue();
 		pp_int32 v2 = v;
-		
+
 		if (forcePowerOfTwo)
 			v = PlayerMaster::roundToNearestPowerOfTwo(v);
-		
-		float fv = PlayerMaster::convertBufferSizeToMillis(settingsDatabase->restore("MIXERFREQ")->getIntValue(), 
+
+		float fv = PlayerMaster::convertBufferSizeToMillis(settingsDatabase->restore("MIXERFREQ")->getIntValue(),
 														   v);
-		
+
 		pp_int32 fixed = (pp_int32)fv;
 		pp_int32 decimal = (pp_int32)(fv*10.0f) % 10;
 		if (v >= 1000)
@@ -508,7 +508,7 @@ public:
 					sprintf(buffer, "%ims(%i.%ik)", fixed, v / 1000, (v / 100) % 10);
 			}
 			else
-				sprintf(buffer, "%i.%ims(%i.%ik)", fixed, decimal, v / 1000, (v / 100) % 10);		
+				sprintf(buffer, "%i.%ims(%i.%ik)", fixed, decimal, v / 1000, (v / 100) % 10);
 		}
 		else
 		{
@@ -517,50 +517,50 @@ public:
 			else
 				sprintf(buffer, "%i.%ims(%i)", fixed, decimal, v);
 		}
-		
+
 		if (strlen(buffer) < 9)
 		{
 			memset(buffer2, 32, sizeof(buffer2));
 			strcpy(buffer2 + 9-strlen(buffer), buffer);
 			strcpy(buffer, buffer2);
 		}
-		
+
 		text->setText(buffer);
-		
+
 		slider->setCurrentValue((v2 >> 5) - 1);
-		
+
 		// force 2^n buffer size
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FORCEPOWER2BUFF))->checkIt(forcePowerOfTwo);
-		
+
 		// mixervolume
 		text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_MIXERVOL));
 		slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_MIXERVOL));
-		
+
 		v = settingsDatabase->restore("MIXERVOLUME")->getIntValue();
-		
+
 		sprintf(buffer, "%i%%", (v*100)/256);
-		
+
 		if (strlen(buffer) < 4)
 		{
 			memset(buffer2, 32, sizeof(buffer2));
 			strcpy(buffer2 + 4-strlen(buffer), buffer);
 			strcpy(buffer, buffer2);
 		}
-		
+
 		text->setText(buffer);
-		
+
 		slider->setCurrentValue(v);
-		
+
 		// amplify
 		v = settingsDatabase->restore("MIXERSHIFT")->getIntValue();
-		
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_AMPLIFY))->setChoice(v);		
-		
+
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_AMPLIFY))->setChoice(v);
+
 		// checkboxes
 		v = settingsDatabase->restore("RAMPING")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
 	}
-	
+
 };
 
 class TabPageIO_2 : public TabPage
@@ -575,67 +575,67 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		// frequency table
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Mixer Resolution", true, true));
-		
+
 		pp_int32 j;
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MIXFREQ, screen, this, PPPoint(x2, y2+2+11), PPSize(160, TrackerConfig::numMixFrequencies*14));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		for (j = 0; j < TrackerConfig::numMixFrequencies; j++)
 		{
 			char buffer[32];
 			sprintf(buffer, "%i Hz", TrackerConfig::mixFrequencies[j]);
 			radioGroup->addItem(buffer);
 		}
-		
-		container->addControl(radioGroup);	
-		
+
+		container->addControl(radioGroup);
+
 		y2+=j*14+14;
-		
+
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=4;
-		
+
 		// module frequencies
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Frequency Table", true, true));
-		
+
 		radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_FREQTAB, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 30));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		radioGroup->addItem("Amiga frequencies");
 		radioGroup->addItem("Linear frequencies");
-		
-		container->addControl(radioGroup);	
-		
+
+		container->addControl(radioGroup);
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// mixer resolution
 		pp_int32 v = settingsDatabase->restore("MIXERFREQ")->getIntValue();
-		
+
 		pp_int32 i;
 		for (i = 0; i < TrackerConfig::numMixFrequencies; i++)
 			if (v == TrackerConfig::mixFrequencies[i])
 			{
-				static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MIXFREQ))->setChoice(i);					
+				static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MIXFREQ))->setChoice(i);
 				break;
 			}
-				
+
 		// frequency table
 		v = moduleEditor.getFrequency();
-		
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_FREQTAB))->setChoice(v);		
+
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_FREQTAB))->setChoice(v);
 	}
-	
+
 };
 
 class TabPageIO_3 : public TabPage
@@ -650,69 +650,69 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 y2 = y;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Instrument Playback", true, true));
-		
+
 		y2+=15;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Jam channels:", true));
-		
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_VIRTUALCHANNELS, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
-		
+
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_VIRTUALCHANNELS, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+
 		y2+=12;
 		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_VIRTUALCHANNELS, NULL, NULL, PPPoint(x + 4, y2), "Use xx channels", false));
-		
+
 		PPButton* button = new PPButton(BUTTON_SETTINGS_VIRTUALCHANNELS_PLUS, screen, this, PPPoint(x + 4 + 15*8 + 4, y2), PPSize(12, 9));
 		button->setText(TrackerConfig::stringButtonPlus);
 		container->addControl(button);
-		
+
 		button = new PPButton(BUTTON_SETTINGS_VIRTUALCHANNELS_MINUS, screen, this, PPPoint(x + 4 + 15*8 + 4 + 13, y2), PPSize(13, 9));
 		button->setText(TrackerConfig::stringButtonMinus);
-		
+
 		container->addControl(button);
-		
+
 		y2+=14;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Multichannel", true, true));
-		
+
 		y2+=15;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Recording:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORD, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORD, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), """Keyjazzing"":", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_KEYJAZZ, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_KEYJAZZ, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Editing:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_EDIT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_EDIT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Record key off:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Rec. note delays:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
-		
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_VIRTUALCHANNELS));
-		
+
 		char buffer[100];
-		
+
 		// buffersize
 		pp_int32 v = settingsDatabase->restore("VIRTUALCHANNELS")->getIntValue();
-		
+
 		sprintf(buffer, "Use %02i", v);
-		
+
 		text->setText(buffer);
-		
+
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_VIRTUALCHANNELS))->checkIt(v>0);
-		
+
 		v = settingsDatabase->restore("MULTICHN_RECORD")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_MULTICHN_RECORD))->checkIt(v!=0);
 		v = settingsDatabase->restore("MULTICHN_KEYJAZZ")->getIntValue();
@@ -724,7 +724,7 @@ public:
 		v = settingsDatabase->restore("MULTICHN_RECORDNOTEDELAY")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY))->checkIt(v!=0);
 	}
-	
+
 };
 
 class TabPageLayout_1 : public TabPage
@@ -739,97 +739,97 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Pattern Editor", true, true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Pattern Editor", true, true));
+
 		y2+=14;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Spacing:", true));
 		container->addControl(new PPStaticText(STATICTEXT_SPACING, screen, this, PPPoint(x2 + 9*8, y2), "0px"));
-		
+
 		PPSlider* slider = new PPSlider(SLIDER_SPACING, screen, this, PPPoint(x2 + 13*8 + 2, y2-1), 49, true);
 		slider->setMaxValue(31);
 		slider->setBarSize(16384);
 		container->addControl(slider);
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Hex count:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_HEXCOUNT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Show zero effect:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SHOWZEROEFFECT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Prospective:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_PROSPECTIVE, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));	
-		
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_PROSPECTIVE, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Muting opacity:", true));
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(STATICTEXT_MUTEFADE, screen, this, PPPoint(x2 + 4, y2), "100%"));
-		
+
 		slider = new PPSlider(SLIDER_MUTEFADE, screen, this, PPPoint(x2 + 4 + 8*4 + 4, y2-1), 113, true);
 		slider->setMaxValue(100);
 		slider->setBarSize(8192);
 		container->addControl(slider);
-		
+
 		y2+=12;
 		PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Row hilight spacing:", true);
 		staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(staticText);
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "1st:", true));
 		container->addControl(new PPStaticText(STATICTEXT_HIGHLIGHTMODULO1, NULL, NULL, PPPoint(x2 + 2 + 4*8 + 2, y2), "xx"));
-		
+
 		PPButton* button = new PPButton(BUTTON_HIGHLIGHTMODULO1_PLUS, screen, this, PPPoint(x + 2 + 7*8, y2-1), PPSize(12, 9));
 		button->setText(TrackerConfig::stringButtonPlus);
-		container->addControl(button);	
+		container->addControl(button);
 		button = new PPButton(BUTTON_HIGHLIGHTMODULO1_MINUS, screen, this, PPPoint(x + 2 + 7*8 + 13, y2-1), PPSize(13, 9));
 		button->setText(TrackerConfig::stringButtonMinus);
-		container->addControl(button);	
+		container->addControl(button);
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2 + 7*8 + 13 + 20, y2), "Full:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO1_FULLROW, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "2nd:", true));
 		container->addControl(new PPStaticText(STATICTEXT_HIGHLIGHTMODULO2, NULL, NULL, PPPoint(x2 + 2 + 4*8 + 2, y2), "xx"));
 		button = new PPButton(BUTTON_HIGHLIGHTMODULO2_PLUS, screen, this, PPPoint(x + 2 + 7*8, y2-1), PPSize(12, 9));
 		button->setText(TrackerConfig::stringButtonPlus);
-		container->addControl(button);	
+		container->addControl(button);
 		button = new PPButton(BUTTON_HIGHLIGHTMODULO2_MINUS, screen, this, PPPoint(x + 2 + 7*8 + 13, y2-1), PPSize(13, 9));
 		button->setText(TrackerConfig::stringButtonMinus);
-		container->addControl(button);	
+		container->addControl(button);
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2 + 7*8 + 13 + 20, y2), "Full:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO2_FULLROW, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-		
+
 		// vertical separator
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));		
+		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// spacing slider
 		PPStaticText* text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPACING));
 		PPSlider* slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SPACING));
-		
+
 		pp_int32 v = settingsDatabase->restore("SPACING")->getIntValue();
 		char buffer[100], buffer2[100];
 		sprintf(buffer,"%ipx", v);
 		text->setText(buffer);
 		slider->setCurrentValue(v);
-		
+
 		// mute fade strength slider
 		text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_MUTEFADE));
 		slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_MUTEFADE));
-		
+
 		v = settingsDatabase->restore("MUTEFADE")->getIntValue();
 		sprintf(buffer, "%i%%", v);
 		// right align
@@ -840,36 +840,36 @@ public:
 			strcpy(buffer, buffer2);
 		}
 		text->setText(buffer);
-		slider->setCurrentValue(v);	
-		
-		// update primary pattern row highlight 
+		slider->setCurrentValue(v);
+
+		// update primary pattern row highlight
 		text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_HIGHLIGHTMODULO1));
 		v = settingsDatabase->restore("HIGHLIGHTMODULO1")->getIntValue();
 		sprintf(buffer, "%02i ", v);
 		text->setText(buffer);
-		
-		// update secondary pattern row highlight 
+
+		// update secondary pattern row highlight
 		text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_HIGHLIGHTMODULO2));
 		v = settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue();
 		sprintf(buffer, "%02i ", v);
 		text->setText(buffer);
-		
+
 		v = settingsDatabase->restore("HIGHLIGHTROW1")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_HIGHLIGHTMODULO1_FULLROW))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("HIGHLIGHTROW2")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_HIGHLIGHTMODULO2_FULLROW))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("HEXCOUNT")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_HEXCOUNT))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("SHOWZEROEFFECT")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SHOWZEROEFFECT))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("PROSPECTIVE")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_PROSPECTIVE))->checkIt(v!=0);
 	}
-	
+
 };
 
 class TabPageLayout_2 : public TabPage
@@ -883,21 +883,21 @@ public:
 	virtual void init(PPScreen* screen)
 	{
 		pp_int32 i = 0;
-	
+
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
-		
+
 		// Colors
-		pp_int32 y2 = y;	
-		
+		pp_int32 y2 = y;
+
 		pp_int32 lbheight = container->getSize().height - (y2 - y) - 66;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Colors", true, true));
-		
+
 		PPButton* button = new PPButton(BUTTON_COLOR_IMPORT, screen, this, PPPoint(x2 + 54, y2 + 2), PPSize(9, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("I");
@@ -912,93 +912,93 @@ public:
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Preview");
 		container->addControl(button);
-		
+
 		button = new PPButton(BUTTON_COLOR_RESTORE, screen, this, PPPoint(x2 + 115 - 40, y2 + 2), PPSize(39, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Restore");
 		container->addControl(button);
-		
+
 		y2+=1+11;
-		
+
 		sectionSettings.listBoxColors = new PPListBox(LISTBOX_COLORS, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		sectionSettings.listBoxColors->setBorderColor(TrackerConfig::colorThemeMain);
 		sectionSettings.listBoxColors->setKeepsFocus(false);
 		sectionSettings.listBoxColors->setShowFocus(false);
-		
+
 		for (i = 0; i < GlobalColorConfig::ColorLast; i++)
 		{
 			pp_int32 j = sectionSettings.colorMapping[i];
 			if (sectionSettings.colorDescriptors[j].readableDecription == NULL)
 				break;
-			
+
 			sectionSettings.listBoxColors->addItem(sectionSettings.colorDescriptors[j].readableDecription);
 		}
-		
+
 #ifdef __LOWRES__
 		y2+=sectionSettings.listBoxColors->getSize().height + 2;
 #else
 		y2+=sectionSettings.listBoxColors->getSize().height + 4;
 #endif
 		container->addControl(sectionSettings.listBoxColors);
-		
+
 		button = new PPColPrevButton(BUTTON_COLOR, screen, this, PPPoint(x2 + 88, y2 + 1), PPSize(31, 34));
 		button->setFlat(true);
 		button->setColor(sectionSettings.currentColor);
-		container->addControl(button);	
-		
+		container->addControl(button);
+
 		button = new PPButton(BUTTON_COLOR_COPY, screen, this, PPPoint(x2 + 88 + 32 + 2, y2 + 2), PPSize(5*6+2, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Copy");
-		container->addControl(button);	
-		
+		container->addControl(button);
+
 		button = new PPButton(BUTTON_COLOR_PASTE, screen, this, PPPoint(x2 + 88 + 32 + 2, y2 + 2+10), PPSize(5*6+2, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Paste");
-		container->addControl(button);	
-		
+		container->addControl(button);
+
 		button = new PPButton(BUTTON_COLOR_DARKER, screen, this, PPPoint(x2 + 88 + 32 + 2, y2 + 2+23), PPSize(16, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("<<");
-		container->addControl(button);	
-		
+		container->addControl(button);
+
 		button = new PPButton(BUTTON_COLOR_BRIGHTER, screen, this, PPPoint(x2 + 88 + 32 + 2 + 17, y2 + 2+23), PPSize(15, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText(">>");
-		container->addControl(button);	
-		
+		container->addControl(button);
+
 		// Red slider
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "R", true));	
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "R", true));
 		PPSlider* slider = new PPSlider(SLIDER_COLOR_RED, screen, this, PPPoint(x2 + 2 + 1*8 + 2, y2 + 1), 74, true);
 		slider->setMaxValue(255);
 		slider->setBarSize(16384);
 		container->addControl(slider);
-		
+
 		y2+=12;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "G", true));	
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "G", true));
 		slider = new PPSlider(SLIDER_COLOR_GREEN, screen, this, PPPoint(x2 + 2 + 1*8 + 2, y2 + 1), 74, true);
 		slider->setMaxValue(255);
 		slider->setBarSize(16384);
 		container->addControl(slider);
-		
+
 		y2+=12;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "B", true));	
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "B", true));
 		slider = new PPSlider(SLIDER_COLOR_BLUE, screen, this, PPPoint(x2 + 2 + 1*8 + 2, y2 + 1), 74, true);
 		slider->setMaxValue(255);
 		slider->setBarSize(16384);
 		container->addControl(slider);
-		
+
 		y2+=12;
-		
+
 		// predefs
 		pp_int32 px = x2 + 2;
-		
+
 		PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(px, y2 + 3), "Predef:", true);
 		container->addControl(staticText);
-		
+
 		px+=7*8+2;
-		
+
 		// pre-defined envelopes
 		for (i = 0; i < TrackerConfig::numPredefinedColorPalettes; i++)
 		{
@@ -1009,7 +1009,7 @@ public:
 			px+=button->getSize().width+1;
 		}
 		px+=2;
-		
+
 		button = new PPButton(BUTTON_COLOR_PREDEF_STORE, screen, this, PPPoint(px, y2 + 2), PPSize(5*6+2, 9), true, true, false);
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Store");
@@ -1017,7 +1017,7 @@ public:
 
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		// Update color from sliders
@@ -1027,10 +1027,10 @@ public:
 		slider->setCurrentValue(sectionSettings.currentColor.g);
 		slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_COLOR_BLUE));
 		slider->setCurrentValue(sectionSettings.currentColor.b);
-		
+
 		static_cast<PPButton*>(container->getControlByID(BUTTON_COLOR_PASTE))->setClickable(sectionSettings.colorCopy != NULL);
 	}
-	
+
 };
 
 class TabPageLayout_3 : public TabPage
@@ -1044,17 +1044,17 @@ public:
 	virtual void init(PPScreen* screen)
 	{
 		pp_int32 i;
-		
+
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
-		pp_int32 y2 = y;	
-		
+		pp_int32 y2 = y;
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Resolutions", true, true));
-		
+
 		PPButton* button = new PPButton(BUTTON_RESOLUTIONS_CUSTOM, screen, this, PPPoint(x2 + 92, y2 + 2), PPSize(37, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Custom");
@@ -1064,25 +1064,25 @@ public:
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Full");
 		container->addControl(button);
-		
+
 		y2+=12;
-		
+
 		pp_int32 lbheight = container->getSize().height - (y2 - y) - (18);
 		PPListBox* listBox;
 		listBox = new PPListBox(LISTBOX_SETTINGS_RESOLUTIONS, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		listBox->setBorderColor(TrackerConfig::colorThemeMain);
 		listBox->setKeepsFocus(false);
 		listBox->setShowFocus(false);
-		
+
 		for (i = 0; i < NUMRESOLUTIONS; i++)
 			listBox->addItem(resolutions[i].name);
-		container->addControl(listBox);	
+		container->addControl(listBox);
 
 
 		y2+=lbheight + 6;
-		
+
 		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_MAGNIFY, NULL, NULL, PPPoint(x2 + 2, y2), "Scale:", true));
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_MAGNIFY, screen, this, PPPoint(x2 + 2 + 7*8, y2 - 4), PPSize(120, 16));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
 		radioGroup->setFont(PPFont::getFont(PPFont::FONT_TINY));
@@ -1095,12 +1095,12 @@ public:
 
 		container->addControl(radioGroup);
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 width = settingsDatabase->restore("XRESOLUTION")->getIntValue();
 		pp_int32 height = settingsDatabase->restore("YRESOLUTION")->getIntValue();
-		
+
 		bool found = false;
 		for (pp_int32 i = 0; i < NUMRESOLUTIONS; i++)
 		{
@@ -1108,10 +1108,10 @@ public:
 			{
 				static_cast<PPListBox*>(container->getControlByID(LISTBOX_SETTINGS_RESOLUTIONS))->setSelectedIndex(i, false, false);
 				found = true;
-				break;	
+				break;
 			}
 		}
-		
+
 		if (!found)
 			static_cast<PPListBox*>(container->getControlByID(LISTBOX_SETTINGS_RESOLUTIONS))->setSelectedIndex(NUMRESOLUTIONS-1, false, false);
 
@@ -1132,10 +1132,10 @@ public:
 				index = 3;
 				break;
 		}
-		
+
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_MAGNIFY))->setChoice(index);
 	}
-	
+
 };
 
 class TabPageLayout_4 : public TabPage
@@ -1150,26 +1150,26 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
-		pp_int32 x2 = x;		
-		pp_int32 y2 = y;	
+		pp_int32 x2 = x;
+		pp_int32 y2 = y;
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Global", true, true));
-		
+
 		y2+=4+11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Fullscreen:", true));
-		
+
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
 	}
-	
+
 };
 
 class TabPageFonts_1 : public TabPage
@@ -1184,49 +1184,49 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 i;
 		const char* name = NULL;
-		
+
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Pattern Editor", true, true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Pattern Editor", true, true));
+
 		y2+=11;
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_PATTERNFONT, screen, this, PPPoint(x2, y2), PPSize(159, 0));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		name = PPFont::getFirstFontFamilyName();
 		i = 0;
 		while (name)
 		{
-			radioGroup->addItem(name);	
-			name = PPFont::getNextFontFamilyName();		
+			radioGroup->addItem(name);
+			name = PPFont::getNextFontFamilyName();
 			i++;
 		}
 		radioGroup->setSize(PPSize(radioGroup->getSize().width, 14*i));
-		
-		container->addControl(radioGroup);	
-		
+
+		container->addControl(radioGroup);
+
 		y2+=radioGroup->getSize().height;
-		
+
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=5;
-		
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("PATTERNFONT")->getIntValue();
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_PATTERNFONT))->setChoice(v);	
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_PATTERNFONT))->setChoice(v);
 	}
-	
+
 };
 
 class TabPageFonts_2 : public TabPage
@@ -1241,58 +1241,58 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Font face config", true, true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Font face config", true, true));
+
 		y2+=12;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available sizes:", true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available sizes:", true));
+
 		y2+=8;
-		
+
 		pp_int32 lbheight = (container->getSize().height - (y2-y+11*2+2)) / 2;
 		sectionSettings.listBoxFontFamilies = new PPListBox(LISTBOX_SETTINGS_FONTFAMILIES, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		sectionSettings.listBoxFontFamilies->setBorderColor(TrackerConfig::colorThemeMain);
 		sectionSettings.listBoxFontFamilies->setKeepsFocus(false);
 		sectionSettings.listBoxFontFamilies->setShowFocus(false);
-		
+
 		const char* name = PPFont::getFirstFontFamilyName();
 		while (name)
 		{
-			sectionSettings.listBoxFontFamilies->addItem(name);	
-			name = PPFont::getNextFontFamilyName();		
+			sectionSettings.listBoxFontFamilies->addItem(name);
+			name = PPFont::getNextFontFamilyName();
 		}
 		container->addControl(sectionSettings.listBoxFontFamilies);
-		
+
 		y2+=sectionSettings.listBoxFontFamilies->getSize().height+2;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available faces:", true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available faces:", true));
+
 		y2+=8;
 		lbheight+=7;
-		
+
 		sectionSettings.listBoxFontEntries = new PPListBox(LISTBOX_SETTINGS_FONTENTRIES, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		sectionSettings.listBoxFontEntries->setBorderColor(TrackerConfig::colorThemeMain);
 		sectionSettings.listBoxFontEntries->setKeepsFocus(false);
 		sectionSettings.listBoxFontEntries->setShowFocus(false);
-		
+
 		sectionSettings.enumerateFontFacesInListBox(sectionSettings.listBoxFontFamilies->getSelectedIndex());
 		container->addControl(sectionSettings.listBoxFontEntries);
-		
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
-	{	
+	{
 		PPString str = settingsDatabase->restore(PPFont::getFamilyInternalName((PPFont::FontID)sectionSettings.listBoxFontFamilies->getSelectedIndex()))->getStringValue();
 		sectionSettings.listBoxFontEntries->setSelectedIndexByItem(str, false);
 	}
-	
+
 };
 
 class TabPageMisc_1 : public TabPage
@@ -1307,49 +1307,49 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Edit mode", true, true));
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_EDITMODE, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 42));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		radioGroup->addItem("MilkyTracker");
 		radioGroup->addItem("Fasttracker II");
-		container->addControl(radioGroup);	
-		
+		container->addControl(radioGroup);
+
 		y2+=3*12+8;
-		
+
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 156, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=6;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Scrolling Style", true, true));
-		
+
 		radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_SCROLLMODE, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 42));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		radioGroup->addItem("Scroll to end");
 		radioGroup->addItem("Scroll to center");
 		radioGroup->addItem("Always centered");
-		container->addControl(radioGroup);	
-		
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));		
+		container->addControl(radioGroup);
+
+		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("EDITMODE")->getIntValue();
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_EDITMODE))->setChoice(v);		
-		
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_EDITMODE))->setChoice(v);
+
 		v = settingsDatabase->restore("SCROLLMODE")->getIntValue();
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_SCROLLMODE))->setChoice(v);		
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_SCROLLMODE))->setChoice(v);
 	}
-	
+
 };
 
 class TabPageMisc_2 : public TabPage
@@ -1364,105 +1364,105 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 y2 = y;
 		pp_int32 x2 = x;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Pattern Editor", true, true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Pattern Editor", true, true));
+
 		y2+=4+11;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Paste autoresize:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTORESIZE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=12;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Instr. backtrace:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=12;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "TAB to note:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_TABTONOTE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=12;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Click to cursor:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_CLICKTOCURSOR, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));	
-		
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_CLICKTOCURSOR, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+
 		y2+=12;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Wrap cursor:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_WRAPCURSOR, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=11;
-		
+
 		//container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Follow song:", true));
-		//container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FOLLOWSONG, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));	
-		
+		//container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FOLLOWSONG, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+
 		// ------------------ sample editor -------------------
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=3;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Sample Editor", true, true));	
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Sample Editor", true, true));
 		y2+=4+11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Enable undo buff:", true));
-		
+
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=14;
-		
+
 		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", true);
 		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(statict);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));
-		
-		y2+=10;		
-		
+
+		y2+=10;
+
 		/*// ------------------ other -------------------
-			container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));	
+			container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
 		y2+=4+11;
 		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Estimate playtime after load", true);
 		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(statict);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));*/
-		
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("PATTERNAUTORESIZE")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTORESIZE))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("INSTRUMENTBACKTRACE")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("TABTONOTE")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABTONOTE))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("CLICKTOCURSOR")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CLICKTOCURSOR))->checkIt(v!=0);
-		
+
 		//v = settingsDatabase->restore("WRAPAROUND")->getIntValue();
 		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_WRAPCURSOR))->checkIt(v!=0);
-		
+
 		//v = settingsDatabase->restore("FOLLOWSONG")->getIntValue();
 		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FOLLOWSONG))->checkIt(v!=0);
-		
+
 		/*v = settingsDatabase->restore("AUTOESTPLAYTIME")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOESTPLAYTIME))->checkIt(v!=0);*/
-		
+
 		v = settingsDatabase->restore("SAMPLEEDITORUNDOBUFFER")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES))->checkIt(v!=0);
 	}
-	
+
 };
 
 class TabPageMisc_3 : public TabPage
@@ -1477,72 +1477,72 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));	
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
 		y2+=4+11;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Internal browser:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INTERNALDISKBROWSER, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=12;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Splash screen:", true));
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SHOWSPLASH, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-		
+
 		y2+=14;
-		
+
 		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Estimate playtime after load", true);
 		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(statict);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));
-		
+
 		y2+=10;
-		
+
 #ifndef __LOWRES__
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Show scopes:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SCOPES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));	
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SCOPES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
 #endif
-		
+
 		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_SCOPESAPPEARANCE, NULL, NULL, PPPoint(x2 + 2, y2), "Scope Style:", true));
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_SCOPESAPPEARANCE, screen, this, PPPoint(x2, y2+10), PPSize(160, 42));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
 		radioGroup->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		radioGroup->addItem("Dots");
 		radioGroup->addItem("Solid");
 		radioGroup->addItem("Smooth Lines");
-		container->addControl(radioGroup);	
-		
+		container->addControl(radioGroup);
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("AUTOESTPLAYTIME")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOESTPLAYTIME))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("INTERNALDISKBROWSER")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INTERNALDISKBROWSER))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("SHOWSPLASH")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SHOWSPLASH))->checkIt(v!=0);
-		
+
 		v = settingsDatabase->restore("SCOPES")->getIntValue();
 #ifndef __LOWRES__
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SCOPES))->checkIt(v & 1);
-		
+
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_SCOPESAPPEARANCE))->enable((v & 1) != 0);
-		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_SCOPESAPPEARANCE))->enable((v & 1) != 0);	
+		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_SCOPESAPPEARANCE))->enable((v & 1) != 0);
 #endif
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_SCOPESAPPEARANCE))->setChoice(v >> 1);
 	}
-	
+
 };
 
 class TabPageTabs_1 : public TabPage
@@ -1557,63 +1557,63 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
+
 		PPStaticText* text;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Load module" PPSTR_PERIODS, true, true));
-		
+
 		y2+=12;
-		
+
 		text = new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2), PPSTR_PERIODS"in new Tab", true);
 		//text->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(text);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-		
+
 		y2+=12+3;
-		
+
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=3;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Stop background", true, true));
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 42));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		radioGroup->addItem("Never");
 		radioGroup->addItem("On Tab switch");
 		radioGroup->addItem("On Playback");
-		container->addControl(radioGroup);	
-		
+		container->addControl(radioGroup);
+
 		y2+=3*14 + 14;
-		
+
 		text = new PPStaticText(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY, NULL, NULL, PPPoint(x + 4, y2 + 2), "Tab-switch resume", true);
 		container->addControl(text);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-		
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));	
+
+		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("TABS_STOPBACKGROUNDBEHAVIOUR")->getIntValue();
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR))->setChoice(v);			
-		
-		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);			
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);				
-		
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR))->setChoice(v);
+
+		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);
+
 		v = settingsDatabase->restore("TABS_TABSWITCHRESUMEPLAY")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->checkIt(v != 0);	
-		
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->checkIt(v != 0);
+
 		v = settingsDatabase->restore("TABS_LOADMODULEINNEWTAB")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB))->checkIt(v != 0);	
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB))->checkIt(v != 0);
 	}
-	
+
 };
 
 SectionSettings::SectionSettings(Tracker& theTracker) :
@@ -1635,18 +1635,18 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 	for (i = 0; i < NUMSETTINGSPAGES; i++)
 	{
 		tabPages.add(new PPSimpleVector<TabPage>());
-		currentActiveSubPageNum[i] = 0;	
+		currentActiveSubPageNum[i] = 0;
 	}
 
 	initColorDescriptors();
 	currentColor.set(128, 128, 128);
-	
+
 	palette = new TColorPalette();
 	mixerSettings = new TMixerSettings();
-	
+
 	// predefined color palettes
 	predefinedColorPalettes = new ColorPaletteContainer(TrackerConfig::numPredefinedColorPalettes);
-	
+
 	for (i = 0; i < getNumPredefinedColorPalettes(); i++)
 	{
 		/*TColorPalette pal;
@@ -1657,10 +1657,10 @@ SectionSettings::SectionSettings(Tracker& theTracker) :
 		}*/
 		predefinedColorPalettes->store(i, ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[i]));
 	}
-	
+
 	for (i = 0; i < GlobalColorConfig::ColorLast; i++)
 		colorMapping[i] = GlobalColorConfig::ColorLast-1;
-	
+
 	colorMapping[0] = GlobalColorConfig::ColorTheme;
 	colorMapping[1] = GlobalColorConfig::ColorForegroundText;
 	colorMapping[2] = GlobalColorConfig::ColorTextHighlited;
@@ -1713,7 +1713,7 @@ void SectionSettings::showRestartMessageBox()
 }
 
 pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
-{	
+{
 	if (event->getID() == eCommand || event->getID() == eCommandRepeat)
 	{
 
@@ -1730,7 +1730,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case SUBPAGE_BUTTON_LEFT_0:
 			case SUBPAGE_BUTTON_LEFT_1:
 			case SUBPAGE_BUTTON_LEFT_2:
@@ -1760,26 +1760,26 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				}
 				break;
 			}
-				
+
 			case BUTTON_SETTINGS_OK:
 			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				showRestartMessageBox();
-								
+
 				// Store new palette settings
 				saveCurrentGlobalPalette();
 				storeCurrentPaletteToDatabase();
-				tracker.applySettings(tracker.settingsDatabase, tracker.settingsDatabaseCopy);				
-				
+				tracker.applySettings(tracker.settingsDatabase, tracker.settingsDatabaseCopy);
+
 				// Store new mixer settings
 				saveCurrentMixerSettings(*mixerSettings);
 
 				show(false);
 				tracker.sectionSamples->update(false);
 				tracker.screen->paint();
-				
+
 				break;
 			}
 
@@ -1789,12 +1789,12 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				showRestartMessageBox();
-				
+
 				// Store new palette settings
 				saveCurrentGlobalPalette();
 				storeCurrentPaletteToDatabase();
-				tracker.applySettings(tracker.settingsDatabase, tracker.settingsDatabaseCopy);				
-				
+				tracker.applySettings(tracker.settingsDatabase, tracker.settingsDatabaseCopy);
+
 				// Store new mixer settings
 				saveCurrentMixerSettings(*mixerSettings);
 
@@ -1811,7 +1811,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-			
+
 				cancelSettings();
 				break;
 			}
@@ -1832,18 +1832,18 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("RAMPING", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case BUTTON_SETTINGS_RESAMPLING:
 			{
 				if (event->getID() != eCommand)
 					break;
 
 				showResamplerMessageBox();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_FORCEPOWER2BUFF:
 			{
 				if (event->getID() != eCommand)
@@ -1851,26 +1851,26 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_VIRTUALCHANNELS:
 			{
 				if (reinterpret_cast<PPCheckBox*>(sender)->isChecked())
-					tracker.settingsDatabase->store("VIRTUALCHANNELS", 32);					
+					tracker.settingsDatabase->store("VIRTUALCHANNELS", 32);
 				else
 					tracker.settingsDatabase->store("VIRTUALCHANNELS", 0);
-				
-				update();			
+
+				update();
 				break;
 			}
-			
+
 			case BUTTON_SETTINGS_VIRTUALCHANNELS_PLUS:
 			{
 				pp_int32 v = tracker.settingsDatabase->restore("VIRTUALCHANNELS")->getIntValue() + 1;
 				if (v > 99)
 					v = 99;
-				tracker.settingsDatabase->store("VIRTUALCHANNELS", v);	
+				tracker.settingsDatabase->store("VIRTUALCHANNELS", v);
 				update();
 				break;
 			}
@@ -1880,11 +1880,11 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				pp_int32 v = tracker.settingsDatabase->restore("VIRTUALCHANNELS")->getIntValue() - 1;
 				if (v < 0)
 					v = 0;
-				tracker.settingsDatabase->store("VIRTUALCHANNELS", v);	
+				tracker.settingsDatabase->store("VIRTUALCHANNELS", v);
 				update();
 				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_MULTICHN_RECORD:
 			{
 				if (event->getID() != eCommand)
@@ -1914,7 +1914,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF:
 			{
 				if (event->getID() != eCommand)
@@ -1924,7 +1924,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY:
 			{
 				if (event->getID() != eCommand)
@@ -1933,8 +1933,8 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				tracker.settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
-			}			
-			
+			}
+
 			case CHECKBOX_SETTINGS_HEXCOUNT:
 			{
 				if (event->getID() != eCommand)
@@ -1942,9 +1942,9 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("HEXCOUNT", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_SHOWZEROEFFECT:
 			{
 				if (event->getID() != eCommand)
@@ -1962,9 +1962,9 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("FULLSCREEN", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE:
 			{
 				if (event->getID() != eCommand)
@@ -1972,7 +1972,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("INSTRUMENTBACKTRACE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_AUTORESIZE:
@@ -1982,7 +1982,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("PATTERNAUTORESIZE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_TABTONOTE:
@@ -1992,7 +1992,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("TABTONOTE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_CLICKTOCURSOR:
@@ -2002,7 +2002,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("CLICKTOCURSOR", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_WRAPCURSOR:
@@ -2012,7 +2012,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("WRAPAROUND", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_PROSPECTIVE:
@@ -2022,7 +2022,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("PROSPECTIVE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case BUTTON_HIGHLIGHTMODULO1_PLUS:
@@ -2030,7 +2030,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				pp_int32 v = tracker.settingsDatabase->restore("HIGHLIGHTMODULO1")->getIntValue() + 1;
 				if (v > 99)
 					v = 99;
-				tracker.settingsDatabase->store("HIGHLIGHTMODULO1", v);	
+				tracker.settingsDatabase->store("HIGHLIGHTMODULO1", v);
 				update();
 				break;
 			}
@@ -2040,7 +2040,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				pp_int32 v = tracker.settingsDatabase->restore("HIGHLIGHTMODULO1")->getIntValue() - 1;
 				if (v < 1)
 					v = 1;
-				tracker.settingsDatabase->store("HIGHLIGHTMODULO1", v);	
+				tracker.settingsDatabase->store("HIGHLIGHTMODULO1", v);
 				update();
 				break;
 			}
@@ -2050,11 +2050,11 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				pp_int32 v = tracker.settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue() + 1;
 				if (v > 99)
 					v = 99;
-				tracker.settingsDatabase->store("HIGHLIGHTMODULO2", v);	
+				tracker.settingsDatabase->store("HIGHLIGHTMODULO2", v);
 				update();
 				break;
 			}
-			
+
 			case CHECKBOX_HIGHLIGHTMODULO1_FULLROW:
 			{
 				if (event->getID() != eCommand)
@@ -2069,7 +2069,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				pp_int32 v = tracker.settingsDatabase->restore("HIGHLIGHTMODULO2")->getIntValue() - 1;
 				if (v < 1)
 					v = 1;
-				tracker.settingsDatabase->store("HIGHLIGHTMODULO2", v);	
+				tracker.settingsDatabase->store("HIGHLIGHTMODULO2", v);
 				update();
 				break;
 			}
@@ -2092,7 +2092,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				mp_sint32 value = (reinterpret_cast<PPCheckBox*>(sender)->isChecked() ? 1 : 0) | (type << 1);
 				tracker.settingsDatabase->store("SCOPES", value);
 				update();
-				break;				
+				break;
 			}
 
 			//case CHECKBOX_SETTINGS_FOLLOWSONG:
@@ -2102,7 +2102,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 			//	tracker.settingsDatabase->store("FOLLOWSONG", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 			//	update();
-			//	break;				
+			//	break;
 			//}
 
 			case CHECKBOX_SETTINGS_SAMPLEEDITORUNDO:
@@ -2112,9 +2112,9 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("SAMPLEEDITORUNDOBUFFER", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES:
 			{
 				if (event->getID() != eCommand)
@@ -2122,7 +2122,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("AUTOMIXDOWNSAMPLES", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_AUTOESTPLAYTIME:
@@ -2132,7 +2132,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("AUTOESTPLAYTIME", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
 
 			case CHECKBOX_SETTINGS_SHOWSPLASH:
@@ -2142,9 +2142,9 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("SHOWSPLASH", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_INTERNALDISKBROWSER:
 			{
 				if (event->getID() != eCommand)
@@ -2152,9 +2152,9 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				tracker.settingsDatabase->store("INTERNALDISKBROWSER", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
-				break;				
+				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY:
 			{
 				if (event->getID() != eCommand)
@@ -2164,7 +2164,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case CHECKBOX_SETTINGS_LOADMODULEINNEWTAB:
 			{
 				if (event->getID() != eCommand)
@@ -2201,7 +2201,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				updateCurrentColors();
 				break;
 			}
-			
+
 			case BUTTON_COLOR_RESTORE:
 			{
 				if (event->getID() != eCommand)
@@ -2209,7 +2209,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				showRestorePaletteMessageBox();
 				break;
 			}
-			
+
 			// predefined color handling
 			case BUTTON_COLOR_PREDEF_0:
 			case BUTTON_COLOR_PREDEF_1:
@@ -2222,20 +2222,20 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				pp_int32 i = reinterpret_cast<PPControl*>(sender)->getID() - BUTTON_COLOR_PREDEF_0;
-				
+
 				if (storePalette)
 				{
 					TColorPalette pal;
-					
+
 					colorDescriptors[getColorIndex()].colorCopy = currentColor;
-					
+
 					pal.numColors = GlobalColorConfig::ColorLast;
 					for (pp_int32 j = 0; j < pal.numColors; j++)
 						pal.colors[j] = colorDescriptors[j].colorCopy;
-						
+
 					predefinedColorPalettes->store(i, pal);
 					storePalette = !storePalette;
-					
+
 					PPButton* button = static_cast<PPButton*>(sectionContainer->getControlByID(BUTTON_COLOR_PREDEF_STORE));
 					if (!button)
 						break;
@@ -2243,8 +2243,8 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				}
 				else
 				{
-					const TColorPalette* pal = predefinedColorPalettes->restore(i);					
-				
+					const TColorPalette* pal = predefinedColorPalettes->restore(i);
+
 					for (i = 0; i < pal->numColors; i++)
 					{
 						if (i < GlobalColorConfig::ColorLast)
@@ -2252,10 +2252,10 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 							colorDescriptors[i].colorCopy = pal->colors[i];
 						}
 					}
-					
+
 					currentColor = colorDescriptors[getColorIndex()].colorCopy;
 				}
-				
+
 				update();
 				break;
 			}
@@ -2267,13 +2267,13 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				storePalette = !storePalette;
 				PPButton* button = reinterpret_cast<PPButton*>(sender);
-				
+
 				button->setPressed(storePalette);
-				
+
 				tracker.screen->paintControl(button);
 				break;
 			}
-			
+
 			case BUTTON_COLOR_COPY:
 			{
 				if (event->getID() != eCommand)
@@ -2281,7 +2281,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 				if (colorCopy == NULL)
 					colorCopy = new PPColor();
-					
+
 				*colorCopy = currentColor;
 				update();
 				break;
@@ -2326,7 +2326,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-					
+
 				retrieveDisplayResolution();
 				break;
 			}
@@ -2351,7 +2351,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case SLIDER_SPACING:
 			{
 				pp_uint32 v = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
@@ -2389,15 +2389,15 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 	else if (event->getID() == eSelection)
 	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
-		{	
+		{
 			/*case RADIOGROUP_SETTINGS_PAGE:
 			{
 				showPage(reinterpret_cast<PPRadioGroup*>(sender)->getChoice());
 				update();
 				break;
 			}*/
-		
-		
+
+
 			case RADIOGROUP_SETTINGS_AMPLIFY:
 			{
 				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
@@ -2409,7 +2409,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			case RADIOGROUP_SETTINGS_MIXFREQ:
 			{
 				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-				
+
 				ASSERT(v >= 0 && v < TrackerConfig::numMixFrequencies);
 				tracker.settingsDatabase->store("MIXERFREQ", TrackerConfig::mixFrequencies[v]);
 				update();
@@ -2434,7 +2434,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case RADIOGROUP_SETTINGS_EDITMODE:
 			{
 				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
@@ -2461,7 +2461,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			case RADIOGROUP_SETTINGS_SCOPESAPPEARANCE:
 			{
 				pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
-				pp_int32 res = (tracker.settingsDatabase->restore("SCOPES")->getIntValue() & 1) | (v << 1);				
+				pp_int32 res = (tracker.settingsDatabase->restore("SCOPES")->getIntValue() & 1) | (v << 1);
 				tracker.settingsDatabase->store("SCOPES", res);
 				update();
 				break;
@@ -2474,7 +2474,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
-			
+
 			case LISTBOX_SETTINGS_RESOLUTIONS:
 			{
 				pp_int32 v = *((pp_int32*)event->getDataPtr());
@@ -2483,13 +2483,13 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					tracker.settingsDatabase->store("XRESOLUTION", resolutions[v].width);
 					tracker.settingsDatabase->store("YRESOLUTION", resolutions[v].height);
 				}
-				update();			
+				update();
 			}
 
 			case LISTBOX_COLORS:
 			{
 				currentColor = colorDescriptors[getColorIndex()].colorCopy;
-				update();			
+				update();
 				break;
 			}
 
@@ -2524,7 +2524,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 
 void SectionSettings::showSection(bool bShow)
 {
-	sectionContainer->show(bShow);	
+	sectionContainer->show(bShow);
 }
 
 void SectionSettings::show(bool bShow)
@@ -2534,7 +2534,7 @@ void SectionSettings::show(bool bShow)
 	PPScreen* screen = tracker.screen;
 
 	visible = bShow;
-	
+
 	if (!initialised)
 	{
 		init();
@@ -2549,7 +2549,7 @@ void SectionSettings::show(bool bShow)
 			update(false);
 			if (control)
 			{
-/*#ifndef 
+/*#ifndef
 				control->setLocation(PPPoint(0, SECTIONHEIGHT));
 				control->setSize(PPSize(screen->getWidth(),screen->getHeight()-SECTIONHEIGHT));*/
 #ifdef __LOWRES__
@@ -2558,26 +2558,26 @@ void SectionSettings::show(bool bShow)
 #endif
 			}
 			tracker.hideInputControl();
-			
+
 			// backup current palette
 			saveCurrentGlobalPalette();
 			updateColors();
 			// backup current color
 			currentColor = colorDescriptors[getColorIndex()].colorCopy;
-			
+
 			// backup current mixer settings
 			saveCurrentMixerSettings(*mixerSettings);
 		}
 		else
 		{
-			tracker.showMainMenu(true, true);			
+			tracker.showMainMenu(true, true);
 			tracker.rearrangePatternEditorControl();
 		}
-		
+
 		showSection(bShow);
-		
+
 		// why should we do that? just show the last active tab
-		//showPage(0); 
+		//showPage(0);
 
 		screen->paint();
 	}
@@ -2587,10 +2587,10 @@ void SectionSettings::cancelSettings()
 {
 	restoreCurrentGlobalPalette();
 	restoreCurrentMixerSettings();
-				
+
 	if (tracker.settingsDatabaseCopy)
 	{
-		tracker.applySettings(tracker.settingsDatabaseCopy, tracker.settingsDatabase, false);				
+		tracker.applySettings(tracker.settingsDatabaseCopy, tracker.settingsDatabase, false);
 		delete tracker.settingsDatabase;
 		tracker.settingsDatabase = tracker.settingsDatabaseCopy;
 		tracker.settingsDatabaseCopy = NULL;
@@ -2614,7 +2614,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	PPScreen* screen = tracker.screen;
 
 	pp_int32 y2 = y;
-	
+
 	sectionContainer = new PPContainer(CONTAINER_SETTINGS, screen, this, PPPoint(x, y2), PPSize(screen->getWidth(),SECTIONHEIGHT), false);
 	static_cast<PPContainer*>(sectionContainer)->setColor(TrackerConfig::colorThemeMain);
 
@@ -2626,8 +2626,8 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 
 	while (x2 < screen->getWidth())
 	{
-		sectionContainer->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));	
-	
+		sectionContainer->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
+
 		x2+=TabPage::getWidth();
 	}
 
@@ -2652,32 +2652,32 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 #ifndef __LOWRES__
 	tabPages.get(4)->add(new TabPageTabs_1(PAGE_TABS_1, *this));
 #endif
-	
+
 	for (i = 0; i < tabPages.size(); i++)
 		for (pp_int32 j = 0; j < tabPages.get(i)->size(); j++)
 		{
 			tabPages.get(i)->get(j)->init(screen);
 			sectionContainer->addControl(tabPages.get(i)->get(j)->getContainer());
 		}
-	
+
 	PPButton* button;
-	
+
 	const pp_int32 numSettingsPages = NUMSETTINGSPAGES;
-	
+
 #ifndef __LOWRES__
-	const char* subSettingsTexts[] = {"I/O","Layout","Fonts","Misc.","Tabs"};	
+	const char* subSettingsTexts[] = {"I/O","Layout","Fonts","Misc.","Tabs"};
 
 	x2 = x;
-	
+
 	static_cast<PPContainer*>(sectionContainer)->addControl(new PPSeperator(0, screen, PPPoint(x2 + 156, y+4), SECTIONHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	static_cast<PPContainer*>(sectionContainer)->addControl(new PPSeperator(0, screen, PPPoint(x2 - 2, y+SECTIONHEIGHT-2-12-6), 157, TrackerConfig::colorThemeMain, true));
 
 	pp_int32 bWidth = 140 - 14*2;
-	pp_int32 bHeight = ((SECTIONHEIGHT - 2-12-6) - 8) / numSettingsPages;	
+	pp_int32 bHeight = ((SECTIONHEIGHT - 2-12-6) - 8) / numSettingsPages;
 
 	pp_int32 sx = x2 + 10;
 	pp_int32 sy = y2 + 4;
-		
+
 	for (i = 0; i < numSettingsPages; i++)
 	{
 		button = new PPButton(PAGE_BUTTON_0+i, screen, this, PPPoint(sx, sy), PPSize(bWidth, bHeight), false, true, false);
@@ -2685,7 +2685,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 		button->setText(subSettingsTexts[i]);
 		static_cast<PPContainer*>(sectionContainer)->addControl(button);
-		
+
 		button = new PPButton(SUBPAGE_BUTTON_LEFT_0+i, screen, this, PPPoint(sx+140-14*2+1, sy), PPSize(14, bHeight), false);
 		button->setColor(TrackerConfig::colorThemeMain);
 		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
@@ -2696,14 +2696,14 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 		button->setColor(TrackerConfig::colorThemeMain);
 		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 		button->setText(">");
-		static_cast<PPContainer*>(sectionContainer)->addControl(button);		
-		
+		static_cast<PPContainer*>(sectionContainer)->addControl(button);
+
 		sy+=bHeight;
 	}
 	x2++;
 
 #else
-	const char* subSettingsTexts[] = {"I/O","Layout","Fonts","Misc."};	
+	const char* subSettingsTexts[] = {"I/O","Layout","Fonts","Misc."};
 
 	x2 = screen->getWidth()-160 + 4;
 
@@ -2711,11 +2711,11 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	static_cast<PPContainer*>(sectionContainer)->addControl(new PPSeperator(0, screen, PPPoint(x + 2, y+UPPERFRAMEHEIGHT-4), screen->getWidth()-4, TrackerConfig::colorThemeMain, true));
 
 	pp_int32 bWidth = (screen->getWidth()-8-26) / numSettingsPages;
-	pp_int32 bHeight = 13;	
+	pp_int32 bHeight = 13;
 
 	pp_int32 sx = x + 4;
 	pp_int32 sy = y + UPPERFRAMEHEIGHT;
-		
+
 	for (i = 0; i < numSettingsPages; i++)
 	{
 		button = new PPButton(PAGE_BUTTON_0+i, screen, this, PPPoint(sx, sy), PPSize(bWidth, bHeight), false, true, false);
@@ -2725,14 +2725,14 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 		static_cast<PPContainer*>(sectionContainer)->addControl(button);
 		sx+=bWidth;
 	}
-	
+
 	sx+=1;
 	button = new PPButton(SUBPAGE_BUTTON_LEFT_0, screen, this, PPPoint(sx, sy), PPSize(13, bHeight), false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	button->setText("<");
 	static_cast<PPContainer*>(sectionContainer)->addControl(button);
-	
+
 	button = new PPButton(SUBPAGE_BUTTON_RIGHT_0, screen, this, PPPoint(sx+13, sy), PPSize(13, bHeight), false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
@@ -2745,20 +2745,20 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SETTINGS_OK, screen, this, PPPoint(x2+3, y+SECTIONHEIGHT-2-12), PPSize(46, 11));
 	button->setText("Ok");
 
-	static_cast<PPContainer*>(sectionContainer)->addControl(button);	
+	static_cast<PPContainer*>(sectionContainer)->addControl(button);
 
 	button = new PPButton(BUTTON_SETTINGS_APPLY, screen, this, PPPoint(x2+3+48, y+SECTIONHEIGHT-2-12), PPSize(48, 11));
 	button->setText("Apply");
 
-	static_cast<PPContainer*>(sectionContainer)->addControl(button);	
+	static_cast<PPContainer*>(sectionContainer)->addControl(button);
 
 	button = new PPButton(BUTTON_SETTINGS_CANCEL, screen, this, PPPoint(x2+3+48+50, y+SECTIONHEIGHT-2-12), PPSize(50, 11));
 	button->setText("Cancel");
 
-	static_cast<PPContainer*>(sectionContainer)->addControl(button);	
+	static_cast<PPContainer*>(sectionContainer)->addControl(button);
 
 	screen->addControl(sectionContainer);
-	
+
 	initialised = true;
 
 	showPage(0, 0);
@@ -2774,12 +2774,12 @@ void SectionSettings::update(bool repaint/* = true*/)
 	pp_int32 i, j;
 
 #ifdef __LOWRES__
-	pp_int32 x = 0;	
+	pp_int32 x = 0;
 #else
-	pp_int32 x = 160;	
+	pp_int32 x = 160;
 #endif
 	pp_int32 y = sectionContainer->getLocation().y;
-	
+
 #ifdef __LOWRES__
 	static_cast<PPButton*>(sectionContainer->getControlByID(SUBPAGE_BUTTON_LEFT_0))->enable(false);
 	static_cast<PPButton*>(sectionContainer->getControlByID(SUBPAGE_BUTTON_RIGHT_0))->enable(false);
@@ -2799,20 +2799,20 @@ void SectionSettings::update(bool repaint/* = true*/)
 		static_cast<PPButton*>(sectionContainer->getControlByID(SUBPAGE_BUTTON_RIGHT_0+i))->enable(false);
 #endif
 	}
-					
+
 	PPPoint location(x, y);
-	
+
 	pp_int32 lastVisiblePage = 0;
-	
+
 	for (j = 0; j < tabPages.get(currentActiveTabNum)->size(); j++)
 	{
 		if (j + currentActivePageStart < tabPages.get(currentActiveTabNum)->size())
 		{
 			TabPage* page = tabPages.get(currentActiveTabNum)->get(j + currentActivePageStart);
 			page->setLocation(location);
-		
+
 			location.x+=TabPage::getWidth();
-				
+
 			if (location.x <= tracker.screen->getWidth())
 			{
 				page->getContainer()->show(true);
@@ -2829,10 +2829,10 @@ void SectionSettings::update(bool repaint/* = true*/)
 	i = currentActiveTabNum;
 #ifdef __LOWRES__
 	i = 0;
-#endif	
+#endif
 	PPButton* button = static_cast<PPButton*>(sectionContainer->getControlByID(SUBPAGE_BUTTON_RIGHT_0+i));
 	button->enable(lastVisiblePage < tabPages.get(currentActiveTabNum)->size() - 1);
-	
+
 	button = static_cast<PPButton*>(sectionContainer->getControlByID(SUBPAGE_BUTTON_LEFT_0+i));
 	button->enable(currentActivePageStart > 0);
 
@@ -2858,12 +2858,12 @@ void SectionSettings::showPage(pp_int32 page, pp_int32 subPage/* = 0*/)
 {
 	currentActiveTabNum = page;
 	currentActivePageStart = subPage;
-	
+
 	currentActiveSubPageNum[currentActiveTabNum] = subPage;
-	
+
 	for (pp_int32 i = 0; i < NUMSETTINGSPAGES; i++)
 		static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_BUTTON_0+i))->setPressed(false);
-		
+
 	static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(PAGE_BUTTON_0+page))->setPressed(true);
 
 	currentActiveSubPageNum[currentActiveTabNum] = subPage;
@@ -2872,28 +2872,28 @@ void SectionSettings::showPage(pp_int32 page, pp_int32 subPage/* = 0*/)
 void SectionSettings::initColorDescriptors()
 {
 	for (pp_int32 i = 0; i < GlobalColorConfig::ColorLast; i++)
-		colorDescriptors[i].readableDecription = GlobalColorConfig::getInstance()->getColorReadableDescription((GlobalColorConfig::GlobalColors)i);	
+		colorDescriptors[i].readableDecription = GlobalColorConfig::getInstance()->getColorReadableDescription((GlobalColorConfig::GlobalColors)i);
 }
 
 void SectionSettings::updateColors()
 {
 	for (pp_int32 i = 0; i < GlobalColorConfig::ColorLast; i++)
-		colorDescriptors[i].colorCopy = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);	
+		colorDescriptors[i].colorCopy = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);
 }
 
 pp_int32 SectionSettings::getNumPredefinedColorPalettes()
 {
 	return TrackerConfig::numPredefinedColorPalettes;
 }
-	
+
 PPString SectionSettings::getEncodedPalette(pp_int32 index)
 {
 	return ColorPaletteContainer::encodePalette(*predefinedColorPalettes->restore(index));
 }
-	
+
 void SectionSettings::setEncodedPalette(pp_int32 index, const PPString& str)
 {
-	TColorPalette p = ColorPaletteContainer::decodePalette(str); 
+	TColorPalette p = ColorPaletteContainer::decodePalette(str);
 
 	predefinedColorPalettes->store(index, p);
 }
@@ -2905,7 +2905,7 @@ void SectionSettings::storeCurrentPaletteToDatabase()
 	pal.numColors = GlobalColorConfig::ColorLast;
 	for (pp_int32 j = 0; j < pal.numColors; j++)
 		pal.colors[j] = colorDescriptors[j].colorCopy;
-	
+
 	tracker.settingsDatabase->store("ACTIVECOLORS", ColorPaletteContainer::encodePalette(pal));
 }
 
@@ -2915,7 +2915,7 @@ void SectionSettings::saveCurrentGlobalPalette()
 	for (pp_int32 i = 0; i < GlobalColorConfig::ColorLast; i++)
 	{
 		if (i < palette->numColors)
-			palette->colors[i] = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);	
+			palette->colors[i] = GlobalColorConfig::getInstance()->getColor((GlobalColorConfig::GlobalColors)i);
 	}
 }
 
@@ -2924,7 +2924,7 @@ void SectionSettings::restoreCurrentGlobalPalette()
 	for (pp_int32 i = 0; i < palette->numColors; i++)
 	{
 		if (i < GlobalColorConfig::ColorLast)
-			GlobalColorConfig::getInstance()->setColor((GlobalColorConfig::GlobalColors)i, palette->colors[i]);	
+			GlobalColorConfig::getInstance()->setColor((GlobalColorConfig::GlobalColors)i, palette->colors[i]);
 	}
 }
 
@@ -2932,7 +2932,7 @@ void SectionSettings::updateCurrentColors()
 {
 	for (pp_int32 i = 0; i < GlobalColorConfig::ColorLast; i++)
 		GlobalColorConfig::getInstance()->setColor((GlobalColorConfig::GlobalColors)i, colorDescriptors[i].colorCopy);
-		
+
 	tracker.screen->paint();
 }
 
@@ -2944,15 +2944,15 @@ void SectionSettings::restorePalettes()
 		predefinedColorPalettes->store(i, ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[i]));
 	}
 
-	*palette = ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[0]);	
+	*palette = ColorPaletteContainer::decodePalette(TrackerConfig::predefinedColorPalettes[0]);
 	restoreCurrentGlobalPalette();
 
 	for (i = 0; i < palette->numColors; i++)
 		if (i < GlobalColorConfig::ColorLast)
 			colorDescriptors[i].colorCopy = palette->colors[i];
-	
-	currentColor = colorDescriptors[getColorIndex()].colorCopy;	
-	
+
+	currentColor = colorDescriptors[getColorIndex()].colorCopy;
+
 	tracker.screen->paint();
 }
 
@@ -2973,7 +2973,7 @@ void SectionSettings::restoreCurrentMixerSettings()
 		{
 			SystemMessage message(*tracker.screen, SystemMessage::MessageSoundDriverInitFailed);
 			message.show();
-		}				
+		}
 	}
 }
 
@@ -2984,27 +2984,27 @@ void SectionSettings::showCustomResolutionMessageBox()
 		delete dialog;
 		dialog = NULL;
 	}
-	
-	dialog = new DialogWithValues(tracker.screen, 
-								  responder, 
-								  RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
-								  "Enter custom resolution" PPSTR_PERIODS, 
+
+	dialog = new DialogWithValues(tracker.screen,
+								  responder,
+								  RESPONDMESSAGEBOX_CUSTOMRESOLUTION,
+								  "Enter custom resolution" PPSTR_PERIODS,
 								  DialogWithValues::ValueStyleEnterTwoValues);
-														
+
 	static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Width in pixels:");
 	static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Height in pixels:");
-	static_cast<DialogWithValues*>(dialog)->setValueOneRange(MINWIDTH, 10000.0f, 0); 
+	static_cast<DialogWithValues*>(dialog)->setValueOneRange(MINWIDTH, 10000.0f, 0);
 	static_cast<DialogWithValues*>(dialog)->setValueTwoRange(MINHEIGHT, 10000.0f, 0);
 	static_cast<DialogWithValues*>(dialog)->setValueOneIncreaseStep(1.0f);
 	static_cast<DialogWithValues*>(dialog)->setValueTwoIncreaseStep(1.0f);
-	 
+
 	pp_int32 width = tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue();
 	pp_int32 height = tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue();
-	 
+
 	static_cast<DialogWithValues*>(dialog)->setValueOne((float)width);
 	static_cast<DialogWithValues*>(dialog)->setValueTwo((float)height);
-	
-	dialog->show();	
+
+	dialog->show();
 }
 
 void SectionSettings::showRestorePaletteMessageBox()
@@ -3014,12 +3014,12 @@ void SectionSettings::showRestorePaletteMessageBox()
 		delete dialog;
 		dialog = NULL;
 	}
-	
-	dialog = new PPDialogBase(tracker.screen, 
-							  responder, 
-							  RESPONDMESSAGEBOX_RESTOREPALETTES, 
+
+	dialog = new PPDialogBase(tracker.screen,
+							  responder,
+							  RESPONDMESSAGEBOX_RESTOREPALETTES,
 							  "Restore all default palettes?");
-	dialog->show();	
+	dialog->show();
 }
 
 void SectionSettings::showSelectDriverMessageBox()
@@ -3029,10 +3029,10 @@ void SectionSettings::showSelectDriverMessageBox()
 		delete dialog;
 		dialog = NULL;
 	}
-	
-	dialog = new DialogListBox(tracker.screen, 
-							   responder, 
-							   RESPONDMESSAGEBOX_SELECTAUDIODRV, 
+
+	dialog = new DialogListBox(tracker.screen,
+							   responder,
+							   RESPONDMESSAGEBOX_SELECTAUDIODRV,
 							   "Select audio driver",
 							   true);
 	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
@@ -3041,22 +3041,22 @@ void SectionSettings::showSelectDriverMessageBox()
 	mp_sint32 selectedIndex = -1;
 	const char* name = tracker.playerMaster->getFirstDriverName();
 	//const char* curDrvName = tracker.playerController->getCurrentDriverName();
-	
+
 	const char* curDrvName = tracker.settingsDatabase->restore("AUDIODRIVER")->getStringValue();
-	
+
 	while (name)
 	{
 		if (strcmp(name, curDrvName) == 0)
 			selectedIndex = i;
-		listBox->addItem(name);	
-		name = tracker.playerMaster->getNextDriverName();		
+		listBox->addItem(name);
+		name = tracker.playerMaster->getNextDriverName();
 		i++;
 	}
 
 	if (selectedIndex != -1)
 		listBox->setSelectedIndex(selectedIndex, false);
 
-	dialog->show();	
+	dialog->show();
 }
 
 void SectionSettings::showResamplerMessageBox()
@@ -3067,20 +3067,20 @@ void SectionSettings::showResamplerMessageBox()
 		dialog = NULL;
 	}
 
-	dialog = new DialogListBox(tracker.screen, 
-							   responder, 
-							   RESPONDMESSAGEBOX_SELECTRESAMPLER, 
+	dialog = new DialogListBox(tracker.screen,
+							   responder,
+							   RESPONDMESSAGEBOX_SELECTRESAMPLER,
 							   "Select Resampler",
 							   true);
 	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
 
 	ResamplerHelper resamplerHelper;
 	for (pp_uint32 i = 0; i < resamplerHelper.getNumResamplers(); i++)
-		listBox->addItem(resamplerHelper.getResamplerName(i));	
+		listBox->addItem(resamplerHelper.getResamplerName(i));
 
 	listBox->setSelectedIndex(tracker.settingsDatabase->restore("INTERPOLATION")->getIntValue(), false);
 
-	dialog->show();	
+	dialog->show();
 }
 
 void SectionSettings::storeAudioDriver(const char* driverName)
@@ -3089,7 +3089,7 @@ void SectionSettings::storeAudioDriver(const char* driverName)
 	if (strcmp(curDrvName, driverName) != 0)
 	{
 		tracker.settingsDatabase->store("AUDIODRIVER", driverName);
-		
+
 		TMixerSettings newMixerSettings;
 		saveCurrentMixerSettings(newMixerSettings);
 		bool res = tracker.playerMaster->applyNewMixerSettings(newMixerSettings, true);
@@ -3105,7 +3105,7 @@ void SectionSettings::storeAudioDriver(const char* driverName)
 void SectionSettings::storeResampler(pp_uint32 resampler)
 {
 	tracker.settingsDatabase->store("INTERPOLATION", resampler);
-	
+
 	TMixerSettings newMixerSettings;
 	newMixerSettings.resampler = resampler;
 	bool res = tracker.playerMaster->applyNewMixerSettings(newMixerSettings, true);
@@ -3122,7 +3122,7 @@ void SectionSettings::enumerateFontFacesInListBox(pp_uint32 fontID)
 	const char* name = PPFont::getFirstFontEntryName((PPFont::FontID)fontID);
 	while (name)
 	{
-		listBoxFontEntries->addItem(name);	
+		listBoxFontEntries->addItem(name);
 		name = PPFont::getNextFontEntryName((PPFont::FontID)fontID);
 	}
 }
@@ -3139,7 +3139,7 @@ void SectionSettings::storeCustomResolution()
 
 	tracker.settingsDatabase->store("XRESOLUTION", width);
 	tracker.settingsDatabase->store("YRESOLUTION", height);
-	
+
 	update();
 }
 
@@ -3148,28 +3148,28 @@ void SectionSettings::importCurrentColorPalette()
 	FileExtProvider fileExtProvider;
 
 	PPOpenPanel panel(tracker.screen, "Open colors");
-	
+
 	panel.addExtensions(fileExtProvider.getColorExtensions());
-	
+
 	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
 	{
 		TColorPalette pal;
 		ColorExportImport exportImport(panel.getFileName());
-		
+
 		if (exportImport.importColorPalette(pal))
 		{
 			for (pp_int32 j = 0; j < pal.numColors; j++)
 				colorDescriptors[j].colorCopy = pal.colors[j];
-			
+
 			currentColor = colorDescriptors[getColorIndex()].colorCopy;
-						
+
 			update();
-			
+
 			lastColorFile = panel.getFileName();
 		}
 		else
 		{
-			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Unrecognized type/corrupt file", Tracker::MessageBox_OK);			
+			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Unrecognized type/corrupt file", Tracker::MessageBox_OK);
 		}
 	}
 }
@@ -3183,22 +3183,22 @@ void SectionSettings::exportCurrentColorPalette()
 	fileName.append(fileExtProvider.getColorExtension(FileExtProvider::ColorExtensionMCT));
 
 	PPSavePanel panel(tracker.screen, "Save colors", fileName);
-	
+
 	panel.addExtensions(fileExtProvider.getColorExtensions());
-	
+
 	if (panel.runModal() == PPModalDialog::ReturnCodeOK)
 	{
 		TColorPalette pal;
-		
+
 		pal.numColors = GlobalColorConfig::ColorLast;
 		for (pp_int32 j = 0; j < pal.numColors; j++)
 			pal.colors[j] = colorDescriptors[j].colorCopy;
-			
+
 		ColorExportImport exportImport(panel.getFileName());
-		
+
 		if (!exportImport.exportColorPalette(pal))
 		{
-			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not create file", Tracker::MessageBox_OK);						
+			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not create file", Tracker::MessageBox_OK);
 		}
 	}
 }
@@ -3206,7 +3206,7 @@ void SectionSettings::exportCurrentColorPalette()
 void SectionSettings::retrieveDisplayResolution()
 {
 	PPSize size = tracker.screen->getDisplayResolution();
-	
+
 	if (size.width > 0 && size.height > 0)
 	{
 
@@ -3217,13 +3217,11 @@ void SectionSettings::retrieveDisplayResolution()
 
 		tracker.settingsDatabase->store("XRESOLUTION", size.width);
 		tracker.settingsDatabase->store("YRESOLUTION", size.height);
-	
-		update();		
+
+		update();
 	}
 	else
 	{
-		tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not retrieve display resolution", Tracker::MessageBox_OK);							
+		tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Could not retrieve display resolution", Tracker::MessageBox_OK);
 	}
 }
-
-

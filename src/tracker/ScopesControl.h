@@ -53,12 +53,12 @@ public:
 		ClickTypeRec,
 		ClickTypeSingleRec
 	};
-	
+
 	enum AppearanceTypes
 	{
 		AppearanceTypeNormal,
 		AppearanceTypeSolid,
-		AppearanceTypeLines		
+		AppearanceTypeLines
 	};
 
 private:
@@ -75,7 +75,7 @@ private:
 	pp_int32 visibleHeight;
 
 	PlayerController* playerController;
-	
+
 	pp_int32 numChannels;
 	pp_int32 channelWidthTable[TrackerConfig::MAXCHANNELS];
 	bool onOffState[TrackerConfig::MAXCHANNELS];
@@ -92,7 +92,7 @@ private:
 	bool didSoloChannel;
 
 	bool enabled;
-	
+
 	AppearanceTypes appearance;
 
 	ClickTypes currentClickType;
@@ -103,11 +103,11 @@ public:
 		ChangeValueMuting,
 		ChangeValueRecording
 	};
-	
-	ScopesControl(pp_int32 id, 
-				  PPScreen* parentScreen, 
-				  EventListenerInterface* eventListener, 
-				  const PPPoint& location, const PPSize& size, 
+
+	ScopesControl(pp_int32 id,
+				  PPScreen* parentScreen,
+				  EventListenerInterface* eventListener,
+				  const PPPoint& location, const PPSize& size,
 				  bool border = true);
 
 	virtual ~ScopesControl();
@@ -123,32 +123,32 @@ public:
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
 	void attachSource(PlayerController* playerController);
-	
+
 	void setNumChannels(pp_int32 numChannels) { this->numChannels = numChannels; }
-	
+
 	bool needsUpdate();
 	void enable(bool b) { enabled = b; }
 
 	void muteChannel(pp_int32 index, bool b) { muteChannels[index] = (b ? 1 : 0); }
 	void recordChannel(pp_int32 index, bool b) { recChannels[index] = (b ? 1 : 0); }
-	
+
 	bool isSoloChannel(pp_int32 c) const;
 	bool isSingleRecChannel(pp_int32 c) const;
-		
+
 	void handleMute(pp_int32 channel);
 	void handleSolo(pp_int32 channel);
 	void handleRec(pp_int32 channel);
 	void handleSingleRec(pp_int32 channel);
 
 	void handleUnmuteAll();
-	
+
 	void setCurrentClickType(ClickTypes type) { currentClickType = type; }
 	ClickTypes getCurrentClickType() const { return currentClickType; }
-	
+
 	void setAppearance(AppearanceTypes appearance) { this->appearance = appearance; }
 	AppearanceTypes getAppearance() const { return appearance; }
-	
-private:	
+
+private:
 	pp_int32 pointToChannel(const PPPoint& pt);
 
 	pp_int32 WRAPCHANNELS();

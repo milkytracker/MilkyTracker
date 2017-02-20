@@ -49,7 +49,7 @@
  *    - GP2X mouse emulator (awaiting a rewrite one day..)
  *    - Various command line options
  *    - Fix for french azerty keyboards (their number keys are shifted)
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -96,25 +96,23 @@ static MidiReceiver*		myMidiReceiver		= NULL;
 PPMutex*			globalMutex				= NULL;
 static bool			ticking					= false;
 
-static pp_uint32	lmyTime;
-static PPPoint		llastClickPosition		= PPPoint(0,0);
-static pp_uint16	lClickCount				= 0;
+struct MouseState {
+	pp_uint32 myTime;
+	PPPoint lastClickPosition;
+	pp_uint16 clickCount;
+	bool mouseDown;
+	pp_uint32 buttonDownStartTime;
+};
 
-static pp_uint32	rmyTime;
-static PPPoint		rlastClickPosition		= PPPoint(0,0);
-static pp_uint16	rClickCount				= 0;
-
-static bool			lMouseDown				= false;
-static pp_uint32	lButtonDownStartTime;
-
-static bool			rMouseDown				= false;
-static pp_uint32	rButtonDownStartTime;
+static MouseState mouseLeft = { 0, PPPoint(0,0), 0, false, 0 };
+static MouseState mouseRight = { 0, PPPoint(0,0), 0, false, 0 };
+static MouseState mouseMiddle = { 0, PPPoint(0,0), 0, false, 0 };
 
 static pp_uint32	timerTicker				= 0;
 
 static PPPoint		p;
 
-// This needs to be visible from outside 
+// This needs to be visible from outside
 pp_uint32 PPGetTickCount()
 {
 	return SDL_GetTicks();
@@ -149,7 +147,7 @@ static void RaiseEventSerialized(PPEvent* event)
 	if (myTrackerScreen && myTracker)
 	{
 		globalMutex->lock();
-		myTrackerScreen->raiseEvent(event);		
+		myTrackerScreen->raiseEvent(event);
 		globalMutex->unlock();
 	}
 }
@@ -159,6 +157,7 @@ enum SDLUserEvents
 	SDLUserEventTimer,
 	SDLUserEventLMouseRepeat,
 	SDLUserEventRMouseRepeat,
+	SDLUserEventMMouseRepeat,
 	SDLUserEventMidiKeyDown,
 	SDLUserEventMidiKeyUp,
 };
@@ -169,42 +168,54 @@ static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 	{
 		return interval;
 	}
-	
-	SDL_UserEvent ev;	
+
+	SDL_UserEvent ev;
 	ev.type = SDL_USEREVENT;
 
 	if (!(timerTicker % 1))
 	{
 		ev.code = SDLUserEventTimer;
-		SDL_PushEvent((SDL_Event*)&ev);		
-		
+		SDL_PushEvent((SDL_Event*)&ev);
+
 		//PPEvent myEvent(eTimer);
 		//RaiseEventSerialized(&myEvent);
 	}
-	
+
 	timerTicker++;
 
-	if (lMouseDown &&
-		(timerTicker - lButtonDownStartTime) > 25)
+	if (mouseLeft.mouseDown &&
+		(timerTicker - mouseLeft.buttonDownStartTime) > 25)
 	{
 		ev.code = SDLUserEventLMouseRepeat;
 		ev.data1 = reinterpret_cast<void*>(p.x);
 		ev.data2 = reinterpret_cast<void*>(p.y);
-		SDL_PushEvent((SDL_Event*)&ev);		
+		SDL_PushEvent((SDL_Event*)&ev);
 
 		//PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));
 		//RaiseEventSerialized(&myEvent);
 	}
 
-	if (rMouseDown &&
-		(timerTicker - rButtonDownStartTime) > 25)
+	if (mouseRight.mouseDown &&
+		(timerTicker - mouseRight.buttonDownStartTime) > 25)
 	{
 		ev.code = SDLUserEventRMouseRepeat;
 		ev.data1 = reinterpret_cast<void*>(p.x);
 		ev.data2 = reinterpret_cast<void*>(p.y);
-		SDL_PushEvent((SDL_Event*)&ev);		
+		SDL_PushEvent((SDL_Event*)&ev);
 
-		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
+		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));
+		//RaiseEventSerialized(&myEvent);
+	}
+
+	if (mouseMiddle.mouseDown &&
+		(timerTicker - mouseMiddle.buttonDownStartTime) > 25)
+	{
+		ev.code = SDLUserEventMMouseRepeat;
+		ev.data1 = reinterpret_cast<void*>(p.x);
+		ev.data2 = reinterpret_cast<void*>(p.y);
+		SDL_PushEvent((SDL_Event*)&ev);
+
+		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));
 		//RaiseEventSerialized(&myEvent);
 	}
 
@@ -215,27 +226,27 @@ static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 class MidiEventHandler : public MidiReceiver::MidiEventHandler
 {
 public:
-	virtual void keyDown(int note, int volume) 
+	virtual void keyDown(int note, int volume)
 	{
-		SDL_UserEvent ev;	
+		SDL_UserEvent ev;
 		ev.type = SDL_USEREVENT;
 		ev.code = SDLUserEventMidiKeyDown;
 		ev.data1 = (void*)note;
 		ev.data2 = (void*)volume;
-		SDL_PushEvent((SDL_Event*)&ev);		
+		SDL_PushEvent((SDL_Event*)&ev);
 
 		//globalMutex->lock();
 		//myTracker->sendNoteDown(note, volume);
 		//globalMutex->unlock();
 	}
 
-	virtual void keyUp(int note) 
+	virtual void keyUp(int note)
 	{
-		SDL_UserEvent ev;	
+		SDL_UserEvent ev;
 		ev.type = SDL_USEREVENT;
 		ev.code = SDLUserEventMidiKeyUp;
 		ev.data1 = (void*)note;
-		SDL_PushEvent((SDL_Event*)&ev);		
+		SDL_PushEvent((SDL_Event*)&ev);
 
 		//globalMutex->lock();
 		//myTracker->sendNoteUp(note);
@@ -275,83 +286,113 @@ void InitMidi()
 
 void translateMouseDownEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 localMouseY)
 {
-	if (mouseButton > 2 || !mouseButton)
+	if (mouseButton > 3 || !mouseButton)
 		return;
 
 	myDisplayDevice->transform(localMouseX, localMouseY);
-	
+
 	p.x = localMouseX;
 	p.y = localMouseY;
-	
+
 	// -----------------------------
 	if (mouseButton == 1)
 	{
 		PPEvent myEvent(eLMouseDown, &p, sizeof(PPPoint));
-		
+
 		RaiseEventSerialized(&myEvent);
-		
-		lMouseDown = true;
-		lButtonDownStartTime = timerTicker;
-		
-		if (!lClickCount)
+
+		mouseLeft.mouseDown = true;
+		mouseLeft.buttonDownStartTime = timerTicker;
+
+		if (!mouseLeft.clickCount)
 		{
-			lmyTime = PPGetTickCount();
-			llastClickPosition.x = localMouseX;
-			llastClickPosition.y = localMouseY;
+			mouseLeft.myTime = PPGetTickCount();
+			mouseLeft.lastClickPosition.x = localMouseX;
+			mouseLeft.lastClickPosition.y = localMouseY;
 		}
-		else if (lClickCount == 2)
+		else if (mouseLeft.clickCount == 2)
 		{
-			pp_uint32 deltat = PPGetTickCount() - lmyTime;
-			
+			pp_uint32 deltat = PPGetTickCount() - mouseLeft.myTime;
+
 			if (deltat > 500)
 			{
-				lClickCount = 0;
-				lmyTime = PPGetTickCount();
-				llastClickPosition.x = localMouseX;
-				llastClickPosition.y = localMouseY;
+				mouseLeft.clickCount = 0;
+				mouseLeft.myTime = PPGetTickCount();
+				mouseLeft.lastClickPosition.x = localMouseX;
+				mouseLeft.lastClickPosition.y = localMouseY;
 			}
 		}
-		
-		lClickCount++;	
-		
+
+		mouseLeft.clickCount++;
+
 	}
 	else if (mouseButton == 2)
 	{
-		PPEvent myEvent(eRMouseDown, &p, sizeof(PPPoint));
-		
+		PPEvent myEvent(eMMouseDown, &p, sizeof(PPPoint));
+
 		RaiseEventSerialized(&myEvent);
-		
-		rMouseDown = true;
-		rButtonDownStartTime = timerTicker;
-		
-		if (!rClickCount)
+
+		mouseMiddle.mouseDown = true;
+		mouseMiddle.buttonDownStartTime = timerTicker;
+
+		if (!mouseMiddle.clickCount)
 		{
-			rmyTime = PPGetTickCount();
-			rlastClickPosition.x = localMouseX;
-			rlastClickPosition.y = localMouseY;
+			mouseMiddle.myTime = PPGetTickCount();
+			mouseMiddle.lastClickPosition.x = localMouseX;
+			mouseMiddle.lastClickPosition.y = localMouseY;
 		}
-		else if (rClickCount == 2)
+		else if (mouseMiddle.clickCount == 2)
 		{
-			pp_uint32 deltat = PPGetTickCount() - rmyTime;
-			
+			pp_uint32 deltat = PPGetTickCount() - mouseRight.myTime;
+
 			if (deltat > 500)
 			{
-				rClickCount = 0;
-				rmyTime = PPGetTickCount();
-				rlastClickPosition.x = localMouseX;
-				rlastClickPosition.y = localMouseY;
+				mouseMiddle.clickCount = 0;
+				mouseMiddle.myTime = PPGetTickCount();
+				mouseMiddle.lastClickPosition.x = localMouseX;
+				mouseMiddle.lastClickPosition.y = localMouseY;
 			}
 		}
-		
-		rClickCount++;	
+
+		mouseMiddle.clickCount++;
+	}
+	else if (mouseButton == 3)
+	{
+		PPEvent myEvent(eRMouseDown, &p, sizeof(PPPoint));
+
+		RaiseEventSerialized(&myEvent);
+
+		mouseRight.mouseDown = true;
+		mouseRight.buttonDownStartTime = timerTicker;
+
+		if (!mouseRight.clickCount)
+		{
+			mouseRight.myTime = PPGetTickCount();
+			mouseRight.lastClickPosition.x = localMouseX;
+			mouseRight.lastClickPosition.y = localMouseY;
+		}
+		else if (mouseRight.clickCount == 2)
+		{
+			pp_uint32 deltat = PPGetTickCount() - mouseRight.myTime;
+
+			if (deltat > 500)
+			{
+				mouseRight.clickCount = 0;
+				mouseRight.myTime = PPGetTickCount();
+				mouseRight.lastClickPosition.x = localMouseX;
+				mouseRight.lastClickPosition.y = localMouseY;
+			}
+		}
+
+		mouseRight.clickCount++;
 	}
 }
 
 void translateMouseUpEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 localMouseY)
 {
-	if (mouseButton > 2 || !mouseButton)
+	if (mouseButton > 3 || !mouseButton)
 		return;
-	
+
 	myDisplayDevice->transform(localMouseX, localMouseY);
 
 	p.x = localMouseX;
@@ -360,57 +401,84 @@ void translateMouseUpEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 
 	// -----------------------------
 	if (mouseButton == 1)
 	{
-		lClickCount++;
-		
-		if (lClickCount >= 4)
+		mouseLeft.clickCount++;
+
+		if (mouseLeft.clickCount >= 4)
 		{
-			pp_uint32 deltat = PPGetTickCount() - lmyTime;
-			
+			pp_uint32 deltat = PPGetTickCount() - mouseLeft.myTime;
+
 			if (deltat < 500)
 			{
-				p.x = localMouseX; p.y = localMouseY;				
-				if (abs(p.x - llastClickPosition.x) < 4 &&
-					abs(p.y - llastClickPosition.y) < 4)
-				{					
-					PPEvent myEvent(eLMouseDoubleClick, &p, sizeof(PPPoint));					
+				p.x = localMouseX; p.y = localMouseY;
+				if (abs(p.x - mouseLeft.lastClickPosition.x) < 4 &&
+					abs(p.y - mouseLeft.lastClickPosition.y) < 4)
+				{
+					PPEvent myEvent(eLMouseDoubleClick, &p, sizeof(PPPoint));
 					RaiseEventSerialized(&myEvent);
 				}
 			}
-			
-			lClickCount = 0;							
+
+			mouseLeft.clickCount = 0;
 		}
-		
-		p.x = localMouseX; p.y = localMouseY;		
-		PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));		
-		RaiseEventSerialized(&myEvent);		
-		lMouseDown = false;
+
+		p.x = localMouseX; p.y = localMouseY;
+		PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));
+		RaiseEventSerialized(&myEvent);
+		mouseLeft.mouseDown = false;
 	}
 	else if (mouseButton == 2)
 	{
-		rClickCount++;
-		
-		if (rClickCount >= 4)
+		mouseMiddle.clickCount++;
+
+		if (mouseMiddle.clickCount >= 4)
 		{
-			pp_uint32 deltat = PPGetTickCount() - rmyTime;
-			
+			pp_uint32 deltat = PPGetTickCount() - mouseMiddle.myTime;
+
 			if (deltat < 500)
 			{
-				p.x = localMouseX; p.y = localMouseY;				
-				if (abs(p.x - rlastClickPosition.x) < 4 &&
-					abs(p.y - rlastClickPosition.y) < 4)
-				{					
-					PPEvent myEvent(eRMouseDoubleClick, &p, sizeof(PPPoint));					
+				p.x = localMouseX; p.y = localMouseY;
+				if (abs(p.x - mouseMiddle.lastClickPosition.x) < 4 &&
+					abs(p.y - mouseMiddle.lastClickPosition.y) < 4)
+				{
+					PPEvent myEvent(eMMouseDoubleClick, &p, sizeof(PPPoint));
 					RaiseEventSerialized(&myEvent);
 				}
 			}
-			
-			rClickCount = 0;
+
+			mouseMiddle.clickCount = 0;
 		}
-		
-		p.x = localMouseX; p.y = localMouseY;		
-		PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));		
-		RaiseEventSerialized(&myEvent);		
-		rMouseDown = false;
+
+		p.x = localMouseX; p.y = localMouseY;
+		PPEvent myEvent(eMMouseUp, &p, sizeof(PPPoint));
+		RaiseEventSerialized(&myEvent);
+		mouseMiddle.mouseDown = false;
+	}
+	else if (mouseButton == 3)
+	{
+		mouseRight.clickCount++;
+
+		if (mouseRight.clickCount >= 4)
+		{
+			pp_uint32 deltat = PPGetTickCount() - mouseRight.myTime;
+
+			if (deltat < 500)
+			{
+				p.x = localMouseX; p.y = localMouseY;
+				if (abs(p.x - mouseRight.lastClickPosition.x) < 4 &&
+					abs(p.y - mouseRight.lastClickPosition.y) < 4)
+				{
+					PPEvent myEvent(eRMouseDoubleClick, &p, sizeof(PPPoint));
+					RaiseEventSerialized(&myEvent);
+				}
+			}
+
+			mouseRight.clickCount = 0;
+		}
+
+		p.x = localMouseX; p.y = localMouseY;
+		PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));
+		RaiseEventSerialized(&myEvent);
+		mouseRight.mouseDown = false;
 	}
 }
 
@@ -439,23 +507,23 @@ void translateMouseMoveEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int3
 	if (mouseButton == 0)
 	{
 		p.x = localMouseX; p.y = localMouseY;
-		PPEvent myEvent(eMouseMoved, &p, sizeof(PPPoint));						
+		PPEvent myEvent(eMouseMoved, &p, sizeof(PPPoint));
 		RaiseEventSerialized(&myEvent);
 	}
 	else
 	{
 		if (mouseButton > 2 || !mouseButton)
 			return;
-		
-		p.x = localMouseX; p.y = localMouseY;		
-		if (mouseButton == 1 && lMouseDown)
+
+		p.x = localMouseX; p.y = localMouseY;
+		if (mouseButton == 1 && mouseLeft.mouseDown)
 		{
-			PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));			
+			PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
 		}
-		else if (rMouseDown)
+		else if (mouseRight.mouseDown)
 		{
-			PPEvent myEvent(eRMouseDrag, &p, sizeof(PPPoint));			
+			PPEvent myEvent(eRMouseDrag, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
 		}
 	}
@@ -466,7 +534,7 @@ void preTranslateKey(SDL_Keysym& keysym)
 	// Rotate cursor keys if necessary
 	switch (myDisplayDevice->getOrientation())
 	{
-		case PPDisplayDevice::ORIENTATION_ROTATE90CW:	
+		case PPDisplayDevice::ORIENTATION_ROTATE90CW:
 			switch (keysym.sym)
 			{
 				case SDLK_UP:
@@ -484,7 +552,7 @@ void preTranslateKey(SDL_Keysym& keysym)
 			}
 			break;
 
-		case PPDisplayDevice::ORIENTATION_ROTATE90CCW:	
+		case PPDisplayDevice::ORIENTATION_ROTATE90CCW:
 			switch (keysym.sym)
 			{
 				case SDLK_DOWN:
@@ -512,9 +580,9 @@ void translateTextInputEvent(const SDL_Event& event)
 #ifdef DEBUG
 	printf ("DEBUG: Text input: %s\n", event.text.text);
 #endif
-	
+
 	char character = event.text.text[0];
-	
+
 	// Only deal with ASCII characters
 	if (character >= 32 && character <= 127)
 	{
@@ -528,13 +596,13 @@ void translateKeyDownEvent(const SDL_Event& event)
 	SDL_Keysym keysym = event.key.keysym;
 
 	// ALT+RETURN = Fullscreen toggle
-	if (keysym.sym == SDLK_RETURN && (keysym.mod & KMOD_LALT)) 
+	if (keysym.sym == SDLK_RETURN && (keysym.mod & KMOD_LALT))
 	{
 		PPEvent myEvent(eFullScreen);
 		RaiseEventSerialized(&myEvent);
 		return;
 	}
-	
+
 	preTranslateKey(keysym);
 
 #ifdef DEBUG
@@ -555,8 +623,8 @@ void translateKeyUpEvent(const SDL_Event& event)
 
 	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
 
-	PPEvent myEvent(eKeyUp, &chr, sizeof(chr));	
-	RaiseEventSerialized(&myEvent);	
+	PPEvent myEvent(eKeyUp, &chr, sizeof(chr));
+	RaiseEventSerialized(&myEvent);
 }
 
 void processSDLEvents(const SDL_Event& event)
@@ -567,30 +635,26 @@ void processSDLEvents(const SDL_Event& event)
 	{
 		case SDL_MOUSEBUTTONDOWN:
 			mouseButton = event.button.button;
-			if (mouseButton > 1 && mouseButton <= 3)
-				mouseButton = 2;
 			translateMouseDownEvent(mouseButton, event.button.x, event.button.y);
 			break;
-			
+
 		case SDL_MOUSEBUTTONUP:
 			mouseButton = event.button.button;
-			if (mouseButton > 1 && mouseButton <= 3)
-				mouseButton = 2;
 			translateMouseUpEvent(mouseButton, event.button.x, event.button.y);
 			break;
-			
+
 		case SDL_MOUSEMOTION:
 			translateMouseMoveEvent(event.button.button, event.motion.x, event.motion.y);
 			break;
-			
+
 		case SDL_MOUSEWHEEL:
 			translateMouseWheelEvent(event.wheel.x, event.wheel.y);
 			break;
-			
+
 		case SDL_TEXTINPUT:
 			translateTextInputEvent(event);
 			break;
-			
+
 		case SDL_KEYDOWN:
 			translateKeyDownEvent(event);
 			break;
@@ -627,17 +691,17 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 			PPPoint p;
 			p.x = data1.i32;
 			p.y = data2.i32;
-			PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));		
+			PPEvent myEvent(eLMouseRepeat, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
 			break;
 		}
-			
+
 		case SDLUserEventRMouseRepeat:
 		{
 			PPPoint p;
 			p.x = data1.i32;
 			p.y = data2.i32;
-			PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));		
+			PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
 			break;
 		}
@@ -665,7 +729,7 @@ void processSDLUserEvents(const SDL_UserEvent& event)
 }
 
 #ifdef __unix__
-void crashHandler(int signum) 
+void crashHandler(int signum)
 {
 	// Save backup.xm
 	static char buffer[1024]; // Should be enough :p
@@ -676,12 +740,12 @@ void crashHandler(int signum)
 	while(stat(buffer, &statBuf) == 0 && num <= 100)
 		snprintf(buffer, sizeof(buffer), "%s/BACKUP%02i.XM", getenv("HOME"), num++);
 
-	if (signum == 15) 
+	if (signum == 15)
 	{
 		fprintf(stderr, "\nTERM signal received.\n");
 		SDL_Quit();
 		return;
-	} 
+	}
 	else
 	{
 		fprintf(stderr, "\nCrashed with signal %i\n"
@@ -690,7 +754,7 @@ void crashHandler(int signum)
 				"Also note if it is possible to reproduce this crash.\n", signum);
 	}
 
-	if (num != 100) 
+	if (num != 100)
 	{
 		if (myTracker->saveModule(buffer) == MP_DEVICE_ERROR)
 		{
@@ -701,22 +765,22 @@ void crashHandler(int signum)
 			fprintf(stderr, "\nA backup has been saved to %s\n\n", buffer);
 		}
 	}
-	
+
 	// Try and quit SDL
 	SDL_Quit();
 }
 #endif
 
-void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, 
+void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 				 bool swapRedBlue, bool noSplash)
 {
 	// Initialize SDL
-	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 ) 
+	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 )
 	{
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-				
+
 	// Enable drag and drop
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
@@ -736,7 +800,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	sigaction(SIGFPE, &act, &oldAct);
 	sigaction(SIGSEGV, &act, &oldAct);
 #endif
-	
+
 	// ------------ Initialise tracker ---------------
 	myTracker = new Tracker();
 
@@ -754,8 +818,8 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 #else
 	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
 											bpp, fullScreen, orientation, swapRedBlue);
-#endif 
-	
+#endif
+
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
 	myDisplayDevice->init();
 
@@ -764,7 +828,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 
 	// Kickstart SDL event loop early so that the splash screen is made visible
 	SDL_PumpEvents();
-	
+
 	// Startup procedure
 	myTracker->startUp(noSplash);
 
@@ -774,7 +838,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 
 	// Try to create timer
 	timer = SDL_AddTimer(20, timerCallback, NULL);
-	
+
 	// Start capturing text input events
 	SDL_StartTextInput();
 
@@ -787,18 +851,18 @@ void exitSDLEventLoop(bool serializedEventInvoked/* = true*/)
 {
 	PPEvent event(eAppQuit);
 	RaiseEventSerialized(&event);
-	
+
 	// it's necessary to make this mutex lock because the SDL modal event loop
 	// used in the modal dialogs expects modal dialogs to be invoked by
 	// events within these mutex lock calls
 	if (!serializedEventInvoked)
 		globalMutex->lock();
-		
+
 	bool res = myTracker->shutDown();
-	
+
 	if (!serializedEventInvoked)
 		globalMutex->unlock();
-	
+
 	if (res)
 		done = 1;
 }
@@ -807,9 +871,9 @@ void SendFile(char *file)
 {
 	PPSystemString finalFile(file);
 	PPSystemString* strPtr = &finalFile;
-		
+
 	PPEvent event(eFileDragDropped, &strPtr, sizeof(PPSystemString*));
-	RaiseEventSerialized(&event);		
+	RaiseEventSerialized(&event);
 }
 
 #if defined(__PSP__)
@@ -820,12 +884,12 @@ int main(int argc, char *argv[])
 {
 	SDL_Event event;
 	char *loadFile = 0;
-	
+
 	pp_int32 defaultBPP = -1;
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
 	bool swapRedBlue = false, noSplash = false;
 	bool recVelocity = false;
-	
+
 	// Parse command line
 	while ( argc > 1 )
 	{
@@ -844,15 +908,15 @@ int main(int argc, char *argv[])
 			defaultBPP = atoi(argv[argc]);
 			--argc;
 		}
-		else if ( strcmp(argv[argc], "-nosplash") == 0 ) 
+		else if ( strcmp(argv[argc], "-nosplash") == 0 )
 		{
 			noSplash = true;
-		} 
-		else if ( strcmp(argv[argc], "-swap") == 0 ) 
+		}
+		else if ( strcmp(argv[argc], "-swap") == 0 )
 		{
 			swapRedBlue = true;
 		}
-		else if ( strcmp(argv[argc-1], "-orientation") == 0 ) 
+		else if ( strcmp(argv[argc-1], "-orientation") == 0 )
 		{
 			if (strcmp(argv[argc], "NORMAL") == 0)
 			{
@@ -866,24 +930,24 @@ int main(int argc, char *argv[])
 			{
 				orientation = PPDisplayDevice::ORIENTATION_ROTATE90CW;
 			}
-			else 
+			else
 				goto unrecognizedCommandLineSwitch;
 			--argc;
-		} 
+		}
 		else if ( strcmp(argv[argc], "-recvelocity") == 0)
 		{
 			recVelocity = true;
 		}
-		else 
+		else
 		{
 unrecognizedCommandLineSwitch:
-			if (argv[argc][0] == '-') 
+			if (argv[argc][0] == '-')
 			{
-				fprintf(stderr, 
+				fprintf(stderr,
 						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-recvelocity]\n", argv[0]);
 				exit(1);
-			} 
-			else 
+			}
+			else
 			{
 				loadFile = argv[argc];
 			}
@@ -891,11 +955,11 @@ unrecognizedCommandLineSwitch:
 	}
 
 	globalMutex = new PPMutex();
-	
+
 	// Store current working path (init routine is likely to change it)
-	PPPath_POSIX path;	
+	PPPath_POSIX path;
 	PPSystemString oldCwd = path.getCurrent();
-	
+
 	globalMutex->lock();
 	initTracker(defaultBPP, orientation, swapRedBlue, noSplash);
 	globalMutex->unlock();
@@ -907,7 +971,7 @@ unrecognizedCommandLineSwitch:
 	}
 #endif
 
-	if (loadFile) 
+	if (loadFile)
 	{
 		PPSystemString newCwd = path.getCurrent();
 		path.change(oldCwd);
@@ -917,12 +981,12 @@ unrecognizedCommandLineSwitch:
 		PPEvent event(eKeyDown, &chr, sizeof(chr));
 		RaiseEventSerialized(&event);
 	}
-	
+
 	// Main event loop
 	done = 0;
-	while (!done && SDL_WaitEvent(&event)) 
+	while (!done && SDL_WaitEvent(&event))
 	{
-		switch (event.type) 
+		switch (event.type)
 		{
 			case SDL_QUIT:
 				exitSDLEventLoop(false);
@@ -931,13 +995,13 @@ unrecognizedCommandLineSwitch:
 			{
 				// Ignore old mouse motion events in the event queue
 				SDL_Event new_event;
-				
+
 				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
 				{
 					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
 					processSDLEvents(new_event);
-				} 
-				else 
+				}
+				else
 				{
 					processSDLEvents(event);
 				}
@@ -972,7 +1036,7 @@ unrecognizedCommandLineSwitch:
 
 	ticking = false;
 	SDL_RemoveTimer(timer);
-	
+
 	globalMutex->lock();
 #ifdef HAVE_LIBASOUND
 	delete myMidiReceiver;
@@ -985,6 +1049,6 @@ unrecognizedCommandLineSwitch:
 	globalMutex->unlock();
 	SDL_Quit();
 	delete globalMutex;
-	
+
 	return 0;
 }

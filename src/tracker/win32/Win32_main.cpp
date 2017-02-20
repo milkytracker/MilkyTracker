@@ -573,6 +573,22 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 		}
 
+		// ----- middle mousebutton -------------------------------
+		case WM_MBUTTONDOWN:
+		{
+			if (!myTrackerScreen)
+				break;
+
+			p.x = LOWORD(lParam);
+			p.y = HIWORD(lParam);
+
+			PPEvent myEvent(eMMouseDown, &p, sizeof(PPPoint));
+
+			RaiseEventSynchronized(&myEvent);
+
+			break;
+		}
+
 		// ----- right mousebutton -------------------------------
 		case WM_RBUTTONDOWN:
 		{
@@ -670,6 +686,23 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			break;
 		}		
+
+		// ----- middle mousebutton -------------------------------
+		case WM_MBUTTONUP:
+		{
+			if (!myTrackerScreen)
+				break;
+
+			p.x = LOWORD(lParam);
+			p.y = HIWORD(lParam);
+
+			PPEvent myEvent(eMMouseUp, &p, sizeof(PPPoint));
+
+			RaiseEventSynchronized(&myEvent);
+
+
+			break;
+		}
 
 		// ----- right mousebutton -------------------------------
 		case WM_RBUTTONUP:
