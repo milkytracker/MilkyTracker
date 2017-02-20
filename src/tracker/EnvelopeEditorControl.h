@@ -62,6 +62,7 @@ private:
 	pp_int32 visibleWidth;
 	pp_int32 visibleHeight;
 	bool hasDragged;
+	bool invertMWheelZoom;
 
 	// selection
 	pp_int32 selectionTicker;
@@ -106,6 +107,8 @@ public:
 	EnvelopeEditor* getEnvelopeEditor() { return envelopeEditor; }
 	
 	void setShowVCenter(bool b) { showVCenter = b; }
+
+	void setInvertMWheelZoom(bool invert) { invertMWheelZoom = invert; }
 
 	void paintGrid(PPGraphicsAbstract* graphics, pp_int32 xOffset, pp_int32 yOffset);
 	

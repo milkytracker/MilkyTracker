@@ -238,6 +238,8 @@ enum ControlIDs
 	STATICTEXT_SETTINGS_SCOPESAPPEARANCE,
 	RADIOGROUP_SETTINGS_SCOPESAPPEARANCE,
 
+	CHECKBOX_SETTINGS_INVERTMWHEELZOOM,
+	
 	// Page V (only on desktop version)
 	RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR,
 	CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY,
@@ -260,6 +262,7 @@ enum ControlIDs
 	PAGE_MISC_1,
 	PAGE_MISC_2,
 	PAGE_MISC_3,
+	PAGE_MISC_4,
 
 	PAGE_TABS_1,
 	PAGE_TABS_2,
@@ -1545,6 +1548,40 @@ public:
 
 };
 
+class TabPageMisc_4 : public TabPage
+{
+public:
+	TabPageMisc_4(pp_uint32 id, SectionSettings& sectionSettings) :
+		TabPage(id, sectionSettings)
+	{
+	}
+
+	virtual void init(PPScreen* screen)
+	{
+		pp_int32 x = 0;
+		pp_int32 y = 0;
+
+		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+
+		pp_int32 x2 = x;
+		pp_int32 y2 = y;
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
+		y2+=4+11;
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Inv. mwheel zoom:", true));
+		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+
+		y2+=12;
+	}
+
+	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+	{
+		pp_int32 v = settingsDatabase->restore("INVERTMWHEELZOOM")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEELZOOM))->checkIt(v!=0);
+	}
+};
+
 class TabPageTabs_1 : public TabPage
 {
 public:
@@ -2092,6 +2129,15 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				mp_sint32 value = (reinterpret_cast<PPCheckBox*>(sender)->isChecked() ? 1 : 0) | (type << 1);
 				tracker.settingsDatabase->store("SCOPES", value);
 				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_INVERTMWHEELZOOM:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("INVERTMWHEELZOOM", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				break;
 			}
 
@@ -2648,6 +2694,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(3)->add(new TabPageMisc_1(PAGE_MISC_1, *this));
 	tabPages.get(3)->add(new TabPageMisc_2(PAGE_MISC_2, *this));
 	tabPages.get(3)->add(new TabPageMisc_3(PAGE_MISC_3, *this));
+	tabPages.get(3)->add(new TabPageMisc_4(PAGE_MISC_4, *this));
 
 #ifndef __LOWRES__
 	tabPages.get(4)->add(new TabPageTabs_1(PAGE_TABS_1, *this));

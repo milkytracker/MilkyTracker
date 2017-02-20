@@ -208,6 +208,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("MULTICHN_RECORDKEYOFF", 1);
 	// disable note delay recording
 	settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", 0);
+	// Invert mousewheel zoom?  (normally wheelup zooms out: if inverted, wheelup zooms in)
+	settingsDatabase->store("INVERTMWHEELZOOM", 0);
 
 	// ---------- Tabs ----------
 	// Control playing of background tabs
@@ -567,6 +569,11 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("MULTICHN_RECORDNOTEDELAY") == 0)
 	{
 		recorderLogic->setRecordNoteDelay(v2 != 0);
+	}
+	else if (theKey->getKey().compareTo("INVERTMWHEELZOOM") == 0)
+	{
+		sectionSamples->getSampleEditorControl()->setInvertMWheelZoom(v2 != 0);
+		sectionInstruments->getEnvelopeEditorControl()->setInvertMWheelZoom(v2 != 0);
 	}
 	// ----------------------- Tabs -------------------------
 	else if (theKey->getKey().compareTo("TABS_STOPBACKGROUNDBEHAVIOUR") == 0)

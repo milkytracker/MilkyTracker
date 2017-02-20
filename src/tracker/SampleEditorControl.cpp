@@ -1023,24 +1023,32 @@ selectingAndResizing:
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 
 			// Horizontal scrolling takes priority over vertical scrolling (zooming) and is
-			// mutually exclusive so that we are less likely to accidentally zoom while scrolling
-			if (params->deltaX)
+			// mutually exclusive so that we are less likely to accidentally zoom while scrolling.
+			// For compatibility for mice without horizontal scroll, SHIFT + vertical scroll is
+			// treated as a synonym for horizontal scroll.
+			bool shiftHeld = (::getKeyModifier() & KeyModifierSHIFT);
+			if (params->deltaX || (params->deltaY && shiftHeld))
 			{
+				pp_int32 delta = shiftHeld? params->deltaY : params->deltaX;
 				// Deltas greater than 1 generate multiple events for scroll acceleration
-				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				PPEvent e = delta > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
 				
-				params->deltaX = abs(params->deltaX);
-				params->deltaX = params->deltaX > 20 ? 20 : params->deltaX;
+				delta = abs(delta);
+				delta = delta > 20 ? 20 : delta;
 				
-				while (params->deltaX)
+				while (delta)
 				{
 					handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
-					params->deltaX--;
+					delta--;
 				}
 			}
 			
 			else if (params->deltaY)
 			{
+				if (invertMWheelZoom)
+				{
+					params->deltaY = -params->deltaY;
+				}
 				params->deltaY > 0 ? scrollWheelZoomOut(&params->pos) : scrollWheelZoomIn(&params->pos);
 			}
 			
