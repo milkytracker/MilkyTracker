@@ -24,12 +24,11 @@ set(
     ChangeLog.html
     FAQ.html
     MilkyTracker.html
-    #readme_PocketPC.html
     TiTAN.nfo
+    ChangeLog.html
 )
 
 if(APPLE)
-    list(APPEND DOCUMENTS readme_OSX.html)
     set(INSTALL_DEST Documentation)
 elseif(WIN32)
     list(APPEND DOCUMENTS readme_rtaudio)
@@ -40,3 +39,6 @@ else()
 endif()
 
 install(FILES ${DOCUMENTS} DESTINATION ${INSTALL_DEST})
+install(FILES ../AUTHORS DESTINATION ${INSTALL_DEST} RENAME Authors.txt)
+install(FILES ../COPYING DESTINATION ${INSTALL_DEST} RENAME Copying.txt)
+# add_custom_command(OUTPUT ChangeLog.html COMMAND pandoc ARGS "-so ChangeLog.html ../ChangeLog.md")
