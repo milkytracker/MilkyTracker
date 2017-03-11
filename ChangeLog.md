@@ -1,5 +1,55 @@
 # MilkyTracker ChangeLog
 
+## 11/03/2017 (v1.00.00):
+
+### What's new:
+
+*   5 new customisable colours
+*   X-Y mouse scrolling support
+*   FT2 panning law
+*   MilkyTracker version number stored in .xm file
+*   Upgrade to SDL 2
+*   SDL2: Window scaling
+*   OSX: Deprecated Carbon interface replaced with Cocoa
+*   OSX: Drag and drop support
+*   OSX: Support audio devices with >2 channels
+*   OSX: Add custom document icons for supported file types
+*   Posix: Follow XFG basedir spec for config file locations
+*   Windows: Use system temp and config directories
+*   Sample offset tool/preview ability (hold Ctrl/Cmd in sample editor waveform, left click for preview)
+*   OSX: Add selectable filetype filter to file dialog
+*   OSX: Native MIDI support
+*   OSX: Allow selection of audio output device
+*   Windows: WASAPI option for RtAudio driver
+*   Shortcut keys to increment/decrement instrument number
+*   LHA compressed modules load support
+*   Moved to common CMake build system across all platforms
+*   3rd-party libraries removed from source tree
+*   Horizontal mouse/touchpad scrolling
+*   Mouse middle-click to solo channel
+*   ..and more, see ([commit log](https://github.com/milkytracker/MilkyTracker/commits/master)) for details
+
+### Bugs Fixed:
+
+*   Segfault when loading <4 byte samples
+*   Samples incorrectly offset when exporting .mod files
+*   libalsa linker errors on some systems
+*   .mod export: Don't zero first word of looping samples
+*   Decompress files despite possible mis-identification
+*   Windows: Determine window dimensions based on client area
+*   Update view if paste changes pattern length
+*   SDL: Unresponsive GUI in some situations
+*   16-bit sample loading bug
+*   Windows: WaveOut crashes and deadlocks
+*   Windows: Incorrect behaviour when mouse is dragged outside main window
+*   Reversed Oktalyzer portamento effects
+*   OSX: Sound driver samplerate mismatch under some circumstances
+*   OSX: Miscellanous audio driver reliability problems
+*   Windows: MIDI crash on 64-bit build
+*   Various compiler warnings (many more remaining!)
+*   Windows: Window occasionally appearing off the screen
+*   Sample/Ins editor listboxes scrolled right in certain circumstances
+
 ## 07/11/13 (v0.90.86):
 
 ### Whats New:
