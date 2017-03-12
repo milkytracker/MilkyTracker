@@ -1113,23 +1113,28 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	windowSize.width = 320;
 	windowSize.height = 240;
 #endif
+
+	RECT rect;
+	rect.left = rect.top = 0;
+	rect.right = windowSize.width;
+	rect.bottom = windowSize.height;
  
 #ifdef FULLSCREEN
+	AdjustWindowRect(&rect, WS_POPUP, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
 							 WS_POPUP/*|WS_SYSMENU/*|WS_MAXIMIZEBOX|WS_MINIMIZEBOX*/,CW_USEDEFAULT,CW_USEDEFAULT,
-							 windowSize.width + ::GetSystemMetrics(SM_CXEDGE)*2,
-							 windowSize.height + ::GetSystemMetrics(SM_CYCAPTION)+::GetSystemMetrics(SM_CYEDGE)*2,
+							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
 							 g_hinst,
 							 0);
 #else
+	AdjustWindowRect(&rect, WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
 							 WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,
-							 windowSize.width + ::GetSystemMetrics(SM_CXEDGE)*2+2,
-							 windowSize.height + ::GetSystemMetrics(SM_CYCAPTION)+2+::GetSystemMetrics(SM_CYEDGE)*2,
+							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
 							 g_hinst,
