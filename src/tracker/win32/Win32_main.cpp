@@ -1130,10 +1130,10 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 							 g_hinst,
 							 0);
 #else
-	AdjustWindowRect(&rect, WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX, false);
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
-							 WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,
+							 WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,
 							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
