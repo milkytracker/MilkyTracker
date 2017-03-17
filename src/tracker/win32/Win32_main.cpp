@@ -1027,12 +1027,11 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		}
 
 		case WM_SIZE:
-			if (myDisplayDevice)
-				myDisplayDevice->adjustWindowSize();
-			break;
+			// Ignore WM_SIZE events sent during window creation, minimize and restore
+			return 0;
 
 		case WM_DESTROY:	
-			PostQuitMessage(0); 
+			PostQuitMessage(0);
 			break;
 
 /*		case WM_KILLFOCUS:
@@ -1130,10 +1129,11 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 							 g_hinst,
 							 0);
 #else
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
-							 WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,
+							 WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+							 CW_USEDEFAULT,CW_USEDEFAULT,
 							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
