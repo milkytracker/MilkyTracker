@@ -29,11 +29,13 @@
 #import "ScanCodes.h"
 #import "VirtualKeys.h"
 
-// This keycode is missing from Events.h
+// This keycode is missing from Events.h in SDK versions <10.12
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 enum
 {
 	kVK_RightCommand = 0x36
 };
+#endif
 
 @interface MTKeyTranslator : NSObject
 + (pp_uint16)toVK:(unsigned short) keyCode;
