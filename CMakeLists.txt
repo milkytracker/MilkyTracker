@@ -78,6 +78,17 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FastTracker II compatible music tracker")
 include(CPack)
 
 if(APPLE)
+    # Warn if deployment target isn't set to Lion
+    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET MATCHES "10.7")
+        message(WARNING
+            "Your deployment target is either unset or not set to \"10.7\", "
+            "which means that the binaries produced may not run on earlier "
+            "versions of macOS.\n"
+            "Please re-run CMake with '-DCMAKE_OSX_DEPLOYMENT_TARGET=10.7' "
+            "or change the variable in the CMake GUI to target Lion and newer."
+        )
+    endif()
+
     # Set variables for generating the Info.plist file
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${VER_FULL}")
     set(MACOSX_BUNDLE_EXECUTABLE ${PROJECT_NAME})
