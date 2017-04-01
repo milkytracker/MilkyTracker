@@ -103,14 +103,15 @@ elseif(WIN32)
     # Visual C++ Compiler options
     if(MSVC)
         # Warn if platform toolset may not be targetting Windows XP upwards
-        if(NOT ${CMAKE_VS_PLATFORM_TOOLSET} MATCHES "xp")
-            message("WARNING:")
-            message("Your currently-selected platform toolset may generate")
-            message("executables which are incompatible with Windows XP.")
-            message("Please set your toolset to be one of v110_xp, v120_xp or")
-            message("v140_xp for VS2012, VS2013, and VS2015 respectively.")
-            message("You can do so with the '-T' argument to CMake, or by")
-            message("entering it in the CMake GUI.")
+        if(NOT CMAKE_VS_PLATFORM_TOOLSET MATCHES "xp")
+            message(WARNING
+                "Your currently-selected platform toolset may generate "
+                "executables which are incompatible with Windows XP.\n"
+                "Please set your toolset to be one of v110_xp, v120_xp or "
+                "v140_xp for VS2012, VS2013, and VS2015 respectively.\n"
+                "You can do so with the '-T' argument to CMake, or by entering "
+                "it in the CMake GUI."
+            )
         endif()
 
         # Suppress secure string function warnings
