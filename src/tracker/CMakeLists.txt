@@ -331,7 +331,8 @@ if(APPLE)
         # Compile the xib file
         add_custom_command(
             TARGET ${TARGET_NAME} POST_BUILD COMMAND ${IBTOOL} --errors
-            --warnings --notices --output-format human-readable-text --compile
+            --warnings --notices --output-format human-readable-text
+            --minimum-deployment-target 10.7 --compile
             ${RESOURCES_DIR}/${MACOSX_BUNDLE_NSMAIN_NIB_FILE}.nib ${XIB_FILE}
             COMMENT "Compiling ${XIB_FILE}"
         )
