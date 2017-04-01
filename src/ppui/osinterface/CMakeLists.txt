@@ -108,3 +108,10 @@ include_directories(
 )
 
 add_library(osinterface ${SOURCES} ${HEADERS})
+
+if(APPLE)
+    # Enable ARC (automatic reference counting) for OS X build
+    set_property(
+        TARGET osinterface APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
+    )
+endif()

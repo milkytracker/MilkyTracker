@@ -135,7 +135,8 @@ void PPDisplayDevice::shutDown()
 
 void PPDisplayDevice::signalWaitState(bool b, const PPColor& color)
 {
-	[[NSApp delegate] showProgress:b];
+	AppDelegate* delegate = (AppDelegate *) [NSApp delegate];
+	[delegate showProgress:b];
 }
 
 void PPDisplayDevice::setMouseCursor(MouseCursorTypes type)

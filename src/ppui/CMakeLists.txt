@@ -139,6 +139,13 @@ include_directories(
 
 add_library(ppui ${SOURCES} ${HEADERS})
 
+if(APPLE)
+    # Enable ARC (automatic reference counting) for OS X build
+    set_property(
+        TARGET ppui APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
+    )
+endif()
+
 target_link_libraries(
     ppui
     osinterface
