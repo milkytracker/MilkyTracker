@@ -119,7 +119,7 @@ AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
 {
 	mp_uint32 deviceCount = 0;
-	AudioDeviceID* deviceIDs = NULL;
+	AudioObjectID* deviceIDs = NULL;
 	OSStatus err = AudioDriver_COREAUDIO::getAudioDevices(deviceCount, deviceIDs);
 	
 	if (err)
