@@ -78,6 +78,17 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FastTracker II compatible music tracker")
 include(CPack)
 
 if(APPLE)
+    # Warn if deployment target isn't set to Lion
+    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET MATCHES "10.7")
+        message(WARNING
+            "Your deployment target is either unset or not set to \"10.7\", "
+            "which means that the binaries produced may not run on earlier "
+            "versions of macOS.\n"
+            "Please re-run CMake with '-DCMAKE_OSX_DEPLOYMENT_TARGET=10.7' "
+            "or change the variable in the CMake GUI to target Lion and newer."
+        )
+    endif()
+
     # Set variables for generating the Info.plist file
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${VER_FULL}")
     set(MACOSX_BUNDLE_EXECUTABLE ${PROJECT_NAME})
@@ -103,14 +114,15 @@ elseif(WIN32)
     # Visual C++ Compiler options
     if(MSVC)
         # Warn if platform toolset may not be targetting Windows XP upwards
-        if(NOT ${CMAKE_VS_PLATFORM_TOOLSET} MATCHES "xp")
-            message("WARNING:")
-            message("Your currently-selected platform toolset may generate")
-            message("executables which are incompatible with Windows XP.")
-            message("Please set your toolset to be one of v110_xp, v120_xp or")
-            message("v140_xp for VS2012, VS2013, and VS2015 respectively.")
-            message("You can do so with the '-T' argument to CMake, or by")
-            message("entering it in the CMake GUI.")
+        if(NOT CMAKE_VS_PLATFORM_TOOLSET MATCHES "xp")
+            message(WARNING
+                "Your currently-selected platform toolset may generate "
+                "executables which are incompatible with Windows XP.\n"
+                "Please set your toolset to be one of v110_xp, v120_xp or "
+                "v140_xp for VS2012, VS2013, and VS2015 respectively.\n"
+                "You can do so with the '-T' argument to CMake, or by entering "
+                "it in the CMake GUI."
+            )
         endif()
 
         # Suppress secure string function warnings

@@ -82,6 +82,11 @@ include_directories(
 add_library(midi ${SOURCES} ${HEADERS})
 
 if(APPLE)
+    # Enable ARC (automatic reference counting) for OS X build
+    set_property(
+        TARGET midi APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
+    )
+
     target_link_libraries(midi ${CORE_MIDI_LIBRARY})
 elseif(WIN32)
     target_link_libraries(midi winmm)

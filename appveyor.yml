@@ -18,8 +18,8 @@ install:
 before_build:
   - md c:\projects\milkytracker\build
   - cd c:\projects\milkytracker\build
-  - if %platform% == Win32 cmake -G "Visual Studio 14" ..
-  - if %platform% == x64 cmake -G "Visual Studio 14 Win64" ..
+  - if %platform% == Win32 cmake -G "Visual Studio 14" -T v140_xp ..
+  - if %platform% == x64 cmake -G "Visual Studio 14 Win64" -T v140_xp ..
 
 build:
     project: c:\projects\milkytracker\build\MilkyTracker.sln

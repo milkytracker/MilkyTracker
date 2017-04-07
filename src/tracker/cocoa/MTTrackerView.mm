@@ -295,6 +295,9 @@ static BOOL drawFocusRing;
 	
 	// Make OpenGL aware of row length for partial updates
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
+
+	// Pixel rows may not start on word-aligned boundaries, so use byte alignment
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	
 	textureReady = YES;
 }
