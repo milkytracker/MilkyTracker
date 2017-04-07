@@ -1764,6 +1764,8 @@ void SampleEditor::tool_changeSignSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 
+	pp_int32 ignorebits = par->getParameter(0).intPart;
+
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
 	
@@ -1788,19 +1790,20 @@ void SampleEditor::tool_changeSignSample(const FilterParameters* par)
 	prepareUndo();
 	
 	pp_int32 i;
+	pp_uint32 mask;
+	if (sample->type & 16)
+	{
+		mask = 0xffff >> ignorebits;
+	}
+	else
+	{
+		mask = 0xff >> ignorebits;
+	}
 	// lazyness follows
 	for (i = sStart; i < sEnd; i++)
 	{
-		if (sample->type & 16)
-		{
-			mp_uword* smp = (mp_uword*)sample->sample;		
-			smp[i]^=0x7fff;
-		}
-		else
-		{
-			mp_ubyte* smp = (mp_ubyte*)sample->sample;		
-			smp[i]^=0x7f;
-		}
+		mp_ubyte* smp = (mp_ubyte*)sample->sample;
+		smp[i] ^= mask;
 	}
 	
 	finishUndo();	

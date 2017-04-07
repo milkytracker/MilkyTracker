@@ -1771,7 +1771,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDChangeSign:
-			sampleEditor->tool_changeSignSample(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeChangeSign);
 			break;
 
 		case MenuCommandIDSwapByteOrder:

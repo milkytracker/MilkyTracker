@@ -75,6 +75,13 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
 			break;
 			
+		case ToolHandlerResponder::SampleToolTypeChangeSign:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Ignore bits from MSB [0..]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, (sampleEditor->is16Bit() ? 16 : 8), 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.changeSignIgnoreBits != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.changeSignIgnoreBits : 1);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter offset in percent [-100..100]");
@@ -199,6 +206,15 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.fadeSampleVolumeStart / 100.0f));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.fadeSampleVolumeEnd / 100.0f));
 			sampleEditor->tool_scaleSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeChangeSign:
+		{
+			lastValues.changeSignIgnoreBits = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.changeSignIgnoreBits));
+			sampleEditor->tool_changeSignSample(&par);
 			break;
 		}
 

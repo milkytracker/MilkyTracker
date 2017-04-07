@@ -30,6 +30,7 @@
 struct SampleEditorControlLastValues
 {
 	pp_int32 newSampleSize;
+	pp_int32 changeSignIgnoreBits;
 	float boostSampleVolume;
 	float fadeSampleVolumeStart;
 	float fadeSampleVolumeEnd;
@@ -60,6 +61,7 @@ struct SampleEditorControlLastValues
 	void reset()
 	{
 		newSampleSize = invalidIntValue();
+		changeSignIgnoreBits = invalidIntValue();
 		boostSampleVolume = invalidFloatValue();
 		fadeSampleVolumeStart = invalidFloatValue();
 		fadeSampleVolumeEnd = invalidFloatValue();
@@ -77,6 +79,8 @@ struct SampleEditorControlLastValues
 		PPDictionary result;
 		
 		result.store("newSampleSize", newSampleSize);
+
+		result.store("changeSignIgnoreBits", changeSignIgnoreBits);
 
 		result.store("boostSampleVolume", PPDictionary::convertFloatToIntNonLossy(boostSampleVolume));
 
@@ -104,6 +108,10 @@ struct SampleEditorControlLastValues
 			if (key->getKey().compareToNoCase("newSampleSize") == 0)
 			{
 				newSampleSize = key->getIntValue();
+			}
+			else if (key->getKey().compareToNoCase("changeSignIgnoreBits") == 0)
+			{
+				changeSignIgnoreBits = key->getIntValue();
 			}
 			else if (key->getKey().compareToNoCase("boostSampleVolume") == 0)
 			{
