@@ -73,7 +73,7 @@ pp_int32 TrackerConfig::numVirtualChannels = 32;
 // The final amount of channels to be mixed, add two for playing samples on seperate channels without having to cut notes
 pp_int32 TrackerConfig::totalPlayerChannels = TrackerConfig::numPlayerChannels + TrackerConfig::numVirtualChannels + 2;
 // This can't be changed later, it's the maximum of channels possible
-const pp_int32 TrackerConfig::maximumPlayerChannels = 32+99+2;
+const pp_int32 TrackerConfig::maximumPlayerChannels = MAXCHANNELS;
 
 bool TrackerConfig::useVirtualChannels = false;
 

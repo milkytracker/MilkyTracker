@@ -873,7 +873,7 @@ void PlayerController::reallocateChannels(mp_sint32 moduleChannels/* = 32*/, mp_
 {
 	numPlayerChannels = moduleChannels;
 	numVirtualChannels = virtualChannels;
-	totalPlayerChannels = numPlayerChannels + numVirtualChannels + 2;
+    totalPlayerChannels = numPlayerChannels + (numVirtualChannels >= 0 ? numVirtualChannels : 0) + 2;
 
 	reallocChannels();
 }

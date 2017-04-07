@@ -154,6 +154,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_RAMPING,
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
+    RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
 
 	// PAGE I (2)
 	CHECKBOX_SETTINGS_VIRTUALCHANNELS,
@@ -249,6 +250,7 @@ enum ControlIDs
 	PAGE_IO_1,
 	PAGE_IO_2,
 	PAGE_IO_3,
+    PAGE_IO_4,
 
 	PAGE_LAYOUT_1,
 	PAGE_LAYOUT_2,
@@ -728,6 +730,56 @@ public:
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY))->checkIt(v!=0);
 	}
 
+};
+
+class TabPageIO_4 : public TabPage
+{
+public:
+    TabPageIO_4(pp_uint32 id, SectionSettings& sectionSettings) :
+    TabPage(id, sectionSettings)
+    {
+    }
+    
+    virtual void init(PPScreen* screen)
+    {
+        pp_int32 x = 0;
+        pp_int32 y = 0;
+        
+        container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+        
+        pp_int32 x2 = x;
+        pp_int32 y2 = y;
+        
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "XM channel limit", true, true));
+        
+        PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_XMCHANNELLIMIT, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 3*14));
+        radioGroup->setColor(TrackerConfig::colorThemeMain);
+        radioGroup->addItem("32");
+        radioGroup->addItem("64");
+        radioGroup->addItem("128");
+        
+        container->addControl(radioGroup);
+    }
+    
+    virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+    {
+        // mixer resolution
+        pp_int32 v = settingsDatabase->restore("XMCHANNELLIMIT")->getIntValue();
+        
+        switch (v) {
+            case 32:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(0);
+                break;
+            case 64:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(1);
+                break;
+            case 128:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(2);
+                break;
+                
+        }
+    }
+    
 };
 
 class TabPageLayout_1 : public TabPage
@@ -2472,6 +2524,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				tracker.ensureSongPlaying(true);
 				break;
 			}
+                
+            case RADIOGROUP_SETTINGS_XMCHANNELLIMIT:
+            {
+                pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+                
+                ASSERT(v >= 0 && v < 3);
+                tracker.settingsDatabase->store("XMCHANNELLIMIT", 1 << (v + 5));
+                update();
+                break;
+            }
 
 			case RADIOGROUP_SETTINGS_PATTERNFONT:
 			{
@@ -2680,6 +2742,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(0)->add(new TabPageIO_1(PAGE_IO_1, *this));
 	tabPages.get(0)->add(new TabPageIO_2(PAGE_IO_2, *this));
 	tabPages.get(0)->add(new TabPageIO_3(PAGE_IO_3, *this));
+    tabPages.get(0)->add(new TabPageIO_4(PAGE_IO_4, *this));
 
 	tabPages.get(1)->add(new TabPageLayout_1(PAGE_LAYOUT_1, *this));
 	tabPages.get(1)->add(new TabPageLayout_2(PAGE_LAYOUT_2, *this));
