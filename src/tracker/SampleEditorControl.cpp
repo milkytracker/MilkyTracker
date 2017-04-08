@@ -158,6 +158,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Mix-Paste", MenuCommandIDMixPaste);
+	editMenuControl->addEntry("AM-Paste", MenuCommandIDAMPaste);
+	editMenuControl->addEntry("FM-Paste", MenuCommandIDFMPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry(seperatorStringMed, -1);
@@ -1650,6 +1652,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	editMenuControl->setState(MenuCommandIDRedo, !sampleEditor->canRedo());
 	editMenuControl->setState(MenuCommandIDPaste, !sampleEditor->canPaste());
 	editMenuControl->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	editMenuControl->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	editMenuControl->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	editMenuControl->setState(MenuCommandIDCopy, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCut, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCrop, !hasValidSelection());
@@ -1711,6 +1715,16 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// mix-paste
 		case MenuCommandIDMixPaste:
 			sampleEditor->mixPasteSample();
+			break;
+
+		// AM-paste
+		case MenuCommandIDAMPaste:
+			sampleEditor->AMPasteSample();
+			break;
+
+		// FM-paste
+		case MenuCommandIDFMPaste:
+			sampleEditor->FMPasteSample();
 			break;
 
 		// crop

@@ -862,6 +862,18 @@ void SampleEditor::mixPasteSample()
 	tool_mixPasteSample(&par);
 }
 
+void SampleEditor::AMPasteSample()
+{
+	FilterParameters par(0);
+	tool_AMPasteSample(&par);
+}
+
+void SampleEditor::FMPasteSample()
+{
+	FilterParameters par(0);
+	tool_FMPasteSample(&par);
+}
+
 void SampleEditor::convertSampleResolution(bool convert)
 {
 	FilterParameters par(1);
@@ -1389,6 +1401,122 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 		
 		setFloatSampleInWaveform(i, f + getFloatSampleFromWaveform(i));
 		j+=step;
+	}
+				
+	finishUndo();	
+	
+	postFilter();
+
+}
+
+void SampleEditor::tool_AMPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+	
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{		
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	
+	preFilter(NULL, NULL);
+	
+	prepareUndo();
+	
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	
+	float step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+	
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+		s = clipBoard->getSampleWord((pp_int32)j+1);
+		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+		float f = (1.0f-frac)*f1 + frac*f2;
+		
+		setFloatSampleInWaveform(i, f * getFloatSampleFromWaveform(i));
+		j+=step;
+	}
+				
+	finishUndo();	
+	
+	postFilter();
+
+}
+
+void SampleEditor::tool_FMPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+	
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{		
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	
+	preFilter(NULL, NULL);
+	
+	prepareUndo();
+	
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	
+	float step;
+	
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+	
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+		s = clipBoard->getSampleWord(((pp_int32)j+1)%clipBoard->getWidth());
+		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+		float f = (1.0f-frac)*f1 + frac*f2;
+		
+		step = powf(16.0f,getFloatSampleFromWaveform(i));
+		setFloatSampleInWaveform(i, f);
+		j+=step;
+		while (j>clipBoard->getWidth()) j-=clipBoard->getWidth();
 	}
 				
 	finishUndo();	
