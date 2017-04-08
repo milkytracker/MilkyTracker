@@ -274,6 +274,8 @@ private:
 	{
 		MenuCommandIDCrop = 99,
 		MenuCommandIDMixPaste,
+		MenuCommandIDAMPaste,
+		MenuCommandIDFMPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,

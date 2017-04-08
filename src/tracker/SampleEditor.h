@@ -249,6 +249,8 @@ public:
 	void cropSample();
 	void clearSample();
 	void mixPasteSample();
+	void AMPasteSample();
+	void FMPasteSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -313,6 +315,8 @@ public:
 	void tool_cropSample(const FilterParameters* par);
 	void tool_clearSample(const FilterParameters* par);
 	void tool_mixPasteSample(const FilterParameters* par);
+	void tool_AMPasteSample(const FilterParameters* par);
+	void tool_FMPasteSample(const FilterParameters* par);
 	
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
