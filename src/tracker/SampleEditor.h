@@ -251,6 +251,7 @@ public:
 	void mixPasteSample();
 	void AMPasteSample();
 	void FMPasteSample();
+	void PHPasteSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -317,6 +318,7 @@ public:
 	void tool_mixPasteSample(const FilterParameters* par);
 	void tool_AMPasteSample(const FilterParameters* par);
 	void tool_FMPasteSample(const FilterParameters* par);
+	void tool_PHPasteSample(const FilterParameters* par);
 	
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
