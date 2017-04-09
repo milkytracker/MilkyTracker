@@ -133,6 +133,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
 	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuAdvanced->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
@@ -1673,6 +1674,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
+	editMenuControl->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
@@ -1810,6 +1812,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDEQ10Band:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ10Band);
+			break;
+
+		case MenuCommandIDSelectiveEQ10Band:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band);
 			break;
 
 		case MenuCommandIDGenerateSilence:
