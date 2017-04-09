@@ -1802,8 +1802,16 @@ void SampleEditor::tool_changeSignSample(const FilterParameters* par)
 	// lazyness follows
 	for (i = sStart; i < sEnd; i++)
 	{
-		mp_ubyte* smp = (mp_ubyte*)sample->sample;
-		smp[i] ^= mask;
+		if (sample->type & 16)
+		{
+			mp_uword* smp = (mp_uword*)sample->sample;
+			smp[i] ^= mask;
+		}
+		else
+		{
+			mp_ubyte* smp = (mp_ubyte*)sample->sample;
+			smp[i] ^= mask;
+		}
 	}
 	
 	finishUndo();	
