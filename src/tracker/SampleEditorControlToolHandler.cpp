@@ -114,6 +114,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeEQ10Band:
+		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
 			dialog = new DialogEQ(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, DialogEQ::EQ10Bands);
 			if (lastValues.hasEQ10BandValues)
 			{
@@ -242,6 +243,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeEQ3Band:
 		case ToolHandlerResponder::SampleToolTypeEQ10Band:
+		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
 		{
 			pp_uint32 numBands = static_cast<DialogEQ*>(dialog)->getNumBandsAsInt();
 			
@@ -266,7 +268,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 					last[i] = val;
 				par.setParameter(i, FilterParameters::Parameter(val));
 			}
-			sampleEditor->tool_eqSample(&par);
+			sampleEditor->tool_eqSample(&par,type==ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band);
 			break;
 		}
 

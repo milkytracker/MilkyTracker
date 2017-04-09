@@ -1506,7 +1506,7 @@ void SampleEditor::tool_FMPasteSample(const FilterParameters* par)
 	{
 		float frac = j - (float)floor(j);
 	
-		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		pp_int16 s = clipBoard->getSampleWord(((pp_int32)j)%clipBoard->getWidth());
 		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
 		s = clipBoard->getSampleWord(((pp_int32)j+1)%clipBoard->getWidth());
 		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
@@ -2233,8 +2233,17 @@ void SampleEditor::tool_triangularSmoothSample(const FilterParameters* par)
 
 void SampleEditor::tool_eqSample(const FilterParameters* par)
 {
+	tool_eqSample(par,false);
+}
+
+void SampleEditor::tool_eqSample(const FilterParameters* par, bool selective)
+{
 	if (isEmptySample())
 		return;
+
+	if (selective && ClipBoard::getInstance()->isEmpty())
+		return;
+
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -2254,10 +2263,22 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		sStart = 0;
 		sEnd = sample->samplen;
 	}
-	
-	preFilter(&SampleEditor::tool_eqSample, par);
+
+	if (selective) {
+		preFilter(NULL,NULL);
+	} else {	
+		preFilter(&SampleEditor::tool_eqSample, par);
+	}
 	
 	prepareUndo();	
+	
+	ClipBoard* clipBoard;
+	float step;
+	float j2 = 0.0f;
+	if (selective) {
+		clipBoard = ClipBoard::getInstance();
+		step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	}
 	
 	float c4spd = 8363; // there really should be a global constant for this
 	
@@ -2296,6 +2317,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		// Fetch a stereo signal
 		double xL = getFloatSampleFromWaveform(i);
 		double xR = xL;
+		float x = (float)xL;
 			
 		for (pp_int32 j = 0; j < par->getNumParameters(); j++)
 		{
@@ -2306,8 +2328,27 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 			xL = yL;
 			xR = yR;
 		}
+		if (selective)
+		{
+			float frac = j2 - (float)floor(j2);
 		
-		setFloatSampleInWaveform(i, (float)xL);
+			pp_int16 s = clipBoard->getSampleWord((pp_int32)j2);
+			float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+			s = clipBoard->getSampleWord((pp_int32)j2+1);
+			float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+			float f = (1.0f-frac)*f1 + frac*f2;
+
+			if (f>=0) {
+				x = f * ((float)xL) + (1.0f-f) * x;
+			} else {
+				x = -f * (x-(float)xL) + (1.0+f) * x; 
+			}
+			j2+=step;
+		} else {
+			x = (float)xL;
+		}
+		setFloatSampleInWaveform(i, x);
 	}
 	
 	for (i = 0; i < par->getNumParameters(); i++)

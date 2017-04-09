@@ -335,6 +335,7 @@ public:
 	void tool_DCOffsetSample(const FilterParameters* par);
 	void tool_rectangularSmoothSample(const FilterParameters* par);
 	void tool_triangularSmoothSample(const FilterParameters* par);
+	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	
 	// generators
