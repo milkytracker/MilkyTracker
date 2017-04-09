@@ -133,9 +133,15 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
 	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
-	subMenuAdvanced->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
+
+	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuXPaste->setSubMenu(true);
+	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
+	subMenuXPaste->addEntry("Amp Mod", MenuCommandIDAMPaste);
+	subMenuXPaste->addEntry("Freq Mod", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
@@ -158,13 +164,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-	editMenuControl->addEntry("Mix-Paste", MenuCommandIDMixPaste);
-	editMenuControl->addEntry("AM-Paste", MenuCommandIDAMPaste);
-	editMenuControl->addEntry("FM-Paste", MenuCommandIDFMPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
 	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
 	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
 
@@ -190,6 +194,7 @@ SampleEditorControl::~SampleEditorControl()
 	
 	delete editMenuControl;	
 	delete subMenuAdvanced;
+	delete subMenuXPaste;
 	delete subMenuPT;
 	delete subMenuGenerators;
 }
@@ -1190,6 +1195,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	}
 	else if ((sender == reinterpret_cast<PPObject*>(editMenuControl) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
@@ -1652,9 +1658,6 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	editMenuControl->setState(MenuCommandIDUndo, !sampleEditor->canUndo());
 	editMenuControl->setState(MenuCommandIDRedo, !sampleEditor->canRedo());
 	editMenuControl->setState(MenuCommandIDPaste, !sampleEditor->canPaste());
-	editMenuControl->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
-	editMenuControl->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
-	editMenuControl->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	editMenuControl->setState(MenuCommandIDCopy, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCut, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCrop, !hasValidSelection());
@@ -1674,8 +1677,12 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
-	editMenuControl->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
+
+	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
 

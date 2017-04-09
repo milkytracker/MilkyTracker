@@ -65,6 +65,7 @@ private:
 
 	PPContextMenu* editMenuControl;
 	PPContextMenu* subMenuAdvanced;
+	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
 
