@@ -139,8 +139,9 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
-	subMenuXPaste->addEntry("Amp Mod", MenuCommandIDAMPaste);
-	subMenuXPaste->addEntry("Freq Mod", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Amp Modulate", MenuCommandIDAMPaste);
+	subMenuXPaste->addEntry("Freq Modulate", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Phase Modulate", MenuCommandIDPHPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
@@ -1682,6 +1683,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDPHPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
@@ -1734,6 +1736,11 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// FM-paste
 		case MenuCommandIDFMPaste:
 			sampleEditor->FMPasteSample();
+			break;
+
+		// PH-paste
+		case MenuCommandIDPHPaste:
+			sampleEditor->PHPasteSample();
 			break;
 
 		// crop

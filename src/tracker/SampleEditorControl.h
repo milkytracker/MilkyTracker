@@ -277,6 +277,7 @@ private:
 		MenuCommandIDMixPaste,
 		MenuCommandIDAMPaste,
 		MenuCommandIDFMPaste,
+		MenuCommandIDPHPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
