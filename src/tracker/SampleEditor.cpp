@@ -1564,13 +1564,41 @@ void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
 
 	ClipBoard* clipBoard = ClipBoard::getInstance();
 
+	// this filter changes the ratio between above zero to below
+	// zero values by stretching the above half wave and shrinking
+	// the below zero half wave (or the other way around)
+	// the frequency of the sample stays constant, only
+	// if the initial ratio is 1/1
+	// If it's not, the frequency shifts.
+	// To work with non synthetic or already distorted samples,
+	// this ratio needs to be calculated and compensated.
+	// The frequency will still shift if the ratio is not constant
+	// during a longer sample. Ce la vie.
+	pp_int32 ups=0,downs=0;
+	for (pp_int32 i = 0; i < clipBoard->getWidth(); i++)
+	{
+		if (clipBoard->getSampleWord(i)<0)
+		{
+			downs++;
+		}
+		else
+		{
+			ups++;
+		}
+	}
+	if (!downs)
+	{
+		downs++; // div by zero prevention
+	}
+	float phaseRatio = (float)ups/(float)downs;
 	float step;
-
 	float j = 0.0f;
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		float f;
 		float fi = getFloatSampleFromWaveform(i);
+		// we need to oversample at a much shorter step size to
+		// track the zero crossing with sufficient accuracy
 		for (pp_int32 oversample = 0; oversample<0x80; oversample++)
 		{
 			float frac = j - (float)floor(j);
@@ -1583,9 +1611,19 @@ void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
 			f = (1.0f-frac)*f1 + frac*f2;
 
 			step = powf(16.0f,fabsf(fi));
-			if (f*fi<0.0f) {
-				step = 1.0f / (1.0f + (1.0f-(1.0f/step))) ;
+			// the lower half wave is matched
+			// to keep the frequency constant
+			if (f*fi<0.0f)
+			{
+				step = 1.0f / (1.0f + (1.0f-(1.0f/step)));
 			}
+			// which needs to be compensated for a nonzero
+			// initial half wave ratio
+			if (f<0.0f)
+			{
+				step = step * (1.0f/phaseRatio);
+			}
+			// we advance by a fraction due to oversampling
 			j+=step*(1.0f/0x80);
 		}
 		while (j>clipBoard->getWidth()) j-=clipBoard->getWidth();
