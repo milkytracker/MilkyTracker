@@ -41,13 +41,126 @@ set(
     unlzx.h
 )
 
-# Under Windows, build sources from Git submodules if present
-if(WIN32)
+# Under macOS and Windows, build sources from Git submodules if present
+if(APPLE OR WIN32)
     set(LHASA_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/lhasa)
     set(ZLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zlib)
     set(ZZIPLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zziplib)
+endif()
+
+# macOS: Build submodules using their own build systems
+if(APPLE)
+    include(ExternalProject)
+
+    # Collect compiler flags to pass to the external build systems
+    set(EXTERNAL_C_FLAGS ${CMAKE_C_FLAGS})
+    set(EXTERNAL_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(EXTERNAL_C_FLAGS "${EXTERNAL_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")
+        set(EXTERNAL_CXX_FLAGS "${EXTERNAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(EXTERNAL_C_FLAGS
+            "${EXTERNAL_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}"
+        )
+        set(EXTERNAL_CXX_FLAGS
+            "${EXTERNAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}"
+        )
+    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(EXTERNAL_C_FLAGS
+            "${EXTERNAL_C_FLAGS} ${CMAKE_C_FLAGS_RELWITHDEBINFO}"
+        )
+        set(EXTERNAL_CXX_FLAGS
+            "${EXTERNAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+        )
+    elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+        set(EXTERNAL_C_FLAGS
+            "${SEXTERNAL_C_FLAGS} ${CMAKE_C_FLAGS_MINSIZEREL}"
+        )
+        set(EXTERNAL_CXX_FLAGS
+            "${EXTERNAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}"
+        )
+    endif()
+
+    # Ensure our libraries match the deployment target of the main project
+    if(CMAKE_OSX_DEPLOYMENT_TARGET)
+        set(V_MIN_FLAG "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+        set(EXTERNAL_C_FLAGS "${EXTERNAL_C_FLAGS} ${V_MIN_FLAG}")
+        set(EXTERNAL_CXX_FLAGS "${EXTERNAL_CXX_FLAGS} ${V_MIN_FLAG}")
+    endif()
+
+    # Trim leading/trailing whitespace
+    string(STRIP ${EXTERNAL_C_FLAGS} EXTERNAL_C_FLAGS)
+    string(STRIP ${EXTERNAL_CXX_FLAGS} EXTERNAL_CXX_FLAGS)
 
     if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
+        message(STATUS "Found LHASA as a submodule")
+        set(LHASA_DESTDIR ${CMAKE_BINARY_DIR}/src/submodules/lhasa)
+        set(LHASA_FOUND ON CACHE INTERNAL "LHASA_FOUND")
+        set(LHASA_INCLUDE_DIRS
+            ${LHASA_DESTDIR}/include/liblhasa-1.0
+            CACHE INTERNAL "LHASA_INCLUDE_DIRS"
+        )
+        set(LHASA_LIBRARIES
+            ${LHASA_DESTDIR}/lib/liblhasa.a
+            CACHE INTERNAL "LHASA_LIBRARIES"
+        )
+
+        ExternalProject_Add(lhasa
+            PREFIX ${LHASA_DESTDIR}
+            SOURCE_DIR ${LHASA_SUBMODULE_DIR}
+            CONFIGURE_COMMAND autoreconf -i &&
+            ./configure --prefix=${LHASA_DESTDIR}
+            CFLAGS=${EXTERNAL_C_FLAGS} CXXFLAGS=${EXTERNAL_CXX_FLAGS}
+            CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+            BUILD_COMMAND make -j
+            INSTALL_COMMAND make -j install
+            BUILD_IN_SOURCE ON
+        )
+    endif()
+
+    if(EXISTS ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h)
+        message(STATUS "Found ZZIPLIB as a submodule")
+
+        # zziplib relies on xmlto to build its manpages, but if not found, its
+        # build system fails at the docs target with an unhelpful error
+        find_program(XMLTO xmlto)
+        if (NOT XMLTO)
+            message(WARNING
+                "xmlto could not be found; building zziplib may fail"
+            )
+        endif()
+
+        set(ZZIPLIB_DESTDIR ${CMAKE_BINARY_DIR}/src/submodules/zziplib)
+        set(ZZIPLIB_FOUND ON CACHE INTERNAL "ZZIPLIB_FOUND")
+        set(ZZIPLIB_INCLUDE_DIRS
+            ${ZZIPLIB_DESTDIR}/include
+            CACHE INTERNAL "ZZIPLIB_INCLUDE_DIRS"
+        )
+        set(ZZIPLIB_LIBRARIES
+            ${ZZIPLIB_DESTDIR}/lib/libzzip.a
+            CACHE INTERNAL "ZZIPLIB_LIBRARIES"
+        )
+
+        ExternalProject_Add(zziplib
+            PREFIX ${ZZIPLIB_DESTDIR}
+            SOURCE_DIR ${ZZIPLIB_SUBMODULE_DIR}
+            CONFIGURE_COMMAND ./configure --prefix=${ZZIPLIB_DESTDIR}
+            --without-debug --disable-dependency-tracking
+            CFLAGS=${EXTERNAL_C_FLAGS} CXXFLAGS=${EXTERNAL_CXX_FLAGS}
+            CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+            BUILD_COMMAND make -j
+            INSTALL_COMMAND make -j install
+            BUILD_IN_SOURCE ON
+        )
+    endif()
+endif()
+
+# Windows: Manually pull in submodule sources as part of the compression library
+# FIXME: This is a bit of a hack, really
+if(WIN32)
+    if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
+        message(STATUS "Found LHASA as a submodule")
         set(LHASA_FOUND ON)
         set(
             LHASA_INCLUDE_DIRS
@@ -137,6 +250,7 @@ if(WIN32)
     endif()
 
     if(EXISTS ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h)
+        message(STATUS "Found ZZIPLIB as a submodule")
         set(ZZIPLIB_FOUND ON)
         set(ZZIPLIB_INCLUDE_DIRS ${ZZIPLIB_SUBMODULE_DIR})
         set(ZZIPLIB_SOURCES
@@ -214,14 +328,24 @@ else()
     if(NOT ZLIB_FOUND AND NOT ZZIPLIB_FOUND)
         message("ZIP decompressor disabled (zlib and zziplib unavailble)")
     elseif(ZZIPLIB_FOUND)
-        message("ZIP decompressor disabled (zlib unvailable)")
+        message("ZIP decompressor disabled (zlib unavailable)")
     else()
-        message("ZIP decompressor disabled (zziplib unvailable)")
+        message("ZIP decompressor disabled (zziplib unavailable)")
     endif()
 endif()
 
 # Define this library as an object library; the objects will not be archived
 add_library(compression OBJECT ${SOURCES} ${HEADERS})
+
+# Ensure dependencies are built before this library
+if(APPLE)
+    if(LHASA_FOUND)
+        add_dependencies(compression lhasa)
+    endif()
+    if(ZZIPLIB_FOUND)
+        add_dependencies(compression zziplib)
+    endif()
+endif()
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/src/milkyplay

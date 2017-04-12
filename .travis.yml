@@ -1,6 +1,6 @@
 language: cpp
 git:
-    submodules: false
+    submodules: true
 
 matrix:
     include:
@@ -24,7 +24,7 @@ matrix:
       - os: osx
         before_install:
           - brew update
-          - brew install lhasa libzzip sdl2
+          - brew install xmlto
           - pushd resources/pictures/docicons/osx
           - wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/docerator/docerator-2.0.zip
           - unzip docerator-2.0.zip -d docerator
