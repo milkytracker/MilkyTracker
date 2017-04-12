@@ -156,9 +156,40 @@ if(APPLE)
     endif()
 endif()
 
-# Windows: Manually pull in submodule sources as part of the compression library
-# FIXME: This is a bit of a hack, really
+# Windows: Build zlib using its own build system, build lhasa/zziplib by
+# rolling their sources into the compression library
+# FIXME: The latter is a bit of a hack, really
 if(WIN32)
+    include(ExternalProject)
+
+    if(EXISTS ${ZLIB_SUBMODULE_DIR}/zlib.h)
+        message(STATUS "Found ZLIB as a submodule")
+
+        set(ZLIB_DESTDIR ${CMAKE_BINARY_DIR}/src/submodules/zlib)
+        set(ZLIB_FOUND ON CACHE INTERNAL "ZLIB_FOUND")
+        set(ZLIB_INCLUDE_DIRS
+            ${ZLIB_DESTDIR}/include
+            CACHE INTERNAL "ZLIB_INCLUDE_DIRS"
+        )
+
+        # zlib adds a 'd' suffix to debug builds of the library
+        set(ZLIB_LIBRARIES
+            debug ${ZLIB_DESTDIR}/lib/zlibstaticd.lib
+            optimized ${ZLIB_DESTDIR}/lib/zlibstatic.lib
+            CACHE INTERNAL "ZLIB_LIBRARIES"
+        )
+
+        ExternalProject_Add(zlib
+            PREFIX ${ZLIB_DESTDIR}
+            SOURCE_DIR ${ZLIB_SUBMODULE_DIR}
+            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+            -DCMAKE_C_FLAGS_DEBUG=${CMAKE_C_FLAGS_DEBUG}
+            -DCMAKE_C_FLAGS_RELEASE=${CMAKE_C_FLAGS_RELEASE}
+            -DCMAKE_C_FLAGS_RELWITHDEBINFO=${CMAKE_C_FLAGS_RELWITHDEBINFO}
+            -DCMAKE_C_FLAGS_MINSIZEREL=${CMAKE_C_FLAGS_MINSIZEREL}
+        )
+    endif()
+
     if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
         message(STATUS "Found LHASA as a submodule")
         set(LHASA_FOUND ON)
@@ -210,43 +241,6 @@ if(WIN32)
         source_group(lhasa FILES ${LHASA_SOURCES} ${LHASA_HEADERS})
         list(APPEND SOURCES ${LHASA_SOURCES})
         list(APPEND HEADERS ${LHASA_HEADERS})
-    endif()
-
-    if(EXISTS ${ZLIB_SUBMODULE_DIR}/zlib.h)
-        set(ZLIB_FOUND ON)
-        set(ZLIB_INCLUDE_DIRS ${ZLIB_SUBMODULE_DIR})
-        set(ZLIB_SOURCES
-            ${ZLIB_SUBMODULE_DIR}/adler32.c
-            ${ZLIB_SUBMODULE_DIR}/compress.c
-            ${ZLIB_SUBMODULE_DIR}/crc32.c
-            ${ZLIB_SUBMODULE_DIR}/deflate.c
-            ${ZLIB_SUBMODULE_DIR}/gzclose.c
-            ${ZLIB_SUBMODULE_DIR}/gzlib.c
-            ${ZLIB_SUBMODULE_DIR}/gzread.c
-            ${ZLIB_SUBMODULE_DIR}/gzwrite.c
-            ${ZLIB_SUBMODULE_DIR}/infback.c
-            ${ZLIB_SUBMODULE_DIR}/inffast.c
-            ${ZLIB_SUBMODULE_DIR}/inflate.c
-            ${ZLIB_SUBMODULE_DIR}/inftrees.c
-            ${ZLIB_SUBMODULE_DIR}/trees.c
-            ${ZLIB_SUBMODULE_DIR}/uncompr.c
-            ${ZLIB_SUBMODULE_DIR}/zutil.c
-        )
-        set(ZLIB_HEADERS
-            ${ZLIB_SUBMODULE_DIR}/crc32.h
-            ${ZLIB_SUBMODULE_DIR}/deflate.h
-            ${ZLIB_SUBMODULE_DIR}/gzguts.h
-            ${ZLIB_SUBMODULE_DIR}/inffast.h
-            ${ZLIB_SUBMODULE_DIR}/inffixed.h
-            ${ZLIB_SUBMODULE_DIR}/inflate.h
-            ${ZLIB_SUBMODULE_DIR}/inftrees.h
-            ${ZLIB_SUBMODULE_DIR}/trees.h
-            ${ZLIB_SUBMODULE_DIR}/zlib.h
-            ${ZLIB_SUBMODULE_DIR}/zutil.h
-        )
-        source_group(zlib FILES ${ZLIB_SOURCES} ${ZLIB_HEADERS})
-        list(APPEND SOURCES ${ZLIB_SOURCES})
-        list(APPEND HEADERS ${ZLIB_HEADERS})
     endif()
 
     if(EXISTS ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h)
@@ -344,6 +338,12 @@ if(APPLE)
     endif()
     if(ZZIPLIB_FOUND)
         add_dependencies(compression zziplib)
+    endif()
+endif()
+
+if(WIN32)
+    if(ZLIB_FOUND)
+        add_dependencies(compression zlib)
     endif()
 endif()
 
