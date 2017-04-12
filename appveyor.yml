@@ -1,9 +1,5 @@
 version: 1.00.00-{build}
 
-branches:
-    only:
-      - cmake_appveyor
-
 configuration:
   - Debug
   - Release
