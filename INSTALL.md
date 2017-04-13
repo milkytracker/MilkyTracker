@@ -85,7 +85,7 @@ On macOS, the same applies if you decided to generate an Xcode project using
 ## macOS specific notes
 
 In addition to CMake, you will need the following extra packages. The
-recommended way of obtaining these is by using Homebrew.
+recommended way of obtaining these is by using Homebrew or MacPorts.
 
 - automake
 - libtool
