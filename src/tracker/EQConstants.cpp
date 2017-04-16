@@ -21,12 +21,15 @@
  */
 
 #include "EQConstants.h"
+#include "math.h"
+
+#define p(e) ldexp(0x10558, e-4*4)
 
 const float EQConstants::EQ3bands[3] = 
 {
-	0x1.0558p+5f,  // 32     Hz
-	0x1.0558p+9f,  // 522    Hz
-	0x1.0558p+12f, // 4181.5 Hz
+	p(5),  // 32     Hz
+	p(9),  // 522    Hz
+	p(12), // 4181.5 Hz
 };
 
 const float EQConstants::EQ3bandwidths[3] = 
@@ -38,28 +41,28 @@ const float EQConstants::EQ3bandwidths[3] =
 
 const float EQConstants::EQ10bands[10] = 
 {
-	0x1.0558p+3f,  // 8      Hz
-	0x1.0558p+4f,  // 16     Hz
-	0x1.0558p+5f,  // 32     Hz
-	0x1.0558p+6f,  // 65     Hz
-	0x1.0558p+7f,  // 130    Hz
-	0x1.0558p+8f,  // 261    Hz
-	0x1.0558p+9f,  // 522    Hz
-	0x1.0558p+10f, // 1     kHz
-	0x1.0558p+11f, // 2     kHz
-	0x1.0558p+12f, // 4181.5 Hz
+	p(3),  // 8      Hz
+	p(4),  // 16     Hz
+	p(5),  // 32     Hz
+	p(6),  // 65     Hz
+	p(7),  // 130    Hz
+	p(8),  // 261    Hz
+	p(9),  // 522    Hz
+	p(10), // 1     kHz
+	p(11), // 2     kHz
+	p(12), // 4181.5 Hz
 };
 
 const float EQConstants::EQ10bandwidths[10] = 
 {
 	16,
-	0x1.0558p+3f*1.5f,
-	0x1.0558p+4f*1.5f,
-	0x1.0558p+5f*1.5f,
-	0x1.0558p+6f*1.5f,
-	0x1.0558p+7f*1.5f,
-	0x1.0558p+8f*1.0f,
-	0x1.0558p+9f*1.0f,
+	p(3)*1.5f,
+	p(4)*1.5f,
+	p(5)*1.5f,
+	p(6)*1.5f,
+	p(7)*1.5f,
+	p(8)*1.0f,
+	p(9)*1.0f,
 	600.0f,
 	800.0f
 };
