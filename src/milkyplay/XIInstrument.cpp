@@ -326,6 +326,10 @@ static mp_sint32 gusFreqToFT2Note(mp_dword freq)
 		/* Octave 8 */  4186073, 4434930, 4698645, 4978041, 5274051, 5587663, 5919922, 6271939, 6644889, 7040015, 7458636, 7902150, 0xFFFFFFFF
 	};
 
+	if (scale_table[0] > freq)
+	{
+		return 0-12;
+	}
 	for (mp_uint32 no = 0; no < sizeof(scale_table)/sizeof(mp_dword)-1; no++)
 	{
 		if (scale_table[no] <= freq && 
