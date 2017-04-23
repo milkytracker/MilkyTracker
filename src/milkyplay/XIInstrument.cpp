@@ -329,7 +329,7 @@ static mp_sint32 gusFreqToFT2Note(mp_dword freq)
 	for (mp_uint32 no = 0; no < sizeof(scale_table)/sizeof(mp_dword)-1; no++)
 	{
 		if (scale_table[no] <= freq && 
-			scale_table[no+1] >= freq)
+			scale_table[no+1] > freq)
 			return (no-12);
 	}
 	
@@ -458,7 +458,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 		//if (i == numsamples - 1)
 		//	hi = 96;
 		
-		for (mp_sint32 j = lo; j < hi; j++)
+		for (mp_sint32 j = lo; j <= hi; j++)
 			if (j >= 0 && j <= 95)
 				if (nbu[j] == 0xFF) nbu[j] = i;
 		
