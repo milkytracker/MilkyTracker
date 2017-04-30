@@ -90,8 +90,8 @@ if(APPLE)
     endif()
 
     # Trim leading/trailing whitespace
-    string(STRIP ${EXTERNAL_C_FLAGS} EXTERNAL_C_FLAGS)
-    string(STRIP ${EXTERNAL_CXX_FLAGS} EXTERNAL_CXX_FLAGS)
+    string(STRIP "${EXTERNAL_C_FLAGS}" EXTERNAL_C_FLAGS)
+    string(STRIP "${EXTERNAL_CXX_FLAGS}" EXTERNAL_CXX_FLAGS)
 
     if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
         message(STATUS "Found LHASA as a submodule")
