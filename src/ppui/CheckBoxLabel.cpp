@@ -52,7 +52,14 @@ pp_int32 PPCheckBoxLabel::dispatchEvent(PPEvent * event)
 	{
 	case eLMouseDown:
 	case eLMouseUp:
-		return checkBox->dispatchEvent(event);
+	{
+		// Create a new event with location on top of the check box.
+		// Event location matters because the checkbox button will fire
+		// a command event only when mouse button is raised on top of the button.
+		const PPPoint checkBoxHitLocation = checkBox->getLocation();
+		PPEvent checkBoxEvent = PPEvent(event->getID(), (void*)&checkBoxHitLocation, sizeof(checkBoxHitLocation));
+		return checkBox->dispatchEvent(&checkBoxEvent);
+	}
 	default:
 		return -1;
 	}
