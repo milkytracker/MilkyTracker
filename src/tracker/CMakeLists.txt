@@ -399,7 +399,7 @@ target_link_libraries(
 if(APPLE OR WIN32)
     set(INSTALL_DEST .)
 else()
-    set(INSTALL_DEST bin)
+    set(INSTALL_DEST ${CMAKE_INSTALL_BINDIR})
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_DEST})

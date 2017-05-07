@@ -35,7 +35,7 @@ elseif(WIN32)
     set(INSTALL_DEST .)
 else()
     list(APPEND DOCUMENTS readme_unix)
-    set(INSTALL_DEST share/doc/${PROJECT_NAME_LOWER})
+    set(INSTALL_DEST ${CMAKE_INSTALL_DOCDIR})
 endif()
 
 install(FILES ${DOCUMENTS} DESTINATION ${INSTALL_DEST})
