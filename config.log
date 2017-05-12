@@ -617,8 +617,8 @@ configure:5431: WARNING: ALSA not found - midi support disabled
 configure:5447: checking for library containing gzopen
 configure:5488: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccUjo5wB.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:44: undefined reference to `gzopen'
+/tmp/cc9HESuS.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:44: undefined reference to `gzopen'
 collect2: error: ld returned 1 exit status
 configure:5494: $? = 1
 configure: failed program was:
@@ -1362,9 +1362,9 @@ conftest.c: In function 'main':
 conftest.c:45:8: warning: implicit declaration of function 'fseeko' [-Wimplicit-function-declaration]
  return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
         ^~~~~~
-/tmp/ccr9YVd8.o(.text+0x10): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:45: undefined reference to `fseeko'
-/tmp/ccr9YVd8.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:45: undefined reference to `fseeko'
+/tmp/ccPdlcBo.o(.text+0x10): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:45: undefined reference to `fseeko'
+/tmp/ccPdlcBo.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:45: undefined reference to `fseeko'
 collect2: error: ld returned 1 exit status
 configure:7991: $? = 1
 configure: failed program was:
@@ -1422,9 +1422,9 @@ conftest.c: In function 'main':
 conftest.c:46:8: warning: implicit declaration of function 'fseeko' [-Wimplicit-function-declaration]
  return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
         ^~~~~~
-/tmp/ccDqFNBa.o(.text+0x10): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:46: undefined reference to `fseeko'
-/tmp/ccDqFNBa.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:46: undefined reference to `fseeko'
+/tmp/ccpRk9as.o(.text+0x10): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:46: undefined reference to `fseeko'
+/tmp/ccpRk9as.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:46: undefined reference to `fseeko'
 collect2: error: ld returned 1 exit status
 configure:8035: $? = 1
 configure: failed program was:
@@ -1499,8 +1499,8 @@ configure:8465: result: yes
 configure:8603: checking for getpagesize
 configure:8659: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccAClL3b.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:80: undefined reference to `getpagesize'
+/tmp/ccIlKRCt.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:80: undefined reference to `getpagesize'
 collect2: error: ld returned 1 exit status
 configure:8665: $? = 1
 configure: failed program was:
@@ -1776,8 +1776,8 @@ configure:9609: result: yes
 configure:9529: checking for floor
 configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccsYwNJp.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:89: undefined reference to `floor'
+/tmp/ccuFswZD.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:89: undefined reference to `floor'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -1897,8 +1897,8 @@ configure:9609: result: yes
 configure:9529: checking for munmap
 configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccYWh1ow.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `munmap'
+/tmp/ccRfZnNL.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:93: undefined reference to `munmap'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2002,8 +2002,8 @@ configure:9609: result: no
 configure:9529: checking for pow
 configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/cc8qTYHz.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `pow'
+/tmp/ccfMiUkP.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:93: undefined reference to `pow'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2107,8 +2107,8 @@ configure:9609: result: no
 configure:9529: checking for select
 configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccY2RXFz.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `select'
+/tmp/ccsWmG8N.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:93: undefined reference to `select'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2212,8 +2212,8 @@ configure:9609: result: no
 configure:9529: checking for sqrt
 configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/cc6RhJfD.o(.text+0x2): In function `main':
-/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `sqrt'
+/tmp/cczbPgOS.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-68k/conftest.c:93: undefined reference to `sqrt'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2487,16 +2487,16 @@ am_cv_CXX_dependencies_compiler_type=gcc3
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run aclocal-1.10'
+ACLOCAL='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run aclocal-1.10'
 ALSA_CFLAGS=''
 ALSA_LIBS=''
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run tar'
-AUTOCONF='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run autoconf'
-AUTOHEADER='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run autoheader'
-AUTOMAKE='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run automake-1.10'
+AMTAR='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run tar'
+AUTOCONF='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run autoconf'
+AUTOHEADER='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run autoheader'
+AUTOMAKE='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run automake-1.10'
 AWK='gawk'
 CC='m68k-amigaos-gcc'
 CCDEPMODE='depmode=gcc3'
@@ -2523,7 +2523,7 @@ LDFLAGS=''
 LIBOBJS=' ${LIBOBJDIR}error$U.o ${LIBOBJDIR}malloc$U.o ${LIBOBJDIR}memcmp$U.o ${LIBOBJDIR}realloc$U.o ${LIBOBJDIR}lstat$U.o ${LIBOBJDIR}stat$U.o'
 LIBS='-lz '
 LTLIBOBJS=' ${LIBOBJDIR}error$U.lo ${LIBOBJDIR}malloc$U.lo ${LIBOBJDIR}memcmp$U.lo ${LIBOBJDIR}realloc$U.lo ${LIBOBJDIR}lstat$U.lo ${LIBOBJDIR}stat$U.lo'
-MAKEINFO='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run makeinfo'
+MAKEINFO='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-68k/missing --run makeinfo'
 OBJEXT='o'
 PACKAGE='milkytracker'
 PACKAGE_BUGREPORT='www.milkytracker.net'
@@ -2565,7 +2565,7 @@ host_alias='m68k-amigaos'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='$(SHELL) /home/marlon/tmp/MilkyTracker/milkytracker-git/install-sh'
+install_sh='$(SHELL) /home/marlon/tmp/MilkyTracker/milkytracker-68k/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'

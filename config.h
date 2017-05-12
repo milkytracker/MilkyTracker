@@ -254,13 +254,13 @@
 /* #undef int8_t */
 
 /* Define to rpl_malloc if the replacement function should be used. */
-//#define malloc rpl_malloc
+//#undef malloc
 
 /* Define to `long int' if <sys/types.h> does not define. */
 /* #undef off_t */
 
 /* Define to rpl_realloc if the replacement function should be used. */
-//#define realloc rpl_realloc
+//#undef realloc
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
