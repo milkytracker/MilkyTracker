@@ -1,0 +1,2 @@
+#!/bin/bash
+SDL_CONFIG="/opt/m68k-amigaos/bin/sdl-config" CFLAGS="-g -Os -D__AMIGA__ -fomit-frame-pointer -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -Xlinker --allow-multiple-definition" LDFLAGS=" -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -lnix -s" ./configure --build x86_64 --host m68k-amigaos
