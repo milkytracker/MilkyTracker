@@ -31,6 +31,10 @@
 #include "TrackerConfig.h"
 
 #define SCROLLBARWIDTH SCROLLBUTTONSIZE
+template<> 
+PianoBitmapSmall * PPSingleton<PianoBitmapSmall>::instance = NULL;
+template<> 
+PianoBitmapLarge * PPSingleton<PianoBitmapLarge>::instance = NULL;
 
 static const bool blackKeys[] =
 {

@@ -29,7 +29,8 @@
  */
 
 #include "PPUIConfig.h"
-
+template<> 
+PPUIConfig * PPSingleton<PPUIConfig>::instance = NULL;
 PPUIConfig::PPUIConfig()
 {
 	colors[ColorSelection] = PPColor(64*2, 64*2, 128*2-1);

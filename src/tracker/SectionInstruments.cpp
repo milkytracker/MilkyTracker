@@ -63,7 +63,6 @@
 #include "PPSavePanel.h"
 
 #include "ControlIDs.h"
-
 // Class which responds to message box clicks
 class DialogResponderInstruments : public DialogResponder
 {

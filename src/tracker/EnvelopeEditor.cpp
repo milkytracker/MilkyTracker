@@ -32,6 +32,9 @@
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
+template<>
+EnvelopeEditor::ClipBoard* PPSingleton<EnvelopeEditor::ClipBoard>::instance = NULL;
+
 EnvelopeEditor::ClipBoard::ClipBoard() :
 	envelopeCopy(NULL)
 {
@@ -46,7 +49,7 @@ void EnvelopeEditor::ClipBoard::makeCopy(TEnvelope& envelope)
 {
 	if (envelopeCopy == NULL)
 		envelopeCopy = new TEnvelope;
-	
+
 	*envelopeCopy = envelope;
 }
 

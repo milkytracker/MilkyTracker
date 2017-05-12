@@ -1,0 +1,368 @@
+Tracker.o: Tracker.cpp Tracker.h ../../src/ppui/BasicTypes.h \
+ ../../src/ppui/ScanCodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h \
+ ../../src/ppui/VirtualKeys.h \
+ ../../src/ppui/osinterface/posix/PPSystemString_POSIX.h \
+ ../../src/ppui/Event.h ../../src/ppui/Object.h \
+ ../../src/ppui/BasicTypes.h EditModes.h FileTypes.h \
+ ../../src/milkyplay/XModule.h ../../src/milkyplay/XMFile.h \
+ ../../src/milkyplay/MilkyPlayCommon.h \
+ ../../src/milkyplay/MilkyPlayTypes.h \
+ ../../src/milkyplay/MilkyPlayResults.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/assert.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h \
+ TrackerConfig.h TabManager.h PlayerController.h \
+ ../../src/milkyplay/MilkyPlayCommon.h PlayerMaster.h PlayerLogic.h \
+ RecorderLogic.h SamplePlayer.h ../../src/ppui/SimpleVector.h \
+ ModuleEditor.h ../../src/milkyplay/MilkyPlay.h \
+ ../../src/milkyplay/AudioDriverManager.h \
+ ../../src/milkyplay/MasterMixer.h ../../src/milkyplay/Mixable.h \
+ ../../src/milkyplay/PlayerSTD.h ../../src/milkyplay/ChannelMixer.h \
+ ../../src/milkyplay/AudioDriverBase.h ../../src/milkyplay/PlayerBase.h \
+ ../../src/milkyplay/XModule.h ../../src/milkyplay/PlayerGeneric.h \
+ ../../src/milkyplay/XIInstrument.h \
+ ../../src/milkyplay/SampleLoaderAbstract.h \
+ ../../src/milkyplay/SampleLoaderGeneric.h PatternEditorTools.h \
+ ../../src/milkyplay/MilkyPlayTypes.h SongLengthEstimator.h \
+ TabTitleProvider.h ../../src/ppui/PPUI.h ../../src/ppui/Tools.h \
+ ../../src/ppui/SimpleVector.h ../../src/ppui/Event.h \
+ ../../src/ppui/Screen.h ../../src/ppui/DisplayDeviceBase.h \
+ ../../src/ppui/Font.h ../../src/ppui/Control.h \
+ ../../src/ppui/GraphicsAbstract.h ../../src/ppui/Button.h \
+ ../../src/ppui/ScrollBar.h ../../src/ppui/Slider.h \
+ ../../src/ppui/ListBox.h ../../src/ppui/CheckBox.h \
+ ../../src/ppui/Container.h ../../src/ppui/MessageBoxContainer.h \
+ ../../src/ppui/RadioGroup.h ../../src/ppui/StaticText.h \
+ ../../src/ppui/ContextMenu.h ../../src/ppui/Menu.h \
+ ../../src/ppui/Seperator.h ../../src/ppui/PPUIConfig.h \
+ ../../src/ppui/Singleton.h PatternTools.h PatternEditorControl.h \
+ ../../src/ppui/Control.h PatternEditor.h EditorBase.h Undo.h \
+ ../../src/ppui/UndoStack.h ../../src/ppui/ScrollBar.h \
+ EnvelopeEditorControl.h PianoControl.h PeakLevelControl.h \
+ ScopesControl.h TabHeaderControl.h ../../src/ppui/Button.h \
+ SampleEditorControl.h SampleEditor.h ../../src/ppui/Singleton.h \
+ SampleEditorControlLastValues.h ../../src/ppui/Dictionary.h \
+ ../../src/ppui/DictionaryKey.h TrackerSettingsDatabase.h \
+ ../../src/ppui/KeyBindings.h ModuleServices.h FileIdentificator.h \
+ FileExtProvider.h ../../src/compression/Decompressor.h Zapper.h \
+ TitlePageManager.h SectionSwitcher.h SectionTranspose.h \
+ SectionUpperLeft.h SectionAbstract.h ../../src/ppui/Screen.h \
+ SectionAdvancedEdit.h SectionDiskMenu.h SectionHDRecorder.h \
+ SectionSettings.h GlobalColorConfig.h SectionInstruments.h \
+ SectionSamples.h SectionQuickOptions.h SectionOptimize.h SectionAbout.h \
+ InputControlListener.h DialogHandlers.h ../../src/ppui/DialogBase.h \
+ DialogChannelSelector.h DialogZap.h ToolInvokeHelper.h ControlIDs.h \
+ ../../src/ppui/osinterface/PPOpenPanel.h \
+ ../../src/ppui/osinterface/PPModalDialog.h \
+ ../../src/ppui/osinterface/PPSavePanel.h \
+ ../../src/ppui/osinterface/PPOpenPanel.h
+
+Tracker.h:
+
+../../src/ppui/BasicTypes.h:
+
+../../src/ppui/ScanCodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h:
+
+../../src/ppui/VirtualKeys.h:
+
+../../src/ppui/osinterface/posix/PPSystemString_POSIX.h:
+
+../../src/ppui/Event.h:
+
+../../src/ppui/Object.h:
+
+../../src/ppui/BasicTypes.h:
+
+EditModes.h:
+
+FileTypes.h:
+
+../../src/milkyplay/XModule.h:
+
+../../src/milkyplay/XMFile.h:
+
+../../src/milkyplay/MilkyPlayCommon.h:
+
+../../src/milkyplay/MilkyPlayTypes.h:
+
+../../src/milkyplay/MilkyPlayResults.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/assert.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h:
+
+TrackerConfig.h:
+
+TabManager.h:
+
+PlayerController.h:
+
+../../src/milkyplay/MilkyPlayCommon.h:
+
+PlayerMaster.h:
+
+PlayerLogic.h:
+
+RecorderLogic.h:
+
+SamplePlayer.h:
+
+../../src/ppui/SimpleVector.h:
+
+ModuleEditor.h:
+
+../../src/milkyplay/MilkyPlay.h:
+
+../../src/milkyplay/AudioDriverManager.h:
+
+../../src/milkyplay/MasterMixer.h:
+
+../../src/milkyplay/Mixable.h:
+
+../../src/milkyplay/PlayerSTD.h:
+
+../../src/milkyplay/ChannelMixer.h:
+
+../../src/milkyplay/AudioDriverBase.h:
+
+../../src/milkyplay/PlayerBase.h:
+
+../../src/milkyplay/XModule.h:
+
+../../src/milkyplay/PlayerGeneric.h:
+
+../../src/milkyplay/XIInstrument.h:
+
+../../src/milkyplay/SampleLoaderAbstract.h:
+
+../../src/milkyplay/SampleLoaderGeneric.h:
+
+PatternEditorTools.h:
+
+../../src/milkyplay/MilkyPlayTypes.h:
+
+SongLengthEstimator.h:
+
+TabTitleProvider.h:
+
+../../src/ppui/PPUI.h:
+
+../../src/ppui/Tools.h:
+
+../../src/ppui/SimpleVector.h:
+
+../../src/ppui/Event.h:
+
+../../src/ppui/Screen.h:
+
+../../src/ppui/DisplayDeviceBase.h:
+
+../../src/ppui/Font.h:
+
+../../src/ppui/Control.h:
+
+../../src/ppui/GraphicsAbstract.h:
+
+../../src/ppui/Button.h:
+
+../../src/ppui/ScrollBar.h:
+
+../../src/ppui/Slider.h:
+
+../../src/ppui/ListBox.h:
+
+../../src/ppui/CheckBox.h:
+
+../../src/ppui/Container.h:
+
+../../src/ppui/MessageBoxContainer.h:
+
+../../src/ppui/RadioGroup.h:
+
+../../src/ppui/StaticText.h:
+
+../../src/ppui/ContextMenu.h:
+
+../../src/ppui/Menu.h:
+
+../../src/ppui/Seperator.h:
+
+../../src/ppui/PPUIConfig.h:
+
+../../src/ppui/Singleton.h:
+
+PatternTools.h:
+
+PatternEditorControl.h:
+
+../../src/ppui/Control.h:
+
+PatternEditor.h:
+
+EditorBase.h:
+
+Undo.h:
+
+../../src/ppui/UndoStack.h:
+
+../../src/ppui/ScrollBar.h:
+
+EnvelopeEditorControl.h:
+
+PianoControl.h:
+
+PeakLevelControl.h:
+
+ScopesControl.h:
+
+TabHeaderControl.h:
+
+../../src/ppui/Button.h:
+
+SampleEditorControl.h:
+
+SampleEditor.h:
+
+../../src/ppui/Singleton.h:
+
+SampleEditorControlLastValues.h:
+
+../../src/ppui/Dictionary.h:
+
+../../src/ppui/DictionaryKey.h:
+
+TrackerSettingsDatabase.h:
+
+../../src/ppui/KeyBindings.h:
+
+ModuleServices.h:
+
+FileIdentificator.h:
+
+FileExtProvider.h:
+
+../../src/compression/Decompressor.h:
+
+Zapper.h:
+
+TitlePageManager.h:
+
+SectionSwitcher.h:
+
+SectionTranspose.h:
+
+SectionUpperLeft.h:
+
+SectionAbstract.h:
+
+../../src/ppui/Screen.h:
+
+SectionAdvancedEdit.h:
+
+SectionDiskMenu.h:
+
+SectionHDRecorder.h:
+
+SectionSettings.h:
+
+GlobalColorConfig.h:
+
+SectionInstruments.h:
+
+SectionSamples.h:
+
+SectionQuickOptions.h:
+
+SectionOptimize.h:
+
+SectionAbout.h:
+
+InputControlListener.h:
+
+DialogHandlers.h:
+
+../../src/ppui/DialogBase.h:
+
+DialogChannelSelector.h:
+
+DialogZap.h:
+
+ToolInvokeHelper.h:
+
+ControlIDs.h:
+
+../../src/ppui/osinterface/PPOpenPanel.h:
+
+../../src/ppui/osinterface/PPModalDialog.h:
+
+../../src/ppui/osinterface/PPSavePanel.h:
+
+../../src/ppui/osinterface/PPOpenPanel.h:

@@ -45,17 +45,16 @@ public:
 	// clipboard
 	class ClipBoard : public PPSingleton<ClipBoard>
 	{
-	private:		
+	private:
 		mp_ubyte numBits;
 		mp_sbyte* buffer;
-		
+
 		pp_int32 selectionStart;
 		pp_int32 selectionEnd;
-		
+
 		pp_int32 selectionWidth;
-		
 		ClipBoard();
-		
+
 	public:
 		~ClipBoard();
 		
@@ -88,10 +87,9 @@ public:
 			else ASSERT(false);
 			return 0;
 		}
-		
+
 		friend class PPSingleton<ClipBoard>;
 	};
-
 	// operations
 	enum Operations
 	{

@@ -48,23 +48,21 @@ public:
 		EnvelopeTypePanning = 1
 	};
 
-private:
 	class ClipBoard : public PPSingleton<ClipBoard>
 	{
 	private:
 		TEnvelope* envelopeCopy;
-		
-		ClipBoard();
 
+		ClipBoard();
 	public:
 		~ClipBoard();
 
 		void makeCopy(TEnvelope& envelope);
 		void paste(TEnvelope& envelope);
 		bool isEmpty() const { return envelopeCopy == NULL; }
-		
 		friend class PPSingleton<ClipBoard>;
 	};
+private:
 
 	TEnvelope* envelope;
 	

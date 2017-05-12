@@ -1,0 +1,3 @@
+EQConstants.o: EQConstants.cpp EQConstants.h
+
+EQConstants.h:

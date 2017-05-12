@@ -36,7 +36,7 @@ class PPSingleton
 {
 private:
 	static type* instance;
-	
+
 public:
 	static type* getInstance()
 	{

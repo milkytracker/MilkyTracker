@@ -47,15 +47,15 @@ void PPPathEntry_POSIX::create(const PPSystemString& path, const PPSystemString&
 {
 	this->name = name;
 	PPSystemString fullPath = path;
-	
+
 	fullPath.append(name);
 
 	struct stat file_status;
-	
+
 	if (::stat(fullPath, &file_status) == 0) 
 	{
 		size = file_status.st_size;
-		
+
 		if (S_ISDIR(file_status.st_mode))
 			type = Directory;
 		//if (S_ISLNK(file_status.st_mode))
@@ -74,7 +74,7 @@ void PPPathEntry_POSIX::create(const PPSystemString& path, const PPSystemString&
 	else 
 	{ /* stat() call failed and returned '-1'. */
 		type = Nonexistent;
-	}		
+	}
 }
 
 bool PPPathEntry_POSIX::isHidden() const
@@ -103,15 +103,15 @@ const PPSystemString PPPath_POSIX::getCurrent()
 {
 	char cwd[PPMAX_DIR_PATH+1];
 	memset(cwd, 0, sizeof(cwd));
-	
+
 	getcwd(cwd, PPMAX_DIR_PATH+1);
 
 	PPSystemString path(cwd);
-	
+
 	path.ensureTrailingCharacter(getPathSeparatorAsASCII());
 	return path;
 }
-	
+
 bool PPPath_POSIX::change(const PPSystemString& path)
 {
 	PPSystemString old = current;
@@ -135,7 +135,7 @@ bool PPPath_POSIX::stepInto(const PPSystemString& directory)
 	current = old;
 	return false;
 }
-	
+
 const PPPathEntry* PPPath_POSIX::getFirstEntry()
 {
 	dir = ::opendir(current);
@@ -143,7 +143,7 @@ const PPPathEntry* PPPath_POSIX::getFirstEntry()
 	{
 		return NULL;
 	}
-	
+
 	return getNextEntry();
 }
 
@@ -154,10 +154,10 @@ const PPPathEntry* PPPath_POSIX::getNextEntry()
 	{
 		PPSystemString file(entry->d_name);
 		this->entry.create(current, file);
-		
+
 		return &this->entry;
 	}
-	
+
 	::closedir(dir);
 	return NULL;
 }

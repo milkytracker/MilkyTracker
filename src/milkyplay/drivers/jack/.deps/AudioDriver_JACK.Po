@@ -1,0 +1,4 @@
+drivers/jack/AudioDriver_JACK.o: drivers/jack/AudioDriver_JACK.cpp \
+ ../../config.h
+
+../../config.h:

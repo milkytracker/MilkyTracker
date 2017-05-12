@@ -1,0 +1,36 @@
+Equalizer.o: Equalizer.cpp Equalizer.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h
+
+Equalizer.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h:

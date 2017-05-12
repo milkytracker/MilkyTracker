@@ -1,0 +1,131 @@
+posix/PPPath_POSIX.o: posix/PPPath_POSIX.cpp posix/PPPath_POSIX.h \
+ ../../../src/ppui/PPPath.h ../../../src/ppui/BasicTypes.h \
+ ../../../src/ppui/ScanCodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h \
+ ../../../src/ppui/VirtualKeys.h \
+ ../../../src/ppui/osinterface/posix/PPSystemString_POSIX.h \
+ ../../../src/ppui/BasicTypes.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/unistd.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/unistd.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/time.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/time.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/dirent.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/dos/exall.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/utility/hooks.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/dos/dosextens.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/tasks.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/ports.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/libraries.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/semaphores.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/devices/timer.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/io.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/dos/dos.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/stat.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/limits.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/limits.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/syslimits.h
+
+posix/PPPath_POSIX.h:
+
+../../../src/ppui/PPPath.h:
+
+../../../src/ppui/BasicTypes.h:
+
+../../../src/ppui/ScanCodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h:
+
+../../../src/ppui/VirtualKeys.h:
+
+../../../src/ppui/osinterface/posix/PPSystemString_POSIX.h:
+
+../../../src/ppui/BasicTypes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/unistd.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/unistd.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/time.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/time.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/dirent.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/dos/exall.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/utility/hooks.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/dos/dosextens.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/tasks.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/ports.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/libraries.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/semaphores.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/devices/timer.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/io.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/dos/dos.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/stat.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/limits.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/limits.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/syslimits.h:

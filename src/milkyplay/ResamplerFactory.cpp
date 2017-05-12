@@ -41,6 +41,12 @@
 #include "ResamplerSinc.h"
 #include "ResamplerAmiga.h"
 
+template<>
+mp_sint32* ResamplerSincTableBase<16>::sinc_table = NULL;
+
+template<>
+bool ResamplerSincTableBase<16>::tableInit = false;
+
 ChannelMixer::ResamplerBase* ResamplerFactory::createResampler(ResamplerTypes type)
 {
 	switch (type)

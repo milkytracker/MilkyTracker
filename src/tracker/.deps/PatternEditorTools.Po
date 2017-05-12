@@ -1,0 +1,108 @@
+PatternEditorTools.o: PatternEditorTools.cpp PatternEditorTools.h \
+ ../../src/ppui/BasicTypes.h ../../src/ppui/ScanCodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h \
+ /opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h \
+ ../../src/ppui/VirtualKeys.h \
+ ../../src/ppui/osinterface/posix/PPSystemString_POSIX.h \
+ ../../src/milkyplay/MilkyPlayTypes.h ../../src/milkyplay/XModule.h \
+ ../../src/milkyplay/XMFile.h ../../src/milkyplay/MilkyPlayCommon.h \
+ ../../src/milkyplay/MilkyPlayTypes.h \
+ ../../src/milkyplay/MilkyPlayResults.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/assert.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h \
+ /opt/m68k-amigaos/m68k-amigaos/sys-include/math.h \
+ /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h \
+ PatternTools.h
+
+PatternEditorTools.h:
+
+../../src/ppui/BasicTypes.h:
+
+../../src/ppui/ScanCodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/stdio.h:
+
+/opt/m68k-amigaos/m68k-amigaos/libnix/include/string.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/ansi.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/cdefs.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/cdefs.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/stdarg.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/lists.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/nodes.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/exec/types.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/stdlib.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cstdlib:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/c++config.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/os_defines.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/m68k-amigaos/bits/cpu_defines.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/stdlib.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/sys/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/types.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/machine/endian.h:
+
+../../src/ppui/VirtualKeys.h:
+
+../../src/ppui/osinterface/posix/PPSystemString_POSIX.h:
+
+../../src/milkyplay/MilkyPlayTypes.h:
+
+../../src/milkyplay/XModule.h:
+
+../../src/milkyplay/XMFile.h:
+
+../../src/milkyplay/MilkyPlayCommon.h:
+
+../../src/milkyplay/MilkyPlayTypes.h:
+
+../../src/milkyplay/MilkyPlayResults.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/assert.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/cmath:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/bits/cpp_type_traits.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/c++/ext/type_traits.h:
+
+/opt/m68k-amigaos/m68k-amigaos/sys-include/math.h:
+
+/opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/include/float.h:
+
+PatternTools.h:

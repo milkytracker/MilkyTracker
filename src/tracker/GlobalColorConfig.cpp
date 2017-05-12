@@ -32,6 +32,9 @@
 #include "TrackerConfig.h"
 #include "PPUIConfig.h"
 
+template<> 
+GlobalColorConfig * PPSingleton<GlobalColorConfig>::instance = NULL;
+
 const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 {
 	switch (whichColor)

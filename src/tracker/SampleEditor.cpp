@@ -37,6 +37,9 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 
+template<>
+SampleEditor::ClipBoard* PPSingleton<SampleEditor::ClipBoard>::instance = NULL;
+
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
 {
