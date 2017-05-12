@@ -46,7 +46,7 @@
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
-#define HAVE_MALLOC 1
+#define HAVE_MALLOC 0
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1

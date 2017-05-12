@@ -85,7 +85,7 @@ m68k-amigaos-g++: fatal error: no input files
 compilation terminated.
 configure:2406: $? = 1
 configure:2429: checking for C++ compiler default output file name
-configure:2456: m68k-amigaos-g++ -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.cpp  >&5
+configure:2456: m68k-amigaos-g++ -g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.cpp  >&5
 configure:2459: $? = 0
 configure:2497: result: a.out
 configure:2514: checking whether the C++ compiler works
@@ -93,19 +93,19 @@ configure:2544: result: yes
 configure:2551: checking whether we are cross compiling
 configure:2553: result: yes
 configure:2556: checking for suffix of executables
-configure:2563: m68k-amigaos-g++ -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.cpp  >&5
+configure:2563: m68k-amigaos-g++ -o conftest -g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.cpp  >&5
 configure:2566: $? = 0
 configure:2590: result: 
 configure:2596: checking for suffix of object files
-configure:2622: m68k-amigaos-g++ -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
+configure:2622: m68k-amigaos-g++ -c -g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
 configure:2625: $? = 0
 configure:2648: result: o
 configure:2652: checking whether we are using the GNU C++ compiler
-configure:2681: m68k-amigaos-g++ -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
+configure:2681: m68k-amigaos-g++ -c -g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
 configure:2687: $? = 0
 configure:2704: result: yes
 configure:2709: checking whether m68k-amigaos-g++ accepts -g
-configure:2739: m68k-amigaos-g++ -c -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
+configure:2739: m68k-amigaos-g++ -c -g -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.cpp >&5
 configure:2745: $? = 0
 configure:2844: result: yes
 configure:2878: checking for style of include used by make
@@ -138,12 +138,12 @@ m68k-amigaos-gcc: fatal error: no input files
 compilation terminated.
 configure:3380: $? = 1
 configure:3383: checking whether we are using the GNU C compiler
-configure:3412: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:3412: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3418: $? = 0
 configure:3435: result: yes
 configure:3440: checking whether m68k-amigaos-gcc accepts -g
-configure:3470: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:3470: m68k-amigaos-gcc -c -g -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3476: $? = 0
 configure: failed program was:
@@ -164,7 +164,7 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:3508: m68k-amigaos-gcc -c  -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:3508: m68k-amigaos-gcc -c  -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3514: $? = 0
 configure: failed program was:
@@ -185,22 +185,22 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:3547: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:3547: m68k-amigaos-gcc -c -g -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3553: $? = 0
 configure:3575: result: yes
 configure:3592: checking for m68k-amigaos-gcc option to accept ISO C89
-configure:3666: m68k-amigaos-gcc  -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:3666: m68k-amigaos-gcc  -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3672: $? = 0
 configure:3695: result: none needed
 configure:3715: checking dependency style of m68k-amigaos-gcc
 configure:3806: result: gcc3
 configure:3826: checking how to run the C preprocessor
-configure:3866: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:3866: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3872: $? = 0
-configure:3903: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:3903: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:10:28: fatal error: ac_nonexistent.h: No such file or directory
  #include <ac_nonexistent.h>
@@ -219,10 +219,10 @@ configure: failed program was:
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
 configure:3942: result: m68k-amigaos-gcc -E
-configure:3971: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:3971: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:3977: $? = 0
-configure:4008: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:4008: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:10:28: fatal error: ac_nonexistent.h: No such file or directory
  #include <ac_nonexistent.h>
@@ -250,12 +250,12 @@ configure:4203: result: m68k-amigaos-ranlib
 configure:4269: checking for a thread-safe mkdir -p
 configure:4308: result: /bin/mkdir -p
 configure:4322: checking for dirent.h that defines DIR
-configure:4351: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4351: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4357: $? = 0
 configure:4373: result: yes
 configure:4386: checking for library containing opendir
-configure:4427: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c  >&5
+configure:4427: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4433: $? = 0
 configure:4461: result: none required
@@ -264,44 +264,44 @@ configure:4630: result: /bin/grep
 configure:4635: checking for egrep
 configure:4713: result: /bin/grep -E
 configure:4718: checking for ANSI C header files
-configure:4748: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4748: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4754: $? = 0
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4882: result: yes
 configure:4906: checking for sys/types.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for sys/stat.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for stdlib.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for string.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for memory.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for strings.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for inttypes.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:52:22: fatal error: inttypes.h: No such file or directory
  #include <inttypes.h>
@@ -363,22 +363,22 @@ configure: failed program was:
 | #include <inttypes.h>
 configure:4949: result: no
 configure:4906: checking for stdint.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4906: checking for unistd.h
-configure:4927: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4927: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:4933: $? = 0
 configure:4949: result: yes
 configure:4979: checking fcntl.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking fcntl.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
@@ -387,24 +387,24 @@ configure:5096: result: yes
 configure:4969: checking for inttypes.h
 configure:4975: result: no
 configure:4979: checking limits.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking limits.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
 configure:5088: checking for limits.h
 configure:5096: result: yes
 configure:4979: checking malloc.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking malloc.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
@@ -413,12 +413,12 @@ configure:5096: result: yes
 configure:4969: checking for memory.h
 configure:4975: result: yes
 configure:4979: checking stddef.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking stddef.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
@@ -433,36 +433,36 @@ configure:4975: result: yes
 configure:4969: checking for strings.h
 configure:4975: result: yes
 configure:4979: checking sys/ioctl.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking sys/ioctl.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
 configure:5088: checking for sys/ioctl.h
 configure:5096: result: yes
 configure:4979: checking sys/param.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking sys/param.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
 configure:5088: checking for sys/param.h
 configure:5096: result: yes
 configure:4979: checking sys/time.h usability
-configure:4996: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:4996: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5002: $? = 0
 configure:5016: result: yes
 configure:5020: checking sys/time.h presence
-configure:5035: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
+configure:5035: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5041: $? = 0
 configure:5055: result: yes
@@ -475,7 +475,7 @@ configure:5211: result:
 configure:5214: checking for ALSA LDFLAGS
 configure:5227: result: -lasound
 configure:5231: checking for libasound headers version >= 1.0.0
-configure:5303: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
+configure:5303: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:34:28: fatal error: alsa/asoundlib.h: No such file or directory
  #include <alsa/asoundlib.h>
@@ -559,7 +559,7 @@ configure: failed program was:
 | }
 configure:5320: result: not present.
 configure:5336: checking for snd_ctl_open in -lasound
-configure:5371: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c -lasound  -lasound  >&5
+configure:5371: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c -lasound  -lasound  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 /opt/m68k-amigaos/lib/gcc/m68k-amigaos/6.3.1d/../../../../m68k-amigaos/bin/ld: cannot find -lasound
 collect2: error: ld returned 1 exit status
@@ -615,9 +615,10 @@ configure: failed program was:
 configure:5395: result: no
 configure:5431: WARNING: ALSA not found - midi support disabled
 configure:5447: checking for library containing gzopen
-configure:5488: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c  >&5
+configure:5488: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccXystKy.o(.text+0x2):/tmp/ccXystKy.o: undefined reference to `gzopen'
+/tmp/ccUjo5wB.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:44: undefined reference to `gzopen'
 collect2: error: ld returned 1 exit status
 configure:5494: $? = 1
 configure: failed program was:
@@ -668,7 +669,7 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5488: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c -lz   >&5
+configure:5488: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c -lz   >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:5494: $? = 0
 configure:5522: result: -lz
@@ -677,7 +678,7 @@ configure:5612: result: /opt/m68k-amigaos/bin/sdl-config
 configure:5622: checking for SDL - version >= 1.2.0
 configure:5752: result: yes
 configure:5851: checking whether SDL supports X11
-configure:5870: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c >&5
+configure:5870: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition  conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:35:19: error: 'SDL_SYSWM_X11' undeclared here (not in a function)
   const int test = SDL_SYSWM_X11;
@@ -721,7 +722,7 @@ configure: failed program was:
 | 	const int test = SDL_SYSWM_X11;
 configure:5892: result: no
 configure:5925: checking jack/jack.h usability
-configure:5942: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:5942: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:67:23: fatal error: jack/jack.h: No such file or directory
  #include <jack/jack.h>
@@ -798,7 +799,7 @@ configure: failed program was:
 | #include <jack/jack.h>
 configure:5962: result: no
 configure:5966: checking jack/jack.h presence
-configure:5981: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
+configure:5981: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:34:23: fatal error: jack/jack.h: No such file or directory
  #include <jack/jack.h>
@@ -845,35 +846,35 @@ configure:6034: checking for jack/jack.h
 configure:6042: result: no
 configure:6145: WARNING: JACK headers not found, JACK support disabled
 configure:6155: checking whether stat file-mode macros are broken
-configure:6192: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6192: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6198: $? = 0
 configure:6213: result: no
 configure:6223: checking for stdbool.h that conforms to C99
-configure:6316: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6316: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6322: $? = 0
 configure:6337: result: yes
 configure:6339: checking for _Bool
-configure:6369: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6369: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6375: $? = 0
 configure:6390: result: yes
 configure:6409: checking for an ANSI C-conforming const
-configure:6484: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6484: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6490: $? = 0
 configure:6505: result: yes
 configure:6515: checking for inline
-configure:6541: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6541: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6547: $? = 0
 configure:6565: result: inline
 configure:6585: checking for int16_t
-configure:6616: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6616: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6622: $? = 0
-configure:6651: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6651: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:72:12: error: size of array 'test_array' is negative
@@ -961,10 +962,10 @@ configure: failed program was:
 | }
 configure:6686: result: yes
 configure:6699: checking for int32_t
-configure:6730: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6730: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6736: $? = 0
-configure:6765: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6765: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:73:60: warning: integer overflow in expression [-Woverflow]
@@ -1055,10 +1056,10 @@ configure: failed program was:
 | }
 configure:6800: result: yes
 configure:6813: checking for int64_t
-configure:6844: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6844: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6850: $? = 0
-configure:6879: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6879: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:73:60: warning: integer overflow in expression [-Woverflow]
@@ -1149,10 +1150,10 @@ configure: failed program was:
 | }
 configure:6914: result: yes
 configure:6927: checking for int8_t
-configure:6958: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6958: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:6964: $? = 0
-configure:6993: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:6993: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:72:12: error: size of array 'test_array' is negative
@@ -1240,64 +1241,64 @@ configure: failed program was:
 | }
 configure:7028: result: yes
 configure:7040: checking for off_t
-configure:7070: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7070: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7076: $? = 0
 configure:7091: result: yes
 configure:7103: checking for size_t
-configure:7133: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7133: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7139: $? = 0
 configure:7154: result: yes
 configure:7166: checking for struct stat.st_blocks
-configure:7194: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7194: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7200: $? = 0
 configure:7257: result: yes
 configure:7280: checking whether time.h and sys/time.h may both be included
-configure:7310: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7310: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7316: $? = 0
 configure:7331: result: yes
 configure:7341: checking whether struct tm is in sys/time.h or time.h
-configure:7371: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7371: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7377: $? = 0
 configure:7392: result: time.h
 configure:7403: checking for uint16_t
-configure:7434: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7434: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7440: $? = 0
 configure:7461: result: yes
 configure:7475: checking for uint32_t
-configure:7506: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7506: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7512: $? = 0
 configure:7533: result: yes
 configure:7551: checking for uint64_t
-configure:7582: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7582: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7588: $? = 0
 configure:7609: result: yes
 configure:7627: checking for uint8_t
-configure:7658: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7658: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7664: $? = 0
 configure:7685: result: yes
 configure:7702: checking for working volatile
-configure:7731: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7731: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7737: $? = 0
 configure:7752: result: yes
 configure:7762: checking for ptrdiff_t
-configure:7792: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:7792: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:7798: $? = 0
 configure:7813: result: yes
 configure:7826: checking whether closedir returns void
 configure:7888: result: yes
 configure:7898: checking for error_at_line
-configure:7924: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:7924: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:41:19: fatal error: error.h: No such file or directory
  #include <error.h>
@@ -1355,14 +1356,15 @@ configure: failed program was:
 | }
 configure:7947: result: no
 configure:7958: checking for _LARGEFILE_SOURCE value needed for large files
-configure:7985: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:7985: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:45:8: warning: implicit declaration of function 'fseeko' [-Wimplicit-function-declaration]
  return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
         ^~~~~~
-/tmp/cczyqw8e.o(.text+0x10):/tmp/cczyqw8e.o: undefined reference to `fseeko'
-/tmp/cczyqw8e.o(.text+0x2c):/tmp/cczyqw8e.o: undefined reference to `fseeko'
+/tmp/ccr9YVd8.o(.text+0x10): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:45: undefined reference to `fseeko'
+/tmp/ccr9YVd8.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:45: undefined reference to `fseeko'
 collect2: error: ld returned 1 exit status
 configure:7991: $? = 1
 configure: failed program was:
@@ -1414,14 +1416,15 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:8029: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:8029: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c: In function 'main':
 conftest.c:46:8: warning: implicit declaration of function 'fseeko' [-Wimplicit-function-declaration]
  return fseeko (stdin, 0, 0) && (fseeko) (stdin, 0, 0);
         ^~~~~~
-/tmp/ccVXPYwh.o(.text+0x10):/tmp/ccVXPYwh.o: undefined reference to `fseeko'
-/tmp/ccVXPYwh.o(.text+0x2c):/tmp/ccVXPYwh.o: undefined reference to `fseeko'
+/tmp/ccDqFNBa.o(.text+0x10): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:46: undefined reference to `fseeko'
+/tmp/ccDqFNBa.o(.text+0x2c):/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:46: undefined reference to `fseeko'
 collect2: error: ld returned 1 exit status
 configure:8035: $? = 1
 configure: failed program was:
@@ -1494,9 +1497,10 @@ configure:8465: result: yes
 configure:8459: checking for unistd.h
 configure:8465: result: yes
 configure:8603: checking for getpagesize
-configure:8659: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:8659: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccyNe9Xi.o(.text+0x2):/tmp/ccyNe9Xi.o: undefined reference to `getpagesize'
+/tmp/ccAClL3b.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:80: undefined reference to `getpagesize'
 collect2: error: ld returned 1 exit status
 configure:8665: $? = 1
 configure: failed program was:
@@ -1591,7 +1595,7 @@ configure:8890: result: yes
 configure:9024: checking for GNU libc compatible realloc
 configure:9086: result: no
 configure:9130: checking sys/select.h usability
-configure:9147: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:9147: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:82:24: fatal error: sys/select.h: No such file or directory
  #include <sys/select.h>
@@ -1683,7 +1687,7 @@ configure: failed program was:
 | #include <sys/select.h>
 configure:9167: result: no
 configure:9171: checking sys/select.h presence
-configure:9186: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
+configure:9186: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 conftest.c:49:24: fatal error: sys/select.h: No such file or directory
  #include <sys/select.h>
@@ -1744,19 +1748,19 @@ configure:9206: result: no
 configure:9239: checking for sys/select.h
 configure:9247: result: no
 configure:9130: checking sys/socket.h usability
-configure:9147: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:9147: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9153: $? = 0
 configure:9167: result: yes
 configure:9171: checking sys/socket.h presence
-configure:9186: m68k-amigaos-gcc -E -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
+configure:9186: m68k-amigaos-gcc -E -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9192: $? = 0
 configure:9206: result: yes
 configure:9239: checking for sys/socket.h
 configure:9247: result: yes
 configure:9260: checking types of arguments for select
-configure:9298: m68k-amigaos-gcc -c -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
+configure:9298: m68k-amigaos-gcc -c -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__ conftest.c >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9304: $? = 0
 configure:9325: result: int,fd_set *,struct timeval *
@@ -1765,14 +1769,15 @@ configure:9419: result: no
 configure:9438: checking whether stat accepts an empty string
 configure:9496: result: yes
 configure:9529: checking for atexit
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for floor
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/cc29bSzu.o(.text+0x2):/tmp/cc29bSzu.o: undefined reference to `floor'
+/tmp/ccsYwNJp.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:89: undefined reference to `floor'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -1870,29 +1875,30 @@ configure: failed program was:
 | }
 configure:9609: result: no
 configure:9529: checking for getcwd
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for gettimeofday
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for memmove
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for memset
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for munmap
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccJS4olq.o(.text+0x2):/tmp/ccJS4olq.o: undefined reference to `munmap'
+/tmp/ccYWh1ow.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `munmap'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -1994,9 +2000,10 @@ configure: failed program was:
 | }
 configure:9609: result: no
 configure:9529: checking for pow
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccRvBnHs.o(.text+0x2):/tmp/ccRvBnHs.o: undefined reference to `pow'
+/tmp/cc8qTYHz.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `pow'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2098,9 +2105,10 @@ configure: failed program was:
 | }
 configure:9609: result: no
 configure:9529: checking for select
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccfmmBdw.o(.text+0x2):/tmp/ccfmmBdw.o: undefined reference to `select'
+/tmp/ccY2RXFz.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `select'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2202,9 +2210,10 @@ configure: failed program was:
 | }
 configure:9609: result: no
 configure:9529: checking for sqrt
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
-/tmp/ccxfOpNu.o(.text+0x2):/tmp/ccxfOpNu.o: undefined reference to `sqrt'
+/tmp/cc6RhJfD.o(.text+0x2): In function `main':
+/home/marlon/tmp/MilkyTracker/milkytracker-git/conftest.c:93: undefined reference to `sqrt'
 collect2: error: ld returned 1 exit status
 configure:9591: $? = 1
 configure: failed program was:
@@ -2306,22 +2315,22 @@ configure: failed program was:
 | }
 configure:9609: result: no
 configure:9529: checking for strcasecmp
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for strdup
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for strerror
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
 configure:9529: checking for strrchr
-configure:9585: m68k-amigaos-gcc -o conftest -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
+configure:9585: m68k-amigaos-gcc -o conftest -g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__  conftest.c -lz  >&5
 cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
 configure:9591: $? = 0
 configure:9609: result: yes
@@ -2377,13 +2386,13 @@ ac_cv_env_CCC_value=
 ac_cv_env_CC_set=
 ac_cv_env_CC_value=
 ac_cv_env_CFLAGS_set=set
-ac_cv_env_CFLAGS_value='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
+ac_cv_env_CFLAGS_value='-g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
 ac_cv_env_CPPFLAGS_set=set
-ac_cv_env_CPPFLAGS_value='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
+ac_cv_env_CPPFLAGS_value='-g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
 ac_cv_env_CPP_set=
 ac_cv_env_CPP_value=
 ac_cv_env_CXXFLAGS_set=set
-ac_cv_env_CXXFLAGS_value='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
+ac_cv_env_CXXFLAGS_value='-g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
 ac_cv_env_CXX_set=
 ac_cv_env_CXX_value=
 ac_cv_env_LDFLAGS_set=
@@ -2478,25 +2487,25 @@ am_cv_CXX_dependencies_compiler_type=gcc3
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run aclocal-1.10'
+ACLOCAL='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run aclocal-1.10'
 ALSA_CFLAGS=''
 ALSA_LIBS=''
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run tar'
-AUTOCONF='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run autoconf'
-AUTOHEADER='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run autoheader'
-AUTOMAKE='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run automake-1.10'
+AMTAR='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run tar'
+AUTOCONF='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run autoconf'
+AUTOHEADER='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run autoheader'
+AUTOMAKE='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run automake-1.10'
 AWK='gawk'
 CC='m68k-amigaos-gcc'
 CCDEPMODE='depmode=gcc3'
-CFLAGS='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
+CFLAGS='-g -D__AMIGA__ -fpermissive -noixemul   -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
 CPP='m68k-amigaos-gcc -E'
-CPPFLAGS='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__'
+CPPFLAGS='-g -D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition -D__FORCE_SDL_AUDIO__'
 CXX='m68k-amigaos-g++'
 CXXDEPMODE='depmode=gcc3'
-CXXFLAGS='-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
+CXXFLAGS='-g -D__AMIGA__ -fpermissive -noixemul  -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -lSDL -ldebug -ljpeg -lSDLstub -lSDL_image -Xlinker --allow-multiple-definition'
 CYGPATH_W='echo'
 DEFS='-DHAVE_CONFIG_H'
 DEPDIR='.deps'
@@ -2514,7 +2523,7 @@ LDFLAGS=''
 LIBOBJS=' ${LIBOBJDIR}error$U.o ${LIBOBJDIR}malloc$U.o ${LIBOBJDIR}memcmp$U.o ${LIBOBJDIR}realloc$U.o ${LIBOBJDIR}lstat$U.o ${LIBOBJDIR}stat$U.o'
 LIBS='-lz '
 LTLIBOBJS=' ${LIBOBJDIR}error$U.lo ${LIBOBJDIR}malloc$U.lo ${LIBOBJDIR}memcmp$U.lo ${LIBOBJDIR}realloc$U.lo ${LIBOBJDIR}lstat$U.lo ${LIBOBJDIR}stat$U.lo'
-MAKEINFO='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/missing --run makeinfo'
+MAKEINFO='${SHELL} /home/marlon/tmp/MilkyTracker/milkytracker-git/missing --run makeinfo'
 OBJEXT='o'
 PACKAGE='milkytracker'
 PACKAGE_BUGREPORT='www.milkytracker.net'
@@ -2556,7 +2565,7 @@ host_alias='m68k-amigaos'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='$(SHELL) /home/marlon/tmp/MilkyTracker/milkytracker-0.90.86/install-sh'
+install_sh='$(SHELL) /home/marlon/tmp/MilkyTracker/milkytracker-git/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
