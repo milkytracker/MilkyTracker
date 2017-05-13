@@ -22,6 +22,20 @@
 
 #include "Math3d.h"
 
+extern "C" float sinf(float f);
+extern "C" float cosf(float f);
+extern "C" float expf(float f);
+
+struct c {
+  float r, i;
+};
+
+extern "C" struct c cexpf(struct c c) {
+  float n = expf(c.r);
+  struct c r = { cosf(c.i) * n, sinf(c.i) * n};
+  return r;
+}
+
 /////////////////////
 // VectorFP struct //
 /////////////////////

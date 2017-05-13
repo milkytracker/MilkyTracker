@@ -80,7 +80,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
---			flags { "OptimizeSize" }
+			flags { "OptimizeSize" }
 			targetname "fx"
 
 	project "compression"
