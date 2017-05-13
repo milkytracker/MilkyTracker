@@ -24,6 +24,7 @@ function newgcctoolchain(toolchain)
 			cc = toolchain.prefix .. "gcc",
 			cxx = toolchain.prefix .. "g++",
 			ar = toolchain.prefix .. "ar",
+			ld = toolchain.prefix .. "ld",
 			cppflags = " " .. toolchain.cppflags
 		}
 	}
@@ -33,7 +34,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68020 -noixemul -fpermissive -fomit-frame-pointer "
+	cppflags = "-m68020 -noixemul -fpermissive -fomit-frame-pointer -g -Os"
 }
 
 if _OPTIONS.platform then
@@ -51,6 +52,7 @@ solution "milkytracker"
 	project "milkyplay"
 		kind "StaticLib"
 		language "C++"
+		location "projects"
 		targetdir("lib/")
 		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*"  }
 		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl/" }
@@ -67,6 +69,7 @@ solution "milkytracker"
 	project "fx"
 		kind "StaticLib"
 		language "C++"
+		location "projects"
 		targetdir("lib/")
 		files { "./src/fx/**",  }
 
@@ -83,9 +86,10 @@ solution "milkytracker"
 	project "compression"
 		kind "StaticLib"
 		language "C++"
+		location "projects"
 		targetdir("lib/")
-		files { "./src/compression/**.c",  }
-		includedirs { "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zziplib" }
+		files { "./src/compression/**",  }
+		includedirs { "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zlib/generic", "./src/compression/zziplib", "./src/compression/zziplib/generic" }
 
 		configuration "debug"
 			defines { "DEBUG" }
@@ -100,6 +104,7 @@ solution "milkytracker"
 	project "ppui"
 		kind "StaticLib"
 		language "C++"
+		location "projects"
 		targetdir("lib/")
 		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/sdl/*" }
 		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl", "./src/ppui/sdl/" }
@@ -121,7 +126,8 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
-		links { "ppui", "milkyplay", "compression", "fx", "stdc++", "SDL", "jpeg", "z", "nix", "debug", "SDLstub", "SDL_image" }
+		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug", "SDLstub", "SDL_image" }
+		linkoptions { "-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
 		-- Libraries.
 		configuration "Linux"
 		
