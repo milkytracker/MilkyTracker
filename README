@@ -3,6 +3,14 @@ Notes on building MilkyTracker for Amiga68k
 
 ./build_gmake to make the makefiles
 
+Configuration
+=============
+To compile with ixemul.library in mind run:
+make config=ixemul_m68k-amigaos	
+
+To compile with libnix just run:
+make
+
 Dependencies
 ============
 
