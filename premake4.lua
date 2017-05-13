@@ -34,7 +34,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68020 -noixemul -fpermissive -fomit-frame-pointer -g -Os"
+	cppflags = "-m68020 -noixemul -fpermissive -fomit-frame-pointer -g"
 }
 
 if _OPTIONS.platform then
@@ -43,7 +43,7 @@ if _OPTIONS.platform then
 end
 
 solution "milkytracker"
-	configurations { "Debug", "Release" }
+	configurations { "Release", "Debug" }
 	platforms { "m68k-amigaos" }
 	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
 	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
@@ -64,7 +64,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			flags { "OptimizeSize" }
 			targetname "milkyplay"
 	project "fx"
 		kind "StaticLib"
@@ -80,7 +80,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			flags { "OptimizeSize" }
 			targetname "fx"
 
 	project "compression"
@@ -98,7 +98,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			flags { "OptimizeSize" }
 			targetname "compression"
 
 	project "ppui"
@@ -115,7 +115,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			flags { "OptimizeSize" }
 			targetname "ppui"	
 
 	project "milkytracker"
@@ -139,5 +139,4 @@ solution "milkytracker"
 		
 		-- Release options.
 		configuration "Release"
-			defines { "NDEBUG" }
-			flags { "OptimizeSpeed" }
+			flags { "OptimizeSize" }
