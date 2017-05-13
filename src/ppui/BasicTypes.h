@@ -284,7 +284,7 @@ public:
 		strBuffer(new char[8]),
 		allocatedSize(8)
 	{
-		*strBuffer = 0;		
+		*strBuffer = 0;
 	}
 
 	// String from single character
@@ -295,20 +295,20 @@ public:
 		*strBuffer = c;
 		*(strBuffer+1) = 0;
 	}
-/*
+
 	PPString(signed char* str) :
-                strBuffer(new char[strlen(str) + 1]),
-                allocatedSize((pp_uint32)strlen(str) + 1)               
-        {
-                strcpy(strBuffer, str);
-        }
-*/
+		strBuffer(new char[strlen(str) + 1]),
+		allocatedSize((pp_uint32)strlen(str) + 1)
+	{
+		strcpy(strBuffer, str);
+	}
+
 
 	PPString(const char* str) :
 		strBuffer(new char[strlen(str) + 1]),
-		allocatedSize((pp_uint32)strlen(str) + 1)		
+		allocatedSize((pp_uint32)strlen(str) + 1)
 	{
-		strcpy(strBuffer, str);		
+		strcpy(strBuffer, str);
 	}
 
 	PPString(const char* str, pp_uint32 length) :

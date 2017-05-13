@@ -54,8 +54,8 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*"  }
-		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl/" }
+		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/generic/*", "./src/milkyplay/generic/rtaudio/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
+		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/milkyplay/drivers/sdl", "./src/milkyplay/drivers/generic/rtaudio", "./src/milkyplay/drivers/generic/rtaudio/asio", "./src/milkyplay/drivers/generic/rtaudio/oss", "./src/milkyplay/drivers/generic/portaudio" }
 
 		configuration "debug"
 			defines { "DEBUG" }
@@ -106,7 +106,7 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/sdl/*" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/sdl/*", "./src/ppui/osinterface/posix/*" }
 		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl", "./src/ppui/sdl/" }
 		configuration "debug"
 			defines { "DEBUG" }
@@ -126,7 +126,7 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
-		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug", "SDLstub", "SDL_image" }
+		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug", "SDLstub", "SDL_image", "m" }
 		linkoptions { "-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
 		-- Libraries.
 		configuration "Linux"

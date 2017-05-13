@@ -48,11 +48,11 @@
 PPSize Tracker::getWindowSizeFromDatabase()
 {
 	PPSize size(PPScreen::getDefaultWidth(), PPScreen::getDefaultHeight());
-	
+
 	if (XMFile::exists(System::getConfigFileName()))
 	{
-		TrackerSettingsDatabase* settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);		
-		XMFile f(System::getConfigFileName());	
+		TrackerSettingsDatabase* settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);
+		XMFile f(System::getConfigFileName());
 		settingsDatabaseCopy->serialize(f);			
 		size.height = settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue();
 		size.width = settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue();
