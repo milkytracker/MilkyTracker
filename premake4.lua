@@ -80,7 +80,7 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize" }
+--			flags { "OptimizeSize" }
 			targetname "fx"
 
 	project "compression"
@@ -126,7 +126,7 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
-		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug", "SDLstub", "SDL_image", "m" }
+		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug" } --, "SDLstub", "SDL_image" }
 		linkoptions { "-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
 		-- Libraries.
 		configuration "Linux"

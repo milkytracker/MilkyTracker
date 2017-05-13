@@ -53,7 +53,7 @@ class VectorFloat
 {
 public:
 	float		x,y,z;
-				
+
 				VectorFloat();
 				VectorFloat(float x,float y,float z);
 				VectorFloat(VectorFP vector);
@@ -95,7 +95,7 @@ class MatrixFloat
 {
 public:
 	float   form[4][4];
-	
+
 	void	setID();
 	void	setRotX(float phi);
 	void	setRotY(float phi);
@@ -119,7 +119,7 @@ class MatrixFP
 {
 public:
 	pp_int32 		form[4][4];
-	
+
 			MatrixFP();
 			MatrixFP(MatrixFloat matrix);
 
