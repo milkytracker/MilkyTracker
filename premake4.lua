@@ -31,7 +31,7 @@ end
 
 newgcctoolchain {
 	name = "m68k-amigaos",
-	description = "m68k-amigaos to cross-compile windows binaries from *nix",
+	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
 	cppflags = "-m68020 -noixemul -fpermissive -fomit-frame-pointer "
 }
@@ -41,32 +41,12 @@ if _OPTIONS.platform then
 	premake.gcc.platforms['Native'] = premake.gcc.platforms[_OPTIONS.platform]
 end
 
-newoption {
-	trigger		= "no-64bit",
-	description	= "Don't add the 64-bit project configuration."
-}
-
-newoption {
-	trigger		= "no-static",
-	description	= "Don't compile as a static runtime."
-}
-
-newoption {
-	trigger		= "no-boost",
-	description = "Don't compile with boost.thread support."
-}
-
-newoption {
-	trigger		= "no-upnp",
-	description	= "Don't compile with universal plug and play support."
-}
-
 solution "milkytracker"
 	configurations { "Debug", "Release" }
 	platforms { "m68k-amigaos" }
 	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
 	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
-	defines { "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX" }
+	defines { "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	project "milkyplay"
 		kind "StaticLib"
@@ -141,7 +121,7 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
-		links { "ppui", "milkyplay", "compression", "fx", "nix" }
+		links { "ppui", "milkyplay", "compression", "fx", "stdc++", "SDL", "jpeg", "z", "nix", "debug", "SDLstub", "SDL_image" }
 		-- Libraries.
 		configuration "Linux"
 		

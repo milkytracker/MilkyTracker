@@ -1,4 +1,0 @@
-drivers/alsa/AudioDriver_ALSA.o: drivers/alsa/AudioDriver_ALSA.cpp \
- ../../config.h
-
-../../config.h:

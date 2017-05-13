@@ -1,5 +1,0 @@
-LittleEndian.o: LittleEndian.cpp LittleEndian.h MilkyPlayTypes.h
-
-LittleEndian.h:
-
-MilkyPlayTypes.h:
