@@ -66,24 +66,24 @@ bool ToolInvokeHelper::invokeTool(ToolTypes toolType, pp_int16 keyDownKeyCode/* 
 		delete dialog;
 		dialog = NULL;
 	}
-	
+
 	switch (toolType)
 	{
 		case ToolTypePatternVolumeScale:
-			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale pattern"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale pattern" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeTrackVolumeScale:
-			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale track"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale track" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeSelectionVolumeScale:
-			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale block"PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			dialog = new DialogWithValues(tracker.screen, this, PP_DEFAULT_ID, "Volume scale block" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			break;
 
 		case ToolTypeQuickChooseInstrument:
 		{
-			dialog = new DialogQuickChooseInstrument(tracker.screen, this, PP_DEFAULT_ID, "Choose instrument"PPSTR_PERIODS);
+			dialog = new DialogQuickChooseInstrument(tracker.screen, this, PP_DEFAULT_ID, "Choose instrument" PPSTR_PERIODS);
 			static_cast<DialogQuickChooseInstrument*>(dialog)->setValueCaption("Enter hex value:");
 			pp_uint16 value = static_cast<DialogQuickChooseInstrument*>(dialog)->numPadKeyToValue(keyDownKeyCode);
 			static_cast<DialogQuickChooseInstrument*>(dialog)->setValue(value);

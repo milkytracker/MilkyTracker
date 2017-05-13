@@ -1427,12 +1427,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						sprintf(buffer, "Swap smp. %x with %x", listBoxSrc->getSelectedIndex(), listBoxDst->getSelectedIndex());
 						break;
 				}
-				
-				staticText->setText(buffer);				
+
+				staticText->setText(buffer);
 				screen->paintControl(screen->getModalControl());
 				break;
 			}
-			
+
 		}
 
 	}
@@ -1445,21 +1445,21 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				moduleEditor->setTitle(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_TITLETEXT);
 				break;
 			}
-		
+
 			case LISTBOX_INSTRUMENTS:
 			{
-				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(), 
+				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(),
 												**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_INSTEXT);
 				break;
 			}
-			
+
 			case LISTBOX_SAMPLES:
 			{
-				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), 
+				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())),
 												   ModuleEditor::MAX_SMPTEXT);
 				break;
 			}
-			
+
 			// channels have been muted/unmuted in pattern editor
 			case PATTERN_EDITOR:
 			{
@@ -2724,35 +2724,35 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 		case FileTypes::FileTypeSongAllSamples:
 		{
 			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
-			
+
 			pp_int32 chnIndex = 0;
 			if (numSampleChannels <= 0)
 			{
 				loadingParameters.res = false;
 				break;
 			}
-			else if (numSampleChannels > 1 && 
+			else if (numSampleChannels > 1 &&
 					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
 				if (dialog)
 					delete dialog;
-				
+
 				if (responder)
 					delete responder;
-					
-				responder = new SampleLoadChannelSelectionHandler(*this);				
-				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load"PPSTR_PERIODS);	
-				
+
+				responder = new SampleLoadChannelSelectionHandler(*this);
+				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);
+
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
 					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
-				
+
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
-				
+
 				signalWaitState(false);
-				
+
 				dialog->show();
 				return true;
 			}

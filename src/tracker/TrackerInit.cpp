@@ -725,14 +725,14 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 			{
 				button = new PPButton(BUTTON_MENU_ITEM_0 + j*4+i, screen, this, PPPoint(x+4 + i*78, y + 3 + j*bHeight), PPSize(77, bHeight-1));
 				button->setText("Unused");
-			
+
 				container->addControl(button);
 			}
 		}
-		
+
 	}
 
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("Play Sng");	
+	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("Play Sng");
 	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("Play Pat");
 	//static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("Stop");
 	// Setup "Stop" PPButton
@@ -740,12 +740,12 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	button->setText("Stop");
 	button->setSize(PPSize(77>>1, bHeight-1));
 	// Add "Edit" button
-	button = new PPButton(MAINMENU_EDIT, screen, this, 
-						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
+	button = new PPButton(MAINMENU_EDIT, screen, this,
+						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y),
 						PPSize(77>>1, bHeight-1), true, true, false);
-	
+
 	button->setText("Rec");
-	
+
 	container->addControl(button);
 
 	static_cast<PPButton*>(container->getControlByID(MAINMENU_ZAP))->setText("Zap");
@@ -755,14 +755,14 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	button->setText("Save");
 	button->setSize(PPSize(77>>1, bHeight-1));
 	// Add "Save As" button
-	button = new PPButton(MAINMENU_SAVEAS, screen, this, 
-						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
+	button = new PPButton(MAINMENU_SAVEAS, screen, this,
+						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y),
 						PPSize(77>>1, bHeight-1));
-	
-	button->setText("As"PPSTR_PERIODS);
-	
+
+	button->setText("As" PPSTR_PERIODS);
+
 	container->addControl(button);
-	
+
 	//static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE));
 	static_cast<PPButton*>(container->getControlByID(MAINMENU_DISKMENU))->setText("Disk Op.");
 	static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("Ins. Ed.");

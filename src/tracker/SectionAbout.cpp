@@ -65,7 +65,7 @@ pp_int32 SectionAbout::handleEvent(PPObject* sender, PPEvent* event)
 				show(false);
 				break;
 		}
-		
+
 	}
 
 	return 0;
@@ -74,11 +74,11 @@ pp_int32 SectionAbout::handleEvent(PPObject* sender, PPEvent* event)
 void SectionAbout::init(pp_int32 px, pp_int32 py)
 {
 	PPScreen* screen = tracker.screen;
-	
+
 	AnimatedFXControl* ctrl = new AnimatedFXControl(FXCONTROL, tracker.screen, this, PPPoint(px, py), PPSize(320, UPPERLEFTSECTIONHEIGHT));
 	ctrl->setBorderColor(TrackerConfig::colorThemeMain);
 	screen->addControl(ctrl);
-	
+
 	sectionContainer = ctrl;
 
 	initialised = true;

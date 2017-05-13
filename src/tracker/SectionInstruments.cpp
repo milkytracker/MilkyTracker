@@ -414,9 +414,9 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Copy ins. %x to %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Copy smp. %x to %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample"PPSTR_PERIODS, 
-											  buffer, buffer2, 
-											  tracker.listBoxInstruments->getSelectedIndex(), 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample" PPSTR_PERIODS,
+											  buffer, buffer2,
+											  tracker.listBoxInstruments->getSelectedIndex(),
 											  tracker.listBoxSamples->getSelectedIndex(),
 											  tracker.tabManager->getSelectedTabIndex());
 				screen->setModalControl(tracker.instrumentChooser);
@@ -432,9 +432,9 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Swap ins. %x with %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Swap smp. %x with %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample"PPSTR_PERIODS, 
-											  buffer, buffer2, 
-											  tracker.listBoxInstruments->getSelectedIndex(), 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample" PPSTR_PERIODS,
+											  buffer, buffer2,
+											  tracker.listBoxInstruments->getSelectedIndex(),
 											  tracker.listBoxSamples->getSelectedIndex(),
 											  tracker.tabManager->getSelectedTabIndex());
 				screen->setModalControl(tracker.instrumentChooser);
@@ -1643,7 +1643,7 @@ bool SectionInstruments::isEnvelopeVisible()
 {
 	if (containerEnvelopes)
 		return containerEnvelopes->isVisible();
-		
+
 	return false;
 }
 
@@ -1651,7 +1651,7 @@ pp_int32 SectionInstruments::getNumPredefinedEnvelopes()
 {
 	return TrackerConfig::numPredefinedEnvelopes;
 }
-	
+
 PPString SectionInstruments::getEncodedEnvelope(EnvelopeTypes type, pp_int32 index)
 {
 	switch (type)
@@ -1661,14 +1661,14 @@ PPString SectionInstruments::getEncodedEnvelope(EnvelopeTypes type, pp_int32 ind
 		case EnvelopeTypePanning:
 			return EnvelopeContainer::encodeEnvelope(*predefinedPanningEnvelopes->restore(index));
 	}
-	
+
 	ASSERT(false);
 	return "";
 }
-	
+
 void SectionInstruments::setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, const PPString& str)
 {
-	TEnvelope e = EnvelopeContainer::decodeEnvelope(str); 
+	TEnvelope e = EnvelopeContainer::decodeEnvelope(str);
 
 	switch (type)
 	{

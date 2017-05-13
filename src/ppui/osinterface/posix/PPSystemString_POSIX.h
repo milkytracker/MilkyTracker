@@ -70,14 +70,14 @@ public:
 		*strBuffer = c;
 		*(strBuffer+1) = 0;
 	}
-
+/*
 	PPSystemString(signed char* str) :
                 strBuffer(new char[strlen(str) + 1]),
                 allocatedSize(strlen(str) + 1)          
         {
                 strcpy(strBuffer, str);         
         }
-
+*/
 	PPSystemString(const char* str) :
 		strBuffer(new char[strlen(str) + 1]),
 		allocatedSize(strlen(str) + 1)		

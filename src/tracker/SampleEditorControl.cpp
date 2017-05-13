@@ -112,8 +112,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuAdvanced->setSubMenu(true);
-	subMenuAdvanced->addEntry("Volume boost"PPSTR_PERIODS, MenuCommandIDVolumeBoost);
-	subMenuAdvanced->addEntry("Volume fade"PPSTR_PERIODS, MenuCommandIDVolumeFade);
+	subMenuAdvanced->addEntry("Volume boost" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
+	subMenuAdvanced->addEntry("Volume fade" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuAdvanced->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Backwards", MenuCommandIDReverse);
@@ -123,26 +123,26 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Swap byte order", MenuCommandIDSwapByteOrder);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("DC normalize", MenuCommandIDDCNormalize);
-	subMenuAdvanced->addEntry("DC offset"PPSTR_PERIODS, MenuCommandIDDCOffset);
+	subMenuAdvanced->addEntry("DC offset" PPSTR_PERIODS, MenuCommandIDDCOffset);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Smooth (rect.)", MenuCommandIDRectangularSmooth);
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
-	subMenuAdvanced->addEntry("3 Band EQ"PPSTR_PERIODS, MenuCommandIDEQ3Band);
-	subMenuAdvanced->addEntry("10 Band EQ"PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
+	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
-	subMenuAdvanced->addEntry("Resample"PPSTR_PERIODS, MenuCommandIDResample);
+	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
 
 	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
-	subMenuGenerators->addEntry("Noise"PPSTR_PERIODS, MenuCommandIDGenerateNoise);
-	subMenuGenerators->addEntry("Sine"PPSTR_PERIODS, MenuCommandIDGenerateSine);
-	subMenuGenerators->addEntry("Square"PPSTR_PERIODS, MenuCommandIDGenerateSquare);
-	subMenuGenerators->addEntry("Triangle"PPSTR_PERIODS, MenuCommandIDGenerateTriangle);
-	subMenuGenerators->addEntry("Sawtooth"PPSTR_PERIODS, MenuCommandIDGenerateSawtooth);
-	subMenuGenerators->addEntry("Silence"PPSTR_PERIODS, MenuCommandIDGenerateSilence);
-	
+	subMenuGenerators->addEntry("Noise" PPSTR_PERIODS, MenuCommandIDGenerateNoise);
+	subMenuGenerators->addEntry("Sine" PPSTR_PERIODS, MenuCommandIDGenerateSine);
+	subMenuGenerators->addEntry("Square" PPSTR_PERIODS, MenuCommandIDGenerateSquare);
+	subMenuGenerators->addEntry("Triangle" PPSTR_PERIODS, MenuCommandIDGenerateTriangle);
+	subMenuGenerators->addEntry("Sawtooth" PPSTR_PERIODS, MenuCommandIDGenerateSawtooth);
+	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
+
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
 	editMenuControl->addEntry("New", MenuCommandIDNew);

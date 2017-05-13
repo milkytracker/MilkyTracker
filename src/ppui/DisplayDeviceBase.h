@@ -73,12 +73,12 @@ static void DrawWaitBar(const pp_int32 width, const pp_int32 height,
 						void* buffer, pp_int32 pitch, DrawPixelFunc drawPixelFuncPtr)
 {
 	pp_int32 x,y;
-	
+
 	static int offset = 0;
 
 	// background pattern, must be of type pp_uint8
 	static pp_uint8 pattern[] = {224, 210, 198, 210, 224};
-	
+
 	for (y = 0; y < height; y++)
 	{
 		PPColor back;
@@ -88,11 +88,11 @@ static void DrawWaitBar(const pp_int32 width, const pp_int32 height,
 	}
 
 	PPColor textColor(0,0,0);
-	::DrawString("please wait"PPSTR_PERIODS, (width>>1)-(14*4), (height>>1)-16, textColor, buffer, pitch, drawPixelFuncPtr);
-	
+	::DrawString("please wait" PPSTR_PERIODS, (width>>1)-(14*4), (height>>1)-16, textColor, buffer, pitch, drawPixelFuncPtr);
+
 	int hBarPos = (width >> 1) - (barWidth>>1);
 	int vBarPos = (height >> 1) - (barHeight>>1) + (height>>3);
-	
+
 	for (y = 0; y < barHeight; y++)
 	{
 		for (x = 0;  x < barWidth; x++)
@@ -103,7 +103,7 @@ static void DrawWaitBar(const pp_int32 width, const pp_int32 height,
 			if ((y == 0) || (y == barHeight-1) ||
 				(x == 0) || (x == barWidth-1))
 			{
-				col.r = col.g = col.b = 128;						
+				col.r = col.g = col.b = 128;
 			}
 			else
 			{

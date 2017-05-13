@@ -64,8 +64,8 @@ newoption {
 solution "milkytracker"
 	configurations { "Debug", "Release" }
 	platforms { "m68k-amigaos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
-	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
+	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
 	defines { "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX" }
 
 	project "milkyplay"
@@ -119,14 +119,10 @@ solution "milkytracker"
 
 	project "ppui"
 		kind "StaticLib"
-		
 		language "C++"
-		-- buildoptions { "/TP" }
-		-- defines { "_CRT_SECURE_NO_WARNINGS" }
-		
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl/*" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl/" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/sdl/*" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl", "./src/ppui/sdl/" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -145,7 +141,7 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
-		links { "ppui", "milkyplay", "compression", "fx" }
+		links { "ppui", "milkyplay", "compression", "fx", "nix" }
 		-- Libraries.
 		configuration "Linux"
 		

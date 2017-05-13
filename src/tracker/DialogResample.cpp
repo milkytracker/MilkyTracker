@@ -96,26 +96,26 @@ DialogResample::DialogResample(PPScreen* screen,
 	adjustFtAndRelnote(true)
 {
 #ifdef __LOWRES__
-	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
 #else
-	initDialog(screen, responder, id, "Resample"PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
-	
+
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
-	
+
 	pp_int32 x2 = x;
 	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
 
 	PPButton* button;
 
 	y2 +=16;
-	
+
 	// enter edit field 1
 	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
-	
-	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "Relative note", true));	
+
+	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "Relative note", true));
 	
 	x2+=17*8;
 	PPListBox* listBox = new PPListBox(MESSAGEBOX_LISTBOX_VALUE_ONE, screen, this, PPPoint(x2, y2), PPSize(7*8,12), true, true, false);

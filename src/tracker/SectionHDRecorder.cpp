@@ -483,20 +483,20 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 
 	pp_int32 x3 = x2 - 6;
 	container->addControl(new PPSeperator(0, screen, PPPoint(x2 - 6, py+16 - 2), container->getSize().height - (dy+14), TrackerConfig::colorThemeMain, false));
-	
+
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2, y2), "Quality:", true));
-	
+
 	y2+=13;
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2, y2), "Resampler:", true));
 	button = new PPButton(HDRECORD_BUTTON_RESAMPLING, screen, this, PPPoint(x2 + 8*10 + 4, y2-2), PPSize(6*7 + 4, 11));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Select"PPSTR_PERIODS);
+	button->setText("Select" PPSTR_PERIODS);
 	container->addControl(button);
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2, y2 + 12), "Volume ramping:", true));
 	container->addControl(new PPCheckBox(HDRECORD_CHECKBOX_RAMPING, screen, this, PPPoint(x2 + 15*8, y2-1+12)));
-	
+
 	y2+=24;
 
 	// Horizontal seperator above exit
@@ -535,7 +535,7 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 	button = new PPButton(HDRECORD_BUTTON_END_PLUS, screen, this, PPPoint(x2+7*8+3, y2-1), PPSize(12, 9));
 	button->setText(TrackerConfig::stringButtonPlus);
 	container->addControl(button);
-	
+
 	button = new PPButton(HDRECORD_BUTTON_END_MINUS, screen, this, PPPoint(button->getLocation().x + button->getSize().width+1, y2-1), PPSize(12, 9));
 	button->setText(TrackerConfig::stringButtonMinus);
 	container->addControl(button);
@@ -550,12 +550,12 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 	container->addControl(button);
 
 	button = new PPButton(HDRECORD_BUTTON_RECORD_AS, screen, this, PPPoint(x2+buttonWidth+1, y2), PPSize(34,buttonHeight));
-	button->setText("As"PPSTR_PERIODS);
+	button->setText("As" PPSTR_PERIODS);
 	container->addControl(button);
 
 	y2+=buttonHeight+2;
-	
-	container->addControl(new PPSeperator(0, screen, PPPoint(x3+1, y2), size.width-5 - (x3-px), container->getColor(), true));	
+
+	container->addControl(new PPSeperator(0, screen, PPPoint(x3+1, y2), size.width-5 - (x3-px), container->getColor(), true));
 
 	y2+=5;
 

@@ -295,14 +295,14 @@ public:
 		*strBuffer = c;
 		*(strBuffer+1) = 0;
 	}
-
-  PPString(signed char* str) :
+/*
+	PPString(signed char* str) :
                 strBuffer(new char[strlen(str) + 1]),
                 allocatedSize((pp_uint32)strlen(str) + 1)               
         {
-                strcpy(strBuffer, str);         
+                strcpy(strBuffer, str);
         }
-
+*/
 
 	PPString(const char* str) :
 		strBuffer(new char[strlen(str) + 1]),

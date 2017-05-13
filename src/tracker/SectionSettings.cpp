@@ -415,7 +415,7 @@ public:
 
 		PPButton* button = new PPButton(BUTTON_SETTINGS_CHOOSEDRIVER, screen, this, PPPoint(x + 4 + 7*8 + 4, y2 + 3), PPSize(90, 11));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Select Driver"PPSTR_PERIODS);
+		button->setText("Select Driver" PPSTR_PERIODS);
 		container->addControl(button);
 
 		y2+=4;
@@ -464,7 +464,7 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Resampling:", true));
 		button = new PPButton(BUTTON_SETTINGS_RESAMPLING, screen, this, PPPoint(x + 4 + 11*8 + 4, y2-2), PPSize(6*9 + 4, 11));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Select"PPSTR_PERIODS);
+		button->setText("Select" PPSTR_PERIODS);
 		container->addControl(button);
 
 		y2+=12;
@@ -1248,51 +1248,51 @@ public:
 		pp_int32 y2 = y;
 		
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Font face config", true, true));	
-		
+
 		y2+=12;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available sizes:", true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available sizes:", true));
+
 		y2+=8;
-		
+
 		pp_int32 lbheight = (container->getSize().height - (y2-y+11*2+2)) / 2;
 		sectionSettings.listBoxFontFamilies = new PPListBox(LISTBOX_SETTINGS_FONTFAMILIES, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		sectionSettings.listBoxFontFamilies->setBorderColor(TrackerConfig::colorThemeMain);
 		sectionSettings.listBoxFontFamilies->setKeepsFocus(false);
 		sectionSettings.listBoxFontFamilies->setShowFocus(false);
-		
+
 		const char* name = PPFont::getFirstFontFamilyName();
 		while (name)
 		{
-			sectionSettings.listBoxFontFamilies->addItem(name);	
-			name = PPFont::getNextFontFamilyName();		
+			sectionSettings.listBoxFontFamilies->addItem(name);
+			name = PPFont::getNextFontFamilyName();
 		}
 		container->addControl(sectionSettings.listBoxFontFamilies);
-		
+
 		y2+=sectionSettings.listBoxFontFamilies->getSize().height+2;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available faces:", true));	
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Available faces:", true));
+
 		y2+=8;
 		lbheight+=7;
-		
+
 		sectionSettings.listBoxFontEntries = new PPListBox(LISTBOX_SETTINGS_FONTENTRIES, screen, this, PPPoint(x2+2, y2+2), PPSize(153,lbheight), true, false, true, true);
 		sectionSettings.listBoxFontEntries->setBorderColor(TrackerConfig::colorThemeMain);
 		sectionSettings.listBoxFontEntries->setKeepsFocus(false);
 		sectionSettings.listBoxFontEntries->setShowFocus(false);
-		
+
 		sectionSettings.enumerateFontFacesInListBox(sectionSettings.listBoxFontFamilies->getSelectedIndex());
 		container->addControl(sectionSettings.listBoxFontEntries);
-		
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
-	{	
+	{
 		PPString str = settingsDatabase->restore(PPFont::getFamilyInternalName((PPFont::FontID)sectionSettings.listBoxFontFamilies->getSelectedIndex()))->getStringValue();
 		sectionSettings.listBoxFontEntries->setSelectedIndexByItem(str, false);
 	}
-	
+
 };
 
 class TabPageMisc_1 : public TabPage
@@ -1557,63 +1557,63 @@ public:
 	{
 		pp_int32 x = 0;
 		pp_int32 y = 0;
-		
+
 		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
 
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
-		
+
 		PPStaticText* text;
-		
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Load module"PPSTR_PERIODS, true, true));
-		
+
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Load module" PPSTR_PERIODS, true, true));
+
 		y2+=12;
-		
-		text = new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2), PPSTR_PERIODS"in new Tab", true);
+
+		text = new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2), PPSTR_PERIODS "in new Tab", true);
 		//text->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(text);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-		
+
 		y2+=12+3;
-		
+
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-		
+
 		y2+=3;
-		
+
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Stop background", true, true));
-		
+
 		PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 42));
 		radioGroup->setColor(TrackerConfig::colorThemeMain);
-		
+
 		radioGroup->addItem("Never");
 		radioGroup->addItem("On Tab switch");
 		radioGroup->addItem("On Playback");
 		container->addControl(radioGroup);	
-		
+
 		y2+=3*14 + 14;
-		
+
 		text = new PPStaticText(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY, NULL, NULL, PPPoint(x + 4, y2 + 2), "Tab-switch resume", true);
 		container->addControl(text);
 		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-		
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));	
+
+		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
-	
+
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("TABS_STOPBACKGROUNDBEHAVIOUR")->getIntValue();
-		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR))->setChoice(v);			
-		
-		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);			
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);				
-		
+		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR))->setChoice(v);
+
+		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->enable(v != 0);
+
 		v = settingsDatabase->restore("TABS_TABSWITCHRESUMEPLAY")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->checkIt(v != 0);	
-		
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY))->checkIt(v != 0);
+
 		v = settingsDatabase->restore("TABS_LOADMODULEINNEWTAB")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB))->checkIt(v != 0);	
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB))->checkIt(v != 0);
 	}
-	
+
 };
 
 SectionSettings::SectionSettings(Tracker& theTracker) :
@@ -2968,7 +2968,7 @@ void SectionSettings::restoreCurrentMixerSettings()
 		{
 			SystemMessage message(*tracker.screen, SystemMessage::MessageSoundDriverInitFailed);
 			message.show();
-		}				
+		}
 	}
 }
 
@@ -2979,27 +2979,27 @@ void SectionSettings::showCustomResolutionMessageBox()
 		delete dialog;
 		dialog = NULL;
 	}
-	
-	dialog = new DialogWithValues(tracker.screen, 
-								  responder, 
-								  RESPONDMESSAGEBOX_CUSTOMRESOLUTION, 
-								  "Enter custom resolution"PPSTR_PERIODS, 
+
+	dialog = new DialogWithValues(tracker.screen,
+								  responder,
+								  RESPONDMESSAGEBOX_CUSTOMRESOLUTION,
+								  "Enter custom resolution" PPSTR_PERIODS,
 								  DialogWithValues::ValueStyleEnterTwoValues);
-														
+
 	static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Width in pixels:");
 	static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Height in pixels:");
 	static_cast<DialogWithValues*>(dialog)->setValueOneRange(MINWIDTH, 10000.0f, 0); 
 	static_cast<DialogWithValues*>(dialog)->setValueTwoRange(MINHEIGHT, 10000.0f, 0);
 	static_cast<DialogWithValues*>(dialog)->setValueOneIncreaseStep(1.0f);
 	static_cast<DialogWithValues*>(dialog)->setValueTwoIncreaseStep(1.0f);
-	 
+
 	pp_int32 width = tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue();
 	pp_int32 height = tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue();
-	 
+
 	static_cast<DialogWithValues*>(dialog)->setValueOne((float)width);
 	static_cast<DialogWithValues*>(dialog)->setValueTwo((float)height);
-	
-	dialog->show();	
+
+	dialog->show();
 }
 
 void SectionSettings::showRestorePaletteMessageBox()
