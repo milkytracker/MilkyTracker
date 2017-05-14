@@ -5,30 +5,6 @@ README for MilkyTracker SDL Versions
 This file contains information that is specific to the SDL versions of
 MilkyTracker.  Please read this file in addition to MilkyTracker.html
 
-Milkytracker should in theory compile and run on any posix compatible operating
-system. However, the build system requires a working C++ compiler and associated
-libraries/includes, Bash compatible shell interpreter and compatible version of
-Gnu Make.  Please read the README file in the top-level source directory for
-build instructions.
-
-Currently the following platforms have been tested:
-
-- Linux    x86
-           x86_64
-           powerpc
-           arm (GP2X/F200 etc)
-- Freebsd  x86
-- Netbsd  x86
-- Solaris  sparc
-- Other    PSP (it will run, but user input not implemented)
-           AmigaOS (known problems)
-           AROS (known problems)
-
-Since the change to open source/GPL, binary distributions of Milkytracker are no
-longer supported (apart from OSX and Windows/Windows CE).  The options are to
-build the binary from the source archive, or to use a pre-built binary possibly
-supplied by your *nix distribution.
-
 It is advisable that you run MilkyTracker from the command line (at least the
 first time you run it) as it will output some messages informing you of what
 audio driver it is using as well as any errors that occurred.
@@ -78,7 +54,6 @@ are the following command line options:
 -bpp N        Set N to either 16 or 24
 -swap         Swaps the red and blue values in 24 BPP mode
 -orientation  Valid arguments are NORMAL|ROTATE90CCW|ROTATE90CW
--fullscreen   Does what it says
 
 The screen size can be selected in the Config->Layout menu.  Fullscreen mode can
 be toggled using ALT+Return.  Note that these arguments are likely to be removed
@@ -98,48 +73,7 @@ sequential number in the range 00 to 99).
 If MilkyTracker should crash, please attempt to reproduce the crash and then
 post details on the bug forum so we can attempt to fix whatever is causing it.
 
-
-GP2X Version
-============
-
-This version is currently incomplete - however the basics are working, and you
-should be able to load/play tunes (even compose - if you are patient!).  The
-following script (named milkytracker.gpu) can be used to load up MilkyTracker
-and return to the menu once it's exited:
-
---- cut here ---
-#!/bin/sh
-# Start MilkyTracker:
-./milkytracker
-# Sync SD card:
-sync
-# Return to the menu screen after exiting MilkyTracker.
-cd /usr/gp2x
-exec /usr/gp2x/gp2xmenu
---- cut here ---
-
-The mouse pointer can be controlled using the d-pad (it is accelerated with 3
-speeds).  Press the d-pad to click, or press the start button to begin playback.
-GP2X control is likely to be improved in future releases.
-
-
-Asus EEE PC
-===========
-
-This machine has problems which prevent Milkytracker from functioning properly.
-The default Linux install has a broken version of the SDL libraries, most users
-replace the default install with another Linux distribution which seems to fix
-the problem with Milkytracker seg-faulting on startup (the seg-fault is
-generated in the libSDL library). However, even with a different distribution
-installed all is not good.  It seems that the graphic-intense nature of
-Milkytracker causes the audio to stutter on playback.  It is not clear what is
-causing this symptom, but it has reported that routing the audio through JACK
-solves it (SDL and Alsa are affected).  Any suggestions or bugfixes (ideally :)
-are appreciated.
-
-
 Enjoy!
-
 
 
 - Christopher O'Neill (Deltafire) 19/8/2006
