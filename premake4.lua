@@ -45,7 +45,7 @@ end
 solution "milkytracker"
 	configurations { "Release", "Debug", "ixemul" }
 	platforms { "m68k-amigaos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL", "/opt/m68k-amigaos/include" }
 	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
 	defines { "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
@@ -54,8 +54,8 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/generic/*", "./src/milkyplay/generic/rtaudio/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
-		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/generic", "./src/milkyplay/drivers/sdl", "./src/milkyplay/drivers/generic/rtaudio", "./src/milkyplay/drivers/generic/rtaudio/asio", "./src/milkyplay/drivers/generic/rtaudio/oss", "./src/milkyplay/drivers/generic/portaudio" }
+		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
+		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl" }
 
 		configuration "debug"
 			defines { "DEBUG" }
@@ -102,7 +102,7 @@ solution "milkytracker"
 		location "projects"
 		targetdir("lib/")
 		files { "./src/compression/**",  }
-		includedirs { "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zlib/generic", "./src/compression/zziplib", "./src/compression/zziplib/generic" }
+		includedirs { "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zlib/generic", "./src/compression/zziplib", "./src/compression/zziplib/generic", "./include/lha" }
 
 		configuration "debug"
 			defines { "DEBUG" }
