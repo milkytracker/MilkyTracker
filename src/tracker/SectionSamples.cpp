@@ -138,8 +138,6 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
-			// sample editor
-			
 			// load sample
 			case BUTTON_SAMPLE_LOAD:
 			{
@@ -437,6 +435,32 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				// redraw sample editor
 				realUpdate(true, true, false);
+				break;
+			}
+		}
+	}
+	else if (event->getID() == eLMouseDown)
+	{
+		switch (reinterpret_cast<PPControl*>(sender)->getID())
+		{
+			// Play sample preview from offset position
+			case SAMPLE_EDITOR:
+			{
+				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
+				samplePlayer.playCurrentSampleFromOffset(event->getMetaData(), currentSamplePlayNote);
+				break;
+			}
+		}
+	}
+	else if (event->getID() == eLMouseUp)
+	{
+		switch (reinterpret_cast<PPControl*>(sender)->getID())
+		{
+			// Stop sample preview
+			case SAMPLE_EDITOR:
+			{
+				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
+				samplePlayer.stopSamplePlayback();
 				break;
 			}
 		}

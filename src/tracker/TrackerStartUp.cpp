@@ -36,6 +36,7 @@
 #include "PatternEditorControl.h"
 #include "PlayerMaster.h"
 #include "SystemMessage.h"
+#include "version.h"
 
 // Logo picture
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
@@ -48,11 +49,11 @@
 PPSize Tracker::getWindowSizeFromDatabase()
 {
 	PPSize size(PPScreen::getDefaultWidth(), PPScreen::getDefaultHeight());
-
+	
 	if (XMFile::exists(System::getConfigFileName()))
 	{
-		TrackerSettingsDatabase* settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);
-		XMFile f(System::getConfigFileName());
+		TrackerSettingsDatabase* settingsDatabaseCopy = new TrackerSettingsDatabase(*settingsDatabase);		
+		XMFile f(System::getConfigFileName());	
 		settingsDatabaseCopy->serialize(f);			
 		size.height = settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue();
 		size.width = settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue();
@@ -126,7 +127,7 @@ void Tracker::showSplash()
 		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
 #endif
 		shade+=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
+		deltaT = abs((signed)::PPGetTickCount() - startTime);
 		if (!deltaT) deltaT++;
 	}
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
@@ -157,7 +158,7 @@ void Tracker::hideSplash()
 		screen->paintSplash(LogoBig::rawData, LogoBig::width, LogoBig::height, LogoBig::width*3, 3, (int)shade); 		
 #endif
 		shade-=deltaT * (1.0f/6.25f);
-		deltaT = abs(::PPGetTickCount() - startTime);
+		deltaT = abs((signed)::PPGetTickCount() - startTime);
 		if (!deltaT) deltaT++;
 	}
 	screen->clear(); 	
@@ -213,7 +214,7 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	applySettings(settingsDatabase, NULL, true, false);
 
 	// update version information
-	settingsDatabase->store("VERSION", TrackerConfig::version);
+	settingsDatabase->store("VERSION", MILKYTRACKER_VERSION);
 	
 	// Update info panels
 	updateSongInfo(false);

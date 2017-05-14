@@ -569,7 +569,8 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 			
 			row++;			
 		}
-		
+		delete[] patternSizes;
+
 		maxChannels++;
 		
 		if (maxChannels > header->channum)

@@ -157,7 +157,7 @@ void XMFileBase::writeDwords(const mp_dword* buffer,mp_sint32 count)
 
 void XMFileBase::writeString(const char* string)
 {
-	write(string, 1, strlen(string));
+	write(string, 1, static_cast<mp_uint32> (strlen(string)));
 }
 
 #define BUFFERSIZE 16384
@@ -470,7 +470,7 @@ void XMFile::seek(mp_uint32 pos, SeekOffsetTypes seekOffsetType/* = SeekOffsetTy
 
 mp_uint32 XMFile::pos()
 {
-	return ftell(handle);
+	return static_cast<mp_uint32>(ftell(handle));
 }
 
 mp_uint32 XMFile::size()

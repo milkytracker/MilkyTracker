@@ -77,7 +77,7 @@ ParticleBlobs::ParticleBlobs(int width, int height) :
 		flareTexture[2][i] = RGB2SHORT(texture[i*3+1],texture[i*3+2],texture[i*3]);
 	}
 
-	delete texture;
+	delete[] texture;
 
 	i = 0;
 	for (int z = 0; z < GRIDSIZE; z++)

@@ -26,6 +26,7 @@
 #include "Event.h"
 #include "Screen.h"
 #include "Seperator.h"
+#include "PPUIConfig.h"
 
 class SliderButton : public PPButton
 {
@@ -186,7 +187,7 @@ void PPScrollbar::initButtons()
 	}
 
 	backgroundButton = new PPButton(0, parentScreen, NULL, /*_Point(location.x + (horizontal?0:1), location.y + (horizontal?1:0))*/location, this->size, false);
-	backgroundButton->setColor(backgroundColor);
+	backgroundButton->setColor(*backgroundColor);
 	backgroundButton->setInvertShading(true);
 
 	buttonUp = new SliderButton(0, parentScreen, this, location, PPSize(SCROLLBUTTONSIZE,SCROLLBUTTONSIZE), 
@@ -207,17 +208,11 @@ PPScrollbar::PPScrollbar(pp_int32 id, PPScreen* parentScreen, EventListenerInter
 	oneDimSize(size),
 	horizontal(horizontal),
 	controlCaughtByLMouseButton(false), controlCaughtByRMouseButton(false),
-	currentBarSize(65536), currentBarPosition(0)
+	currentBarSize(65536), currentBarPosition(0),
+	backgroundColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorScrollBarBackground))
 {
-	// default color
-	backgroundColor.r = 32;
-	backgroundColor.g = 48;
-	backgroundColor.b = 64;
-
 	initButtons();
-
 	caughtControl = NULL;
-
 }
 
 PPScrollbar::~PPScrollbar()

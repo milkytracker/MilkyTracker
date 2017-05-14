@@ -74,6 +74,8 @@ bool KeyboardBindingHandler::processKeyEvents(PPEvent* event)
 			}
 			break;
 		}
+		default:
+			break;
 	}
 
 	return false;

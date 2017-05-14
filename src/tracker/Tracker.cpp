@@ -194,7 +194,7 @@ Tracker::Tracker() :
 
 	pp_int32 i;
 	
-	muteChannels = new pp_uint8[TrackerConfig::numPlayerChannels];
+	muteChannels = new bool[TrackerConfig::numPlayerChannels];
 	
 	for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
 		muteChannels[i] = false;
@@ -538,6 +538,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 		updateWindowTitle();
 	}
 	else if (event->getID() == eKeyDown ||
+			 event->getID() == eKeyChar ||
 			 event->getID() == eKeyUp) 
 	{	
 		processShortcuts(event);
@@ -1427,12 +1428,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						sprintf(buffer, "Swap smp. %x with %x", listBoxSrc->getSelectedIndex(), listBoxDst->getSelectedIndex());
 						break;
 				}
-
-				staticText->setText(buffer);
+				
+				staticText->setText(buffer);				
 				screen->paintControl(screen->getModalControl());
 				break;
 			}
-
+			
 		}
 
 	}
@@ -1445,25 +1446,25 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				moduleEditor->setTitle(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_TITLETEXT);
 				break;
 			}
-
+		
 			case LISTBOX_INSTRUMENTS:
 			{
-				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(),
+				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(), 
 												**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_INSTEXT);
 				break;
 			}
-
+			
 			case LISTBOX_SAMPLES:
 			{
-				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())),
+				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), 
 												   ModuleEditor::MAX_SMPTEXT);
 				break;
 			}
-
+			
 			// channels have been muted/unmuted in pattern editor
 			case PATTERN_EDITOR:
 			{
-				const pp_uint8* muteChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+				const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
 				
 				for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				{
@@ -1485,7 +1486,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					case ScopesControl::ChangeValueMuting:
 					{
-						const pp_uint8* muteChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+						const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
@@ -1505,7 +1506,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					
 					case ScopesControl::ChangeValueRecording:
 					{
-						const pp_uint8* recordChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());				
+						const pp_uint8* recordChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());
 						
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
@@ -2575,9 +2576,9 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 			return loadTypeFromFile(FileTypes::FileTypePatternXP, fileName);
 		case FileIdentificator::FileTypeTrack:
 			return loadTypeFromFile(FileTypes::FileTypeTrackXT, fileName);
+		default:
+			return false;
 	}
-	
-	return false;
 }
 
 bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bool suspendPlayer, bool repaint, bool saveCheck)
@@ -2724,35 +2725,35 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 		case FileTypes::FileTypeSongAllSamples:
 		{
 			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
-
+			
 			pp_int32 chnIndex = 0;
 			if (numSampleChannels <= 0)
 			{
 				loadingParameters.res = false;
 				break;
 			}
-			else if (numSampleChannels > 1 &&
+			else if (numSampleChannels > 1 && 
 					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
 				if (dialog)
 					delete dialog;
-
+				
 				if (responder)
 					delete responder;
-
-				responder = new SampleLoadChannelSelectionHandler(*this);
-				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);
-
+					
+				responder = new SampleLoadChannelSelectionHandler(*this);				
+				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);	
+				
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
 					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
-
+				
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
-
+				
 				signalWaitState(false);
-
+				
 				dialog->show();
 				return true;
 			}
@@ -2796,7 +2797,7 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 		{
 			if (!checkForChangesOpenModule())
 				return false;
-			openPanel = new PPOpenPanel(screen, "Open module");		
+			openPanel = new PPOpenPanel(screen, "Open Module");
 			openPanel->addExtensions(fileExtProvider.getModuleExtensions());
 			break;
 		}

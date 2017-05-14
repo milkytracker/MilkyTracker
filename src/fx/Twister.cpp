@@ -75,17 +75,17 @@ Twister::Twister(int width, int height, int center)
 		cosTable[i] = (int)((float)cos(phi)*65536.0f);
 	}
 
-	delete rgbTex;
-	delete rgbTex2;
+	delete[] rgbTex;
+	delete[] rgbTex2;
 
 	zbuffer = new int[height];
 }
 
 Twister::~Twister()
 {
-	delete zbuffer;
+	delete[] zbuffer;
 
-	delete texture;
+	delete[] texture;
 }
 
 void Twister::update(float syncFrac)

@@ -557,10 +557,8 @@ pp_int32 PPSlider::handleEvent(PPObject* sender, PPEvent* event)
 				
 
 	}
-	else if ((event->getID() == eLMouseDrag && 
-			 sender == reinterpret_cast<PPObject*>(buttonBar)) ||
-			 event->getID() == eRMouseDrag && 
-			 sender == reinterpret_cast<PPObject*>(buttonBar))
+	else if ((event->getID() == eLMouseDrag && sender == reinterpret_cast<PPObject*>(buttonBar)) ||
+			 (event->getID() == eRMouseDrag && sender == reinterpret_cast<PPObject*>(buttonBar)))
 	{
 		PPPoint* p = (PPPoint*)event->getDataPtr();
 	

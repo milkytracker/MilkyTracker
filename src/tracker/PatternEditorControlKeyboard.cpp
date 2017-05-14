@@ -70,6 +70,14 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Interpolate);
 
+	// Scancode bindings
+	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+
 	// Key-down bindings Fasttracker
 	eventKeyDownBindingsFastTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
 
@@ -171,100 +179,15 @@ void PatternEditorControl::initKeyBindings()
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
 
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
 
-static pp_int32 virtualKeyToHex(pp_uint16 keyCode)
-{
-	pp_int32 number = -1;
-	
-	switch (keyCode)
-	{
-			// 0: 
-		case 0x30:
-			number = 0;
-			break;
-
-			// 1: 
-		case 0x31:
-			number = 1;
-			break;
-			
-			// 2: 
-		case 0x32:
-			number = 2;
-			break;
-			
-			// 3: 
-		case 0x33:
-			number = 3;
-			break;
-			
-			// 4: 
-		case 0x34:
-			number = 4;
-			break;
-			
-			// 5: 
-		case 0x35:
-			number = 5;
-			break;
-			
-			// 6: 
-		case 0x36:
-			number = 6;
-			break;
-			
-			// 7: 
-		case 0x37:
-			number = 7;
-			break;
-
-			// 8: 
-		case 0x38:
-			number = 8;
-			break;
-			
-			// 9: 
-		case 0x39:
-			number = 9;
-			break;
-			
-			// A: 
-		case 0x41:
-			number = 0xA;
-			break;
-
-			// B: 
-		case 0x42:
-			number = 0xB;
-			break;
-
-			// C: 
-		case 0x43:
-			number = 0xC;
-			break;
-			
-			// D: 
-		case 0x44:
-			number = 0xD;
-			break;
-			
-			// E: 
-		case 0x45:
-			number = 0xE;
-			break;
-			
-			// F: 
-		case 0x46:
-			number = 0xF;
-			break;
-	}
-
-	return number;
-}
-
-static pp_int32 asciiToHex(pp_uint16 ascii)
+static pp_int32 asciiToHex(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
 	
@@ -360,7 +283,7 @@ static pp_int32 asciiToHex(pp_uint16 ascii)
 	return number;
 }
 
-static pp_int32 asciiToHexExtended(pp_uint16 ascii)
+static pp_int32 asciiToHexExtended(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
 
@@ -644,6 +567,7 @@ void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character)
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number = -1;
 
 	if (::getKeyModifier() == 0)
 	{
@@ -697,12 +621,12 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 				assureCursor = false;
 				notifyUpdate();
 				return;
-			
+
 			// F9
 			case VK_F9:
 				eventKeyDownBinding_HOME();
 				return;
-						
+
 			// F10
 			case VK_F10:
 				eventKeyDownBinding_FIRSTQUARTER();
@@ -726,147 +650,105 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 
 	if (cursor.inner == 0)
 	{
-		pp_int32 note = -1;
-		
-		handleDeleteKey(keyCode, note);
-		
-		if (note == -1 && ::getKeyModifier() == 0)
-		{
-			note = ScanCodeToNote(scanCode);
-		}
-
-		patternEditor->writeNote(note, true, this);
-	}
-	else if ((cursor.inner == 1 || cursor.inner == 2))
-	{
-		pp_int32 number = -1;
-
 		handleDeleteKey(keyCode, number);
-		
-		// still not assigned, try if we map to a hexadecimal digit
-		if (number == -1)
-		{
-			number = asciiToHex(character);
-		}
-		
+
+		if (number == -1 && ::getKeyModifier() == 0)
+			number = ScanCodeToNote(scanCode);
+
+		patternEditor->writeNote(number, true, this);
+	}
+	else
+		handleDeleteKey(keyCode, number);
+
+	patternEditor->setLazyUpdateNotifications(false);
+}
+
+void PatternEditorControl::handleKeyChar(pp_uint8 character)
+{
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number = -1;
+
+	// prevent unnecessary screen refreshing through listener callback
+	// remember to reset this when leaving this function
+	patternEditor->setLazyUpdateNotifications(true);
+
+	if ((cursor.inner == 1 || cursor.inner == 2))
+	{
+		number = asciiToHex(character);
+
 		if (number == 0xFF)
-		{
 			patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, 0, true, this);
-		}
 		else if (number >= 0 && number <= 0xF)
-		{			
+		{
 			if (cursor.inner == 1)
 				patternEditor->writeInstrument(PatternEditor::NibbleTypeHigh, number, true, this);
 			else if (cursor.inner == 2)
-				patternEditor->writeInstrument(PatternEditor::NibbleTypeLow, number, true, this);				
+				patternEditor->writeInstrument(PatternEditor::NibbleTypeLow, number, true, this);
 		}
-
 	}
 	else if (cursor.inner == 3 || cursor.inner == 4)
 	{
-		pp_int32 number = -1;
-
-		switch (character)
+		if (cursor.inner == 3)
 		{
-			// -: Volslide down
-			case '-':
-				if (cursor.inner == 3)
-				{
+			switch (character)
+			{
+				// -: Volslide down
+				case '-':
 					number = 5;
 					break;
-				}
-				goto stupid;
 
-			// +: Volslide up
-			case '+':
-				if (cursor.inner == 3)
-				{
+				// +: Volslide up
+				case '+':
 					number = 6;
 					break;
-				}
-				goto stupid;
-			
-			// D: Fine volslide down
-			case 'd':
-				if (cursor.inner == 3)
-				{
+
+				// D: Fine volslide down
+				case 'd':
 					number = 7;
 					break;
-				}
-				goto stupid;
-			
-			// U: Fine volslide up
-			case 'u':
-				if (cursor.inner == 3)
-				{
+
+				// U: Fine volslide up
+				case 'u':
 					number = 8;
 					break;
-				}
-				goto stupid;
 
-			// S: Vibrato rate
-			case 's':
-				if (cursor.inner == 3)
-				{
+				// S: Vibrato rate
+				case 's':
 					number = 9;
 					break;
-				}
-				goto stupid;
-			
-			// V: Vibrato depth
-			case 'v':
-				if (cursor.inner == 3)
-				{
+
+				// V: Vibrato depth
+				case 'v':
 					number = 0xA;
 					break;
-				}
-				goto stupid;
-			
-			// P: Set Panning
-			case 'p':
-				if (cursor.inner == 3)
-				{
+
+				// P: Set Panning
+				case 'p':
 					number = 0xB;
 					break;
-				}
-				goto stupid;
-			
-			// L: Panning slide left
-			case 'l':
-			case '<':
-				if (cursor.inner == 3)
-				{
+
+				// L: Panning slide left
+				case 'l':
+				case '<':
 					number = 0xC;
 					break;
-				}
-				goto stupid;
-			
-			// R: Panning slide right
-			case 'r':
-			case '>':
-				if (cursor.inner == 3)
-				{
+
+				// R: Panning slide right
+				case 'r':
+				case '>':
 					number = 0xD;
 					break;
-				}
-				goto stupid;
-			
-			// M: Portamento
-			case 'm':
-				if (cursor.inner == 3)
-				{
+
+				// M: Portamento
+				case 'm':
 					number = 0xE;
 					break;
-				}
-				goto stupid;
+			}
 		}
-
-		handleDeleteKey(keyCode, number);
 
 		// still not assigned, try if we map to a hexadecimal digit
 		if (number == -1)
 		{
-stupid:
 			number = asciiToHex(character);
 			if (cursor.inner == 3 && number > 4)
 				goto cleanUp;
@@ -875,65 +757,40 @@ stupid:
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
 		{
 			if (number == 0xFF)
-			{
 				patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, number, true, this);
-			}
-			else 
-			{
-				patternEditor->writeFT2Volume(cursor.inner == 3 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow, 
-												   number, true, this);
-			}
+			else
+				patternEditor->writeFT2Volume(cursor.inner == 3 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow,
+						number, true, this);
 		}
 	}
 	else if (cursor.inner == 5)
 	{
-		pp_int32 number = -1;
+		number = asciiToHex(character);
 
-		handleDeleteKey(keyCode, number);
-
-		// still not assigned, try if we map to a hexadecimal digit
 		if (number == -1)
-		{
-			number = asciiToHex(character);
-		
-			if (number == -1)
-			{
-				number = asciiToHexExtended(character);
-			}
-		}
+			number = asciiToHexExtended(character);
 
 		if (number == 0xFF || (number >= 0 && number <= 0x23))
-		{
 			patternEditor->writeEffectNumber(number, true, this);
-		}
 	}
 	else if ((cursor.inner == 6 || cursor.inner == 7))
 	{
-		pp_int32 number = -1;
-		
-		handleDeleteKey(keyCode, number);
-
-		// still not assigned, try if we map to a hexadecimal digit
-		if (number == -1)
-		{
-			number = asciiToHex(character);
-		}
+		number = asciiToHex(character);
 
 		if (number == 0xFF || (number >= 0 && number <= 0xF))
-		{			
+		{
 			if (number == 0xFF)
-			{
 				patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, number, true, this);
-			}
-			else 
-			{
-				patternEditor->writeEffectOperand(cursor.inner == 6 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow, 
-													   number, true, this);
-			}
+			else
+				patternEditor->writeEffectOperand(cursor.inner == 6 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow,
+												  number, true, this);
 		}
-
 	}
-	
+
+	// If the input had an effect, ensure the PatternEditorControl is repainted
+	if (number != -1)
+		assureUpdate = true;
+
 cleanUp:
 	patternEditor->setLazyUpdateNotifications(false);
 }
@@ -1518,6 +1375,26 @@ void PatternEditorControl::eventKeyDownBinding_DeleteLine()
 	}
 }
 
+void PatternEditorControl::eventKeyDownBinding_InsIncSelection()
+{
+	patternEditor->insIncSelection();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsDecSelection()
+{
+	patternEditor->insDecSelection();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsIncTrack()
+{
+	patternEditor->insIncTrack();
+}
+
+void PatternEditorControl::eventKeyDownBinding_InsDecTrack()
+{
+	patternEditor->insDecTrack();
+}
+
 void PatternEditorControl::eventKeyDownBinding_CutTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
@@ -1721,6 +1598,9 @@ void PatternEditorControl::eventKeyCharBinding_Paste()
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, false, menuInvokeChannel);
 	else
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, false);
+	// If row count changed, call notifyUpdate to refresh pattern length indicator
+	if (patternEditor->getLastOperationDidChangeRows())
+		notifyUpdate();
 }
 
 void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
@@ -1729,6 +1609,9 @@ void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, true, menuInvokeChannel);
 	else
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, true);
+	// If row count changed, call notifyUpdate to refresh pattern length indicator
+	if (patternEditor->getLastOperationDidChangeRows())
+		notifyUpdate();
 }
 
 void PatternEditorControl::eventKeyCharBinding_SelectAll()

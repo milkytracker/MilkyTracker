@@ -66,7 +66,7 @@ bool ToolInvokeHelper::invokeTool(ToolTypes toolType, pp_int16 keyDownKeyCode/* 
 		delete dialog;
 		dialog = NULL;
 	}
-
+	
 	switch (toolType)
 	{
 		case ToolTypePatternVolumeScale:
@@ -148,6 +148,8 @@ pp_int32 ToolInvokeHelper::ActionOkay(PPObject* sender)
 				tracker.selectInstrument(value);
 			}
 		}
+		case ToolTypeNone:
+			break;
 	}
 
 	return 0;

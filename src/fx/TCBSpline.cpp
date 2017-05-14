@@ -168,17 +168,17 @@ VectorFloat TCBSpline::getPos(float curTime)
 			
 			VectorFloat curPos = keys[i].v;
 			VectorFloat nextPos = getNextPos(i);
-			VectorFloat lastPos = getLastPos(i);
+//			VectorFloat lastPos = getLastPos(i);
 			
 			// incoming tangent vector for the current point
-			VectorFloat Ti = calcTi(i);
+//			VectorFloat Ti = calcTi(i);
 			// outgoing tangent vector for the current point
 			VectorFloat To = calcTo(i);
 			
 			// incoming tangent vector for the next point
 			VectorFloat Ti1 = calcTi(i+1);
 			// outgoing tangent vector for the next point
-			VectorFloat To1 = calcTo(i+1);
+//			VectorFloat To1 = calcTo(i+1);
 			
 			VectorFloat Ai = curPos;
 			VectorFloat Bi = deltai * To;

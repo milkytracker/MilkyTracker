@@ -45,7 +45,7 @@ class PPButton;
 class PPScrollbar : public PPControl, public EventListenerInterface
 {
 private:
-	PPColor backgroundColor;
+	const PPColor* backgroundColor;
 
 	pp_uint32 oneDimSize;
 	bool horizontal;
@@ -71,7 +71,7 @@ public:
 
 	virtual ~PPScrollbar();	
 	
-	void setBackgroundColor(const PPColor& color) { backgroundColor = color; }
+	void setBackgroundColor(const PPColor& color) { backgroundColor = &color; }
 
 	// set bar size [none:0 - full:65536]
 	void setBarSize(pp_int32 size, bool repaint = false);

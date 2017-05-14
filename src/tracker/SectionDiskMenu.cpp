@@ -1265,7 +1265,10 @@ void SectionDiskMenu::updateClassicView(bool repaint/* = true*/)
 			break;
 		case BrowseTracks:
 			currentActiveRadioGroup = static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE));
-			break;		
+			break;
+		case BrowseAll:
+		case BrowseLAST:
+			break;
 	}
 
 	cond = listBoxFiles->getSize().height == fileBrowserExtent.height;
@@ -1399,6 +1402,9 @@ void SectionDiskMenu::updateFilenameEditField(ClassicViewStates viewState)
 			file->append(ext);
 			break;	
 		}
+		case BrowseLAST:
+			break;
+
 	}
 	
 	updateFilenameEditField(*file);
@@ -1466,7 +1472,10 @@ void SectionDiskMenu::loadCurrentSelectedFile()
 			break;
 		case BrowseTracks:
 			tracker.loadTypeFromFile(FileTypes::FileTypeTrackXT, fileFullPath);
-			break;		
+			break;
+		case BrowseLAST:
+			break;
+
 	}
 	
 	updateFilenameEditFieldExtension(classicViewState);
@@ -1579,7 +1588,10 @@ void SectionDiskMenu::saveCurrent()
 			break;
 		case BrowseTracks:
 			saveType = FileTypes::FileTypeTrackXT;
-			break;		
+			break;
+		case BrowseLAST:
+			break;
+
 	}
 	
 	res = tracker.prepareSavingWithDialog(saveType);
@@ -1816,7 +1828,10 @@ void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 				break;
 			case BrowseTracks:
 				extensions = fileExtProvider.getTrackExtensions();
-				break;		
+				break;
+			case BrowseAll: 
+			case BrowseLAST:
+				break;
 		}
 	}
 	

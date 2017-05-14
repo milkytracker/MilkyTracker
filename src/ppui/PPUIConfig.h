@@ -50,6 +50,7 @@ public:
 		ColorMenuTextBright,
 		ColorListBoxBorder,
 		ColorListBoxBackground,
+		ColorScrollBarBackground,
 		ColorRadioGroupButton,
 		ColorStaticText,
 		ColorLast 

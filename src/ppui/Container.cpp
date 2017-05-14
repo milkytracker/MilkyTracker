@@ -25,8 +25,8 @@
 #include "Screen.h"
 #include "PPUIConfig.h"
 
-PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
-						 const PPPoint& location, const PPSize& size, 
+PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener,
+						 const PPPoint& location, const PPSize& size,
 						 bool border /* = true */) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	color(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorContainer)),
@@ -39,7 +39,7 @@ PPContainer::PPContainer(pp_int32 id, PPScreen* parentScreen, EventListenerInter
 	this->border = border;
 
 	backgroundButton = new PPButton(0, parentScreen, NULL, location, size, border, false);
-	backgroundButton->setColor(*color);	
+	backgroundButton->setColor(*color);
 
 	timerEventControls = new PPSimpleVector<PPControl>(16, false);
 }
@@ -63,34 +63,36 @@ void PPContainer::paint(PPGraphicsAbstract* g)
 {
 	if (!isVisible())
 		return;
-	
+
 	backgroundButton->paint(g);
 
 	paintControls(g);
 }
 
 pp_int32 PPContainer::dispatchEvent(PPEvent* event)
-{ 
+{
 	if (event->getID() == eInvalid)
 		return 0;
 
 	pp_int32 i, res = 0;
 	bool handleEvent = false;
-	
+
 	if (caughtControl)
 	{
 		PPControl* control = caughtControl;
-	
+
 		switch (event->getID())
 		{
 			case eLMouseDown:
 			case eRMouseDown:
+			case eMMouseDown:
 				currentlyPressedMouseButtons++;
 				res = control->dispatchEvent(event);
 				goto exit;
 
 			case eLMouseUp:
 			case eRMouseUp:
+			case eMMouseUp:
 				currentlyPressedMouseButtons--;
 				if (currentlyPressedMouseButtons == 0)
 				{
@@ -103,52 +105,64 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 				// break is missing intentionally
 			case eLMouseDoubleClick:
 			case eRMouseDoubleClick:
+			case eMMouseDoubleClick:
 			case eLMouseDrag:
 			case eLMouseRepeat:
 			case eRMouseDrag:
 			case eRMouseRepeat:
+			case eMMouseDrag:
+			case eMMouseRepeat:
 			case eMouseMoved:
 				res = control->dispatchEvent(event);
 				goto exit;
-		}		
+			default:
+				break;
+		}
 	}
-	
+
 	if (focusedControl)
 	{
 		PPControl* control = focusedControl;
-	
+
 		bool mouseEvent = false;
 
 		switch (event->getID())
 		{
 			case eLMouseDown:
 			case eRMouseDown:
+			case eMMouseDown:
 			case eLMouseUp:
 			case eRMouseUp:
+			case eMMouseUp:
 			case eLMouseDoubleClick:
 			case eRMouseDoubleClick:
+			case eMMouseDoubleClick:
 			case eLMouseDrag:
 			case eLMouseRepeat:
 			case eRMouseDrag:
 			case eRMouseRepeat:
+			case eMMouseDrag:
+			case eMMouseRepeat:
 			case eMouseMoved:
 			case eMouseWheelMoved:
 				mouseEvent = true;
 				break;
+			default:
+				break;
 		}
-		
+
 		if (!mouseEvent)
 		{
 			res = control->dispatchEvent(event);
-			
+
 			// we're getting send an focus lost event
 			// so remove all references to focused controls
-			if (event->getID() == eFocusLost || 
+			if (event->getID() == eFocusLost ||
 				event->getID() == eFocusLostNoRepaint)
 			{
 				focusedControl = NULL;
-			}	
-				
+			}
+
 			goto exit;
 		}
 	}
@@ -157,21 +171,21 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 	{
 		case eLMouseDown:
 		case eRMouseDown:
+		case eMMouseDown:
 		case eMouseWheelMoved:
 		case eMouseMoved:
 			handleEvent = true;
 			break;
-		
+
 		// we got a focus gained message
 		// if we don't have some focused control set,
 		// we simply search for a control that could gain the focus
 		// and assign focus to that
-		case eFocusGainedNoRepaint:	
+		case eFocusGainedNoRepaint:
 		case eFocusGained:
-		{
 			if (focusedControl != NULL || caughtControl != NULL)
 				break;
-				
+
 			for (pp_int32 j = 0; j < controls.size(); j++)
 			{
 				PPControl* control = controls.get(j);
@@ -182,9 +196,10 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 				}
 			}
 			break;
-		}
+		default:
+			break;
 	}
-	
+
 	if (!handleEvent)
 		goto exit;
 
@@ -216,12 +231,12 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 			case eMouseMoved:
 			{
 				PPPoint* p = (PPPoint*)event->getDataPtr();
-				
+
 				if (control->isActive())
 				{
 					bool bHit = control->hit(*p);
 					bool bLastHit = control->hit(lastMousePoint);
-				
+
 					if (!bLastHit && bHit)
 					{
 						PPEvent e(eMouseEntered, p, sizeof(PPPoint));
@@ -232,24 +247,25 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 						PPEvent e(eMouseLeft, p, sizeof(PPPoint));
 						control->dispatchEvent(&e);
 					}
-				
+
 					if (bHit)
 					{
 						if (control != lastMouseOverControl && lastMouseOverControl)
 							lastMouseOverControl->dispatchEvent(event);
 
-						res = control->dispatchEvent(event);	
-						lastMouseOverControl = control;				
+						res = control->dispatchEvent(event);
+						lastMouseOverControl = control;
 						abortLoop = true;
 					}
-				}								
+				}
 				break;
 			}
 
 			// Mouse button down event
 			case eLMouseDown:
 			case eRMouseDown:
-				if (control->hit(*(PPPoint*)event->getDataPtr()) && 
+			case eMMouseDown:
+				if (control->hit(*(PPPoint*)event->getDataPtr()) &&
 					control->isActive() &&
 					caughtControl == NULL)
 				{
@@ -259,17 +275,18 @@ pp_int32 PPContainer::dispatchEvent(PPEvent* event)
 					abortLoop = true;
 				}
 				break;
-		}
-		
+			default:
+				break;
+}
+
 		if (abortLoop || event->getID() == eInvalid)
 			break;
-		
 	}
-	
+
 exit:
 	if (event->getID() == eMouseMoved)
 	{
-		PPPoint* p = (PPPoint*)event->getDataPtr();		
+		PPPoint* p = (PPPoint*)event->getDataPtr();
 		lastMousePoint = *p;
 	}
 
@@ -285,9 +302,9 @@ PPControl* PPContainer::getControlByID(pp_int32 id)
 		pp_int32 cID = controls.get(i)->getID();
 		if (cID == id)
 			return controls.get(i);
-		
-	}	
-	
+
+	}
+
 	// not found, try recursive in sub-containers if any
 	for (i = 0; i < controls.size(); i++)
 	{
@@ -298,16 +315,16 @@ PPControl* PPContainer::getControlByID(pp_int32 id)
 			if (newCtrl)
 				return newCtrl;
 		}
-	}		
+	}
 
 	return NULL;
 }
 
-void PPContainer::addControl(PPControl* control) 
-{ 
-	control->setOwnerControl(this); 
-	controls.add(control); 
-	if (control->receiveTimerEvent()) 
+void PPContainer::addControl(PPControl* control)
+{
+	control->setOwnerControl(this);
+	controls.add(control);
+	if (control->receiveTimerEvent())
 	{
 		if (this->isVisible())
 			parentScreen->addTimerEventControl(control);
@@ -339,13 +356,13 @@ bool PPContainer::removeControl(PPControl* control)
 }
 
 bool PPContainer::gainsFocus() const
-{ 
+{
 	if (caughtControl && caughtControl->gainsFocus())
 		return true;
-		
+
 	if (focusedControl)
 		return true;
-		
+
 	return false;
 }
 
@@ -353,7 +370,7 @@ bool PPContainer::gainedFocusByMouse() const
 {
 	if (caughtControl && caughtControl->gainedFocusByMouse())
 		return true;
-		
+
 	return false;
 }
 
@@ -368,7 +385,7 @@ void PPContainer::show(bool visible)
 		{
 			parentScreen->addTimerEventControl(timerEventControls->get(i));
 		}
-		
+
 		timerEventControls->clear();
 	}
 	else
@@ -384,7 +401,7 @@ void PPContainer::show(bool visible)
 			}
 		}
 	}
-	
+
 }
 
 void PPContainer::hide(bool hidden)
@@ -398,7 +415,7 @@ void PPContainer::hide(bool hidden)
 		{
 			parentScreen->addTimerEventControl(timerEventControls->get(i));
 		}
-		
+
 		timerEventControls->clear();
 	}
 	else
@@ -425,11 +442,11 @@ void PPContainer::setSize(const PPSize& size)
 void PPContainer::setLocation(const PPPoint& location)
 {
 	/*PPPoint offset(location.x - this->location.x, location.y - this->location.y);
-	
+
 	move(offset);*/
-	
+
 	this->location = location;
-	backgroundButton->setLocation(location);	
+	backgroundButton->setLocation(location);
 }
 
 void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
@@ -437,14 +454,14 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 	// nothing to do
 	if (control == this->focusedControl)
 		return;
-	
+
 	// the current control is about to lose focus
 	if (this->focusedControl)
 	{
 		PPEvent e(repaint ? eFocusLost : eFocusLostNoRepaint);
 		this->focusedControl->dispatchEvent(&e);
 	}
-	
+
 	this->focusedControl = control;
 
 	if (this->focusedControl)
@@ -478,15 +495,15 @@ void PPContainer::setFocus(PPControl* control, bool repaint/* = true*/)
 
 			lastFocusedControl = control;
 		}
-		
+
 	}
-	focusedControl = control; 
+	focusedControl = control;
 #endif
 }
 
 bool PPContainer::hasFocus(PPControl* control) const
-{ 
-	return focusedControl == control; 
+{
+	return focusedControl == control;
 }
 
 void PPContainer::move(const PPPoint& offset)
@@ -499,11 +516,11 @@ void PPContainer::move(const PPPoint& offset)
 	backgroundButton->setLocation(p);
 
 	PPSimpleVector<PPControl>& controls = getControls();
-	
+
 	for (pp_int32 i = 0; i < controls.size(); i++)
 	{
 		PPControl* control = controls.get(i);
-		
+
 		if (!control->isContainer())
 		{
 			p = control->getLocation();
@@ -519,13 +536,13 @@ void PPContainer::move(const PPPoint& offset)
 void PPContainer::adjustContainerSize()
 {
 	PPSimpleVector<PPControl>& controls = getControls();
-	
+
 	pp_int32 x1 = parentScreen->getWidth();
 	pp_int32 y1 = parentScreen->getHeight();
 
 	pp_int32 x2 = 0;
 	pp_int32 y2 = 0;
-	
+
 	for (pp_int32 i = 0; i < controls.size(); i++)
 	{
 		PPControl* control = controls.get(i);
@@ -535,18 +552,16 @@ void PPContainer::adjustContainerSize()
 			x1 = p.x;
 		if (p.y < y1)
 			y1 = p.y;
-			
+
 		p.x+=control->getSize().width;
 		p.y+=control->getSize().height;
-		
+
 		if (p.x > x2)
 			x2 = p.x;
 		if (p.y > y2)
 			y2 = p.y;
 	}
-	
+
 	setLocation(PPPoint(x1, y1));
 	setSize(PPSize(x2-x1, y2-y1));
 }
-
-

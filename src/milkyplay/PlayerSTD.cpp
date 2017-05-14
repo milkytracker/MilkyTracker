@@ -740,6 +740,7 @@ void PlayerSTD::updatePlayModeFlags()
 			newInsST3Flag = false;
 			oldPTInsChangeFlag = false;
 			break;
+		case PlayMode_ImpulseTracker:
 		case PlayMode_Auto:
 			break;
 	}

@@ -52,14 +52,16 @@ public:
 	{
 	private:
 		TEnvelope* envelopeCopy;
-
+		
 		ClipBoard();
+
 	public:
 		~ClipBoard();
 
 		void makeCopy(TEnvelope& envelope);
 		void paste(TEnvelope& envelope);
 		bool isEmpty() const { return envelopeCopy == NULL; }
+		
 		friend class PPSingleton<ClipBoard>;
 	};
 private:

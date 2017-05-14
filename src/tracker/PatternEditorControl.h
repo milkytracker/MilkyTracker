@@ -371,6 +371,7 @@ private:
 	void executeMenuCommand(pp_int32 commandId);
 	
 	void handleDeleteKey(pp_uint16 keyCode, pp_int32& result);
+	void handleKeyChar(pp_uint8 character);
 	void handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character);
 
 	// mark channel
@@ -469,6 +470,11 @@ private:
 	void eventKeyDownBinding_InsertLine();
 	void eventKeyDownBinding_DeleteNoteSlot();
 	void eventKeyDownBinding_DeleteLine();
+
+	void eventKeyDownBinding_InsIncSelection();
+	void eventKeyDownBinding_InsDecSelection();
+	void eventKeyDownBinding_InsIncTrack();
+	void eventKeyDownBinding_InsDecTrack();
 	
 	void eventKeyDownBinding_CutTrack();
 	void eventKeyDownBinding_CopyTrack();

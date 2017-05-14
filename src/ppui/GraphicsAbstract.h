@@ -211,7 +211,8 @@ protected:
 	{
 	}
 
-public:	
+public:
+	virtual ~PPGraphicsAbstract() {}
 	pp_int32 getWidth() { return width; }
 	pp_int32 getHeight() { return height; }
 

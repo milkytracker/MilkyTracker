@@ -34,6 +34,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #ifdef __PSP__
 #include <pspkernel.h>
@@ -54,18 +56,22 @@
 SYSCHAR System::buffer[PATH_MAX+1];
 
 const SYSCHAR* System::getTempFileName()
-{	
-	// Although tmpnam(3) generates names that are difficult to guess, it is 
-	// nevertheless possible that between the time that tmpnam(3) returns a pathname, 
-	// and the time that the program opens it, another program might create that 
-	// pathname using open(2), or create it as a symbolic link. This can lead to security holes. 
-	// To avoid such possibilities, use the open(2) O_EXCL flag to open the pathname. 
-	// Or better yet, use mkstemp(3) or tmpfile(3).
-	tmpnam(buffer);
-	// should not be the case, if it is the case, 
-	// create something that "might" work out
-	if (buffer == NULL)
+{
+	// Suppressed warning: "'tmpnam' is deprecated: This function is provided for
+	// compatibility reasons only. Due to security concerns inherent in the
+	// design of tmpnam(3), it is highly recommended that you use mkstemp(3)
+	// instead."
+
+	// Note: Replacing tmpnam() with mkstemp() requires modifying the module
+	// load, export and decompressor functions to accept a file handle (XMFILE)
+	// instead of a file name.
+#pragma clang diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	if ((tmpnam(buffer) == NULL))
+#pragma clang diagnostic pop
 	{
+		// should not be the case, if it is the case, create something that
+		// "might" work out
 		char *home = getenv("HOME");
 		if(home)
 		{
@@ -97,14 +103,32 @@ const SYSCHAR* System::getConfigFileName()
 	return buffer;
 #endif
 	char *home = getenv("HOME");
-	if(home)
+	if(!home)
 	{
-		strcpy(buffer, home);
-		strcat(buffer, "/.milkytracker_config");
+		// If $HOME isn't set, save in the current dir
+		strncpy(buffer, "milkytracker_config", PATH_MAX);
+		return buffer;
 	}
+	// Old location was in the home directory
+	char oldLoc[PATH_MAX];
+	strncpy(oldLoc, home, PATH_MAX);
+	strncat(oldLoc, "/.milkytracker_config", PATH_MAX);
+	// New location based on xdg basedir spec
+	char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+	if(xdg_config_home)
+		strncpy(buffer, xdg_config_home, PATH_MAX);
 	else
-		strcpy(buffer, "milkytracker_config");
-
+	{
+		strncpy(buffer, home, PATH_MAX);
+		strncat(buffer, "/.config", PATH_MAX);
+	}
+	mkdir(buffer, S_IRWXU);
+	strncat(buffer, "/milkytracker", PATH_MAX);
+	mkdir(buffer, S_IRWXU);
+	strncat(buffer, "/config", PATH_MAX);
+	// Move possible existing config into new location if not already present
+	if(home && access(oldLoc, F_OK) == 0 && access(buffer, F_OK) != 0)
+		rename(oldLoc, buffer);
 	return buffer;
 }
 

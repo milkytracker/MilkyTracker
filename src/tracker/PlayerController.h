@@ -114,8 +114,8 @@ public:
 	
 	PlayerCriticalSection* getCriticalSection() { return criticalSection; }
 	
-	void playSong(mp_sint32 startIndex, mp_sint32 rowPosition, mp_ubyte* muteChannels);
-	void playPattern(mp_sint32 index, mp_sint32 songPosition, mp_sint32 rowPosition, mp_ubyte* muteChannels, bool playRowOnly = false);
+	void playSong(mp_sint32 startIndex, mp_sint32 rowPosition, bool* muteChannels);
+	void playPattern(mp_sint32 index, mp_sint32 songPosition, mp_sint32 rowPosition, bool* muteChannels, bool playRowOnly = false);
 	void setCurrentPatternIndex(mp_sint32 index);
 	void stop(bool bResetMainVolume = true);
 	

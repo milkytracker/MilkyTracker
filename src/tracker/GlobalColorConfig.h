@@ -74,8 +74,15 @@ public:
 		ColorRowHighlitedFirst, // First color to highlight the row background
 		ColorRowHighlitedSecond, // Second color to highlight the row background
 
+		ColorScrollBarBackground,
+		ColorRecordModeButtonText, // usually red
+		ColorScopesRecordIndicator, // usually red
+		ColorPeakClipIndicator, // usually red
+
+		ColorSampleEditorWaveform,
+
 		// Unused, endmarker
-		ColorLast = ColorScopes + 24 // remember to subtract one from the last value every time you add another color to the list
+		ColorLast = 40
 	};
 
 public:

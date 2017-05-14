@@ -266,8 +266,8 @@ namespace midi
 
         // Called by Windows when a MIDI input event occurs
         static void CALLBACK MidiInProc(HMIDIIN MidiIn, UINT Msg,
-                                        DWORD Instance, DWORD Param1, 
-                                        DWORD Param2);
+                                        DWORD_PTR Instance, DWORD_PTR Param1, 
+                                        DWORD_PTR Param2);
 
         // Thread function for managing headers
         static DWORD WINAPI HeaderProc(LPVOID Parameter);

@@ -216,8 +216,6 @@ void SectionQuickOptions::init(pp_int32 px, pp_int32 py)
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(px + 2, py + 2), "Quick Options (experts only)", true, true));
 
-	PPSize size = container->getSize();
-
 	pp_int32 buttonWidth = 8*4+4;
 	pp_int32 buttonHeight = 11;
 	

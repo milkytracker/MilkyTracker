@@ -152,17 +152,18 @@ void PPDisplayDevice::setSize(const PPSize& size)
 
 	RECT rc;
 
-	pp_int32 modexs = size.width * scaleFactor +::GetSystemMetrics(SM_CXEDGE) * 2 + 2;
-	pp_int32 modeys = size.height * scaleFactor + ::GetSystemMetrics(SM_CYCAPTION) + 2 + ::GetSystemMetrics(SM_CYEDGE) * 2;
-
 	::GetWindowRect(m_hWnd, &rc);
+
+	rc.right = rc.left + size.width * scaleFactor;
+	rc.bottom = rc.top + size.height * scaleFactor;
+	::AdjustWindowRect(&rc, GetWindowLong(m_hWnd, GWL_STYLE), false);
 
 	::SetWindowPos(m_hWnd, 
 				   NULL, 
 				   rc.left, 
 				   rc.top, 
-				   modexs, 
-				   modeys, 
+				   rc.right - rc.left,
+				   rc.bottom - rc.top,
 				   SWP_SHOWWINDOW | SWP_NOZORDER);
 
 }

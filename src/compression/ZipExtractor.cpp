@@ -145,7 +145,7 @@ bool ZipExtractor::parseZip(pp_int32& err, bool extract, const PPSystemString* o
 							if (extract)
 							{
 								XMFile f(*outFile, true);
-								f.write(buf, 1, i);								
+								f.write(buf, 1, i);
 								while (0 < (i = zzip_file_read(fp, (char*)buf, 16384)))
 								{
 									f.write(buf, 1, i);

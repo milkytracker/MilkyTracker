@@ -469,6 +469,8 @@ pp_int32 PianoControl::dispatchEvent(PPEvent* event)
 							eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 							break;
 						}
+						case ModeEdit:
+							break;
 					}
 					
 					parentScreen->paintControl(this);
@@ -553,14 +555,14 @@ pp_int32 PianoControl::dispatchEvent(PPEvent* event)
 		{
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0 && hScrollbar)
-			{
-				PPEvent e(eBarScrollUp);
-				handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
-			}
-			else if (params->delta < 0 && hScrollbar)
+			if ((params->deltaX > 0 || params->deltaY < 0) && hScrollbar)
 			{
 				PPEvent e(eBarScrollDown);
+				handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
+			}
+			else if ((params->deltaX < 0 || params->deltaY > 0) && hScrollbar)
+			{
+				PPEvent e(eBarScrollUp);
 				handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
 			}
 			
@@ -783,4 +785,3 @@ pp_int32 PianoControl::positionToNote(PPPoint cp)
 
 	return note;
 }
-

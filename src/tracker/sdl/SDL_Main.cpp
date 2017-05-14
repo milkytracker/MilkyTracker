@@ -476,7 +476,8 @@ void translateMouseUpEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 
 		TMouseWheelEventParams mouseWheelParams;
 		mouseWheelParams.pos.x = localMouseX;
 		mouseWheelParams.pos.y = localMouseY;
-		mouseWheelParams.delta = -1;
+		mouseWheelParams.deltaX = -1;
+		mouseWheelParams.deltaY = -1;
 		
 		PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));						
 		RaiseEventSerialized(&myEvent);				
@@ -486,7 +487,8 @@ void translateMouseUpEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 
 		TMouseWheelEventParams mouseWheelParams;
 		mouseWheelParams.pos.x = localMouseX;
 		mouseWheelParams.pos.y = localMouseY;
-		mouseWheelParams.delta = 1;
+		mouseWheelParams.deltaX = 1;
+		mouseWheelParams.deltaY = 1;
 		
 		PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));						
 		RaiseEventSerialized(&myEvent);				

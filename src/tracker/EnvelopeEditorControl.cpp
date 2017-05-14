@@ -701,17 +701,36 @@ pp_int32 EnvelopeEditorControl::dispatchEvent(PPEvent* event)
 		// mouse wheel
 		case eMouseWheelMoved:
 		{
-
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0)
+			// Horizontal scrolling takes priority over vertical scrolling (zooming) and is
+			// mutually exclusive so that we are less likely to accidentally zoom while scrolling
+			// For compatibility for mice without horizontal scroll, SHIFT + vertical scroll is
+			// treated as a synonym for horizontal scroll.
+			bool shiftHeld = (::getKeyModifier() & KeyModifierSHIFT);
+			if (params->deltaX || (params->deltaY && shiftHeld))
 			{
-				setScale(xScale << 1);
-				parentScreen->paintControl(this);
+				pp_int32 delta = shiftHeld? params->deltaY : params->deltaX;
+				// Deltas greater than 1 generate multiple events for scroll acceleration
+				PPEvent e = delta > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				
+				delta = abs(delta);
+				delta = delta > 20 ? 20 : delta;
+				
+				while (delta)
+				{
+					handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
+					delta--;
+				}
 			}
-			else if (params->delta < 0)
+			
+			else if (params->deltaY)
 			{
-				setScale(xScale >> 1);
+				if (invertMWheelZoom)
+				{
+					params->deltaY = -params->deltaY;
+				}
+				setScale(params->deltaY > 0 ? xScale << 1 : xScale >> 1);
 				parentScreen->paintControl(this);
 			}
 			
@@ -1094,13 +1113,13 @@ void EnvelopeEditorControl::editorNotification(EditorBase* sender, EditorBase::E
 			notifyChanges();
 			break;
 		}
-			
+		default:
+			break;
 	}
 }
 
 EnvelopeEditorControl::ToolHandlerResponder::ToolHandlerResponder(EnvelopeEditorControl& theEnvelopeEditorControl) :
-	envelopeEditorControl(theEnvelopeEditorControl),
-	envelopeToolType(EnvelopeToolTypeNone)
+	envelopeEditorControl(theEnvelopeEditorControl)
 {
 }
 

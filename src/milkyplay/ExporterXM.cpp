@@ -67,9 +67,9 @@ struct TWorkBuffers
 
 	void clearBuffers()
 	{
-		memset(lastArpeggio, 0, sizeof(noteRangeRemapper));
-		memset(lastVolSlide, 0, sizeof(noteRangeRemapper));
-		memset(lastGVolSlide, 0, sizeof(noteRangeRemapper));
+		memset(lastArpeggio, 0, sizeof(lastArpeggio));
+		memset(lastVolSlide, 0, sizeof(lastVolSlide));
+		memset(lastGVolSlide, 0, sizeof(lastGVolSlide));
 		memset(lastPorta, 0, sizeof(lastPorta));
 		memset(lastTempoSlide, 0, sizeof(lastTempoSlide));
 		memset(lastIns, 0, sizeof(lastIns));
@@ -1387,10 +1387,11 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 		f.write(header.name, 1, 20);
 	header.whythis1a = 0x1a;
 	f.writeByte(header.whythis1a);
-#ifndef MILKYTRACKER
-	f.write(header.tracker, 1, 20);
+#ifdef MILKYTRACKER
+#include "../tracker/version.h"
+	f.write(MILKYTRACKER_VERSION_STRING, 1, 20);
 #else
-	f.write("MilkyTracker        ", 1, 20);
+	f.write(header.tracker, 1, 20);
 #endif
 	header.ver = 0x104;
 	f.writeWord(header.ver);
@@ -2080,19 +2081,24 @@ unused:
 	for (i = 0; i < header.smpnum; i++) 
 	{
 		mp_uint32 smplen = prep(smp[i].samplen) << 1;
+		mp_uint32 j = 0;
 
-		// Ensure first 2 bytes are zero (for Protracker/Amiga
-		// compatibility)
-		f.writeWord(0);
-		
+		// Ensure first 2 bytes are zero in non-looping
+		// samples (for Protracker/Amiga compatibility)
+		if(!(smp[i].type & 0xef) && smplen >= 2)
+		{
+			f.writeWord(0);
+			j = 2;;
+		}
+
 		if (smp[i].type & 16)
 		{
-			for (mp_uint32 j = 2; j < smplen; j++)
+			for (; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j) >> 8);
 		}
 		else
 		{
-			for (mp_uint32 j = 2; j < smplen; j++)
+			for (; j < smplen; j++)
 				f.writeByte(smp[i].getSampleValue(j));
 		}
 	}

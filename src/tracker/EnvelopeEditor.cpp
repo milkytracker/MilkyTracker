@@ -49,7 +49,7 @@ void EnvelopeEditor::ClipBoard::makeCopy(TEnvelope& envelope)
 {
 	if (envelopeCopy == NULL)
 		envelopeCopy = new TEnvelope;
-
+	
 	*envelopeCopy = envelope;
 }
 

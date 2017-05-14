@@ -53,14 +53,6 @@ static void convertOKTEffects(mp_ubyte& eff, mp_ubyte& op)
 			op = 0;
 			break;
 			
-		case 01:	// porta down
-			eff = 0x02;
-			break;
-			
-		case 02:	// porta up
-			eff = 0x01;
-			break;
-		
 		case 10:	// arpeggio I
 		case 11:	// arpeggio II
 		case 12:	// arpeggio III

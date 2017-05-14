@@ -177,6 +177,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 				
 				delete[] smpOffsets;
 				delete[] patOffsets;
+				delete[] ordHeaders;
 				return MP_OUT_OF_MEMORY;
 			}
 			
@@ -225,6 +226,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 			
 			delete[] smpOffsets;
 			delete[] patOffsets;
+			delete[] ordHeaders;
 			
 			return MP_LOADER_FAILED;
 		}
@@ -296,6 +298,7 @@ mp_sint32 LoaderPLM::load(XMFileBase& f, XModule* module)
 				
 				delete[] smpOffsets;
 				delete[] patOffsets;
+				delete[] ordHeaders;
 				return MP_OUT_OF_MEMORY;
 			}
 			

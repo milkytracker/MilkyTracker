@@ -236,6 +236,8 @@ pp_int32 PPContextMenu::dispatchEvent(PPEvent* event)
 			pressInvoke = false;
 			hadCursor = false;
 			break;
+		default:
+			break;
 	}
 
 	return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event); 

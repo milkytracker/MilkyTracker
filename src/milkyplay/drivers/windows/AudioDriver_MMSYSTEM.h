@@ -57,7 +57,11 @@ private:
     };
 
 	bool		paused;
+	bool		deviceOpen;
 	bool		deviceHasStarted;
+
+	DWORD		bufferThreadId;
+	HANDLE		bufferThreadHandle;
 
 	HWAVEOUT	hwo;
 	WAVEOUTCAPS waveoutcaps;
@@ -66,23 +70,19 @@ private:
 	mp_sint32   currentBufferIndex;
 
 	mp_uint32	sampleCounterTotal;
-
-	bool		timeEmulation;
-	
+		
 	mp_uint32	sampleRate;
 
 	mutable	mp_uint32			lastSampleIndex;
-	mutable	mp_uint32			lastTimeInMillis;
 	mutable	mp_uint32			timeInSamples;
 	mutable	mp_uint32			sampleCounter;
 	mutable	CRITICAL_SECTION	cs;
 
-	static void CALLBACK waveOutProc(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD dwParam1,DWORD dwParam2);
-
-	void		kick();
+	static DWORD WINAPI			ThreadProc(_In_ LPVOID lpParameter);
+	void						kick();
 
 public:
-				AudioDriver_MMSYSTEM(bool timeEmulation = false);
+				AudioDriver_MMSYSTEM();
 	virtual		~AudioDriver_MMSYSTEM();
 			
 	virtual		mp_sint32   initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer);
@@ -98,7 +98,7 @@ public:
 	virtual		mp_uint32	getBufferPos() const;
 	virtual		bool		supportsTimeQuery() const { return true; }
 
-	virtual		const char* getDriverID() { return timeEmulation ? "WaveOut (Vista)" : "WaveOut (old)"; }
+	virtual		const char* getDriverID() { return "WaveOut"; }
 
 	virtual		mp_sint32	getPreferredSampleRate() const { return 44100; }
 	virtual		mp_sint32	getPreferredBufferSize() const { return 8192; }

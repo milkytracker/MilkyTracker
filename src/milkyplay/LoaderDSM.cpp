@@ -171,6 +171,7 @@ mp_sint32 LoaderDSm::load(XMFileBase& f, XModule* module)
 		// out of memory?
 		if (phead[i].patternData == NULL)
 		{
+			delete[] pattern;
 			return MP_OUT_OF_MEMORY;
 		}
 		

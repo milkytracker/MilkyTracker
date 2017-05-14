@@ -161,6 +161,10 @@ public:
 	bool expandPattern();
 	bool shrinkPattern();
 
+	pp_int32 insIncSelection(const Position& ss, const Position& se);
+	pp_int32 insDecSelection(const Position& ss, const Position& se);
+	pp_int32 insIncTrack(pp_int32 track);
+	pp_int32 insDecTrack(pp_int32 track);
 	pp_int32 insRemapSelection(const Position& ss, const Position& se, pp_int32 oldIns, pp_int32 newIns);
 	pp_int32 insRemap(pp_int32 oldIns, pp_int32 newIns);
 	pp_int32 insRemapTrack(pp_int32 track, pp_int32 oldIns, pp_int32 newIns);

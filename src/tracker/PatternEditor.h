@@ -162,7 +162,11 @@ private:
 
 		LastChangeLoadXPattern,
 		LastChangeLoadXTrack,
-		
+
+		LastChangeInsIncSelection,
+		LastChangeInsDecSelection,
+		LastChangeInsIncTrack,
+		LastChangeInsDecTrack,
 		LastChangeInsRemapTrack,
 		LastChangeInsRemapPattern,
 		LastChangeInsRemapSelection,
@@ -314,7 +318,11 @@ public:
 	bool loadExtendedTrack(const PPSystemString& fileName);
 	bool saveExtendedTrack(const PPSystemString& fileName);
 	
-	// --- remap instruments -------------------------------------------------
+	// --- increase/decrease/remap instruments -------------------------------------------------
+	pp_int32 insIncSelection();
+	pp_int32 insDecSelection();
+	pp_int32 insIncTrack();
+	pp_int32 insDecTrack();
 	pp_int32 insRemapTrack(pp_int32 oldIns, pp_int32 newIns);
 	pp_int32 insRemapPattern(pp_int32 oldIns, pp_int32 newIns);
 	pp_int32 insRemapSelection(pp_int32 oldIns, pp_int32 newIns);

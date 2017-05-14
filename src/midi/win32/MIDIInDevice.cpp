@@ -245,8 +245,8 @@ void CMIDIInDevice::Open(UINT DeviceId)
 
     // Open MIDI input device
     MMRESULT Result = ::midiInOpen(&m_DevHandle, DeviceId, 
-                                  reinterpret_cast<DWORD>(MidiInProc),
-                                  reinterpret_cast<DWORD>(this),
+                                  reinterpret_cast<DWORD_PTR>(MidiInProc),
+                                  reinterpret_cast<DWORD_PTR>(this),
                                   CALLBACK_FUNCTION);
 
     // If we are able to open the device, change state
@@ -478,8 +478,8 @@ bool CMIDIInDevice::CreateEvent()
 
 // Called by Windows when a MIDI input event occurs
 void CALLBACK CMIDIInDevice::MidiInProc(HMIDIIN MidiIn, UINT Msg,
-                                        DWORD Instance, DWORD Param1,
-                                        DWORD Param2)
+                                        DWORD_PTR Instance, DWORD_PTR Param1,
+                                        DWORD_PTR Param2)
 {
     CMIDIInDevice *Device;
     

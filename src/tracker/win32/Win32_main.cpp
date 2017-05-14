@@ -20,7 +20,8 @@
  *
  */
 
-#include <windows.h>
+#include <Windows.h>
+#include <Windowsx.h>
 #include <tchar.h>
 #include <shellapi.h>
 #include <stdio.h>
@@ -78,6 +79,7 @@ TCHAR						c_szClassName[]		= _T("MILKYTRACKERMAINCLASS");
 HINSTANCE					g_hinst				= NULL;       /* My instance handle */
 BOOL						g_fPaused			= TRUE;       /* Should I be paused? */
 HWND						hWnd				= NULL;
+BOOL						g_mouseDragging		= FALSE;
 
 PPMutex*					g_globalMutex		= NULL;
 
@@ -99,52 +101,52 @@ static MidiReceiver*		myMidiReceiver		= NULL;
    #define WM_MOUSELEAVE   WM_USER+2
    #define TME_LEAVE               1
 
-   typedef struct tagTRACKMOUSEEVENT {
-       DWORD cbSize;
-       DWORD dwFlags;
-       HWND  hwndTrack;
-   } TRACKMOUSEEVENT, *LPTRACKMOUSEEVENT;
+typedef struct tagTRACKMOUSEEVENT {
+	DWORD cbSize;
+	DWORD dwFlags;
+	HWND  hwndTrack;
+} TRACKMOUSEEVENT, *LPTRACKMOUSEEVENT;
 
-   VOID CALLBACK
-   TrackMouseTimerProc(HWND hWnd,UINT uMsg,UINT idEvent,DWORD dwTime) {
-      RECT rect;
-      POINT pt;
+VOID CALLBACK
+TrackMouseTimerProc(HWND hWnd,UINT uMsg,UINT idEvent,DWORD dwTime) {
+	RECT rect;
+	POINT pt;
+	
+	GetClientRect(hWnd,&rect);
+	MapWindowPoints(hWnd,NULL,(LPPOINT)&rect,2);
+	GetCursorPos(&pt);
+	if (!PtInRect(&rect,pt) || (WindowFromPoint(pt) != hWnd)) {
+		if (!KillTimer(hWnd,idEvent)) {
+			// Error killing the timer!
+		}
+		
+		PostMessage(hWnd,WM_MOUSELEAVE,0,0);
+	}
+}
 
-      GetClientRect(hWnd,&rect);
-      MapWindowPoints(hWnd,NULL,(LPPOINT)&rect,2);
-      GetCursorPos(&pt);
-      if (!PtInRect(&rect,pt) || (WindowFromPoint(pt) != hWnd)) {
-         if (!KillTimer(hWnd,idEvent)) {
-            // Error killing the timer!
-         }
-
-         PostMessage(hWnd,WM_MOUSELEAVE,0,0);
-      }
-   }
-
-   BOOL
-   TrackMouseEvent(LPTRACKMOUSEEVENT ptme) {
-      OutputDebugString(_T("TrackMouseEvent\n"));
-
-      if (!ptme || ptme->cbSize < sizeof(TRACKMOUSEEVENT)) {
-         OutputDebugString(_T("TrackMouseEvent: invalid TRACKMOUSEEVENT structure\n"));
-         return FALSE;
-      }
-
-      if (!IsWindow(ptme->hwndTrack)) {
-         OutputDebugString(
-            _T("TrackMouseEvent: invalid hwndTrack\n"));
-         return FALSE;
-      }
-
-      if (!(ptme->dwFlags & TME_LEAVE)) {
-         OutputDebugString(_T("TrackMouseEvent: invalid dwFlags\n"));
-         return FALSE;
-      }
-
-      return SetTimer(ptme->hwndTrack, ptme->dwFlags,
-                      100,(TIMERPROC)TrackMouseTimerProc);
-   }
+BOOL
+TrackMouseEvent(LPTRACKMOUSEEVENT ptme) {
+	OutputDebugString(_T("TrackMouseEvent\n"));
+	
+	if (!ptme || ptme->cbSize < sizeof(TRACKMOUSEEVENT)) {
+		OutputDebugString(_T("TrackMouseEvent: invalid TRACKMOUSEEVENT structure\n"));
+		return FALSE;
+	}
+	
+	if (!IsWindow(ptme->hwndTrack)) {
+		OutputDebugString(
+						  _T("TrackMouseEvent: invalid hwndTrack\n"));
+		return FALSE;
+	}
+	
+	if (!(ptme->dwFlags & TME_LEAVE)) {
+		OutputDebugString(_T("TrackMouseEvent: invalid dwFlags\n"));
+		return FALSE;
+	}
+	
+	return SetTimer(ptme->hwndTrack, ptme->dwFlags,
+					100,(TIMERPROC)TrackMouseTimerProc);
+}
 #endif // WIN32_WINNT
 
 #endif // MOUSETRACKING
@@ -480,7 +482,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetUnhandledExceptionFilter(CrashHandler); 
 #endif
 			fInWindow = FALSE;
-            fInMenu = FALSE;
+			fInMenu = FALSE;
 			break;
 
 		case WM_PAINT:
@@ -490,6 +492,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 
 		case WM_MOUSEWHEEL:
+		case WM_MOUSEHWHEEL:
 		{
 			RECT rc;
 			GetWindowRect(hwnd, &rc);
@@ -503,14 +506,16 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			{
 				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left);
 				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top);
-				mouseWheelParams.delta = ((signed short)HIWORD(wParam))/60;
 			}
 			else
 			{
 				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
 				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
-				mouseWheelParams.delta = ((signed short)HIWORD(wParam))/60;
 			}
+			
+			mouseWheelParams.deltaX = msg == WM_MOUSEHWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
+			mouseWheelParams.deltaY = msg == WM_MOUSEWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
+			
 			PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));	
 			
 			RaiseEventSynchronized(&myEvent);				
@@ -526,8 +531,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			if (lMouseDown)
 			{
-                p.x = -1;
-			    p.y = -1;
+				p.x = -1;
+				p.y = -1;
 				PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));				
 				RaiseEventSynchronized(&myEvent);
 				lMouseDown = false;
@@ -568,6 +573,22 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 		}
 
+		// ----- middle mousebutton -------------------------------
+		case WM_MBUTTONDOWN:
+		{
+			if (!myTrackerScreen)
+				break;
+
+			p.x = LOWORD(lParam);
+			p.y = HIWORD(lParam);
+
+			PPEvent myEvent(eMMouseDown, &p, sizeof(PPPoint));
+
+			RaiseEventSynchronized(&myEvent);
+
+			break;
+		}
+
 		// ----- right mousebutton -------------------------------
 		case WM_RBUTTONDOWN:
 		{
@@ -576,8 +597,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			if (rMouseDown)
 			{
-                p.x = -1;
-			    p.y = -1;
+				p.x = -1;
+				p.y = -1;
 				PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));				
 				RaiseEventSynchronized(&myEvent);
 				rMouseDown = false;
@@ -624,6 +645,11 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!myTrackerScreen || !lMouseDown)
 				break;
 
+			if (g_mouseDragging)
+			{
+				ReleaseCapture();
+				g_mouseDragging = FALSE;
+			}
 			lClickCount++;
 
 			if (lClickCount == 4)
@@ -660,6 +686,23 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			
 			break;
 		}		
+
+		// ----- middle mousebutton -------------------------------
+		case WM_MBUTTONUP:
+		{
+			if (!myTrackerScreen)
+				break;
+
+			p.x = LOWORD(lParam);
+			p.y = HIWORD(lParam);
+
+			PPEvent myEvent(eMMouseUp, &p, sizeof(PPPoint));
+
+			RaiseEventSynchronized(&myEvent);
+
+
+			break;
+		}
 
 		// ----- right mousebutton -------------------------------
 		case WM_RBUTTONUP:
@@ -706,8 +749,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		
 #ifdef MOUSETRACKING
 		case WM_MOUSELEAVE:
-            fInWindow = FALSE;
-            if (!fInMenu)
+			fInWindow = FALSE;
+			if (!fInMenu)
 			{
 				PPPoint p(-1000, -1000);
 				if (lMouseDown)
@@ -726,12 +769,12 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 
 		case WM_ENTERMENULOOP:
-            fInMenu = TRUE;
-            break;
+			fInMenu = TRUE;
+			break;
 
-        case WM_EXITMENULOOP:
-            fInMenu = FALSE;
-            break;
+		case WM_EXITMENULOOP:
+			fInMenu = FALSE;
+			break;
 #endif
 
 		case WM_MOUSEMOVE:
@@ -748,15 +791,20 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 						TEXT("TrackMouseEvent Failed"),
 						TEXT("Mouse Leave"),MB_OK);
 				}
-            }
+			}
 #endif			
 			if (!myTrackerScreen)
 				break;
 
 			if ((wParam&MK_LBUTTON) && lMouseDown)
 			{
-				p.x = LOWORD(lParam);
-				p.y = HIWORD(lParam);
+				p.x = GET_X_LPARAM(lParam);
+				p.y = GET_Y_LPARAM(lParam);
+				if (!g_mouseDragging)
+				{
+					SetCapture(hWnd);
+					g_mouseDragging = TRUE;
+				}
 				
 				PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));
 				
@@ -811,7 +859,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			BYTE keyState[256];
 			WORD keyBuf[2] = {0,0};
- 			GetKeyboardState((PBYTE)&keyState);
+			GetKeyboardState((PBYTE)&keyState);
 			if (ToAscii(wParam, (lParam>>16)&255, (PBYTE)&keyState, keyBuf, 0) != 1)
 				keyBuf[0] = keyBuf[1] = 0;
 
@@ -860,7 +908,7 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			BYTE keyState[256];
 			WORD keyBuf[2] = {0,0};
- 			GetKeyboardState((PBYTE)&keyState);
+			GetKeyboardState((PBYTE)&keyState);
 			if (ToAscii(wParam, (lParam>>16)&255, (PBYTE)&keyState, keyBuf, 0) != 1)
 				keyBuf[0] = keyBuf[1] = 0;
 
@@ -979,12 +1027,11 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		}
 
 		case WM_SIZE:
-			if (myDisplayDevice)
-				myDisplayDevice->adjustWindowSize();
-			break;
+			// Ignore WM_SIZE events sent during window creation, minimize and restore
+			return 0;
 
 		case WM_DESTROY:	
-			PostQuitMessage(0); 
+			PostQuitMessage(0);
 			break;
 
 /*		case WM_KILLFOCUS:
@@ -1015,38 +1062,6 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 
-}
-
-static void InitTracker()
-{
-	myPreferenceDialog = new CPreferencesDialog(hWnd, g_hinst);
-
-	myTracker = new Tracker();
-
-	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
-	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
-	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
-#ifdef __LOWRES__
-	windowSize.width = 320;
-	windowSize.height = 240;
-#endif
-
-	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
-
-	// Change preferred window size
-	myDisplayDevice->setSize(windowSize);
-	
-	if (fullScreen)
-		myDisplayDevice->goFullScreen(fullScreen);
-
-	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
-
-	myTracker->setScreen(myTrackerScreen);
-
-	// Startup procedure
-	myTracker->startUp();
-
-	HandleMidiRecording();
 }
 
 /****************************************************************************
@@ -1087,23 +1102,39 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	wc.cbWndExtra     = 0;
 
 	if (!RegisterClass(&wc)) return FALSE;
+
+	myTracker = new Tracker();
+
+	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
+	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
+	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
+#ifdef __LOWRES__
+	windowSize.width = 320;
+	windowSize.height = 240;
+#endif
+
+	RECT rect;
+	rect.left = rect.top = 0;
+	rect.right = windowSize.width;
+	rect.bottom = windowSize.height;
  
 #ifdef FULLSCREEN
+	AdjustWindowRect(&rect, WS_POPUP, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
 							 WS_POPUP/*|WS_SYSMENU/*|WS_MAXIMIZEBOX|WS_MINIMIZEBOX*/,CW_USEDEFAULT,CW_USEDEFAULT,
-							 DISPLAYDEVICE_WIDTH + ::GetSystemMetrics(SM_CXEDGE)*2,
-							 DISPLAYDEVICE_HEIGHT + ::GetSystemMetrics(SM_CYCAPTION)+::GetSystemMetrics(SM_CYEDGE)*2,
+							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
 							 g_hinst,
 							 0);
 #else
+	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
-							 WS_SYSMENU/*|WS_MAXIMIZEBOX*/|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,
-							 DISPLAYDEVICE_WIDTH + ::GetSystemMetrics(SM_CXEDGE)*2+2,
-							 DISPLAYDEVICE_HEIGHT + ::GetSystemMetrics(SM_CYCAPTION)+2+::GetSystemMetrics(SM_CYEDGE)*2,
+							 WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+							 CW_USEDEFAULT,CW_USEDEFAULT,
+							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
 							 NULL,
 							 g_hinst,
@@ -1118,12 +1149,25 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	AppendMenu(hMenu, MF_STRING, IDM_FULLSCREEN, _T("Fullscreen	ALT+RETURN"));
 	AppendMenu(hMenu, MF_SEPARATOR, 0xFFFFFFFF, NULL);
 	AppendMenu(hMenu, MF_STRING, IDM_PREFERENCES, _T("Preferences..."));
+	myPreferenceDialog = new CPreferencesDialog(hWnd, g_hinst);
 
 	DWORD style = GetWindowLong(hWnd, GWL_EXSTYLE);
 
 	ShowWindow(hWnd, nCmdShow);
 
-	InitTracker();
+	// Tracker init
+	myDisplayDevice = new PPDisplayDevice(hWnd, windowSize.width, windowSize.height, scaleFactor);
+
+	if (fullScreen)
+		myDisplayDevice->goFullScreen(fullScreen);
+
+	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
+	myTracker->setScreen(myTrackerScreen);
+
+	// Startup procedure
+	myTracker->startUp();
+	HandleMidiRecording();
+
 	return TRUE;
 }
 

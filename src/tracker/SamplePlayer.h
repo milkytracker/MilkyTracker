@@ -52,6 +52,7 @@ public:
 	void playSample(pp_int32 insIndex, pp_int32 smpIndex, pp_uint32 note);
 	void playSample(pp_int32 insIndex, pp_uint32 note);
 	void playCurrentSample(pp_uint32 note);
+	void playCurrentSampleFromOffset(pp_uint32 offset, pp_uint32 note);
 	void playCurrentSampleSelectionRange(pp_uint32 note);
 	
 	void stopSamplePlayback();

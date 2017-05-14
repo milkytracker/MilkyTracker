@@ -55,6 +55,9 @@ private:
 	PPColor ourOwnBorderColor;
 	const PPColor* borderColor;
 
+	PPPoint currentPosition;
+	pp_int32 currentOffset;
+
 	PPScrollbar* hScrollbar;	
 
 	PPControl* caughtControl;
@@ -92,6 +95,7 @@ private:
 	bool drawMode;
 
 	bool hasDragged;
+	bool invertMWheelZoom;
 
 	// selection
 	pp_int32 selectionTicker;
@@ -129,6 +133,7 @@ public:
 	void setBorderColor(const PPColor& color) { borderColor = &color; }
 
 	static void formatMillis(char* buffer, pp_uint32 millis);
+	static void formatMillisFraction(char* buffer, pp_uint32 millis, pp_uint32 totalMillis);
 
 	// from PPControl
 	virtual void paint(PPGraphicsAbstract* graphics);	
@@ -186,6 +191,8 @@ public:
 
 		notifyUpdate();
 	}
+
+	void setInvertMWheelZoom(bool invert) { invertMWheelZoom = invert; }
 	
 	void showAll();
 

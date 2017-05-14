@@ -71,6 +71,9 @@ const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 		// PPButton foreground text
 		case ColorButtonText:
 			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText);
+		// Record mode button foreground text
+		case ColorRecordModeButtonText:
+			return TrackerConfig::colorRecordModeButtonText;
 		
 		// Various
 		case ColorSelection:
@@ -78,6 +81,8 @@ const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 
 		case ColorListBoxBackground:
 			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground);
+		case ColorScrollBarBackground:
+			return PPUIConfig::getInstance()->getColor(PPUIConfig::ColorScrollBarBackground);
 			
 		case ColorPatternSelection:
 			return TrackerConfig::colorPatternEditorSelection;			
@@ -88,11 +93,18 @@ const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 
 		case ColorScopes:
 			return TrackerConfig::colorScopes;
+		case ColorScopesRecordIndicator:
+			return TrackerConfig::colorScopesRecordIndicator;
+		case ColorPeakClipIndicator:
+			return TrackerConfig::colorPeakClipIndicator;
 
 		case ColorRowHighlitedFirst:
 			return TrackerConfig::colorRowHighLight_1;
 		case ColorRowHighlitedSecond:
 			return TrackerConfig::colorRowHighLight_2;
+
+		case ColorSampleEditorWaveform:
+			return TrackerConfig::colorSampleEditorWaveform;
 
 		default:
 			return dummy;
@@ -136,12 +148,17 @@ const char* GlobalColorConfig::getColorReadableDescription(GlobalColors whichCol
 		// PPButton foreground text
 		case ColorButtonText:
 			return "Button text";
+		// Record mode button foreground text
+		case ColorRecordModeButtonText:
+			return "Record mode button text";
 		
 		// Various
 		case ColorSelection:
 			return "Selections";
 		case ColorListBoxBackground:
 			return "Listbox background";
+		case ColorScrollBarBackground:
+			return "Scrollbar background";
 		case ColorPatternSelection:
 			return "Pattern block";
 		case ColorTextHighlited:
@@ -150,11 +167,18 @@ const char* GlobalColorConfig::getColorReadableDescription(GlobalColors whichCol
 			return "Pattern:2nd highlight text";
 		case ColorScopes:
 			return "Scopes";
+		case ColorScopesRecordIndicator:
+			return "Scopes record indicator";
+		case ColorPeakClipIndicator:
+			return "Peak clip indicator";
 
 		case ColorRowHighlitedFirst:
 			return "Pattern:1st row bg";
 		case ColorRowHighlitedSecond:
 			return "Pattern:2nd row bg";
+
+		case ColorSampleEditorWaveform:
+			return "Sample editor waveform";
 
 		default:
 			return NULL;
@@ -210,6 +234,10 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		case ColorButtonText:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorDefaultButtonText, color);
 			break;
+		// Record mode button foreground text
+		case ColorRecordModeButtonText:
+			TrackerConfig::colorRecordModeButtonText = color;
+			break;
 		
 		// Various
 		case ColorSelection:
@@ -218,6 +246,9 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 
 		case ColorListBoxBackground:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorListBoxBackground, color);
+			break;
+		case ColorScrollBarBackground:
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorScrollBarBackground, color);
 			break;
 			
 		case ColorPatternSelection:
@@ -236,6 +267,14 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 			TrackerConfig::colorScopes = color;
 			break;
 
+		case ColorScopesRecordIndicator:
+			TrackerConfig::colorScopesRecordIndicator = color;
+			break;
+
+		case ColorPeakClipIndicator:
+			TrackerConfig::colorPeakClipIndicator = color;
+			break;
+
 		case ColorRowHighlitedFirst:
 			TrackerConfig::colorRowHighLight_1 = color;
 			break;
@@ -243,6 +282,14 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		case ColorRowHighlitedSecond:
 			TrackerConfig::colorRowHighLight_2 = color;
 			break;
-	}	
+
+		case ColorSampleEditorWaveform:
+			TrackerConfig::colorSampleEditorWaveform = color;
+			break;
+            
+        case ColorLast:
+            // Not handled
+            break;
+	}
 }
 

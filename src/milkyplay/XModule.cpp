@@ -159,14 +159,16 @@ void TXMSample::restoreOriginalState()
 void TXMSample::postProcessSamples()
 {
 	mp_ubyte buffer[8];
+	mp_sint32 loopend = loopstart + looplen;
+	mp_sint32 samplen = this->samplen;
 
 	// this is in fact not good
-	if (loopstart + looplen > samplen)
+	if (loopend > samplen)
 	{
 		if (loopstart > samplen)
 			loopstart = samplen;
 		// calculate loop end
-		mp_uint32 loopend = loopstart + looplen;
+		loopend = loopstart + looplen;
 		// clip loop end
 		if (loopend > samplen)
 			loopend = samplen;
@@ -191,7 +193,7 @@ void TXMSample::postProcessSamples()
 	const mp_ubyte importantFlags = 3 + 16;
 	
 	if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateDirty ||
-		(((loopBufferProps->lastloopend != loopstart+looplen) ||
+		(((loopBufferProps->lastloopend != loopend) ||
 		  (loopBufferProps->state[1] != (type & importantFlags))) && 
 		 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed))
 	{
@@ -222,19 +224,19 @@ void TXMSample::postProcessSamples()
 			if ((type&3) == 1)
 			{
 				// padding start
-				data[-1] = data[loopstart+looplen-1];
-				data[-2] = data[loopstart+looplen-2];
-				data[-3] = data[loopstart+looplen-3];
-				data[-4] = data[loopstart+looplen-4];
+				data[-1] = data[loopend-1];
+				data[-2] = data[loopend-2];
+				data[-3] = data[loopend-3];
+				data[-4] = data[loopend-4];
 				
 				// save portions after loopend, gets overwritten now
-				memcpy(originalSample, data+loopstart+looplen, saveLen);
+				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;			
-				loopBufferProps->lastloopend = loopstart+looplen;
+				loopBufferProps->lastloopend = loopend;
 				
 				memcpy(buffer, data+loopstart, saveLen);
-				memcpy(data+loopstart+looplen, buffer, saveLen);	
+				memcpy(data+loopend, buffer, saveLen);	
 			}
 			else if ((type&3) == 2)
 			{
@@ -242,8 +244,6 @@ void TXMSample::postProcessSamples()
 				data[-2] = data[1];
 				data[-3] = data[2];
 				data[-4] = data[3];
-
-				mp_sint32 loopend = loopstart+looplen;
 
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
@@ -282,19 +282,19 @@ void TXMSample::postProcessSamples()
 			if ((type&3) == 1)
 			{
 				// leading padding
-				data[-1] = data[loopstart+looplen-1];
-				data[-2] = data[loopstart+looplen-2];
-				data[-3] = data[loopstart+looplen-3];
-				data[-4] = data[loopstart+looplen-4];
+				data[-1] = data[loopend-1];
+				data[-2] = data[loopend-2];
+				data[-3] = data[loopend-3];
+				data[-4] = data[loopend-4];
 				
 				// save portions after loopend, gets overwritten now
-				memcpy(originalSample, data+loopstart+looplen, saveLen);
+				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;			
-				loopBufferProps->lastloopend = loopstart+looplen;
+				loopBufferProps->lastloopend = loopend;
 				
 				memcpy(buffer, data+loopstart, saveLen);
-				memcpy(data+loopstart+looplen, buffer, saveLen);				
+				memcpy(data+loopend, buffer, saveLen);				
 			}
 			// bidi loop
 			else if ((type&3) == 2)
@@ -303,8 +303,6 @@ void TXMSample::postProcessSamples()
 				data[-2] = data[1];
 				data[-3] = data[2];
 				data[-4] = data[3];
-
-				mp_sint32 loopend = loopstart+looplen;
 
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
@@ -1488,7 +1486,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	else
 	{
 		memset(buffer, 0, size);
-		f.read(buffer,1,size);
+		f.read(buffer,flags & ST_16BIT ? 2 : 1, length);
 	}
 
 	// 16 bit sample 
@@ -1569,6 +1567,7 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	if (smp[index].type & 16)
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen*2;
+		if(finalSize < 8) finalSize = 8;
 		
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		
@@ -1585,6 +1584,7 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	else
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen;
+		if(finalSize < 4) finalSize = 4;
 		
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
 		

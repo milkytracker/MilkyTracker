@@ -37,45 +37,35 @@ SYSCHAR System::buffer[MAX_PATH+1];
 const SYSCHAR* System::getTempFileName()
 {
 	TCHAR szPath[MAX_PATH+1];
-	_tcscpy(szPath, getConfigFileName(_T("")));
+	UINT result = 0;
 
-	UINT result = ::GetTempFileName(szPath, _T("mt"), ::GetTickCount(), buffer);
+	DWORD dwRetVal = GetTempPath(MAX_PATH, szPath);
+	if (dwRetVal != 0 || dwRetVal <= MAX_PATH)
+		result = GetTempFileName(szPath, _T("mt"), ::GetTickCount(), buffer);
 	if (result == 0)
-	{
 		return getConfigFileName(_T("milkytracker_temp"));
-	}
 
 	return buffer;
 }
 
-const SYSCHAR* System::getConfigFileName(SYSCHAR* fileName/* = NULL*/)
+const SYSCHAR* System::getConfigFileName(SYSCHAR *fileName/* = NULL*/)
 {
-	// get path of our executable
-	TCHAR szPath[MAX_PATH+1];
+	TCHAR szPath[MAX_PATH + 1];
 
-    DWORD dwLen;
-    LPTSTR p;
-    ::GetModuleFileName(NULL, szPath, MAX_PATH);
+	DWORD size = GetEnvironmentVariable(_T("APPDATA"), szPath, MAX_PATH);
 
-	// cut off executable
-	dwLen = (DWORD)_tcslen(szPath);
-
-	if (dwLen)
+	if (size)
 	{
-		p = szPath + dwLen;
-		while (p != szPath) {
-			if (TEXT('\\') == *--p) {
-				*(++p) = 0;
-				break;
-			}
-		}
-    }
-
+		_tcscat_s(szPath, MAX_PATH, _T("\\MilkyTracker"));
+		CreateDirectory(szPath, NULL);
+		_tcscat_s(szPath, MAX_PATH, _T("\\"));
+	}
 	if (fileName)
-		_tcscat(szPath, fileName);
+		_tcscat_s(szPath, MAX_PATH, fileName);
 	else
-		_tcscat(szPath, _T("milkytracker.cfg"));
+		_tcscat_s(szPath, MAX_PATH, _T("milkytracker.cfg"));
 	_tcscpy(buffer, szPath);
+
 	return buffer;
 }
 

@@ -274,6 +274,21 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 					keyCode = 0;
 				}
 				break;
+
+			// Increment/decrement instrument
+			case SC_SS:
+			case SC_TICK:
+				if (screen->getModalControl())
+					break;
+
+				if (::getKeyModifier() == KeyModifierCTRL ||
+					::getKeyModifier() == (KeyModifierSHIFT|KeyModifierCTRL))
+				{
+					getPatternEditorControl()->dispatchEvent(event);
+					event->cancel();
+					keyCode = 0;
+				}
+				break;
 		}
 	
 		switch (keyCode)
@@ -498,6 +513,21 @@ processOthers:
 				}
 		}
 	}
+	else if (event->getID() == eKeyChar)
+	{
+		if (recorderLogic->getRecordMode())
+		{
+			getPatternEditorControl()->dispatchEvent(event);
+			event->cancel();
+		}
+		// if recordMode is false and focus is on pattern editor
+		// we need to cancel the event in order to prevent it
+		// from going into the pattern editor
+		else if (screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl()))
+		{
+			event->cancel();
+		}
+	}
 	else if (event->getID() == eKeyUp)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
@@ -596,15 +626,16 @@ static void simulateMouseClickEvent(PPControl* ctrl)
 bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 {
 	PPControl* ctrl = screen->getModalControl();
-	
-	if (ctrl == NULL || !ctrl->isContainer() || event->getID() != eKeyDown)
+
+	if (ctrl == NULL || !ctrl->isContainer() || (event->getID() != eKeyDown
+			&& event->getID() != eKeyChar))
 		return false;
 
 	PPSimpleVector<PPControl>& controls = static_cast<PPContainer*>(ctrl)->getControls();
 
 	pp_int32 i;
 	// if dialog contains list (list can also be an edit field btw.)
-	// and something is being edited in that list we don't simulate 
+	// and something is being edited in that list we don't simulate
 	// yes/no/cancel button presses
 	for (i = 0; i < controls.size(); i++)
 	{
@@ -613,34 +644,37 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 			return true;
 	}
 
-	// iterate over controls in dialog and see whether we can find 
+	// iterate over controls in dialog and see whether we can find
 	// yes/no/cancel buttons
 	// if that's the case we simulate mouse button press
-	pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-
-	for (i = 0; i < controls.size(); i++)
+	if (event->getID() == eKeyDown)
 	{
-		PPControl* ctrl = controls.get(i);
-		switch (ctrl->getID())
+		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
+
+		for (i = 0; i < controls.size(); i++)
 		{
-			case PP_MESSAGEBOX_BUTTON_YES:	
-				if (keyCode == VK_RETURN)
-				{
-					simulateMouseClickEvent(ctrl);
-					return true;
-				}
-				break;
-				
-			case PP_MESSAGEBOX_BUTTON_CANCEL:
-			case PP_MESSAGEBOX_BUTTON_NO:
-				if (keyCode == VK_ESCAPE)
-				{
-					simulateMouseClickEvent(ctrl);
-					return true;
-				}
-				break;
+			PPControl* ctrl = controls.get(i);
+			switch (ctrl->getID())
+			{
+				case PP_MESSAGEBOX_BUTTON_YES:
+					if (keyCode == VK_RETURN)
+					{
+						simulateMouseClickEvent(ctrl);
+						return true;
+					}
+					break;
+
+				case PP_MESSAGEBOX_BUTTON_CANCEL:
+				case PP_MESSAGEBOX_BUTTON_NO:
+					if (keyCode == VK_ESCAPE)
+					{
+						simulateMouseClickEvent(ctrl);
+						return true;
+					}
+					break;
+			}
 		}
 	}
-	
+
 	return false;
 }

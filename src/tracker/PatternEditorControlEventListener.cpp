@@ -87,15 +87,18 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 		{
 			TMouseWheelEventParams* params = (TMouseWheelEventParams*)event->getDataPtr();
 			
-			if (params->delta > 0)
+			// Vertical scrolling takes priority over horizontal scrolling and is mutually
+			// exclusive from horizontal scrolling.
+			if (params->deltaY)
 			{
-				PPEvent e(eBarScrollUp);
+				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
 				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
 			}
-			else if (params->delta < 0)
+			
+			else if (params->deltaX)
 			{
-				PPEvent e(eBarScrollDown);
-				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
+				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				handleEvent(reinterpret_cast<PPObject*>(hBottomScrollbar), &e);
 			}
 			
 			event->cancel();
@@ -454,6 +457,8 @@ unmuteAll:
 						case ScrollModeStayInCenter:
 							assureCursorVisible();
 							break;
+						case ScrollModeToEnd:
+							break;
 					}
 				}
 				
@@ -759,7 +764,7 @@ markSelection:
 				keyCode == VK_TAB)
 			{
 				if ((::getKeyModifier() == (unsigned)selectionKeyModifier) && 
-				    !keyboardStartSelection && 
+					!keyboardStartSelection && 
 					!keyboadStartSelectionFlipped)
 				{
 					patternEditor->getSelection().end = patternEditor->getCursor();
@@ -780,6 +785,20 @@ markSelection:
 			{
 				parentScreen->paintControl(this);
 			}
+
+			break;
+		}
+
+		case eKeyChar:
+		{
+			assureUpdate = false;
+
+			pp_uint8 character = *((pp_uint8*)event->getDataPtr());
+
+			handleKeyChar(character);
+
+			if (assureUpdate)
+				parentScreen->paintControl(this);
 
 			break;
 		}
@@ -984,6 +1003,8 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 				
 				break;
 			}
+			default:
+				break;
 		}
 		return 0;
 	}

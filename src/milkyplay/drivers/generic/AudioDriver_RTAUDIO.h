@@ -45,18 +45,20 @@ private:
 	AudioDriverInterface* impl;
 	
 public:
-	enum Api 
+	// The following enum is copied from RtAudio.h, keep synchronised
+	enum Api
 	{
 		UNSPECIFIED,    /*!< Search for a working compiled API. */
 		LINUX_ALSA,     /*!< The Advanced Linux Sound Architecture API. */
+		LINUX_PULSE,    /*!< The Linux PulseAudio API. */
 		LINUX_OSS,      /*!< The Linux Open Sound System API. */
 		UNIX_JACK,      /*!< The Jack Low-Latency Audio Server API. */
 		MACOSX_CORE,    /*!< Macintosh OS-X Core Audio API. */
+		WINDOWS_WASAPI, /*!< The Microsoft WASAPI API. */
 		WINDOWS_ASIO,   /*!< The Steinberg Audio Stream I/O API. */
 		WINDOWS_DS,     /*!< The Microsoft Direct Sound API. */
 		RTAUDIO_DUMMY   /*!< A compilable but non-functional API. */
 	};
-
 	AudioDriver_RTAUDIO(Api audioApi = UNSPECIFIED);
 
 	virtual		~AudioDriver_RTAUDIO();

@@ -314,7 +314,7 @@ ParticleFun::ParticleFun(int width, int height, int FOV) :
 
 	Texture::convert24to16(flareTexture, texture,  TEXTURESIZE*TEXTURESIZE, 0);
 
-	delete texture;
+	delete[] texture;
 
 	for (i = 0; i < NUMPARTICLES; i++)
 	{

@@ -64,9 +64,14 @@ public:
 	static PPColor colorHighLight_1;
 	static PPColor colorHighLight_2;
 	static PPColor colorScopes;
+	static PPColor colorScopesRecordIndicator;
+	static PPColor colorPeakClipIndicator;
+
 	static PPColor colorRowHighLight_1;
 	static PPColor colorRowHighLight_2;
-	
+
+	static PPColor colorSampleEditorWaveform;
+
 	static pp_int32 numTabs;
 	
 	static pp_int32 numPlayerChannels;

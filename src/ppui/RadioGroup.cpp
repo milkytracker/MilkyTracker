@@ -226,6 +226,8 @@ pp_int32 PPRadioGroup::dispatchEvent(PPEvent* event)
 		case eLMouseUp:
 			parentScreen->paintControl(this);
 			break;
+		default:
+			break;
 	}	
 
 	return 0;

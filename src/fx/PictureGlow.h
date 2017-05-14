@@ -38,7 +38,7 @@ private:
 
 public:
 	PictureGlow(int w, int h, int rShift, unsigned short* picture) :
-		resShift(resShift),
+		resShift(0),
 		pictureBuffer(picture)
 	{
 		width = w;
@@ -51,8 +51,8 @@ public:
 
 	~PictureGlow()
 	{
-		delete glowBuffer1;
-		delete glowBuffer2;
+		delete[] glowBuffer1;
+		delete[] glowBuffer2;
 	}
 
 	void setScale(int scale) { this->scale = scale; }

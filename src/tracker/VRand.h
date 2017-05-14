@@ -43,6 +43,8 @@
 #include <windows.h>
 #endif
 
+#include "BasicTypes.h"
+
 // Usage:
 // ------
 // VRande rand;
@@ -150,10 +152,10 @@ public:
   }
 
 private:
-  unsigned long  m_seed;
-  unsigned long  m_count;
+  pp_uint32  m_seed;
+  pp_uint32  m_count;
   union {
-  	unsigned long  m_white;
+       pp_uint32  m_white;
 	float m_fwhite;
   };
   float          m_pink;
