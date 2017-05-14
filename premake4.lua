@@ -34,7 +34,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68020 --std=c++98 -fpermissive -fomit-frame-pointer -g"
+	cppflags = "-m68020 -fpermissive -fomit-frame-pointer -g -fbbb=aspcmbf"
 }
 
 if _OPTIONS.platform then
@@ -64,14 +64,14 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+--			flags { "OptimizeSize" }
 			targetname "milkyplay"
 			buildoptions"-noixemul"
 		configuration "ixemul"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+			flags { "OptimizeSize" }
 			targetname "milkyplay"
-
+			buildoptions "--std=c++98"
 
 	project "fx"
 		kind "StaticLib"
@@ -87,13 +87,14 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+--			flags { "OptimizeSize" }
 			targetname "fx"
 			buildoptions"-noixemul"
 		configuration "ixemul"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+			flags { "OptimizeSize" }
 			targetname "milkyplay"
+			buildoptions "--std=c++98"
 
 	project "compression"
 		kind "StaticLib"
@@ -110,13 +111,14 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+--			flags { "OptimizeSize" }
 			targetname "compression"
 			buildoptions"-noixemul"
 		configuration "ixemul"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+			flags { "OptimizeSize" }
 			targetname "milkyplay"
+			buildoptions "--std=c++98"
 
 	project "ppui"
 		kind "StaticLib"
@@ -132,13 +134,14 @@ solution "milkytracker"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+--			flags { "OptimizeSize" }
 			targetname "ppui"	
 			buildoptions"-noixemul"
 		configuration "ixemul"
 			defines { "NDEBUG" }
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+			flags { "OptimizeSize" }
 			targetname "milkyplay"
+			buildoptions "--std=c++98"
 
 	project "milkytracker"
 		-- kind "SDLApp"
@@ -161,8 +164,10 @@ solution "milkytracker"
 		
 		-- Release options.
 		configuration "Release"
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
-			buildoptions"-noixemul"
+--			flags { "OptimizeSize" }
+			buildoptions "-noixemul"
 
 		configuration "ixemul"
-			flags { "OptimizeSize", "Optimize", "OptimizeSpeed" }
+			flags { "OptimizeSize" }
+			buildoptions "--std=c++98"
+			targetname "milkytracker.68k-ixemul"
