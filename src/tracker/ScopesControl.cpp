@@ -40,7 +40,7 @@
 
 #undef PANNINGINDICATOR
 
-pp_int32 ScopesControl::WRAPCHANNELS()
+pp_int32 ScopesControl::WRAPCHANNELS() const
 {
 	if (parentScreen->getWidth() < 800)
 	{
@@ -262,7 +262,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	pp_int32 channelWidth = visibleWidth / numChannels;
 	pp_int32 channelHeight = visibleHeight;
 
-	if (numChannels > WRAPCHANNELS())
+	if (isWrapped())
 	{
 		channelWidth = visibleWidth / (numChannels>>1);
 		channelHeight>>=1;
@@ -307,6 +307,8 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	scopedColor+=tempCol;
 	scopedColor.scaleFixed(49192);
 
+    const bool wrapped = isWrapped();
+    
 	for (pp_int32 c = 0; c < numChannels; c++)
 	{
 		char buffer[8];
@@ -320,7 +322,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 
 		// correct last channel
 		cn++;
-		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
+		if (wrapped && cn >= (numChannels>>1))
 		{
 			cn = 0;
 			y++;
@@ -394,7 +396,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->drawString("\xf0", sx-1, sy2);
 		}
 
-		g->setFont((channelWidth < 40 || numChannels > WRAPCHANNELS()) ? smallFont : font);
+		g->setFont((channelWidth < 40 || wrapped) ? smallFont : font);
 		g->setColor(0, 0, 0);
 		g->drawString(buffer, sx+1, sy+1);
 		g->setColor(foregroundColor);
@@ -420,7 +422,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		x+=channelWidthTable[cn+1];
 	}
 
-	if (numChannels > WRAPCHANNELS())
+	if (isWrapped())
 	{
 		x = location.x + xOffset;
 
@@ -664,7 +666,9 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 	pp_int32 channelWidth = visibleWidth / numChannels;
 	pp_int32 channelHeight = visibleHeight;
 
-	if (numChannels > WRAPCHANNELS())
+    const bool wrapped = isWrapped();
+    
+	if (wrapped)
 	{
 		channelWidth = visibleWidth / (numChannels>>1);
 		channelHeight>>=1;
@@ -712,7 +716,7 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 
 		// correct last channel
 		cn++;
-		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
+		if (wrapped && cn >= (numChannels>>1))
 		{
 			cn = 0;
 			y++;

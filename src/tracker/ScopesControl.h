@@ -151,7 +151,9 @@ public:
 private:
 	pp_int32 pointToChannel(const PPPoint& pt);
 
-	pp_int32 WRAPCHANNELS();
+	pp_int32 WRAPCHANNELS() const;
+    
+    bool isWrapped() const { return numChannels > WRAPCHANNELS(); }
 };
 
 
