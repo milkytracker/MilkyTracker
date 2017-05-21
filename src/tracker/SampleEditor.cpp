@@ -2120,8 +2120,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 	
 	prepareUndo();	
 	
-	float c4spd = getc4spd(sample->relnote, sample->finetune);
-	float scale = c4spd / 44100.0f;
+	float c4spd = 8363; // there really should be a global constant for this
 	
 	Equalizer** eqs = new Equalizer*[par->getNumParameters()];
 	
@@ -2131,7 +2130,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i]*scale, EQConstants::EQ3bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
+			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i], EQConstants::EQ3bandwidths[i], c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	// ten band EQ
@@ -2140,7 +2139,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i]*scale, EQConstants::EQ10bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
+			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i], EQConstants::EQ10bandwidths[i], c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	else
