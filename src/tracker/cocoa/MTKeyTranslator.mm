@@ -132,6 +132,7 @@
 		case kVK_F10:			return VK_F10;
 		case kVK_F11:			return VK_F11;
 		case kVK_F12:			return VK_F12;
+		case kVK_F13:			return VK_INSERT;
 
 		default:				return VK_UNDEFINED;
 	}
