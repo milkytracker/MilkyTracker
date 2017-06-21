@@ -326,10 +326,14 @@ static mp_sint32 gusFreqToFT2Note(mp_dword freq)
 		/* Octave 8 */  4186073, 4434930, 4698645, 4978041, 5274051, 5587663, 5919922, 6271939, 6644889, 7040015, 7458636, 7902150, 0xFFFFFFFF
 	};
 
+	if (scale_table[0] > freq)
+	{
+		return 0-12;
+	}
 	for (mp_uint32 no = 0; no < sizeof(scale_table)/sizeof(mp_dword)-1; no++)
 	{
 		if (scale_table[no] <= freq && 
-			scale_table[no+1] >= freq)
+			scale_table[no+1] > freq)
 			return (no-12);
 	}
 	
@@ -458,7 +462,7 @@ mp_sint32 XIInstrument::loadPAT(XMFile& f)
 		//if (i == numsamples - 1)
 		//	hi = 96;
 		
-		for (mp_sint32 j = lo; j < hi; j++)
+		for (mp_sint32 j = lo; j <= hi; j++)
 			if (j >= 0 && j <= 95)
 				if (nbu[j] == 0xFF) nbu[j] = i;
 		

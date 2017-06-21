@@ -168,10 +168,16 @@ if(APPLE)
     set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 endif()
 
-# Under Windows we use Git Submodules to locate the decompression libraries
+# Under macOS and Windows we use Git Submodules to locate the decompression libs
 if(UNIX)
+    # zlib is provided by Linux and macOS
+    find_package(ZLIB)
+
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_package(ALSA)
+        find_package(JACK)
+        find_package(LHASA)
+        find_package(ZZIPLIB)
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
@@ -186,13 +192,6 @@ if(UNIX)
             message("MIDI support disabled (ALSA unavailable)")
         endif()
     endif()
-
-    if(NOT APPLE)
-        find_package(JACK)
-    endif()
-    find_package(LHASA)
-    find_package(ZLIB)
-    find_package(ZZIPLIB)
 endif()
 
 # Restore library suffixes
