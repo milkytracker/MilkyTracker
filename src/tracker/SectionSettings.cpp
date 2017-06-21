@@ -2742,7 +2742,9 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(0)->add(new TabPageIO_1(PAGE_IO_1, *this));
 	tabPages.get(0)->add(new TabPageIO_2(PAGE_IO_2, *this));
 	tabPages.get(0)->add(new TabPageIO_3(PAGE_IO_3, *this));
+#ifndef __LOWRES__
     tabPages.get(0)->add(new TabPageIO_4(PAGE_IO_4, *this));
+#endif
 
 	tabPages.get(1)->add(new TabPageLayout_1(PAGE_LAYOUT_1, *this));
 	tabPages.get(1)->add(new TabPageLayout_2(PAGE_LAYOUT_2, *this));
