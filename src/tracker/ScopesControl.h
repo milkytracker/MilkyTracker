@@ -85,6 +85,7 @@ private:
 	pp_uint8 recChannels[TrackerConfig::MAXCHANNELS];
 	pp_uint8 lastRecChannels[TrackerConfig::MAXCHANNELS];
 	pp_int32 lastNumChannels;
+    PPRect channelRects[TrackerConfig::MAXCHANNELS];
 	PPFont* font;
 	PPFont* smallFont;
 
@@ -153,7 +154,7 @@ private:
 
 	pp_int32 WRAPCHANNELS() const;
     
-    bool isWrapped() const { return numChannels > WRAPCHANNELS(); }
+    bool isWrapped() const { return ((numChannels - 2) / WRAPCHANNELS()) > 0; }
 };
 
 
