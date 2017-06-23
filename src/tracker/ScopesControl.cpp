@@ -38,6 +38,8 @@
 #include "PPUIConfig.h"
 #include "TrackerConfig.h"
 
+#include <math.h>
+
 #undef PANNINGINDICATOR
 
 pp_int32 ScopesControl::WRAPCHANNELS() const
