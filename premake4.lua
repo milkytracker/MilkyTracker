@@ -34,7 +34,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68020 -fpermissive -fomit-frame-pointer -g -fbbb=aspcmbf"
+	cppflags = "-m68040 -fpermissive -fomit-frame-pointer -fno-rtti -fno-exceptions -fbbb=sapcmfbi"
 }
 
 if _OPTIONS.platform then
@@ -67,6 +67,11 @@ solution "milkytracker"
 --			flags { "OptimizeSize" }
 			targetname "milkyplay"
 			buildoptions"-noixemul"
+		configuration "release-nofpu"
+			defines { "NDEBUG" }
+--			flags { "" }
+			buildoptions "-noixemul -msoft-float"
+			targetname "milkyplay"
 		configuration "ixemul"
 			defines { "NDEBUG" }
 			flags { "OptimizeSize" }
@@ -84,12 +89,16 @@ solution "milkytracker"
 			defines { "DEBUG" }
 			flags { "Symbols" }
 			targetname "fx_d"
-
 		configuration "release"
 			defines { "NDEBUG" }
 --			flags { "OptimizeSize" }
 			targetname "fx"
 			buildoptions"-noixemul"
+		configuration "release-nofpu"
+                        defines { "NDEBUG" }
+--                        flags { "" }
+                        buildoptions "-noixemul -msoft-float"
+                        targetname "fx"
 		configuration "ixemul"
 			defines { "NDEBUG" }
 			flags { "OptimizeSize" }
@@ -114,6 +123,11 @@ solution "milkytracker"
 --			flags { "OptimizeSize" }
 			targetname "compression"
 			buildoptions"-noixemul"
+		configuration "release-nofpu"
+                        defines { "NDEBUG" }
+--                        flags { "" }
+                        buildoptions "-noixemul -msoft-float"
+                        targetname "compression"
 		configuration "ixemul"
 			defines { "NDEBUG" }
 			flags { "OptimizeSize" }
@@ -137,6 +151,11 @@ solution "milkytracker"
 --			flags { "OptimizeSize" }
 			targetname "ppui"	
 			buildoptions"-noixemul"
+		configuration "release-nofpu"
+                        defines { "NDEBUG" }
+--                        flags { "" }
+                        buildoptions "-noixemul -msoft-float"
+                        targetname "ppui"
 		configuration "ixemul"
 			defines { "NDEBUG" }
 			flags { "OptimizeSize" }
@@ -152,7 +171,7 @@ solution "milkytracker"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl/*" }
 		links { "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug" } --, "SDLstub", "SDL_image" }
-		linkoptions { "-D__AMIGA__ -fpermissive -noixemul -m68020 -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
+		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -fbbb=sapcmfbi -noixemul -m68040 -msoft-float -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
 		-- Libraries.
 		configuration "Linux"
 		
@@ -166,8 +185,12 @@ solution "milkytracker"
 		configuration "Release"
 --			flags { "OptimizeSize" }
 			buildoptions "-noixemul"
-
+		configuration "Release-noFPU"
+                        defines { "NDEBUG" }
+--                        flags { "" }
+                        buildoptions "-noixemul -msoft-float"
+			targetsuffix "-nofpu"
 		configuration "ixemul"
 			flags { "OptimizeSize" }
 			buildoptions "--std=c++98"
-			targetname "milkytracker.68k-ixemul"
+			targetsuffix "-ixemul"
