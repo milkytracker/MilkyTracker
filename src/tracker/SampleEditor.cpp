@@ -2189,14 +2189,11 @@ void SampleEditor::tool_generateSilence(const FilterParameters* par)
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
 	
-	if ((sStart == sEnd) || hasValidSelection())
+	if (sStart >= 0 && sEnd >= 0)
 	{
-		if (sStart >= 0 && sEnd >= 0)
-		{		
-			if (sEnd < sStart)
-			{
-				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
-			}
+		if (sEnd < sStart)
+		{
+			pp_int32 s = sEnd; sEnd = sStart; sStart = s;
 		}
 	}
 	else
