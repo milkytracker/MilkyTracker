@@ -155,6 +155,7 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 						tracker.playerController->switchPlayMode(PlayerController::PlayMode_FastTracker2, !keepSettings());
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(false);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(false);
+						tracker.getPatternEditorControl()->setPtNoteLimit(false);
 						
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(false);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_BUTTON_SETDEFAULTPANNING)->enable(false);
@@ -163,6 +164,7 @@ pp_int32 SectionQuickOptions::handleEvent(PPObject* sender, PPEvent* event)
 						tracker.playerController->switchPlayMode(PlayerController::PlayMode_ProTracker2, !keepSettings());						
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(true);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(true);
+						tracker.getPatternEditorControl()->setPtNoteLimit(true);
 
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(true);
 						static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_BUTTON_SETDEFAULTPANNING)->enable(true);
