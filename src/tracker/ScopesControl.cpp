@@ -38,28 +38,36 @@
 #include "PPUIConfig.h"
 #include "TrackerConfig.h"
 
+#include <math.h>
+
 #undef PANNINGINDICATOR
 
-pp_int32 ScopesControl::WRAPCHANNELS()
+pp_int32 ScopesControl::WRAPCHANNELS() const
 {
-	if (parentScreen->getWidth() < 800)
-	{
 #ifdef __LOWRES__
-		return 16;
+    return 16;
 #else
-		return 18;
+    if (numChannels <= 32) {
+        if (getSize().width < 800)
+        {
+            return 18;
+        }
+        if (getSize().width < 1024)
+        {
+            return 20;
+        }
+        if (getSize().width < 1280)
+        {
+            return 22;
+        }
+        
+        return 32;
+    }
+    else
+    {
+        return 32;
 #endif
-	}
-	if (parentScreen->getWidth() < 1024)
-	{
-		return 20;
-	}
-	if (parentScreen->getWidth() < 1280)
-	{
-		return 22;
-	}
-
-	return 32;
+    }
 }
 
 ScopesControl::ScopesControl(pp_int32 id,
@@ -262,20 +270,23 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	pp_int32 channelWidth = visibleWidth / numChannels;
 	pp_int32 channelHeight = visibleHeight;
 
-	if (numChannels > WRAPCHANNELS())
+    const pp_uint32 numLines = ceil((float)numChannels / (float)WRAPCHANNELS());
+    const pp_uint32 channelsPerLine = ceil((float)numChannels/(float)numLines);
+    if (isWrapped())
 	{
-		channelWidth = visibleWidth / (numChannels>>1);
-		channelHeight>>=1;
+        
+		channelWidth = visibleWidth / channelsPerLine;
+		channelHeight/=numLines;
 
 		pp_int32 i;
-		pp_int32 r = visibleWidth % (numChannels>>1);
+		pp_int32 r = visibleWidth % channelsPerLine;
 
-		for (i = 0; i < numChannels >> 1; i++)
+		for (i = 0; i < channelsPerLine; i++)
 			channelWidthTable[i] = channelWidth;
 
 		for (i = 0; i < r; i++)
 		{
-			pp_int32 j = (i*(numChannels>>1))/r;
+			pp_int32 j = (i*channelsPerLine)/r;
 			channelWidthTable[j]++;
 		}
 	}
@@ -307,26 +318,34 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	scopedColor+=tempCol;
 	scopedColor.scaleFixed(49192);
 
+    const bool wrapped = isWrapped();
+    
 	for (pp_int32 c = 0; c < numChannels; c++)
 	{
 		char buffer[8];
 		PPTools::convertToDec(buffer, c + 1, PPTools::getDecNumDigits(c+1));
 
-		mp_sint32 locy = location.y + yOffset + y*channelHeight + channelHeight / 2;
+        const mp_sint32 starty = location.y + yOffset + y*channelHeight;
+		mp_sint32 locy = starty + channelHeight / 2;
 		mp_sint32 locx = location.x + xOffset + x;
 		mp_sint32 cWidth = channelWidthTable[cn];
 
+        channelRects[c].x1 = locx;
+        channelRects[c].y1 = starty;
+        channelRects[c].x2 = locx + cWidth;
+        channelRects[c].y2 = starty + channelHeight;
+        
 		pp_int32 count = cWidth;
 
 		// correct last channel
 		cn++;
-		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
+		if (wrapped && cn >= channelsPerLine)
 		{
 			cn = 0;
 			y++;
 			count = visibleWidth - (xOffset + x);
 		}
-		else if (c == numChannels-1)
+		else if (c == numChannels-1 && numChannels == (numLines * channelsPerLine))
 		{
 			count = visibleWidth - (xOffset + x);
 		}
@@ -394,7 +413,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->drawString("\xf0", sx-1, sy2);
 		}
 
-		g->setFont((channelWidth < 40 || numChannels > WRAPCHANNELS()) ? smallFont : font);
+		g->setFont((channelWidth < 40 || wrapped) ? smallFont : font);
 		g->setColor(0, 0, 0);
 		g->drawString(buffer, sx+1, sy+1);
 		g->setColor(foregroundColor);
@@ -408,7 +427,28 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	}
 
 	g->setRect(location.x + 1, location.y + 1, location.x + size.width - 1, location.y + size.height - 1);
-	x = location.x + xOffset + channelWidthTable[0];
+
+    if (isWrapped())
+    {
+        pp_int32 xPos = location.x + xOffset;
+        pp_int32 yPos = location.y + yOffset + channelHeight;
+        for (pp_int32 y = 1; y < numLines; y++)
+        {
+            g->setColor(bColor);
+            g->drawHLine(xPos, xPos + visibleWidth - 1, yPos - 1);
+            
+            g->setColor(*borderColor);
+            g->drawHLine(xPos, xPos + visibleWidth - 1, yPos);
+            
+            g->setColor(dColor);
+            g->drawHLine(xPos, xPos + visibleWidth - 1, yPos + 1);
+            
+            yPos += channelHeight;
+        }
+    }
+    
+    
+    x = location.x + xOffset + channelWidthTable[0];
 	for (cn = 0; cn < (visibleWidth / channelWidth) - 1; cn++)
 	{
 		g->setColor(bColor);
@@ -418,25 +458,6 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		g->setColor(dColor);
 		g->drawVLine(location.y + yOffset, location.y + yOffset + visibleHeight, x+1);
 		x+=channelWidthTable[cn+1];
-	}
-
-	if (numChannels > WRAPCHANNELS())
-	{
-		x = location.x + xOffset;
-
-		for (cn = 0; cn < (visibleWidth / channelWidth); cn++)
-		{
-			g->setColor(bColor);
-			g->drawHLine(x+1, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1)-1);
-
-			g->setColor(*borderColor);
-			g->drawHLine(x, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1));
-
-			g->setColor(dColor);
-			g->drawHLine(x+1, x + channelWidthTable[cn]-1, location.y + yOffset + (visibleHeight>>1)+1);
-
-			x+=channelWidthTable[cn];
-		}
 	}
 
 }
@@ -658,79 +679,13 @@ pp_int32 ScopesControl::pointToChannel(const PPPoint& pt)
 	if (numChannels < 2)
 		return -1;
 
-	pp_int32 xOffset = 2;
-	pp_int32 yOffset = 2;
-
-	pp_int32 channelWidth = visibleWidth / numChannels;
-	pp_int32 channelHeight = visibleHeight;
-
-	if (numChannels > WRAPCHANNELS())
-	{
-		channelWidth = visibleWidth / (numChannels>>1);
-		channelHeight>>=1;
-
-		pp_int32 i;
-		pp_int32 r = visibleWidth % (numChannels>>1);
-
-		for (i = 0; i < numChannels >> 1; i++)
-			channelWidthTable[i] = channelWidth;
-
-		for (i = 0; i < r; i++)
-		{
-			pp_int32 j = (i*(numChannels>>1))/r;
-			channelWidthTable[j]++;
-		}
-	}
-	else
-	{
-		pp_int32 i;
-		pp_int32 r = visibleWidth % numChannels;
-
-		for (i = 0; i < numChannels; i++)
-			channelWidthTable[i] = channelWidth;
-
-		for (i = 0; i < r; i++)
-		{
-			pp_int32 j = (i*numChannels)/r;
-			channelWidthTable[j]++;
-		}
-	}
-
-
-	// detect hit
-	pp_int32 cn = 0;
-	pp_int32 y = 0;
-	pp_int32 x = 0;
-
-	for (pp_int32 c = 0; c < numChannels; c++)
-	{
-		mp_sint32 locy = location.y + yOffset + y*channelHeight;
-		mp_sint32 locx = location.x + xOffset + x;
-		mp_sint32 cWidth = channelWidthTable[cn];
-
-		pp_int32 count = cWidth;
-
-		// correct last channel
-		cn++;
-		if (numChannels > WRAPCHANNELS() && cn >= (numChannels>>1))
-		{
-			cn = 0;
-			y++;
-			count+=visibleWidth - (xOffset + x);
-		}
-		else if (c == numChannels-1)
-		{
-			count+=visibleWidth - (xOffset + x);
-		}
-
-		if (pt.x > locx+1 && pt.y+1 > locy && pt.x < locx + count - 1 && pt.y < locy + channelHeight - 1)
-			return c;
-
-		if (cn == 0)
-			x = -cWidth;
-
-		x+=cWidth;
-	}
+    for (pp_int32 c = 0; c < numChannels; c++)
+    {
+        if (pt.x >= channelRects[c].x1 && pt.x < channelRects[c].x2 &&
+            pt.y >= channelRects[c].y1 && pt.y < channelRects[c].y2) {
+            return c;
+        }
+    }
 
 	return -1;
 }

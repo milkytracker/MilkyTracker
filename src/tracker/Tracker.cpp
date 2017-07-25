@@ -194,9 +194,9 @@ Tracker::Tracker() :
 
 	pp_int32 i;
 	
-	muteChannels = new bool[TrackerConfig::numPlayerChannels];
+	muteChannels = new bool[TrackerConfig::maximumPlayerChannels];
 	
-	for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
+	for (i = 0; i < TrackerConfig::maximumPlayerChannels; i++)
 		muteChannels[i] = false;
 		
 	initKeyBindings();

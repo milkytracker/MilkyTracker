@@ -851,31 +851,27 @@ bool PlayerController::isChannelRecording(mp_sint32 c)
 	return recordChannels[c];
 }
 
-bool PlayerController::reallocChannels()
-{
-	if (!player)
-		return false;
-
-	if (module)
-	{
-		bool paused = player->isPaused();
-		stop(false);		
-		// reattaching will cause the desired channels to be allocated
-		attachModuleEditor(moduleEditor);
-		if (paused)
-			player->pausePlaying();
-		continuePlaying();
-	}
-	return true;
-}
-
 void PlayerController::reallocateChannels(mp_sint32 moduleChannels/* = 32*/, mp_sint32 virtualChannels/* = 0*/)
 {
+    
+    // channels might be changed, we need to make sure playing is stopped firstly
+    bool paused = false;
+    if (player && module) {
+        paused = player->isPaused();
+        stop(false);
+    }
+    
 	numPlayerChannels = moduleChannels;
 	numVirtualChannels = virtualChannels;
-	totalPlayerChannels = numPlayerChannels + numVirtualChannels + 2;
+    totalPlayerChannels = numPlayerChannels + (numVirtualChannels >= 0 ? numVirtualChannels : 0) + 2;
 
-	reallocChannels();
+    if (player && module) {
+        // reattaching will cause the desired channels to be allocated
+        attachModuleEditor(moduleEditor);
+        if (paused)
+            player->pausePlaying();
+        continuePlaying();
+    }
 }
 
 void PlayerController::setUseVirtualChannels(bool bUseVirtualChannels)

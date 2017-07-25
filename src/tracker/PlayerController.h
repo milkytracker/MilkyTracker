@@ -163,7 +163,6 @@ public:
 	bool isChannelRecording(mp_sint32 c);
 
 private:
-	bool reallocChannels();
 	void reallocateChannels(mp_sint32 moduleChannels = 32, mp_sint32 virtualChannels = 0);
 	void setUseVirtualChannels(bool bUseVirtualChannels);
 
