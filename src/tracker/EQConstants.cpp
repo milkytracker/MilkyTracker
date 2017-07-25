@@ -20,52 +20,49 @@
  *
  */
 
-/*  
- * bullshit trial and error values following because nobody knows 
- * how the EQ actually works
- *
- */
-
 #include "EQConstants.h"
+#include "math.h"
+
+#define p(e) ldexp(0x10558, e-4*4)
 
 const float EQConstants::EQ3bands[3] = 
 {
-	80.0f,
-	2500.0f,
-	12000.0f
+	p(5),  // 32     Hz
+	p(9),  // 522    Hz
+	p(12), // 4181.5 Hz
 };
 
 const float EQConstants::EQ3bandwidths[3] = 
 {
-	2500.0f*0.25f,
-	2500.0f*0.5f,
-	2500.0f
+	170.0f,
+	600.0f,
+	1000.0f
 };
 
 const float EQConstants::EQ10bands[10] = 
 {
-	31.25f,
-	62.5f,
-	125.0f,
-	250.0f,
-	500.0f,
-	1000.0f,
-	2000.0f,
-	4000.0f,
-	8000.0f,
-	16000.0f
+	p(3),  // 8      Hz
+	p(4),  // 16     Hz
+	p(5),  // 32     Hz
+	p(6),  // 65     Hz
+	p(7),  // 130    Hz
+	p(8),  // 261    Hz
+	p(9),  // 522    Hz
+	p(10), // 1     kHz
+	p(11), // 2     kHz
+	p(12), // 4181.5 Hz
 };
 
 const float EQConstants::EQ10bandwidths[10] = 
 {
-	23.44f*0.25f,
-	46.87f*0.30f,
-	93.75f*0.35f,
-	187.5f*0.40f,
-	375.0f*0.45f,
-	750.0f*0.50f,
-	1500.0f*0.55f,
-	3000.0f*0.50f,
-	6000.0f*0.30f,
-	12000.0f*0.25f
+	16,
+	p(3)*1.5f,
+	p(4)*1.5f,
+	p(5)*1.5f,
+	p(6)*1.5f,
+	p(7)*1.5f,
+	p(8)*1.0f,
+	p(9)*1.0f,
+	600.0f,
+	800.0f
 };
