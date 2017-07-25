@@ -36,6 +36,7 @@
 #include "ListBox.h"
 #include "ListBoxFileBrowser.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "PPPathFactory.h"
 
 enum ControlIDs
@@ -146,13 +147,10 @@ DialogFileSelector::DialogFileSelector(PPScreen* screen,
 		button->setText(sortAscending ? "\xfd" : "\xfe");
 		messageBoxContainerGeneric->addControl(button);
 		
-		x3+=114;
-		
-		ctrl = new PPStaticText(DISKMENU_STATICTEXT_FILTEREXTENSIONS, NULL, NULL, PPPoint(x3, y3), "Type filter:", true);
-		messageBoxContainerGeneric->addControl(ctrl);
-		
-		ctrl = new PPCheckBox(DISKMENU_CHECKBOX_FILTEREXTENSIONS, screen, this, PPPoint(x3 + 12*8+2, y3-1));
-		messageBoxContainerGeneric->addControl(ctrl);
+		x3+=114;		
+		PPCheckBox* checkBox = new PPCheckBox(DISKMENU_CHECKBOX_FILTEREXTENSIONS, screen, this, PPPoint(x3 + 12 * 8 + 2, y3 - 1));
+		messageBoxContainerGeneric->addControl(checkBox);
+		messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(DISKMENU_STATICTEXT_FILTEREXTENSIONS, screen, this, PPPoint(x3, y3), "Type filter:", checkBox, true));
 	}
 	
 	y2 = getMessageBoxContainer()->getControlByID(DISKMENU_STATICTEXT_SORTBY)->getLocation().y + 14;

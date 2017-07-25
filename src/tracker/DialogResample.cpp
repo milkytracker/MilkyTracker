@@ -32,6 +32,7 @@
 #include "Screen.h"
 #include "StaticText.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "PPUIConfig.h"
 #include "MessageBoxContainer.h"
 #include "Font.h"
@@ -198,14 +199,14 @@ DialogResample::DialogResample(PPScreen* screen,
 
 	y2+=16;
 
-	x2 = x + width / 2 - (10*8+35 + 14*8)/2;
-	messageBoxContainerGeneric->addControl(new PPStaticText(0, screen, this, PPPoint(x2, y2+2), "Adjust Ft/Rel.Note:", true));	
-	x2+= 21*8;
-	
-	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER2, screen, this, PPPoint(x2, y2+1));
+	x2 = x + width / 2 - (10 * 8 + 35 + 14 * 8) / 2 + 21 * 8;
+	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER2, screen, this, PPPoint(x2, y2 + 1));
 	checkBox->checkIt(adjustFtAndRelnote);
 	messageBoxContainerGeneric->addControl(checkBox);
 
+	x2 -= 21 * 8;
+	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust Ft/Rel.Note:", checkBox, true));	
+	
 	y2+=16;
 
 #ifdef __LOWRES__

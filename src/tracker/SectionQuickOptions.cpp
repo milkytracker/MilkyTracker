@@ -35,6 +35,7 @@
 #include "PlayerMaster.h"
 #include "PlayerSTD.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "RadioGroup.h"
 #include "StaticText.h"
 #include "Seperator.h"
@@ -233,9 +234,9 @@ void SectionQuickOptions::init(pp_int32 px, pp_int32 py)
 	pp_int32 y2 = py+4+12;
 
 	y+=2;
-	container->addControl(new PPStaticText(QUICKOPTIONS_STATICTEXT_KEEPOPTIONS, NULL, NULL, PPPoint(x2 + 2, y), "Keep settings (auto-adjust OFF)", true));
-	checkBoxKeepSettings = new PPCheckBox(QUICKOPTIONS_CHECKBOX_KEEPOPTIONS, screen, this, PPPoint(x2 + 2 + 31*8 + 4, y-1));
+	checkBoxKeepSettings = new PPCheckBox(QUICKOPTIONS_CHECKBOX_KEEPOPTIONS, screen, this, PPPoint(x2 + 2 + 31 * 8 + 4, y - 1));
 	checkBoxKeepSettings->checkIt(false);
+	container->addControl(new PPCheckBoxLabel(QUICKOPTIONS_STATICTEXT_KEEPOPTIONS, NULL, this, PPPoint(x2 + 2, y), "Keep settings (auto-adjust OFF)", checkBoxKeepSettings, true));
 	container->addControl(checkBoxKeepSettings);	
 
 	// add playback modes
@@ -265,20 +266,20 @@ void SectionQuickOptions::init(pp_int32 px, pp_int32 py)
 
 	y2+=15;
 
-	container->addControl(new PPStaticText(QUICKOPTIONS_STATICTEXT_ALLOW8XX, NULL, NULL, PPPoint(x2, y2), "Allow 8xx panning", true));
-	checkBox = new PPCheckBox(QUICKOPTIONS_CHECKBOX_ALLOW8XX, screen, this, PPPoint(x2 + 19*8 + 4, y2-1));
+	checkBox = new PPCheckBox(QUICKOPTIONS_CHECKBOX_ALLOW8XX, screen, this, PPPoint(x2 + 19 * 8 + 4, y2 - 1));
+	container->addControl(new PPCheckBoxLabel(QUICKOPTIONS_STATICTEXT_ALLOW8XX, NULL, this, PPPoint(x2, y2), "Allow 8xx panning", checkBox, true));
 	container->addControl(checkBox);
 
 	y2+=13;
 
-	container->addControl(new PPStaticText(QUICKOPTIONS_STATICTEXT_ALLOWE8X, NULL, NULL, PPPoint(x2, y2), "Allow E8x panning", true));
 	checkBox = new PPCheckBox(QUICKOPTIONS_CHECKBOX_ALLOWE8X, screen, this, PPPoint(x2 + 19*8 + 4, y2-1));
+	container->addControl(new PPCheckBoxLabel(QUICKOPTIONS_STATICTEXT_ALLOWE8X, NULL, this, PPPoint(x2, y2), "Allow E8x panning", checkBox, true));
 	container->addControl(checkBox);
 
 	y2+=13;
 
-	container->addControl(new PPStaticText(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE, NULL, NULL, PPPoint(x2, y2), "PT 3 octaves limit", true));
 	checkBox = new PPCheckBox(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE, screen, this, PPPoint(x2 + 19*8 + 4, y2-1));
+	container->addControl(new PPCheckBoxLabel(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE, NULL, this, PPPoint(x2, y2), "PT 3 octaves limit", checkBox, true));
 	container->addControl(checkBox);
 
 	y2+=13;

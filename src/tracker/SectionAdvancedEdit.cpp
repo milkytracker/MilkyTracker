@@ -35,6 +35,7 @@
 #include "ModuleEditor.h"
 
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "Container.h"
 #include "RadioGroup.h"
 #include "Seperator.h"
@@ -331,17 +332,17 @@ void SectionAdvancedEdit::init(pp_int32 px, pp_int32 py)
 	container->addControl(button);
 
 	y+=12;
-
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y + 2), "Block only", true));		
-
-	checkBoxSplitTrack = new PPCheckBox(ADVEDIT_CHECKBOX_SPLITTRACK, screen, this, PPPoint(x + 11*8, y));
+	
+	checkBoxSplitTrack = new PPCheckBox(ADVEDIT_CHECKBOX_SPLITTRACK, screen, this, PPPoint(x + 11 * 8, y));
 	checkBoxSplitTrack->checkIt(false);
+
+	container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2, y + 2), "Block only", checkBoxSplitTrack, true));		
 	container->addControl(checkBoxSplitTrack);
 	
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2 + 12*8 + 4, y + 2), "Insert note off", true));		
-
-	checkBoxSplitTrackNoteOff = new PPCheckBox(ADVEDIT_CHECKBOX_SPLITTRACKNOTEOFF, screen, this, PPPoint(x + 28*8 + 3, y));
+	checkBoxSplitTrackNoteOff = new PPCheckBox(ADVEDIT_CHECKBOX_SPLITTRACKNOTEOFF, screen, this, PPPoint(x + 28 * 8 + 3, y));
 	checkBoxSplitTrackNoteOff->checkIt(false);
+
+	container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2 + 12*8 + 4, y + 2), "Insert note off", checkBoxSplitTrackNoteOff, true));		
 	container->addControl(checkBoxSplitTrackNoteOff);
 	
 

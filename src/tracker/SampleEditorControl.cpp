@@ -157,7 +157,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
-	editMenuControl->addEntry("New", MenuCommandIDNew);
+	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
 	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
