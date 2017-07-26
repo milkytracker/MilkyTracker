@@ -1115,8 +1115,8 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 
 	RECT rect;
 	rect.left = rect.top = 0;
-	rect.right = windowSize.width;
-	rect.bottom = windowSize.height;
+	rect.right = windowSize.width * scaleFactor;
+	rect.bottom = windowSize.height * scaleFactor;
  
 #ifdef FULLSCREEN
 	AdjustWindowRect(&rect, WS_POPUP, false);
