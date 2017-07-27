@@ -175,12 +175,12 @@ endif()
 if(UNIX)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
+    find_package(LHASA)
+    find_package(ZZIPLIB)
 
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_package(ALSA)
         find_package(JACK)
-        find_package(LHASA)
-        find_package(ZZIPLIB)
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
