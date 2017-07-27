@@ -187,6 +187,7 @@ void EnvelopeEditor::pasteOther(const TEnvelope& env)
 	prepareUndo();
 	
 	*envelope = env;
+	resetSelection();
 	
 	finishUndo();
 }
