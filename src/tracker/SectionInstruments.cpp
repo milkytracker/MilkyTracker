@@ -187,7 +187,8 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				else
 				{
 					const TEnvelope* env = predefinedEnvelopes->restore(i);					
-					getEnvelopeEditor()->pasteOther(*env);					
+					getEnvelopeEditor()->pasteOther(*env);
+					getEnvelopeEditor()->resetSelection();
 				}
 				
 				update();
