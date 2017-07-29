@@ -175,8 +175,13 @@ endif()
 if(UNIX)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
-    find_package(LHASA)
-    find_package(ZZIPLIB)
+
+    # We can't use Brew for these due to OSX target version mismatch
+    # (we're targeting an older version of OSX to increase compatibility)
+    if(!APPLE)
+      find_package(LHASA)
+      find_package(ZZIPLIB)
+    endif()
 
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_package(ALSA)
