@@ -3,12 +3,15 @@ Main Code:
 
 Additional Code:
     Christopher "Deltafire" O'Neill (SDL ports, some features/bugfixes)
+    Dale "d0pefish" Whinham (Cocoa & cmake port, some features/bugfixes)
     Julian "jua" Harnath (Haiku port)
     Antti S. Lankila (Amiga filter coefficients)
     Varthall (Amiga port)
     Andrew Simper (noise code)
     David Ross (EQ code)
     Stuart Caie/Claudio Matsuoka (powerpacker decrunching)
+    Corvus Corax (sample editor filters)
+    Henri Isojärvi (GUS patch loader fixes, GUI improvements)
 
 3rd Party Libraries:
     RtMidi/RtAudio
