@@ -38,26 +38,21 @@
 // get number of channels of protracker compatible song
 static mp_sint32 getPTnumchannels(char *id)
 {
-	struct TModID
+	if(!memcmp(id, "M.K.", 4) || !memcmp(id, "M!K!", 4) || !memcmp(id, "FLT4", 4))
 	{
-		const char*	ID;
-		mp_sint32	numChannels;
-	};
-	
-	TModID modIDs[] = 
+		return 4;
+	}
+	if(!memcmp(id, "FLT8", 4) || !memcmp(id, "OKTA", 4) || !memcmp(id, "OCTA", 4) || !memcmp(id, "FA08", 4) || !memcmp(id, "CD81", 4))
 	{
-		{"M.K.",4},{"M!K!",4},{"FLT4",4},{"FLT8",8},{"OKTA",8},{"OCTA",8},{"FA08",8},{"CD81",8},
-		{"1CHN",1},{"2CHN",2},{"3CHN",3},{"4CHN",4},{"5CHN",5},{"6CHN",6},{"7CHN",7},{"8CHN",8},{"9CHN",9},{"10CH",10},
-		{"11CH",11},{"12CH",12},{"13CH",13},{"14CH",14},{"15CH",15},{"16CH",16},{"17CH",17},{"18CH",18},{"19CH",19},{"20CH",20},
-		{"21CH",21},{"22CH",22},{"23CH",23},{"24CH",24},{"25CH",25},{"26CH",26},{"27CH",27},{"28CH",28},{"29CH",29},{"30CH",30},{"31CH",31},{"32CH",32}
-	};
-	
-	mp_sint32 *id1 = (mp_sint32*)id;
-	for (mp_uint32 x=0;x<sizeof(modIDs)/sizeof(TModID);x++) {
-		mp_sint32 *id2 = (mp_sint32*)modIDs[x].ID;
-		if (*id2==*id1) {
-			return modIDs[x].numChannels;
-		}
+		return 8;
+	}
+	if(id[0] >= '1' && id[0] <= '9' && !memcmp(id + 1, "CHN", 3))
+	{
+		return id[0] - '0';
+	}
+	if(id[0] >= '1' && id[0] <= '9' && id[1]>='0' && id[1] <= '9' && (!memcmp(id + 2, "CH", 2) || !memcmp(id + 2, "CN", 2)))
+	{
+		return (id[0] - '0') * 10 + id[1] - '0';
 	}
 	
 	return 0;
