@@ -178,7 +178,7 @@ if(UNIX)
 
     # We can't use Brew for these due to OSX target version mismatch
     # (we're targeting an older version of OSX to increase compatibility)
-    if(!APPLE)
+    if(NOT APPLE)
       find_package(LHASA)
       find_package(ZZIPLIB)
     endif()
