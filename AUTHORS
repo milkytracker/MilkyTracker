@@ -12,6 +12,7 @@ Additional Code:
     Stuart Caie/Claudio Matsuoka (powerpacker decrunching)
     Corvus Corax (sample editor filters)
     Henri Isojärvi (GUS patch loader fixes, GUI improvements)
+    Johannes Schultz (various compatibility fixes)
 
 3rd Party Libraries:
     RtMidi/RtAudio
