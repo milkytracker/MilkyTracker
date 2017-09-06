@@ -73,6 +73,11 @@ void PatternEditorControl::initKeyBindings()
 	// Scancode bindings
 	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
 
+	// Alternate binding for eventKeyDownBinding_SC_IncreaseRowInsertAdd
+	// for modern ANSI keyboards without section symbol key
+    scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
+
 	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
 	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
 	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
@@ -178,6 +183,11 @@ void PatternEditorControl::initKeyBindings()
 	
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+
+	// Alternate binding for eventKeyDownBinding_SC_IncreaseRowInsertAdd
+	// for modern ANSI keyboards without section symbol key
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 
 	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
 	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
