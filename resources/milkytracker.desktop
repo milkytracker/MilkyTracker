@@ -3,6 +3,7 @@ Encoding=UTF-8
 Type=Application
 Name=MilkyTracker
 Comment=Fast Tracker II inspired music tracker
+Comment[fr]=Tracker musical inspiré par Fast Tracker II
 Exec=milkytracker %f
 Icon=milkytracker
 Terminal=false
