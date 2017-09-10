@@ -103,7 +103,7 @@ $ ./genicons.py
 $ popd
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7
+$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 ..
 $ make
 $ cpack .
 ```
