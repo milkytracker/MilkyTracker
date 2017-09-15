@@ -25,6 +25,7 @@ set(
     SOURCES
     Button.cpp
     CheckBox.cpp
+	CheckBoxLabel.cpp
     Container.cpp
     ContextMenu.cpp
     Control.cpp
@@ -63,6 +64,7 @@ set(
     BasicTypes.h
     Button.h
     CheckBox.h
+	CheckBoxLabel.h
     Container.h
     ContextMenu.h
     Control.h

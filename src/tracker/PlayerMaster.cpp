@@ -326,21 +326,25 @@ bool PlayerMaster::applyNewMixerSettings(const TMixerSettings& settings, bool al
 	for (pp_int32 i = 0; i < playerControllers->size(); i++)
 		applySettingsToPlayerController(*playerControllers->get(i), currentSettings);
 
-	if (settings.numVirtualChannels >= 0)
+	if (settings.numPlayerChannels != 0 || settings.numVirtualChannels >= 0)
 	{
-		currentSettings.numVirtualChannels = settings.numVirtualChannels;	
+        if (settings.numPlayerChannels != 0)
+            currentSettings.numPlayerChannels = settings.numPlayerChannels;
+
+        if (settings.numVirtualChannels > 0)
+            currentSettings.numVirtualChannels = settings.numVirtualChannels;
 
 		if (res)
 		{
 			if (settings.numVirtualChannels)
 			{
 				setUseVirtualChannels(true);
-				reallocateChannels(32, settings.numVirtualChannels);
+				reallocateChannels(settings.numPlayerChannels, settings.numVirtualChannels);
 			}
 			else
 			{
 				setUseVirtualChannels(false);
-				reallocateChannels(32, 0);
+				reallocateChannels(settings.numPlayerChannels, 0);
 			}
 		}
 	}

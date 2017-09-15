@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>MilkyTracker Manual v1.00.00</title>
+		<title>MilkyTracker Manual v1.01</title>
 		<meta charset="UTF-8" />
 		<style type="text/css">
 			html, body {
@@ -153,9 +153,9 @@
 		</style>
 	</head>
 	<body>
-		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.0.0</span></h1>
+		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.0.1</span></h1>
 		<p>
-			Hello and welcome to MilkyTracker, an open source multi-platform Fasttracker II compatible music tracker program. This document holds a lot of valuable information about the tracker but it's not a tracking manual. If you want to learn more about tracking and how it's done, the Internet is your friend. We host some resources on <a href="http://www.milkytracker.org/">MilkyTracker.org</a> as well.
+			Hello and welcome to MilkyTracker, an open source multi-platform Fasttracker II compatible music tracker program. This document holds a lot of valuable information about the tracker but it's not a tracking manual. If you want to learn more about tracking and how it's done, the Internet is your friend. We host some resources on <a href="http://milkytracker.titandemo.org/">MilkyTracker.titandemo.org</a> as well.
 		</p>
 		<h4>Disclaimer:</h4>
 		<p>
@@ -717,6 +717,12 @@
 			<tr class="odd">
 				<td><em>1</em></td><td>Enter key-off (OS X only)</td>
 			</tr>
+            <tr class="even">
+				<td><em>Alt-Minus</em></td><td>Increase Add value</td>
+			</tr>
+			<tr class="odd">
+				<td><em>or Alt-Plus</em></td><td>Decrease Add value</td>
+			</tr>
 		</table>
 		<h4>Transpose:</h4>
 		<table>
@@ -887,10 +893,10 @@
 			<tr class="odd">
 				<td><em>Ctrl-F12</em></td><td>Increase current order pattern number</td>
 			<tr class="even">
-				<td><em>Key below ESC</em></td><td>Increase Add value</td>
+				<td><em>Key below ESC (ANSI: Alt-Minus)*</em></td><td>Increase Add value</td>
 			</tr>
 			<tr class="odd">
-				<td><em>Shift-key below ESC</em></td><td>Decrease Add value</td>
+				<td><em>Shift-key below ESC (ANSI: Alt-Plus)*</em></td><td>Decrease Add value</td>
 			</tr>
 			<tr class="even">
 				<td><em>Ctrl-F</em></td><td>Toggle song follow</td>
@@ -917,6 +923,9 @@
 				<td><em>Esc</em></td><td>Exit program</td>
 			</tr>
 		</table>
+		<p>
+			* <em>Please note</em> in this table, "Key under esc" refers to the tilde / tick key, section symbol / plusminus key or the ring accent / circumflex key depending on your ISO keyboard, but does not exist on ANSI layouts. See: <a href="https://github.com/milkytracker/MilkyTracker/issues/120#issuecomment-327614068">this issue</a> for details
+		</p>
 		<h4>Pattern editor:</h4>
 		<table>
 			<tr class="even">
@@ -980,10 +989,10 @@
 				<td><em>Alt-Delete</em></td><td>Delete effect at cursor</td>
 			</tr>
 			<tr class="even">
-				<td><em>Ins</em></td><td>Insert space on current track at cursor position</td>
+				<td><em>Ins</em></td><td>Insert space on current track at cursor position (F13 on mac)</td>
 			</tr>
 			<tr class="odd">
-				<td><em>Shift-Ins</em></td><td>Insert row at cursor position</td>
+				<td><em>Shift-Ins</em></td><td>Insert row at cursor position (shift-F13 on mac)</td>
 			</tr>
 			<tr class="even">
 				<td><em>Backspace</em></td><td>Delete previous note</td>
@@ -1242,7 +1251,7 @@
 			<li><em><code>Gxx</code></em> <a href="#fxGxx">Set global volume</a></li>
 			<li><em><code>Hxy</code></em> <a href="#fxHxy">Global volume slide</a></li>
 			<li><em><code>Kxx</code></em> <a href="#fxKxx">Key-off</a></li>
-			<li><em><code>Lxx</code></em> <a href="#fxLxx">Set volume envelope position</a></li>
+			<li><em><code>Lxx</code></em> <a href="#fxLxx">Set envelope position</a></li>
 			<li><em><code>Pxy</code></em> <a href="#fxPxy">Panning slide</a></li>
 			<li><em><code>Rxy</code></em> <a href="#fxRxy">Re-trigger note with volume slide</a></li>
 			<li><em><code>Txy</code></em> <a href="#fxTxy">Tremor</a></li>
@@ -2457,13 +2466,13 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxLxx"><em>Lxx</em> Set volume envelope position</a></h3>
+		<h3><a id="fxLxx"><em>Lxx</em> Set envelope position</a></h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>L</code></em></td>
 			</tr>
 			<tr>
-				<td><em><code>xx</code></em> = volume envelope position</td>
+				<td><em><code>xx</code></em> = envelope position</td>
 			</tr>
 			<tr class="odd">
 				<td><em>Example:</em></td>
@@ -2480,7 +2489,8 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Makes the currently playing note jump to tick <em><code>xx</code></em> on the volume envelope timeline.
+						Makes the currently playing note jump to tick <em><code>xx</code></em> on the volume envelope timeline.<br />
+                        If the <em>volume</em> envelope's sustain point is set, the <em>panning</em> envelope also jumps to tick <em><code>xx</code></em> (This is an original FT2 quirk).
 					</p>
 				</td>
 			</tr>
@@ -3111,7 +3121,7 @@
 			Gary P. Scavone for RtAudio and RtMidi,
 			kruze, idc, Rez et al. for the fonts,
 			svenzzon for the demo tune,
-			m0d for website hosting and forum administration,
+			sage_musix for website hosting and forum administration,
 			Valerio for the quick reference printouts,
 			syphus for constructive criticism,
 			Flasch,
@@ -3125,12 +3135,12 @@
 			and everybody who donated or dropped a letter.
 		</p>
 		<p>
-			Special greetings to everyone at <a href="http://www.milkytracker.org/?community">#MilkyTracker</a> for making it a daily active channel.
+			Special greetings to everyone at <a href="http://milkytracker.titandemo.org/community/">#MilkyTracker</a> for making it a daily active channel.
 		</p>
 
 		<h2><a id="contact">10. Contact</a></h2>
 		<p>
-			You can contact the MilkyTracker team by email (<span class="email">ten.rekcartyklim@troppus</span>), through the forum at <a href="http://www.milkytracker.org/?community">http://www.milkytracker.org/?community</a> or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
+			You can contact the MilkyTracker team by email (<span class="email">ten.rekcartyklim@troppus</span>), through the forum at <a href="http://milkytracker.titandemo.org/community/">http://milkytracker.titandemo.org/community/</a> or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
 		</p>
 
 

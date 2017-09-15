@@ -28,14 +28,20 @@ set(
     ChangeLog.html
 )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "BSD")
+    set(BSD TRUE)
+endif()
+
 if(APPLE)
     set(INSTALL_DEST Documentation)
+elseif(BSD)
+    set(INSTALL_DEST share/doc/${PROJECT_NAME_LOWER})
 elseif(WIN32)
     list(APPEND DOCUMENTS readme_rtaudio)
     set(INSTALL_DEST .)
 else()
     list(APPEND DOCUMENTS readme_unix)
-    set(INSTALL_DEST share/doc/${PROJECT_NAME_LOWER})
+    set(INSTALL_DEST ${CMAKE_INSTALL_DOCDIR})
 endif()
 
 install(FILES ${DOCUMENTS} DESTINATION ${INSTALL_DEST})

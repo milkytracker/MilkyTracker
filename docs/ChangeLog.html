@@ -9,8 +9,40 @@
 </head>
 <body>
 <h1 id="milkytracker-changelog">MilkyTracker ChangeLog</h1>
-<h2 id="v1.00.00">11/03/2017 (v1.00.00):</h2>
+<h2 id="v1.01">29/07/2017 (v1.01):</h2>
 <h3 id="whats-new">What's new:</h3>
+<ul>
+<li>Channel limit increased to 128 channels</li>
+<li>New sample editor filters:</li>
+<li>Phase modulation</li>
+<li>AM &amp; FM modulation</li>
+<li>Selective equaliser</li>
+<li>OSX: Insert key mapped to F13</li>
+<li>GUI: Clickable checkbox labels</li>
+<li>GNU: Use GNUInstallDirs</li>
+</ul>
+<h3 id="bugs-fixed">Bugs fixed:</h3>
+<ul>
+<li>Errant characters inserts when selecting patterns using ALT + cursor keys</li>
+<li>Windows: Window size now takes scale factor into consideration</li>
+<li>Build: Default value used for PATH_MAX if not set (for GNU/Hurd)</li>
+<li>Instrument editor:</li>
+<li>Prevent point inserts overlapping existing points</li>
+<li>Reset cursor when changing presets or pasting envelopes</li>
+<li>PT3 octave limit not reset when switching playback mode back to FT2</li>
+<li>Sample editor:</li>
+<li>Invert function now works correctly</li>
+<li>Equaliser constants tweaked</li>
+<li>No longer crashes when generating silence with no selection active</li>
+<li>Noise generator on 64-bit systems</li>
+<li>OSX: Core audio sample-rate switching</li>
+<li>GUS frequencies lower than lowest note</li>
+<li>Off-by-semitone issue in GUS patch loader</li>
+<li>Corrupt display with window sizes that aren't multiples of 4</li>
+<li>Windows: Window position gradually moving off-screen on restarts</li>
+</ul>
+<h2 id="v1.00.00">11/03/2017 (v1.00.00):</h2>
+<h3 id="whats-new-1">What's new:</h3>
 <ul>
 <li>5 new customisable colours</li>
 <li>X-Y mouse scrolling support</li>
@@ -37,7 +69,7 @@
 <li>Mouse middle-click to solo channel</li>
 <li>..and more, see (<a href="https://github.com/milkytracker/MilkyTracker/commits/master">commit log</a>) for details</li>
 </ul>
-<h3 id="bugs-fixed">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-1">Bugs Fixed:</h3>
 <ul>
 <li>Segfault when loading &lt;4 byte samples</li>
 <li>Samples incorrectly offset when exporting .mod files</li>
@@ -59,7 +91,7 @@
 <li>Sample/Ins editor listboxes scrolled right in certain circumstances</li>
 </ul>
 <h2 id="v0.90.86">07/11/13 (v0.90.86):</h2>
-<h3 id="whats-new-1">Whats New:</h3>
+<h3 id="whats-new-2">Whats New:</h3>
 <ul>
 <li>Unsafe notes now shown in red when &quot;PT 3 octave limit&quot; option enabled</li>
 <li>Haiku port (thanks jua)</li>
@@ -68,7 +100,7 @@
 <li>Jack driver now connects to first available physical device</li>
 <li>MilkyTracker source code now hosted on <a href="https://github.com/milkytracker/MilkyTracker">GitHub</a></li>
 </ul>
-<h3 id="bugs-fixed-1">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-2">Bugs Fixed:</h3>
 <ul>
 <li>Loss of data when using 'backward' sample filter (<a href="http://forums.modarchive.org/index.php?topic=3093.0">forum post</a>)</li>
 <li>Warning displayed when exporting .mod files with samples over 64k (<a href="http://forums.modarchive.org/index.php?topic=3235.0">forum post</a>)</li>
@@ -87,7 +119,7 @@
 <li>Various build warnings and errors</li>
 </ul>
 <h2 id="v0.90.85">01/01/10 (v0.90.85):</h2>
-<h3 id="whats-new-2">Whats New:</h3>
+<h3 id="whats-new-3">Whats New:</h3>
 <ul>
 <li>Ability to move dialogs.</li>
 <li>Keyboard shortcut Shift-U (unmute all).</li>
@@ -108,7 +140,7 @@
 <li>Improved constants for 10 band EQ.</li>
 <li>New font: Topaz 1.3 &amp; Topaz 2.0 (8x8)</li>
 </ul>
-<h3 id="bugs-fixed-2">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-3">Bugs Fixed:</h3>
 <ul>
 <li>(Unix) JACK client thread gets zombified causing playback to block.</li>
 <li>Crash when using the '-orientation ROTATE90CW' switch on SDL versions.</li>
@@ -150,7 +182,7 @@
 <h2 id="v0.90.80">04/13/08 (v0.90.80):</h2>
 <h3 id="important-note">Important note:</h3>
 <p>This version of MilkyTracker will update your current configuration file in a way that it's no longer usable with older versions. It is recommended that you keep a backup of your configuration file. On <strong>Windows</strong> the configuration is stored in the application folder. When using MilkyTracker on <strong>OS X</strong> or <strong>Unix</strong> systems the configuration is stored in your home directory in a file called .milkytracker_config.</p>
-<h3 id="whats-new-3">What's New:</h3>
+<h3 id="whats-new-4">What's New:</h3>
 <ul>
 <li>Killer feature: Open up to 32 modules using tabs(*):
 <ul>
@@ -178,7 +210,7 @@
 <li>WAV loader recognizes loop points and also exports them</li>
 </ul>
 <p>(*) Only available in the Desktop version of MilkyTracker</p>
-<h3 id="bugs-fixed-3">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-4">Bugs Fixed:</h3>
 <h4 id="replay">Replay</h4>
 <ul>
 <li>Fixed bug in bidirectional looping which caused clicks on short samples</li>
@@ -200,7 +232,7 @@
 <li>Countless bugs you might not even have found yet</li>
 </ul>
 <h2 id="v0.90.60">05/20/07 (v0.90.60):</h2>
-<h3 id="whats-new-4">What's New:</h3>
+<h3 id="whats-new-5">What's New:</h3>
 <ul>
 <li>New imported (obscure) module formats (mainly for personal satisfaction):
 <ul>
@@ -223,7 +255,7 @@
 <li>&quot;Mix paste&quot; in the sample editor: paste in a sample from the clipboard and get it mixed with the current selection/entire sample.</li>
 <li>As usually: more Ft2-compatible replay</li>
 </ul>
-<h3 id="bugs-fixed-4">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-5">Bugs Fixed:</h3>
 <h4 id="replay-1">Replay</h4>
 <ul>
 <li>A severe volume ramping bug has been fixed</li>
@@ -255,7 +287,7 @@
 <li>Other things I can't remember :P</li>
 </ul>
 <h2 id="v0.90.50-tons-of-fixes-and-added-features">09/26/06 (v0.90.50), Tons of fixes and added features:</h2>
-<h3 id="whats-new-5">What's New:</h3>
+<h3 id="whats-new-6">What's New:</h3>
 <ul>
 <li>New platforms supported:
 <ul>
@@ -295,7 +327,7 @@
 <li>Skippable splash screen</li>
 <li>Volume boost/fade dialogs accept negative values (useful for chip sample generation, sample phase inversion etc)</li>
 </ul>
-<h3 id="bugs-fixed-5">Bugs Fixed:</h3>
+<h3 id="bugs-fixed-6">Bugs Fixed:</h3>
 <h4 id="replay-2">Replay</h4>
 <ul>
 <li>A rogue EDx note delay without a note should retrigger the previous note when x is lesser than or equal to song speed.</li>
@@ -329,7 +361,7 @@
 <li>When tabbing to a channel outside the current display, the screen shifted one whole &quot;page&quot;. Very confusing for young, fragile artists. Now it moves one channel at a time, à la Ft2.</li>
 </ul>
 <h2 id="v0.90.30-mainly-bugfixes-and-minor-additions">02/14/06 (v0.90.30), Mainly bugfixes and minor additions:</h2>
-<h3 id="bugs-fixed-6">Bugs fixed:</h3>
+<h3 id="bugs-fixed-7">Bugs fixed:</h3>
 <ul>
 <li>ProTracker modules using 'one shot'-looped samples seem to crash the replayer sometimes. Fixed.</li>
 <li>There was a bug in the mod exporter when trying to export samples with a loopstart set to 0. Fixed.</li>

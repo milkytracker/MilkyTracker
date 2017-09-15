@@ -249,6 +249,9 @@ public:
 	void cropSample();
 	void clearSample();
 	void mixPasteSample();
+	void AMPasteSample();
+	void FMPasteSample();
+	void PHPasteSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -313,6 +316,9 @@ public:
 	void tool_cropSample(const FilterParameters* par);
 	void tool_clearSample(const FilterParameters* par);
 	void tool_mixPasteSample(const FilterParameters* par);
+	void tool_AMPasteSample(const FilterParameters* par);
+	void tool_FMPasteSample(const FilterParameters* par);
+	void tool_PHPasteSample(const FilterParameters* par);
 	
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);
@@ -331,6 +337,7 @@ public:
 	void tool_DCOffsetSample(const FilterParameters* par);
 	void tool_rectangularSmoothSample(const FilterParameters* par);
 	void tool_triangularSmoothSample(const FilterParameters* par);
+	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	
 	// generators

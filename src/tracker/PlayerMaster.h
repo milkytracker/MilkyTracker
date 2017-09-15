@@ -52,6 +52,8 @@ struct TMixerSettings
 	pp_int32 ramping;
 	// NULL means ignore
 	char* audioDriverName;
+    // default number of player channels
+    pp_uint32 numPlayerChannels;
 	// 0 means disable virtual channels, negative value means ignore
 	pp_int32 numVirtualChannels;
 
@@ -64,6 +66,7 @@ struct TMixerSettings
 		resampler(-1),
 		ramping(-1),
 		audioDriverName(NULL),
+        numPlayerChannels(TrackerConfig::numPlayerChannels),
 		numVirtualChannels(-1)
 	{
 	}
@@ -108,6 +111,10 @@ struct TMixerSettings
 		if (ramping != source.ramping)
 			return false;
 
+        if (numPlayerChannels != source.numPlayerChannels) {
+            return false;
+        }
+            
 		if (numVirtualChannels != source.numVirtualChannels)
 			return false;
 

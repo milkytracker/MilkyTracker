@@ -35,7 +35,7 @@ typedef signed int		pp_int32;
 #if defined(WIN32) || defined(_WIN32_WCE) 
 	#include <windows.h>
 	#include <stdio.h>
-	#define VK_ALT        0xFF
+	#define VK_ALT        VK_MENU
 	#define __PPUI_WINDOWS__
 #endif
 

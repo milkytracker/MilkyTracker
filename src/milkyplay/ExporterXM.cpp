@@ -1838,10 +1838,6 @@ static mp_uword prep(mp_sint32 v)
 
 mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 {
-	static const char* modIDs[16] = {"2CHN","M.K.","6CHN","8CHN","10CH",
-									 "12CH","14CH","16CH","18CH","20CH",
-									 "22CH","24CH","26CH","28CH","30CH","32CH"};
-
 	static const mp_sint32 periods[12] = {1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,907};
 
 	static const mp_sint32 originalPeriods[] = {1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,906,
@@ -1969,11 +1965,9 @@ unused:
 	f.write(ord, 1, 128);
 	
 	mp_uword numChannels = header.channum&1 ? header.channum+1 : header.channum;	
-	
-	if (numChannels < 2 || numChannels > 32)
+
+	if (numChannels < 1 || numChannels > 99)
 		return MP_UNSUPPORTED;
-	
-	f.write(modIDs[(numChannels >> 1)-1], 1, 4);
 	
 // - patterns -------------------------------------------
 	mp_sint32 numPatterns = 0;
@@ -1982,6 +1976,26 @@ unused:
 		if (ord[i] > numPatterns)
 			numPatterns = ord[i];
 	}
+
+	char modMagic[4];
+	if(numChannels == 4)
+	{
+		// ProTracker may not load files with more than 64 patterns correctly if we do not specify the M!K! magic.
+		if(numPatterns <= 63)
+			memcpy(modMagic, "M.K.", 4);
+		else
+			memcpy(modMagic, "M!K!", 4);
+	} else if(numChannels < 10)
+	{
+		memcpy(modMagic, "0CHN", 4);
+		modMagic[0] += static_cast<char>(numChannels);
+	} else
+	{
+		memcpy(modMagic, "00CH", 4);
+		modMagic[0] += static_cast<char>(numChannels / 10u);
+		modMagic[1] += static_cast<char>(numChannels % 10u);
+	}
+	f.write(modMagic, 1, 4);
 	
 	for (i = 0; i < numPatterns+1; i++)
 	{

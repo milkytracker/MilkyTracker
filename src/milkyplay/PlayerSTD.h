@@ -104,6 +104,8 @@ private:
 			delete[] timeRecord;
 			timeRecord = new TTimeRecord[size];
 		}
+		
+		void setToTick(mp_uint32 tick);
 	};
 
 	struct TLastOperands

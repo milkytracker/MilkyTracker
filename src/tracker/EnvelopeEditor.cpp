@@ -187,6 +187,7 @@ void EnvelopeEditor::pasteOther(const TEnvelope& env)
 	prepareUndo();
 	
 	*envelope = env;
+	resetSelection();
 	
 	finishUndo();
 }
@@ -502,12 +503,15 @@ void EnvelopeEditor::addPoint()
 	if (envelope->num >= 12)
 		return;
 
-	prepareUndo();
-	
 	pp_int16 points[12][2];
 
 	if (selectionIndex >= 0 && selectionIndex < envelope->num - 1)
 	{
+		if (envelope->env[selectionIndex + 1][0] - envelope->env[selectionIndex][0] < 2)
+			return; // Insufficient space on x-axis
+
+		prepareUndo();
+
 		pp_int32 i = 0;
 		for (i = 0; i <= selectionIndex; i++)
 		{
@@ -542,6 +546,8 @@ void EnvelopeEditor::addPoint()
 	}
 	else 
 	{
+		prepareUndo();
+
 		if (envelope->num)
 		{
 			envelope->env[envelope->num][0] = envelope->env[envelope->num-1][0] + 10;

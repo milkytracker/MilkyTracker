@@ -1,5 +1,36 @@
 # MilkyTracker ChangeLog
 
+## 29/07/2017 (v1.01):
+
+### What's new:
+*  Channel limit increased to 128 channels
+*  New sample editor filters:
+   *  Phase modulation
+   *  AM & FM modulation
+   *  Selective equaliser
+*  OSX: Insert key mapped to F13
+*  GUI: Clickable checkbox labels
+*  GNU: Use GNUInstallDirs
+
+### Bugs fixed:
+*  Errant characters inserts when selecting patterns using ALT + cursor keys
+*  Windows: Window size now takes scale factor into consideration
+*  Build: Default value used for PATH_MAX if not set (for GNU/Hurd)
+*  Instrument editor:
+   *  Prevent point inserts overlapping existing points
+   *  Reset cursor when changing presets or pasting envelopes
+*  PT3 octave limit not reset when switching playback mode back to FT2
+*  Sample editor:
+   *  Invert function now works correctly
+   *  Equaliser constants tweaked
+   *  No longer crashes when generating silence with no selection active
+   *  Noise generator on 64-bit systems
+*  OSX: Core audio sample-rate switching
+*  GUS frequencies lower than lowest note
+*  Off-by-semitone issue in GUS patch loader
+*  Corrupt display with window sizes that aren't multiples of 4
+*  Windows: Window position gradually moving off-screen on restarts
+
 ## 11/03/2017 (v1.00.00):
 
 ### What's new:

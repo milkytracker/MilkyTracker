@@ -22,7 +22,7 @@
 #ifndef __EQUALIZER_H__
 #define __EQUALIZER_H__
 
-#include "math.h"
+#include <math.h>
 
 class Equalizer
 {

@@ -75,6 +75,13 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
 			break;
 			
+		case ToolHandlerResponder::SampleToolTypeChangeSign:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Ignore bits from MSB [0..]");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(0, (sampleEditor->is16Bit() ? 16 : 8), 0);
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.changeSignIgnoreBits != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.changeSignIgnoreBits : 1);
+			break;
+
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter offset in percent [-100..100]");
@@ -107,6 +114,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 
 		case ToolHandlerResponder::SampleToolTypeEQ10Band:
+		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
 			dialog = new DialogEQ(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, DialogEQ::EQ10Bands);
 			if (lastValues.hasEQ10BandValues)
 			{
@@ -202,6 +210,15 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 
+		case ToolHandlerResponder::SampleToolTypeChangeSign:
+		{
+			lastValues.changeSignIgnoreBits = (pp_int32)static_cast<DialogWithValues*>(dialog)->getValueOne();
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.changeSignIgnoreBits));
+			sampleEditor->tool_changeSignSample(&par);
+			break;
+		}
+
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
 		{
 			FilterParameters par(1);
@@ -226,6 +243,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeEQ3Band:
 		case ToolHandlerResponder::SampleToolTypeEQ10Band:
+		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
 		{
 			pp_uint32 numBands = static_cast<DialogEQ*>(dialog)->getNumBandsAsInt();
 			
@@ -250,7 +268,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 					last[i] = val;
 				par.setParameter(i, FilterParameters::Parameter(val));
 			}
-			sampleEditor->tool_eqSample(&par);
+			sampleEditor->tool_eqSample(&par,type==ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band);
 			break;
 		}
 

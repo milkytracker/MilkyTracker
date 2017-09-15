@@ -44,6 +44,7 @@
 #include "ListBox.h"
 #include "ListBoxFileBrowser.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "PPUIConfig.h"
 #include "PatternEditorControl.h"
 
@@ -805,13 +806,10 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(button);
 
 	x3+=80;
-
-	ctrl = new PPStaticText(DISKMENU_CLASSIC_STATICTEXT_FILTEREXTENSIONS, NULL, NULL, PPPoint(x3, y3), "Type filter:", true);
-	container->addControl(ctrl);
-
-	ctrl = new PPCheckBox(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS, screen, this, PPPoint(x3 + 12*8+2, y3-1));
-	container->addControl(ctrl);
-
+	PPCheckBox* checkBox = new PPCheckBox(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS, screen, this, PPPoint(x3 + 12 * 8 + 2, y3 - 1));
+	container->addControl(checkBox);
+	container->addControl(new PPCheckBoxLabel(DISKMENU_CLASSIC_STATICTEXT_FILTEREXTENSIONS, NULL, this, PPPoint(x3, y3), "Type filter:", checkBox, true));
+	
 	buttonWidth = 27;
 	pp_int32 y5 = y3 + 12;
 	pp_int32 x5 = container->getLocation().x + container->getSize().width - buttonWidth - 5;

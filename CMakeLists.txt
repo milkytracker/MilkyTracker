@@ -19,8 +19,11 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.5)
 project(MilkyTracker)
+
+# Adhere to GNU filesystem layout conventions
+include(GNUInstallDirs)
 
 # Force SDL if requested
 option(FORCESDL "Force SDL instead of native" OFF)
@@ -40,7 +43,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 # Version number in format X.YY.ZZ
 set(VER_X  1)
-set(VER_YY 00)
+set(VER_YY 01)
 set(VER_ZZ 00)
 set(VER_FULL "${VER_X}.${VER_YY}.${VER_ZZ}")
 
@@ -173,11 +176,16 @@ if(UNIX)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
 
+    # We can't use Brew for these due to OSX target version mismatch
+    # (we're targeting an older version of OSX to increase compatibility)
+    if(NOT APPLE)
+      find_package(LHASA)
+      find_package(ZZIPLIB)
+    endif()
+
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_package(ALSA)
         find_package(JACK)
-        find_package(LHASA)
-        find_package(ZZIPLIB)
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)

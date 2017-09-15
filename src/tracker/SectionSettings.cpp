@@ -39,6 +39,7 @@
 
 #include "PPUIConfig.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "ListBox.h"
 #include "RadioGroup.h"
 #include "Seperator.h"
@@ -154,6 +155,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_RAMPING,
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
+    RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
 
 	// PAGE I (2)
 	CHECKBOX_SETTINGS_VIRTUALCHANNELS,
@@ -249,6 +251,7 @@ enum ControlIDs
 	PAGE_IO_1,
 	PAGE_IO_2,
 	PAGE_IO_3,
+    PAGE_IO_4,
 
 	PAGE_LAYOUT_1,
 	PAGE_LAYOUT_2,
@@ -437,9 +440,10 @@ public:
 
 		y2++;
 
-		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_FORCEPOWER2BUFF, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*3), "Force 2^n sizes:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FORCEPOWER2BUFF, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 + 11*3-1)));
-
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FORCEPOWER2BUFF, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 + 2 + 11 * 3 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(STATICTEXT_SETTINGS_FORCEPOWER2BUFF, NULL, this, PPPoint(x + 4, y2 + 2 + 11*3), "Force 2^n sizes:", checkBox, true));
+		
 		y2+=12;
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2 + 11*3), "Mixervol:", true));
@@ -474,9 +478,10 @@ public:
 
 		y2+=12;
 
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Volume ramping:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Volume ramping:", checkBox, true));
+		
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 
@@ -661,9 +666,9 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Instrument Playback", true, true));
 
 		y2+=15;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Jam channels:", true));
-
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_VIRTUALCHANNELS, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_VIRTUALCHANNELS, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Jam channels:", checkBox, true));
 
 		y2+=12;
 		container->addControl(new PPStaticText(STATICTEXT_SETTINGS_VIRTUALCHANNELS, NULL, NULL, PPPoint(x + 4, y2), "Use xx channels", false));
@@ -682,21 +687,29 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y2 + 2), "Multichannel", true, true));
 
 		y2+=15;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORD, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Recording:", checkBox, true));
 
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Recording:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORD, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
 		y2+=12;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), """Keyjazzing"":", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_KEYJAZZ, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_KEYJAZZ, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), """Keyjazzing"":", checkBox, true));
+
 		y2+=12;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Editing:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_EDIT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_EDIT, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Editing:", checkBox, true));
+
 		y2+=12;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Record key off:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Record key off:", checkBox, true));
+
 		y2+=12;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Rec. note delays:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Rec. note delays:", checkBox, true));
 
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
@@ -730,6 +743,56 @@ public:
 
 };
 
+class TabPageIO_4 : public TabPage
+{
+public:
+    TabPageIO_4(pp_uint32 id, SectionSettings& sectionSettings) :
+    TabPage(id, sectionSettings)
+    {
+    }
+    
+    virtual void init(PPScreen* screen)
+    {
+        pp_int32 x = 0;
+        pp_int32 y = 0;
+        
+        container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+        
+        pp_int32 x2 = x;
+        pp_int32 y2 = y;
+        
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "XM channel limit", true, true));
+        
+        PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SETTINGS_XMCHANNELLIMIT, screen, this, PPPoint(x2, y2+2+11), PPSize(160, 3*14));
+        radioGroup->setColor(TrackerConfig::colorThemeMain);
+        radioGroup->addItem("32");
+        radioGroup->addItem("64");
+        radioGroup->addItem("128");
+        
+        container->addControl(radioGroup);
+    }
+    
+    virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+    {
+        // mixer resolution
+        pp_int32 v = settingsDatabase->restore("XMCHANNELLIMIT")->getIntValue();
+        
+        switch (v) {
+            case 32:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(0);
+                break;
+            case 64:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(1);
+                break;
+            case 128:
+                static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_XMCHANNELLIMIT))->setChoice(2);
+                break;
+                
+        }
+    }
+    
+};
+
 class TabPageLayout_1 : public TabPage
 {
 public:
@@ -761,16 +824,19 @@ public:
 		container->addControl(slider);
 
 		y2+=11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Hex count:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_HEXCOUNT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_HEXCOUNT, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2, y2), "Hex count:", checkBox, true));
+		
+		y2+=11;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SHOWZEROEFFECT, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2, y2), "Show zero effect:", checkBox, true));		
 
 		y2+=11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2), "Show zero effect:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SHOWZEROEFFECT, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
-
-		y2+=11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Prospective:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_PROSPECTIVE, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_PROSPECTIVE, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Prospective:", checkBox, true));
 
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Muting opacity:", true));
@@ -798,8 +864,9 @@ public:
 		button = new PPButton(BUTTON_HIGHLIGHTMODULO1_MINUS, screen, this, PPPoint(x + 2 + 7*8 + 13, y2-1), PPSize(13, 9));
 		button->setText(TrackerConfig::stringButtonMinus);
 		container->addControl(button);
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2 + 7*8 + 13 + 20, y2), "Full:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO1_FULLROW, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO1_FULLROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2 + 7*8 + 13 + 20, y2), "Full:", checkBox, true));
 
 		y2+=11;
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "2nd:", true));
@@ -810,8 +877,9 @@ public:
 		button = new PPButton(BUTTON_HIGHLIGHTMODULO2_MINUS, screen, this, PPPoint(x + 2 + 7*8 + 13, y2-1), PPSize(13, 9));
 		button->setText(TrackerConfig::stringButtonMinus);
 		container->addControl(button);
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 2 + 7*8 + 13 + 20, y2), "Full:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO2_FULLROW, screen, this, PPPoint(x + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_HIGHLIGHTMODULO2_FULLROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 2 + 7 * 8 + 13 + 20, y2), "Full:", checkBox, true));
 
 		// vertical separator
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
@@ -1162,9 +1230,9 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Global", true, true));
 
 		y2+=4+11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2), "Fullscreen:", true));
-
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 4, y2), "Fullscreen:", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -1376,29 +1444,29 @@ public:
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Pattern Editor", true, true));
 
 		y2+=4+11;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Paste autoresize:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTORESIZE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-
-		y2+=12;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Instr. backtrace:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_AUTORESIZE, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Paste autoresize:", checkBox, true));
 
 		y2+=12;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "TAB to note:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_TABTONOTE, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-
-		y2+=12;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Click to cursor:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_CLICKTOCURSOR, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Instr. backtrace:", checkBox, true));
 
 		y2+=12;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Wrap cursor:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_WRAPCURSOR, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_TABTONOTE, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "TAB to note:", checkBox, true));
+		
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_CLICKTOCURSOR, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Click to cursor:", checkBox, true));
+		
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_WRAPCURSOR, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Wrap cursor:", checkBox, true));
 
 		y2+=11;
 
@@ -1412,16 +1480,17 @@ public:
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Sample Editor", true, true));
 		y2+=4+11;
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Enable undo buff:", true));
-
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Enable undo buff:", checkBox, true));
 
 		y2+=14;
-
-		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", true);
-		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(statict);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 3));
+		container->addControl(checkBox);
+		PPCheckBoxLabel* cbLabel = new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", checkBox, true);
+		cbLabel->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		container->addControl(cbLabel);
+		
 
 		y2+=10;
 
@@ -1487,28 +1556,30 @@ public:
 		pp_int32 y2 = y;
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
-		y2+=4+11;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Internal browser:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INTERNALDISKBROWSER, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		y2+=4+11;		
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INTERNALDISKBROWSER, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Internal browser:", checkBox, true));
 
 		y2+=12;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Splash screen:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SHOWSPLASH, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SHOWSPLASH, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Splash screen:", checkBox, true));
 
 		y2+=14;
-
-		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Estimate playtime after load", true);
-		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(statict);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 3));
+		container->addControl(checkBox);
+		PPCheckBoxLabel* cbLabel = new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Estimate playtime after load", checkBox, true);
+		cbLabel->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		container->addControl(cbLabel);
+		
 
 		y2+=10;
 
 #ifndef __LOWRES__
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Show scopes:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_SCOPES, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SCOPES, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Show scopes:", checkBox, true));
 		y2+=12;
 #endif
 
@@ -1568,9 +1639,10 @@ public:
 
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
 		y2+=4+11;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Inv. mwheel zoom:", true));
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Inv. mwheel zoom:", checkBox, true));
+		
 
 		y2+=12;
 	}
@@ -1600,17 +1672,13 @@ public:
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
 
-		PPStaticText* text;
-
 		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Load module" PPSTR_PERIODS, true, true));
 
 		y2+=12;
-
-		text = new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y2 + 2), PPSTR_PERIODS"in new Tab", true);
-		//text->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(text);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_LOADMODULEINNEWTAB, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 + 2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2 + 2), PPSTR_PERIODS"in new Tab", checkBox, true));
+		
 		y2+=12+3;
 
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
@@ -1628,11 +1696,10 @@ public:
 		container->addControl(radioGroup);
 
 		y2+=3*14 + 14;
-
-		text = new PPStaticText(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY, NULL, NULL, PPPoint(x + 4, y2 + 2), "Tab-switch resume", true);
-		container->addControl(text);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY, screen, this, PPPoint(x + 4 + 17*8 + 4, y2 + 2 - 1)));
-
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 + 2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY, NULL, this, PPPoint(x + 4, y2 + 2), "Tab-switch resume", checkBox, true));
+				
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 
@@ -2472,6 +2539,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				tracker.ensureSongPlaying(true);
 				break;
 			}
+                
+            case RADIOGROUP_SETTINGS_XMCHANNELLIMIT:
+            {
+                pp_int32 v = reinterpret_cast<PPRadioGroup*>(sender)->getChoice();
+                
+                ASSERT(v >= 0 && v < 3);
+                tracker.settingsDatabase->store("XMCHANNELLIMIT", 1 << (v + 5));
+                update();
+                break;
+            }
 
 			case RADIOGROUP_SETTINGS_PATTERNFONT:
 			{
@@ -2680,6 +2757,9 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(0)->add(new TabPageIO_1(PAGE_IO_1, *this));
 	tabPages.get(0)->add(new TabPageIO_2(PAGE_IO_2, *this));
 	tabPages.get(0)->add(new TabPageIO_3(PAGE_IO_3, *this));
+#ifndef __LOWRES__
+    tabPages.get(0)->add(new TabPageIO_4(PAGE_IO_4, *this));
+#endif
 
 	tabPages.get(1)->add(new TabPageLayout_1(PAGE_LAYOUT_1, *this));
 	tabPages.get(1)->add(new TabPageLayout_2(PAGE_LAYOUT_2, *this));

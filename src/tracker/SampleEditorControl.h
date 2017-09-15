@@ -65,6 +65,7 @@ private:
 
 	PPContextMenu* editMenuControl;
 	PPContextMenu* subMenuAdvanced;
+	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
 
@@ -274,6 +275,9 @@ private:
 	{
 		MenuCommandIDCrop = 99,
 		MenuCommandIDMixPaste,
+		MenuCommandIDAMPaste,
+		MenuCommandIDFMPaste,
+		MenuCommandIDPHPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
@@ -289,6 +293,7 @@ private:
 		MenuCommandIDTriangularSmooth,
 		MenuCommandIDEQ3Band,
 		MenuCommandIDEQ10Band,
+		MenuCommandIDSelectiveEQ10Band,
 		MenuCommandIDGenerateSilence,
 		MenuCommandIDGenerateNoise,
 		MenuCommandIDGenerateSine,
@@ -332,6 +337,7 @@ private:
 			SampleToolTypeTriangularSmooth,
 			SampleToolTypeEQ3Band,
 			SampleToolTypeEQ10Band,
+			SampleToolTypeSelectiveEQ10Band,
 			SampleToolTypeGenerateSilence,
 			SampleToolTypeGenerateNoise,
 			SampleToolTypeGenerateSine,

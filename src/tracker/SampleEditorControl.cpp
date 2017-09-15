@@ -136,6 +136,14 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
+	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuXPaste->setSubMenu(true);
+	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
+	subMenuXPaste->addEntry("Amp Modulate", MenuCommandIDAMPaste);
+	subMenuXPaste->addEntry("Freq Modulate", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Phase Modulate", MenuCommandIDPHPaste);
+	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
+
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
 
@@ -149,7 +157,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
-	editMenuControl->addEntry("New", MenuCommandIDNew);
+	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
 	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
@@ -157,11 +165,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-	editMenuControl->addEntry("Mix-Paste", MenuCommandIDMixPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
 	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
 	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
 
@@ -187,6 +195,7 @@ SampleEditorControl::~SampleEditorControl()
 	
 	delete editMenuControl;	
 	delete subMenuAdvanced;
+	delete subMenuXPaste;
 	delete subMenuPT;
 	delete subMenuGenerators;
 }
@@ -1187,6 +1196,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	}
 	else if ((sender == reinterpret_cast<PPObject*>(editMenuControl) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
@@ -1649,7 +1659,6 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	editMenuControl->setState(MenuCommandIDUndo, !sampleEditor->canUndo());
 	editMenuControl->setState(MenuCommandIDRedo, !sampleEditor->canRedo());
 	editMenuControl->setState(MenuCommandIDPaste, !sampleEditor->canPaste());
-	editMenuControl->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	editMenuControl->setState(MenuCommandIDCopy, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCut, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCrop, !hasValidSelection());
@@ -1670,6 +1679,12 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
+
+	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDPHPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
 
@@ -1711,6 +1726,21 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		// mix-paste
 		case MenuCommandIDMixPaste:
 			sampleEditor->mixPasteSample();
+			break;
+
+		// AM-paste
+		case MenuCommandIDAMPaste:
+			sampleEditor->AMPasteSample();
+			break;
+
+		// FM-paste
+		case MenuCommandIDFMPaste:
+			sampleEditor->FMPasteSample();
+			break;
+
+		// PH-paste
+		case MenuCommandIDPHPaste:
+			sampleEditor->PHPasteSample();
 			break;
 
 		// crop
@@ -1771,7 +1801,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDChangeSign:
-			sampleEditor->tool_changeSignSample(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeChangeSign);
 			break;
 
 		case MenuCommandIDSwapByteOrder:
@@ -1796,6 +1826,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDEQ10Band:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ10Band);
+			break;
+
+		case MenuCommandIDSelectiveEQ10Band:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band);
 			break;
 
 		case MenuCommandIDGenerateSilence:

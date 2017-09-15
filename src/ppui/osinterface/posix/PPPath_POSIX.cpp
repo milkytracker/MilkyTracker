@@ -37,11 +37,11 @@
 #include <sys/syslimits.h>
 #endif
 
-#ifdef __AMIGA__
-#define PATH_MAX 1024
-#endif
-
+#ifdef PATH_MAX
 #define PPMAX_DIR_PATH PATH_MAX
+#else
+#define PPMAX_DIR_PATH 1024
+#endif
 
 void PPPathEntry_POSIX::create(const PPSystemString& path, const PPSystemString& name)
 {

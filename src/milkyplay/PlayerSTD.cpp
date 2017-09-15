@@ -1705,46 +1705,12 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 		case 0x11 : if (eop) chnInf->old[effcnt].gvolslide=eop; break;
 		// set envelope position
 		case 0x15 : {
-						if (chnInf->venv.envstruc == NULL)
-							break;
-							
-						bool bSet = false;
-						for (mp_sint32 i = 0; i < chnInf->venv.envstruc->num-1; i++)
+						chnInf->venv.setToTick(eop);
+						if (chnInf->venv.envstruc && chnInf->venv.envstruc->type & 2)
 						{
-							if (eop >= chnInf->venv.envstruc->env[i][0] &&
-								eop < chnInf->venv.envstruc->env[i+1][0])
-							{
-								chnInf->venv.a = i;
-								chnInf->venv.b = i+1;
-								chnInf->venv.step = eop;								
-								bSet = true;
-								break;
-							}
+							// FT2 only updates the pan envelope position if the volume envelope's sustain point is enabled
+							chnInf->penv.setToTick(eop);
 						}
-						
-						if (!bSet)
-						{
-							// if position is beyond the last envelope point
-							// we limit it to the last point and exit
-							bool beyond = eop > chnInf->venv.envstruc->env[chnInf->venv.envstruc->num-1][0];							
-							chnInf->venv.a = chnInf->venv.envstruc->num-1;
-							chnInf->venv.b = chnInf->venv.envstruc->num;
-							chnInf->venv.step = chnInf->venv.envstruc->env[chnInf->venv.envstruc->num-1][0];
-							if (beyond)
-								break;
-						}
-
-						// check if we set envelope position to a loop end point
-						// in that case wrap to the loop start, otherwise the loop
-						// end is skipped and the envelope will roll out without 
-						// looping
-						if ((chnInf->venv.envstruc->type & 4) && 
-							chnInf->venv.step == chnInf->venv.envstruc->env[chnInf->venv.envstruc->loope][0])
-						{
-							chnInf->venv.a=chnInf->venv.envstruc->loops;
-							chnInf->venv.b=chnInf->venv.envstruc->loops+1;
-							chnInf->venv.step=chnInf->venv.envstruc->env[chnInf->venv.a][0];
-						}						
 						break;
 					}
 		// set BPM
@@ -3219,4 +3185,49 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 		
 	}
 			
+}
+
+
+void PlayerSTD::TPrEnv::setToTick(mp_uint32 tick)
+{
+	if (envstruc == NULL)
+		return;
+		
+	bool bSet = false;
+	for (mp_sint32 i = 0; i < envstruc->num-1; i++)
+	{
+		if (tick >= envstruc->env[i][0] &&
+			tick < envstruc->env[i+1][0])
+		{
+			a = i;
+			b = i+1;
+			step = tick;
+			bSet = true;
+			break;
+		}
+	}
+	
+	if (!bSet)
+	{
+		// if position is beyond the last envelope point
+		// we limit it to the last point and exit
+		bool beyond = tick > envstruc->env[envstruc->num-1][0];
+		a = envstruc->num-1;
+		b = envstruc->num;
+		step = envstruc->env[envstruc->num-1][0];
+		if (beyond)
+			return;
+	}
+
+	// check if we set envelope position to a loop end point
+	// in that case wrap to the loop start, otherwise the loop
+	// end is skipped and the envelope will roll out without 
+	// looping
+	if ((envstruc->type & 4) && 
+		step == envstruc->env[envstruc->loope][0])
+	{
+		a=envstruc->loops;
+		b=envstruc->loops+1;
+		step=envstruc->env[a][0];
+	}
 }

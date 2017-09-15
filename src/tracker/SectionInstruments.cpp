@@ -43,6 +43,7 @@
 #include "PPUIConfig.h"
 #include "Button.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "MessageBoxContainer.h"
 #include "TransparentContainer.h"
 #include "ListBox.h"
@@ -186,7 +187,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				else
 				{
 					const TEnvelope* env = predefinedEnvelopes->restore(i);					
-					getEnvelopeEditor()->pasteOther(*env);					
+					getEnvelopeEditor()->pasteOther(*env);
 				}
 				
 				update();
@@ -662,15 +663,17 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	y4+=18;
 
-	containerEnvelopes->addControl(new PPCheckBox(CHECKBOX_ENVELOPE_ON, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2)));
+	PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_ENVELOPE_ON, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2));
+	containerEnvelopes->addControl(checkBox);
 
-	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 3), "On", true));
+	containerEnvelopes->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 3), "On", checkBox, true));
 
 	// sustain
-	containerEnvelopes->addControl(new PPCheckBox(CHECKBOX_ENVELOPE_SUSTAIN, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18)));
+	checkBox = new PPCheckBox(CHECKBOX_ENVELOPE_SUSTAIN, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18));
+	containerEnvelopes->addControl(checkBox);
 
-	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 2 + 18+1), "Sustain:", true));
-	
+	containerEnvelopes->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 2 + 18 + 1), "Sustain:", checkBox, true));
+
 	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18+1 + 12), "Point", true));
 
 	// sustain point field
@@ -687,9 +690,10 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEnvelopes->addControl(button);
 
 	// loop
-	containerEnvelopes->addControl(new PPCheckBox(CHECKBOX_ENVELOPE_LOOP, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18*2 + 9)));
+	checkBox = new PPCheckBox(CHECKBOX_ENVELOPE_LOOP, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18 * 2 + 9));
+	containerEnvelopes->addControl(checkBox);
 
-	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 2 + 18*2 + 10), "Loop:", true));
+	containerEnvelopes->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + envelopeEditorControl->getSize().width + 4 + 13, y4 + 2 + 18*2 + 10), "Loop:", checkBox, true));
 
 	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + envelopeEditorControl->getSize().width + 4, y4 + 2 + 18*2 + 10 + 12), "Start", true));
 

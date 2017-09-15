@@ -862,6 +862,24 @@ void SampleEditor::mixPasteSample()
 	tool_mixPasteSample(&par);
 }
 
+void SampleEditor::AMPasteSample()
+{
+	FilterParameters par(0);
+	tool_AMPasteSample(&par);
+}
+
+void SampleEditor::FMPasteSample()
+{
+	FilterParameters par(0);
+	tool_FMPasteSample(&par);
+}
+
+void SampleEditor::PHPasteSample()
+{
+	FilterParameters par(0);
+	tool_PHPasteSample(&par);
+}
+
 void SampleEditor::convertSampleResolution(bool convert)
 {
 	FilterParameters par(1);
@@ -1397,6 +1415,227 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_AMPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+	
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{		
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	
+	preFilter(NULL, NULL);
+	
+	prepareUndo();
+	
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	
+	float step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+	
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+		s = clipBoard->getSampleWord((pp_int32)j+1);
+		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+		float f = (1.0f-frac)*f1 + frac*f2;
+		
+		setFloatSampleInWaveform(i, f * getFloatSampleFromWaveform(i));
+		j+=step;
+	}
+				
+	finishUndo();	
+	
+	postFilter();
+
+}
+
+void SampleEditor::tool_FMPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+	
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{		
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	
+	preFilter(NULL, NULL);
+	
+	prepareUndo();
+	
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+	
+	float step;
+	
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+	
+		pp_int16 s = clipBoard->getSampleWord(((pp_int32)j)%clipBoard->getWidth());
+		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+		s = clipBoard->getSampleWord(((pp_int32)j+1)%clipBoard->getWidth());
+		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+		float f = (1.0f-frac)*f1 + frac*f2;
+		
+		step = powf(16.0f,getFloatSampleFromWaveform(i));
+		setFloatSampleInWaveform(i, f);
+		j+=step;
+		while (j>clipBoard->getWidth()) j-=clipBoard->getWidth();
+	}
+				
+	finishUndo();	
+	
+	postFilter();
+
+}
+
+void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(NULL, NULL);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	// this filter changes the ratio between above zero to below
+	// zero values by stretching the above half wave and shrinking
+	// the below zero half wave (or the other way around)
+	// the frequency of the sample stays constant, only
+	// if the initial ratio is 1/1
+	// If it's not, the frequency shifts.
+	// To work with non synthetic or already distorted samples,
+	// this ratio needs to be calculated and compensated.
+	// The frequency will still shift if the ratio is not constant
+	// during a longer sample. Ce la vie.
+	pp_int32 ups=0,downs=0;
+	for (pp_int32 i = 0; i < clipBoard->getWidth(); i++)
+	{
+		if (clipBoard->getSampleWord(i)<0)
+		{
+			downs++;
+		}
+		else
+		{
+			ups++;
+		}
+	}
+	if (!downs)
+	{
+		downs++; // div by zero prevention
+	}
+	float phaseRatio = (float)ups/(float)downs;
+	float step;
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float f;
+		float fi = getFloatSampleFromWaveform(i);
+		// we need to oversample at a much shorter step size to
+		// track the zero crossing with sufficient accuracy
+		for (pp_int32 oversample = 0; oversample<0x80; oversample++)
+		{
+			float frac = j - (float)floor(j);
+
+			pp_int16 s = clipBoard->getSampleWord(((pp_int32)j)%clipBoard->getWidth());
+			float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+			s = clipBoard->getSampleWord(((pp_int32)j+1)%clipBoard->getWidth());
+			float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+			f = (1.0f-frac)*f1 + frac*f2;
+
+			step = powf(16.0f,fabsf(fi));
+			// the lower half wave is matched
+			// to keep the frequency constant
+			if (f*fi<0.0f)
+			{
+				step = 1.0f / (1.0f + (1.0f-(1.0f/step)));
+			}
+			// which needs to be compensated for a nonzero
+			// initial half wave ratio
+			if (f<0.0f)
+			{
+				step = step * (1.0f/phaseRatio);
+			}
+			// we advance by a fraction due to oversampling
+			j+=step*(1.0f/0x80);
+		}
+		while (j>clipBoard->getWidth()) j-=clipBoard->getWidth();
+		setFloatSampleInWaveform(i, f);
+	}
+
+	finishUndo();
+
+	postFilter();
+
+}
+
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {
 	if (isEmptySample())
@@ -1764,6 +2003,8 @@ void SampleEditor::tool_changeSignSample(const FilterParameters* par)
 	if (isEmptySample())
 		return;
 
+	pp_int32 ignorebits = par->getParameter(0).intPart;
+
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
 	
@@ -1788,18 +2029,27 @@ void SampleEditor::tool_changeSignSample(const FilterParameters* par)
 	prepareUndo();
 	
 	pp_int32 i;
+	pp_uint32 mask;
+	if (sample->type & 16)
+	{
+		mask = 0xffff >> ignorebits;
+	}
+	else
+	{
+		mask = 0xff >> ignorebits;
+	}
 	// lazyness follows
 	for (i = sStart; i < sEnd; i++)
 	{
 		if (sample->type & 16)
 		{
-			mp_uword* smp = (mp_uword*)sample->sample;		
-			smp[i]^=0x7fff;
+			mp_uword* smp = (mp_uword*)sample->sample;
+			smp[i] ^= mask;
 		}
 		else
 		{
-			mp_ubyte* smp = (mp_ubyte*)sample->sample;		
-			smp[i]^=0x7f;
+			mp_ubyte* smp = (mp_ubyte*)sample->sample;
+			smp[i] ^= mask;
 		}
 	}
 	
@@ -2094,8 +2344,17 @@ void SampleEditor::tool_triangularSmoothSample(const FilterParameters* par)
 
 void SampleEditor::tool_eqSample(const FilterParameters* par)
 {
+	tool_eqSample(par,false);
+}
+
+void SampleEditor::tool_eqSample(const FilterParameters* par, bool selective)
+{
 	if (isEmptySample())
 		return;
+
+	if (selective && ClipBoard::getInstance()->isEmpty())
+		return;
+
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -2115,13 +2374,24 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		sStart = 0;
 		sEnd = sample->samplen;
 	}
-	
-	preFilter(&SampleEditor::tool_eqSample, par);
+
+	if (selective) {
+		preFilter(NULL,NULL);
+	} else {	
+		preFilter(&SampleEditor::tool_eqSample, par);
+	}
 	
 	prepareUndo();	
 	
-	float c4spd = getc4spd(sample->relnote, sample->finetune);
-	float scale = c4spd / 44100.0f;
+	ClipBoard* clipBoard;
+	float step;
+	float j2 = 0.0f;
+	if (selective) {
+		clipBoard = ClipBoard::getInstance();
+		step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	}
+	
+	float c4spd = 8363; // there really should be a global constant for this
 	
 	Equalizer** eqs = new Equalizer*[par->getNumParameters()];
 	
@@ -2131,7 +2401,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i]*scale, EQConstants::EQ3bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
+			eqs[i]->CalcCoeffs(EQConstants::EQ3bands[i], EQConstants::EQ3bandwidths[i], c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	// ten band EQ
@@ -2140,7 +2410,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		for (pp_int32 i = 0; i < par->getNumParameters(); i++)
 		{
 			eqs[i] = new Equalizer();
-			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i]*scale, EQConstants::EQ10bandwidths[i]*scale, c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
+			eqs[i]->CalcCoeffs(EQConstants::EQ10bands[i], EQConstants::EQ10bandwidths[i], c4spd, Equalizer::CalcGain(par->getParameter(i).floatPart));
 		}
 	}
 	else
@@ -2158,6 +2428,7 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 		// Fetch a stereo signal
 		double xL = getFloatSampleFromWaveform(i);
 		double xR = xL;
+		float x = (float)xL;
 			
 		for (pp_int32 j = 0; j < par->getNumParameters(); j++)
 		{
@@ -2168,8 +2439,27 @@ void SampleEditor::tool_eqSample(const FilterParameters* par)
 			xL = yL;
 			xR = yR;
 		}
+		if (selective)
+		{
+			float frac = j2 - (float)floor(j2);
 		
-		setFloatSampleInWaveform(i, (float)xL);
+			pp_int16 s = clipBoard->getSampleWord((pp_int32)j2);
+			float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+			s = clipBoard->getSampleWord((pp_int32)j2+1);
+			float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+			float f = (1.0f-frac)*f1 + frac*f2;
+
+			if (f>=0) {
+				x = f * ((float)xL) + (1.0f-f) * x;
+			} else {
+				x = -f * (x-(float)xL) + (1.0+f) * x; 
+			}
+			j2+=step;
+		} else {
+			x = (float)xL;
+		}
+		setFloatSampleInWaveform(i, x);
 	}
 	
 	for (i = 0; i < par->getNumParameters(); i++)
@@ -2189,14 +2479,11 @@ void SampleEditor::tool_generateSilence(const FilterParameters* par)
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
 	
-	if ((sStart == sEnd) || hasValidSelection())
+	if (sStart >= 0 && sEnd >= 0)
 	{
-		if (sStart >= 0 && sEnd >= 0)
-		{		
-			if (sEnd < sStart)
-			{
-				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
-			}
+		if (sEnd < sStart)
+		{
+			pp_int32 s = sEnd; sEnd = sStart; sStart = s;
 		}
 	}
 	else

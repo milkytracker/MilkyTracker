@@ -40,6 +40,7 @@
 #include "Seperator.h"
 #include "Container.h"
 #include "CheckBox.h"
+#include "CheckBoxLabel.h"
 #include "Font.h"
 #include "DialogListBox.h"
 #include "ListBox.h"
@@ -520,12 +521,13 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 
 	y+=2;
 	x = px+4;
-	PPStaticText* staticText = new PPStaticText(OPTIMIZE_STATICTEXT_CRUNCHHEADER, NULL, NULL, PPPoint(x, y), "Crunch headers (XM format only)", true);
-	staticText->enable(false);
-	container->addControl(staticText);
-	PPCheckBox* checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_CRUNCHHEADER, screen, this, PPPoint(x + 32*8, y-1));
+	PPCheckBox* checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_CRUNCHHEADER, screen, this, PPPoint(x + 32 * 8, y - 1));
 	checkBox->checkIt(false);
 	checkBox->enable(false);
+
+	PPCheckBoxLabel* checkBoxLabel = new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_CRUNCHHEADER, NULL, this, PPPoint(x, y), "Crunch headers (XM format only)", checkBox, true);
+	checkBoxLabel->enable(false);
+	container->addControl(checkBoxLabel);
 	container->addControl(checkBox);
 
 	// ----------------------------- "remove"
@@ -535,35 +537,35 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 
 	pp_int32 seperatorWidth = (x + 14*8+2) - (px+4) + 4 + 2;
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x, y), "Remove unused", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE, screen, this, PPPoint(x + 13*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE, screen, this, PPPoint(x + 13 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x, y), "Remove unused", checkBox, true));	
 	container->addControl(checkBox);
 	y+=12;
 
 	x = px+4;
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_REMOVE_PATTERNS, NULL, NULL, PPPoint(x, y), "Pat", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_PATTERNS, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_PATTERNS, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_REMOVE_PATTERNS, NULL, this, PPPoint(x, y), "Pat", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_REMOVE_INSTRUMENTS, NULL, NULL, PPPoint(x, y), "Ins", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_INSTRUMENTS, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_INSTRUMENTS, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_REMOVE_INSTRUMENTS, NULL, this, PPPoint(x, y), "Ins", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_REMOVE_SAMPLES, NULL, NULL, PPPoint(x, y), "Smp", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_SAMPLES, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REMOVE_SAMPLES, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_REMOVE_SAMPLES, NULL, this, PPPoint(x, y), "Smp", checkBox, true));
 	container->addControl(checkBox);
 
 	y+=12;
 	x = px+4;
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_REARRANGE, NULL, NULL, PPPoint(x, y), "Remap instr.", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REARRANGE, screen, this, PPPoint(x + 13*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_REARRANGE, screen, this, PPPoint(x + 13 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_REARRANGE, NULL, this, PPPoint(x, y), "Remap instr.", checkBox, true));	
 	container->addControl(checkBox);
 
 	// ----------------------------- "seperator"
@@ -573,16 +575,16 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 	y+=4;
 
 	// ----------------------------- "minimize all samples"
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x, y), "Min. all smp.", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_MINIMIZEALL, screen, this, PPPoint(x + 13*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_MINIMIZEALL, screen, this, PPPoint(x + 13 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x, y), "Min. all smp.", checkBox, true));	
 	container->addControl(checkBox);
 
 	// ----------------------------- "samples to 8 bit"
 	y+=12;
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x, y), "Smp. to 8 bit", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_CONVERTALL, screen, this, PPPoint(x + 13*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_CONVERTALL, screen, this, PPPoint(x + 13 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x, y), "Smp. to 8 bit", checkBox, true));
 	container->addControl(checkBox);
 
 	y+=12;
@@ -606,95 +608,95 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 	x = x2 = px + 4 + seperatorWidth + 1;
 	space = 5*8-1;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_1xx, NULL, NULL, PPPoint(x, y), "1xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_1xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_1xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_1xx, NULL, this, PPPoint(x, y), "1xx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_2xx, NULL, NULL, PPPoint(x, y), "2xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_2xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_2xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_2xx, NULL, this, PPPoint(x, y), "2xx", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_3xx, NULL, NULL, PPPoint(x, y), "3xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_3xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_3xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_3xx, NULL, this, PPPoint(x, y), "3xx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_4xx, NULL, NULL, PPPoint(x, y), "4xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_4xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_4xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_4xx, NULL, this, PPPoint(x, y), "4xx", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_7xx, NULL, NULL, PPPoint(x, y), "7xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_7xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_7xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_7xx, NULL, this, PPPoint(x, y), "7xx", checkBox, true));
 	container->addControl(checkBox);
 	
 	y+=12;
 	x = x2;
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_A56xx, NULL, NULL, PPPoint(x+4, y), "A/5/6xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_A56xx, screen, this, PPPoint(x + 8*8+1, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_A56xx, screen, this, PPPoint(x + 8 * 8 + 1, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_A56xx, NULL, this, PPPoint(x+4, y), "A/5/6xx", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space*2;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Hxx, NULL, NULL, PPPoint(x, y), "Hxx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Hxx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Hxx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Hxx, NULL, this, PPPoint(x, y), "Hxx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Pxx, NULL, NULL, PPPoint(x, y), "Pxx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Pxx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Pxx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Pxx, NULL, this, PPPoint(x, y), "Pxx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Rxx, NULL, NULL, PPPoint(x, y), "Rxx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Rxx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_Rxx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_Rxx, NULL, this, PPPoint(x, y), "Rxx", checkBox, true));
 	container->addControl(checkBox);
 
 	y+=12;
 	x = x2;
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_E1x, NULL, NULL, PPPoint(x, y), "E1x", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_E1x, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_E1x, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_E1x, NULL, this, PPPoint(x, y), "E1x", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_E2x, NULL, NULL, PPPoint(x, y), "E2x", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_E2x, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_E2x, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_E2x, NULL, this, PPPoint(x, y), "E2x", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_EAx, NULL, NULL, PPPoint(x, y), "EAx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_EAx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_EAx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_EAx, NULL, this, PPPoint(x, y), "EAx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_EBx, NULL, NULL, PPPoint(x, y), "EBx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_EBx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_EBx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_EBx, NULL, this, PPPoint(x, y), "EBx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_X1x, NULL, NULL, PPPoint(x, y), "X1x", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_X1x, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_X1x, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_X1x, NULL, this, PPPoint(x, y), "X1x", checkBox, true));
 	container->addControl(checkBox);
 	y+=12;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_OPERANDCONTROL_X2x, NULL, NULL, PPPoint(x, y), "X2x", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_X2x, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_OPERANDCONTROL_X2x, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_OPERANDCONTROL_X2x, NULL, this, PPPoint(x, y), "X2x", checkBox, true));
 	container->addControl(checkBox);
 
 	y+=1;
@@ -702,7 +704,7 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 	buttonWidth = container->getSize().width/10-5;
 	buttonHeight = 8;
 	
-	staticText = new PPStaticText(0, NULL, NULL, PPPoint(x-1, y+1), "Zero ops", true);
+	PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x-1, y+1), "Zero ops", true);
 	staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	container->addControl(staticText);
 
@@ -770,53 +772,53 @@ void SectionOptimize::init(pp_int32 px, pp_int32 py)
 	x = x2;
 	space = 5*8-1;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_3xx, NULL, NULL, PPPoint(x, y), "3xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_3xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_3xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_3xx, NULL, this, PPPoint(x, y), "3xx", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_4xx, NULL, NULL, PPPoint(x, y), "4xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_4xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_4xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_4xx, NULL, this, PPPoint(x, y), "4xx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_8xx, NULL, NULL, PPPoint(x, y), "8xx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_8xx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_8xx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_8xx, NULL, this, PPPoint(x, y), "8xx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Axx, NULL, NULL, PPPoint(x, y), "Axx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Axx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Axx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Axx, NULL, this, PPPoint(x, y), "Axx", checkBox, true));	
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Cxx, NULL, NULL, PPPoint(x, y), "Cxx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Cxx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Cxx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Cxx, NULL, this, PPPoint(x, y), "Cxx", checkBox, true));
 	container->addControl(checkBox);
 
 	x = x2;
 	y+=12;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_EAx, NULL, NULL, PPPoint(x, y), "EAx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_EAx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_EAx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_EAx, NULL, this, PPPoint(x, y), "EAx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_EBx, NULL, NULL, PPPoint(x, y), "EBx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_EBx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_EBx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_EBx, NULL, this, PPPoint(x, y), "EBx", checkBox, true));
 	container->addControl(checkBox);
 	x+=space;
 
-	container->addControl(new PPStaticText(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Pxx, NULL, NULL, PPPoint(x, y), "Pxx", true));
-	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Pxx, screen, this, PPPoint(x + 3*8+2, y));
+	checkBox = new PPCheckBox(OPTIMIZE_CHECKBOX_EFFECTRELOCATION_Pxx, screen, this, PPPoint(x + 3 * 8 + 2, y));
 	checkBox->checkIt(true);
+	container->addControl(new PPCheckBoxLabel(OPTIMIZE_STATICTEXT_EFFECTRELOCATION_Pxx, NULL, this, PPPoint(x, y), "Pxx", checkBox, true));
 	container->addControl(checkBox);
 
 	y+=12;
