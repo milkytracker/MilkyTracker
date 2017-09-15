@@ -41,7 +41,13 @@
 
 #include "SDL_KeyTranslation.h"
 
+
+#ifdef AMIGA
+pp_uint16 toVK(const SDL_keysym& keysym)
+#else
 pp_uint16 toVK(const SDL_Keysym& keysym)
+#endif
+
 {
 	switch (keysym.sym)
 	{
@@ -164,7 +170,11 @@ pp_uint16 toVK(const SDL_Keysym& keysym)
 	}
 }
 
+#ifdef AMIGA
+pp_uint16 toSC(const SDL_keysym& keysym)
+#else
 pp_uint16 toSC(const SDL_Keysym& keysym)
+#endif
 {
 	switch (keysym.scancode)
 	{

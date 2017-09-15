@@ -32,6 +32,13 @@
 
 #define SCROLLBARWIDTH SCROLLBUTTONSIZE
 
+#ifdef AMIGA
+template<> 
+PianoBitmapSmall * PPSingleton<PianoBitmapSmall>::instance = NULL;
+template<> 
+PianoBitmapLarge * PPSingleton<PianoBitmapLarge>::instance = NULL;
+#endif
+
 static const bool blackKeys[] =
 {
 	false,

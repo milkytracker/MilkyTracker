@@ -32,6 +32,11 @@
 #include "TrackerConfig.h"
 #include "PPUIConfig.h"
 
+#ifdef AMIGA
+template<> 
+GlobalColorConfig * PPSingleton<GlobalColorConfig>::instance = NULL;
+#endif
+
 const PPColor& GlobalColorConfig::getColor(GlobalColors whichColor) const
 {
 	switch (whichColor)

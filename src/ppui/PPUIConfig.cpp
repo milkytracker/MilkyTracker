@@ -30,6 +30,11 @@
 
 #include "PPUIConfig.h"
 
+#ifdef AMIGA
+template<> 
+PPUIConfig * PPSingleton<PPUIConfig>::instance = NULL;
+#endif
+
 PPUIConfig::PPUIConfig()
 {
 	colors[ColorSelection] = PPColor(64*2, 64*2, 128*2-1);

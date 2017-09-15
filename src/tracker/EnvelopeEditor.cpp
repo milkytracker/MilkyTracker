@@ -32,6 +32,11 @@
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
+#ifdef AMIGA
+template<>
+EnvelopeEditor::ClipBoard* PPSingleton<EnvelopeEditor::ClipBoard>::instance = NULL;
+#endif
+
 EnvelopeEditor::ClipBoard::ClipBoard() :
 	envelopeCopy(NULL)
 {

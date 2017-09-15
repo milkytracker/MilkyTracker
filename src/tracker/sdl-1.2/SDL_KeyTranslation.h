@@ -26,9 +26,6 @@
  *
  *  Created by Peter Barth on 19.11.05.
  *
- *  12/5/14 - Dale Whinham
- *    - Port to SDL2
- *
  */
 
 #ifndef KEYTRANSLATION__H
@@ -37,12 +34,11 @@
 #include <SDL.h>
 #include "BasicTypes.h"
 
-#ifdef AMIGA
+// #define NOT_PC_KB	// Set this if you're using non-PC type keyboard
+
 pp_uint16 toVK(const SDL_keysym& keysym);
 pp_uint16 toSC(const SDL_keysym& keysym);
-#else
-pp_uint16 toVK(const SDL_Keysym& keysym);
-pp_uint16 toSC(const SDL_Keysym& keysym);
-#endif
+extern bool isX11;
+extern bool stdKb;
 
 #endif

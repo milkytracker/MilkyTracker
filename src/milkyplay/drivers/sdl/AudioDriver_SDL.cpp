@@ -99,8 +99,11 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		return MP_DEVICE_ERROR;
 	}
 
+#ifdef AMIGA
+	printf("SDL: Using audio driver: %s\n", SDL_AudioDriverName(name, 32));
+#else
 	printf("SDL: Using audio driver: %s\n", SDL_GetCurrentAudioDriver());
-
+#endif
 	if(wanted.format != obtained.format)
 	{
 		fprintf(stderr, "SDL: Audio driver doesn't support 16-bit signed samples!\n");
