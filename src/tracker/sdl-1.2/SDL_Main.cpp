@@ -699,9 +699,6 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		fullScreen = myTracker->getFullScreenFlagFromDatabase();
 	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 
-	windowSize.width = 640;
-	windowSize.height = 480;
-
 #ifdef __LOWRES__
 	windowSize.width = DISPLAYDEVICE_WIDTH;
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
