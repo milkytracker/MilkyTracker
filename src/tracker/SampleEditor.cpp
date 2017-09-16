@@ -38,9 +38,11 @@
 #include "SampleEditorResampler.h"
 
 #ifdef AMIGA
+#define powf	pow
+#define fabsf	fabs
 template<>
 SampleEditor::ClipBoard* PPSingleton<SampleEditor::ClipBoard>::instance = NULL;
-#ifdef
+#endif
 
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
