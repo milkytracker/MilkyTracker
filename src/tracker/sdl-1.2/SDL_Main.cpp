@@ -665,7 +665,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	}
 
 	bpp = 16;
-	fullScreen = true;
+	//fullScreen = true;
 
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,

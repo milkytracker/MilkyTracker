@@ -9,3 +9,4 @@ resources/pictures/docicons/osx/docerator/
 *.o
 .deps
 *.Po
+nbproject/*

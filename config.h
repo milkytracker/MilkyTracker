@@ -7,8 +7,10 @@
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
+#define _LOWRES_1
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
-   */
+ */
 #define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
@@ -30,7 +32,7 @@
 #define HAVE_GETTIMEOFDAY 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-/* #undef HAVE_INTTYPES_H */
+#define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the <jack/jack.h> header file. */
 /* #undef HAVE_JACK_JACK_H */
@@ -125,14 +127,14 @@
 #define HAVE_ST_BLOCKS 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
-   */
+ */
 /* #undef HAVE_SYS_DIR_H */
 
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
 
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
-   */
+ */
 /* #undef HAVE_SYS_NDIR_H */
 
 /* Define to 1 if you have the <sys/param.h> header file. */
@@ -176,13 +178,13 @@
 #define PACKAGE_NAME "MilkyTracker"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "MilkyTracker 0.90.86"
+#define PACKAGE_STRING "MilkyTracker 1.01.00"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "milkytracker"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.90.86"
+#define PACKAGE_VERSION "1.01.00"
 
 /* Define to the type of arg 1 for `select'. */
 #define SELECT_TYPE_ARG1 int
@@ -206,7 +208,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "0.90.86"
+#define VERSION "1.01.00"
 
 /* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
 /* #undef _LARGEFILE_SOURCE */
