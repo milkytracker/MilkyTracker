@@ -666,8 +666,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 
 	bpp = 16;
 	fullScreen = true;
-	windowSize.width = 640;
-	windowSize.height = 480;
+
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
 			SDL_DEFAULT_REPEAT_INTERVAL);
@@ -699,6 +698,9 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	if (!fullScreen)
 		fullScreen = myTracker->getFullScreenFlagFromDatabase();
 	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
+
+	windowSize.width = 640;
+	windowSize.height = 480;
 
 #ifdef __LOWRES__
 	windowSize.width = DISPLAYDEVICE_WIDTH;
