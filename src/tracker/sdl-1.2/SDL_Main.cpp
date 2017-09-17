@@ -911,7 +911,7 @@ unrecognizedCommandLineSwitch:
 	occur if you exit your application using the exit() method. However,
 	if you end main() with 'return 0;' or so, this seems to happen.
 	 */
-#ifdef __QTOPIA__
+#ifdef AMIGA
 	exit(0);
 #else
 	return 0;
