@@ -10,3 +10,9 @@ resources/pictures/docicons/osx/docerator/
 .deps
 *.Po
 nbproject/*
+include/clib/SDL_protos.h
+include/inline/SDL.h
+include/inline/SDL_inline.h
+include/SDL/*
+projects/*
+Makefile
