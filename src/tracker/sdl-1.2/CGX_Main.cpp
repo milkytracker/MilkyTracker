@@ -1,6 +1,6 @@
-/* *  tracker/sdl/SDL_Main.cpp
+/* *  tracker/amiga/CGX_Main.cpp
  *
- *  Copyright 2009 Peter Barth, Christopher O'Neill
+ *  Copyright 2017 Marlon Beijer
  *
  *  This file is part of Milkytracker.
  *
@@ -20,30 +20,17 @@
  */
 
 /*
- *  SDL_Main.cpp
- *  MilkyTracker SDL front end
+ *  CGX_Main.cpp
+ *  MilkyTracker CybergraphX (RTG) Amiga front end
  *
- *  Created by Peter Barth on 19.11.05.
- *
- * 15/2/08 - Peter Barth
- *  This code needs major clean up, there are too many workarounds going on
- *  for different platforms/configurations (MIDI, GP2X etc.)
- *  Please do not further pollute this single source code when possible
- *
- * 14/8/06 - Christopher O'Neill
- *  Ok, there are so many changes in this file that I've lost track...
- *  Here are some I remember:
- *   - ALSA Midi Support
- *   - GP2X mouse emulator (awaiting a rewrite one day..)
- *   - Various command line options
- *   - Fix for french azerty keyboards (their number keys are shifted)
+ *  Created by Marlon Beijer on 17.09.17.
  *
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
+#include <exec/exec.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,9 +46,6 @@
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
 #include "DisplayDeviceFB_SDL.h"
-#ifdef __OPENGL__
-#include "DisplayDeviceOGL_SDL.h"  // <-- Experimental, slow
-#endif
 #include "Screen.h"
 #include "Tracker.h"
 #include "PPMutex.h"
@@ -72,6 +56,11 @@
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif
 // --------------------------------------------------------------------------
+
+// Amiga specifics
+extern struct ExecBase *SysBase;
+int isRTG;
+int cpu_type;
 
 // SDL surface screen
 SDL_Surface* screen = NULL;
@@ -767,6 +756,21 @@ extern "C" int SDL_main(int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+	// find out what type of CPU we have
+	if ((SysBase->AttnFlags & AFF_68060) != 0)
+		cpu_type = 68060;
+	else if ((SysBase->AttnFlags & AFF_68040) != 0)
+		cpu_type = 68040;
+	else if ((SysBase->AttnFlags & AFF_68030) != 0)
+		cpu_type = 68030;
+	else if ((SysBase->AttnFlags & AFF_68020) != 0)
+		cpu_type = 68020;
+	else if ((SysBase->AttnFlags & AFF_68010) != 0)
+		cpu_type = 68010;
+	else
+		cpu_type = 68000;
+
+	printf("Your CPU is a %i \n", cpu_type);
 	Uint32 videoflags;
 	SDL_Event event;
 	char *loadFile = 0;
@@ -813,12 +817,6 @@ unrecognizedCommandLineSwitch:
 			}
 		}
 	}
-
-	// Workaround for seg-fault in SDL_Init on Eee PC (thanks nostromo)
-	// (see http://forum.eeeuser.com/viewtopic.php?pid=136945)
-#if HAVE_DECL_SDL_PUTENV
-	SDL_putenv("SDL_VIDEO_X11_WMCLASS=Milkytracker");
-#endif
 
 	timerMutex = new PPMutex();
 	globalMutex = new PPMutex();
@@ -878,10 +876,6 @@ unrecognizedCommandLineSwitch:
 		}
 	}
 
-#ifdef __GP2X__
-	SDL_JoystickClose(0);
-#endif
-
 	timerMutex->lock();
 	ticking = false;
 	timerMutex->unlock();
@@ -904,17 +898,5 @@ unrecognizedCommandLineSwitch:
 	delete globalMutex;
 	delete timerMutex;
 
-	/* Quoting from README.Qtopia (Application Porting Notes):
-	One thing I have noticed is that applications sometimes don't exit
-	correctly. Their icon remains in the taskbar and they tend to
-	relaunch themselves automatically. I believe this problem doesn't
-	occur if you exit your application using the exit() method. However,
-	if you end main() with 'return 0;' or so, this seems to happen.
-	 */
-#ifdef AMIGA
-	exit(0);
-#else
 	return 0;
-#endif
 }
-
