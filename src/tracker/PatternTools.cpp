@@ -675,11 +675,8 @@ void PatternTools::getEffectName(char* name, pp_uint32 effect)
 
 pp_uint32 PatternTools::getHexNumDigits(pp_uint32 value)
 {
-	if (value == 0)
-		return 1;
-
-	pp_uint32 i = 0;
-	while (value >> i*4)
+	pp_uint32 i = 1;
+	while ((value = value >> 4))
 		i++;
 
 	return i;
