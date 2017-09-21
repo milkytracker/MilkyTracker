@@ -92,18 +92,4 @@ recommended way of obtaining these is by using Homebrew or MacPorts.
 - xmlto
 
 The correct way to build a release .DMG for macOS 10.7 and above, including
-special document icons, is as follows:
-
-```
-$ pushd resources/pictures/docicons/osx
-$ wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/docerator/docerator-2.0.zip
-$ unzip docerator-2.0.zip -d docerator
-$ rm docerator-2.0.zip
-$ ./genicons.py
-$ popd
-$ mkdir build
-$ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 ..
-$ make
-$ cpack .
-```
+special document icons, is to run the `build_macos.sh` script.
