@@ -66,7 +66,9 @@ const SYSCHAR* System::getTempFileName()
 	// load, export and decompressor functions to accept a file handle (XMFILE)
 	// instead of a file name.
 #pragma clang diagnostic push
+#ifndef __amigaos4__ // GCC 4.2.4 was upset about this pragma
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 	if ((tmpnam(buffer) == NULL))
 #pragma clang diagnostic pop
 	{
@@ -102,7 +104,11 @@ const SYSCHAR* System::getConfigFileName()
 	strcpy(buffer, path.Path());	
 	return buffer;
 #endif
+#ifdef __amigaos4__
+	char *home = NULL;
+#else
 	char *home = getenv("HOME");
+#endif
 	if(!home)
 	{
 		// If $HOME isn't set, save in the current dir
@@ -129,6 +135,7 @@ const SYSCHAR* System::getConfigFileName()
 	// Move possible existing config into new location if not already present
 	if(home && access(oldLoc, F_OK) == 0 && access(buffer, F_OK) != 0)
 		rename(oldLoc, buffer);
+
 	return buffer;
 }
 
