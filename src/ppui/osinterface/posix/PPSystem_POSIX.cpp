@@ -111,6 +111,9 @@ const SYSCHAR* System::getConfigFileName()
 	path.Append("milkytracker_config");
 	strcpy(buffer, path.Path());	
 	return buffer;
+#endif
+#ifdef __amigaos4__
+	char *home = NULL;
 #else
 #ifdef __amigaos4__
 	char *home = NULL;
@@ -143,6 +146,7 @@ const SYSCHAR* System::getConfigFileName()
 	// Move possible existing config into new location if not already present
 	if(home && access(oldLoc, F_OK) == 0 && access(buffer, F_OK) != 0)
 		rename(oldLoc, buffer);
+
 	return buffer;
 #endif
 }
