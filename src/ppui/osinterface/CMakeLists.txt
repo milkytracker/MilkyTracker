@@ -79,6 +79,9 @@ elseif(WIN32)
     )
 else()
     list(APPEND SOURCES
+        amiga/PPOpenPanel_Amiga.cpp
+        amiga/PPSavePanel_Amiga.cpp
+        amiga/AslRequester.cpp
         posix/PPPath_POSIX.cpp
         posix/PPSystem_POSIX.cpp
         sdl/PPMessageBox_SDL.cpp
@@ -90,6 +93,7 @@ else()
     )
     list(APPEND HEADERS
         posix/PPMutex.h
+        amiga/AslRequester.h
         posix/PPPath_POSIX.h
         posix/PPSystemString_POSIX.h
         posix/PPSystem_POSIX.h
@@ -98,6 +102,7 @@ else()
     )
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
         ${SDL2_INCLUDE_DIRS}
     )
 endif()
