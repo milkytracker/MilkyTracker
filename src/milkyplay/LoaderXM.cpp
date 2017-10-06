@@ -115,6 +115,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 	header->tempo = LittleEndian::GET_WORD(hdrBuff+12);
 	header->speed = LittleEndian::GET_WORD(hdrBuff+14);
 	memcpy(header->ord, hdrBuff+16, 256);
+	if(header->ordnum > MP_MAXORDERS)
+		header->ordnum = MP_MAXORDERS;
 
 	delete[] hdrBuff;
 	

@@ -39,6 +39,7 @@
 #include "XMFile.h"
 
 #define MP_MAXTEXT 32
+#define MP_MAXORDERS 256
 
 struct TXMHeader 
 {
@@ -66,7 +67,7 @@ struct TXMHeader
 	mp_uword	tempo;
 	mp_uword	speed;
 	mp_uword	mainvol;
-	mp_ubyte	ord[256];
+	mp_ubyte	ord[MP_MAXORDERS];
 	mp_ubyte	pan[256];
 };
 

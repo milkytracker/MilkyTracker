@@ -161,7 +161,7 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 			f.read(&dummy,1,20);
 			mp_uword ordnum = 0;
 			f.readWords(&ordnum,1);
-			if(ordnum > sizeof(header->ord) / sizeof(header->ord[0])) {
+			if(ordnum > MP_MAXORDERS) {
 				return MP_LOADER_FAILED;
 			}
 			header->ordnum = ordnum;
