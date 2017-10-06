@@ -63,7 +63,7 @@ const char* LoaderXM::identifyModule(const mp_ubyte* buffer)
 mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 {
 	mp_ubyte insData[230];		
-	mp_sint32 smpReloc[16];
+	mp_sint32 smpReloc[96];
 	mp_ubyte nbu[96];
 	mp_uint32 fileSize = 0;
 			
@@ -141,7 +141,11 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			f.readDwords(&instr[y].size,1);
 			f.read(&instr[y].name,1,22);		
 			f.read(&instr[y].type,1,1);
-			f.readWords(&instr[y].samp,1);
+			mp_uword numSamples = 0;
+			f.readWords(&numSamples,1);
+			if(numSamples > 96)
+				return MP_LOADER_FAILED;
+			instr[y].samp = numSamples;
 
 			if (instr[y].size == 29)
 			{
