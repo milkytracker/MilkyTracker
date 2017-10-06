@@ -864,6 +864,8 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 
 		for (mp_uint32 s = 0; s < numsamples; s++)
 		{
+			if(mdlsamp[s].sampnum == 0)
+				continue;
 			i = mdlsamp[s].sampnum - 1;
 		
 			if ((i+1) > header->insnum)
