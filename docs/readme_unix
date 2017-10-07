@@ -32,7 +32,7 @@ this isn't the case you can set the environment variable 'SDL_AUDIODRIVER' to
 configure SDL to use the driver of your choice. Some known values to try are
 'alsa', 'dsp', 'arts', 'esd'.  For example:
 
-$ SDL_AUDIO_DRIVER=alsa ./milkytracker
+$ SDL_AUDIODRIVER=alsa ./milkytracker
 
 Note that due to weaknesses in some audio configurations we have had to force
 MilkyTracker to use 2^N audio buffer sizes.  This option can be disabled in the
