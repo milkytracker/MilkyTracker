@@ -580,7 +580,7 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 						{
 							pp_uint32 u = r.x1 * 65536;
 							pp_uint16* srcPtr = src + (v>>16)*srcPitch;
-							pp_uint16* dstPtr = dst + (realWidth-1-y) + (dstPitch*(destRect.x1-1));
+							pp_uint16* dstPtr = dst + (realWidth-1-y) + (dstPitch*(destRect.x1));
 							for (pp_uint32 x = destRect.x1; x < destRect.x2; x++)
 							{
 								*(dstPtr+=dstPitch) = *(srcPtr+(u>>16));
@@ -595,7 +595,7 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 						for (pp_uint32 y = r.y1; y < r.y2; y++)
 						{
 							pp_uint16* srcPtr = src + y*srcPitch + r.x1;
-							pp_uint16* dstPtr = dst + (realWidth-1-y) + (dstPitch*(r.x1-1));
+							pp_uint16* dstPtr = dst + (realWidth-1-y) + (dstPitch*r.x1);
 							for (pp_uint32 x = r.x1; x < r.x2; x++)
 								*(dstPtr+=dstPitch) = *srcPtr++;
 						}
@@ -628,7 +628,7 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 						{
 							pp_uint32 u = r.x1 * 65536;
 							pp_uint8* srcPtr = src + (v>>16)*srcPitch;
-							pp_uint8* dstPtr = dst + (realWidth-1-y)*dstBPP + (dstPitch*(destRect.x1-1));
+							pp_uint8* dstPtr = dst + (realWidth-1-y)*dstBPP + (dstPitch*(destRect.x1));
 							for (pp_uint32 x = destRect.x1; x < destRect.x2; x++)
 							{
 								dstPtr[0] = *(srcPtr+(u>>16) * srcBPP);
@@ -685,7 +685,7 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 						{
 							pp_uint32 u = r.x1 * 65536;
 							pp_uint8* srcPtr = src + (v>>16)*srcPitch;
-							pp_uint32* dstPtr = (pp_uint32*)(dst + (realWidth-1-y)*dstBPP + (dstPitch*(destRect.x1-1)));
+							pp_uint32* dstPtr = (pp_uint32*)(dst + (realWidth-1-y)*dstBPP + (dstPitch*(destRect.x1)));
 							for (pp_uint32 x = destRect.x1; x < destRect.x2; x++)
 							{
 								*(dstPtr+=(dstPitch>>2)) = *(pp_uint32*)(srcPtr + (u>>16) * srcBPP);
@@ -699,7 +699,7 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 						for (pp_uint32 y = r.y1; y < r.y2; y++)
 						{
 							pp_uint32* srcPtr = (pp_uint32*)(src + y*srcPitch + r.x1*srcBPP);
-							pp_uint32* dstPtr = (pp_uint32*)(dst + (realWidth-1-y)*dstBPP + (dstPitch*(r.x1-1)));
+							pp_uint32* dstPtr = (pp_uint32*)(dst + (realWidth-1-y)*dstBPP + (dstPitch*r.x1));
 							for (pp_uint32 x = r.x1; x < r.x2; x++)
 								*(dstPtr+=(dstPitch>>2)) = *srcPtr++;
 						}
