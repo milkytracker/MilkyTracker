@@ -497,31 +497,31 @@ void translateMouseWheelEvent(pp_int32 wheelX, pp_int32 wheelY) {
 	RaiseEventSerialized(&myEvent);
 }
 
-void translateMouseMoveEvent(pp_int32 mouseButton, pp_int32 localMouseX, pp_int32 localMouseY)
+void translateMouseMoveEvent(pp_uint32 mouseState, pp_int32 localMouseX, pp_int32 localMouseY)
 {
 	myDisplayDevice->transform(localMouseX, localMouseY);
 
 	p.x = localMouseX;
 	p.y = localMouseY;
 
-	if (mouseButton == 0)
+	if (mouseState == 0)
 	{
-		p.x = localMouseX; p.y = localMouseY;
 		PPEvent myEvent(eMouseMoved, &p, sizeof(PPPoint));
 		RaiseEventSerialized(&myEvent);
 	}
 	else
 	{
-		if (mouseButton > 2 || !mouseButton)
+		if (mouseState & ~(SDL_BUTTON_LMASK | SDL_BUTTON_RMASK))
+		{
 			return;
+		}
 
-		p.x = localMouseX; p.y = localMouseY;
-		if (mouseButton == 1 && mouseLeft.mouseDown)
+		if (mouseState == SDL_BUTTON_LMASK && mouseLeft.mouseDown)
 		{
 			PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
 		}
-		else if (mouseRight.mouseDown)
+		else if (mouseState == SDL_BUTTON_RMASK && mouseRight.mouseDown)
 		{
 			PPEvent myEvent(eRMouseDrag, &p, sizeof(PPPoint));
 			RaiseEventSerialized(&myEvent);
@@ -644,7 +644,7 @@ void processSDLEvents(const SDL_Event& event)
 			break;
 
 		case SDL_MOUSEMOTION:
-			translateMouseMoveEvent(event.button.button, event.motion.x, event.motion.y);
+			translateMouseMoveEvent(event.motion.state, event.motion.x, event.motion.y);
 			break;
 
 		case SDL_MOUSEWHEEL:
