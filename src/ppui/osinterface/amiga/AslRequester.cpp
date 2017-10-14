@@ -30,17 +30,69 @@
 #include <proto/asl.h>
 #include <proto/dos.h>
 
-static bool GetCurrentPath(char *buffer, size_t len)
-{
-    BPTR lock = IDOS->GetCurrentDir();
-    int32 success = IDOS->NameFromLock(lock, buffer, len);
+struct AslIFace *IAsl;
 
-    if (success) {
-        return true;
+static char pathBuffer[MAX_DOS_PATH];
+
+static void GetCurrentPath()
+{
+    if (strlen(pathBuffer) == 0) {
+        BPTR lock = IDOS->GetCurrentDir();
+        int32 success = IDOS->NameFromLock(lock, pathBuffer, sizeof(pathBuffer));
+
+        if (success) {
+            printf("Initialized to '%s'\n", pathBuffer);
+        } else {
+            puts("Failed to get current dir name, use PROGDIR:");
+            strncpy(pathBuffer, "PROGDIR:", sizeof(pathBuffer));
+        }
     } else {
-        puts("Failed to get current dir name");
-        return false;
+        printf("Use known path '%s'\n", pathBuffer);
     }
+}
+
+static PPSystemString GetFileNameFromRequester(struct FileRequester *req)
+{
+    char buffer[MAX_DOS_PATH];
+    PPSystemString fileName = "";
+
+    if (strlen(req->fr_Drawer) < sizeof(buffer)) {
+
+        strncpy(buffer, req->fr_Drawer, sizeof(buffer));
+        strncpy(pathBuffer, req->fr_Drawer, sizeof(pathBuffer));
+
+        int32 success = IDOS->AddPart(buffer, req->fr_File, sizeof(buffer));
+
+        if (success == FALSE) {
+            puts("Failed to construct path");
+        } else {
+            fileName = buffer;
+        }
+
+        //printf("%s\n", fileName.getStrBuffer());
+
+    } else {
+        printf("Path is too long (limit %ld)\n", sizeof(buffer));
+    }
+
+    return fileName;
+}
+
+static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
+{
+    struct FileRequester *req = (struct FileRequester *)IAsl->AllocAslRequestTags(
+        ASL_FileRequest,
+        ASLFR_TitleText, title,
+        //ASLFR_PositiveText, "Open file",
+        ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
+        ASLFR_SleepWindow, TRUE,
+        ASLFR_StayOnTop, TRUE,
+        ASLFR_RejectIcons, TRUE,
+        ASLFR_InitialDrawer, pathBuffer,
+        ASLFR_InitialFile, name,
+        TAG_DONE);
+
+    return req;
 }
 
 PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
@@ -50,48 +102,26 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
     struct Library *AslBase = IExec->OpenLibrary(AslName, 53);
 
     if (AslBase) {
-        struct AslIFace *IAsl = (struct AslIFace *)IExec->GetInterface(AslBase, "main", 1, NULL);
+        IAsl = (struct AslIFace *)IExec->GetInterface(AslBase, "main", 1, NULL);
 
         if (IAsl) {
-            char buffer[MAX_DOS_PATH];
+            GetCurrentPath();
 
-            if (GetCurrentPath(buffer, sizeof(buffer))) {
-                struct FileRequester *r = (struct FileRequester *)IAsl->AllocAslRequestTags(
-                    ASL_FileRequest,
-                    ASLFR_TitleText, title,
-                    //ASLFR_PositiveText, "Open file",
-                    ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
-                    ASLFR_SleepWindow, TRUE,
-                    ASLFR_StayOnTop, TRUE,
-                    ASLFR_RejectIcons, TRUE,
-                    ASLFR_InitialDrawer, buffer,
-                    ASLFR_InitialFile, name,
-                    TAG_DONE);
+            struct FileRequester *req = CreateRequester(title, saveMode, name);
 
-                if (r) {
+            if (req) {
 
-                    BOOL b = IAsl->AslRequestTags(r, TAG_DONE);
+                BOOL result = IAsl->AslRequestTags(req, TAG_DONE);
 
-                    //printf("%d '%s' '%s'\n", b, r->fr_File, r->fr_Drawer);
+                //printf("%d '%s' '%s'\n", b, r->fr_File, r->fr_Drawer);
 
-                    if (b != FALSE) {
-                        if (strlen(r->fr_Drawer) < sizeof(buffer)) {
-
-                            strncpy(buffer, r->fr_Drawer, sizeof(buffer));
-                            IDOS->AddPart(buffer, r->fr_File, sizeof(buffer));
-
-                            fileName = buffer;
-
-                            //printf("%s\n", fileName.getStrBuffer());
-                        } else {
-                            printf("Path is too long (limit %ld)\n", sizeof(buffer));
-                        }
-                    }
-
-                    IAsl->FreeAslRequest(r);
-                } else {
-                    puts("Failed to allocate file requester");
+                if (result != FALSE) {
+                    fileName = GetFileNameFromRequester(req);
                 }
+
+                IAsl->FreeAslRequest(req);
+            } else {
+                puts("Failed to allocate file requester");
             }
 
             IExec->DropInterface((struct Interface *)IAsl);
