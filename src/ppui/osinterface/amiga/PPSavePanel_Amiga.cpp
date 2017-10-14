@@ -1,7 +1,7 @@
 /*
  *  ppui/osinterface/amiga/PPSavePanel_Amiga.cpp
  *
- *  Copyright 2017 Peter Barth
+ *  Copyright 2017 Juha Niemimaki
  *
  *  This file is part of Milkytracker.
  *
