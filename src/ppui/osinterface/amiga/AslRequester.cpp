@@ -78,10 +78,13 @@ static PPSystemString GetFileNameFromRequester(struct FileRequester *req)
     return fileName;
 }
 
+struct Window* getNativeWindow(void);
+
 static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
 {
     struct FileRequester *req = (struct FileRequester *)IAsl->AllocAslRequestTags(
         ASL_FileRequest,
+        ASLFR_Window, getNativeWindow(),
         ASLFR_TitleText, title,
         //ASLFR_PositiveText, "Open file",
         ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
