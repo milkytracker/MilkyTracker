@@ -25,7 +25,8 @@ function newgcctoolchain(toolchain)
 			cxx = toolchain.prefix .. "g++",
 			ar = toolchain.prefix .. "ar",
 			ld = toolchain.prefix .. "ld",
-			cppflags = " " .. toolchain.cppflags
+			cppflags = " " .. toolchain.cppflags,
+			ldflags = " " .. toolchain.ldflags
 		}
 	}
 end
@@ -34,7 +35,24 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68040 -fomit-frame-pointer -fno-exceptions -fbbb=sapcmfbi"
+	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -fbbb=sapcmfbi -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib"
+}
+
+newgcctoolchain {
+	name = "m68k-macos",
+	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
+	prefix = "m68k-apple-macos-",
+	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -O3 -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/RIncludes -I../include/mac",
+	ldflags = "-L/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/lib"
+}
+
+newgcctoolchain {
+	name = "ppc-macos",
+	description = "",
+	prefix = "powerpc-apple-macos-",
+	cppflags = "-g -fomit-frame-pointer -fno-exceptions -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL -I../include/mac",
+	ldflags = "-L/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/lib"
 }
 
 if _OPTIONS.platform then
@@ -44,8 +62,8 @@ end
 
 solution "milkytracker"
 	configurations { "Release", "Debug", "ixemul" }
-	platforms { "m68k-amigaos" }
-	includedirs { "/opt/m68k-amigaos/m68k-amigaos/sys-include", "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl-1.2", "/opt/m68k-amigaos/include" }
+	platforms { "m68k-amigaos", "m68k-macos", "ppc-macos" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib" }
 	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
 	defines { "AMIGA", "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
@@ -61,14 +79,14 @@ solution "milkytracker"
 			defines { "DEBUG" }
 			flags { "Symbols" }
 			targetname "lhasa_d"
-			buildoptions "-noixemul"
+			buildoptions ""
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "lhasa"
-			buildoptions "-g -noixemul -DHAVE_CONFIG_H -Wimplicit-function-declaration "
+			buildoptions "-DHAVE_CONFIG_H -Wimplicit-function-declaration "
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
-			buildoptions "-noixemul -msoft-float"
+			buildoptions " -msoft-float"
 			targetname "lhasa"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -91,10 +109,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "zlib"
-			buildoptions"-noixemul"
+			buildoptions""
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
-			buildoptions "-noixemul -msoft-float"
+			buildoptions "-msoft-float"
 			targetname "zlib"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -107,7 +125,7 @@ solution "milkytracker"
 		location "projects"
 		targetdir("lib/")
 		files { "./src/submodules/zziplib/**.c" }
-		includedirs { "./include/zziplib", "./src/submodules/zlib", "./src/submodules/zziplib", "./src/submodules/zziplib/SDL", "/opt/m68k-amigaos/include/SDL" }
+		includedirs { "./include/zziplib", "./src/submodules/zlib", "./src/submodules/zziplib", "./src/submodules/zziplib/SDL" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -116,10 +134,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "zziplib"
-			buildoptions "-noixemul "
+			buildoptions " "
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
-			buildoptions "-g -noixemul -msoft-float"
+			buildoptions "-msoft-float"
 			targetname "zziplib"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -131,8 +149,8 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
-		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl", "/opt/m68k-amigaos/include/SDL" }
+		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl-1.2/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
+		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl" }
 
 		configuration "debug"
 			defines { "DEBUG" }
@@ -142,11 +160,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "milkyplay"
-			buildoptions"-g -noixemul -fpermissive"
+			buildoptions"-fpermissive"
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
---			flags { "" }
-			buildoptions "-noixemul -msoft-float"
+			buildoptions " -msoft-float"
 			targetname "milkyplay"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -168,11 +185,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "fx"
-			buildoptions"-g -noixemul -fpermissive"
+			buildoptions"-fpermissive"
 		configuration "release-nofpu"
                         defines { "NDEBUG" }
---                        flags { "" }
-                        buildoptions "-noixemul -msoft-float"
+                        buildoptions " -msoft-float"
                         targetname "fx"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -196,11 +212,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "compression"
-			buildoptions"-g -noixemul -fpermissive"
+			buildoptions"-fpermissive"
 		configuration "release-nofpu"
                         defines { "NDEBUG" }
---                        flags { "" }
-                        buildoptions "-noixemul -msoft-float"
+                        buildoptions " -msoft-float"
                         targetname "compression"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -215,7 +230,7 @@ solution "milkytracker"
 		targetdir("lib/")
 		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
 		excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/sdl-1.2", "/opt/m68k-amigaos/include/SDL" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/sdl-1.2" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -224,10 +239,10 @@ solution "milkytracker"
 		configuration "release"
 			defines { "NDEBUG" }
 			targetname "ppui"	
-			buildoptions "-g -noixemul -fpermissive"
+			buildoptions "-fpermissive"
 		configuration "release-nofpu"
                         defines { "NDEBUG" }
-                        buildoptions "-noixemul -msoft-float"
+                        buildoptions " -msoft-float"
                         targetname "ppui"
 		configuration "ixemul"
 			defines { "NDEBUG" }
@@ -243,7 +258,7 @@ solution "milkytracker"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl-1.2/*" }
 		links { "zlib", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug" }
-		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -fbbb=sapcmfbi -noixemul -m68040 -msoft-float -I/opt/m68k-amigaos/include/SDL -I/opt/m68k-amigaos/include -L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
+		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -fbbb=sapcmfbi  -m68040 -msoft-float -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
 		includedirs { "/opt/m68k-amigaos/include/SDL" }
 
 		-- Libraries.
@@ -257,11 +272,11 @@ solution "milkytracker"
 		
 		-- Release options.
 		configuration "Release"
-			buildoptions "-g -noixemul -fpermissive"
+			buildoptions "-g  -fpermissive"
 		configuration "Release-noFPU"
                         defines { "NDEBUG" }
 --                        flags { "" }
-                        buildoptions "-noixemul -msoft-float"
+                        buildoptions "-msoft-float"
 			targetsuffix "-nofpu"
 		configuration "ixemul"
 			flags { "OptimizeSize" }
