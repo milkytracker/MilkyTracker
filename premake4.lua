@@ -35,13 +35,13 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -fbbb=sapcmfbi -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
-	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib"
+	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -Os -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -noixemul"
 }
 
 newgcctoolchain {
 	name = "m68k-macos",
-	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
+	description = "m68k-macos to cross-compile mac.68k binaries from linux",
 	prefix = "m68k-apple-macos-",
 	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -O3 -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/RIncludes -I../include/mac",
 	ldflags = "-L/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/lib"
@@ -61,7 +61,7 @@ if _OPTIONS.platform then
 end
 
 solution "milkytracker"
-	configurations { "Release", "Debug", "ixemul" }
+	configurations { "Release", "Release-noFPU", "Debug", "ixemul" }
 	platforms { "m68k-amigaos", "m68k-macos", "ppc-macos" }
 	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib" }
 	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
@@ -258,7 +258,7 @@ solution "milkytracker"
 		targetname "milkytracker.68k"
 		files {  "./src/tracker/*", "./src/tracker/sdl-1.2/*" }
 		links { "zlib", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug" }
-		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -fbbb=sapcmfbi  -m68040 -msoft-float -fomit-frame-pointer -Xlinker --allow-multiple-definition" }
+		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -Xlinker --allow-multiple-definition" }
 		includedirs { "/opt/m68k-amigaos/include/SDL" }
 
 		-- Libraries.
