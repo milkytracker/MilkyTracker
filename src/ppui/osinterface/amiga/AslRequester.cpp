@@ -41,13 +41,13 @@ static void GetCurrentPath()
         int32 success = IDOS->NameFromLock(lock, pathBuffer, sizeof(pathBuffer));
 
         if (success) {
-            printf("Initialized to '%s'\n", pathBuffer);
+            //printf("Initialized to '%s'\n", pathBuffer);
         } else {
             puts("Failed to get current dir name, use PROGDIR:");
             strncpy(pathBuffer, "PROGDIR:", sizeof(pathBuffer));
         }
     } else {
-        printf("Use known path '%s'\n", pathBuffer);
+        //printf("Use known path '%s'\n", pathBuffer);
     }
 }
 
