@@ -2123,6 +2123,8 @@ unused:
 #ifdef MILKYTRACKER
 bool TXMPattern::saveExtendedPattern(const SYSCHAR* fileName) const
 {
+	// Note: For FT2 compatibility, .XP files are fixed at 32 channels.
+	// TODO:  Create a version 2 format for variable channel counts
 	TWorkBuffers workBuffers;
 
 	// ------ start ---------------------------------
@@ -2134,13 +2136,13 @@ bool TXMPattern::saveExtendedPattern(const SYSCHAR* fileName) const
 	f.writeWord(0x1);
 	f.writeWord(rows);
 	
-	mp_sint32 len = rows * channum * 5;
+	mp_sint32 len = rows * 32 * 5;
 	
 	mp_ubyte* srcPattern = new mp_ubyte[len];
 	
 	memset(srcPattern, 0, len);
 	
-	convertPattern(NULL, this, srcPattern, channum, workBuffers, false);		
+	convertPattern(NULL, this, srcPattern, 32, workBuffers, false);
 	
 	f.write(srcPattern, 1, len);
 	
@@ -2165,14 +2167,12 @@ bool TXMPattern::saveExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel) c
 	f.writeWord(0x1);
 	f.writeWord(rows);
 	
-	mp_sint32 len = rows * channum * 5;
+	mp_sint32 len = rows * 5;
 	
-	mp_ubyte* srcPattern = new mp_ubyte[len];
+	mp_ubyte* srcPattern = new mp_ubyte[rows * channum * 5];
 	mp_ubyte* dstPattern = new mp_ubyte[len];
 	
-	memset(srcPattern, 0, len);
-	
-	convertPattern(NULL, this, srcPattern, channum, workBuffers, false);		
+	convertPattern(NULL, this, srcPattern, channum, workBuffers, false);
 	
 	for (mp_sint32 r = 0; r < rows; r++)
 	{
