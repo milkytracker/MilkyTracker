@@ -35,23 +35,23 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -Os -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
-	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -noixemul"
+	cppflags = "-m68040 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -mhard-float -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix -noixemul -ldebug -Xlinker --allow-multiple-definition"
 }
 
 newgcctoolchain {
-	name = "m68k-macos",
-	description = "m68k-macos to cross-compile mac.68k binaries from linux",
-	prefix = "m68k-apple-macos-",
-	cppflags = "-g -m68040 -fomit-frame-pointer -fno-exceptions -O3 -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/RIncludes -I../include/mac",
-	ldflags = "-L/opt/m68k-ppc-macos/toolchain/m68k-apple-macos/lib"
+	name = "ppc-amigaos",
+	description = "ppc-amigaos to cross-compile amiga.ppc binaries from linux",
+	prefix = "ppc-amigaos-",
+	cppflags = "-mcrt=newlib -fomit-frame-pointer -fno-exceptions -I/opt/ppc-amigaos/ppc-amigaos/sys-include -I/opt/ppc-amigaos/include -I/opt/ppc-amigaos/include/SDL ",
+	ldflags = "-mcrt=newlib -L/opt/ppc-amigaos/lib -L/opt/ppc-amigaos/ppc-amigaos/lib -lauto -lunix"
 }
 
 newgcctoolchain {
 	name = "ppc-macos",
 	description = "",
 	prefix = "powerpc-apple-macos-",
-	cppflags = "-g -fomit-frame-pointer -fno-exceptions -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL -I../include/mac",
+	cppflags = "-fomit-frame-pointer -fno-exceptions -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes -I/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL -I../include/mac",
 	ldflags = "-L/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/lib"
 }
 
@@ -62,9 +62,8 @@ end
 
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug", "ixemul" }
-	platforms { "m68k-amigaos", "m68k-macos", "ppc-macos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib" }
-	libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
+	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-macos" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
 	defines { "AMIGA", "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	project "lhasa"
@@ -74,7 +73,7 @@ solution "milkytracker"
 		targetdir("lib/")
 		files { "./src/submodules/lhasa/src/**.c", "./src/submodules/lhasa/lib/**.c" }
 		excludes { "./src/submodules/lhasa/lib/bit_stream_reader.c", "./src/submodules/lhasa/lib/lh_new_decoder.c", "./src/submodules/lhasa/lib/pma_common.c", "./src/submodules/lhasa/lib/tree_decode.c" }
-		includedirs { "./src/submodules/lhasa", "./src/submodules/lhasa/lib", "./src/submodules/lhasa/lib/public", "./src/submodules/lhasa/src", "./src/submodules/lhasa", "./include/lhasa" }
+		includedirs { "./src/submodules/lhasa", "./src/submodules/lhasa/lib", "./src/submodules/lhasa/lib/public", "./src/submodules/lhasa/src", "./src/submodules/lhasa" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -202,7 +201,7 @@ solution "milkytracker"
 		location "projects"
 		targetdir("lib/")
 		files { "./src/compression/**.cpp",  }
-		includedirs { "./include/zziplib", "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zlib/generic", "./src/compression/zziplib", "./src/compression/zziplib/generic", "./include/lhasa", "./src/submodules/zziplib", "src/submodules/lhasa/lib/public" }
+		includedirs { "./include/zziplib", "./src/compression", "./src/compression/lha", "./src/compression/zlib", "./src/compression/zlib/generic", "./src/compression/zziplib", "./src/compression/zziplib/generic", "./src/submodules/zziplib", "src/submodules/lhasa/lib/public" }
 
 		configuration "debug"
 			defines { "DEBUG" }
@@ -255,14 +254,17 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir "./bin"
-		targetname "milkytracker.68k"
+		targetname "milkytracker"
 		files {  "./src/tracker/*", "./src/tracker/sdl-1.2/*" }
-		links { "zlib", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL", "jpeg", "z", "debug" }
-		linkoptions { "-D__AMIGA__ -fno-rtti -fno-exceptions -fpermissive -Xlinker --allow-multiple-definition" }
-		includedirs { "/opt/m68k-amigaos/include/SDL" }
+		links { "zlib", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL" }
+		flags { "Symbols" }
 
-		-- Libraries.
-		configuration "Linux"
+		configuration "m68k-amigaos"
+			targetextension ".68k"
+		configuration "ppc-amigaos"
+			targetextension ".os4"
+		configuration "ppc-macos"
+			targetextension ".app"
 		
 		-- Debug options.
 		configuration "Debug"
@@ -272,10 +274,9 @@ solution "milkytracker"
 		
 		-- Release options.
 		configuration "Release"
-			buildoptions "-g  -fpermissive"
+			buildoptions "-fpermissive"
 		configuration "Release-noFPU"
                         defines { "NDEBUG" }
---                        flags { "" }
                         buildoptions "-msoft-float"
 			targetsuffix "-nofpu"
 		configuration "ixemul"
