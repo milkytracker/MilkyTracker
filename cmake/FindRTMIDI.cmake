@@ -46,14 +46,10 @@ find_library(
 if(PC_RTMIDI_VERSION)
     set(RTMIDI_VERSION_STRING ${PC_RTMIDI_VERSION})
 elseif(RTMIDI_INCLUDE_DIR AND EXISTS "${RTMIDI_INCLUDE_DIR}/RtMidi.h")
-    file(
-        STRINGS "${RTMIDI_INCLUDE_DIR}/RtMidi.h" RTMIDI_VERSION_LINE
-        REGEX "^// RtMidi: Version .*$"
-    )
-    string(
-        REGEX REPLACE "^.*Version (.*)$" "\\1" RTMIDI_VERSION_STRING
-        ${RTMIDI_VERSION_LINE}
-    )
+    file(STRINGS "${RTMIDI_INCLUDE_DIR}/RtMidi.h" RTMIDI_VERSION_LINE
+         REGEX "^#define RTMIDI_VERSION \".*\".*$")
+    string(REGEX REPLACE "^#define RTMIDI_VERSION \"(.*)\".*$" "\\1" RTMIDI_VERSION_STRING
+         ${RTMIDI_VERSION_LINE})
     unset(RTMIDI_VERSION_LINE)
 endif()
 
