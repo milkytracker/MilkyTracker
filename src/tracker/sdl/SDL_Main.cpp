@@ -1138,3 +1138,21 @@ unrecognizedCommandLineSwitch:
 
 	return 0;
 }
+
+#ifdef __amigaos4__
+
+#include "SDL_syswm.h"
+
+struct Window * getNativeWindow(void) {
+    struct Window *syswin = NULL;
+    SDL_Window *sdlwin = myDisplayDevice->getWindow();
+
+    SDL_SysWMinfo info;
+
+    if (SDL_GetWindowWMInfo(sdlwin, &info)) {
+        syswin = info.info.os4.window;
+    }
+
+    return syswin;
+}
+#endif
