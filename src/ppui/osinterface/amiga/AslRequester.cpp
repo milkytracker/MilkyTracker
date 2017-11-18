@@ -31,14 +31,15 @@
 #include <proto/dos.h>
 
 struct AslIFace *IAsl;
-
+#define MAX_DOS_PATH 260
 static char pathBuffer[MAX_DOS_PATH];
 
 static void GetCurrentPath()
 {
     if (strlen(pathBuffer) == 0) {
-        BPTR lock = IDOS->GetCurrentDir();
-        int32 success = IDOS->NameFromLock(lock, pathBuffer, sizeof(pathBuffer));
+
+//        BPTR lock = GetCurrentDir();
+        bool success = GetCurrentDirName(pathBuffer, sizeof(pathBuffer));//IDOS->NameFromLock(lock, pathBuffer, sizeof(pathBuffer));
 
         if (success) {
             //printf("Initialized to '%s'\n", pathBuffer);
@@ -61,7 +62,7 @@ static PPSystemString GetFileNameFromRequester(struct FileRequester *req)
         strncpy(buffer, req->fr_Drawer, sizeof(buffer));
         strncpy(pathBuffer, req->fr_Drawer, sizeof(pathBuffer));
 
-        int32 success = IDOS->AddPart(buffer, req->fr_File, sizeof(buffer));
+        bool success = AddPart(buffer, req->fr_File, sizeof(buffer));
 
         if (success == FALSE) {
             puts("Failed to construct path");
@@ -78,18 +79,18 @@ static PPSystemString GetFileNameFromRequester(struct FileRequester *req)
     return fileName;
 }
 
-struct Window* getNativeWindow(void);
+//struct Window* getNativeWindow(void);
 
 static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
 {
-    struct FileRequester *req = (struct FileRequester *)IAsl->AllocAslRequestTags(
+    struct FileRequester *req = (struct FileRequester *)AllocAslRequestTags(
         ASL_FileRequest,
-        ASLFR_Window, getNativeWindow(),
+//        ASLFR_Window, getNativeWindow(),
         ASLFR_TitleText, title,
         //ASLFR_PositiveText, "Open file",
         ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
         ASLFR_SleepWindow, TRUE,
-        ASLFR_StayOnTop, TRUE,
+        //ASLFR_StayOnTop, TRUE,
         ASLFR_RejectIcons, TRUE,
         ASLFR_InitialDrawer, pathBuffer,
         ASLFR_InitialFile, name,
@@ -102,19 +103,19 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
 {
     PPSystemString fileName = "";
 
-    struct Library *AslBase = IExec->OpenLibrary(AslName, 53);
+    struct Library *AslBase = OpenLibrary(AslName, 45);
 
     if (AslBase) {
-        IAsl = (struct AslIFace *)IExec->GetInterface(AslBase, "main", 1, NULL);
+//        IAsl = (struct AslIFace *)IExec->GetInterface(AslBase, "main", 1, NULL);
 
-        if (IAsl) {
+//        if (IAsl) {
             GetCurrentPath();
 
             struct FileRequester *req = CreateRequester(title, saveMode, name);
 
             if (req) {
 
-                BOOL result = IAsl->AslRequestTags(req, TAG_DONE);
+                BOOL result = AslRequestTags(req, TAG_DONE);
 
                 //printf("%d '%s' '%s'\n", b, r->fr_File, r->fr_Drawer);
 
@@ -122,17 +123,17 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
                     fileName = GetFileNameFromRequester(req);
                 }
 
-                IAsl->FreeAslRequest(req);
+                FreeAslRequest(req);
             } else {
                 puts("Failed to allocate file requester");
             }
 
-            IExec->DropInterface((struct Interface *)IAsl);
-        } else {
-            puts("Failed to get ASL interface");
-        }
+            //->DropInterface((struct Interface *)IAsl);
+//        } else {
+//            puts("Failed to get ASL interface");
+//        }
 
-        IExec->CloseLibrary(AslBase);
+        CloseLibrary(AslBase);
     } else {
         printf("Failed to open %s\n", AslName);
     }

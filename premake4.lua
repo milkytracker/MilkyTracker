@@ -35,7 +35,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68040 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -mhard-float -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	cppflags = "-m68060 -mhard-float -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
 	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix -noixemul -ldebug -Xlinker --allow-multiple-definition"
 }
 
@@ -43,7 +43,7 @@ newgcctoolchain {
 	name = "ppc-amigaos",
 	description = "ppc-amigaos to cross-compile amiga.ppc binaries from linux",
 	prefix = "ppc-amigaos-",
-	cppflags = "-mcrt=newlib -fomit-frame-pointer -fno-exceptions -I/opt/ppc-amigaos/ppc-amigaos/sys-include -I/opt/ppc-amigaos/include -I/opt/ppc-amigaos/include/SDL ",
+	cppflags = "-Os -mcrt=newlib -fomit-frame-pointer -fno-exceptions -I/opt/ppc-amigaos/ppc-amigaos/sys-include -I/opt/ppc-amigaos/include -I/opt/ppc-amigaos/include/SDL ",
 	ldflags = "-mcrt=newlib -L/opt/ppc-amigaos/lib -L/opt/ppc-amigaos/ppc-amigaos/lib -lauto -lunix"
 }
 
@@ -63,7 +63,7 @@ end
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug", "ixemul" }
 	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-macos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2","./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
 	defines { "AMIGA", "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	project "lhasa"
@@ -227,9 +227,9 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
 		excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/sdl-1.2" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/sdl-1.2" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
