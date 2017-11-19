@@ -35,7 +35,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68060 -mhard-float -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	cppflags = "-m68060 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
 	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix -noixemul -ldebug -Xlinker --allow-multiple-definition"
 }
 
