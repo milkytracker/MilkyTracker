@@ -298,10 +298,10 @@ public:
 
 #ifdef AMIGA
 	PPString(signed char* str) :
-		strBuffer(new char[strlen(str) + 1]),
-		allocatedSize((pp_uint32)strlen(str) + 1)
+		strBuffer(new char[strlen( (const char*)str) + 1]),
+		allocatedSize((pp_uint32)strlen( (const char*)str) + 1)
 	{
-		strcpy(strBuffer, str);
+		strcpy(strBuffer, (const char*)str);
 	}
 #endif
 

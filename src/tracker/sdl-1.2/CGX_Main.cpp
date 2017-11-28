@@ -1,3 +1,4 @@
+
 /* *  tracker/amiga/CGX_Main.cpp
  *
  *  Copyright 2017 Marlon Beijer
@@ -819,7 +820,7 @@ int main(int argc, char *argv[])
 //	if (ammx == 1)
 //		ammxon = "On";
 
-#if !defined(__amigaos4__) && !defined(MORPHOS) && !defined(WARPOS) && defined(__AMIGA__)
+#if defined(__amigaos3__)
 	// find out what type of CPU we have
 	if ((SysBase->AttnFlags & AFF_68080) != 0)
 		cpu_type = 68080;
@@ -894,7 +895,17 @@ unrecognizedCommandLineSwitch:
 			}
 		}
 	}
-
+#ifdef DEBUG
+	fprintf(stderr,"SDL_INIT");
+#endif
+	/* Initialize SDL */
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+#ifdef DEBUG
+	fprintf(stderr,"SDL_INIT Done");
+#endif
 	timerMutex = new PPMutex();
 	globalMutex = new PPMutex();
 
@@ -903,8 +914,15 @@ unrecognizedCommandLineSwitch:
 	PPSystemString oldCwd = path.getCurrent();
 
 	globalMutex->lock();
+#ifdef DEBUG
+	fprintf(stderr,"InitTracker\n");
+#endif
 	initTracker(defaultBPP, orientation, swapRedBlue, fullScreen, noSplash);
+#ifdef DEBUG
+	fprintf(stderr,"InitTracker done\n");
+#endif
 	globalMutex->unlock();
+
 
 #ifdef HAVE_LIBASOUND
 	if (myMidiReceiver && recVelocity) {
@@ -921,7 +939,9 @@ unrecognizedCommandLineSwitch:
 		PPEvent event(eKeyDown, &chr, sizeof (chr));
 		RaiseEventSerialized(&event);
 	}
-
+#ifdef DEBUG
+	fprintf(stderr,"loadfile done\n");
+#endif
 	/* Main event loop */
 	done = 0;
 	while (!done && SDL_WaitEvent(&event)) {
