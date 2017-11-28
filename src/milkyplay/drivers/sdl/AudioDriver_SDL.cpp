@@ -71,7 +71,7 @@ AudioDriver_SDL::~AudioDriver_SDL()
 mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
 {
 	SDL_AudioSpec	wanted, obtained, saved;
-	char name[32];
+	char name[64];
 	mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
 	if (res < 0)
 	{

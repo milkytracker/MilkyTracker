@@ -11,3 +11,7 @@
 [submodule "zziplib"]
 	path = src/submodules/zziplib
 	url = https://github.com/dwhinham/zziplib.git
+
+[submodule "bzlib2"]
+	path = src/submodules/bzlib2
+	url = https://github.com/srorso/Bzip2

@@ -35,7 +35,7 @@ newgcctoolchain {
 	name = "m68k-amigaos",
 	description = "m68k-amigaos to cross-compile amiga.68k binaries from linux",
 	prefix = "m68k-amigaos-",
-	cppflags = "-m68060 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
+	cppflags = "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul -I/opt/m68k-amigaos/m68k-amigaos/sys-include -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/include/SDL ",
 	ldflags = "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/lib -L/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix -noixemul -ldebug -Xlinker --allow-multiple-definition"
 }
 
@@ -43,7 +43,7 @@ newgcctoolchain {
 	name = "ppc-amigaos",
 	description = "ppc-amigaos to cross-compile amiga.ppc binaries from linux",
 	prefix = "ppc-amigaos-",
-	cppflags = "-Os -mcrt=newlib -fomit-frame-pointer -fno-exceptions -I/opt/ppc-amigaos/ppc-amigaos/sys-include -I/opt/ppc-amigaos/include -I/opt/ppc-amigaos/include/SDL ",
+	cppflags = "-O3 -mcrt=newlib -fomit-frame-pointer -fno-exceptions -I/opt/ppc-amigaos/ppc-amigaos/sys-include -I/opt/ppc-amigaos/include -I/opt/ppc-amigaos/include/SDL ",
 	ldflags = "-mcrt=newlib -L/opt/ppc-amigaos/lib -L/opt/ppc-amigaos/ppc-amigaos/lib -lauto -lunix"
 }
 
@@ -77,6 +77,7 @@ solution "milkytracker"
 		files { "./src/submodules/lhasa/src/**.c", "./src/submodules/lhasa/lib/**.c" }
 		excludes { "./src/submodules/lhasa/lib/bit_stream_reader.c", "./src/submodules/lhasa/lib/lh_new_decoder.c", "./src/submodules/lhasa/lib/pma_common.c", "./src/submodules/lhasa/lib/tree_decode.c" }
 		includedirs { "./src/submodules/lhasa", "./src/submodules/lhasa/lib", "./src/submodules/lhasa/lib/public", "./src/submodules/lhasa/src", "./src/submodules/lhasa" }
+
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -96,6 +97,25 @@ solution "milkytracker"
 			targetname "lhasa"
 			buildoptions "--std=c++98"
 
+	project "bzlib2"
+		kind "StaticLib"
+		language "C"
+		location "projects"
+		targetdir("lib/")
+		files { "./src/submodules/bzlib2/pkg_src/*.c" }
+		includedirs { "./src/submodules/bzlib2/pkg_src" }
+		targetname "bz2"
+
+		configuration "debug"
+			defines { "DEBUG" }
+			flags { "Symbols" }
+			targetsuffix "_d"
+		configuration "release"
+			defines { "NDEBUG" }
+		configuration "release-nofpu"
+			defines { "NDEBUG" }
+			buildoptions "-msoft-float"
+
 	project "zlib"
 		kind "StaticLib"
 		language "C"
@@ -103,24 +123,20 @@ solution "milkytracker"
 		targetdir("lib/")
 		files { "./src/submodules/zlib/*.c" }
 		includedirs { "./src/submodules/zlib" }
+		targetname "z"
+
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
-			targetname "zlib_d"
+			targetsuffix "_d"
 
 		configuration "release"
 			defines { "NDEBUG" }
-			targetname "zlib"
 			buildoptions""
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
 			buildoptions "-msoft-float"
-			targetname "zlib"
-		configuration "ixemul"
-			defines { "NDEBUG" }
-			flags { "OptimizeSize" }
-			targetname "zlib"
-			buildoptions "--std=c++98"
+
 	project "zziplib"
 		kind "StaticLib"
 		language "C"
@@ -128,24 +144,18 @@ solution "milkytracker"
 		targetdir("lib/")
 		files { "./src/submodules/zziplib/**.c" }
 		includedirs { "./include/zziplib", "./src/submodules/zlib", "./src/submodules/zziplib", "./src/submodules/zziplib/SDL" }
+		targetname "zziplib"
+
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
-			targetname "zziplib_d"
-
+			targetsuffix "_d"
 		configuration "release"
 			defines { "NDEBUG" }
-			targetname "zziplib"
-			buildoptions " "
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
 			buildoptions "-msoft-float"
-			targetname "zziplib"
-		configuration "ixemul"
-			defines { "NDEBUG" }
-			flags { "OptimizeSize" }
-			targetname "zziplib"
-			buildoptions "--std=c++98"
+
 	project "milkyplay"
 		kind "StaticLib"
 		language "C++"
@@ -153,25 +163,18 @@ solution "milkytracker"
 		targetdir("lib/")
 		files { "./src/milkyplay/*", "./src/milkyplay/generic/*", "./src/milkyplay/sdl-1.2/*", "./src/milkyplay/drivers/*", "./src/milkyplay/drivers/sdl/*", "./src/milkyplay/drivers/generic/sdl/*"  }
 		includedirs { "./src/milkyplay", "./src/milkyplay/drivers/sdl" }
+		targetname "milkyplay"
 
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
-			targetname "milkyplay_d"
-
+			targetsuffix "_d"
 		configuration "release"
 			defines { "NDEBUG" }
-			targetname "milkyplay"
 			buildoptions"-fpermissive"
 		configuration "release-nofpu"
 			defines { "NDEBUG" }
 			buildoptions " -msoft-float"
-			targetname "milkyplay"
-		configuration "ixemul"
-			defines { "NDEBUG" }
-			flags { "OptimizeSize" }
-			targetname "milkyplay"
-			buildoptions "--std=c++98"
 
 	project "fx"
 		kind "StaticLib"
@@ -259,7 +262,7 @@ solution "milkytracker"
 		targetdir "./bin"
 		targetname "milkytracker"
 		files {  "./src/tracker/*", "./src/tracker/sdl-1.2/*" }
-		links { "zlib", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL" }
+		links { "z", "bz2", "lhasa", "zziplib", "ppui", "milkyplay", "compression", "fx", "SDL" }
 		flags { "Symbols" }
 
 		configuration "m68k-amigaos"

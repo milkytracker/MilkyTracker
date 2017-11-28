@@ -31,9 +31,7 @@
 #include <proto/dos.h>
 
 struct AslIFace *IAsl;
-#ifndef __amigaos4__
 #define MAX_DOS_PATH 260
-#endif
 
 static char pathBuffer[MAX_DOS_PATH];
 
@@ -99,7 +97,7 @@ static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, 
 #endif
         ASL_FileRequest,
 //        ASLFR_Window, getNativeWindow(),
-        ASLFR_TitleText, title,
+        ASLFR_TitleText, (long unsigned int)title,
         //ASLFR_PositiveText, "Open file",
         ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
         ASLFR_SleepWindow, TRUE,
@@ -107,8 +105,8 @@ static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, 
         ASLFR_StayOnTop, TRUE,
 #endif
         ASLFR_RejectIcons, TRUE,
-        ASLFR_InitialDrawer, pathBuffer,
-        ASLFR_InitialFile, name,
+        ASLFR_InitialDrawer, (long unsigned int)pathBuffer,
+        ASLFR_InitialFile, (long unsigned int)name,
         TAG_DONE);
 
     return req;
@@ -121,7 +119,7 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
 #ifdef __amigaos4__
     struct Library *AslBase = IExec->OpenLibrary(AslName, 53);
 #else
-    struct Library *AslBase = OpenLibrary(AslName, 45);
+    struct Library *AslBase = OpenLibrary(AslName, 39);
 #endif
 
     if (AslBase) {

@@ -1,3 +1,4 @@
+
 /* *  tracker/amiga/CGX_Main.cpp
  *
  *  Copyright 2017 Marlon Beijer
@@ -31,6 +32,12 @@
 #include "config.h"
 #endif
 #include <exec/exec.h>
+#ifndef AFB_68080
+#define AFB_68080 10
+#endif
+#ifndef AFF_68080
+#define AFF_68080 (1<<AFB_68080)
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -647,11 +654,6 @@ void crashHandler(int signum) {
 
 void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		bool swapRedBlue, bool fullScreen, bool noSplash) {
-	/* Initialize SDL */
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
 
 	bpp = 16;
 	//fullScreen = true;
@@ -753,11 +755,23 @@ void SendFile(char *file) {
 extern "C" int SDL_main(int argc, char *argv[])
 #else
 
+//int ammx = 0;
+//char ammxon = "Off";
+const char* has_fpu = "No";
+
 int main(int argc, char *argv[])
 #endif
 {
+//	ammx = Apollo_EnableAMMX();
+
+//	if (ammx == 1)
+//		ammxon = "On";
+
+#ifndef __amigaos4__
 	// find out what type of CPU we have
-	if ((SysBase->AttnFlags & AFF_68060) != 0)
+	if ((SysBase->AttnFlags & AFF_68080) != 0)
+		cpu_type = 68080;
+	else if ((SysBase->AttnFlags & AFF_68060) != 0)
 		cpu_type = 68060;
 	else if ((SysBase->AttnFlags & AFF_68040) != 0)
 		cpu_type = 68040;
@@ -770,7 +784,18 @@ int main(int argc, char *argv[])
 	else
 		cpu_type = 68000;
 
-	printf("Your CPU is a %i \n", cpu_type);
+	if ((SysBase->AttnFlags & AFF_FPU40) != 0)
+		has_fpu = "Yes";
+
+	printf("Your CPU is a %i. Has FPU? %s\n", cpu_type, has_fpu);
+
+	if (has_fpu != "Yes")
+	{
+		fprintf(stderr, "Sorry, you need minimum a 68040 processor with FPU to run this application!\n");
+		exit(1);
+	}
+#endif
+
 	Uint32 videoflags;
 	SDL_Event event;
 	char *loadFile = 0;
@@ -817,7 +842,17 @@ unrecognizedCommandLineSwitch:
 			}
 		}
 	}
-
+#ifdef DEBUG
+	fprintf(stderr,"SDL_INIT");
+#endif
+	/* Initialize SDL */
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+#ifdef DEBUG
+	fprintf(stderr,"SDL_INIT Done");
+#endif
 	timerMutex = new PPMutex();
 	globalMutex = new PPMutex();
 
@@ -826,8 +861,15 @@ unrecognizedCommandLineSwitch:
 	PPSystemString oldCwd = path.getCurrent();
 
 	globalMutex->lock();
+#ifdef DEBUG
+	fprintf(stderr,"InitTracker\n");
+#endif
 	initTracker(defaultBPP, orientation, swapRedBlue, fullScreen, noSplash);
+#ifdef DEBUG
+	fprintf(stderr,"InitTracker done\n");
+#endif
 	globalMutex->unlock();
+
 
 #ifdef HAVE_LIBASOUND
 	if (myMidiReceiver && recVelocity) {
@@ -844,7 +886,9 @@ unrecognizedCommandLineSwitch:
 		PPEvent event(eKeyDown, &chr, sizeof (chr));
 		RaiseEventSerialized(&event);
 	}
-
+#ifdef DEBUG
+	fprintf(stderr,"loadfile done\n");
+#endif
 	/* Main event loop */
 	done = 0;
 	while (!done && SDL_WaitEvent(&event)) {

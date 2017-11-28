@@ -53,11 +53,11 @@ void SampleLoaderAbstract::nameToSample(const char* name, TXMSample* smp)
 	
 	if (strlen(name) <= sizeof(smp->name))
 	{
-		memcpy(smp->name, name, strlen(name));
+		memcpy(smp->name, (const char*)name, strlen(name));
 	}
 	else
 	{
-		memcpy(smp->name, name, sizeof(smp->name));
+		memcpy(smp->name, (const char*)name, sizeof(smp->name));
 	}
 }
 

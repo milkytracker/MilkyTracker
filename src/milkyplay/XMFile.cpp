@@ -429,7 +429,7 @@ mp_sint32 XMFile::write(const void* ptr, mp_sint32 size, mp_sint32 count)
 	if (size*count + currentCacheBufferPtr <= cacheBuffer+BUFFERSIZE)
 	{
 		// Copy into cache
-		memcpy(currentCacheBufferPtr, ptr, size*count);
+		memcpy(currentCacheBufferPtr, (const char*)ptr, size*count);
 		// Advance current cache ptr
 		currentCacheBufferPtr += size*count;
 	}
@@ -438,7 +438,7 @@ mp_sint32 XMFile::write(const void* ptr, mp_sint32 size, mp_sint32 count)
 		// Buffer doesn't fit, flush buffer first
 		flush();
 		// Copy into cache
-		memcpy(currentCacheBufferPtr, ptr, size*count);
+		memcpy(currentCacheBufferPtr, (const char*)ptr, size*count);
 		// Advance 
 		currentCacheBufferPtr += size*count;
 	}

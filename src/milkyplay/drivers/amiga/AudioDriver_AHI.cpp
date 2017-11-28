@@ -79,7 +79,7 @@ AudioDriver_AHI::~AudioDriver_AHI()
 // otherwise return the number of 16 bit words contained in the obtained buffer
 mp_sint32 AudioDriver_AHI::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
 {
-	AHI_AudioSpec	wanted, obtained, saved;
+	SDL_AudioSpec	wanted, obtained, saved;
 	char name[32];
 	mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
 	if (res < 0)
