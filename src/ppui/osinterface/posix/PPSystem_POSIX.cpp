@@ -115,9 +115,6 @@ const SYSCHAR* System::getConfigFileName()
 #ifdef __amigaos4__
 	char *home = NULL;
 #else
-#ifdef __amigaos4__
-	char *home = NULL;
-#else
 	char *home = getenv("HOME");
 #endif
 	if(!home)

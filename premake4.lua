@@ -60,13 +60,31 @@ if _OPTIONS.platform then
 end
 
 solution "milkytracker"
-	configurations { "Release", "Release-noFPU", "Debug", "ixemul" }
+	configurations { "Release", "Release-noFPU", "Debug" }
 	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-macos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
-	defines { "AMIGA", "__AMIGA__", "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
+	defines { "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
+
+	configuration "m68k-amigaos"
+		buildoptions "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -fno-rtti -s -noixemul"
+		linkoptions { "-noixemul", "-ldebug", "-Xlinker --allow-multiple-definition" }
+		includedirs { "/opt/m68k-amigaos/m68k-amigaos/sys-include", "/opt/m68k-amigaos/include", "/opt/m68k-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
+		defines { "AMIGA", "__AMIGA__" }
 
 	configuration "ppc-amigaos"
-		defines { "__amigaos4__" }
+		buildoptions "-O3 -mcrt=newlib -fomit-frame-pointer -fno-exceptions"
+		linkoptions { "-mcrt=newlib", "-lauto", "-lunix" }
+		includedirs { "/opt/ppc-amigaos/ppc-amigaos/sys-include", "/opt/ppc-amigaos/include", "/opt/ppc-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		libdirs { "/opt/ppc-amigaos/lib", "/opt/ppc-amigaos/ppc-amigaos/lib" }
+		defines { "AMIGA", "__AMIGA__", "__amigaos4__" }
+
+	configuration "ppc-macos"
+		buildoptions "-fomit-frame-pointer -fno-exceptions"
+		linkoptions { "" }
+		includedirs { "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL", "./include/mac", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		libdirs { "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/lib" }
+		defines { "__macos__" }
 
 	project "lhasa"
 		kind "StaticLib"
@@ -142,6 +160,7 @@ solution "milkytracker"
 		location "projects"
 		targetdir("lib/")
 		files { "./src/submodules/zziplib/**.c" }
+		excludes { "./src/submodules/zziplib/SDL/*" }
 		includedirs { "./include/zziplib", "./src/submodules/zlib", "./src/submodules/zziplib", "./src/submodules/zziplib/SDL" }
 		targetname "zziplib"
 
@@ -232,9 +251,17 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
 		excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/sdl-1.2" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl-1.2", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		targetname "ppui"
+
+		configuration "m68k-amigaos"
+			excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
+		configuration "ppc-amigaos"
+			excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
+		configuration "ppc-macos"
+			excludes { "./src/ppui/osinterface/posix/PPMutex.cpp", "**/amiga/**" }
 		configuration "debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
@@ -270,6 +297,7 @@ solution "milkytracker"
 			targetextension ".os4"
 		configuration "ppc-macos"
 			targetextension ".app"
+		--	links { "SDLmain" }
 		
 		-- Debug options.
 		configuration "Debug"
