@@ -46,6 +46,10 @@
 #include <sys/syslimits.h>
 #endif
 
+#ifdef __macos__
+#include <sys/param.h>
+#endif
+
 #ifdef __HAIKU__
 #include <Directory.h>
 #include <Entry.h>

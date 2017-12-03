@@ -31,12 +31,14 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#if defined(__AMIGA__) || defined(AMIGA) || defined(__amigaos4__)
 #include <exec/exec.h>
 #ifndef AFB_68080
 #define AFB_68080 10
 #endif
 #ifndef AFF_68080
 #define AFF_68080 (1<<AFB_68080)
+#endif
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -767,7 +769,7 @@ int main(int argc, char *argv[])
 //	if (ammx == 1)
 //		ammxon = "On";
 
-#ifndef __amigaos4__
+#if !defined(__amigaos4__) && defined(__AMIGA__)
 	// find out what type of CPU we have
 	if ((SysBase->AttnFlags & AFF_68080) != 0)
 		cpu_type = 68080;
