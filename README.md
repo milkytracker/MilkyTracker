@@ -13,8 +13,7 @@ Currently available platforms:
 * m68k-amigaos
 * ppc-amigaos
 
-The default is to compile *m68k-amigaos*:
-make
+The default is to compile *m68k-amigaos*.
 
 Dependencies
 ============
