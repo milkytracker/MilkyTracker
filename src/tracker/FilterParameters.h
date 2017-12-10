@@ -46,7 +46,7 @@ public:
 
 		Parameter(const Parameter& src)		
 		{
-			memcpy(this, &src, sizeof(Parameter));
+			memcpy(this, const_cast<FilterParameters::Parameter*>(&src), sizeof(Parameter));
 		}
 
 		explicit Parameter(float value) :

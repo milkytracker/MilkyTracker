@@ -605,7 +605,7 @@ void PatternTools::getNoteName(char* name, pp_uint32 note, bool terminate /* = t
 		return;
 	}
 
-	memcpy(name, noteNames[(note-1)%12], 2);
+	memcpy(name, const_cast<char*>(noteNames[(note-1)%12]), 2);
 	name[2] = '0' + (mp_ubyte)((note-1)/12);
 	if (terminate)
 		name[3] = 0;

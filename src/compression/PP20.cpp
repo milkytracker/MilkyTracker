@@ -72,7 +72,7 @@ bool PP20::checkEfficiency(const void* source)
     const pp_uint32 PP_BITS_BEST = 0x090a0c0d;
 	
     // Copy efficiency table.
-    memcpy(efficiency,(const pp_uint8*)source,4);
+    memcpy(efficiency,const_cast<void*>(source),4);
     pp_uint32 eff = BigEndian::GET_DWORD(efficiency);
     if (( eff != PP_BITS_FAST ) &&
         ( eff != PP_BITS_MEDIOCRE ) &&

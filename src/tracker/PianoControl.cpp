@@ -717,7 +717,7 @@ void PianoControl::setSampleTable(const pp_uint8* nbu)
 		return;
 	}
 
-	memcpy(this->nbu, nbu, NUMNOTES);
+	memcpy(this->nbu, const_cast<pp_uint8*>(nbu), NUMNOTES);
 }
 
 void PianoControl::pressNote(pp_int32 note, bool pressed, bool muted/* = false*/)

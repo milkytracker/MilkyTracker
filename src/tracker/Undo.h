@@ -58,7 +58,7 @@ public:
 			dataLen(dataLen)
 		{
 			this->data = new pp_uint8[dataLen];
-			memcpy(this->data, (const char*)data, dataLen);
+			memcpy(this->data, const_cast<pp_uint8*>(data), dataLen);
 		}
 
 		UserData(const UserData& src) :

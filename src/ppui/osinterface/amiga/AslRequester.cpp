@@ -99,7 +99,7 @@ static struct FileRequester *CreateRequester(CONST_STRPTR title, bool saveMode, 
 //        ASLFR_Window, getNativeWindow(),
         ASLFR_TitleText, (long unsigned int)title,
         //ASLFR_PositiveText, "Open file",
-        ASLFR_DoSaveMode, saveMode ? TRUE : FALSE,
+        ASLFR_DoSaveMode, (long unsigned int)((saveMode) ? TRUE : FALSE),
         ASLFR_SleepWindow, TRUE,
 #ifdef __amigaos4__
         ASLFR_StayOnTop, TRUE,

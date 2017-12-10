@@ -66,13 +66,13 @@ PPOpenPanel::ReturnCodes PPOpenPanel::runModal()
 	}
 
 	ReturnCodes result = SDL_runModalLoop(screen, dialog);
-	
+
 	PPSystemString pathEntry(dialog->getSelectedPathFull());
-	
+
 	// this is no longer needed
 	delete dialog;
-	
-    fileName = ((result == ReturnCodeOK) ? pathEntry : ""); 
-	
+
+	fileName = ((result == ReturnCodeOK) ? pathEntry : (PPString)"");
+
 	return result;
 }

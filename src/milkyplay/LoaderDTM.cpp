@@ -50,9 +50,9 @@ const char* LoaderDTM_2::identifyModule(const mp_ubyte* buffer)
 	{
 		mp_ubyte ID[4], lenBuf[4];
 		
-		memcpy(ID, buffer + i, 4);
+		memcpy(ID, const_cast<mp_ubyte*>(buffer + i), 4);
 		i+=4;
-		memcpy(lenBuf, buffer + i, 4);
+		memcpy(lenBuf, const_cast<mp_ubyte*>(buffer + i), 4);
 		i+=4;
 
 		mp_uint32 chunkLen = BigEndian::GET_DWORD(lenBuf);
@@ -162,7 +162,7 @@ mp_sint32 LoaderDTM_2::load(XMFileBase& f, XModule* module)
 					fLen--;
 				}
 
-				memcpy(header->name, name+i, fLen < sizeof(header->name) ? fLen : sizeof(header->name));
+				memcpy(header->name, const_cast<mp_ubyte*>(name+i), fLen < sizeof(header->name) ? fLen : sizeof(header->name));
 				
 				for (i = 0; i < sizeof(header->name); i++)
 					if (!header->name[i])
@@ -452,9 +452,9 @@ const char* LoaderDTM_1::identifyModule(const mp_ubyte* buffer)
 	{
 		mp_ubyte ID[4], lenBuf[4];
 		
-		memcpy(ID, buffer + i, 4);
+		memcpy(ID, const_cast<mp_ubyte*>(buffer + i), 4);
 		i+=4;
-		memcpy(lenBuf, buffer + i, 4);
+		memcpy(lenBuf, const_cast<mp_ubyte*>(buffer + i), 4);
 		i+=4;
 
 		mp_uint32 chunkLen = LittleEndian::GET_DWORD(lenBuf);

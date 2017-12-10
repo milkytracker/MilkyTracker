@@ -1956,7 +1956,7 @@ void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::Edi
 								hScrollbar->getBarSize());
 			if (sizeof(undoInfo) == sampleEditor->getUndoUserDataLen())
 			{
-				memcpy(&undoInfo, sampleEditor->getUndoUserData(), sizeof(undoInfo));				
+				memcpy(&undoInfo, const_cast<void*>(sampleEditor->getUndoUserData()), sizeof(undoInfo));
 				xScale = undoInfo.xScale;
 				minScale = undoInfo.minScale;
 				startPos = undoInfo.startPos;

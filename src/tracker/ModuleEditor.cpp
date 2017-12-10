@@ -1386,8 +1386,8 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	
 	instruments[index].instrument->samp = ins->numsamples;
 	
-	memcpy(&module->venvs[instruments[index].volumeEnvelope], &ins->venv, sizeof(ins->venv));
-	memcpy(&module->penvs[instruments[index].panningEnvelope], &ins->penv, sizeof(ins->penv));
+	memcpy(&module->venvs[instruments[index].volumeEnvelope], const_cast<TEnvelope*>(&ins->venv), sizeof(ins->venv));
+	memcpy(&module->penvs[instruments[index].panningEnvelope], const_cast<TEnvelope*>(&ins->penv), sizeof(ins->penv));
 	
 	instruments[index].volfade = ins->volfade>>1;
 	instruments[index].vibtype = ins->vibtype;
@@ -1971,7 +1971,7 @@ void ModuleEditor::updateSampleTable(mp_sint32 index, const mp_ubyte* nbu)
 		return;
 
 	// cope with FT2 noterange (= 96)
-	memcpy(instruments[index].nbu, nbu, MAX_NOTE);
+	memcpy(instruments[index].nbu, const_cast<mp_ubyte*>(nbu), MAX_NOTE);
 
 	// update module data
 	for (mp_sint32 i = 0; i < MAX_NOTE; i++)
@@ -2464,7 +2464,7 @@ void ModuleEditor::insertText(char* dst, const char* src, mp_sint32 max)
 	ASSERT((signed)sizeof(name) >= max && strlen(src) <= sizeof(name));
 				
 	memset(name, 0, sizeof(name));
-	memcpy(name, src, (signed)strlen(src) <= max ? strlen(src) : max);
+	memcpy(name, const_cast<char*>(src), (signed)strlen(src) <= max ? strlen(src) : max);
 	memcpy(dst, name, max);
 }
 
