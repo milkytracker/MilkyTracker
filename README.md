@@ -1,31 +1,26 @@
 MilkyTracker - Cross-Platform XM Tracker
 ========================================
 
-Notes on building MilkyTracker for Amiga68k
+Notes on building MilkyTracker for Amiga platforms (AmigaOS 3.x, AmigaOS 4.x, WarpOS, MorphOS and AROS)
 ==============================
 
 ./build_gmake to make the makefiles
 
-Configuration
+Building
 =============
-To compile with ixemul.library in mind run:
-make config=ixemul_m68k-amigaos	
+To compile for different platforms, use make config=release_*platform*.
+Currently available platforms:
+* m68k-amigaos
+* ppc-amigaos
 
-To compile with libnix just run:
+The default is to compile *m68k-amigaos*:
 make
 
 Dependencies
 ============
 
 To build MilkyTracker you will need the following development libraries:
-
-SDL	- http://aminet.net/package/dev/misc/SDL-Amiga
-libz	- http://aminet.net/package/dev/lib/zlib_68k
-libjpeg	- http://aminet.net/package/dev/lib/libjpeg9_a68k
-
-Note to package maintainers: MilkyTracker contains an internal copy of
-libzzip that has been modified for use with MilkyTracker; An externally
-linked libzzip will not work correctly (ZIP support will be broken).
+libSDL1.2	- https://github.com/HenrykRichter/libSDL12_Amiga68k
 
 ========================================
 
