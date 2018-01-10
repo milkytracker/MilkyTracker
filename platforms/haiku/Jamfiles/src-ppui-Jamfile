@@ -12,6 +12,7 @@ SubDirHdrs - ;
 Library libppui :
 	Button.cpp
 	CheckBox.cpp
+	CheckBoxLabel.cpp
 	Container.cpp
 	ContextMenu.cpp
 	Control.cpp
