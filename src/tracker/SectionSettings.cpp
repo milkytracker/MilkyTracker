@@ -850,7 +850,7 @@ public:
 		container->addControl(slider);
 
 		y2+=12;
-		PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Row hilight spacing:", true);
+		PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Row highlight spacing:", true);
 		staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		container->addControl(staticText);
 

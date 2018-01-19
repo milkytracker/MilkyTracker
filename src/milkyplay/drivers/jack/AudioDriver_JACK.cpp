@@ -126,7 +126,7 @@ mp_sint32 AudioDriver_JACK::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mi
 	jack_port_name = (const char* (*)(const jack_port_t *))
 		dlsym(libJack, "jack_port_name");
 	if(dlerror()) {
-		fprintf(stderr, "JACK: An error occured whilst loading symbols, aborting.\n");
+		fprintf(stderr, "JACK: An error occurred whilst loading symbols, aborting.\n");
 		return -1;
 	}
 
