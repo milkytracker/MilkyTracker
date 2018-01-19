@@ -48,6 +48,14 @@ newgcctoolchain {
 }
 
 newgcctoolchain {
+	name = "ppc-morphos",
+	description = "ppc-morphos to cross-compile morphos.ppc binaries from linux",
+	prefix = "ppc-morphos-",
+	cppflags = "",
+	ldflags = ""
+}
+
+newgcctoolchain {
 	name = "x86_64-aros",
 	description = "x86_64-aros to cross-compile aros.x86_64 binaries from linux",
 	prefix = "x86_64-aros-",
@@ -70,7 +78,7 @@ end
 
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug" }
-	platforms { "m68k-amigaos", "ppc-amigaos", "x86_64-aros", "ppc-macos" }
+	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-morphos", "x86_64-aros", "ppc-macos" }
 	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
 	defines { "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
@@ -80,6 +88,13 @@ solution "milkytracker"
 		includedirs { "/opt/m68k-amigaos/m68k-amigaos/sys-include", "/opt/m68k-amigaos/include", "/opt/m68k-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
 		defines { "AMIGA", "__AMIGA__" }
+
+	configuration "ppc-morphos"
+		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
+		linkoptions { "-noixemul", "-ldebug" }
+		includedirs { "/opt/ppc-morphos/os-include", "/opt/ppc-morphos/include", "/opt/ppc-morphos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		libdirs { "/opt/ppc-morphos/lib" }
+		defines { "AMIGA", "__AMIGA__", "MORPHOS", "__MORPHOS__", "morphos", "__morphos__" }
 
 	configuration "ppc-amigaos"
 		buildoptions "-O3 -mcrt=newlib -fomit-frame-pointer -fno-exceptions"
@@ -306,6 +321,9 @@ solution "milkytracker"
 
 		configuration "m68k-amigaos"
 			targetextension ".68k"
+		configuration "ppc-morphos"
+			targetextension ".mos"
+			links { "debug" }
 		configuration "ppc-amigaos"
 			targetextension ".os4"
 		configuration "ppc-macos"

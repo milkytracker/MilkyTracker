@@ -72,7 +72,7 @@ PPOpenPanel::ReturnCodes PPOpenPanel::runModal()
 	// this is no longer needed
 	delete dialog;
 
-	fileName = ((result == ReturnCodeOK) ? pathEntry : (PPString)"");
+	fileName = ((result == ReturnCodeOK) ? pathEntry : "");
 
 	return result;
 }

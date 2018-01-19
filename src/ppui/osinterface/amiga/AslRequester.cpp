@@ -158,7 +158,7 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
         } else {
             puts("Failed to get ASL interface");
         }
-        
+
         IExec->CloseLibrary(AslBase);
 #else
         CloseLibrary(AslBase);
