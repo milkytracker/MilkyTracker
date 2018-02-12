@@ -526,7 +526,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					}
 					else if (y==0x0F)
 					{
-						workBuffers.globalVolume -= y;
+						workBuffers.globalVolume -= x;
 						if (workBuffers.globalVolume < 0)
 							workBuffers.globalVolume = 0;
 						effOut = 0x10;
@@ -1012,7 +1012,7 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 										}
 										else if (y==0x0F)
 										{
-											workBuffers.globalVolume -= y;
+											workBuffers.globalVolume -= x;
 											if (workBuffers.globalVolume < 0)
 												workBuffers.globalVolume = 0;
 										}
