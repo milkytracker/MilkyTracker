@@ -1,3 +1,14 @@
+function os.capture(cmd, raw)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  if raw then return s end
+  s = string.gsub(s, '^%s+', '')
+  s = string.gsub(s, '%s+$', '')
+  s = string.gsub(s, '[\n\r]+', ' ')
+  return s
+end
+
 function newplatform(plf)
 	local name = plf.name
 	local description = plf.description
@@ -76,6 +87,19 @@ if _OPTIONS.platform then
 	premake.gcc.platforms['Native'] = premake.gcc.platforms[_OPTIONS.platform]
 end
 
+
+local m68kprefix = "/opt/m68k-amigaos"
+local curpfx  = os.capture("m68k-amigaos-gcc -v 2>&1 | grep prefix", false)
+if curpfx ~= "" then
+        local e = string.sub(curpfx, string.find(curpfx, "--prefix") + 9)
+        local p = string.sub(e, 0, string.find(e, " ") - 1)
+	if p ~= "" then
+	        print("using:" .. p .. "/")
+		m68kprefix = p
+	end
+end
+
+
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug" }
 	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-morphos", "x86_64-aros", "ppc-macos" }
@@ -85,8 +109,8 @@ solution "milkytracker"
 	configuration "m68k-amigaos"
 		buildoptions "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
 		linkoptions { "-noixemul", "-ldebug", "-Xlinker --allow-multiple-definition" }
-		includedirs { "/opt/m68k-amigaos/m68k-amigaos/sys-include", "/opt/m68k-amigaos/include", "/opt/m68k-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
-		libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
+		includedirs { m68kprefix .. "/m68k-amigaos/sys-include", m68kprefix .. "/include", m68kprefix .. "/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		libdirs { m68kprefix .. "/lib", m68kprefix .. "/m68k-amigaos/lib", m68kprefix .. "/m68k-amigaos/libnix/lib/libnix" }
 		defines { "AMIGA", "__AMIGA__" }
 
 	configuration "ppc-morphos"
