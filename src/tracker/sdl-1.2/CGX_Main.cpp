@@ -49,7 +49,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include "SDL_KeyTranslation.h"
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"

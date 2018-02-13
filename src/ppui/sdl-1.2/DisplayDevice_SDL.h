@@ -31,7 +31,7 @@
 #include "BasicTypes.h"
 #include "DisplayDeviceBase.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 // Forwards
 class PPGraphicsAbstract;

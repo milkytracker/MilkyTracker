@@ -139,7 +139,7 @@ mp_sint32 LoaderGDM::load(XMFileBase& f, XModule* module)
 	i = 0;
 	do {
 		i++;
-	} while (GDMHeader.panset[i]!=0xFF);
+	} while (i < sizeof(GDMHeader.panset) && GDMHeader.panset[i]!=0xFF);
 	header->channum = i;
 	
 	f.seekWithBaseOffset(GDMHeader.insinfopos);

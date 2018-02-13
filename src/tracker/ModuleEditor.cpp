@@ -20,6 +20,7 @@
  *
  */
 
+#include <new>
 #include "ModuleEditor.h"
 #include "PatternEditor.h"
 #include "SampleEditor.h"
@@ -698,11 +699,16 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	
 		PPSystemString tempFile(getTempFilename());
 	
-		res = module->saveExtendedModule(tempFile) == MP_OK;
-		if (!res)
-			return res;
+		try
+		{
+			res = module->saveExtendedModule(tempFile) == MP_OK;
+			if(!res)
+				return res;
 
-		res = module->loadModule(tempFile) == MP_OK;
+			res = module->loadModule(tempFile) == MP_OK;
+		} catch (const std::bad_alloc &) {
+			return false;
+		}
 	
 		// restore one shot looping flag
 		if (type == XModule::ModuleType_MOD)
