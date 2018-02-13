@@ -83,7 +83,7 @@ solution "milkytracker"
 	defines { "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	configuration "m68k-amigaos"
-		buildoptions "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
+		buildoptions "-m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -s -noixemul"
 		linkoptions { "-noixemul", "-ldebug", "-Xlinker --allow-multiple-definition" }
 		includedirs { "/opt/m68k-amigaos/m68k-amigaos/sys-include", "/opt/m68k-amigaos/include", "/opt/m68k-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/lib", "/opt/m68k-amigaos/m68k-amigaos/libnix/lib/libnix" }
