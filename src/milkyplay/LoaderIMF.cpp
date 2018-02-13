@@ -288,6 +288,9 @@ mp_sint32 LoaderIMF::load(XMFileBase& f, XModule* module)
 	header->insnum = f.readWord();
 	header->freqtab = f.readWord() & 1;
 
+	if(header->ordnum > MP_MAXORDERS || header->patnum > 256 || header->insnum > 256)
+		return MP_LOADER_FAILED;
+
 	f.readDword();
 	f.readDword();
 

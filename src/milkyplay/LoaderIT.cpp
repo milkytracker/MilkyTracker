@@ -178,7 +178,10 @@ mp_sint32 LoaderIT::load(XMFileBase& f, XModule* module)
 	f.read(header->sig, 1, 4);
 	f.read(header->name, 1, 26);
 	f.readWord();
-	header->ordnum = f.readWord();
+	mp_uword ordnum = f.readWord();
+	if(ordnum > MP_MAXORDERS)
+		return MP_LOADER_FAILED;
+	header->ordnum = ordnum;
 	header->insnum = f.readWord();
 	header->smpnum = f.readWord();
 
