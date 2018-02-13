@@ -48,7 +48,7 @@ static mp_sint32 convertStr(SYSCHAR* buffer, char* src)
 	{
 		if (src[i] == '\0')
 			break;
-		
+
 		bool found = false;
 		for (mp_sint32 k = 0; k < (signed)(sizeof(validCharacters)/sizeof(char))-1; k++)
 			if (src[i] == validCharacters[k])
@@ -56,11 +56,11 @@ static mp_sint32 convertStr(SYSCHAR* buffer, char* src)
 				found = true;
 				break;
 			}
-		
+
 		if (found)
 			buffer[j++] = src[i];
 	}
-	
+
 	buffer[j] = '\0';
 	return j;
 }
@@ -79,7 +79,7 @@ private:
 				moduleEditor.setChanged();
 				break;
 			}
-			
+
 			case EditorBase::NotificationPrepareCritical:
 				moduleEditor.enterCriticalSection();
 				break;
@@ -91,9 +91,9 @@ private:
 				break;
 		}
 	}
-	
+
 	ModuleEditor& moduleEditor;
-	
+
 public:
 	ChangesListener(ModuleEditor& moduleEditor) :
 		moduleEditor(moduleEditor)
@@ -124,7 +124,7 @@ ModuleEditor::ModuleEditor() :
 	adjustExtension(false);
 
 	module = new XModule();
-	
+
 	createNewSong();
 
 	changesListener = new ChangesListener(*this);
@@ -133,20 +133,20 @@ ModuleEditor::ModuleEditor() :
 	patternEditor = new PatternEditor();
 	patternEditor->addNotificationListener(changesListener);
 	reloadCurrentPattern();
-	
+
 	// create sample editor
 	sampleEditor = new SampleEditor();
 	sampleEditor->addNotificationListener(changesListener);
 	reloadSample(0, 0);
-	
+
 	// create envelope editor
 	envelopeEditor = new EnvelopeEditor();
 	envelopeEditor->addNotificationListener(changesListener);
 	envelopeEditor->attachEnvelope(NULL, module);
-	
+
 	moduleServices = new ModuleServices(*module);
 
-	currentCursorPosition.row = currentCursorPosition.channel = currentCursorPosition.inner = 0;	
+	currentCursorPosition.row = currentCursorPosition.channel = currentCursorPosition.inner = 0;
 }
 
 ModuleEditor::~ModuleEditor()
@@ -162,10 +162,10 @@ ModuleEditor::~ModuleEditor()
 	delete[] instruments;
 }
 
-PPSystemString ModuleEditor::getModuleFileNameFull(ModSaveTypes extension/* = ModSaveTypeDefault*/) 
-{ 
+PPSystemString ModuleEditor::getModuleFileNameFull(ModSaveTypes extension/* = ModSaveTypeDefault*/)
+{
 	PPSystemString s = moduleFileName;
-	
+
 	PPSystemString s2;
 	if (extension != ModSaveTypeDefault)
 	{
@@ -179,24 +179,24 @@ PPSystemString ModuleEditor::getModuleFileNameFull(ModSaveTypes extension/* = Mo
 	return s2;
 }
 
-PPSystemString ModuleEditor::getModuleFileName(ModSaveTypes extension/* = ModSaveTypeDefault*/) 
+PPSystemString ModuleEditor::getModuleFileName(ModSaveTypes extension/* = ModSaveTypeDefault*/)
 {
 	PPSystemString s = getModuleFileNameFull(extension);
-	
-	return s.stripPath(); 
+
+	return s.stripPath();
 }
 
 void ModuleEditor::reloadCurrentPattern()
 {
 	TXMPattern* pattern = patternEditor->getPattern();
 
-	if (pattern && 
-		pattern->patternData && 
+	if (pattern &&
+		pattern->patternData &&
 		pattern->channum == TrackerConfig::numPlayerChannels &&
-		module && 
+		module &&
 		pattern == &module->phead[getCurrentPatternIndex()])
 		return;
-	
+
 	patternEditor->attachPattern(getPattern(getCurrentPatternIndex()), module);
 }
 
@@ -236,7 +236,7 @@ void ModuleEditor::adjustExtension(bool hasExtension/* = true*/)
 		case ModSaveTypeMOD:
 			moduleFileName.append(".mod");
 			break;
-			
+
 		default:
 			ASSERT(false);
 	}
@@ -245,9 +245,9 @@ void ModuleEditor::adjustExtension(bool hasExtension/* = true*/)
 void ModuleEditor::convertInstrument(mp_sint32 i)
 {
 	mp_sint32 j,k;
-	
-	TXMInstrument* ins = &module->instr[i];	
-	instruments[i].instrument = ins;	
+
+	TXMInstrument* ins = &module->instr[i];
+	instruments[i].instrument = ins;
 	instruments[i].numUsedSamples = 16;
 
 	for (j = 0; j < 16; j++)
@@ -257,7 +257,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 	for (j = 0; j < MAX_NOTE; j++)
 	{
 		mp_sword s = ins->snum[j];
-		
+
 		// empty entry
 		if (s == -1)
 		{
@@ -265,7 +265,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 			ins->snum[j] = i*16;
 			continue;
 		}
-		
+
 		bool found = false;
 		for (k = 0; k < 16; k++)
 			if (i*16+k == s)
@@ -281,14 +281,14 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 			ins->snum[j] = i*16;
 			//exit(1);
 		}
-	}		
+	}
 
 	if (ins->samp)
 	{
 		// take default envelope from first sample in instrument
-		mp_sint32 venvIndex = module->smp[i*16].venvnum - 1;		
+		mp_sint32 venvIndex = module->smp[i*16].venvnum - 1;
 		if (venvIndex == -1)
-		{			
+		{
 			for (mp_sint32 e = 0; e < module->header.volenvnum; e++)
 			{
 				bool used = false;
@@ -296,7 +296,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 				{
 					if (module->smp[s].venvnum - 1 == e)
 					{
-						used = true; 
+						used = true;
 						break;
 					}
 				}
@@ -340,7 +340,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 				{
 					if (module->smp[s].penvnum - 1 == e)
 					{
-						used = true; 
+						used = true;
 						break;
 					}
 				}
@@ -374,7 +374,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 		instruments[i].panningEnvelope = penvIndex;
 
 		mp_sint32 s = instruments[i].usedSamples[0];
-		
+
 		// take all fadeout/autovibrato settings from first sample in instrument
 		instruments[i].volfade = module->smp[s].volfade >> 1;
 		instruments[i].vibtype = module->smp[s].vibtype;
@@ -384,13 +384,13 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 	}
 	else
 	{
-	
+
 		for (j = 0; j < MAX_NOTE; j++)
 			ins->snum[j] = i*16;
-	
+
 		mp_sint32 e;
 		mp_sint32 venvIndex = - 1;
-		
+
 		for (e = 0; e < module->header.volenvnum; e++)
 		{
 			bool used = false;
@@ -398,11 +398,11 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 			{
 				if (module->smp[s].venvnum - 1 == e)
 				{
-					used = true; 
+					used = true;
 					break;
 				}
 			}
-			
+
 			if (!used)
 			{
 				venvIndex = e;
@@ -431,7 +431,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 		instruments[i].volumeEnvelope = venvIndex;
 
 		mp_sint32 penvIndex = - 1;
-		
+
 		for (e = 0; e < module->header.panenvnum; e++)
 		{
 			bool used = false;
@@ -439,11 +439,11 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 			{
 				if (module->smp[s].penvnum - 1 == e)
 				{
-					used = true; 
+					used = true;
 					break;
 				}
 			}
-			
+
 			if (!used)
 			{
 				penvIndex = e;
@@ -501,7 +501,7 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 }
 
 void ModuleEditor::buildInstrumentTable()
-{	
+{
 	mp_sint32 i,j;
 
 	for (i = 0; i < MAX_INSTRUMENTS; i++)
@@ -511,7 +511,7 @@ void ModuleEditor::buildInstrumentTable()
 		for (j = 0; j < 16; j++)
 			instruments[i].usedSamples[j] = -1;
 		instruments[i].volumeEnvelope = instruments[i].panningEnvelope = -1;
-		
+
 		memset(instruments[i].nbu, 0, MAX_NOTE);
 	}
 
@@ -526,7 +526,7 @@ void ModuleEditor::buildInstrumentTable()
 void ModuleEditor::validateInstruments()
 {
 	for (mp_sint32 i = 0; i < module->header.insnum; i++)
-	{	
+	{
 		mp_sint32 lastUsedInstrument = -1;
 		for (mp_sint32 j = 15; j >= 0; j--)
 		{
@@ -535,10 +535,10 @@ void ModuleEditor::validateInstruments()
 			{
 				lastUsedInstrument = j;
 			}
-			
+
 			module->smp[s].flags = 3;
 		}
-		
+
 		instruments[i].instrument->samp = 16;
 	}
 }
@@ -550,7 +550,7 @@ bool ModuleEditor::allocatePattern(TXMPattern* pattern)
 	pattern->rows = 64;
 	// create XM style pattern, two effects
 	pattern->effnum = 2;
-	
+
 	mp_sint32 slotSize = pattern->effnum * 2 + 2;
 
 	mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
@@ -569,10 +569,10 @@ void ModuleEditor::createEmptySong(bool clearPatterns/* = true*/, bool clearInst
 	if (module)
 	{
 		enterCriticalSection();
-	
+
 		setCurrentOrderIndex(0);
 		setCurrentPatternIndex(0);
-	
+
 		module->createEmptySong(clearPatterns, clearInstruments, numChannels);
 
 		if (clearPatterns && clearInstruments)
@@ -580,9 +580,9 @@ void ModuleEditor::createEmptySong(bool clearPatterns/* = true*/, bool clearInst
 			changed = false;
 
 			eSaveType = ModSaveTypeXM;
-			
+
 			moduleFileName = TrackerConfig::untitledSong;
-			
+
 			// no extension
 			adjustExtension(false);
 		}
@@ -590,11 +590,11 @@ void ModuleEditor::createEmptySong(bool clearPatterns/* = true*/, bool clearInst
 		{
 			changed = true;
 		}
-	
+
 		buildInstrumentTable();
-		
+
 		lastRequestedPatternIndex = 0;
-		
+
 		leaveCriticalSection();	
 	}
 }
@@ -615,7 +615,7 @@ bool ModuleEditor::createNewSong(mp_uword numChannels/*= 8*/)
 	buildInstrumentTable();
 
 	lastRequestedPatternIndex = 0;
-	
+
 	return true;
 }
 
@@ -624,15 +624,15 @@ bool ModuleEditor::isEmpty() const
 	mp_sint32 patNum = module->header.patnum;
 	if (patNum != 1)
 		return false;
-	
+
 	TXMPattern* pattern = &module->phead[0];
-	
+
 	if (pattern->patternData != NULL)
 	{
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
-		
+
 		mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
-		
+
 		bool empty = true;
 		for (mp_sint32 j = 0; j < patternSize; j++)
 			if (pattern->patternData[j])
@@ -640,19 +640,19 @@ bool ModuleEditor::isEmpty() const
 				empty = false;
 				break;
 			}
-	
+
 		if (!empty)
 			return false;
-	} 
+	}
 
 	// step two, find last used instrument
 	mp_sint32 insNum = module->getNumUsedInstruments();
 	if (insNum)
 		return false;
-		
+
 	char temp[MAX_TITLETEXT+1];
 	memset(temp, 0, sizeof(temp));
-	getTitle(temp, MAX_TITLETEXT);	
+	getTitle(temp, MAX_TITLETEXT);
 
 	if (strlen(temp))
 		return true;
@@ -666,7 +666,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		return false;
 
 	mp_sint32 nRes = module->loadModule(fileName);
-	
+
 	// unknown format
 	if (nRes == MP_UNKNOWN_FORMAT)
 	{
@@ -678,9 +678,9 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	XModule::ModuleTypes type = XModule::ModuleType_NONE;
 
 	if (module->getType() != XModule::ModuleType_XM)
-	{	
+	{
 		type = module->getType();
-	
+
 		mp_ubyte oneShotFlags[MAX_INSTRUMENTS];
 		// save flags for one shot PT style looping, it will be stripped out
 		// when exporting to XM
@@ -695,21 +695,23 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 					oneShotFlags[i] = module->smp[snum].type & 32;
 				}
 			}
-		} 
-	
+		}
+
 		PPSystemString tempFile(getTempFilename());
-	
+#if !defined(__AMIGA__) && !defined(AMIGA)
 		try
 		{
+#endif
 			res = module->saveExtendedModule(tempFile) == MP_OK;
 			if(!res)
 				return res;
 
 			res = module->loadModule(tempFile) == MP_OK;
+#if !defined(__AMIGA__) && !defined(AMIGA)
 		} catch (const std::bad_alloc &) {
 			return false;
 		}
-	
+#endif
 		// restore one shot looping flag
 		if (type == XModule::ModuleType_MOD)
 		{
@@ -722,8 +724,8 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 						module->smp[snum].type |= 32;
 				}
 			}
-		} 
-	
+		}
+
 		XMFile::remove(tempFile);
 	}
 
@@ -731,26 +733,26 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		res = false;
 
 	lastRequestedPatternIndex = 0;
-	
+
 	if (res)
 	{
 		changed = false;
-		
+
 		buildInstrumentTable();
-		
+
 		// expand patterns to 32 channels width
 		for (mp_sint32 i = 0; i < module->header.patnum; i++)
 			getPattern(i);
-		
+
 		PPSystemString strFileName = preferredFileName ? preferredFileName : fileName;
 
 		moduleFileName = strFileName.stripExtension();
-		
+
 		if (type == XModule::ModuleType_MOD)
 			eSaveType = ModSaveTypeMOD;
-		else	
+		else
 			eSaveType = ModSaveTypeXM;
-		
+
 		// no extension
 		adjustExtension(false);
 	}
@@ -760,7 +762,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	}
 
 	cleanUnusedPatterns();
-	
+
 	return res;
 }
 
@@ -770,14 +772,14 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 	//cleanUnusedPatterns();
 
 	bool res = false;
-	
+
 	switch (saveType)
 	{
 		case ModSaveTypeDefault:
 		case ModSaveTypeXM:
 			res = module->saveExtendedModule(fileName) == 0;
 			break;
-			
+
 		case ModSaveTypeMOD:
 			res = module->saveProtrackerModule(fileName) == 0;
 			break;
@@ -786,7 +788,7 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 	eSaveType = saveType;
 
 	moduleFileName = fileName;
-	
+
 	// has extension
 	adjustExtension();
 
@@ -825,7 +827,7 @@ void ModuleEditor::increaseRepeatPos()
 
 	if (module->header.restart < 255)
 		module->header.restart++;
-		
+
 	if (module->header.restart >= module->header.ordnum)
 		module->header.restart = module->header.ordnum - 1;
 
@@ -877,7 +879,7 @@ void ModuleEditor::deleteOrderPosition(mp_sint32 index)
 			module->header.ord[i] = module->header.ord[i+1];
 
 		module->header.ordnum--;
-	
+
 		changed = true;
 	}
 }
@@ -888,7 +890,7 @@ bool ModuleEditor::seqCurrentOrderPosition(mp_sint32 index, bool clone/* = false
 
 	if (module->header.ordnum >= 255)
 		return false;
-		
+
 	pp_int32 srcPatternIndex = module->header.ord[index];
 
 	mp_sint32 highestPattern = module->header.ord[0];
@@ -952,7 +954,7 @@ bool ModuleEditor::isEditingOrderPosition(mp_sint32 index) const
 {
 	if (index < 0 || index >= module->header.ordnum)
 		return false;
-		
+
 	return patternEditor->getPattern() == &module->phead[module->header.ord[index]];
 }
 
@@ -960,18 +962,18 @@ void ModuleEditor::cleanUnusedPatterns()
 {
 	if (!module)
 		return;
-		
+
 	for (mp_sint32 i = module->header.patnum - 1; i > lastRequestedPatternIndex; i--)
 	{
 		TXMPattern* pattern = &module->phead[i];
 
 		if (pattern->patternData == NULL)
 			continue;
-			
+
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
-		
+
 		mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
-		
+
 		bool empty = true;
 		for (mp_sint32 j = 0; j < patternSize; j++)
 			if (pattern->patternData[j])
@@ -979,7 +981,7 @@ void ModuleEditor::cleanUnusedPatterns()
 				empty = false;
 				break;
 			}
-		
+
 		if (empty)
 		{
 			bool found = false;
@@ -989,10 +991,10 @@ void ModuleEditor::cleanUnusedPatterns()
 					found = true;
 					break;
 				}
-			
+
 			if (found)
 				break;
-			
+
 			delete[] pattern->patternData;
 			memset(pattern, 0, sizeof(TXMPattern));
 			module->header.patnum = i;
@@ -1001,7 +1003,7 @@ void ModuleEditor::cleanUnusedPatterns()
 		{
 			break;
 		}
-	} 
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1018,7 +1020,7 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 	// is using them
 	if (cleanUnusedPatterns)
 		this->cleanUnusedPatterns();
-	
+
 	// get requested pattern, allocate one if it's empty
 	TXMPattern* pattern = &module->phead[index];
 
@@ -1035,13 +1037,13 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 	if (pattern->channum < TrackerConfig::numPlayerChannels)
 	{
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
-		
+
 		mp_sint32 patternSize = slotSize * TrackerConfig::numPlayerChannels * pattern->rows;
 
 		mp_ubyte* newPatternData = new mp_ubyte[patternSize];
-		
+
 		memset(newPatternData, 0, patternSize);
-		
+
 		for (mp_sint32 i = 0; i < pattern->rows; i++)
 		{
 			mp_sint32 srcOffset = i * slotSize * pattern->channum;
@@ -1049,11 +1051,11 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 			for (mp_sint32 j = 0; j < slotSize * pattern->channum; j++)
 				newPatternData[dstOffset++] = pattern->patternData[srcOffset++];
 		}
-		
+
 		delete[] pattern->patternData;
-		
+
 		pattern->patternData = newPatternData;
-	
+
 		pattern->channum = (mp_ubyte)TrackerConfig::numPlayerChannels;
 	}
 
@@ -1068,7 +1070,7 @@ TXMPattern* ModuleEditor::getPattern(mp_sint32 index, bool cleanUnusedPatterns/*
 #if 0
 mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 {
-	if (index < 0) 
+	if (index < 0)
 		return -1;
 
 	if (index >= module->header.insnum)
@@ -1081,14 +1083,14 @@ mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 
 	// look if we can find an unused sample
 	mp_sint32 s = -1;
-	
+
 	for (mp_sint32 i = 0; i < module->header.smpnum; i++)
 	{
-		
+
 		bool used = false;
 		//if (module->smp[i].sample == NULL && module->smp[i].samplen == 0)
 		//{
-		
+
 			for (mp_sint32 j = 0; j < module->header.insnum; j++)
 			{
 				for (mp_sint32 k = 0; k < instruments[j].numUsedSamples; k++)
@@ -1104,7 +1106,7 @@ mp_sint32 ModuleEditor::allocateSample(mp_sint32 index)
 					break;
 
 			}
-		
+
 		//}
 		//else
 		//	used = true;
@@ -1174,7 +1176,7 @@ mp_sint32 ModuleEditor::allocateInstrument()
 	leaveCriticalSection();
 
 	changed = true;
-	
+
 	return 0;
 }
 
@@ -1182,8 +1184,8 @@ mp_sint32 ModuleEditor::allocateInstrument()
 void ModuleEditor::freeSample(mp_sint32 index)
 {
 	return;
-	
-	if (index < 0) 
+
+	if (index < 0)
 		return;
 
 	if (index >= module->header.insnum)
@@ -1192,7 +1194,7 @@ void ModuleEditor::freeSample(mp_sint32 index)
 	if (instruments[index].numUsedSamples)
 	{
 		instruments[index].usedSamples[--instruments[index].numUsedSamples] = -1;
-	
+
 		mp_sint32 i;
 
 		mp_ubyte* nbu = instruments[index].nbu;
@@ -1224,7 +1226,7 @@ void ModuleEditor::clearSample(mp_sint32 smpIndex)
 		dst->samplen = 0;
 		dst->loopstart = 0;
 		dst->looplen = 0;
-		
+
 		changed = true;
 	}
 }
@@ -1234,14 +1236,14 @@ void ModuleEditor::clearSample(mp_sint32 insIndex, mp_sint32 smpIndex)
 	if (insIndex < module->header.insnum && smpIndex < 16)
 	{
 		mp_sint32 s = instruments[insIndex].usedSamples[smpIndex];
-		
+
 		clearSample(s);
 	}
 }
 
-bool ModuleEditor::loadSample(const SYSCHAR* fileName, 
-							  mp_sint32 insIndex, 
-							  mp_sint32 smpIndex, 
+bool ModuleEditor::loadSample(const SYSCHAR* fileName,
+							  mp_sint32 insIndex,
+							  mp_sint32 smpIndex,
 							  mp_sint32 channelIndex,
 							  const SYSCHAR* preferredFileName/* = NULL*/)
 {
@@ -1250,41 +1252,41 @@ bool ModuleEditor::loadSample(const SYSCHAR* fileName,
 	char* preferredNameASCIIZ = sysPreferredName.toASCIIZ();
 	PPString preferredName(preferredNameASCIIZ);
 	delete[] preferredNameASCIIZ;
-	
+
 	SampleLoaderGeneric sampleLoader(fileName, *module);
 	sampleLoader.setPreferredDefaultName(preferredName);
 
 	if (insIndex < module->header.insnum && smpIndex < 16)
 	{
 		enterCriticalSection();
-	
+
 		bool res = sampleLoader.loadSample(instruments[insIndex].usedSamples[smpIndex], channelIndex) == 0;
-		
+
 		if (res)
 		{
 			TXMSample* dst = &module->smp[instruments[insIndex].usedSamples[smpIndex]];
-			
+
 			ASSERT(dst);
-			
-			// default values first	
+
+			// default values first
 			dst->flags = 3;
 			dst->venvnum = instruments[insIndex].volumeEnvelope+1;
 			dst->penvnum = instruments[insIndex].panningEnvelope+1;
 			dst->fenvnum = dst->vibenvnum = 0;
-			
+
 			dst->vibtype = instruments[insIndex].vibtype;
 			dst->vibsweep = instruments[insIndex].vibsweep;
 			dst->vibdepth = instruments[insIndex].vibdepth << 1;
 			dst->vibrate = instruments[insIndex].vibrate;
 			dst->volfade = instruments[insIndex].volfade << 1;
-			
+
 			finishSamples();
-			
+
 			validateInstruments();
 
 			changed = true;
 		}
-		
+
 		leaveCriticalSection();
 
 		return res;
@@ -1313,7 +1315,7 @@ bool ModuleEditor::saveSample(const SYSCHAR* fileName, mp_sint32 insIndex, mp_si
 	if (insIndex < module->header.insnum && smpIndex < 16)
 	{
 		bool res = false;
-	
+
 		switch (format)
 		{
 			case SampleFormatTypeWAV:
@@ -1323,7 +1325,7 @@ bool ModuleEditor::saveSample(const SYSCHAR* fileName, mp_sint32 insIndex, mp_si
 				res = sampleLoader.saveSample(fileName, instruments[insIndex].usedSamples[smpIndex], SampleLoaderGeneric::OutputFiletypeIFF) == 0;
 				break;
 		}
-				
+
 		return res;
 	}
 
@@ -1334,7 +1336,7 @@ const PPSystemString& ModuleEditor::getSampleFileName(mp_sint32 insIndex, mp_sin
 {
 	SYSCHAR buffer[MP_MAXTEXT+1];
 	memset(buffer, 0, sizeof(buffer));
-	
+
 	TXMSample* smp = getSampleInfo(insIndex,smpIndex);
 
 	mp_sint32 len = convertStr(buffer, smp->name);
@@ -1346,7 +1348,7 @@ const PPSystemString& ModuleEditor::getSampleFileName(mp_sint32 insIndex, mp_sin
 		sampleFileName = buffer;
 		sampleFileName = sampleFileName.stripExtension();
 	}
-	
+
 	return sampleFileName;
 }
 
@@ -1367,7 +1369,7 @@ void ModuleEditor::freeInstrument()
 	memset(instruments[module->header.insnum].nbu, 0, MAX_NOTE);
 
 	module->header.insnum--;
-	
+
 	module->header.smpnum-=16;
 
 	leaveCriticalSection();
@@ -1380,32 +1382,32 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	ASSERT(index < module->header.insnum);
 
 	mp_sint32 j;
-	
+
 	ASSERT(instruments[index].numUsedSamples == 16);
-	
+
 	memcpy(instruments[index].nbu, ins->nbu, MAX_NOTE);
-	
+
 	for (j = 0; j < MAX_NOTE; j++)
 		instruments[index].instrument->snum[j] = index*16 + ins->nbu[j];
-	
+
 	memcpy(instruments[index].instrument->name, ins->name, MAX_INSTEXT);
-	
+
 	instruments[index].instrument->samp = ins->numsamples;
-	
+
 	memcpy(&module->venvs[instruments[index].volumeEnvelope], const_cast<TEnvelope*>(&ins->venv), sizeof(ins->venv));
 	memcpy(&module->penvs[instruments[index].panningEnvelope], const_cast<TEnvelope*>(&ins->penv), sizeof(ins->penv));
-	
+
 	instruments[index].volfade = ins->volfade>>1;
 	instruments[index].vibtype = ins->vibtype;
 	instruments[index].vibrate = ins->vibrate;
 	instruments[index].vibdepth = ins->vibdepth>>1;
 	instruments[index].vibsweep = ins->vibsweep;
-	
+
 	// Wipe samples first
 	for (j = 0; j < 16; j++)
 	{
 		mp_sint32 s = instruments[index].usedSamples[j];
-		
+
 		TXMSample* smp = &module->smp[s];
 
 		if (smp->sample)
@@ -1422,12 +1424,11 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 		smp->flags = smp->type = 0;
 		memset(smp->name, 0, sizeof(smp->name));
 	}
-	
-	
+
 	for (j = 0; j < ins->numsamples; j++)
 	{
 		mp_sint32 s = instruments[index].usedSamples[j];
-		
+
 		// 16 bit samples
 		if (ins->samples[j].samplen && ins->samples[j].sample)
 		{
@@ -1436,7 +1437,7 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 				module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(ins->samples[j].samplen*2);
 				if (module->smp[s].sample == NULL)
 					return false;
-				
+
 				TXMSample::copyPaddedMem(module->smp[s].sample, ins->samples[j].sample, ins->samples[j].samplen*2);
 			}
 			else
@@ -1444,20 +1445,20 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 				module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(ins->samples[j].samplen);
 				if (module->smp[s].sample == NULL)
 					return false;
-				
+
 				TXMSample::copyPaddedMem(module->smp[s].sample, ins->samples[j].sample, ins->samples[j].samplen);
 			}
 		}
-		
+
 		const TXMSample* src = &ins->samples[j];
 		TXMSample* dst = &module->smp[s];
-		
-		// default values first	
+
+		// default values first
 		dst->flags = 3;
 		dst->venvnum = instruments[index].volumeEnvelope+1;
 		dst->penvnum = instruments[index].panningEnvelope+1;
 		dst->fenvnum = dst->vibenvnum = 0;
-		
+
 		// copy from original instrument
 		dst->samplen = src->samplen;
 		dst->loopstart = src->loopstart;
@@ -1467,18 +1468,18 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 		dst->type = src->type;
 		dst->pan = src->pan;
 		dst->relnote = src->relnote;
-		
+
 		dst->vibtype = src->vibtype;
 		dst->vibsweep = src->vibsweep;
 		dst->vibdepth = src->vibdepth;
 		dst->vibrate = src->vibrate;
 		dst->volfade = src->volfade;
-		
+
 		memcpy(dst->name, src->name, sizeof(dst->name));
 	}
-	
+
 	changed = true;
-	
+
 	return true;
 }
 
@@ -1490,39 +1491,39 @@ XIInstrument* ModuleEditor::extractXIInstrument(mp_sint32 index)
 
 	if (ins == NULL)
 		return NULL;
-		
+
 	mp_sint32 j;
-	
+
 	ASSERT(instruments[index].numUsedSamples == 16);
-	
+
 	memcpy(ins->nbu, instruments[index].nbu, MAX_NOTE);
-	
+
 	memcpy(ins->name, instruments[index].instrument->name, MAX_INSTEXT);
-	
+
 	ins->numsamples = 16;
-	
+
 	memcpy(&ins->venv, &module->venvs[instruments[index].volumeEnvelope], sizeof(ins->venv));
 	memcpy(&ins->penv, &module->penvs[instruments[index].panningEnvelope], sizeof(ins->penv));
-	
+
 	ins->volfade = instruments[index].volfade<<1;
 	ins->vibtype = instruments[index].vibtype;
 	ins->vibrate = instruments[index].vibrate;
 	ins->vibdepth = instruments[index].vibdepth<<1;
 	ins->vibsweep = instruments[index].vibsweep;
-	
+
 	for (j = 0; j < ins->numsamples; j++)
 	{
 		mp_sint32 s = instruments[index].usedSamples[j];
-		
+
 		TXMSample* dst = &ins->samples[j];
 		TXMSample* src = &module->smp[s];
-		
-		// default values first	
+
+		// default values first
 		dst->flags = 3;
 		dst->venvnum = instruments[index].volumeEnvelope+1;
 		dst->penvnum = instruments[index].panningEnvelope+1;
 		dst->fenvnum = dst->vibenvnum = 0;
-		
+
 		// copy from original instrument
 		dst->samplen = src->samplen;
 		dst->loopstart = src->loopstart;
@@ -1533,15 +1534,15 @@ XIInstrument* ModuleEditor::extractXIInstrument(mp_sint32 index)
 		dst->pan = src->pan;
 		dst->relnote = src->relnote;
 		dst->sample = src->sample;
-		
+
 		dst->vibtype = src->vibtype;
 		dst->vibsweep = src->vibsweep;
 		dst->vibdepth = src->vibdepth;
 		dst->vibrate = src->vibrate;
 		dst->volfade = src->volfade;
-		
+
 		memcpy(dst->name, src->name, sizeof(dst->name));
-	}	
+	}
 
 	return ins;
 }
@@ -1551,18 +1552,18 @@ bool ModuleEditor::loadInstrument(const SYSCHAR* fileName, mp_sint32 index)
 	ASSERT(index < module->header.insnum);
 
 	XIInstrument* ins = new XIInstrument();
-	
-	bool res = ins->load(fileName) == 0; 
-	
+
+	bool res = ins->load(fileName) == 0;
+
 	if (res)
 	{
 		res = insertXIInstrument(index, ins);
-	
+
 		finishSamples();
-		
+
 		validateInstruments();
 	}
-	
+
 	delete ins;
 
 	return res;
@@ -1573,14 +1574,14 @@ bool ModuleEditor::saveInstrument(const SYSCHAR* fileName, mp_sint32 index)
 	ASSERT(index < module->header.insnum);
 
 	XIInstrument* ins = extractXIInstrument(index);
-	
+
 	bool res = true;
-	
+
 	if (ins)
-	{		
+	{
 		ins->save(fileName);
 	}
-	
+
 	return res;
 }
 
@@ -1591,11 +1592,11 @@ bool ModuleEditor::zapInstrument(mp_sint32 index)
 	enterCriticalSection();
 
 	XIInstrument ins;
-	
+
 	bool res = insertXIInstrument(index, &ins);
-	
+
 	finishSamples();
-		
+
 	validateInstruments();
 
 	leaveCriticalSection();
@@ -1609,11 +1610,11 @@ const PPSystemString& ModuleEditor::getInstrumentFileName(mp_sint32 index)
 {
 	SYSCHAR buffer[MP_MAXTEXT+1];
 	memset(buffer, 0, sizeof(buffer));
-	
+
 	TEditorInstrument* ins = getInstrumentInfo(index);
-	
+
 	mp_sint32 len = convertStr(buffer, ins->instrument->name);
-	
+
 	if (!len)
 		instrumentFileName = "Untitled";
 	else
@@ -1621,11 +1622,11 @@ const PPSystemString& ModuleEditor::getInstrumentFileName(mp_sint32 index)
 		instrumentFileName = buffer;
 		instrumentFileName = instrumentFileName.stripExtension();
 	}
-	
+
 	return instrumentFileName;
 }
 
-bool ModuleEditor::copyInstrument(ModuleEditor& dstModule, mp_sint32 dstIndex, 
+bool ModuleEditor::copyInstrument(ModuleEditor& dstModule, mp_sint32 dstIndex,
 								  ModuleEditor& srcModule, mp_sint32 srcIndex)
 {
 	ASSERT(srcIndex < srcModule.module->header.insnum);
@@ -1635,34 +1636,34 @@ bool ModuleEditor::copyInstrument(ModuleEditor& dstModule, mp_sint32 dstIndex,
 
 	if (!srcIns)
 		return false;
-	
+
 	XIInstrument* dstIns = new XIInstrument(*srcIns);
 
 	if (!dstIns)
 	{
-		delete srcIns;		
+		delete srcIns;
 		return false;
 	}
 
 	dstModule.enterCriticalSection();
-		
+
 	bool res = dstModule.insertXIInstrument(dstIndex, dstIns);
-	
+
 	if (res)
 	{
 		dstModule.finishSamples();
 		dstModule.validateInstruments();
-	}	
-	
+	}
+
 	delete dstIns;
 	delete srcIns;
 
 	dstModule.leaveCriticalSection();
-	
+
 	return res;
 }
 
-bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex, 
+bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 								   ModuleEditor& srcModule, mp_sint32 srcIndex)
 {
 	ASSERT(srcIndex < srcModule.module->header.insnum);
@@ -1672,17 +1673,17 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 
 	if (!srcIns)
 		return false;
-	
+
 	XIInstrument* dstIns = dstModule.extractXIInstrument(dstIndex);
-	
+
 	if (!dstIns)
 	{
 		delete srcIns;
 		return false;
 	}
-	
+
 	XIInstrument* swapSrc = new XIInstrument(*srcIns);
-	
+
 	if (!swapSrc)
 	{
 		delete dstIns;
@@ -1691,7 +1692,7 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 	}
 
 	XIInstrument* swapDst = new XIInstrument(*dstIns);
-	
+
 	if (!swapDst)
 	{
 		delete swapSrc;
@@ -1702,7 +1703,7 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 
 	delete dstIns;
 	delete srcIns;
-	
+
 	if (&dstModule == &srcModule)
 	{
 		dstModule.enterCriticalSection();
@@ -1712,10 +1713,10 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 		srcModule.enterCriticalSection();
 		dstModule.enterCriticalSection();
 	}
-	
+
 	bool res = dstModule.insertXIInstrument(dstIndex, swapSrc);
 	res = srcModule.insertXIInstrument(srcIndex, swapDst) && res;
-	
+
 	if (res)
 	{
 		srcModule.finishSamples();
@@ -1723,11 +1724,11 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 
 		dstModule.finishSamples();
 		dstModule.validateInstruments();
-	}	
+	}
 
 	delete swapDst;
 	delete swapSrc;
-	
+
 	if (&dstModule == &srcModule)
 	{
 		dstModule.leaveCriticalSection();
@@ -1737,11 +1738,11 @@ bool ModuleEditor::swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 		dstModule.leaveCriticalSection();
 		srcModule.leaveCriticalSection();
 	}
-	
+
 	return res;
 }
 
-bool ModuleEditor::copySample(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex, 
+bool ModuleEditor::copySample(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex,
 							  ModuleEditor& srcModule, mp_sint32 srcInsIndex, mp_sint32 srcIndex)
 {
 	ASSERT(srcInsIndex < srcModule.module->header.insnum);
@@ -1751,37 +1752,37 @@ bool ModuleEditor::copySample(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp
 	ASSERT(dstIndex < 16);
 
 	bool res = true;
-	
-	TXMSample* dstSmp = dstModule.getSampleInfo(dstInsIndex, dstIndex);	
+
+	TXMSample* dstSmp = dstModule.getSampleInfo(dstInsIndex, dstIndex);
 	TXMSample* srcSmp = srcModule.getSampleInfo(srcInsIndex, srcIndex);
 
 	dstModule.enterCriticalSection();
-	
+
 	if (dstSmp->sample && dstSmp->samplen)
 		dstModule.module->freeSampleMem((mp_ubyte*)dstSmp->sample);
-	
+
 	// assign attributes
 	*dstSmp = *srcSmp;
-	
+
 	mp_sint32 sampleSize = (srcSmp->samplen * ((srcSmp->type & 16) ? 16:8)) >> 3;
 	if (sampleSize && srcSmp->sample)
 	{
 		dstSmp->sample = (mp_sbyte*)dstModule.module->allocSampleMem(sampleSize);
 		if (dstSmp->sample)
 		{
-			TXMSample::copyPaddedMem(dstSmp->sample, srcSmp->sample, sampleSize);			
+			TXMSample::copyPaddedMem(dstSmp->sample, srcSmp->sample, sampleSize);
 			dstModule.finishSamples();
 			dstModule.validateInstruments();
 		}
 		else res = false;
 	}
-	
+
 	dstModule.leaveCriticalSection();
-	
+
 	return res;
 }
 
-bool ModuleEditor::swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex, 
+bool ModuleEditor::swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex,
 							   ModuleEditor& srcModule, mp_sint32 srcInsIndex, mp_sint32 srcIndex)
 {
 	ASSERT(srcInsIndex < srcModule.module->header.insnum);
@@ -1791,7 +1792,7 @@ bool ModuleEditor::swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, m
 	ASSERT(dstIndex < 16);
 
 	bool res = true;
-	
+
 	if (&dstModule == &srcModule)
 	{
 		dstModule.enterCriticalSection();
@@ -1801,22 +1802,22 @@ bool ModuleEditor::swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, m
 		srcModule.enterCriticalSection();
 		dstModule.enterCriticalSection();
 	}
-	
-	TXMSample* dstSmp = dstModule.getSampleInfo(dstInsIndex, dstIndex);	
+
+	TXMSample* dstSmp = dstModule.getSampleInfo(dstInsIndex, dstIndex);
 	TXMSample* srcSmp = srcModule.getSampleInfo(srcInsIndex, srcIndex);
-	
+
 	TXMSample tmpSmp;
-	
+
 	srcModule.module->removeSamplePtr((mp_ubyte*)srcSmp->sample);
 	dstModule.module->removeSamplePtr((mp_ubyte*)dstSmp->sample);
-	
+
 	tmpSmp = *dstSmp;
 	*dstSmp = *srcSmp;
 	*srcSmp = tmpSmp;
-	
+
 	srcModule.module->insertSamplePtr((mp_ubyte*)srcSmp->sample);
-	dstModule.module->insertSamplePtr((mp_ubyte*)dstSmp->sample);	
-	
+	dstModule.module->insertSamplePtr((mp_ubyte*)dstSmp->sample);
+
 	if (&dstModule == &srcModule)
 	{
 		dstModule.leaveCriticalSection();
@@ -1826,7 +1827,7 @@ bool ModuleEditor::swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, m
 		dstModule.leaveCriticalSection();
 		srcModule.leaveCriticalSection();
 	}
-	
+
 	return res;
 }
 
@@ -1847,7 +1848,7 @@ void ModuleEditor::getTitle(char* name, mp_uint32 length) const
 {
 	if (length > MAX_TITLETEXT)
 		length = MAX_TITLETEXT;
-	XModule::convertStr(name, (char*)module->header.name, length, false);	
+	XModule::convertStr(name, (char*)module->header.name, length, false);
 }
 
 void ModuleEditor::setNumOrders(mp_sint32 numOrders)
@@ -1856,10 +1857,10 @@ void ModuleEditor::setNumOrders(mp_sint32 numOrders)
 		numOrders = 255;
 	if (numOrders < 1)
 		numOrders = 1;
-	
+
 	if (module->header.ordnum != numOrders)
 		changed = true;
-	
+
 	module->header.ordnum = numOrders;
 }
 
@@ -1891,7 +1892,7 @@ void ModuleEditor::setCurrentSampleName(const char* name, mp_uint32 length)
 {
 	if (sampleEditor->getSample() == NULL)
 		return;
-		
+
 	insertText((char*)sampleEditor->getSample()->name, name, length);
 	changed = true;
 }
@@ -1913,7 +1914,7 @@ TXMSample* ModuleEditor::getNextSampleInfo()
 		enumerationIndex = -1;
 		return NULL;
 	}
-	
+
 	return &module->smp[enumerationIndex];
 }
 
@@ -1927,7 +1928,7 @@ void ModuleEditor::getInstrumentName(mp_sint32 insIndex, char* name, mp_uint32 l
 {
 	if (length > MAX_INSTEXT)
 		length = MAX_INSTEXT;
-	
+
 	XModule::convertStr(name, module->instr[insIndex].name, length, false);
 }
 
@@ -1938,16 +1939,16 @@ TEnvelope* ModuleEditor::getEnvelope(mp_sint32 insIndex, mp_sint32 smpIndex, mp_
 
 	if (smpIndex < 0 || smpIndex >= instruments[insIndex].numUsedSamples)
 		return NULL;
-	
+
 	TXMSample* smp = getSampleInfo(insIndex,smpIndex);
-	
+
 	// no envelopes available, assign some
 	if (smp->venvnum == 0)
 		smp->venvnum = instruments[insIndex].volumeEnvelope+1;
-	// no envelope available, assign one 
+	// no envelope available, assign one
 	if (smp->penvnum == 0)
 		smp->penvnum = instruments[insIndex].panningEnvelope+1;
-	
+
 	if (type == 0 && smp->venvnum)
 	{
 		return &module->venvs[smp->venvnum-1];
@@ -1994,7 +1995,7 @@ void ModuleEditor::updateSampleTable(mp_sint32 index, const mp_ubyte* nbu)
 
 void ModuleEditor::updateInstrumentData(mp_sint32 index)
 {
-	
+
 	if (index < 0)
 		return;
 
@@ -2028,12 +2029,12 @@ pp_int32 ModuleEditor::insRemapSong(pp_int32 oldIns, pp_int32 newIns)
 	for (mp_sint32 k = 0; k < module->header.patnum; k++)
 	{
 		patternEditorTools.attachPattern(&module->phead[k]);
-		resCnt+=patternEditorTools.insRemap(oldIns, newIns);				
+		resCnt+=patternEditorTools.insRemap(oldIns, newIns);
 	}
 
 	if (resCnt)
 		changed = true;
-		
+
 	return resCnt;
 }
 
@@ -2047,18 +2048,18 @@ pp_int32 ModuleEditor::noteTransposeSong(const PatternEditorTools::TransposePara
 	for (mp_sint32 k = 0; k < module->header.patnum; k++)
 	{
 		patternEditorTools.attachPattern(&module->phead[k]);
-		
+
 		if (evaluate)
-			fuckupCnt+=patternEditorTools.noteTranspose(transposeParameters, evaluate);				
+			fuckupCnt+=patternEditorTools.noteTranspose(transposeParameters, evaluate);
 		else
-			resCnt+=patternEditorTools.noteTranspose(transposeParameters, evaluate);				
+			resCnt+=patternEditorTools.noteTranspose(transposeParameters, evaluate);
 	}
 
 	if (!evaluate)
 	{
 		if (resCnt)
 			changed = true;
-		
+
 		return resCnt;
 	}
 	else
@@ -2075,15 +2076,15 @@ pp_int32 ModuleEditor::panConvertSong(PanConversionTypes type)
 
 		if (pattern->patternData == NULL)
 			continue;
-			
+
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
 		mp_sint32 rowSizeSrc = slotSize*pattern->channum;
-		
+
 		for (pp_int32 i = 0; i < pattern->rows; i++)
 			for (pp_int32 j = 0; j < pattern->channum; j++)
 			{
 				mp_ubyte* src = pattern->patternData + i*rowSizeSrc+j*slotSize;
-				
+
 				switch (type)
 				{
 					case PanConversionTypeConvert_E8x:
@@ -2117,9 +2118,9 @@ pp_int32 ModuleEditor::panConvertSong(PanConversionTypes type)
 						break;
 				}
 			}
-				
+
 	}
-	
+
 	if (resCnt)
 		changed = true;
 
@@ -2153,10 +2154,10 @@ pp_int32 ModuleEditor::removeUnusedInstruments(bool evaluate, bool remap)
 
 		if (pattern->patternData == NULL)
 			continue;
-			
+
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
 		mp_sint32 rowSizeSrc = slotSize*pattern->channum;
-		
+
 		for (i = 0; i < pattern->rows; i++)
 			for (j = 0; j < pattern->channum; j++)
 			{
@@ -2167,9 +2168,9 @@ pp_int32 ModuleEditor::removeUnusedInstruments(bool evaluate, bool remap)
 					bitMap[src[1]-1] = TRUE;
 				}
 			}
-				
+
 	}
-	
+
 	mp_sint32 result = 0;
 	for (i = 0; i < module->header.insnum; i++)
 	{
@@ -2203,7 +2204,7 @@ pp_int32 ModuleEditor::removeUnusedInstruments(bool evaluate, bool remap)
 				{
 					XIInstrument* ins = extractXIInstrument(i);
 
-					insertXIInstrument(j, ins);			
+					insertXIInstrument(j, ins);
 
 					delete ins;
 
@@ -2260,10 +2261,10 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 
 		if (pattern->patternData == NULL)
 			continue;
-			
+
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
 		mp_sint32 rowSizeSrc = slotSize*pattern->channum;
-		
+
 		for (i = 0; i < pattern->rows; i++)
 			for (j = 0; j < pattern->channum; j++)
 			{
@@ -2276,7 +2277,7 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 					// just assume, that if an instrument is used
 					// in the pattern, that the first sample of this instrument
 					// is kept even if there isn't any note played with that instrument
-					mp_sint32 insIndex = lastIns[j] - 1;					
+					mp_sint32 insIndex = lastIns[j] - 1;
 					mp_sint32 smpIndex = module->instr[insIndex].snum[0];
 					if (smpIndex >= 0 && smpIndex < MP_MAXSAMPLES)
 						bitMap[smpIndex] = TRUE;
@@ -2288,19 +2289,19 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 					if (lastIns[j])
 					{
 						mp_sint32 insIndex = lastIns[j] - 1;
-					
+
 						mp_sint32 smpIndex = module->instr[insIndex].snum[src[0]-1];
-					
+
 						if (smpIndex >= 0 && smpIndex < MP_MAXSAMPLES)
 							bitMap[smpIndex] = TRUE;
 					}
 				}
 			}
-				
+
 	}
 
 	delete[] lastIns;
-	
+
 	mp_sint32 result = 0;
 	for (i = 0; i < module->header.smpnum; i++)
 	{
@@ -2315,8 +2316,8 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 			}
 		}
 	}
-	
-	// relocate samples 
+
+	// relocate samples
 	if (!evaluate)
 	{
 		for (i = 0; i < module->header.insnum; i++)
@@ -2324,7 +2325,7 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 			mp_sint32 smpRelocTable[16];
 			for (j = 0; j < 16; j++)
 				smpRelocTable[j] = -1;
-			
+
 			mp_sint32 s = 0;
 			TXMSample* src = module->smp + 16*i;
 			TXMSample* dst = src;
@@ -2343,23 +2344,23 @@ pp_int32 ModuleEditor::removeUnusedSamples(bool evaluate)
 					dst++;
 				}
 			}
-			
+
 			// adjust the FT2 style sample->note mapping table
 			TEditorInstrument* ins = instruments + i;
-			
+
 			for (j = 0; j < MAX_NOTE; j++)
 				if (ins->nbu[j] < 16 && smpRelocTable[ins->nbu[j]] != -1)
 					ins->nbu[j] = smpRelocTable[ins->nbu[j]];
 				else
 					ins->nbu[j] = 0;
-		
+
 			// convert back to milkytracker module style mapping
 			for (j = 0; j < MAX_NOTE; j++)
 				module->instr[i].snum[j] = i * 16 + ins->nbu[j];
-			
+
 		}
 	}
-	
+
 	if (!evaluate && result)
 		changed = true;
 
@@ -2377,9 +2378,9 @@ pp_int32 ModuleEditor::relocateCommands(const PatternEditorTools::RelocateParame
 	for (mp_sint32 k = 0; k < module->header.patnum; k++)
 	{
 		patternEditorTools.attachPattern(&module->phead[k]);
-		result+=patternEditorTools.relocateCommands(relocateParameters, evaluate);				
+		result+=patternEditorTools.relocateCommands(relocateParameters, evaluate);
 	}
-	
+
 	if (!evaluate && result)
 		changed = true;
 
@@ -2395,7 +2396,7 @@ pp_int32 ModuleEditor::zeroOperands(const PatternEditorTools::OperandOptimizePar
 	for (mp_sint32 k = 0; k < module->header.patnum; k++)
 	{
 		patternEditorTools.attachPattern(&module->phead[k]);
-		result+=patternEditorTools.zeroOperands(optimizeParameters, evaluate);				
+		result+=patternEditorTools.zeroOperands(optimizeParameters, evaluate);
 	}
 
 	if (!evaluate && result)
@@ -2413,7 +2414,7 @@ pp_int32 ModuleEditor::fillOperands(const PatternEditorTools::OperandOptimizePar
 	for (mp_sint32 k = 0; k < module->header.patnum; k++)
 	{
 		patternEditorTools.attachPattern(&module->phead[k]);
-		result+=patternEditorTools.fillOperands(optimizeParameters, evaluate);				
+		result+=patternEditorTools.fillOperands(optimizeParameters, evaluate);
 	}
 
 	if (!evaluate && result)
@@ -2422,7 +2423,7 @@ pp_int32 ModuleEditor::fillOperands(const PatternEditorTools::OperandOptimizePar
 	return result;
 }
 
-void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize, 
+void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 								   mp_sint32& numConvertedSamples, mp_sint32& numMinimizedSamples,
 								   bool evaluate)
 {
@@ -2466,9 +2467,9 @@ void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 void ModuleEditor::insertText(char* dst, const char* src, mp_sint32 max)
 {
 	char name[MP_MAXTEXT+1];
-	
+
 	ASSERT((signed)sizeof(name) >= max && strlen(src) <= sizeof(name));
-				
+
 	memset(name, 0, sizeof(name));
 	memcpy(name, const_cast<char*>(src), (signed)strlen(src) <= max ? strlen(src) : max);
 	memcpy(dst, name, max);
