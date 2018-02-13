@@ -159,7 +159,12 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 		if (!memcmp(&blockhead,"IN",2)) {
 			f.read(&header->name,1,32);
 			f.read(&dummy,1,20);
-			f.readWords(&header->ordnum,1);
+			mp_uword ordnum = 0;
+			f.readWords(&ordnum,1);
+			if(ordnum > MP_MAXORDERS) {
+				return MP_LOADER_FAILED;
+			}
+			header->ordnum = ordnum;
 			f.readWords(&header->restart,1);
 			header->mainvol = f.readByte();
 			header->tempo = f.readByte();
@@ -859,6 +864,8 @@ mp_sint32 LoaderMDL::load(XMFileBase& f, XModule* module)
 
 		for (mp_uint32 s = 0; s < numsamples; s++)
 		{
+			if(mdlsamp[s].sampnum == 0)
+				continue;
 			i = mdlsamp[s].sampnum - 1;
 		
 			if ((i+1) > header->insnum)

@@ -255,7 +255,10 @@ mp_sint32 LoaderPTM::load(XMFileBase& f, XModule* module)
 	
 	header->insnum = f.readWord(); // number of instruments
 	header->smpnum = header->insnum;
-	header->patnum = f.readWord(); // number of patterns	
+	header->patnum = f.readWord(); // number of patterns
+
+	if(header->insnum > 256 || header->patnum > 256)
+		return MP_LOADER_FAILED;
 	
 	header->channum = f.readWord();
 
