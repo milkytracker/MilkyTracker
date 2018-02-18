@@ -159,24 +159,16 @@ void TXMSample::restoreOriginalState()
 void TXMSample::postProcessSamples()
 {
 	mp_ubyte buffer[8];
+
+	// Sanitize loop points
+	if(loopstart > samplen)
+		loopstart = samplen;
+	if(looplen > samplen - loopstart)
+		looplen = samplen - loopstart;
+
 	mp_sint32 loopend = loopstart + looplen;
 	mp_sint32 samplen = this->samplen;
 
-	// this is in fact not good
-	if (loopend > samplen)
-	{
-		if (loopstart > samplen)
-			loopstart = samplen;
-		// calculate loop end
-		loopend = loopstart + looplen;
-		// clip loop end
-		if (loopend > samplen)
-			loopend = samplen;
-		// calculate new loop length
-		looplen = loopend - loopstart;
-		// no more looping if loop length is 0
-	}
-	
 	if (looplen == 0)
 		type &= ~3;
 	if (sample == NULL)
@@ -232,7 +224,7 @@ void TXMSample::postProcessSamples()
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
 				
 				memcpy(buffer, data+loopstart, saveLen);
@@ -248,13 +240,13 @@ void TXMSample::postProcessSamples()
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
 				
 				data[loopend] = data[loopend-1];
 				data[loopend+1] = data[loopend-2];
 				data[loopend+2] = data[loopend-3];
-				data[loopend+3] = data[loopend-4];			
+				data[loopend+3] = data[loopend-4];
 			}			
 		}			
 	}
@@ -290,11 +282,11 @@ void TXMSample::postProcessSamples()
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
 				
 				memcpy(buffer, data+loopstart, saveLen);
-				memcpy(data+loopend, buffer, saveLen);				
+				memcpy(data+loopend, buffer, saveLen);
 			}
 			// bidi loop
 			else if ((type&3) == 2)
@@ -307,13 +299,13 @@ void TXMSample::postProcessSamples()
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
-				loopBufferProps->state[1] = type & importantFlags;			
+				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
 				
 				data[loopend] = data[loopend-1];
 				data[loopend+1] = data[loopend-2];
 				data[loopend+2] = data[loopend-3];
-				data[loopend+3] = data[loopend-4];				
+				data[loopend+3] = data[loopend-4];
 			}
 		}
 	}

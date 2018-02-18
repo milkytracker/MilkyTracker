@@ -32,3 +32,12 @@ matrix:
           - /usr/bin/python genicons.py
           - popd
         script: *cmake_build
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: Vr2TAgHrYnMp95PUmGnzl3E2dMqBTe3E/JZZAInWC8Ifx1hCF0SI085svFg902kFhnZJhMFBukP/hNu6UAm/exTdAByks57Af9oJTCxrUIYhYs2sasKjmSKPjRD5rFB+zqZSlq/DKzQZTBZBYUn2w3f4otrbNB6vBayNgWMtKdEtS1GI6e9pxKQcvxJodi/4RNgws6l5sQ59aPSPGK0XnOSLu5HPGC4QLpdQVSw5/Rzn5Fcw3zPVYOs7ZV/t7ptmR7T+MjFSE7HBMJlUPflHWA+L3jjx8ngYkz+W0pNsXxomRQVCLhGlGo0F6EEijOt1TvLhqMTVWrMgNjK9pxlgZEMWTho8/44kLQ5ABGuqql+uhTtJXI4dLmrrSPnCDHvVd7j8cwQDptYvRaEhzZmxNAB+xhqWdMDzkL7DouRcFzuKWTCWPFablVDXElcODO+xqWcU62gO/xEww7Y1mC9GC5zpmOgA7198JxeIM/o5eiMsj1J24KK+2WJH3t65hqGNhRfHgoR24LfkylhU+MFEnM5ZQM/21IGfeA/bszKDitDfIuNMOCSQqiD/fIKFsqOrKRvMi5cp1XvHzQTIR5x+BWS6zQwQk0RCaM7d7FKTtT3w0cm0aNAD3f0MfdU3BKH9YG5DT5DNvsoP613bg50tVgarTX5PwNOosQU/rSysLIg=
+  file_glob: true
+  file: build/milkytracker-*
+  on:
+    tags: true

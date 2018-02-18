@@ -189,7 +189,11 @@ mp_sint32 LoaderMXM::load(XMFileBase& f, XModule* module)
 	MXMHeader.samples16 = f.readDword();
 	MXMHeader.lowpitch = f.readDword();
 	MXMHeader.highpitch = f.readDword();
-	f.read(MXMHeader.panpos,1,32);		
+
+	if(MXMHeader.ordnum > 256 || MXMHeader.patnum > 256 || MXMHeader.insnum > 256)
+		return MP_LOADER_FAILED;
+
+	f.read(MXMHeader.panpos,1,32);
 		
 	f.read(&header->ord, 1, 256);
 
