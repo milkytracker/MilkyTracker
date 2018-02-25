@@ -1,6 +1,6 @@
 # MilkyTracker ChangeLog
 
-## 24/04/2018 (v1.02):
+## 24/02/2018 (v1.02):
 
 ### What's new:
 *  99 channel MOD support
