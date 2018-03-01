@@ -1,5 +1,19 @@
 # MilkyTracker ChangeLog
 
+## 24/02/2018 (v1.02):
+
+### What's new:
+*  99 channel MOD support
+*  Alternative keybindings for inc/dec Row Insert
+
+### Bugs fixed:
+*  Fix Lxx command to also set panning envelope if volume sustain point is enabled.
+*  Infinite loop when processing 8 digit hexadecimal numbers
+*  SDL crash with -orientation command line parameter
+*  SDL mouse drag issue
+*  Fix fine global volume slide down handling
+*  Various loader memory corruption bugs
+
 ## 29/07/2017 (v1.01):
 
 ### What's new:
