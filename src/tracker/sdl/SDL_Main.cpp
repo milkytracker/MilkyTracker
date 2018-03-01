@@ -1063,6 +1063,8 @@ struct Window * getNativeWindow(void) {
 
     SDL_SysWMinfo info;
 
+    SDL_VERSION(&info.version);
+
     if (SDL_GetWindowWMInfo(sdlwin, &info)) {
         syswin = info.info.os4.window;
     }
