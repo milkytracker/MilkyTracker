@@ -1,4 +1,4 @@
-version: 1.00.00-{build}
+version: 1.02.00-{build}
 
 configuration:
   - Debug
