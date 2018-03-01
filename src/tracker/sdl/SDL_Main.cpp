@@ -640,7 +640,7 @@ void translateKeyDownEvent(const SDL_Event& event)
 	printf ("DEBUG: Key pressed: VK: %d, SC: %d, Scancode: %d\n", toVK(keysym), toSC(keysym), keysym.sym);
 #endif
 
-	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
+	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), static_cast<pp_uint16> (keysym.sym)};
 
 	PPEvent myEvent(eKeyDown, &chr, sizeof(chr));
 	RaiseEventSerialized(&myEvent);
@@ -656,7 +656,7 @@ void translateKeyUpEvent(const SDL_Event& event)
 
 	preTranslateKey(keysym);
 
-	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), keysym.sym};
+	pp_uint16 chr[3] = {toVK(keysym), toSC(keysym), static_cast<pp_uint16> (keysym.sym)};
 
 	PPEvent myEvent(eKeyUp, &chr, sizeof(chr));
 	RaiseEventSerialized(&myEvent);
