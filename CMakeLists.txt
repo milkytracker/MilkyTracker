@@ -29,6 +29,25 @@ include(GNUInstallDirs)
 option(FORCESDL "Force SDL instead of native" OFF)
 if(FORCESDL)
     unset(APPLE)
+    if(MSVC)
+        add_definitions(-DNOMINMAX)
+
+        # Enable parallel compilation
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /wd4996")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /wd4996")
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MTd /wd4996")
+        set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT /wd4996")
+        set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
+        set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
+
+        set(SDL2_LIBRARY "SDL2.lib")
+        set(SDL2MAIN_LIBRARY "SDL2main.lib")
+
+        include_directories("platforms/win32-sdl2")
+    endif()
     unset(WIN32)
     add_definitions(-D__FORCE_SDL_AUDIO__)
     # Frameworks not supported by findSDL2.cmake

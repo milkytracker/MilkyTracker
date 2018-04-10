@@ -276,8 +276,12 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/ppui/win32
     )
 else()
+    if(MSVC)
+        list(APPEND ICONS ${PROJECT_SOURCE_DIR}/platforms/win32-sdl2/milkytracker.rc)
+    endif()
     list(
         APPEND SOURCES
+        ${ICONS}
         sdl/SDL_KeyTranslation.cpp
         sdl/SDL_Main.cpp
     )

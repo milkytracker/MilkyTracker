@@ -37,6 +37,7 @@
 #ifndef __AUDIODRIVER_SDL_H__
 #define __AUDIODRIVER_SDL_H__
 
+#include <stdio.h>
 #include <SDL.h>
 #include <SDL_audio.h>
 

@@ -55,6 +55,21 @@
 
 SYSCHAR System::buffer[PATH_MAX+1];
 
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+void usleep(__int64 usec)
+{
+	HANDLE timer;
+	LARGE_INTEGER ft;
+
+	ft.QuadPart = -(10 * usec);
+
+	timer = CreateWaitableTimer(NULL, TRUE, NULL);
+	SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
+	WaitForSingleObject(timer, INFINITE);
+	CloseHandle(timer);
+}
+#endif
+
 const SYSCHAR* System::getTempFileName()
 {
 	// Suppressed warning: "'tmpnam' is deprecated: This function is provided for
@@ -122,9 +137,17 @@ const SYSCHAR* System::getConfigFileName()
 		strncpy(buffer, home, PATH_MAX);
 		strncat(buffer, "/.config", PATH_MAX);
 	}
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+	mkdir(buffer);
+#else
 	mkdir(buffer, S_IRWXU);
+#endif
 	strncat(buffer, "/milkytracker", PATH_MAX);
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+	mkdir(buffer);
+#else
 	mkdir(buffer, S_IRWXU);
+#endif
 	strncat(buffer, "/config", PATH_MAX);
 	// Move possible existing config into new location if not already present
 	if(home && access(oldLoc, F_OK) == 0 && access(buffer, F_OK) != 0)

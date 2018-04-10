@@ -33,6 +33,12 @@
 
 #include "../../../milkyplay/MilkyPlayCommon.h"
 
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+	#ifndef PATH_MAX
+		#define PATH_MAX 260
+	#endif
+#endif
+
 class System
 {
 private:

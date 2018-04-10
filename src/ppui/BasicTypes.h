@@ -32,19 +32,26 @@ typedef signed int		pp_int32;
 
 #include "ScanCodes.h"
 
-#if defined(WIN32) || defined(_WIN32_WCE) 
+#if (defined(WIN32) || defined(_WIN32_WCE)) && !defined(__FORCE_SDL_AUDIO__)
 	#include <windows.h>
 	#include <stdio.h>
 	#define VK_ALT        VK_MENU
 	#define __PPUI_WINDOWS__
+#endif
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+	#define strcasecmp _stricmp
 #endif
 
 #if !defined(__PPUI_WINDOWS__)
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	#include <string.h>
+#if (defined(WIN32) || defined(_WIN32_WCE)) && defined(__FORCE_SDL_AUDIO__)
+	#include <windows.h>
+	#define VK_ALT        VK_MENU
+#else
 	#include "VirtualKeys.h"
+#endif
 	#include "PPSystemString_POSIX.h"
 #endif
 
