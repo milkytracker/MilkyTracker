@@ -42,8 +42,12 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	needsTemporaryBuffer((orientation != ORIENTATION_NORMAL) || (scaleFactor != 1)),
 	temporaryBuffer(NULL)
 {
+	char rendername[256] = { 0 };
+	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
+	int drv_index = -1;
+
 	// Create an SDL window and surface
-	theWindow = CreateWindow(realWidth, realHeight, bpp,
+	theWindow = SDL2CreateWindow(realWidth, realHeight, bpp,
 #ifdef HIDPI_SUPPORT
 							  SDL_WINDOW_ALLOW_HIGHDPI |							// Support for 'Retina'/Hi-DPI displays
 #endif
@@ -55,13 +59,32 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 		fprintf(stderr, "SDL: Could not create window.\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
+	for (int it = 0; it < SDL_GetNumRenderDrivers(); it++)
+	{
+		SDL_RendererInfo info;
+		SDL_GetRenderDriverInfo(it, &info);
+
+		strncat(rendername, info.name, 9);
+		strncat(rendername, " ", 1);
+
+		if (strncmp("opengles2", info.name, 9) == 0)
+		{
+			drv_index = it;
+		}
+	}
+
 	// Create renderer for the window
 	theRenderer = SDL_CreateRenderer(theWindow, drv_index, 0);
 	if (theRenderer == NULL)
 	{
-		fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
+		// If renderer was listed but native driver didn't support it will fallback to first supported (only on Win32)
+		theRenderer = SDL_CreateRenderer(theWindow, -1, 0);
+		if (theRenderer == NULL)
+		{
+			fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
 	}
 
 #ifdef HIDPI_SUPPORT
@@ -69,6 +92,19 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	int rendererW, rendererH;
 	SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
 #endif
+
+	glGetStringAPI = (PFNGLGETSTRINGPROC)SDL_GL_GetProcAddress("glGetString");
+
+	fprintf(stdout, "SDL: Available Renderers: %s\n", rendername);
+	if (glGetStringAPI)
+	{
+		fprintf(stdout, "SDL: Vendor     : %s\n", glGetStringAPI(GL_VENDOR));
+		fprintf(stdout, "SDL: Renderer   : %s\n", glGetStringAPI(GL_RENDERER));
+		fprintf(stdout, "SDL: Version    : %s\n", glGetStringAPI(GL_VERSION));
+#ifdef DEBUG
+		fprintf(stdout, "Extensions : %s\n", glGetStringAPI(GL_EXTENSIONS));
+#endif
+	}
 
 	// Log renderer capabilities
 	SDL_RendererInfo theRendererInfo;

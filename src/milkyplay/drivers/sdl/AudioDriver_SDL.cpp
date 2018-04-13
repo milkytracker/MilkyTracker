@@ -71,7 +71,7 @@ AudioDriver_SDL::~AudioDriver_SDL()
 mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
 {
 	SDL_AudioSpec	wanted, obtained, saved;
-	char name[32];
+	char name[256] = { 0 };
 	mp_sint32 res = AudioDriverBase::initDevice(bufferSizeInWords, mixFrequency, mixer);
 	if (res < 0)
 	{
@@ -99,6 +99,13 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		return MP_DEVICE_ERROR;
 	}
 
+	for (int it = 0; it < SDL_GetNumAudioDrivers(); it++)
+	{
+		strncat(name, SDL_GetAudioDriver(it), 15);
+		strncat(name, " ", 1);
+	}
+
+	printf("SDL: Available audio drivers: %s\n", name);
 	printf("SDL: Using audio driver: %s\n", SDL_GetCurrentAudioDriver());
 
 	if(wanted.format != obtained.format)
