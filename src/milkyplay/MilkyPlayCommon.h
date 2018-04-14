@@ -89,7 +89,7 @@
 
 #define MP_NUMEFFECTS 4
 
-#if defined(WIN32) || defined(_WIN32_WCE) && !defined(__FORCE_SDL_AUDIO__)
+#if (defined(WIN32) || defined(_WIN32_WCE)) && !defined(__FORCE_SDL_AUDIO__)
 	#define DRIVER_WIN32
 #elif defined(__APPLE__) && !defined(__FORCE_SDL_AUDIO__)
 	#define DRIVER_OSX

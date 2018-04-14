@@ -162,7 +162,7 @@ enum SDLUserEvents
 	SDLUserEventMidiKeyUp,
 };
 
-static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
+static Uint32 SDLCALL timerCallback(Uint32 interval, void* param)
 {
 	if (!myTrackerScreen || !myTracker || !ticking)
 	{
