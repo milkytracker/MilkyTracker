@@ -171,9 +171,9 @@ enum SDLUserEvents
 };
 
 #ifdef AMIGA
-static SDLCALL Uint32 timerCallback(Uint32 interval)
+static Uint32 SDLCALL timerCallback(Uint32 interval)
 #else
-static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
+static Uint32 SDLCALL timerCallback(Uint32 interval, void* param)
 #endif
 {
 #ifdef AMIGA
