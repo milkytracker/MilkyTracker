@@ -576,16 +576,16 @@ mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p)
 			case 1 : vl=vibtab[vp&31]; break;
 			// square
 			case 2 : vl=255; break;
-			// ramp down
+			// ramp down (down being the period here - so ramp frequency up ;)
 			case 3 : {
 						vl=((vp&31)*539087)>>16;
 						if ((vp&63)>31) vl=255-vl;
-						vl=-vl;
 					 }; break;
-			// ramp up
+			// ramp up (up being the period here - so ramp frequency down ;)
 			case 4 : {
 						vl=((vp&31)*539087)>>16;
 						if ((vp&63)>31) vl=255-vl;
+						vl=-vl;
 					 }; break;
 		}
 		
