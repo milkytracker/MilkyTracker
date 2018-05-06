@@ -67,9 +67,9 @@ newgcctoolchain {
 }
 
 newgcctoolchain {
-	name = "x86_64-aros",
+	name = "i386-aros",
 	description = "x86_64-aros to cross-compile aros.x86_64 binaries from linux",
-	prefix = "x86_64-aros-",
+	prefix = "i386-aros-",
 	cppflags = "",
 	ldflags = ""
 }
@@ -94,7 +94,7 @@ if curpfx ~= "" then
         local e = string.sub(curpfx, string.find(curpfx, "--prefix") + 9)
         local p = string.sub(e, 0, string.find(e, " ") - 1)
 	if p ~= "" then
-	        print("using:" .. p .. "/")
+	        print("Using: " .. p .. "/")
 		m68kprefix = p
 	end
 end
@@ -102,12 +102,12 @@ end
 
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug" }
-	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-morphos", "x86_64-aros", "ppc-macos" }
+	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-morphos", "i386-aros", "ppc-macos" }
 	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
 	defines { "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	configuration "m68k-amigaos"
-		buildoptions "-m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -s -noixemul"
+		buildoptions "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
 		linkoptions { "-noixemul", "-ldebug", "-Xlinker --allow-multiple-definition" }
 		includedirs { m68kprefix .. "/m68k-amigaos/sys-include", m68kprefix .. "/include", m68kprefix .. "/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
 		libdirs { m68kprefix .. "/lib", m68kprefix .. "/m68k-amigaos/lib", m68kprefix .. "/m68k-amigaos/libnix/lib/libnix" }
@@ -127,10 +127,10 @@ solution "milkytracker"
 		libdirs { "/opt/ppc-amigaos/lib", "/opt/ppc-amigaos/ppc-amigaos/lib" }
 		defines { "AMIGA", "__AMIGA__", "__amigaos4__" }
 
-	configuration "x86_64-aros"
-		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions"
-		linkoptions { "-noixemul" }
-		includedirs { "/opt/aros/sdk/x86_64-aros/sys-include", "/opt/aros/sdk/include", "/opt/aros/sdk/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+	configuration "i386-aros"
+		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions -static-libstdc++ -s"
+		linkoptions { "-lpthread", "-static-libstdc++" }
+		includedirs { "/opt/x86-aros/bin/linux-i386/AROS/Extras/Developer/include", "/opt/x86-aros/bin/linux-x86_64/tools/crosstools/lib/gcc/i386-aros/6.3.0/include-fixed", "/opt/aros/sdk/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/aros/sdk/lib", "/opt/aros/sdk/x86_64-aros/lib" }
 		defines { "AMIGA", "__AMIGA__", "AROS", "aros", "__AROS__", "__aros__" }
 
@@ -350,6 +350,9 @@ solution "milkytracker"
 			links { "debug" }
 		configuration "ppc-amigaos"
 			targetextension ".os4"
+		configuration "i386-aros"
+			targetextension ".aros-abiv1"
+			links { "pthread" }
 		configuration "ppc-macos"
 			targetextension ".app"
 		--	links { "SDLmain" }

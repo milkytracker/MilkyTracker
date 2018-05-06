@@ -42,8 +42,12 @@
 #include <sys/syslimits.h>
 #endif
 
-#ifdef __AMIGA__
+#if defined(__AMIGA__) && !defined(__AROS__)
 #include <sys/syslimits.h>
+#endif
+
+#if defined(__AROS__)
+#include <syslimits.h>
 #endif
 
 #ifdef __macos__
