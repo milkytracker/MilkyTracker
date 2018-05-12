@@ -1,0 +1,25 @@
+# Copyright © 2018, The AROS Development Team. All rights reserved. 
+# $Id$ 
+
+include $(SRCDIR)/config/aros.cfg
+
+MILKYTRACKER_EXEDIR := $(AROS_CONTRIB)/MultiMedia/Audio/MilkyTrackerAmiga
+
+#MM- local-milkytracker : local-milkytracker-binary 
+#MM- local-milkytracker-binary : contrib-sdl
+
+NOWARN_CXXFLAGS := $(NOWARN_SIGN_COMPARE) $(NOWARN_UNUSED_VARIABLE) $(NOWARN_MISLEADING_INDENTATION) \
+                   $(NOWARN_UNUSED_BUT_SET_VARIABLE) $(NOWARN_STRICT_OVERFLOW) $(NOWARN_RETURN_TYPE) \
+                   $(NOWARN_MAYBE_UNINITIALIZED) $(NOWARN_UNUSED_FUNCTION) $(NOWARN_SWITCH) -Wno-reorder -Wno-delete-non-virtual-dtor
+
+USER_CXXFLAGS := $(NOWARN_CXXFLAGS)
+
+USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES) -I$(AROS_INCLUDES)/SDL -I$(SRCDIR)/$(CURDIR)/src/milkyplay/drivers/sdl
+
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB) -static-libstdc++ -lSDL
+
+%build_with_cmake mmake=local-milkytracker-binary 		\
+	srcdir=$(SRCDIR)/$(CURDIR) prefix="$(MILKYTRACKER_EXEDIR)"	\
+	extraoptions=""
+
+%common
