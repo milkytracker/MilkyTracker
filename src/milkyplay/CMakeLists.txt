@@ -276,3 +276,29 @@ else()
         message(STATUS "Enabled SDL2 support")
     endif()
 endif()
+
+add_definitions(-DMILKYTRACKER)
+
+include_directories(
+    # Include the CMake-generated version header from the build directory
+    # (version string required when saving modules)
+    ${PROJECT_BINARY_DIR}/src/tracker
+    ${PROJECT_SOURCE_DIR}/src/milkyplay
+)
+
+add_library(milkyplay ${SOURCES} ${HEADERS})
+
+if(APPLE)
+    target_link_libraries(
+        milkyplay
+        ${COCOA_LIBRARY}
+        ${CORE_AUDIO_LIBRARY}
+        ${CORE_FOUNDATION_LIBRARY}
+    )
+elseif(AROS)
+    target_link_libraries(milkyplay)
+elseif(WIN32)
+    target_link_libraries(milkyplay winmm dsound)
+else()
+    target_link_libraries(milkyplay ${CMAKE_DL_LIBS} ${ALSA_LIBRARIES})
+endif()
