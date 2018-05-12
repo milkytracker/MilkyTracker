@@ -13,7 +13,7 @@
 #include <ctype.h>
 
 #ifdef AMIGA
-static unsigned char *version_string = "$VER: UnLZX " UNLZX_VERSION " (" UNLZX_VERDATE ")";
+static const char *version_string = "$VER: UnLZX " UNLZX_VERSION " (" UNLZX_VERDATE ")";
 #endif /* AMIGA */
 
 const unsigned char *month_str[16] =

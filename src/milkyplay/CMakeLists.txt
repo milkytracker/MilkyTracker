@@ -118,6 +118,13 @@ if(APPLE)
         ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/osx
     )
     message(STATUS "Enabled Core Audio support")
+elseif(AROS)
+    list(APPEND SOURCES drivers/sdl/AudioDriver_SDL.cpp)
+    list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/sdl
+    )
+    message(STATUS "Enabled AHI")
 elseif(WIN32)
     # Basic WaveOut support
     list(APPEND SOURCES drivers/windows/AudioDriver_MMSYSTEM.cpp)
@@ -223,6 +230,8 @@ if(APPLE)
         ${CORE_AUDIO_LIBRARY}
         ${CORE_FOUNDATION_LIBRARY}
     )
+elseif(AROS)
+    target_link_libraries(milkyplay)
 elseif(WIN32)
     target_link_libraries(milkyplay winmm dsound)
 else()
