@@ -32,6 +32,9 @@
 #include "DisplayDeviceBase.h"
 
 #include <SDL.h>
+#include <SDL_opengl.h>
+
+typedef const GLubyte *(APIENTRYP PFNGLGETSTRINGPROC) (GLenum name);
 
 // Forwards
 class PPGraphicsAbstract;
@@ -51,6 +54,7 @@ protected:
 	pp_int32 realWidth, realHeight;
 	SDL_Window* theWindow;
 	Orientations orientation;
+	int drv_index;
 	
 	SDL_Window* CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
 
