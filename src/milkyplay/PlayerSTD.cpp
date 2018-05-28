@@ -572,8 +572,8 @@ mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p)
 		
 		mp_sint32 vl = 0;
 		switch (chninfo[c].avibused) {
-			// sine
-			case 1 : vl=vibtab[vp&31]; break;
+			// sine (we must invert the phase here)
+			case 1 : vl=~vibtab[vp&31]; break;
 			// square
 			case 2 : vl=255; break;
 			// ramp down (down being the period here - so ramp frequency up ;)
@@ -2198,6 +2198,7 @@ void PlayerSTD::triggerAutovibrato(TModuleChannel* chnInf)
 {
 	if (module->smp[chnInf->smp].vibdepth&&module->smp[chnInf->smp].vibrate) {
 		//chnInf->avibused=1;
+		chnInf->avibcnt=0;
 		chnInf->avibused=module->smp[chnInf->smp].vibtype+1;
 		chnInf->avibdepth=module->smp[chnInf->smp].vibdepth;
 		chnInf->avibspd=module->smp[chnInf->smp].vibrate;
