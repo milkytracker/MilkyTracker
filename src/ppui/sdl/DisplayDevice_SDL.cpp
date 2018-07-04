@@ -25,9 +25,30 @@
 
 SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
+	char rendername[256] = { 0 };
+	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
+
+	for (int it = 0; it < SDL_GetNumRenderDrivers(); it++)
+	{
+		SDL_RendererInfo info;
+		SDL_GetRenderDriverInfo(it,&info);
+
+		strncat(rendername, info.name, 9);
+		strncat(rendername, " ", 1);
+
+		if (strncmp("opengles2", info.name, 9) == 0)
+		{
+			drv_index = it;
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+		}
+	}
+
 	// Create SDL window
-	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
-	
+	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL | flags);
+
 	if (theWindow == NULL)
 	{
 		fprintf(stderr, "SDL: SDL_CreateWindow (width: %d, height: %d) failed: %s\n", w, h, SDL_GetError());
@@ -36,7 +57,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 		w = getDefaultWidth();
 		h = getDefaultHeight();
 		
-		theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
+		theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL | flags);
 		
 		if (theWindow == NULL)
 		{
@@ -45,7 +66,22 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 			return NULL;
 		}
 	}
+
+	SDL_GLContext ctx = SDL_GL_CreateContext(theWindow);
+	SDL_GL_MakeCurrent(theWindow, ctx);
 	
+	glGetStringAPI = (PFNGLGETSTRINGPROC)SDL_GL_GetProcAddress("glGetString");
+
+	fprintf(stdout, "Available Renderers: %s\n", rendername);
+	if (glGetStringAPI)
+	{
+		fprintf(stdout, "Vendor     : %s\n", glGetStringAPI(GL_VENDOR));
+		fprintf(stdout, "Renderer   : %s\n", glGetStringAPI(GL_RENDERER));
+		fprintf(stdout, "Version    : %s\n", glGetStringAPI(GL_VERSION));
+#ifdef DEBUG
+		fprintf(stdout, "Extensions : %s\n", glGetStringAPI(GL_EXTENSIONS));
+#endif
+	}
 	// Prevent window from being resized below minimum
 	SDL_SetWindowMinimumSize(theWindow, w, h);
 	fprintf(stderr, "SDL: Minimum window size set to %dx%d.\n", w, h);
@@ -66,6 +102,8 @@ PPDisplayDevice::PPDisplayDevice(pp_int32 width,
 	adjust(realWidth, realHeight);
 
 	bFullScreen = fullScreen;
+
+	drv_index = -1;
 
 	initMousePointers();
 }

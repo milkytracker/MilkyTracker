@@ -57,7 +57,7 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	}
 	
 	// Create renderer for the window
-	theRenderer = SDL_CreateRenderer(theWindow, -1, 0);
+	theRenderer = SDL_CreateRenderer(theWindow, drv_index, 0);
 	if (theRenderer == NULL)
 	{
 		fprintf(stderr, "SDL: SDL_CreateRenderer failed: %s\n", SDL_GetError());
