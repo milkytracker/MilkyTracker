@@ -77,6 +77,33 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/milkyplay
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
     )
+elseif(AROS)
+    list(APPEND SOURCES
+        amiga/PPOpenPanel_Amiga.cpp
+        amiga/PPSavePanel_Amiga.cpp
+        amiga/AslRequester.cpp
+        posix/PPPath_POSIX.cpp
+        posix/PPSystem_POSIX.cpp
+        sdl-1.2/PPMessageBox_SDL.cpp
+        sdl-1.2/PPMutex.cpp
+        sdl-1.2/PPOpenPanel_SDL.cpp
+        sdl-1.2/PPQuitSaveAlert_SDL.cpp
+        sdl-1.2/PPSavePanel_SDL.cpp
+        sdl-1.2/SDL_ModalLoop.cpp
+    )
+    list(APPEND HEADERS
+        posix/PPMutex.h
+        amiga/AslRequester.h
+        posix/PPPath_POSIX.h
+        posix/PPSystemString_POSIX.h
+        posix/PPSystem_POSIX.h
+        sdl-1.2/PPMutex.h
+        sdl-1.2/SDL_ModalLoop.h
+    )
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
+    )
 else()
     list(APPEND SOURCES
         amiga/PPOpenPanel_Amiga.cpp

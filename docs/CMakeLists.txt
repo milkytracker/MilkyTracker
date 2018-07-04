@@ -34,6 +34,8 @@ endif()
 
 if(APPLE)
     set(INSTALL_DEST Documentation)
+elseif(AROS)
+    set(INSTALL_DEST doc)
 elseif(BSD)
     set(INSTALL_DEST share/doc/${PROJECT_NAME_LOWER})
 elseif(WIN32)

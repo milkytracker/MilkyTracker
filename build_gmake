@@ -1,3 +1,5 @@
 #!/bin/bash
 git submodule update --init --recursive
+git submodule foreach git checkout
+git submodule update
 premake4 gmake

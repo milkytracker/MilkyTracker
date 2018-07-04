@@ -197,7 +197,11 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/milkyplay
     ${PROJECT_SOURCE_DIR}/src/ppui
     ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
+if(AROS)
+    ${PROJECT_SOURCE_DIR}/src/ppui/sdl-1.2
+elseif()
     ${PROJECT_SOURCE_DIR}/src/ppui/sdl
+endif
     ${PROJECT_SOURCE_DIR}/src/tracker
 )
 
@@ -274,6 +278,19 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/midi/win32
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
         ${PROJECT_SOURCE_DIR}/src/ppui/win32
+    )
+elseif(AROS)
+    list(
+        APPEND SOURCES
+        sdl-1.2/SDL_KeyTranslation.cpp
+        sdl-1.2/CGX_Main.cpp
+    )
+    list(
+        APPEND HEADERS
+        sdl-1.2/SDL_KeyTranslation.h
+    )
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 else()
     list(
@@ -362,6 +379,10 @@ elseif(WIN32)
     add_executable(${TARGET_NAME} WIN32 ${SOURCES} ${HEADERS})
 
     target_link_libraries(${TARGET_NAME} midi)
+elseif(AROS)
+    add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
+
+    target_link_libraries(${TARGET_NAME} -lSDL)
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
@@ -396,7 +417,7 @@ target_link_libraries(
 )
 
 # OS X and Windows install to the root of the prefix, the others install to bin
-if(APPLE OR WIN32)
+if(APPLE OR WIN32 OR AROS)
     set(INSTALL_DEST .)
 else()
     set(INSTALL_DEST ${CMAKE_INSTALL_BINDIR})
