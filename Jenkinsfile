@@ -20,6 +20,11 @@ env.PATH = "/usr/local/bin:/usr/bin:/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/
 
 node {
 	try{
+		stage('Checkout and pull') {
+			properties([pipelineTriggers([githubPush()])])
+			git url: 'https://github.com/AmigaPorts/MilkyTracker.git', credentialsId: '8e82b347-73ca-460c-9d51-396c844cc636'
+		}
+
 		stage('Clean workspace') {
 			sh './clean'
 		}
