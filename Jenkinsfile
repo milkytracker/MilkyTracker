@@ -15,8 +15,10 @@ def notify(status){
 def buildStep(config, ext) {
 	sh "make clean config=$config"
 	sh "make config=$config -j8"
-	sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
-	//sh "cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info"
+	if (!env.CHANGE_ID) {
+		sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
+		//sh "cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info"
+	}
 }
 
 env.PATH = env.FORCEDPATH
@@ -40,9 +42,11 @@ node {
 			sh "./build_gmake"
 		}
 
-		stage('Generate publishing directories') {
-			sh "rm -rfv publishing/deploy/*"
-			sh "mkdir -p publishing/deploy/MilkyTracker"
+		if (!env.CHANGE_ID) {
+			stage('Generate publishing directories') {
+				sh "rm -rfv publishing/deploy/*"
+				sh "mkdir -p publishing/deploy/MilkyTracker"
+			}
 		}
 
 		stage('Build AmigaOS 3.x version') {
