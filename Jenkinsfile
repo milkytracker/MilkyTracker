@@ -36,7 +36,9 @@ node {
 
 			checkout scm
 		}
-
+	if ($TAG_NAME) {
+		echo "$TAG_NAME"
+	} else {
 		stage('Clean workspace') {
 			sh "./clean"
 		}
@@ -70,7 +72,11 @@ node {
 
 		stage('Deploying to stage') {
 			sh "ls -l publishing/deploy/MilkyTracker"
+			
+			
+			
 		}
+	}
 	} catch(err) {
 		currentBuild.result = 'FAILURE'
 		notify('Build failed')
