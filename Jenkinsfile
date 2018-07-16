@@ -29,7 +29,10 @@ node {
 			properties([pipelineTriggers([githubPush()])])
 			if (env.CHANGE_ID) {
 				echo 'Trying to build pull request'
-			} 
+			}
+
+			echo "$BRANCH_NAME"
+			echo "${env.BRANCH_NAME}"
 
 			checkout scm
 		}
