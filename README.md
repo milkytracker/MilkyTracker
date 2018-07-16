@@ -12,6 +12,8 @@ To compile for different platforms, use make config=release_*platform*.
 Currently available platforms:
 * m68k-amigaos
 * ppc-amigaos
+* ppc-morphos
+* i386-aros
 
 The default is to compile *m68k-amigaos*.
 
