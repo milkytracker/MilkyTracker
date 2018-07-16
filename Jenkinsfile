@@ -36,7 +36,7 @@ node {
 
 			checkout scm
 		}
-	if ($TAG_NAME) {
+	if (env.TAG_NAME) {
 		echo "$TAG_NAME"
 	} else {
 		stage('Clean workspace') {
