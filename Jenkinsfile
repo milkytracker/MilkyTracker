@@ -13,10 +13,10 @@ def notify(status){
 }
 
 def buildStep(config, ext) {
-	sh "make clean config=$config"
-	sh "make config=$config -j8"
-	sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
-	//sh "cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info"
+	sh 'make clean config=$config'
+	sh 'make config=$config -j8'
+	sh 'mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/'
+	//sh 'cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info'
 }
 
 env.PATH = env.FORCEDPATH
@@ -41,8 +41,8 @@ node {
 		}
 
 		stage('Generate publishing directories') {
-			sh "rm -rfv publishing/deploy/*"
-			sh "mkdir -p publishing/deploy/MilkyTracker"
+			sh 'rm -rfv publishing/deploy/*'
+			sh 'mkdir -p publishing/deploy/MilkyTracker'
 		}
 
 		stage('Build AmigaOS 3.x version') {
@@ -62,8 +62,7 @@ node {
 		}
 
 		stage('Deploying to stage') {
-		  sh "ls -l publishing/deploy/MilkyTracker"
-
+			sh 'ls -l publishing/deploy/MilkyTracker'
 		}
 	} catch(err) {
 		currentBuild.result = 'FAILURE'
