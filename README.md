@@ -18,8 +18,7 @@ The default is to compile *m68k-amigaos*.
 Dependencies
 ============
 
-To build MilkyTracker you will need the following development libraries:
-* libSDL1.2	- https://github.com/HenrykRichter/libSDL12_Amiga68k
+To build MilkyTracker you will need the appropriate toolchain to build.
 
 ========================================
 
