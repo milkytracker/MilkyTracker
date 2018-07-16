@@ -119,6 +119,18 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
         ${PROJECT_SOURCE_DIR}/src/milkyplay
     )
+elseif(AROS)
+    list(APPEND SOURCES
+        sdl-1.2/DisplayDeviceFB_SDL.cpp
+        sdl-1.2/DisplayDevice_SDL.cpp
+    )
+    list(APPEND HEADERS
+        sdl-1.2/DisplayDeviceFB_SDL.h
+        sdl-1.2/DisplayDevice_SDL.h
+    )
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+    )
 else()
     list(APPEND SOURCES
         sdl/DisplayDeviceFB_SDL.cpp

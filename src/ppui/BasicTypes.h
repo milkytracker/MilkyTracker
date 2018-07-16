@@ -296,6 +296,15 @@ public:
 		*(strBuffer+1) = 0;
 	}
 
+#ifdef AMIGA
+	PPString(signed char* str) :
+		strBuffer(new char[strlen( (const char*)str) + 1]),
+		allocatedSize((pp_uint32)strlen( (const char*)str) + 1)
+	{
+		strcpy(strBuffer, (const char*)str);
+	}
+#endif
+
 	PPString(const char* str) :
 		strBuffer(new char[strlen(str) + 1]),
 		allocatedSize((pp_uint32)strlen(str) + 1)		
@@ -307,7 +316,7 @@ public:
 		strBuffer(new char[length + 1]),
 		allocatedSize(length + 1)
 	{
-		memcpy(strBuffer, str, length);
+		memcpy(strBuffer, (const char*)str, length);
 		strBuffer[length] = 0;
 	}
 

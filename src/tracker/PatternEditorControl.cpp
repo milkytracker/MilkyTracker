@@ -1483,7 +1483,7 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 		case PatternEditor::NotificationFetchUndoData:
 			if (sizeof(undoInfo) == patternEditor->getUndoUserDataLen())
 			{
-				memcpy(&undoInfo, patternEditor->getUndoUserData(), sizeof(undoInfo));
+				memcpy(&undoInfo, const_cast<void*>(patternEditor->getUndoUserData()), sizeof(undoInfo));
 				
 				assureCursorVisible();
 				setScrollbarPositions(undoInfo.startIndex, undoInfo.startPos);

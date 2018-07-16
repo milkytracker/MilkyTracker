@@ -1,0 +1,4 @@
+#!/bin/bash
+rm -rfv ./src/submodules/*/*
+rm -rfv ./src/submodules/*/.git*
+premake4 clean

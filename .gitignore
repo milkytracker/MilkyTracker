@@ -4,3 +4,15 @@ build/
 # Resources generated with docerator on OSX
 resources/pictures/docicons/osx/MilkyTracker-*.icns
 resources/pictures/docicons/osx/docerator/
+
+# Don't include objects
+*.o
+.deps
+*.Po
+nbproject/*
+include/clib/SDL_protos.h
+include/inline/SDL.h
+include/inline/SDL_inline.h
+include/SDL/*
+projects/*
+Makefile

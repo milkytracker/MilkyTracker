@@ -130,7 +130,7 @@ pp_int32 fpdiv(pp_int32 n,pp_int32 d)
 	}*/
 	
 	pp_int32 g,t0,t1,t2;
-    pp_int32 sign=d&0x80000000;
+    const pp_int32 sign=d&0x80000000;
     if(sign)
         d=-d;
 

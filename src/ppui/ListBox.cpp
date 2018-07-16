@@ -713,7 +713,7 @@ placeCursor:
 				columnSelectionStart < 0*/)
 				break;
 			
-			pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
+			char keyCode = *((char *)event->getDataPtr());			
 
 			if (selectionIndex >= 0 &&
 				columnSelectionStart > (signed)getItem(selectionIndex).length())
@@ -732,7 +732,7 @@ placeCursor:
 						selectionIndex < 0)
 						break;
 
-					items->get(selectionIndex)->insertAt(columnSelectionStart,(char)keyCode);
+					items->get(selectionIndex)->insertAt(columnSelectionStart, keyCode);
 					columnSelectionStart++;
 					break;
 			}

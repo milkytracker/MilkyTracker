@@ -21,7 +21,7 @@
 
 file(GLOB SONGS "*.xm")
 
-if(APPLE OR WIN32)
+if(APPLE OR WIN32 OR AROS)
     set(INSTALL_DEST "Example Songs")
 else()
     set(INSTALL_DEST ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME_LOWER}/songs)

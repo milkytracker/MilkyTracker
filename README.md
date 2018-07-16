@@ -1,6 +1,29 @@
 MilkyTracker - Cross-Platform XM Tracker
 ========================================
 
+Notes on building MilkyTracker for Amiga platforms (AmigaOS 3.x, AmigaOS 4.x, WarpOS, MorphOS and AROS)
+==============================
+
+./build_gmake to make the makefiles
+
+Building
+=============
+To compile for different platforms, use make config=release_*platform*.
+Currently available platforms:
+* m68k-amigaos
+* ppc-amigaos
+* ppc-morphos
+* i386-aros
+
+The default is to compile *m68k-amigaos*.
+
+Dependencies
+============
+
+To build MilkyTracker you will need the appropriate toolchain to build.
+
+========================================
+
 [![Travis Build Status](https://travis-ci.org/milkytracker/MilkyTracker.svg?branch=master)](https://travis-ci.org/milkytracker/MilkyTracker)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/milkytracker/MilkyTracker?branch=master&svg=true)](https://ci.appveyor.com/project/Deltafire/milkytracker)
 

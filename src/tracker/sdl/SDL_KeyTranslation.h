@@ -37,7 +37,12 @@
 #include <SDL.h>
 #include "BasicTypes.h"
 
+#ifdef AMIGA
+pp_uint16 toVK(const SDL_keysym& keysym);
+pp_uint16 toSC(const SDL_keysym& keysym);
+#else
 pp_uint16 toVK(const SDL_Keysym& keysym);
 pp_uint16 toSC(const SDL_Keysym& keysym);
+#endif
 
 #endif

@@ -1310,7 +1310,7 @@ mp_sint32 packPattern(const mp_ubyte* pattern, mp_ubyte* outputPattern, mp_sint3
             }
             else 
 			{
-				memcpy(outputPattern+j,pattern+z,5);
+				memcpy(outputPattern+j,const_cast<mp_ubyte*>(pattern+z),5);
 				j+=5;
             }
 

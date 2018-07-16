@@ -37,6 +37,13 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 
+#ifdef AMIGA
+#define powf	pow
+#define fabsf	fabs
+template<>
+SampleEditor::ClipBoard* PPSingleton<SampleEditor::ClipBoard>::instance = NULL;
+#endif
+
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
 {

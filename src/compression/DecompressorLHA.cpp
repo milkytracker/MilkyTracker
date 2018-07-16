@@ -89,8 +89,8 @@ namespace
 		}
 
 	private:
-		LHAInputStream* input_stream = NULL;
-		LHAReader* reader = NULL;
+		LHAInputStream* input_stream;
+		LHAReader* reader;
 
 		LHAReaderWrapper(const LHAReaderWrapper&) {}
 		LHAReaderWrapper& operator=(const LHAReaderWrapper&) {}
