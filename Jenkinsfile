@@ -31,14 +31,9 @@ node {
 				echo 'Trying to build pull request'
 			}
 
-			echo "$BRANCH_NAME"
-			echo "${env.BRANCH_NAME}"
-
 			checkout scm
 		}
-	if (env.TAG_NAME) {
-		echo "$TAG_NAME"
-	} else {
+	
 		stage('Clean workspace') {
 			sh "./clean"
 		}
@@ -71,14 +66,18 @@ node {
 		}
 
 		stage('Deploying to stage') {
-			sh "ls -l publishing/deploy/MilkyTracker"
-			
-			
-			
+			if (env.TAG_NAME) {
+				sh "echo $TAG_NAME > publishing/deploy/MilkyTracker/STABLE"
+				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/"
+			} else if (env.BRANCH_NAME.equals('master')) {
+				sh "echo date +'%Y-%m-%d %H:%M:%S' > publishing/deploy/MilkyTracker/BUILDTIME"
+				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/nightly/"
+			}
 		}
-	}
+	
 	} catch(err) {
 		currentBuild.result = 'FAILURE'
 		notify('Build failed')
+		throw err
 	}
 }
