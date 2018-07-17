@@ -68,10 +68,12 @@ node {
 		stage('Deploying to stage') {
 			if (env.TAG_NAME) {
 				sh "echo $TAG_NAME > publishing/deploy/MilkyTracker/STABLE"
-				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/"
+				sh "ssh $DEPLOYHOST mkdir -p ~/public_html/downloads/releases/$TAG_NAME"
+				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/releases/$TAG_NAME/"
 			} else if (env.BRANCH_NAME.equals('master')) {
 				sh "date +'%Y-%m-%d %H:%M:%S' > publishing/deploy/MilkyTracker/BUILDTIME"
-				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/nightly/"
+				sh "ssh $DEPLOYHOST mkdir -p ~/public_html/downloads/nightly/`date+'%Y'`/`date+'%m'`/`date+'%d'`/"
+				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/nightly/`date+'%Y'`/`date+'%m'`/`date+'%d'`/"
 			}
 		}
 	
