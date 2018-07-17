@@ -70,7 +70,7 @@ node {
 				sh "echo $TAG_NAME > publishing/deploy/MilkyTracker/STABLE"
 				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/"
 			} else if (env.BRANCH_NAME.equals('master')) {
-				sh "echo date +'%Y-%m-%d %H:%M:%S' > publishing/deploy/MilkyTracker/BUILDTIME"
+				sh "date +'%Y-%m-%d %H:%M:%S' > publishing/deploy/MilkyTracker/BUILDTIME"
 				sh "scp publishing/deploy/MilkyTracker/* $DEPLOYHOST:~/public_html/downloads/nightly/"
 			}
 		}
