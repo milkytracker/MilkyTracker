@@ -32,9 +32,11 @@
 #include "DisplayDeviceBase.h"
 
 #include <SDL.h>
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 #include <SDL_opengl.h>
 
 typedef const GLubyte *(APIENTRYP PFNGLGETSTRINGPROC) (GLenum name);
+#endif
 
 // Forwards
 class PPGraphicsAbstract;
@@ -52,17 +54,28 @@ public:
 
 protected:
 	pp_int32 realWidth, realHeight;
-	SDL_Window* theWindow;
 	Orientations orientation;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window* theWindow;
 	int drv_index;
 	
 	SDL_Window* CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
+	SDL_Cursor *cursorStandard, *cursorResizeHoriz, *cursorEggtimer, *cursorHand;
+#else
+	SDL_Surface* theSurface;
+	SDL_Surface* CreateScreen(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags);
+	SDL_Cursor *cursorStandard, *cursorResizeLeft, *cursorResizeRight, *cursorEggtimer, *cursorHand;
+	static Uint8 resizeLeft_data[], resizeLeft_mask[];
+	static Uint8 resizeRight_data[], resizeRight_mask[];
+	static Uint8 eggtimer_data[], eggtimer_mask[];
+	static Uint8 hand_data[], hand_mask[];
+#endif
 
 	// used for rotating coordinates etc.
 	void adjust(pp_int32& x, pp_int32& y);
 
 	// Mouse pointers
-	SDL_Cursor *cursorStandard, *cursorResizeHoriz, *cursorEggtimer, *cursorHand;
+	
 	void initMousePointers();
 
 public:
@@ -74,19 +87,24 @@ public:
 					Orientations theOrientation = ORIENTATION_NORMAL);
 				  
 	virtual ~PPDisplayDevice();
-	
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window* getWindow();
+	virtual PPSize getDisplayResolution() const;
+#else
+	virtual void setSize(const PPSize& size);
+#endif
 	void transform(pp_int32& x, pp_int32& y);
 	void transformInverse(pp_int32& x, pp_int32& y);
 	void transformInverse(PPRect& r);
 
 	Orientations getOrientation() { return orientation; }
-	
-	SDL_Window* getWindow();
+
+
 
 	// ----------------------------- ex. PPWindow ----------------------------
 	virtual void setTitle(const PPSystemString& title);	
 	virtual bool goFullScreen(bool b);
-	virtual PPSize getDisplayResolution() const;
+
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);
