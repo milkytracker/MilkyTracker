@@ -31,6 +31,9 @@
 #ifndef __DISPLAYDEVICEFB_H__
 #define __DISPLAYDEVICEFB_H__
 
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 2
+#endif
 #include "DisplayDevice_SDL.h"
 
 class PPDisplayDeviceFB : public PPDisplayDevice
@@ -44,7 +47,11 @@ private:
 	void swap(const PPRect& r);
 
 public:
-	PPDisplayDeviceFB(pp_int32 width,
+	PPDisplayDeviceFB(
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+					  SDL_Surface*& screen, 
+#endif
+					  pp_int32 width, 
 					  pp_int32 height, 
 					  pp_int32 scaleFactor,
 					  pp_int32 bpp, 
@@ -55,17 +62,21 @@ public:
 	virtual ~PPDisplayDeviceFB();
 
 	virtual bool supportsScaling() const { return true; }
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	virtual void setSize(const PPSize& size);
+#endif
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();
 
 	void update();
 	void update(const PPRect& r);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 protected:
 	SDL_Surface* theSurface;
 	SDL_Texture* theTexture;
 	SDL_Renderer* theRenderer;
+#endif
 };
 
 #endif
