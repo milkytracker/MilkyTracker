@@ -119,17 +119,19 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
         ${PROJECT_SOURCE_DIR}/src/milkyplay
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     list(APPEND SOURCES
-        sdl-1.2/DisplayDeviceFB_SDL.cpp
-        sdl-1.2/DisplayDevice_SDL.cpp
+        sdl/DisplayDeviceFB_SDL.cpp
+        sdl/DisplayDevice_SDL.cpp
     )
     list(APPEND HEADERS
-        sdl-1.2/DisplayDeviceFB_SDL.h
-        sdl-1.2/DisplayDevice_SDL.h
+        sdl/DisplayDeviceFB_SDL.h
+        sdl/DisplayDevice_SDL.h
     )
     include_directories(
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+        ${SDL_INCLUDE_DIRS}
     )
 else()
     list(APPEND SOURCES
