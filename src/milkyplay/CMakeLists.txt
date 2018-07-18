@@ -139,19 +139,11 @@ if(APPLE)
     )
     message(STATUS "Enabled Core Audio support")
 elseif(AROS OR AMIGA)
-    target_sources(milkyplay
-        PRIVATE
-            # Sources
-            drivers/sdl/AudioDriver_SDL.cpp
-            # Headers
-            drivers/sdl/AudioDriver_SDL.h
-        )
-    target_include_directories(milkyplay PRIVATE
-            drivers/sdl
-            ${SDL_INCLUDE_DIR}
-        )
-    target_link_libraries(milkyplay PUBLIC ${SDL_LIBRARY})
-
+    list(APPEND SOURCES drivers/sdl/AudioDriver_SDL.cpp)
+    list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/sdl
+    )
     message(STATUS "Enabled AHI")
 elseif(WIN32)
     # Basic WaveOut support
