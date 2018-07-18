@@ -13,15 +13,16 @@ def notify(status){
 }
 
 def buildStep(config, ext) {
-	sh "make clean config=$config"
-	sh "make config=$config -j8"
+	sh "mkdir $ext-build"
+	dir "$ext-build"
+	sh "cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
+	sh "make -j8"
+	dir ".."
 	if (!env.CHANGE_ID) {
-		sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
+		//sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
 		//sh "cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info"
 	}
 }
-
-env.PATH = env.FORCEDPATH
 
 node {
 	try{
@@ -34,14 +35,6 @@ node {
 			checkout scm
 		}
 	
-		stage('Clean workspace') {
-			sh "./clean"
-		}
-
-		stage('Generate makefiles') {
-			sh "./build_gmake"
-		}
-
 		if (!env.CHANGE_ID) {
 			stage('Generate publishing directories') {
 				sh "rm -rfv publishing/deploy/*"
