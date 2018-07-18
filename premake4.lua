@@ -130,7 +130,7 @@ solution "milkytracker"
 	configuration "i386-aros"
 		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions -static-libstdc++ -s"
 		linkoptions { "-lpthread", "-static-libstdc++" }
-		includedirs { "/opt/x86-aros/bin/linux-i386/AROS/Extras/Developer/include", "/opt/x86-aros/bin/linux-x86_64/tools/crosstools/lib/gcc/i386-aros/6.3.0/include-fixed", "/opt/aros/sdk/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
+		includedirs { "/opt/x86-aros/bin/linux-i386/AROS/Extras/Developer/include", "/opt/x86-aros/bin/linux-x86_64/tools/crosstools/lib/gcc/i386-aros/6.3.0/include-fixed", "/opt/x86-aros/bin/linux-i386/AROS/Developer/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/aros/sdk/lib", "/opt/aros/sdk/x86_64-aros/lib" }
 		defines { "AMIGA", "__AMIGA__", "AROS", "aros", "__AROS__", "__aros__" }
 
