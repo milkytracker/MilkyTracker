@@ -13,7 +13,7 @@ def notify(status){
 }
 
 def buildStep(config, ext) {
-	sh "mkdir $ext-build"
+	sh "mkdir -p $ext-build"
 	sh "cd $ext-build && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
 	sh "cd $ext-build && make -j8"
 	dir ".."
