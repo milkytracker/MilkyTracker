@@ -287,7 +287,7 @@ elseif(AROS OR AMIGA)
     )
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-	${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+	    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 else()
     list(
@@ -380,6 +380,10 @@ elseif(AROS)
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
     target_link_libraries(${TARGET_NAME} -lSDL)
+elseif(AMIGA)
+    add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
+
+    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARIES} -static)
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
@@ -414,7 +418,7 @@ target_link_libraries(
 )
 
 # OS X and Windows install to the root of the prefix, the others install to bin
-if(APPLE OR WIN32 OR AROS)
+if(APPLE OR WIN32 OR AROS OR AMIGA)
     set(INSTALL_DEST .)
 else()
     set(INSTALL_DEST ${CMAKE_INSTALL_BINDIR})
