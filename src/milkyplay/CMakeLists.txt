@@ -118,7 +118,7 @@ if(APPLE)
         ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/osx
     )
     message(STATUS "Enabled Core Audio support")
-elseif(AROS || AMIGA)
+elseif(AROS OR AMIGA)
     list(APPEND SOURCES drivers/sdl/AudioDriver_SDL.cpp)
     list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
     include_directories(

@@ -197,11 +197,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/milkyplay
     ${PROJECT_SOURCE_DIR}/src/ppui
     ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-if(AROS)
-    ${PROJECT_SOURCE_DIR}/src/ppui/sdl-1.2
-elseif()
     ${PROJECT_SOURCE_DIR}/src/ppui/sdl
-endif
     ${PROJECT_SOURCE_DIR}/src/tracker
 )
 
@@ -279,7 +275,7 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
         ${PROJECT_SOURCE_DIR}/src/ppui/win32
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     list(
         APPEND SOURCES
         sdl-1.2/SDL_KeyTranslation.cpp
@@ -290,7 +286,8 @@ elseif(AROS)
         sdl-1.2/SDL_KeyTranslation.h
     )
     include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
+	${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 else()
     list(
