@@ -109,35 +109,35 @@ solution "milkytracker"
 	configuration "m68k-amigaos"
 		buildoptions "-m68040 -mhard-float -O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
 		linkoptions { "-noixemul", "-ldebug", "-Xlinker --allow-multiple-definition" }
-		includedirs { m68kprefix .. "/m68k-amigaos/sys-include", m68kprefix .. "/include", m68kprefix .. "/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { m68kprefix .. "/m68k-amigaos/sys-include", m68kprefix .. "/include", m68kprefix .. "/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { m68kprefix .. "/lib", m68kprefix .. "/m68k-amigaos/lib", m68kprefix .. "/m68k-amigaos/libnix/lib/libnix" }
 		defines { "AMIGA", "__AMIGA__" }
 
 	configuration "ppc-morphos"
 		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions -s -noixemul"
 		linkoptions { "-noixemul", "-ldebug" }
-		includedirs { "/opt/ppc-morphos/os-include", "/opt/ppc-morphos/include", "/opt/ppc-morphos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "/opt/ppc-morphos/os-include", "/opt/ppc-morphos/include", "/opt/ppc-morphos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/ppc-morphos/lib" }
 		defines { "AMIGA", "__AMIGA__", "MORPHOS", "__MORPHOS__", "morphos", "__morphos__" }
 
 	configuration "ppc-amigaos"
 		buildoptions "-O3 -mcrt=newlib -fomit-frame-pointer -fno-exceptions"
 		linkoptions { "-mcrt=newlib", "-lauto", "-lunix" }
-		includedirs { "/opt/ppc-amigaos/ppc-amigaos/sys-include", "/opt/ppc-amigaos/include", "/opt/ppc-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "/opt/ppc-amigaos/ppc-amigaos/sys-include", "/opt/ppc-amigaos/include", "/opt/ppc-amigaos/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/ppc-amigaos/lib", "/opt/ppc-amigaos/ppc-amigaos/lib" }
 		defines { "AMIGA", "__AMIGA__", "__amigaos4__" }
 
 	configuration "i386-aros"
 		buildoptions "-O3 -fomit-frame-pointer -fno-exceptions -static-libstdc++ -s"
 		linkoptions { "-lpthread", "-static-libstdc++" }
-		includedirs { "/opt/x86-aros/bin/linux-i386/AROS/Extras/Developer/include", "/opt/x86-aros/bin/linux-x86_64/tools/crosstools/lib/gcc/i386-aros/6.3.0/include-fixed", "/opt/aros/sdk/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "/opt/x86-aros/bin/linux-i386/AROS/Extras/Developer/include", "/opt/x86-aros/bin/linux-x86_64/tools/crosstools/lib/gcc/i386-aros/6.3.0/include-fixed", "/opt/aros/sdk/include/SDL", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/aros/sdk/lib", "/opt/aros/sdk/x86_64-aros/lib" }
 		defines { "AMIGA", "__AMIGA__", "AROS", "aros", "__AROS__", "__aros__" }
 
 	configuration "ppc-macos"
 		buildoptions "-fomit-frame-pointer -fno-exceptions"
 		linkoptions { "" }
-		includedirs { "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL", "./include/mac", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/RIncludes", "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/include/SDL", "./include/mac", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		libdirs { "/opt/m68k-ppc-macos/toolchain/powerpc-apple-macos/lib" }
 		defines { "__macos__" }
 
@@ -305,9 +305,9 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/osinterface/posix/*" }
 		excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl-1.2", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl-1.2", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		buildoptions "-fno-rtti"
 		targetname "ppui"
 
