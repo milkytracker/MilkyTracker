@@ -286,7 +286,7 @@ elseif(AROS OR AMIGA)
         sdl-1.2/SDL_KeyTranslation.h
     )
     include_directories(
-        ${SDL_INCLUDE_DIRS}
+        ${SDL_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )

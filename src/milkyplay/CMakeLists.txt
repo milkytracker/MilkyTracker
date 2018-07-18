@@ -123,6 +123,7 @@ elseif(AROS OR AMIGA)
     list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/sdl
+        ${SDL_INCLUDE_DIR}
     )
     message(STATUS "Enabled AHI")
 elseif(WIN32)
