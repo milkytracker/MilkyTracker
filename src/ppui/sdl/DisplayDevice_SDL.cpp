@@ -121,7 +121,7 @@ SDL_Surface* PPDisplayDevice::CreateScreen(pp_int32& w, pp_int32& h, pp_int32& b
 
 PPDisplayDevice::PPDisplayDevice(
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-								SDL_Surface*& screen, 
+								 SDL_Surface*& screen, 
 #endif
 								 pp_int32 width, 
 								 pp_int32 height, 

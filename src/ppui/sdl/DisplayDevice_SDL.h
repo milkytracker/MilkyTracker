@@ -79,7 +79,11 @@ protected:
 	void initMousePointers();
 
 public:
-	PPDisplayDevice(pp_int32 width,
+	PPDisplayDevice(
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+					SDL_Surface*& screen,
+#endif
+					pp_int32 width,
 					pp_int32 height, 
 					pp_int32 scaleFactor,
 					pp_int32 bpp, 
