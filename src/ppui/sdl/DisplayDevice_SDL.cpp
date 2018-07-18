@@ -240,6 +240,13 @@ void PPDisplayDevice::setTitle(const PPSystemString& title)
 #endif
 }
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+void PPDisplayDevice::setSize(const PPSize& size)	
+{	
+	theSurface = SDL_SetVideoMode(size.width, size.height, theSurface->format->BitsPerPixel, theSurface->flags);	
+}
+#endif
+
 bool PPDisplayDevice::goFullScreen(bool b)
 {
 	// In X11, this will make MilkyTracker go fullscreen at the selected
