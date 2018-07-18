@@ -34,7 +34,7 @@ endif()
 
 if(APPLE)
     set(INSTALL_DEST Documentation)
-elseif(AROS)
+elseif(AROS OR AMIGA)
     set(INSTALL_DEST doc)
 elseif(BSD)
     set(INSTALL_DEST share/doc/${PROJECT_NAME_LOWER})

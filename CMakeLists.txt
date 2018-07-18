@@ -159,11 +159,6 @@ elseif(WIN32)
 elseif(AROS)
     # AROS will provide the SDL dependency via makefile. 
 elseif(AMIGA)
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -s -noixemul")
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -s -noixemul")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -fpermissive -fno-rtti -s -noixemul")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -m68040 -mhard-float -Os -fomit-frame-pointer -fno-exceptions -fpermissive -fno-rtti -s -noixemul")
-
     find_package(SDL 1.2 REQUIRED)
 else()
     # Workaround for SDL bug #3295, which we might hit if the distro's SDL2
