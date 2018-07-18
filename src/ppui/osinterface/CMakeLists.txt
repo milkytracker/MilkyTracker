@@ -77,7 +77,7 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/milkyplay
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     list(APPEND SOURCES
         amiga/PPOpenPanel_Amiga.cpp
         amiga/PPSavePanel_Amiga.cpp
