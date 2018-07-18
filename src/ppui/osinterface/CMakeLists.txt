@@ -103,6 +103,7 @@ elseif(AROS OR AMIGA)
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
+        ${SDL_INCLUDE_DIR}
     )
 else()
     list(APPEND SOURCES
