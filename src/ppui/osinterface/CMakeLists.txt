@@ -126,7 +126,6 @@ else()
     )
     list(APPEND HEADERS
         posix/PPMutex.h
-        amiga/AslRequester.h
         posix/PPPath_POSIX.h
         posix/PPSystemString_POSIX.h
         posix/PPSystem_POSIX.h
@@ -135,7 +134,6 @@ else()
     )
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
         ${SDL2_INCLUDE_DIRS}
     )
 endif()
