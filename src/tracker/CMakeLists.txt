@@ -286,8 +286,9 @@ elseif(AROS OR AMIGA)
         sdl-1.2/SDL_KeyTranslation.h
     )
     include_directories(
+        ${SDL_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-	    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 else()
     list(
@@ -383,7 +384,7 @@ elseif(AROS)
 elseif(AMIGA)
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
-    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARIES})
+    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY})
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
