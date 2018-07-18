@@ -384,7 +384,7 @@ elseif(AROS)
 elseif(AMIGA)
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
-    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY})
+    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} -ldebug)
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
