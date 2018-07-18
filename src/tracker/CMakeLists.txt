@@ -383,8 +383,11 @@ elseif(AROS)
     target_link_libraries(${TARGET_NAME} -lSDL)
 elseif(AMIGA)
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
-
-    target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} -ldebug)
+    if(MORPHOS)
+        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} -ldebug)
+    else()
+        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY})
+    endif()
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
