@@ -14,9 +14,8 @@ def notify(status){
 
 def buildStep(config, ext) {
 	sh "mkdir $ext-build"
-	dir "$ext-build"
-	sh "cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
-	sh "make -j8"
+	sh "cd $ext-build && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
+	sh "cd $ext-build && make -j8"
 	dir ".."
 	if (!env.CHANGE_ID) {
 		//sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
