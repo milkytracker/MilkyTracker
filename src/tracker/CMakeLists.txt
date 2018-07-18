@@ -279,7 +279,7 @@ elseif(AROS OR AMIGA)
     list(
         APPEND SOURCES
         sdl-1.2/SDL_KeyTranslation.cpp
-        sdl-1.2/CGX_Main.cpp
+        sdl-1.2/SDL_Main.cpp
     )
     list(
         APPEND HEADERS
