@@ -239,7 +239,6 @@ void PPDisplayDevice::setTitle(const PPSystemString& title)
 	SDL_WM_SetCaption(title, "MilkyTracker");
 #endif
 }
-}
 
 bool PPDisplayDevice::goFullScreen(bool b)
 {
