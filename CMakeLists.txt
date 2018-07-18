@@ -158,6 +158,8 @@ elseif(WIN32)
     add_subdirectory(src/midi)
 elseif(AROS)
     # AROS will provide the SDL dependency via makefile. 
+elseif(AMIGA)
+    find_package(SDL 1.2 REQUIRED)
 else()
     # Workaround for SDL bug #3295, which we might hit if the distro's SDL2
     # package includes the sdl2-config.cmake file
