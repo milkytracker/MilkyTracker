@@ -93,12 +93,12 @@ elseif(AROS OR AMIGA)
         amiga/AslRequester.cpp
         posix/PPPath_POSIX.cpp
         posix/PPSystem_POSIX.cpp
-        sdl-1.2/PPMessageBox_SDL.cpp
-        sdl-1.2/PPMutex.cpp
-        sdl-1.2/PPOpenPanel_SDL.cpp
-        sdl-1.2/PPQuitSaveAlert_SDL.cpp
-        sdl-1.2/PPSavePanel_SDL.cpp
-        sdl-1.2/SDL_ModalLoop.cpp
+        sdl/PPMessageBox_SDL.cpp
+        sdl/PPMutex.cpp
+        sdl/PPOpenPanel_SDL.cpp
+        sdl/PPQuitSaveAlert_SDL.cpp
+        sdl/PPSavePanel_SDL.cpp
+        sdl/SDL_ModalLoop.cpp
     )
     list(APPEND HEADERS
         posix/PPMutex.h
@@ -106,8 +106,8 @@ elseif(AROS OR AMIGA)
         posix/PPPath_POSIX.h
         posix/PPSystemString_POSIX.h
         posix/PPSystem_POSIX.h
-        sdl-1.2/PPMutex.h
-        sdl-1.2/SDL_ModalLoop.h
+        sdl/PPMutex.h
+        sdl/SDL_ModalLoop.h
     )
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
@@ -115,9 +115,6 @@ elseif(AROS OR AMIGA)
     )
 else()
     list(APPEND SOURCES
-        amiga/PPOpenPanel_Amiga.cpp
-        amiga/PPSavePanel_Amiga.cpp
-        amiga/AslRequester.cpp
         posix/PPPath_POSIX.cpp
         posix/PPSystem_POSIX.cpp
         sdl/PPMessageBox_SDL.cpp

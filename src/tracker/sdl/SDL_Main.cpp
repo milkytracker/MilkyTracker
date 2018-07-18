@@ -116,7 +116,6 @@ static MouseState mouseLeft = { 0, PPPoint(0,0), 0, false, 0 };
 static MouseState mouseRight = { 0, PPPoint(0,0), 0, false, 0 };
 static MouseState mouseMiddle = { 0, PPPoint(0,0), 0, false, 0 };
 
-
 static pp_uint32	timerTicker				= 0;
 
 static PPPoint		p;
@@ -177,15 +176,8 @@ static SDLCALL Uint32 timerCallback(Uint32 interval)
 static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 #endif
 {
-#ifdef AMIGA
-	timerMutex->lock();
-#endif
-
 	if (!myTrackerScreen || !myTracker || !ticking)
 	{
-#ifdef AMIGA
-		timerMutex->unlock();
-#endif
 		return interval;
 	}
 
@@ -238,10 +230,6 @@ static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
 		//PPEvent myEvent(eRMouseRepeat, &p, sizeof(PPPoint));
 		//RaiseEventSerialized(&myEvent);
 	}
-
-#ifdef AMIGA
-	timerMutex->unlock();
-#endif
 
 	return interval;
 }
@@ -553,11 +541,7 @@ void translateMouseMoveEvent(pp_uint32 mouseState, pp_int32 localMouseX, pp_int3
 	}
 }
 
-#ifdef AMIGA
-void preTranslateKey(SDL_keysym& keysym)
-#else
 void preTranslateKey(SDL_Keysym& keysym)
-#endif
 {
 	// Rotate cursor keys if necessary
 	switch (myDisplayDevice->getOrientation())
@@ -621,11 +605,7 @@ void translateTextInputEvent(const SDL_Event& event)
 
 void translateKeyDownEvent(const SDL_Event& event)
 {
-#ifdef AMIGA
-	SDL_keysym keysym = event.key.keysym;
-#else
 	SDL_Keysym keysym = event.key.keysym;
-#endif
 
 	// ALT+RETURN = Fullscreen toggle
 	if (keysym.sym == SDLK_RETURN && (keysym.mod & KMOD_LALT))
@@ -649,11 +629,7 @@ void translateKeyDownEvent(const SDL_Event& event)
 
 void translateKeyUpEvent(const SDL_Event& event)
 {
-#ifdef AMIGA
-	SDL_keysym keysym = event.key.keysym;
-#else
 	SDL_Keysym keysym = event.key.keysym;
-#endif
 
 	preTranslateKey(keysym);
 
@@ -807,13 +783,8 @@ void crashHandler(int signum)
 }
 #endif
 
-#ifdef AMIGA
-void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation, 
-				 bool swapRedBlue, bool fullScreen, bool noSplash)
-else
 void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 				 bool swapRedBlue, bool noSplash)
-#endif
 {
 	// Initialize SDL
 	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0 )
@@ -822,15 +793,8 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		exit(EXIT_FAILURE);
 	}
 
-#ifndef AMIGA
 	// Enable drag and drop
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
-#else
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
-	                    SDL_DEFAULT_REPEAT_INTERVAL);
-						
-	SDL_EnableUNICODE(1);
-#endif
 
 #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
 	(!defined(__CYGWIN32__) && !defined(ENABLE_NANOX) && \
@@ -853,12 +817,7 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	myTracker = new Tracker();
 
 	PPSize windowSize = myTracker->getWindowSizeFromDatabase();
-#ifdef AMIGA
- 	if (!fullScreen) 
-#else	
-	bool 
-#endif
-	fullScreen = myTracker->getFullScreenFlagFromDatabase();
+	bool fullScreen = myTracker->getFullScreenFlagFromDatabase();
 	pp_int32 scaleFactor = myTracker->getScreenScaleFactorFromDatabase();
 
 #ifdef __LOWRES__
@@ -867,26 +826,20 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 #endif
 
 #ifdef __OPENGL__
-	myDisplayDevice = new PPDisplayDeviceOGL(screen, windowSize.width, windowSize.height, 1, bpp, fullScreen, orientation, swapRedBlue);
+	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, scaleFactor, bpp, fullScreen, orientation, swapRedBlue);
 #else
-	myDisplayDevice = new PPDisplayDeviceFB(screen, windowSize.width, windowSize.height, scaleFactor, 
+	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
 											bpp, fullScreen, orientation, swapRedBlue);
 #endif
 
-#ifdef AMIGA
-	SDL_WM_SetCaption("Loading MilkyTracker...", "MilkyTracker");
-#else
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
-#endif
 	myDisplayDevice->init();
 
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
 
-#ifndef AMIGA
 	// Kickstart SDL event loop early so that the splash screen is made visible
 	SDL_PumpEvents();
-#endif
 
 	// Startup procedure
 	myTracker->startUp(noSplash);
@@ -896,23 +849,12 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 #endif
 
 	// Try to create timer
-#ifdef AMIGA
-	SDL_SetTimer(20, timerCallback);
-#else
 	timer = SDL_AddTimer(20, timerCallback, NULL);
 
 	// Start capturing text input events
 	SDL_StartTextInput();
-#endif
 
-#ifdef AMIGA
-	timerMutex->lock();
 	ticking = true;
-	timerMutex->unlock();
-#else
-	ticking = true;
-#endif
-
 }
 
 static bool done;
@@ -1025,9 +967,6 @@ unrecognizedCommandLineSwitch:
 		}
 	}
 
-#ifdef AMIGA
-	timerMutex = new PPMutex();
-#endif
 	globalMutex = new PPMutex();
 
 	// Store current working path (init routine is likely to change it)
@@ -1069,10 +1008,10 @@ unrecognizedCommandLineSwitch:
 			{
 				// Ignore old mouse motion events in the event queue
 				SDL_Event new_event;
-				
-				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0) 
+
+				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
 				{
-					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0);
+					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
 					processSDLEvents(new_event);
 				}
 				else
@@ -1108,18 +1047,8 @@ unrecognizedCommandLineSwitch:
 		}
 	}
 
-#ifdef AMIGA
-	timerMutex->lock();
-	ticking = false;
-	timerMutex->unlock();
-
-	SDL_SetTimer(0, NULL);
-	
-	timerMutex->lock();
-#else
 	ticking = false;
 	SDL_RemoveTimer(timer);
-#endif
 
 	globalMutex->lock();
 #ifdef HAVE_LIBRTMIDI
@@ -1131,10 +1060,6 @@ unrecognizedCommandLineSwitch:
 	myTrackerScreen = NULL;
 	delete myDisplayDevice;
 	globalMutex->unlock();
-#ifdef AMIGA
-	timerMutex->unlock();
-	delete timerMutex;
-#endif
 	SDL_Quit();
 	delete globalMutex;
 
