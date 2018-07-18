@@ -93,8 +93,8 @@ end
 
 solution "milkytracker"
 	configurations { "Release", "Release-noFPU", "Debug" }
-	platforms { "m68k-amigaos", "ppc-amigaos", "x86_64-aros", "ppc-macos" }
-	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl-1.2", "./src/ppui/osinterface", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
+	platforms { "m68k-amigaos", "ppc-amigaos", "ppc-morphos", "i386-aros", "ppc-macos" }
+	includedirs { "./", "./src/fx", "./src/tracker", "./src/compression/", "./src/milkyplay", "./src/ppui", "./src/ppui/sdl", "./src/ppui/osinterface", "./src/milkyplay/drivers/jack", "../../src/milkyplay/drivers/sdl", "./src/submodules/zlib", "./include/lhasa" }
 	defines { "HAVE_CONFIG_H", "MILKYTRACKER", "__THREADTIMER__", "DRIVER_UNIX", "__FORCE_SDL_AUDIO__" }
 
 	configuration "m68k-amigaos"
@@ -297,9 +297,9 @@ solution "milkytracker"
 		language "C++"
 		location "projects"
 		targetdir("lib/")
-		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl-1.2/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl-1.2/*", "./src/ppui/osinterface/posix/*" }
+		files { "./src/ppui/*", "./src/ppui/osinterface/*", "./src/ppui/sdl/*", "./src/ppui/osinterface/amiga/*", "./src/ppui/osinterface/sdl/*", "./src/ppui/osinterface/posix/*" }
 		excludes { "./src/ppui/osinterface/posix/PPMutex.cpp" }
-		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl-1.2", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl-1.2", "./src/ppui/osinterface/posix" }
+		includedirs { "./src/ppui/osinterface/posix", "./src/ppui/", "./src/ppui/osinterface", "./src/ppui/sdl", "./src/ppui/osinterface/amiga", "./src/ppui/osinterface/sdl", "./src/ppui/osinterface/posix" }
 		buildoptions "-fno-rtti"
 		targetname "ppui"
 
