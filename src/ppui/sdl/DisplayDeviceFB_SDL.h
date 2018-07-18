@@ -34,6 +34,7 @@
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 2
 #endif
+
 #include "DisplayDevice_SDL.h"
 
 class PPDisplayDeviceFB : public PPDisplayDevice
