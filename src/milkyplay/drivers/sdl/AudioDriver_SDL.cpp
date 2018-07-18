@@ -99,10 +99,10 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		return MP_DEVICE_ERROR;
 	}
 
-#if defined(__AMIGA__) || defined(__macos__) || defined(__AROS__)
-	printf("SDL: Using audio driver: %s\n", SDL_AudioDriverName(name, 32));
-#else
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	printf("SDL: Using audio driver: %s\n", SDL_GetCurrentAudioDriver());
+#else
+	printf("SDL: Using audio driver: %s\n", SDL_AudioDriverName(name, 32));
 #endif
 	if(wanted.format != obtained.format)
 	{
