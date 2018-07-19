@@ -28,12 +28,20 @@
 #ifndef __DISPLAYDEVICEOGL_H__
 #define __DISPLAYDEVICEOGL_H__
 
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 2
+#endif
+
 #include "DisplayDevice_SDL.h"
 
 class PPDisplayDeviceOGL : public PPDisplayDevice
 {
 public:
-	PPDisplayDeviceOGL(pp_int32 width,
+	PPDisplayDeviceOGL(
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+					   SDL_Surface*& screen, 
+#endif
+					   pp_int32 width, 
 					   pp_int32 height, 
 					   pp_int32 scaleFactor,
 					   pp_int32 bpp, 
@@ -48,8 +56,10 @@ public:
 
 	void update();
 	void update(const PPRect& r);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 protected:
 	SDL_GLContext glContext;
+#endif
 };
 
 #endif

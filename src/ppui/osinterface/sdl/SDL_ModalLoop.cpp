@@ -102,9 +102,15 @@ PPModalDialog::ReturnCodes SDL_runModalLoop(PPScreen* screen, PPDialogBase* dial
 				// ignore old mouse motion events in the event queue
 				SDL_Event new_event;
 				
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
 				{
 					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
+#else
+				if (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0)
+				{
+					while (SDL_PeepEvents(&new_event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) > 0);
+#endif
 					processSDLEvents(new_event);
 				} 
 				else 
