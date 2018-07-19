@@ -31,7 +31,7 @@
 #ifndef KEYTRANSLATION__H
 #define KEYTRANSLATION__H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "BasicTypes.h"
 
 // #define NOT_PC_KB	// Set this if you're using non-PC type keyboard

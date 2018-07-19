@@ -197,11 +197,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/milkyplay
     ${PROJECT_SOURCE_DIR}/src/ppui
     ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-if(AROS)
-    ${PROJECT_SOURCE_DIR}/src/ppui/sdl-1.2
-elseif()
     ${PROJECT_SOURCE_DIR}/src/ppui/sdl
-endif
     ${PROJECT_SOURCE_DIR}/src/tracker
 )
 
@@ -279,17 +275,19 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
         ${PROJECT_SOURCE_DIR}/src/ppui/win32
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     list(
         APPEND SOURCES
         sdl-1.2/SDL_KeyTranslation.cpp
-        sdl-1.2/CGX_Main.cpp
+        sdl-1.2/SDL_Main.cpp
     )
     list(
         APPEND HEADERS
         sdl-1.2/SDL_KeyTranslation.h
     )
     include_directories(
+        ${SDL_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 else()
@@ -383,6 +381,13 @@ elseif(AROS)
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
     target_link_libraries(${TARGET_NAME} -lSDL)
+elseif(AMIGA)
+    add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
+    if(MORPHOS)
+        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} -ldebug)
+    else()
+        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY})
+    endif()
 else()
     add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
 
@@ -417,7 +422,7 @@ target_link_libraries(
 )
 
 # OS X and Windows install to the root of the prefix, the others install to bin
-if(APPLE OR WIN32 OR AROS)
+if(APPLE OR WIN32 OR AROS OR AMIGA)
     set(INSTALL_DEST .)
 else()
     set(INSTALL_DEST ${CMAKE_INSTALL_BINDIR})

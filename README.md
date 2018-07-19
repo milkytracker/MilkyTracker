@@ -1,10 +1,11 @@
 MilkyTracker - Cross-Platform XM Tracker
 ========================================
 
-Notes on building MilkyTracker for Amiga platforms (AmigaOS 3.x, AmigaOS 4.x, WarpOS, MorphOS and AROS)
+Notes on cross compiling MilkyTracker for Amiga platforms (AmigaOS 3.x, AmigaOS 4.x, WarpOS, MorphOS and AROS)
 ==============================
 
-./build_gmake to make the makefiles
+Modify CMakeAmigaToolchain.txt to point to the appropriate toolchain then run:
+cmake -DCMAKE_TOOLCHAIN_FILE=./CMakeAmigaToolchain.txt . && make
 
 Building
 =============
