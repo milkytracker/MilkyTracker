@@ -47,7 +47,7 @@
 #endif
 
 #if defined(__AROS__)
-#include <syslimits.h>
+#include <aros/posixc/limits.h>
 #endif
 
 #ifdef __macos__
