@@ -176,7 +176,7 @@ if(APPLE)
 endif()
 
 # Under macOS and Windows we use Git Submodules to locate the decompression libs
-if(UNIX AND NOT AMIGA)
+if(UNIX AND AMIGA)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
 
