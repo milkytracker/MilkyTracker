@@ -157,7 +157,7 @@ elseif(WIN32)
     message(STATUS "Enabled MIDI support (WinMM)")
     add_subdirectory(src/midi)
 elseif(AROS)
-    # AROS will provide the SDL dependency via makefile. 
+    # AROS will provide the SDL dependency via makefile.
 elseif(AMIGA)
     find_package(SDL 1.2 REQUIRED)
 else()
