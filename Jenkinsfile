@@ -12,10 +12,11 @@ def notify(status){
 	)
 }
 
-def buildStep(config, ext) {
-	sh "mkdir -p $ext-build"
-	sh "cd $ext-build && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
-	sh "cd $ext-build && make -j8"
+def buildStep(ext) {
+	sh "rm -rfv build-$ext"
+	sh "mkdir -p build-$ext"
+	sh "cd build-$ext && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
+	sh "cd build-$ext && make -j8"
 
 	if (!env.CHANGE_ID) {
 		//sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
@@ -42,19 +43,19 @@ node {
 		}
 
 		stage('Build AmigaOS 3.x version') {
-			buildStep('release_m68k-amigaos', '68k')
+			buildStep('68k')
 		}
 
 		stage('Build AmigaOS 4.x version') {
-			buildStep('release_ppc-amigaos', 'os4')
+			buildStep('os4')
 		}
 
 		stage('Build MorphOS 3.x version') {
-			buildStep('release_ppc-morphos', 'mos')
+			buildStep('mos')
 		}
 
 		stage('Build AROS x86 ABI-v1 version') {
-			buildStep('release_i386-aros', 'aros-abiv1')
+			buildStep('aros-abiv1')
 		}
 
 		stage('Deploying to stage') {
