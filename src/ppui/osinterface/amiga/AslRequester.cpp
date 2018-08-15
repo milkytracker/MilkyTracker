@@ -26,12 +26,23 @@
 
 #include <stdio.h>
 
-#include <proto/exec.h>
-#include <proto/asl.h>
-#include <proto/dos.h>
+#ifdef WARPOS
+#pragma pack(2)
+#endif
 
-struct AslIFace *IAsl;
 #define MAX_DOS_PATH 260
+
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/asl.h>
+
+#ifdef WARPOS
+#pragma pack()
+#endif
+
+#ifndef WARPOS
+struct AslIFace *IAsl;
+#endif
 
 static char pathBuffer[MAX_DOS_PATH];
 

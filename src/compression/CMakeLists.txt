@@ -42,7 +42,7 @@ set(
 )
 
 # Under macOS and Windows, build sources from Git submodules if present
-if(APPLE OR WIN32)
+if(APPLE OR WIN32 OR AMIGA)
     set(LHASA_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/lhasa)
     set(ZLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zlib)
     set(ZZIPLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zziplib)

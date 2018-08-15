@@ -157,7 +157,9 @@ elseif(WIN32)
     message(STATUS "Enabled MIDI support (WinMM)")
     add_subdirectory(src/midi)
 elseif(AROS)
-    # AROS will provide the SDL dependency via makefile. 
+    # AROS will provide the SDL dependency via makefile.
+elseif(AMIGA)
+    find_package(SDL 1.2 REQUIRED)
 else()
     # Workaround for SDL bug #3295, which we might hit if the distro's SDL2
     # package includes the sdl2-config.cmake file
@@ -174,7 +176,7 @@ if(APPLE)
 endif()
 
 # Under macOS and Windows we use Git Submodules to locate the decompression libs
-if(UNIX)
+if(UNIX AND AMIGA)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
 

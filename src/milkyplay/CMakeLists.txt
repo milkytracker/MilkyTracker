@@ -118,11 +118,12 @@ if(APPLE)
         ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/osx
     )
     message(STATUS "Enabled Core Audio support")
-elseif(AROS)
+elseif(AROS OR AMIGA)
     list(APPEND SOURCES drivers/sdl/AudioDriver_SDL.cpp)
     list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/sdl
+        ${SDL_INCLUDE_DIR}
     )
     message(STATUS "Enabled AHI")
 elseif(WIN32)
@@ -230,7 +231,7 @@ if(APPLE)
         ${CORE_AUDIO_LIBRARY}
         ${CORE_FOUNDATION_LIBRARY}
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     target_link_libraries(milkyplay)
 elseif(WIN32)
     target_link_libraries(milkyplay winmm dsound)
