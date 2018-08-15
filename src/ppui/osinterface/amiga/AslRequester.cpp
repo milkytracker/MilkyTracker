@@ -25,13 +25,24 @@
 #include "AslRequester.h"
 
 #include <stdio.h>
+#ifdef WARPOS
+#pragma pack(2)
+#endif
 
-#include <proto/exec.h>
-#include <proto/asl.h>
-#include <proto/dos.h>
 
-struct AslIFace *IAsl;
+
 #define MAX_DOS_PATH 260
+#ifdef WARPOS
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/asl.h>
+
+#pragma pack()
+#endif
+
+#ifndef WARPOS
+struct AslIFace *IAsl;
+#endif
 
 static char pathBuffer[MAX_DOS_PATH];
 
