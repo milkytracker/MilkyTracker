@@ -19,7 +19,7 @@ def buildStep(ext) {
 	sh "cd build-$ext && make -j8"
 
 	if (!env.CHANGE_ID) {
-		//sh "mv bin/milkytracker.$ext publishing/deploy/MilkyTracker/"
+		sh "mv build-$ext/src/tracker/milkytracker publishing/deploy/MilkyTracker/milkytracker.$ext"
 		//sh "cp publishing/amiga-spec/MilkyTracker.info publishing/deploy/MilkyTracker/MilkyTracker.$ext.info"
 	}
 }
