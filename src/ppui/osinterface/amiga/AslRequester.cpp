@@ -25,18 +25,18 @@
 #include "AslRequester.h"
 
 #include <stdio.h>
+
 #ifdef WARPOS
 #pragma pack(2)
 #endif
 
-
-
 #define MAX_DOS_PATH 260
-#ifdef WARPOS
+
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/asl.h>
 
+#ifdef WARPOS
 #pragma pack()
 #endif
 
