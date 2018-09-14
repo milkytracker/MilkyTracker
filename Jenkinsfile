@@ -42,6 +42,10 @@ node {
 			}
 		}
 
+		stage('Build WarpOS version') {
+			buildStep('wos')
+		}
+
 		stage('Build AmigaOS 3.x version') {
 			buildStep('68k')
 		}

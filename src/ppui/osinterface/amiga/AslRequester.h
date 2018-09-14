@@ -29,7 +29,7 @@
 #pragma pack(2)
 #include <proto/exec.h>
 #endif
-#include <exec/types.h>'
+#include <exec/types.h>
 #ifdef WARPOS
 #include <proto/dos.h>
 #pragma pack()

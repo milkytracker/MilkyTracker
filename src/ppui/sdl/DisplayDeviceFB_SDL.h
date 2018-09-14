@@ -31,11 +31,11 @@
 #ifndef __DISPLAYDEVICEFB_H__
 #define __DISPLAYDEVICEFB_H__
 
+#include "DisplayDevice_SDL.h"
+
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 2
 #endif
-
-#include "DisplayDevice_SDL.h"
 
 class PPDisplayDeviceFB : public PPDisplayDevice
 {
@@ -43,23 +43,23 @@ private:
 	bool needsTemporaryBuffer;
 	pp_uint8* temporaryBuffer;
 	pp_uint32 temporaryBufferPitch, temporaryBufferBPP;
-	
+
 	// used for rotating coordinates etc.
 	void swap(const PPRect& r);
 
 public:
 	PPDisplayDeviceFB(
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-					  SDL_Surface*& screen, 
+					  SDL_Surface*& screen,
 #endif
-					  pp_int32 width, 
-					  pp_int32 height, 
+					  pp_int32 width,
+					  pp_int32 height,
 					  pp_int32 scaleFactor,
-					  pp_int32 bpp, 
+					  pp_int32 bpp,
 					  bool fullScreen,
-					  Orientations theOrientation = ORIENTATION_NORMAL, 
+					  Orientations theOrientation = ORIENTATION_NORMAL,
 					  bool swapRedBlue = false);
-				  
+
 	virtual ~PPDisplayDeviceFB();
 
 	virtual bool supportsScaling() const { return true; }
