@@ -32,6 +32,7 @@
 #include <exec/types.h>
 #ifdef WARPOS
 #include <proto/dos.h>
+#include <proto/asl.h>
 #pragma pack()
 #endif
 

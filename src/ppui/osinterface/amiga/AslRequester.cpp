@@ -37,13 +37,13 @@
 #include <proto/asl.h>
 
 #ifdef WARPOS
-struct Library *AslBase = NULL;
 #pragma pack()
 #endif
 
 #ifndef WARPOS
 struct AslIFace *IAsl;
 #endif
+struct Library *AslBase = NULL;
 
 static char pathBuffer[MAX_DOS_PATH];
 
@@ -129,9 +129,9 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
     PPSystemString fileName = "";
 
 #ifdef __amigaos4__
-    struct Library *AslBase = IExec->OpenLibrary(AslName, 53);
+    AslBase = IExec->OpenLibrary(AslName, 53);
 #else
-    struct Library *AslBase = OpenLibrary(AslName, 39);
+    AslBase = OpenLibrary(AslName, 39);
 #endif
 
     if (AslBase) {
