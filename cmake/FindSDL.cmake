@@ -125,7 +125,7 @@ endif()
 # The Apple build may not need an explicit flag because one of the
 # frameworks may already provide it.
 # But for non-OSX systems, I will use the CMake Threads package.
-if(NOT APPLE AND NOT (AMIGA AND WARPOS))
+if(NOT APPLE AND NOT (AMIGA AND WARPOS) AND NOT (AMIGA AND AMIGAOS3))
   find_package(Threads)
 endif()
 
