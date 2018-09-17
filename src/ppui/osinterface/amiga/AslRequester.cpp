@@ -37,6 +37,7 @@
 #include <proto/asl.h>
 
 #ifdef WARPOS
+struct Library *AslBase = NULL;
 #pragma pack()
 #endif
 
