@@ -423,7 +423,7 @@ pp_int32 PPDialogBase::handleEvent(PPObject* sender, PPEvent* event)
 			case MESSAGEBOX_BUTTON_KEYS_BASE+16: // BACK
 			{
 				pp_int32 i = (reinterpret_cast<PPControl*>(sender)->getID() - MESSAGEBOX_BUTTON_KEYS_BASE);
-				pp_uint16 key[2];
+				pp_uint16 key[3];
 				key[0] = (pp_uint16)asciiCodesNumbers[i];
 				key[1] = scanCodesNumbers[i];
 				key[2] = 0;

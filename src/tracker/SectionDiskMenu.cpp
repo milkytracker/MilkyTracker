@@ -1931,7 +1931,7 @@ PPString SectionDiskMenu::getKeyFromPredefPathButton(PPControl* button)
 		
 		sprintf(result, "%s_%d", keys[classicViewState], id);
 		
-		return result;
+		return PPString(result);
 	}
 	else return "";
 }
