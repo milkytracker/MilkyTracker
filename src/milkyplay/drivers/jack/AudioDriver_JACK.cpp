@@ -92,7 +92,13 @@ AudioDriver_JACK::~AudioDriver_JACK()
 mp_sint32 AudioDriver_JACK::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mixFrequency, MasterMixer* mixer)
 {
 	// First load libjack
-	libJack = dlopen("libjack.so", RTLD_LAZY);
+	const char *libJackNames[] = {"libjack.so", "libjack.so.0", NULL};
+	libJack = NULL;
+	for(const char **p = libJackNames; !libJack && *p; ++p) {
+		libJack = dlopen(*p, RTLD_LAZY);
+		fprintf(stderr, "JACK: Attempt to load \"%s\": %s\n", *p, libJack ? "success" : "failure");
+	}
+
 	if(!libJack) {
 		fprintf(stderr, "JACK: Can't load libjack (is it installed?)\n");
 		return -1;
