@@ -15,7 +15,7 @@ def notify(status){
 def buildStep(ext) {
 	sh "rm -rfv build-$ext"
 	sh "mkdir -p build-$ext"
-	sh "cd build-$ext && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/cmake$ext .."
+	sh "cd build-$ext && cmake -DCMAKE_TOOLCHAIN_FILE=/opt/toolchains/cmake$ext .."
 	sh "cd build-$ext && make -j8"
 
 	if (!env.CHANGE_ID) {
