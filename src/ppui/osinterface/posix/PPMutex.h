@@ -31,21 +31,22 @@
 #ifndef PPMUTEX__H
 #define PPMUTEX__H
 
+#if !defined(__AMIGA__) && !defined(AMIGA)
 #include <pthread.h>
+#endif
 
 class PPMutex
 {
+#if !defined(__AMIGA__) && !defined(AMIGA)
 private:
 	pthread_mutex_t* mutexpth_p;
-
+#endif
 public:
 	PPMutex();
 	~PPMutex();
-	
+
 	void lock();
 	bool tryLock();
 	void unlock();
 };
-
 #endif
-

@@ -44,7 +44,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # Version number in format X.YY.ZZ
 set(VER_X  1)
 set(VER_YY 02)
-set(VER_ZZ 00)
+set(VER_ZZ 01)
 set(VER_FULL "${VER_X}.${VER_YY}.${VER_ZZ}")
 
 # Generate version header from the above
@@ -67,8 +67,10 @@ if(APPLE)
     )
 elseif(WIN32)
     set(CPACK_GENERATOR ZIP)
+elseif(AMIGA)
+    set(CPACK_GENERATOR LHA)
 else()
-    set(CPACK_GENERATOR TGZ)
+    set(CPACK_GENERATOR "TGZ;DEB;RPM")
 endif()
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
 set(CPACK_PACKAGE_VENDOR "MilkyTracker Team")
@@ -157,7 +159,9 @@ elseif(WIN32)
     message(STATUS "Enabled MIDI support (WinMM)")
     add_subdirectory(src/midi)
 elseif(AROS)
-    # AROS will provide the SDL dependency via makefile. 
+    # AROS will provide the SDL dependency via makefile.
+elseif(AMIGA)
+    find_package(SDL 1.2 REQUIRED)
 else()
     # Workaround for SDL bug #3295, which we might hit if the distro's SDL2
     # package includes the sdl2-config.cmake file
@@ -174,7 +178,7 @@ if(APPLE)
 endif()
 
 # Under macOS and Windows we use Git Submodules to locate the decompression libs
-if(UNIX)
+if(UNIX AND AMIGA)
     # zlib is provided by Linux and macOS
     find_package(ZLIB)
 

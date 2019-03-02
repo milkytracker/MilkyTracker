@@ -77,34 +77,7 @@ elseif(WIN32)
         ${PROJECT_SOURCE_DIR}/src/milkyplay
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
     )
-elseif(AROS)
-    list(APPEND SOURCES
-        amiga/PPOpenPanel_Amiga.cpp
-        amiga/PPSavePanel_Amiga.cpp
-        amiga/AslRequester.cpp
-        posix/PPPath_POSIX.cpp
-        posix/PPSystem_POSIX.cpp
-        sdl-1.2/PPMessageBox_SDL.cpp
-        sdl-1.2/PPMutex.cpp
-        sdl-1.2/PPOpenPanel_SDL.cpp
-        sdl-1.2/PPQuitSaveAlert_SDL.cpp
-        sdl-1.2/PPSavePanel_SDL.cpp
-        sdl-1.2/SDL_ModalLoop.cpp
-    )
-    list(APPEND HEADERS
-        posix/PPMutex.h
-        amiga/AslRequester.h
-        posix/PPPath_POSIX.h
-        posix/PPSystemString_POSIX.h
-        posix/PPSystem_POSIX.h
-        sdl-1.2/PPMutex.h
-        sdl-1.2/SDL_ModalLoop.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-    )
-else()
+elseif(AROS OR AMIGA)
     list(APPEND SOURCES
         amiga/PPOpenPanel_Amiga.cpp
         amiga/PPSavePanel_Amiga.cpp
@@ -130,6 +103,29 @@ else()
     include_directories(
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
+        ${SDL_INCLUDE_DIR}
+    )
+else()
+    list(APPEND SOURCES
+        posix/PPPath_POSIX.cpp
+        posix/PPSystem_POSIX.cpp
+        sdl/PPMessageBox_SDL.cpp
+        sdl/PPMutex.cpp
+        sdl/PPOpenPanel_SDL.cpp
+        sdl/PPQuitSaveAlert_SDL.cpp
+        sdl/PPSavePanel_SDL.cpp
+        sdl/SDL_ModalLoop.cpp
+    )
+    list(APPEND HEADERS
+        posix/PPMutex.h
+        posix/PPPath_POSIX.h
+        posix/PPSystemString_POSIX.h
+        posix/PPSystem_POSIX.h
+        sdl/PPMutex.h
+        sdl/SDL_ModalLoop.h
+    )
+    include_directories(
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
         ${SDL2_INCLUDE_DIRS}
     )
 endif()

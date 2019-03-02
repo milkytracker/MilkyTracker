@@ -25,7 +25,16 @@
 
 #include "BasicTypes.h"
 
+#ifdef WARPOS
+#pragma pack(2)
+#include <proto/exec.h>
+#endif
 #include <exec/types.h>
+#ifdef WARPOS
+#include <proto/dos.h>
+#include <proto/asl.h>
+#pragma pack()
+#endif
 
 PPSystemString GetFileName(CONST_STRPTR title, bool saveMode = false, CONST_STRPTR name = "");
 

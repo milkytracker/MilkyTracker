@@ -26,12 +26,24 @@
 
 #include <stdio.h>
 
-#include <proto/exec.h>
-#include <proto/asl.h>
-#include <proto/dos.h>
+#ifdef WARPOS
+#pragma pack(2)
+#endif
 
-struct AslIFace *IAsl;
 #define MAX_DOS_PATH 260
+
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/asl.h>
+
+#ifdef WARPOS
+#pragma pack()
+#endif
+
+#ifndef WARPOS
+struct AslIFace *IAsl;
+#endif
+struct Library *AslBase = NULL;
 
 static char pathBuffer[MAX_DOS_PATH];
 
@@ -117,9 +129,9 @@ PPSystemString GetFileName(CONST_STRPTR title, bool saveMode, CONST_STRPTR name)
     PPSystemString fileName = "";
 
 #ifdef __amigaos4__
-    struct Library *AslBase = IExec->OpenLibrary(AslName, 53);
+    AslBase = IExec->OpenLibrary(AslName, 53);
 #else
-    struct Library *AslBase = OpenLibrary(AslName, 39);
+    AslBase = OpenLibrary(AslName, 39);
 #endif
 
     if (AslBase) {

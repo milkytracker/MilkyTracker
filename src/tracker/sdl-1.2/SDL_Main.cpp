@@ -39,6 +39,9 @@
 #ifndef AFF_68080
 #define AFF_68080 (1<<AFB_68080)
 #endif
+#if defined(WARPOS) && !defined(AFF68060)
+#define AFF_68060 1
+#endif
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +52,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "SDL_KeyTranslation.h"
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
@@ -769,7 +772,7 @@ int main(int argc, char *argv[])
 //	if (ammx == 1)
 //		ammxon = "On";
 
-#if !defined(__amigaos4__) && defined(__AMIGA__)
+#if !defined(__amigaos4__) && !defined(MORPHOS) && !defined(WARPOS) && defined(__AMIGA__)
 	// find out what type of CPU we have
 	if ((SysBase->AttnFlags & AFF_68080) != 0)
 		cpu_type = 68080;

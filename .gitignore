@@ -16,3 +16,7 @@ include/inline/SDL_inline.h
 include/SDL/*
 projects/*
 Makefile
+*.cmake
+CMakeCache.txt
+CMakeFiles
+*.a
