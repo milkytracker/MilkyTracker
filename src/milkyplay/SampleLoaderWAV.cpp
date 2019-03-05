@@ -574,6 +574,8 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 			f.seek(pos);
 		}
 	
+		if (hdr.dataLength & 1)
+			f.seek(1, XMFile::SeekOffsetTypeCurrent);
 	} while (f.pos() < f.size());
 	
 	if (!hasData)
