@@ -38,12 +38,12 @@ enum ControlIDs
 {
 	MESSAGEBOXZAP_BUTTON_ALL = PP_MESSAGEBOX_BUTTON_USER1,
 	MESSAGEBOXZAP_BUTTON_SONG,
-	
+
 	MESSAGEBOXZAP_BUTTON_PATT,
 	MESSAGEBOXZAP_BUTTON_INS
 };
 
-DialogZap::DialogZap(PPScreen* screen, 
+DialogZap::DialogZap(PPScreen* screen,
 					 DialogResponder* responder,
 					 pp_int32 id) :
 	PPDialogBase()
@@ -73,16 +73,16 @@ DialogZap::DialogZap(PPScreen* screen,
 	container->addControl(button);
 
 	button = new PPButton(MESSAGEBOXZAP_BUTTON_PATT, screen, this, PPPoint(x + 10 + 60*2 + 10*2, y2 + 15), PPSize(60, 11));
-	button->setText("Pattern");
+	button->setText("Patns");
 	container->addControl(button);
 
 	button = new PPButton(MESSAGEBOXZAP_BUTTON_INS, screen, this, PPPoint(x + 10 + 60*3 + 10*3, y2 + 15), PPSize(60, 11));
-	button->setText("Instr.");
+	button->setText("Insts");
 	container->addControl(button);
 
 	button = new PPButton(PP_MESSAGEBOX_BUTTON_CANCEL, screen, this, PPPoint(x + 10 + 60*3 + 10*3, y2 + 15*2+4), PPSize(60, 11));
 	button->setText("Cancel");
 	container->addControl(button);
-	
+
 	messageBoxContainerGeneric = container;
 }
