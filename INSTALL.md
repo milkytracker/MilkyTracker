@@ -91,5 +91,5 @@ recommended way of obtaining these is by using Homebrew or MacPorts.
 - libtool
 - xmlto
 
-The correct way to build a release .DMG for macOS 10.7 and above, including
+The correct way to build a release .DMG for macOS, including
 special document icons, is to run the `build_macos.sh` script.

@@ -16,7 +16,7 @@ popd
 
 cmake -E make_directory build
 pushd build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . --config Release
 cpack .
 popd
