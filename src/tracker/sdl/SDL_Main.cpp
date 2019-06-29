@@ -813,12 +813,8 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-#ifdef __OPENGL__
-	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, scaleFactor, bpp, fullScreen, orientation, swapRedBlue);
-#else
-	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
-											bpp, fullScreen, orientation, swapRedBlue);
-#endif
+myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
+										bpp, fullScreen, orientation, swapRedBlue);
 
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
 	myDisplayDevice->init();
