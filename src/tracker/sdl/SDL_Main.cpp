@@ -487,7 +487,7 @@ void translateMouseWheelEvent(pp_int32 wheelX, pp_int32 wheelY) {
 
 	// Deltas from wheel event
 	mouseWheelParams.deltaX = wheelX;
-	mouseWheelParams.deltaY = wheelY;
+	mouseWheelParams.deltaY = wheelY * 3;
 
 	// Use last stored coordinates
 	mouseWheelParams.pos.x = p.x;

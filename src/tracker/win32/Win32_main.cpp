@@ -80,6 +80,7 @@ HINSTANCE					g_hinst				= NULL;       /* My instance handle */
 BOOL						g_fPaused			= TRUE;       /* Should I be paused? */
 HWND						hWnd				= NULL;
 BOOL						g_mouseDragging		= FALSE;
+INT							g_mouseWheelLines	= 3;
 
 PPMutex*					g_globalMutex		= NULL;
 
@@ -150,6 +151,62 @@ TrackMouseEvent(LPTRACKMOUSEEVENT ptme) {
 #endif // WIN32_WINNT
 
 #endif // MOUSETRACKING
+
+// The following function modified from Microsoft's developer docs
+#ifndef SPI_GETWHEELSCROLLLINES
+#define SPI_GETWHEELSCROLLLINES   104
+#define SPI_SETWHEELSCROLLLINES   105
+#endif
+
+#include "zmouse.h"
+
+/*********************************************************
+* FUNCTION: getMouseWheelLines
+* Purpose : An OS independent method to retrieve the
+*           number of wheel scroll lines
+* Params  : none
+* Returns : none
+* Effects : Sets g_mouseWheelLines
+*********************************************************/
+void getMouseWheelLines(void)
+{
+	HWND hdlMsWheel;
+	OSVERSIONINFO osversion;
+	UINT uiMsh_MsgScrollLines;
+
+
+	memset(&osversion, 0, sizeof(osversion));
+	osversion.dwOSVersionInfoSize = sizeof(osversion);
+	GetVersionEx(&osversion);
+
+	if ((osversion.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) ||
+		((osversion.dwPlatformId == VER_PLATFORM_WIN32_NT) &&
+		(osversion.dwMajorVersion < 4)))
+	{
+		hdlMsWheel = FindWindow(MSH_WHEELMODULE_CLASS,
+			MSH_WHEELMODULE_TITLE);
+		if (hdlMsWheel)
+		{
+			uiMsh_MsgScrollLines = RegisterWindowMessage
+			(MSH_SCROLL_LINES);
+			if (uiMsh_MsgScrollLines)
+				g_mouseWheelLines = (int)SendMessage(hdlMsWheel,
+					uiMsh_MsgScrollLines,
+					0,
+					0);
+		}
+	}
+	else if ((osversion.dwPlatformId ==
+		VER_PLATFORM_WIN32_NT) &&
+		(osversion.dwMajorVersion >= 4))
+	{
+		SystemParametersInfo(SPI_GETWHEELSCROLLLINES,
+			0,
+			&g_mouseWheelLines, 0);
+	}
+	if (g_mouseWheelLines == WHEEL_PAGESCROLL)
+		g_mouseWheelLines = 16;
+}
 
 static void MyThreadTimerProc(void* obj, UINT idEvent)
 {
@@ -457,6 +514,9 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 	static bool		wasFullScreen		= false;
 
+	static INT		xMouseWheelFrac		= 0;
+	static INT		yMouseWheelFrac		= 0;
+
 	// ------------------------------------------ stupid fucking shit --------
 #ifdef MOUSETRACKING
 	TRACKMOUSEEVENT tme;
@@ -494,33 +554,49 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_MOUSEWHEEL:
 		case WM_MOUSEHWHEEL:
 		{
+			if (g_mouseWheelLines == 0)
+				break;
 			RECT rc;
 			GetWindowRect(hwnd, &rc);
-		
+
 			TMouseWheelEventParams mouseWheelParams;
 			// Absolute screen coordinates into client coordinates?
 			//mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
 			//mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
-			
+
 			if (myDisplayDevice->isFullScreen())
 			{
-				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left);
-				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top);
+				mouseWheelParams.pos.x = GET_X_LPARAM(lParam)-(rc.left);
+				mouseWheelParams.pos.y = GET_Y_LPARAM(lParam)-(rc.top);
 			}
 			else
 			{
-				mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
-				mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
+				mouseWheelParams.pos.x = GET_X_LPARAM(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
+				mouseWheelParams.pos.y = GET_Y_LPARAM(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
 			}
-			
-			mouseWheelParams.deltaX = msg == WM_MOUSEHWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
-			mouseWheelParams.deltaY = msg == WM_MOUSEWHEEL ? ((signed short)HIWORD(wParam)) / 60 : 0;
-			
-			PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));	
-			
-			RaiseEventSynchronized(&myEvent);				
 
-			break;
+			INT delta = GET_WHEEL_DELTA_WPARAM(wParam);
+			if (msg == WM_MOUSEWHEEL) {
+				if (delta * yMouseWheelFrac < 0)
+					yMouseWheelFrac = 0;
+				// Use system defined lines per wheel notch
+				mouseWheelParams.deltaY = (delta + yMouseWheelFrac) * g_mouseWheelLines / WHEEL_DELTA;
+				yMouseWheelFrac = (delta + yMouseWheelFrac) * g_mouseWheelLines % WHEEL_DELTA;
+				mouseWheelParams.deltaX = 0;
+			} else { //WM_MOUSEHWHEEL
+				if (delta * xMouseWheelFrac < 0)
+					xMouseWheelFrac = 0;
+				// Hardcode to 1 column per wheel notch
+				mouseWheelParams.deltaX = 0 - (delta + xMouseWheelFrac) / WHEEL_DELTA;
+				xMouseWheelFrac = (delta + xMouseWheelFrac) % WHEEL_DELTA;
+				mouseWheelParams.deltaY = 0;
+			}
+
+			PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(mouseWheelParams));
+
+			RaiseEventSynchronized(&myEvent);
+
+			return true;
 		}
 
 		// ----- left mousebutton -------------------------------
@@ -528,23 +604,23 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			if (!myTrackerScreen)
 				break;
-			
+
 			if (lMouseDown)
 			{
 				p.x = -1;
 				p.y = -1;
-				PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));				
+				PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));
 				RaiseEventSynchronized(&myEvent);
 				lMouseDown = false;
 			}
 
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eLMouseDown, &p, sizeof(PPPoint));
-			
+
 			RaiseEventSynchronized(&myEvent);
-			
+
 			lMouseDown = TRUE;
 			//lButtonDownStartTime = timerTicker;
 			lButtonDownStartTime = GetTickCount();
@@ -552,23 +628,23 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!lClickCount)
 			{
 				ltime = GetTickCount();
-				llastClickPosition.x = LOWORD(lParam);
-				llastClickPosition.y = HIWORD(lParam);
+				llastClickPosition.x = GET_X_LPARAM(lParam);
+				llastClickPosition.y = GET_Y_LPARAM(lParam);
 			}
 			else if (lClickCount == 2)
 			{
 				DWORD deltat = GetTickCount() - ltime;
-				
+
 				if (deltat > 500)
 				{
 					lClickCount = 0;
 					ltime = GetTickCount();
-					llastClickPosition.x = LOWORD(lParam);
-					llastClickPosition.y = HIWORD(lParam);
+					llastClickPosition.x = GET_X_LPARAM(lParam);
+					llastClickPosition.y = GET_Y_LPARAM(lParam);
 				}
 			}
 
-			lClickCount++;	
+			lClickCount++;
 
 			break;
 		}
@@ -579,8 +655,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!myTrackerScreen)
 				break;
 
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eMMouseDown, &p, sizeof(PPPoint));
 
@@ -594,23 +670,23 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			if (!myTrackerScreen)
 				break;
-			
+
 			if (rMouseDown)
 			{
 				p.x = -1;
 				p.y = -1;
-				PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));				
+				PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));
 				RaiseEventSynchronized(&myEvent);
 				rMouseDown = false;
 			}
 
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eRMouseDown, &p, sizeof(PPPoint));
-			
+
 			RaiseEventSynchronized(&myEvent);
-			
+
 			rMouseDown = TRUE;
 			//rButtonDownStartTime = timerTicker;
 			rButtonDownStartTime = GetTickCount();
@@ -618,27 +694,27 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!rClickCount)
 			{
 				rtime = GetTickCount();
-				rlastClickPosition.x = LOWORD(lParam);
-				rlastClickPosition.y = HIWORD(lParam);
+				rlastClickPosition.x = GET_X_LPARAM(lParam);
+				rlastClickPosition.y = GET_Y_LPARAM(lParam);
 			}
 			else if (rClickCount == 2)
 			{
 				DWORD deltat = GetTickCount() - rtime;
-				
+
 				if (deltat > 500)
 				{
 					rClickCount = 0;
 					rtime = GetTickCount();
-					rlastClickPosition.x = LOWORD(lParam);
-					rlastClickPosition.y = HIWORD(lParam);
+					rlastClickPosition.x = GET_X_LPARAM(lParam);
+					rlastClickPosition.y = GET_Y_LPARAM(lParam);
 				}
 			}
 
-			rClickCount++;	
+			rClickCount++;
 
 			break;
 		}
-		
+
 		// ----- left mousebutton -------------------------------
 		case WM_LBUTTONUP:
 		{
@@ -655,37 +731,37 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (lClickCount == 4)
 			{
 				DWORD deltat = GetTickCount() - ltime;
-				
+
 				if (deltat < 500)
 				{
-					p.x = LOWORD(lParam);
-					p.y = HIWORD(lParam);
-					
+					p.x = GET_X_LPARAM(lParam);
+					p.y = GET_Y_LPARAM(lParam);
+
 					if (abs(p.x - llastClickPosition.x) < 4 &&
 						abs(p.y - llastClickPosition.y) < 4)
 					{
 
 						PPEvent myEvent(eLMouseDoubleClick, &p, sizeof(PPPoint));
-						
+
 						RaiseEventSynchronized(&myEvent);
 					}
 				}
-				
+
 				lClickCount = 0;
 
 			}
-				
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eLMouseUp, &p, sizeof(PPPoint));
-			
+
 			RaiseEventSynchronized(&myEvent);
-			
+
 			lMouseDown = FALSE;
-			
+
 			break;
-		}		
+		}
 
 		// ----- middle mousebutton -------------------------------
 		case WM_MBUTTONUP:
@@ -693,8 +769,8 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (!myTrackerScreen)
 				break;
 
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eMMouseUp, &p, sizeof(PPPoint));
 
@@ -715,38 +791,38 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (rClickCount == 4)
 			{
 				DWORD deltat = GetTickCount() - rtime;
-				
+
 				if (deltat < 500)
 				{
-					p.x = LOWORD(lParam);
-					p.y = HIWORD(lParam);
-					
+					p.x = GET_X_LPARAM(lParam);
+					p.y = GET_Y_LPARAM(lParam);
+
 					if (abs(p.x - rlastClickPosition.x) < 4 &&
 						abs(p.y - rlastClickPosition.y) < 4)
 					{
 
 						PPEvent myEvent(eRMouseDoubleClick, &p, sizeof(PPPoint));
-						
+
 						RaiseEventSynchronized(&myEvent);
 					}
 				}
-				
+
 				rClickCount = 0;
 
 			}
-				
-			p.x = LOWORD(lParam);
-			p.y = HIWORD(lParam);
+
+			p.x = GET_X_LPARAM(lParam);
+			p.y = GET_Y_LPARAM(lParam);
 
 			PPEvent myEvent(eRMouseUp, &p, sizeof(PPPoint));
-			
+
 			RaiseEventSynchronized(&myEvent);
-			
+
 			rMouseDown = FALSE;
-			
+
 			break;
-		}		
-		
+		}
+
 #ifdef MOUSETRACKING
 		case WM_MOUSELEAVE:
 			fInWindow = FALSE;
@@ -805,27 +881,27 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					SetCapture(hWnd);
 					g_mouseDragging = TRUE;
 				}
-				
+
 				PPEvent myEvent(eLMouseDrag, &p, sizeof(PPPoint));
-				
+
 				RaiseEventSynchronized(&myEvent);
 			}
 			else if ((wParam&MK_RBUTTON) && rMouseDown)
 			{
-				p.x = LOWORD(lParam);
-				p.y = HIWORD(lParam);
-				
+				p.x = GET_X_LPARAM(lParam);
+				p.y = GET_Y_LPARAM(lParam);
+
 				PPEvent myEvent(eRMouseDrag, &p, sizeof(PPPoint));
-				
+
 				RaiseEventSynchronized(&myEvent);
 			}
 			else
 			{
-				p.x = LOWORD(lParam);
-				p.y = HIWORD(lParam);
-				
+				p.x = GET_X_LPARAM(lParam);
+				p.y = GET_Y_LPARAM(lParam);
+
 				PPEvent myEvent(eMouseMoved, &p, sizeof(PPPoint));
-				
+
 				RaiseEventSynchronized(&myEvent);
 			}
 			break;
@@ -1047,6 +1123,9 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			break;*/
 
+		case WM_SETTINGCHANGE:
+			if (wParam == SPI_SETWHEELSCROLLLINES)
+				getMouseWheelLines();
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -1288,8 +1367,10 @@ int PASCAL WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int nC
 			SendFile(fileInput);
 		}
 	}
-	
-	if (hWnd) 
+
+	getMouseWheelLines();
+
+	if (hWnd)
 	{
 
 		MSG    Msg;
