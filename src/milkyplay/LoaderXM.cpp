@@ -63,8 +63,8 @@ const char* LoaderXM::identifyModule(const mp_ubyte* buffer)
 mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 {
 	mp_ubyte insData[230];		
-	mp_sint32 smpReloc[96];
-	mp_ubyte nbu[96];
+	mp_sint32 smpReloc[MP_MAXINSSAMPS];
+	mp_ubyte nbu[MP_MAXINSSAMPS];
 	mp_uint32 fileSize = 0;
 			
 	module->cleanUp();
@@ -117,6 +117,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 	memcpy(header->ord, hdrBuff+16, 256);
 	if(header->ordnum > MP_MAXORDERS)
 		header->ordnum = MP_MAXORDERS;
+	if(header->insnum > MP_MAXINS)
+		return MP_LOADER_FAILED;
 
 	delete[] hdrBuff;
 	
@@ -143,7 +145,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			f.read(&instr[y].type,1,1);
 			mp_uword numSamples = 0;
 			f.readWords(&numSamples,1);
-			if(numSamples > 96)
+			if(numSamples > MP_MAXINSSAMPS)
 				return MP_LOADER_FAILED;
 			instr[y].samp = numSamples;
 
@@ -169,8 +171,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			if (instr[y].samp) {
 				mp_ubyte* insDataPtr = insData;
 				
-				memcpy(nbu, insDataPtr, 96);
-				insDataPtr+=96;
+				memcpy(nbu, insDataPtr, MP_MAXINSSAMPS);
+				insDataPtr+=MP_MAXINSSAMPS;
 				
 				TEnvelope venv;
 				TEnvelope penv;
@@ -285,7 +287,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 				instr[y].samp = g;
 
-				for (sc = 0; sc < 96; sc++) {
+				for (sc = 0; sc < MP_MAXINSSAMPS; sc++) {
 					if (smpReloc[nbu[sc]] == -1)
 						instr[y].snum[sc] = -1;
 					else
@@ -491,6 +493,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				f.read(&instr[y].type,1,1);
 				f.readWords(&instr[y].samp,1);
 			}
+			if (instr[y].samp > MP_MAXINSSAMPS)
+				return MP_LOADER_FAILED;
 
 			//printf("%i, %i\n", instr[y].size, instr[y].samp);
 
@@ -532,8 +536,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				
 				//f.read(&nbu,1,96);
 				
-				memcpy(nbu, insDataPtr, 96);
-				insDataPtr+=96;
+				memcpy(nbu, insDataPtr, MP_MAXINSSAMPS);
+				insDataPtr+=MP_MAXINSSAMPS;
 				
 				TEnvelope venv;
 				TEnvelope penv;
@@ -650,7 +654,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 				instr[y].samp = g;
 
-				for (sc = 0; sc < 96; sc++) {					
+				for (sc = 0; sc < MP_MAXINSSAMPS; sc++) {					
 					if (smpReloc[nbu[sc]] == -1)
 						instr[y].snum[sc] = -1;
 					else
