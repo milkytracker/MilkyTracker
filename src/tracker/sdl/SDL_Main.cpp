@@ -487,7 +487,7 @@ void translateMouseWheelEvent(pp_int32 wheelX, pp_int32 wheelY) {
 
 	// Deltas from wheel event
 	mouseWheelParams.deltaX = wheelX;
-	mouseWheelParams.deltaY = wheelY;
+	mouseWheelParams.deltaY = wheelY * 3;
 
 	// Use last stored coordinates
 	mouseWheelParams.pos.x = p.x;
@@ -813,12 +813,8 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-#ifdef __OPENGL__
-	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, scaleFactor, bpp, fullScreen, orientation, swapRedBlue);
-#else
-	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
-											bpp, fullScreen, orientation, swapRedBlue);
-#endif
+myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
+										bpp, fullScreen, orientation, swapRedBlue);
 
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
 	myDisplayDevice->init();

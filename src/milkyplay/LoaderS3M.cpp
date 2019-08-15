@@ -340,7 +340,11 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 		return MP_OUT_OF_MEMORY;
 	
 	header->insnum = f.readWord(); // number of instruments
-	header->patnum = f.readWord(); // number of patterns	
+	if (header->insnum > MP_MAXINS)
+		return MP_LOADER_FAILED;
+	header->patnum = f.readWord(); // number of patterns
+	if (header->patnum > 256)
+		return MP_LOADER_FAILED;
 	
 	mp_sint32 flags = f.readWord(); // st3 flags	
 

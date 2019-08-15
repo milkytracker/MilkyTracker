@@ -164,7 +164,7 @@ public:
 	static const char* getPreferredAudioDriverID();
 	static pp_uint32 getPreferredSampleRate();
 	static pp_uint32 getPreferredBufferSize();
-	static pp_int32 roundToNearestPowerOfTwo(pp_int32 v);	
+	static pp_uint32 roundToNearestPowerOfTwo(pp_uint32 v);
 	static float convertBufferSizeToMillis(pp_uint32 sampleRate, pp_uint32 bufferSize);
 
 	PlayerController* createPlayerController(bool fakeScopes);

@@ -66,8 +66,8 @@ pp_int32 ScopesControl::WRAPCHANNELS() const
     else
     {
         return 32;
-#endif
     }
+#endif
 }
 
 ScopesControl::ScopesControl(pp_int32 id,

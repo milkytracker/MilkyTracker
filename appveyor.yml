@@ -1,7 +1,4 @@
-version: 1.02.00-{build}
-
 configuration:
-  - Debug
   - Release
 
 platform:
@@ -10,6 +7,9 @@ platform:
 
 install:
   - git submodule update --init --recursive
+  - ps: |
+      $env:GIT_TAG = (git describe HEAD | sed -E "s/-.+$//")
+      Update-AppveyorBuild -Version "$env:GIT_TAG-$env:APPVEYOR_BUILD_NUMBER"
 
 before_build:
   - md c:\projects\milkytracker\build
@@ -27,3 +27,15 @@ after_build:
 
 artifacts:
   - path: build\milkytracker*.zip
+
+deploy:
+  description: Release $(appveyor_repo_tag_name)
+  provider: GitHub
+  auth_token:
+    secure: XtZUHo/SWVXr89Z4YQYylRE8lDQue+JwuaQdqEG/P57GePwPJipKzlPSxp8qOFiG
+  artifact: /milkytracker.*\.zip/
+  prerelease: false
+  overwrite: true
+  on:
+    configuration: Release
+    appveyor_repo_tag: true        # deploy on tag push only

@@ -40,6 +40,8 @@
 
 #define MP_MAXTEXT 32
 #define MP_MAXORDERS 256
+#define MP_MAXINS 255
+#define MP_MAXINSSAMPS 96
 
 struct TXMHeader 
 {

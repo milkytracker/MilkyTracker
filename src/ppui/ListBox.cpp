@@ -422,13 +422,15 @@ pp_int32 PPListBox::dispatchEvent(PPEvent* event)
 			// exclusive from horizontal scrolling.
 			if (vScrollbar && params->deltaY)
 			{
-				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				EEventDescriptor ed = params->deltaY < 0 ? eBarScrollDown : eBarScrollUp;
+				PPEvent e = PPEvent(ed, abs(params->deltaY));
 				handleEvent(reinterpret_cast<PPObject*>(vScrollbar), &e);
 			}
 			
 			else if (hScrollbar && params->deltaX)
 			{
-				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				EEventDescriptor ed = params->deltaX < 0 ? eBarScrollDown : eBarScrollUp;
+				PPEvent e = PPEvent(ed, params->deltaX);
 				handleEvent(reinterpret_cast<PPObject*>(hScrollbar), &e);
 			}
 
@@ -1003,12 +1005,13 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 		else
 		{
 			pp_int32 visibleItems = getNumVisibleItems();
-			
-			if (startIndex + visibleItems < items->size())
-				startIndex++;
-			
+
+			startIndex += event->getMetaData();
+			if (startIndex + visibleItems > items->size())
+				startIndex = items->size() - visibleItems;
+
 			float v = (float)(items->size() - visibleItems);
-			
+
 			vScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
 		}
 	}
@@ -1037,8 +1040,9 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 		}
 		else
 		{
-			if (startIndex)
-				startIndex--;
+			startIndex -= event->getMetaData();
+			if(startIndex < 0)
+				startIndex = 0;
 			
 			pp_int32 visibleItems = getNumVisibleItems();
 			
