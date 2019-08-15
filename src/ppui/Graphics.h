@@ -42,7 +42,7 @@ public:
 		pitch(p), buffer((pp_uint8*)buff)
 	{
 	}
-	
+
 	void setBufferProperties(pp_int32 p, void* buff)
 	{
 		pitch = p;
@@ -97,7 +97,7 @@ SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, __EMPTY__, PPGraphics_BGR24_SLOW, __EMP
 
 #define PROLOGUE \
 	pp_uint32 bitPosR, bitPosG, bitPosB;
-	
+
 #define EPILOGUE \
 	void setComponentBitpositions(pp_uint32 bitPosR, pp_uint32 bitPosG, pp_uint32 bitPosB) \
 	{ \
@@ -114,9 +114,5 @@ SUBCLASS_GRAPHICS(PPGraphicsFrameBuffer, PROLOGUE, PPGraphics_32bpp_generic, EPI
 #undef SUBCLASS_GRAPHICSABSTRACT
 
 #undef __EMPTY__
-
-#ifdef __OPENGL__
-#include "Graphics_OGL.h"
-#endif
 
 #endif

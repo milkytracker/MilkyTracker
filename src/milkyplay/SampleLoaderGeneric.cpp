@@ -168,8 +168,9 @@ SampleLoaderAbstract* SampleLoaderGeneric::getSuitableLoader()
 		loader = new SampleLoaderALL(theFileName, theModule);
 		if (loader && loader->identifySample())
 			return loader;
+	
+		delete loader;
 	}
 
-	delete loader;
 	return NULL;
 }

@@ -27,7 +27,7 @@
  *  Created by Peter Barth on Fri Mar 11 2005.
  *
  */
- 
+
 #include "PatternEditorControl.h"
 #include "PatternTools.h"
 #include "KeyBindings.h"
@@ -56,6 +56,8 @@ void PatternEditorControl::initKeyBindings()
 
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, 0, &PatternEditorControl::eventKeyDownBinding_InsertNote);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsertNote);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT | KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, 0, &PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteLine);
 
@@ -125,7 +127,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
 
 	// Typical:
-	// Remember to check keyboard shortcuts which are always possible in file TrackerShortCuts.cpp 
+	// Remember to check keyboard shortcuts which are always possible in file TrackerShortCuts.cpp
 	// (= keyboard handler) otherwise they might not be routed here
 	eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Undo);
 	eventKeyDownBindingsFastTracker->addBinding('Y', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Redo);
@@ -162,7 +164,7 @@ void PatternEditorControl::initKeyBindings()
 	scanCodeBindingsFastTracker->addBinding(SC_8, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro8);
 	scanCodeBindingsFastTracker->addBinding(SC_9, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro9);
 	scanCodeBindingsFastTracker->addBinding(SC_0, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro0);
-	
+
 	scanCodeBindingsFastTracker->addBinding(SC_Q, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_Q);
 	scanCodeBindingsFastTracker->addBinding(SC_W, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_W);
 	scanCodeBindingsFastTracker->addBinding(SC_E, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_E);
@@ -180,7 +182,7 @@ void PatternEditorControl::initKeyBindings()
 	scanCodeBindingsFastTracker->addBinding(SC_H, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_H);
 	scanCodeBindingsFastTracker->addBinding(SC_J, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_J);
 	scanCodeBindingsFastTracker->addBinding(SC_K, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_K);
-	
+
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
 
@@ -200,90 +202,90 @@ void PatternEditorControl::initKeyBindings()
 static pp_int32 asciiToHex(pp_uint8 ascii)
 {
 	pp_int32 number = -1;
-	
+
 	switch (ascii)
 	{
-			// 0: 
+			// 0:
 		case '0':
 			number = 0;
 			break;
 
-			// 1: 
+			// 1:
 		case '1':
 			number = 1;
 			break;
-			
-			// 2: 
+
+			// 2:
 		case '2':
 			number = 2;
 			break;
-			
-			// 3: 
+
+			// 3:
 		case '3':
 			number = 3;
 			break;
-			
-			// 4: 
+
+			// 4:
 		case '4':
 			number = 4;
 			break;
-			
-			// 5: 
+
+			// 5:
 		case '5':
 			number = 5;
 			break;
-			
-			// 6: 
+
+			// 6:
 		case '6':
 			number = 6;
 			break;
-			
-			// 7: 
+
+			// 7:
 		case '7':
 			number = 7;
 			break;
 
-			// 8: 
+			// 8:
 		case '8':
 			number = 8;
 			break;
-			
-			// 9: 
+
+			// 9:
 		case '9':
 			number = 9;
 			break;
-			
-			// A: 
+
+			// A:
 		case 'A':
 		case 'a':
 			number = 0xA;
 			break;
 
-			// B: 
+			// B:
 		case 'B':
 		case 'b':
 			number = 0xB;
 			break;
 
-			// C: 
+			// C:
 		case 'C':
 		case 'c':
 			number = 0xC;
 			break;
-			
-			// D: 
+
+			// D:
 		case 'D':
 		case 'd':
 			number = 0xD;
 			break;
-			
-			// E: 
+
+			// E:
 		case 'E':
 		case 'e':
 			number = 0xE;
 			break;
-			
-			// F: 
+
+			// F:
 		case 'F':
 		case 'f':
 			number = 0xF;
@@ -392,17 +394,17 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 		case 0x03:
 		case 0x26:
 			return TONOTE(patternEditor->getCurrentOctave(),1);
-		
+
 		// 3,÷: D#
 		case 0x04:
 		case 0x27:
 			return TONOTE(patternEditor->getCurrentOctave(),3);
-		
+
 		// 5,': F#
 		case 0x06:
 		case 0x2B:
 			return TONOTE(patternEditor->getCurrentOctave(),6);
-		
+
 		// 6: G#
 		case 0x07:
 			return TONOTE(patternEditor->getCurrentOctave(),8);
@@ -410,31 +412,31 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 		// 7: A#
 		case 0x08:
 			return TONOTE(patternEditor->getCurrentOctave(),10);
-		
+
 		// 9: C# + 1
 		case 0x0A:
 			return TONOTE(patternEditor->getCurrentOctave() + 1,1);
-		
+
 		// 0: D# + 1
 		case 0x0B:
 			return TONOTE(patternEditor->getCurrentOctave() + 1,3);
-		
+
 		// ¥: F# + 1
 		case 0x0D:
 			return TONOTE(patternEditor->getCurrentOctave() + 1,6);
-		
+
 		// S: C# - 1
 		case 0x1F:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,1);
-		
+
 		// D: D# - 1
 		case 0x20:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,3);
-		
+
 		// G: F# - 1
 		case 0x22:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,6);
-		
+
 		// H: G# - 1
 		case 0x23:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,8);
@@ -470,16 +472,16 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 		// U: B
 		case 0x16:
 			return TONOTE(patternEditor->getCurrentOctave(),11);
-		
+
 		// Y: C - 1
 		case 0x2C:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,0);
-		
+
 		// X: D - 1
 		case 0x2D:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,2);
-		
-		// C: E - 1 
+
+		// C: E - 1
 		case 0x2E:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,4);
 
@@ -497,7 +499,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 		// M: B - 1
 		case 0x32:
 			return TONOTE(patternEditor->getCurrentOctave() - 1,11);
-		
+
 		// ,: C
 		case 0x33:
 			return TONOTE(patternEditor->getCurrentOctave(),0);
@@ -545,7 +547,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 
 		case SC_SMALLERGREATER:
 			return PatternTools::getNoteOffNote();
-		
+
 		default:
 			return -1;
 	}
@@ -556,7 +558,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 {
 	if (result == -1 &&  ::getKeyModifier() == 0)
-	{	
+	{
 		switch (keyCode)
 		{
 			// Delete (only works in MilkyTracker edit mode)
@@ -569,7 +571,7 @@ void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 					result = 0xFF;
 				}
 				break;
-		}			
+		}
 	}
 }
 
@@ -815,7 +817,7 @@ bool PatternEditorControl::executeBinding(const PPKeyBindings<TPatternEditorKeyB
 
 	if (res)
 	{
-		(this->*handlerFunc)();		
+		(this->*handlerFunc)();
 		return true;
 	}
 	return false;
@@ -836,7 +838,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 			cursor.channel--;
 			cursor.inner = 7;
 		}
-		else 
+		else
 		{
 			// When selecting don't wrap around (not intuitive)
 			if (::getKeyModifier() & selectionKeyModifier)
@@ -887,7 +889,7 @@ void PatternEditorControl::eventKeyDownBinding_UP()
 	pp_int32 res = 0;
 
 	cursor.row--;
-	
+
 	// When selecting don't wrap around (not intuitive)
 	if (cursor.row < 0 && ((::getKeyModifier() & selectionKeyModifier) || startSelection))
 	{
@@ -904,7 +906,7 @@ void PatternEditorControl::eventKeyDownBinding_UP()
 		//cursor.row = wrapAround ? pattern->rows-1 : 0;
 		cursor.row = pattern->rows-1;
 	}
-	
+
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
@@ -916,7 +918,7 @@ void PatternEditorControl::eventKeyDownBinding_DOWN()
 	pp_int32 res = 0;
 
 	cursor.row++;
-	
+
 	if (cursor.row > pattern->rows-1 && ((::getKeyModifier() & selectionKeyModifier) || startSelection))
 	{
 		cursor.row = pattern->rows-1;
@@ -932,7 +934,7 @@ void PatternEditorControl::eventKeyDownBinding_DOWN()
 		//cursor.row = wrapAround ? 0 : pattern->rows-1;
 		cursor.row = 0;
 	}
-	
+
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
@@ -944,7 +946,7 @@ void PatternEditorControl::eventKeyDownBinding_PRIOR()
 	pp_int32 res = 0;
 
 	cursor.row-=16;
-	
+
 	// When selecting don't wrap around (not intuitive)
 	if (cursor.row < 0 && ((::getKeyModifier() & selectionKeyModifier) || startSelection))
 	{
@@ -960,7 +962,7 @@ void PatternEditorControl::eventKeyDownBinding_PRIOR()
 	{
 		cursor.row = /*wrapAround ? pattern->rows-1 : */0;
 	}
-	
+
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
@@ -972,7 +974,7 @@ void PatternEditorControl::eventKeyDownBinding_NEXT()
 	pp_int32 res = 0;
 
 	cursor.row+=16;
-	
+
 	if (cursor.row > pattern->rows-1 && ((::getKeyModifier() & selectionKeyModifier) || startSelection))
 	{
 		cursor.row = pattern->rows-1;
@@ -987,7 +989,7 @@ void PatternEditorControl::eventKeyDownBinding_NEXT()
 	{
 		cursor.row = /*wrapAround ? 0 : */pattern->rows-1;
 	}
-	
+
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
@@ -1283,7 +1285,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	// if the track inner position is not the note column, we will first 
+	// if the track inner position is not the note column, we will first
 	// set the position to the note before decrementing the track result
 	if (properties.tabToNote && cursor.inner > 0)
 	{
@@ -1298,7 +1300,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 			cursor.inner = 0;
 	}
 	else
-	{					
+	{
 		// When selecting don't wrap around (not intuitive)
 		if (::getKeyModifier() & selectionKeyModifier)
 		{
@@ -1325,7 +1327,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 			cursor.inner = 0;
 	}
 	else
-	{					
+	{
 		// When selecting don't wrap around (not intuitive)
 		if (::getKeyModifier() & selectionKeyModifier)
 		{
@@ -1360,7 +1362,7 @@ void PatternEditorControl::eventKeyDownBinding_InsertLine()
 void PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
-	
+
 	if (cursor.row)
 	{
 		cursor.row--;
@@ -1409,7 +1411,7 @@ void PatternEditorControl::eventKeyDownBinding_CutTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	markChannel(cursor.channel, false);
 
@@ -1420,7 +1422,7 @@ void PatternEditorControl::eventKeyDownBinding_CutTrack()
 	assureUpdate = true;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
-	
+
 	patternEditor->cut(PatternEditor::ClipBoardTypeTrack);
 
 	patternEditor->getSelection().start = ss;
@@ -1432,10 +1434,10 @@ void PatternEditorControl::eventKeyDownBinding_CopyTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	markChannel(cursor.channel, false);
-	
+
 	// if invoked by key combination, the view shouldn't be adjusted
 	// to ensure a visible cursor, just stay where you are
 	assureCursor = false;
@@ -1448,14 +1450,14 @@ void PatternEditorControl::eventKeyDownBinding_CopyTrack()
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;	
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_PasteTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	// Start at row 0
 	cursor.row = 0;
@@ -1465,14 +1467,14 @@ void PatternEditorControl::eventKeyDownBinding_PasteTrack()
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_TransparentPasteTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	// Start at row 0
 	cursor.row = 0;
@@ -1481,17 +1483,17 @@ void PatternEditorControl::eventKeyDownBinding_TransparentPasteTrack()
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_CutPattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	selectAll();
-	
+
 	// if invoked by key combination, the view shouldn't be adjusted
 	// to ensure a visible cursor, just stay where you are
 	assureCursor = false;
@@ -1499,22 +1501,22 @@ void PatternEditorControl::eventKeyDownBinding_CutPattern()
 	assureUpdate = true;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
-	
+
 	patternEditor->cut(PatternEditor::ClipBoardTypePattern);
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_CopyPattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	selectAll();
-	
+
 	// if invoked by key combination, the view shouldn't be adjusted
 	// to ensure a visible cursor, just stay where you are
 	assureCursor = false;
@@ -1527,43 +1529,43 @@ void PatternEditorControl::eventKeyDownBinding_CopyPattern()
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_PastePattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	// start at row 0/channel 0
 	cursor.row = 0;
 	cursor.channel = 0;
 	cursor.inner = 0;
-	
+
 	patternEditor->paste(PatternEditor::ClipBoardTypePattern, false);
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyDownBinding_TransparentPastePattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;	
+	PatternEditorTools::Position ss = patternEditor->getSelection().start, se = patternEditor->getSelection().end, cc = cursor;
 
 	// start at row 0/channel 0
 	cursor.row = 0;
 	cursor.channel = 0;
 	cursor.inner = 0;
-	
+
 	patternEditor->paste(PatternEditor::ClipBoardTypePattern, true);
 
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
-	cursor = cc;		
+	cursor = cc;
 }
 
 void PatternEditorControl::eventKeyCharBinding_Undo()
@@ -1585,7 +1587,7 @@ void PatternEditorControl::eventKeyCharBinding_Cut()
 	assureUpdate = true;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
-	
+
 	patternEditor->cut(PatternEditor::ClipBoardTypeSelection);
 }
 
@@ -1644,20 +1646,19 @@ void PatternEditorControl::eventKeyCharBinding_SelectAll()
 void PatternEditorControl::eventKeyCharBinding_MuteChannel()
 {
 	muteChannels[patternEditor->getCursor().channel] = !muteChannels[patternEditor->getCursor().channel];
-	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels));						
-	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);	
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels));
+	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
 void PatternEditorControl::eventKeyCharBinding_InvertMuting()
 {
 	for (pp_int32 i = 0; i < patternEditor->getNumChannels(); i++)
 		muteChannels[i] = !muteChannels[i];
-	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels));						
-	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);	
+	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels));
+	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
 void PatternEditorControl::eventKeyCharBinding_Interpolate()
 {
 	patternEditor->interpolateValuesInSelection();
 }
-

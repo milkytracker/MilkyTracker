@@ -91,13 +91,13 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 			// exclusive from horizontal scrolling.
 			if (params->deltaY)
 			{
-				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown, -params->deltaY) : PPEvent(eBarScrollUp, params->deltaY);
 				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
 			}
 			
 			else if (params->deltaX)
 			{
-				PPEvent e = params->deltaX > 0 ? PPEvent(eBarScrollDown) : PPEvent(eBarScrollUp);
+				PPEvent e = params->deltaX < 0 ? PPEvent(eBarScrollDown, -params->deltaX) : PPEvent(eBarScrollUp, params->deltaX);
 				handleEvent(reinterpret_cast<PPObject*>(hBottomScrollbar), &e);
 			}
 			
@@ -839,18 +839,20 @@ leave:
 }
 
 pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
-{	
+{
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	// Vertical scrollbar, scroll down
 	if ((sender == reinterpret_cast<PPObject*>(vLeftScrollbar) || 
 		sender == reinterpret_cast<PPObject*>(vRightScrollbar)) &&
 		event->getID() == eBarScrollDown)
 	{
+		pp_int32 scrollAmount = event->getMetaData();
 		if (properties.scrollMode != ScrollModeStayInCenter)
 		{
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
-
-			if (startIndex + visibleItems < pattern->rows)
-				startIndex++;
+			startIndex += scrollAmount;
+			if (startIndex + visibleItems > pattern->rows)
+				startIndex = pattern->rows - visibleItems;
 
 			float v = (float)(pattern->rows - visibleItems);
 
@@ -859,7 +861,9 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		}
 		else
 		{
-			scrollCursorDown();
+			cursor.row += scrollAmount;
+			if (cursor.row >= pattern->rows)
+				cursor.row = pattern->rows - 1;
 			assureCursorVisible(true, false);
 		}
 	}
@@ -868,10 +872,12 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(vRightScrollbar)) &&
 			 event->getID() == eBarScrollUp)
 	{
+		pp_int32 scrollAmount = event->getMetaData();
 		if (properties.scrollMode != ScrollModeStayInCenter)
 		{
-			if (startIndex)
-				startIndex--;
+			startIndex -= scrollAmount;
+			if (startIndex < 0)
+				startIndex = 0;
 		
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 
@@ -882,7 +888,9 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		}
 		else
 		{
-			scrollCursorUp();
+			cursor.row -= scrollAmount;
+			if (cursor.row < 0)
+				cursor.row = 0;
 			assureCursorVisible(true, false);
 		}
 	}

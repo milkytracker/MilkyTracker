@@ -491,18 +491,26 @@ static BOOL drawFocusRing;
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+	static float xMouseFract = 0.0;
+	static float yMouseFract = 0.0;
 	curPoint = [self translateMouseCoordinates:theEvent];
-	
+
 #if DEBUG
 	NSLog(@"Scroll wheel event: Delta x %.2f, y %.2f @ (%d,%d)", theEvent.deltaX, theEvent.deltaY, curPoint.x, curPoint.y);
 #endif
-	
+
+	CGFloat dX = theEvent.deltaX;
+	CGFloat dY = theEvent.deltaY;
+	if(xMouseFract * dX < 0.0) xMouseFract = 0;
+	if(yMouseFract * dY < 0.0) yMouseFract = 0;
 	TMouseWheelEventParams mouseWheelParams;
 	mouseWheelParams.pos.x = curPoint.x;
 	mouseWheelParams.pos.y = curPoint.y;
-	mouseWheelParams.deltaX = -theEvent.deltaX;
-	mouseWheelParams.deltaY = theEvent.deltaY;
-	
+	mouseWheelParams.deltaX = xMouseFract + dX;
+	mouseWheelParams.deltaY = yMouseFract + dY;
+	xMouseFract += float(dX) - mouseWheelParams.deltaX;
+	yMouseFract += float(dY) - mouseWheelParams.deltaY;
+
 	PPEvent myEvent(eMouseWheelMoved, &mouseWheelParams, sizeof(TMouseWheelEventParams));
 	RaiseEventSynchronized(&myEvent);
 }

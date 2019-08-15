@@ -137,12 +137,13 @@ pp_uint32 PlayerMaster::getPreferredBufferSize()
 	return audioDriverManager.getPreferredAudioDriverBufferSize();
 }
 
-pp_int32 PlayerMaster::roundToNearestPowerOfTwo(pp_int32 v)
+pp_uint32 PlayerMaster::roundToNearestPowerOfTwo(pp_uint32 v)
 {
 	for (mp_uint32 i = 0; i < 32; i++)
 	{
-		if ((unsigned)(1 << i) >= (unsigned)v)
-			return (1 << i);
+		pp_uint32 shifted = 1u << i;
+		if (shifted >= v)
+			return shifted;
 	}
 	
 	return v;

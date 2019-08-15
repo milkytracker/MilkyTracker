@@ -99,7 +99,7 @@ for name, extension in FILETYPES.iteritems():
 	docerator.makedocicon(	outname='%s.icns' % name,
 							appicon=APPICON_PATH,
 							text=extension,
-							sizes=[512, 256, 128, 32, 16],
+							sizes=[512, 256, 128],
 							makeicns=MAKEICNS_PATH,
 							background=ICNS_FILE,
 							rects=RECTS

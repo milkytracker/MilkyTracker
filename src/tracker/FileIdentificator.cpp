@@ -106,9 +106,9 @@ bool FileIdentificator::isInstrument()
 
 bool FileIdentificator::isSample()
 {
-	XModule* module = NULL;
+	XModule module;
 
-	SampleLoaderGeneric sampleLoader(fileName, *module);
+	SampleLoaderGeneric sampleLoader(fileName, module);
 		
 	return sampleLoader.identifySample();
 }
