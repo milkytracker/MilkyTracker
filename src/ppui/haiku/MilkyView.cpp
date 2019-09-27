@@ -424,7 +424,8 @@ MilkyView::MouseWheelChanged(float deltaX, float deltaY)
 	TMouseWheelEventParams wheelEventParams;
 	wheelEventParams.pos.x = (pp_int32)point.x;
 	wheelEventParams.pos.y = (pp_int32)point.y;
-	wheelEventParams.delta = (pp_int32)-deltaY;
+	wheelEventParams.deltaX = (pp_int32)deltaX;
+	wheelEventParams.deltaY = -(pp_int32)deltaY;
 
 	MilkyWindow* milkyWindow = (MilkyWindow*)Window();
 
