@@ -231,8 +231,8 @@ public:
 		SDL_UserEvent ev;
 		ev.type = SDL_USEREVENT;
 		ev.code = SDLUserEventMidiKeyDown;
-		ev.data1 = (void*)note;
-		ev.data2 = (void*)volume;
+		ev.data1 = reinterpret_cast<void*>(note);
+		ev.data2 = reinterpret_cast<void*>(volume);
 		SDL_PushEvent((SDL_Event*)&ev);
 
 		//globalMutex->lock();
@@ -245,7 +245,7 @@ public:
 		SDL_UserEvent ev;
 		ev.type = SDL_USEREVENT;
 		ev.code = SDLUserEventMidiKeyUp;
-		ev.data1 = (void*)note;
+		ev.data1 = reinterpret_cast<void*>(note);
 		SDL_PushEvent((SDL_Event*)&ev);
 
 		//globalMutex->lock();
