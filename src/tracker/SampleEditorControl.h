@@ -133,8 +133,8 @@ public:
 	void setBackgroundColor(const PPColor& color) { backgroundColor = color; }
 	void setBorderColor(const PPColor& color) { borderColor = &color; }
 
-	static void formatMillis(char* buffer, pp_uint32 millis);
-	static void formatMillisFraction(char* buffer, pp_uint32 millis, pp_uint32 totalMillis);
+	static void formatMillis(char* buffer, size_t size, pp_uint32 millis);
+	static void formatMillisFraction(char* buffer, size_t size, pp_uint32 millis, pp_uint32 totalMillis);
 
 	// from PPControl
 	virtual void paint(PPGraphicsAbstract* graphics);	

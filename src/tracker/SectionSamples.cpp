@@ -1315,9 +1315,10 @@ void SectionSamples::setOffsetText(pp_uint32 ID, pp_uint32 offset)
 		{
 			pp_uint32 millis = sampleEditorControl->getSampleEditor()->convertSmpPosToMillis(offset, currentSamplePlayNote - ModuleEditor::MAX_NOTE/2);
 			char buffer[32], buffer2[32];
+
 			memset(buffer2, 32, sizeof(buffer2));
 			// we only have 7 digits, one period character is contained too
-			SampleEditorControl::formatMillis(buffer, millis % 10000000);
+			SampleEditorControl::formatMillis(buffer, sizeof(buffer), millis % 10000000);
 			// string too large
 			if (strlen(buffer) > 8)
 			{
