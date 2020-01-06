@@ -31,8 +31,6 @@ if(FORCESDL)
     unset(APPLE)
     unset(WIN32)
     add_definitions(-D__FORCE_SDL_AUDIO__)
-    # Frameworks not supported by findSDL2.cmake
-    set(CMAKE_FIND_FRAMEWORK NEVER)
 endif()
 
 # Lowercase project name for binaries and packaging
@@ -172,7 +170,7 @@ else()
     # https://bugzilla.libsdl.org/show_bug.cgi?id=3295
     cmake_policy(SET CMP0004 OLD)
 
-    find_package(SDL2 2 REQUIRED)
+    find_package(SDL2 REQUIRED)
 endif()
 
 # Prefer static linkage under OS X for libraries located with find_package()

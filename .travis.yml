@@ -4,7 +4,7 @@ git:
 matrix:
   include:
   - os: linux
-    dist: trusty
+    dist: bionic
     sudo: required
     addons:
       apt:
