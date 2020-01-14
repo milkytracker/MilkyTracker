@@ -64,6 +64,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <limits.h>
 
 #include <SDL.h>
 #include "SDL_KeyTranslation.h"
@@ -880,6 +881,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Event event;
 	char *loadFile = 0;
+	char loadFileAbsPath[PATH_MAX];
 
 	pp_int32 defaultBPP = -1;
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
@@ -971,7 +973,7 @@ unrecognizedCommandLineSwitch:
 	{
 		PPSystemString newCwd = path.getCurrent();
 		path.change(oldCwd);
-		SendFile(loadFile);
+		SendFile(realpath(loadFile, loadFileAbsPath));
 		path.change(newCwd);
 		pp_uint16 chr[3] = {VK_RETURN, 0, 0};
 		PPEvent event(eKeyDown, &chr, sizeof(chr));
