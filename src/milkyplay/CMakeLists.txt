@@ -19,8 +19,8 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(
-    SOURCES
+add_library(milkyplay STATIC
+    # Sources
     AudioDriverBase.cpp
     AudioDriverManager.cpp
     AudioDriver_NULL.cpp
@@ -69,10 +69,8 @@ set(
     XIInstrument.cpp
     XMFile.cpp
     XModule.cpp
-)
 
-set(
-    HEADERS
+    # Headers
     AudioDriverBase.h
     AudioDriverManager.h
     AudioDriver_COMPENSATE.h
@@ -110,121 +108,156 @@ set(
     computed-blep.h
 )
 
-# Add platform-specific sources, include paths and definitions
+target_include_directories(milkyplay
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        # Include the CMake-generated version header from the build directory
+        # (version string required when saving modules)
+        ${PROJECT_BINARY_DIR}/src/tracker
+)
+
+# Add platform-specific sources, include paths, definitions and link libraries
 if(APPLE)
-    list(APPEND SOURCES drivers/osx/AudioDriver_COREAUDIO.mm)
-    list(APPEND HEADERS drivers/osx/AudioDriver_COREAUDIO.h)
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/osx
+    target_sources(milkyplay
+        PRIVATE
+            # Sources
+            drivers/osx/AudioDriver_COREAUDIO.mm
+
+            # Headers
+            drivers/osx/AudioDriver_COREAUDIO.h
+    )
+    target_include_directories(milkyplay
+        PRIVATE
+            drivers/osx
+    )
+    target_link_libraries(milkyplay
+        PRIVATE
+            ${COCOA_LIBRARY}
+            ${CORE_AUDIO_LIBRARY}
+            ${CORE_FOUNDATION_LIBRARY}
     )
     message(STATUS "Enabled Core Audio support")
 elseif(WIN32)
     # Basic WaveOut support
-    list(APPEND SOURCES drivers/windows/AudioDriver_MMSYSTEM.cpp)
-    list(APPEND HEADERS drivers/windows/AudioDriver_MMSYSTEM.h)
-    include_directories(${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/windows)
+    target_sources(milkyplay
+        PRIVATE
+            # Sources
+            drivers/windows/AudioDriver_MMSYSTEM.cpp
+
+            # Headers
+            drivers/windows/AudioDriver_MMSYSTEM.h
+    )
+
+    target_include_directories(milkyplay
+        PRIVATE
+            drivers/windows
+    )
+
     message(STATUS "Enabled WaveOut support")
 
     # Build sources from RtAudio Git submodule if present
     set(RTAUDIO_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/rtaudio)
-    if(EXISTS ${RTAUDIO_SUBMODULE_DIR}/RtAudio.cpp)
+    if(EXISTS ${RTAUDIO_SUBMODULE_DIR}/CMakeLists.txt)
         message(STATUS "Enabled RtAudio support")
-        list(
-            APPEND SOURCES
-            ${RTAUDIO_SUBMODULE_DIR}/include/asio.cpp
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrivers.cpp
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiolist.cpp
-            ${RTAUDIO_SUBMODULE_DIR}/include/iasiothiscallresolver.cpp
-            ${RTAUDIO_SUBMODULE_DIR}/RtAudio.cpp
-            drivers/generic/AudioDriver_RTAUDIO.cpp
-            drivers/generic/RtAudio4Impl.cpp
+
+        set(RTAUDIO_BUILD_SHARED_LIBS OFF)
+        set(RTAUDIO_BUILD_TESTING OFF)
+        add_subdirectory(${RTAUDIO_SUBMODULE_DIR} ${CMAKE_BINARY_DIR}/src/submodules/rtaudio)
+
+        target_sources(milkyplay
+            PRIVATE
+                # Sources
+                drivers/generic/AudioDriver_RTAUDIO.cpp
+                drivers/generic/RtAudio4Impl.cpp
+
+                # Headers
+                drivers/generic/AudioDriver_RTAUDIO.h
         )
-        list(
-            APPEND HEADERS
-            ${RTAUDIO_SUBMODULE_DIR}/include/asio.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrivers.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiodrvr.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiolist.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/asiosys.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/dsound.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/FunctionDiscoveryKeys_devpkey.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/ginclude.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/iasiodrv.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/iasiothiscallresolver.h
-            ${RTAUDIO_SUBMODULE_DIR}/include/soundcard.h
-            ${RTAUDIO_SUBMODULE_DIR}/RtAudio.h
-            drivers/generic/AudioDriver_RTAUDIO.h
+
+        target_include_directories(milkyplay
+            PRIVATE
+                drivers/generic
+                ${RTAUDIO_SUBMODULE_DIR}
         )
-        include_directories(
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/generic
-            ${RTAUDIO_SUBMODULE_DIR}
-            ${RTAUDIO_SUBMODULE_DIR}/include
-        )
-        add_definitions(
-            -D__WINDOWS_DS__
-            -D__WINDOWS_ASIO__
-            -D__WINDOWS_WASAPI__
+
+        target_link_libraries(milkyplay PRIVATE rtaudio)
+
+        # Place targets into IDE subfolder
+        set_target_properties(
+            rtaudio
+            uninstall
+            Continuous
+            Experimental
+            Nightly
+            NightlyMemoryCheck
+            PROPERTIES FOLDER "Externals/RtAudio"
         )
     else()
-        add_definitions(-D__SKIPRTAUDIO__)
+        target_compile_definitions(milkyplay PRIVATE -D__SKIPRTAUDIO__)
         message("RtAudio support disabled (RtAudio unavailable)")
     endif()
+    target_link_libraries(milkyplay PRIVATE winmm dsound)
 else()
-    add_definitions(-DDRIVER_UNIX)
+    target_compile_definitions(milkyplay PRIVATE -DDRIVER_UNIX)
 
     if(ALSA_FOUND)
-        list(APPEND SOURCES drivers/alsa/AudioDriver_ALSA.cpp)
-        list(APPEND HEADERS drivers/alsa/AudioDriver_ALSA.h)
-        add_definitions(-DHAVE_LIBASOUND)
-        include_directories(
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/alsa
-            ${ALSA_INCLUDE_DIRS}
+        target_sources(milkyplay PRIVATE
+            # Sources
+            drivers/alsa/AudioDriver_ALSA.cpp
+
+            # Headers
+            drivers/alsa/AudioDriver_ALSA.h
         )
+        target_compile_definitions(milkyplay PUBLIC -DHAVE_LIBASOUND)
+        target_include_directories(milkyplay
+            PUBLIC
+                ${ALSA_INCLUDE_DIRS}
+            PRIVATE
+                drivers/alsa
+        )
+        target_link_libraries(milkyplay PUBLIC ${ALSA_LIBRARIES})
         message(STATUS "Enabled ALSA support")
     endif()
 
     if(JACK_FOUND)
-        list(APPEND SOURCES drivers/jack/AudioDriver_JACK.cpp)
-        list(APPEND HEADERS drivers/jack/AudioDriver_JACK.h)
-        add_definitions(-DHAVE_JACK_JACK_H)
-        include_directories(
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/jack
+        target_sources(milkyplay PRIVATE
+            # Sources
+            drivers/jack/AudioDriver_JACK.cpp
+
+            # Headers
+            drivers/jack/AudioDriver_JACK.h
+        )
+        target_compile_definitions(milkyplay PRIVATE -DHAVE_JACK_JACK_H)
+        target_include_directories(milkyplay PRIVATE
+            drivers/jack
             ${JACK_INCLUDE_DIRS}
         )
+        target_link_libraries(milkyplay PUBLIC ${CMAKE_DL_LIBS})
         message(STATUS "Enabled JACK support")
     endif()
 
     if(SDL2_FOUND)
-        list(APPEND SOURCES drivers/sdl/AudioDriver_SDL.cpp)
-        list(APPEND HEADERS drivers/sdl/AudioDriver_SDL.h)
-        include_directories(
-            ${PROJECT_SOURCE_DIR}/src/milkyplay/drivers/sdl
+        target_sources(milkyplay PRIVATE
+            # Sources
+            drivers/sdl/AudioDriver_SDL.cpp
+
+            # Headers
+            drivers/sdl/AudioDriver_SDL.h
+        )
+        target_include_directories(milkyplay PRIVATE
+            drivers/sdl
             ${SDL2_INCLUDE_DIRS}
         )
+
+        if(TARGET SDL2::SDL2)
+            # If the distro built SDL2 with CMake, we can just link to an exported target
+            target_link_libraries(milkyplay PUBLIC SDL2::SDL2)
+        else()
+            # Otherwise we need to do things the old-fashioned way for compatibility
+            target_include_directories(milkyplay PUBLIC ${SDL2_INCLUDE_DIRS})
+            target_link_libraries(milkyplay PUBLIC ${SDL2_LIBRARIES})
+        endif()
         message(STATUS "Enabled SDL2 support")
     endif()
-endif()
-
-add_definitions(-DMILKYTRACKER)
-
-include_directories(
-    # Include the CMake-generated version header from the build directory
-    # (version string required when saving modules)
-    ${PROJECT_BINARY_DIR}/src/tracker
-    ${PROJECT_SOURCE_DIR}/src/milkyplay
-)
-
-add_library(milkyplay ${SOURCES} ${HEADERS})
-
-if(APPLE)
-    target_link_libraries(
-        milkyplay
-        ${COCOA_LIBRARY}
-        ${CORE_AUDIO_LIBRARY}
-        ${CORE_FOUNDATION_LIBRARY}
-    )
-elseif(WIN32)
-    target_link_libraries(milkyplay winmm dsound)
-else()
-    target_link_libraries(milkyplay ${CMAKE_DL_LIBS} ${ALSA_LIBRARIES})
 endif()

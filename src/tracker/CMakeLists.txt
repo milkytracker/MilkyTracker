@@ -19,8 +19,8 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(
-    SOURCES
+add_executable(tracker
+    # Sources
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
@@ -104,10 +104,8 @@ set(
     Undo.cpp
     VRand.cpp
     Zapper.cpp
-)
 
-set(
-    HEADERS
+    # Headers
     ${PROJECT_BINARY_DIR}/src/tracker/version.h
     AnimatedFXControl.h
     ColorExportImport.h
@@ -189,27 +187,42 @@ set(
     Zapper.h
 )
 
-include_directories(
-    # Include the CMake-generated version header from the build directory
-    ${PROJECT_BINARY_DIR}/src/tracker
-    ${PROJECT_SOURCE_DIR}/src/compression
-    ${PROJECT_SOURCE_DIR}/src/fx
-    ${PROJECT_SOURCE_DIR}/src/milkyplay
-    ${PROJECT_SOURCE_DIR}/src/ppui
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-    ${PROJECT_SOURCE_DIR}/src/ppui/sdl
-    ${PROJECT_SOURCE_DIR}/src/tracker
+# Set target name for the executable
+if(APPLE OR WIN32)
+    # OS X and Windows get a mixed-case binary name
+    set_target_properties(tracker PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+else()
+    # Linux/other UNIX get a lower-case binary name
+    set_target_properties(tracker PROPERTIES OUTPUT_NAME ${PROJECT_NAME_LOWER})
+endif()
+
+target_include_directories(tracker
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        # Include the CMake-generated version header from the build directory
+        ${PROJECT_BINARY_DIR}/src/tracker
 )
 
-# Add the compression library.
-# The compression library is special in that each decompressor has a constructor
-# which statically self-registers the decompressor into a global decompressors
-# list. Because they are not each individually referenced in code, the linker
-# will discard them if they are archived into a static library. We could work
-# around it with compiler-specific flags such as GCC's --whole-archive or
-# Clang's --force_load, but instead we use this special CMake feature which lets
-# us easily pull in the individual objects without having to manually list them.
-list(APPEND SOURCES $<TARGET_OBJECTS:compression>)
+target_link_libraries(tracker
+    fx
+    milkyplay
+    osinterface
+    ppui
+)
+
+if(CMAKE_VERSION GREATER_EQUAL 3.12)
+    # CMake >=3.12 can just "link" to object libraries and inherit any objects
+    # and include paths
+    target_link_libraries(tracker compression)
+else()
+    # Do things the hard way for older CMake
+    target_sources(tracker PRIVATE
+        $<TARGET_OBJECTS:compression>
+    )
+    target_include_directories(tracker PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../compression
+    )
+endif()
 
 # Add platform-specific sources and include paths
 if(APPLE)
@@ -235,76 +248,49 @@ if(APPLE)
         ${ICONS} PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
-    list(
-        APPEND SOURCES
+    target_sources(tracker PRIVATE
+        # Sources
         ${ICONS}
         cocoa/AppDelegate.mm
         cocoa/MTKeyTranslator.mm
         cocoa/MTTrackerView.mm
         cocoa/main.mm
         cocoa/resources/Application.xib
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         cocoa/AppDelegate.h
         cocoa/MTKeyTranslator.h
         cocoa/MTTrackerView.h
     )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/midi/osx
-        ${PROJECT_SOURCE_DIR}/src/ppui/cocoa
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${PROJECT_SOURCE_DIR}/src/tracker/cocoa
+
+    target_include_directories(tracker PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cocoa
     )
 elseif(WIN32)
-    list(
-        APPEND SOURCES
+    target_sources(tracker PRIVATE
+        # Sources
         win32/PreferencesDialog.cpp
         win32/ThreadTimer.cpp
         win32/Win32_main.cpp
         win32/Win32_resources.rc
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         win32/PreferencesDialog.h
         win32/ThreadTimer.h
         win32/Win32_resource.h
     )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/midi/win32
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
-        ${PROJECT_SOURCE_DIR}/src/ppui/win32
-    )
 else()
-    list(
-        APPEND SOURCES
+    target_sources(tracker PRIVATE
+        # Sources
         sdl/SDL_KeyTranslation.cpp
         sdl/SDL_Main.cpp
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         sdl/SDL_KeyTranslation.h
     )
-    include_directories(
-        ${SDL2_INCLUDE_DIRS}
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-    )
-endif()
-
-add_definitions(-DMILKYTRACKER)
-
-# Set target names for the executables
-if(APPLE OR WIN32)
-    # OS X and Windows get a mixed-case binary name
-    set(TARGET_NAME ${PROJECT_NAME})
-else()
-    # Linux/other UNIX get a lower-case binary name
-    set(TARGET_NAME ${PROJECT_NAME_LOWER})
 endif()
 
 if(APPLE)
-    add_executable(${TARGET_NAME} MACOSX_BUNDLE ${SOURCES} ${HEADERS})
-
     # Xcode can deal with Interface Builder xibs automatically - if we are not
     # generating for Xcode, then we must manually compile and install any xibs
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
@@ -321,16 +307,16 @@ if(APPLE)
         )
 
         # Destination for compiled xib
-        set(RESOURCES_DIR $<TARGET_FILE_DIR:${TARGET_NAME}>/../Resources)
+        set(RESOURCES_DIR $<TARGET_FILE_DIR:tracker>/../Resources)
 
         # Ensure the destination directory of the compiled xib exists
         add_custom_command(
-            TARGET ${TARGET_NAME} PRE_BUILD COMMAND mkdir -p ${RESOURCES_DIR}
+            TARGET tracker PRE_BUILD COMMAND mkdir -p ${RESOURCES_DIR}
         )
 
         # Compile the xib file
         add_custom_command(
-            TARGET ${TARGET_NAME} POST_BUILD COMMAND ${IBTOOL} --errors
+            TARGET tracker POST_BUILD COMMAND ${IBTOOL} --errors
             --warnings --notices --output-format human-readable-text
             --minimum-deployment-target 10.7 --compile
             ${RESOURCES_DIR}/${MACOSX_BUNDLE_NSMAIN_NIB_FILE}.nib ${XIB_FILE}
@@ -338,62 +324,47 @@ if(APPLE)
         )
     endif()
 
+    # Build as an Application Bundle
+    set_target_properties(tracker PROPERTIES MACOSX_BUNDLE TRUE)
+
     # Pass in the Info.plist template, whose variables are defined in the
     # top-level CMakeLists.txt
-    set_target_properties(
-        ${TARGET_NAME}
-        PROPERTIES
+    set_target_properties(tracker PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST
-        ${PROJECT_SOURCE_DIR}/src/tracker/cocoa/resources/Info.plist.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/cocoa/resources/Info.plist.in
     )
 
     # Enable ARC (automatic reference counting) for OS X build
-    set_property(
-        TARGET ${TARGET_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
-    )
+    target_compile_options(tracker PRIVATE -fobjc-arc)
 
-    target_link_libraries(
-        ${TARGET_NAME}
+    target_link_libraries(tracker
         midi
         ${CORE_VIDEO_LIBRARY}
         ${OPENGL_LIBRARY}
     )
 elseif(WIN32)
-    add_executable(${TARGET_NAME} WIN32 ${SOURCES} ${HEADERS})
+    set_target_properties(tracker PROPERTIES WIN32_EXECUTABLE TRUE)
 
-    target_link_libraries(${TARGET_NAME} midi)
+    target_link_libraries(tracker midi)
 else()
-    add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
-
-    target_link_libraries(${TARGET_NAME} ${SDL2_LIBRARIES})
-
     if(ALSA_FOUND AND RTMIDI_FOUND)
-        add_definitions(-DHAVE_LIBASOUND)
-        target_link_libraries(${TARGET_NAME} midi ${RTMIDI_LIBRARIES})
+        target_link_libraries(tracker midi)
     endif()
 endif()
 
 if(ZLIB_FOUND)
-    target_link_libraries(${TARGET_NAME} ${ZLIB_LIBRARIES})
+    target_link_libraries(tracker ${ZLIB_LIBRARIES})
 endif()
 
 if(UNIX)
     if(ZZIPLIB_FOUND)
-        target_link_libraries(${TARGET_NAME} ${ZZIPLIB_LIBRARIES})
+        target_link_libraries(tracker ${ZZIPLIB_LIBRARIES})
     endif()
 
     if(LHASA_FOUND)
-        target_link_libraries(${TARGET_NAME} ${LHASA_LIBRARIES})
+        target_link_libraries(tracker ${LHASA_LIBRARIES})
     endif()
 endif()
-
-target_link_libraries(
-    ${TARGET_NAME}
-    fx
-    milkyplay
-    osinterface
-    ppui
-)
 
 # OS X and Windows install to the root of the prefix, the others install to bin
 if(APPLE OR WIN32)
@@ -402,4 +373,4 @@ else()
     set(INSTALL_DEST ${CMAKE_INSTALL_BINDIR})
 endif()
 
-install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_DEST})
+install(TARGETS tracker DESTINATION ${INSTALL_DEST})

@@ -19,7 +19,8 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(SOURCES
+add_library(fx STATIC
+    # Sources
     Camera.cpp
     Filter.cpp
     Fire.cpp
@@ -38,9 +39,8 @@ set(SOURCES
     Twister.cpp
     TwisterFX.cpp
     fpmath.cpp
-)
 
-set(HEADERS
+    # Headers
     Camera.h
     FXAbstract.h
     FXInterface.h
@@ -64,9 +64,10 @@ set(HEADERS
     fpmath.h
 )
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-    ${PROJECT_SOURCE_DIR}/src/ppui
+target_include_directories(fx
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-add_library(fx ${SOURCES} ${HEADERS})
