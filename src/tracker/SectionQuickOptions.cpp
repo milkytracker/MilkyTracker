@@ -303,21 +303,21 @@ void SectionQuickOptions::updateControlStates()
 {
 	switch (tracker.playerController->getPlayMode())
 	{
-		case PlayerBase::PlayMode_ProTracker2:
+		case PlayerController::PlayMode_ProTracker2:
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_BUTTON_SETDEFAULTPANNING)->enable(true);
 			break;
 			
-		case PlayerBase::PlayMode_ProTracker3:
+		case PlayerController::PlayMode_ProTracker3:
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(true);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_BUTTON_SETDEFAULTPANNING)->enable(true);
 			break;
 			
-		case PlayerBase::PlayMode_FastTracker2:
+		case PlayerController::PlayMode_FastTracker2:
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_PTPERIODRANGE)->enable(false);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_CHECKBOX_PTPERIODRANGE)->enable(false);
 			static_cast<PPContainer*>(sectionContainer)->getControlByID(QUICKOPTIONS_STATICTEXT_SETDEFAULTPANNING)->enable(false);
@@ -347,15 +347,15 @@ void SectionQuickOptions::update(bool repaint/* = true*/)
 	
 	switch (tracker.playerController->getPlayMode())
 	{
-		case PlayerBase::PlayMode_ProTracker2:
+		case PlayerController::PlayMode_ProTracker2:
 			radioGroup->setChoice(1);
 			break;
 
-		case PlayerBase::PlayMode_ProTracker3:
+		case PlayerController::PlayMode_ProTracker3:
 			radioGroup->setChoice(2);
 			break;
 
-		case PlayerBase::PlayMode_FastTracker2:
+		case PlayerController::PlayMode_FastTracker2:
 			radioGroup->setChoice(0);
 			break;
 			

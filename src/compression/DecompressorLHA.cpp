@@ -92,8 +92,8 @@ namespace
 		LHAInputStream* input_stream = NULL;
 		LHAReader* reader = NULL;
 
-		LHAReaderWrapper(const LHAReaderWrapper&) {}
-		LHAReaderWrapper& operator=(const LHAReaderWrapper&) {}
+		LHAReaderWrapper(const LHAReaderWrapper&);
+		LHAReaderWrapper& operator=(const LHAReaderWrapper&);
 	};
 }
 
