@@ -54,7 +54,7 @@ namespace
 	class LHAReaderWrapper
 	{
 	public:
-		explicit LHAReaderWrapper(XMFile& file)
+		explicit LHAReaderWrapper(XMFile& file) : input_stream(NULL), reader(NULL)
 		{
 			// Open input stream
 			input_stream = lha_input_stream_new(&lha_callbacks, &file);
@@ -89,8 +89,8 @@ namespace
 		}
 
 	private:
-		LHAInputStream* input_stream = NULL;
-		LHAReader* reader = NULL;
+		LHAInputStream* input_stream;
+		LHAReader* reader;
 
 		LHAReaderWrapper(const LHAReaderWrapper&);
 		LHAReaderWrapper& operator=(const LHAReaderWrapper&);
