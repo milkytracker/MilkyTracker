@@ -108,6 +108,7 @@ public:
 SectionTranspose::SectionTranspose(Tracker& theTracker) :
 	SectionUpperLeft(theTracker, NULL, new DialogResponderTranspose(*this))
 {
+	currentInstrument = 0;
 	currentInstrumentRangeStart = 0;
 	currentInstrumentRangeEnd = 0;
 	currentTransposeAmount = 1;
