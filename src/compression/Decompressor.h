@@ -70,7 +70,7 @@ public:
 	
 	static void removeFile(const PPSystemString& fileName);
 	
-	virtual void setFilename(const PPSystemString& filename);
+	virtual void setFilename(const PPSystemString& fileName);
 
 	virtual DecompressorBase* clone() = 0;
 	
@@ -98,10 +98,10 @@ public:
 	
 	virtual DecompressorBase* clone();
 
-	virtual void setFilename(const PPSystemString& filename);
+	virtual void setFilename(const PPSystemString& fileName);
 	
 private:
-	void adjustFilenames(const PPSystemString& filename);	
+	void adjustFilenames(const PPSystemString& fileName);	
 
 	PPSimpleVector<DecompressorBase> decompressors;
 	
