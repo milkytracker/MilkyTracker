@@ -19,8 +19,13 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(
-    SOURCES
+# Define this library as an object library; the objects will not be archived.
+# The compression library is special in that each decompressor has a constructor
+# which statically self-registers the decompressor into a global decompressors
+# list. Because they are not each individually referenced in code, the linker
+# will discard them if they are archived into a static library.
+add_library(compression OBJECT
+    # Sources
     # AIFFWriter.m
     Decompressor.cpp
     DecompressorLZX.cpp
@@ -28,10 +33,8 @@ set(
     DecompressorUMX.cpp
     PP20.cpp
     unlzx.cpp
-)
 
-set(
-    HEADERS
+    # Headers
     # AIFFWriter.h
     Decompressor.h
     DecompressorLZX.h
@@ -39,6 +42,15 @@ set(
     DecompressorUMX.h
     PP20.h
     unlzx.h
+)
+
+target_include_directories(compression
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../milkyplay
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
 )
 
 # Under macOS and Windows, build sources from Git submodules if present
@@ -125,7 +137,7 @@ if(APPLE)
         # zziplib relies on xmlto to build its manpages, but if not found, its
         # build system fails at the docs target with an unhelpful error
         find_program(XMLTO xmlto)
-        if (NOT XMLTO)
+        if(NOT XMLTO)
             message(WARNING
                 "xmlto could not be found; building zziplib may fail"
             )
@@ -145,7 +157,8 @@ if(APPLE)
         ExternalProject_Add(zziplib
             PREFIX ${ZZIPLIB_DESTDIR}
             SOURCE_DIR ${ZZIPLIB_SUBMODULE_DIR}
-            CONFIGURE_COMMAND ./configure --prefix=${ZZIPLIB_DESTDIR}
+            CONFIGURE_COMMAND autoreconf -f -i
+            COMMAND ./configure --prefix=${ZZIPLIB_DESTDIR}
             --without-debug --disable-dependency-tracking
             CFLAGS=${EXTERNAL_C_FLAGS} CXXFLAGS=${EXTERNAL_CXX_FLAGS}
             CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
@@ -180,26 +193,27 @@ if(WIN32)
         )
 
         ExternalProject_Add(zlib
-            PREFIX ${ZLIB_DESTDIR}
             SOURCE_DIR ${ZLIB_SUBMODULE_DIR}
+            PREFIX ${ZLIB_DESTDIR}
             CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
             -DCMAKE_C_FLAGS_DEBUG=${CMAKE_C_FLAGS_DEBUG}
             -DCMAKE_C_FLAGS_RELEASE=${CMAKE_C_FLAGS_RELEASE}
             -DCMAKE_C_FLAGS_RELWITHDEBINFO=${CMAKE_C_FLAGS_RELWITHDEBINFO}
             -DCMAKE_C_FLAGS_MINSIZEREL=${CMAKE_C_FLAGS_MINSIZEREL}
         )
+
+        # Place target into IDE subfolder
+        set_target_properties(zlib PROPERTIES FOLDER "Externals/zlib")
     endif()
 
     if(EXISTS ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h)
         message(STATUS "Found LHASA as a submodule")
         set(LHASA_FOUND ON)
-        set(
-            LHASA_INCLUDE_DIRS
+        set(LHASA_INCLUDE_DIRS
             ${LHASA_SUBMODULE_DIR}/lib
             ${LHASA_SUBMODULE_DIR}/lib/public
         )
-        set(
-            LHASA_SOURCES
+        set(LHASA_SOURCES
             ${LHASA_SUBMODULE_DIR}/lib/crc16.c
             ${LHASA_SUBMODULE_DIR}/lib/ext_header.c
             ${LHASA_SUBMODULE_DIR}/lib/lh1_decoder.c
@@ -238,9 +252,9 @@ if(WIN32)
             ${LHASA_SUBMODULE_DIR}/lib/public/lha_reader.h
             ${LHASA_SUBMODULE_DIR}/lib/public/lhasa.h
         )
-        source_group(lhasa FILES ${LHASA_SOURCES} ${LHASA_HEADERS})
-        list(APPEND SOURCES ${LHASA_SOURCES})
-        list(APPEND HEADERS ${LHASA_HEADERS})
+        target_sources(compression PRIVATE ${LHASA_SOURCES} ${LHASA_HEADERS})
+        source_group("Source Files\\lhasa" FILES ${LHASA_SOURCES})
+        source_group("Header Files\\lhasa" FILES ${LHASA_HEADERS})
     endif()
 
     if(EXISTS ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h)
@@ -285,38 +299,58 @@ if(WIN32)
             ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip.h
             ${ZZIPLIB_SUBMODULE_DIR}/zzip/zzip32.h
         )
-        source_group(zziplib FILES ${ZZIPLIB_SOURCES} ${ZZIPLIB_HEADERS})
-        list(APPEND SOURCES ${ZZIPLIB_SOURCES})
-        list(APPEND HEADERS ${ZZIPLIB_HEADERS})
+        target_sources(compression PRIVATE ${ZZIPLIB_SOURCES} ${ZZIPLIB_HEADERS})
+        source_group("Source Files\\zziplib" FILES ${ZZIPLIB_SOURCES})
+        source_group("Header Files\\zziplib" FILES ${ZZIPLIB_HEADERS})
     endif()
 endif()
 
 # Optional decompressors
 if(LHASA_FOUND)
     message(STATUS "Enabled LHA decompressor")
-    list(APPEND SOURCES DecompressorLHA.cpp)
-    list(APPEND HEADERS DecompressorLHA.h)
-    include_directories(${LHASA_INCLUDE_DIRS})
+    target_sources(compression PRIVATE
+        # Sources
+        DecompressorLHA.cpp
+
+        # Headers
+        DecompressorLHA.h
+    )
+    target_include_directories(compression PRIVATE ${LHASA_INCLUDE_DIRS})
 else()
     message("LHA decompressor disabled (lhasa unavailable)")
 endif()
 
 if(ZLIB_FOUND)
     message(STATUS "Enabled GZIP decompressor")
-    list(APPEND SOURCES DecompressorGZIP.cpp)
-    list(APPEND HEADERS DecompressorGZIP.h)
-    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_sources(compression PRIVATE
+        # Sources
+        DecompressorGZIP.cpp
+
+        # Headers
+        DecompressorGZIP.h
+    )
+    target_include_directories(compression PRIVATE ${ZLIB_INCLUDE_DIRS})
 else()
     message("GZIP decompressor disabled (zlib unvailable)")
 endif()
 
 if(ZLIB_FOUND AND ZZIPLIB_FOUND)
     message(STATUS "Enabled ZIP decompressor")
-    list(APPEND SOURCES DecompressorZIP.cpp ZipExtractor.cpp zziplib/MyIO.cpp)
-    list(APPEND HEADERS DecompressorZIP.h ZipExtractor.h zziplib/MyIO.h)
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/compression/zziplib
-        ${ZZIPLIB_INCLUDE_DIRS}
+    target_sources(compression PRIVATE
+        # Sources
+        DecompressorZIP.cpp
+        ZipExtractor.cpp
+        zziplib/MyIO.cpp
+
+        # Headers
+        DecompressorZIP.h
+        ZipExtractor.h
+        zziplib/MyIO.h
+    )
+    target_include_directories(compression
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/zziplib
+            ${ZZIPLIB_INCLUDE_DIRS}
     )
 else()
     if(NOT ZLIB_FOUND AND NOT ZZIPLIB_FOUND)
@@ -327,9 +361,6 @@ else()
         message("ZIP decompressor disabled (zziplib unavailable)")
     endif()
 endif()
-
-# Define this library as an object library; the objects will not be archived
-add_library(compression OBJECT ${SOURCES} ${HEADERS})
 
 # Ensure dependencies are built before this library
 if(APPLE)
@@ -346,9 +377,3 @@ if(WIN32)
         add_dependencies(compression zlib)
     endif()
 endif()
-
-include_directories(
-    ${PROJECT_SOURCE_DIR}/src/milkyplay
-    ${PROJECT_SOURCE_DIR}/src/ppui
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-)

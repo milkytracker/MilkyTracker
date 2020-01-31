@@ -273,7 +273,7 @@ pp_uint32 SampleEditorControl::getRepeatLength() const
 	return sampleEditor->getRepeatLength(); 
 }
 
-void SampleEditorControl::formatMillis(char* buffer, pp_uint32 millis)
+void SampleEditorControl::formatMillis(char* buffer, size_t size, pp_uint32 millis)
 {
 	if (millis >= 1000)
 	{
@@ -283,16 +283,16 @@ void SampleEditorControl::formatMillis(char* buffer, pp_uint32 millis)
 		{
 			pp_uint32 mins = secs / 60;
 			secs %= 60;
-			sprintf(buffer, "%im%i.%is", mins, secs, millis);
+			snprintf(buffer, size, "%im%02i.%03is", mins, secs, millis);
 		}
 		else		
-			sprintf(buffer, "%i.%is", secs, millis);
+			snprintf(buffer, size, "%i.%03is", secs, millis);
 	}
 	else
-		sprintf(buffer, "%ims", millis);	
+		snprintf(buffer, size, "%ims", millis);
 }
 
-void SampleEditorControl::formatMillisFraction(char* buffer, pp_uint32 millis, pp_uint32 totalMillis)
+void SampleEditorControl::formatMillisFraction(char* buffer, size_t size, pp_uint32 millis, pp_uint32 totalMillis)
 {
 	if (totalMillis >= 1000)
 	{
@@ -306,13 +306,13 @@ void SampleEditorControl::formatMillisFraction(char* buffer, pp_uint32 millis, p
 			pp_uint32 totalMins = totalSecs / 60;
 			secs %= 60;
 			totalSecs %= 60;
-			sprintf(buffer, "%im%i.%is / %im%i.%is", mins, secs, millis, totalMins, totalSecs, totalMillis);
+			snprintf(buffer, size, "%im%02i.%03is / %im%02i.%03is", mins, secs, millis, totalMins, totalSecs, totalMillis);
 		}
 		else
-			sprintf(buffer, "%i.%is / %i.%is", secs, millis, totalSecs, totalMillis);
+			snprintf(buffer, size, "%i.%03is / %i.%03is", secs, millis, totalSecs, totalMillis);
 	}
 	else
-		sprintf(buffer, "%ims / %ims", millis, totalMillis);
+		snprintf(buffer, size, "%ims / %ims", millis, totalMillis);
 }
 
 void SampleEditorControl::paint(PPGraphicsAbstract* g)
@@ -512,7 +512,7 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 	else if (offsetFormat == OffsetFormatMillis)
 	{
 		pp_uint32 millis = sampleEditor->convertSmpPosToMillis((mp_sint32)ceil(startPos*xScale), relativeNote);
-		formatMillis(buffer, millis);
+		formatMillis(buffer, sizeof(buffer), millis);
 	}
 
 	PPFont* font = PPFont::getFont(PPFont::FONT_TINY);
@@ -537,7 +537,7 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 		{
 			pp_uint32 millis = sampleEditor->convertSmpPosToMillis(positionToSample(currentPosition), relativeNote);
 			pp_uint32 totalMillis = sampleEditor->convertSmpPosToMillis(end, relativeNote);
-			formatMillisFraction(buffer, millis, totalMillis);
+			formatMillisFraction(buffer, sizeof(buffer), millis, totalMillis);
 		}
 	}
 	else
@@ -549,7 +549,7 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 		else if (offsetFormat == OffsetFormatMillis)
 		{
 			pp_uint32 totalMillis = sampleEditor->convertSmpPosToMillis(end, relativeNote);
-			formatMillis(buffer, totalMillis);
+			formatMillis(buffer, sizeof(buffer), totalMillis);
 		}
 	}
 

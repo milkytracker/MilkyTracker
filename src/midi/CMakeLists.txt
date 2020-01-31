@@ -19,33 +19,51 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(HEADERS
+add_library(midi STATIC
+    # Headers
     MidiTools.h
+)
+
+target_include_directories(midi
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../milkyplay
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface
+        ${CMAKE_CURRENT_SOURCE_DIR}/../tracker
 )
 
 # Add platform-specific sources and include paths
 if(APPLE)
-    set(
-        SOURCES
+    target_sources(midi PRIVATE
+        # Sources
         osx/MidiReceiver_CoreMIDI.mm
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         osx/MidiReceiver_CoreMIDI.h
     )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+
+    # Enable ARC (automatic reference counting) for OS X build
+    target_compile_options(midi PRIVATE -fobjc-arc)
+
+    target_include_directories(midi
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/osx
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
     )
+
+    target_link_libraries(midi PUBLIC ${CORE_MIDI_LIBRARY})
 elseif(WIN32)
-    set(
-        SOURCES
+    target_sources(midi PRIVATE
+        # Sources
         win32/LongMsg.cpp
         win32/MidiInDevice.cpp
         win32/MidiReceiver_win32.cpp
         win32/ShortMsg.cpp
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         win32/LongMsg.h
         win32/MIDIInDevice.h
         win32/MIDIMsg.h
@@ -53,43 +71,29 @@ elseif(WIN32)
         win32/ShortMsg.h
         win32/midi.h
     )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
+
+    target_include_directories(midi
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/win32
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/win32
     )
+
+    target_link_libraries(midi PUBLIC winmm)
 else()
-    set(
-        SOURCES
+    target_sources(midi PRIVATE
+        # Sources
         posix/MidiReceiver_pthread.cpp
-    )
-    list(
-        APPEND HEADERS
+
+        # Headers
         posix/MidiReceiver_pthread.h
     )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${RTMIDI_INCLUDE_DIR}
-    )
-endif()
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/src/midi
-    ${PROJECT_SOURCE_DIR}/src/milkyplay
-    ${PROJECT_SOURCE_DIR}/src/ppui
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-    ${PROJECT_SOURCE_DIR}/src/tracker
-)
-
-add_library(midi ${SOURCES} ${HEADERS})
-
-if(APPLE)
-    # Enable ARC (automatic reference counting) for OS X build
-    set_property(
-        TARGET midi APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
+    target_include_directories(midi
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
+            ${RTMIDI_INCLUDE_DIRS}
     )
 
-    target_link_libraries(midi ${CORE_MIDI_LIBRARY})
-elseif(WIN32)
-    target_link_libraries(midi winmm)
-else()
-    target_link_libraries(midi ${RTMIDI_LIBRARIES})
+    target_link_libraries(midi PUBLIC ${RTMIDI_LIBRARIES})
 endif()

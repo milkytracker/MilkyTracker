@@ -10,4 +10,4 @@
 	url = https://github.com/madler/zlib.git
 [submodule "zziplib"]
 	path = src/submodules/zziplib
-	url = https://github.com/dwhinham/zziplib.git
+	url = https://github.com/gdraheim/zziplib.git

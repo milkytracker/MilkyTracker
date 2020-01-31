@@ -19,13 +19,11 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set(
-    SOURCES
+add_library(osinterface STATIC
+    # Sources
     PPPathFactory.cpp
-)
 
-set(
-    HEADERS
+    # Headers
     PPMessageBox.h
     PPModalDialog.h
     PPOpenPanel.h
@@ -35,47 +33,58 @@ set(
     PPSystem.h
 )
 
+target_include_directories(osinterface
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
 # Add platform-specific sources and include paths
 if(APPLE)
-    list(APPEND SOURCES
-        cocoa/PPMessageBox_COCOA.mm
-        cocoa/PPOpenPanel_COCOA.mm
-        cocoa/PPQuitSaveAlert_COCOA.mm
-        cocoa/PPSavePanel_COCOA.mm
-        posix/PPMutex.cpp
-        posix/PPPath_POSIX.cpp
-        posix/PPSystem_POSIX.cpp
+    target_sources(osinterface
+        PRIVATE
+            # Sources
+            cocoa/PPMessageBox_COCOA.mm
+            cocoa/PPOpenPanel_COCOA.mm
+            cocoa/PPQuitSaveAlert_COCOA.mm
+            cocoa/PPSavePanel_COCOA.mm
+            posix/PPMutex.cpp
+            posix/PPPath_POSIX.cpp
+            posix/PPSystem_POSIX.cpp
+
+            # Headers
+            posix/PPMutex.h
+            posix/PPPath_POSIX.h
+            posix/PPSystemString_POSIX.h
+            posix/PPSystem_POSIX.h
     )
-    list(APPEND HEADERS
-        posix/PPMutex.h
-        posix/PPPath_POSIX.h
-        posix/PPSystemString_POSIX.h
-        posix/PPSystem_POSIX.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-    )
+    target_include_directories(osinterface PUBLIC posix)
 elseif(WIN32)
-    list(APPEND SOURCES
-        win32/PPMessageBox_WIN32.cpp
-        win32/PPMutex.cpp
-        win32/PPOpenPanel_WIN32.cpp
-        win32/PPPath_WIN32.cpp
-        win32/PPQuitSaveAlert_WIN32.cpp
-        win32/PPSavePanel_WIN32.cpp
-        win32/PPSystem_WIN32.cpp
-        win32/WaitWindow_WIN32.cpp
+    target_sources(osinterface
+        PRIVATE
+            # Sources
+            win32/PPMessageBox_WIN32.cpp
+            win32/PPMutex.cpp
+            win32/PPOpenPanel_WIN32.cpp
+            win32/PPPath_WIN32.cpp
+            win32/PPQuitSaveAlert_WIN32.cpp
+            win32/PPSavePanel_WIN32.cpp
+            win32/PPSystem_WIN32.cpp
+            win32/WaitWindow_WIN32.cpp
+
+            # Headers
+            win32/PPMutex.h
+            win32/PPPath_WIN32.h
+            win32/PPSystemString_WIN32.h
+            win32/PPSystem_WIN32.h
+            win32/WaitWindow_WIN32.h
     )
-    list(APPEND HEADERS
-        win32/PPMutex.h
-        win32/PPPath_WIN32.h
-        win32/PPSystemString_WIN32.h
-        win32/PPSystem_WIN32.h
-        win32/WaitWindow_WIN32.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/milkyplay
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
+    target_include_directories(osinterface
+        PRIVATE
+            ${PROJECT_SOURCE_DIR}/src/milkyplay
+        PUBLIC
+            win32
     )
 elseif(AROS OR AMIGA)
     list(APPEND SOURCES
@@ -106,40 +115,39 @@ elseif(AROS OR AMIGA)
         ${SDL_INCLUDE_DIR}
     )
 else()
-    list(APPEND SOURCES
-        posix/PPPath_POSIX.cpp
-        posix/PPSystem_POSIX.cpp
-        sdl/PPMessageBox_SDL.cpp
-        sdl/PPMutex.cpp
-        sdl/PPOpenPanel_SDL.cpp
-        sdl/PPQuitSaveAlert_SDL.cpp
-        sdl/PPSavePanel_SDL.cpp
-        sdl/SDL_ModalLoop.cpp
+    target_sources(osinterface
+        PRIVATE
+            # Sources
+            posix/PPPath_POSIX.cpp
+            posix/PPSystem_POSIX.cpp
+            sdl/PPMessageBox_SDL.cpp
+            sdl/PPMutex.cpp
+            sdl/PPOpenPanel_SDL.cpp
+            sdl/PPQuitSaveAlert_SDL.cpp
+            sdl/PPSavePanel_SDL.cpp
+            sdl/SDL_ModalLoop.cpp
+
+            # Headers
+            posix/PPMutex.h
+            posix/PPPath_POSIX.h
+            posix/PPSystemString_POSIX.h
+            posix/PPSystem_POSIX.h
+            sdl/PPMutex.h
+            sdl/SDL_ModalLoop.h
     )
-    list(APPEND HEADERS
-        posix/PPMutex.h
-        posix/PPPath_POSIX.h
-        posix/PPSystemString_POSIX.h
-        posix/PPSystem_POSIX.h
-        sdl/PPMutex.h
-        sdl/SDL_ModalLoop.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${SDL2_INCLUDE_DIRS}
-    )
+    target_include_directories(osinterface PUBLIC posix)
+
+    if(TARGET SDL2::SDL2)
+        # If the distro built SDL2 with CMake, we can just link to an exported target
+        target_link_libraries(osinterface PUBLIC SDL2::SDL2)
+    else()
+        # Otherwise we need to do things the old-fashioned way for compatibility
+        target_include_directories(osinterface PUBLIC ${SDL2_INCLUDE_DIRS})
+        target_link_libraries(osinterface PUBLIC ${SDL2_LIBRARIES})
+    endif()
 endif()
-
-include_directories(
-    ${PROJECT_SOURCE_DIR}/src/ppui
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-)
-
-add_library(osinterface ${SOURCES} ${HEADERS})
 
 if(APPLE)
     # Enable ARC (automatic reference counting) for OS X build
-    set_property(
-        TARGET osinterface APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
-    )
+    target_compile_options(osinterface PRIVATE -fobjc-arc)
 endif()
