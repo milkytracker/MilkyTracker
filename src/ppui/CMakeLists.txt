@@ -25,7 +25,7 @@ add_library(ppui STATIC
     # Sources
     Button.cpp
     CheckBox.cpp
-	CheckBoxLabel.cpp
+    CheckBoxLabel.cpp
     Container.cpp
     ContextMenu.cpp
     Control.cpp
@@ -62,7 +62,7 @@ add_library(ppui STATIC
     BasicTypes.h
     Button.h
     CheckBox.h
-	CheckBoxLabel.h
+    CheckBoxLabel.h
     Container.h
     ContextMenu.h
     Control.h
@@ -149,14 +149,14 @@ else()
     )
     if(AROS OR AMIGA)
         target_include_directories(ppui
-            PRIVATE
-                ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-                ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
             PUBLIC
+                osinterface/amiga
+                osinterface/posix
                 sdl
+                ${SDL_INCLUDE_DIR}
         )
     else()
-        target_include_directories(ppui PUBLIC sdl)
+        target_include_directories(ppui PUBLIC sdl ${SDL2_INCLUDE_DIRS})
     endif()
 endif()
 

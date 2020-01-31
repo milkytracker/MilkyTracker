@@ -87,33 +87,35 @@ elseif(WIN32)
             win32
     )
 elseif(AROS OR AMIGA)
-    list(APPEND SOURCES
-        amiga/PPOpenPanel_Amiga.cpp
-        amiga/PPSavePanel_Amiga.cpp
-        amiga/AslRequester.cpp
-        posix/PPPath_POSIX.cpp
-        posix/PPSystem_POSIX.cpp
-        sdl/PPMessageBox_SDL.cpp
-        sdl/PPMutex.cpp
-        sdl/PPOpenPanel_SDL.cpp
-        sdl/PPQuitSaveAlert_SDL.cpp
-        sdl/PPSavePanel_SDL.cpp
-        sdl/SDL_ModalLoop.cpp
+    target_sources(osinterface
+        PRIVATE
+            # Sources
+            amiga/PPOpenPanel_Amiga.cpp
+            amiga/PPSavePanel_Amiga.cpp
+            amiga/AslRequester.cpp
+            posix/PPPath_POSIX.cpp
+            posix/PPSystem_POSIX.cpp
+            sdl/PPMessageBox_SDL.cpp
+            sdl/PPMutex.cpp
+            sdl/PPOpenPanel_SDL.cpp
+            sdl/PPQuitSaveAlert_SDL.cpp
+            sdl/PPSavePanel_SDL.cpp
+            sdl/SDL_ModalLoop.cpp
+
+            # Headers
+            posix/PPMutex.h
+            amiga/AslRequester.h
+            posix/PPPath_POSIX.h
+            posix/PPSystemString_POSIX.h
+            posix/PPSystem_POSIX.h
+            sdl/PPMutex.h
+            sdl/SDL_ModalLoop.h
     )
-    list(APPEND HEADERS
-        posix/PPMutex.h
-        amiga/AslRequester.h
-        posix/PPPath_POSIX.h
-        posix/PPSystemString_POSIX.h
-        posix/PPSystem_POSIX.h
-        sdl/PPMutex.h
-        sdl/SDL_ModalLoop.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-        ${SDL_INCLUDE_DIR}
-    )
+
+    target_include_directories(osinterface PUBLIC posix)
+
+    target_include_directories(osinterface PUBLIC ${SDL_INCLUDE_DIR})
+    target_link_libraries(osinterface PUBLIC ${SDL_LIBRARY})
 else()
     target_sources(osinterface
         PRIVATE

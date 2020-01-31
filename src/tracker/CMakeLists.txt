@@ -356,7 +356,7 @@ elseif(WIN32)
 
     target_link_libraries(tracker midi)
 elseif(AMIGA)
-    if(MORPHOS OR AMIGAOS3 AND NOT WARPOS)
+    if(MORPHOS AND NOT WARPOS)
         target_link_libraries(tracker -ldebug)
     endif()
 else()

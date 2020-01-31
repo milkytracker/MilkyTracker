@@ -142,14 +142,15 @@ elseif(AROS OR AMIGA)
     target_sources(milkyplay
         PRIVATE
             # Sources
-            drivers/sdl/AudioDriver_SDL.cpp)
+            drivers/sdl/AudioDriver_SDL.cpp
             # Headers
-            drivers/sdl/AudioDriver_SDL.h)
+            drivers/sdl/AudioDriver_SDL.h
+        )
     target_include_directories(milkyplay PRIVATE
             drivers/sdl
-            ${SDL_INCLUDE_DIRS}
+            ${SDL_INCLUDE_DIR}
         )
-    target_link_libraries(milkyplay PUBLIC ${SDL_LIBRARIES})
+    target_link_libraries(milkyplay PUBLIC ${SDL_LIBRARY})
 
     message(STATUS "Enabled AHI")
 elseif(WIN32)
