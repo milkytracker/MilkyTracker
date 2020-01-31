@@ -287,7 +287,7 @@ if(APPLE)
         ${CORE_AUDIO_LIBRARY}
         ${CORE_FOUNDATION_LIBRARY}
     )
-elseif(AROS)
+elseif(AROS OR AMIGA)
     target_link_libraries(milkyplay)
 elseif(WIN32)
     target_link_libraries(milkyplay winmm dsound)
