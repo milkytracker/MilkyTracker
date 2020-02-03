@@ -43,6 +43,9 @@
 #define AFF_68060 1
 #endif
 #endif
+#if defined(__AMIGA__) || defined(WARPUP) || defined(__WARPOS__) || defined(AROS) || defined(__amigaos4__) || defined(__morphos__)
+#include "amigaversion.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -661,8 +664,6 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		bool swapRedBlue, bool fullScreen, bool noSplash) {
 
 	bpp = 16;
-	//fullScreen = true;
-
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
 			SDL_DEFAULT_REPEAT_INTERVAL);

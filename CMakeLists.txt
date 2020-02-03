@@ -52,6 +52,13 @@ set(VER_YY 02)
 set(VER_ZZ 01)
 set(VER_FULL "${VER_X}.${VER_YY}.${VER_ZZ}")
 
+# Build date Information
+string(TIMESTAMP VER_YEAR "%Y")
+string(TIMESTAMP VER_MONTH "%m")
+string(TIMESTAMP VER_DAY "%d")
+string(REGEX REPLACE "^0+" "" VER_MONTH "${VER_MONTH}")
+string(REGEX REPLACE "^0+" "" VER_DAY "${VER_DAY}")
+
 # Final build filename, for example "milkytracker-1.02.00-win32.zip"
 set(BUILD_FILENAME "milkytracker-${VER_FULL}-${SYSTEM_NAME_LOWER}")
 
@@ -59,6 +66,11 @@ set(BUILD_FILENAME "milkytracker-${VER_FULL}-${SYSTEM_NAME_LOWER}")
 configure_file(
     ${PROJECT_SOURCE_DIR}/src/tracker/version.h.in
     ${PROJECT_BINARY_DIR}/src/tracker/version.h
+)
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/src/tracker/amigaversion.h.in
+    ${PROJECT_BINARY_DIR}/src/tracker/amigaversion.h
 )
 
 # Packaging

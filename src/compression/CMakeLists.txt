@@ -58,6 +58,7 @@ if(APPLE OR WIN32 OR AMIGA)
     set(LHASA_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/lhasa)
     set(ZLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zlib)
     set(ZZIPLIB_SUBMODULE_DIR ${PROJECT_SOURCE_DIR}/src/submodules/zziplib)
+    find_package(ZLIB)
 endif()
 
 # macOS: Build submodules using their own build systems
@@ -122,7 +123,7 @@ if(APPLE)
             PREFIX ${LHASA_DESTDIR}
             SOURCE_DIR ${LHASA_SUBMODULE_DIR}
             CONFIGURE_COMMAND autoreconf -i &&
-            ./configure --prefix=${LHASA_DESTDIR}
+            ./configure --prefix=${LHASA_DESTDIR} --host=${CMAKE_SYSTEM_PROCESSOR}-linux
             CFLAGS=${EXTERNAL_C_FLAGS} CXXFLAGS=${EXTERNAL_CXX_FLAGS}
             CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
             BUILD_COMMAND make -j
@@ -375,5 +376,11 @@ endif()
 if(WIN32)
     if(ZLIB_FOUND)
         add_dependencies(compression zlib)
+    endif()
+endif()
+
+if(AMIGA)
+    if(ZLIB_FOUND)
+        target_link_libraries(compression ${ZLIB_LIBRARY})
     endif()
 endif()
