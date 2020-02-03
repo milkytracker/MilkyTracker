@@ -71,7 +71,11 @@ def buildStep(dockerImage, os) {
 				slackSend color: "good", channel: "#jenkins", message: "Starting ${os} build target..."
 				dir("build") {
 					sh "PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig/:${SYSROOT}/share/pkgconfig/ cmake -G\"${generator}\" ${DEFINES} -DVER_EXTRA=\"-${fixed_os}-${fixed_job_name}\" .."
-					sh "VERBOSE=1 cmake --build . --config Release -- -j$(getconf _NPROCESSORS_ONLN)"
+					def _NPROCESSORS_ONLN = sh (
+						script: 'getconf _NPROCESSORS_ONLN',
+						returnStdout: true
+					).trim()
+					sh "VERBOSE=1 cmake --build . --config Release -- -j${_NPROCESSORS_ONLN}"
 					
 					sh "cp src/tracker/milkytracker milkytracker-${os}"
 					archiveArtifacts artifacts: "milkytracker-${os}"
