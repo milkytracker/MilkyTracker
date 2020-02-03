@@ -51,7 +51,7 @@ def buildStep(dockerImage, os) {
 			dockerImageRef.inside("-u 0:0 -u root -w /tmp/work") {
 
 				sh "apt update"
-				sh "apt install -y gcc-multilib curl automake autoconf libtool unzip"
+				sh "apt install -y curl automake autoconf libtool unzip"
 				
 				checkout scm
 		
@@ -69,6 +69,13 @@ def buildStep(dockerImage, os) {
 				sh "rm -rfv build/*"
 
 				slackSend color: "good", channel: "#jenkins", message: "Starting ${os} build target..."
+				
+				try {
+					sh "platforms/${os}/prep.sh"
+				} catch(err) {
+					notify('Prep not found')
+				}
+				
 				dir("build") {
 					sh "PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig/:${SYSROOT}/share/pkgconfig/ cmake -G\"${generator}\" ${DEFINES} -DVER_EXTRA=\"-${fixed_os}-${fixed_job_name}\" .."
 					def _NPROCESSORS_ONLN = sh (
