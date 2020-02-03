@@ -43,7 +43,7 @@ def buildStep(dockerImage, os) {
 	def commondir = env.WORKSPACE + '/../' + env.JOB_NAME.replace('%2F','/') + '/'
 	
 	try{
-		stage("Building on \"${dockerImage}\" with \"${generator}\" for \"${os}\"...") {
+		stage("Building on \"${dockerImage}\" for \"${os}\"...") {
 			properties([pipelineTriggers([githubPush()])])
 
 			def dockerImageRef = docker.image("${dockerImage}")
