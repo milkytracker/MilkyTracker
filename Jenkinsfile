@@ -93,7 +93,7 @@ def buildStep(dockerImage, os) {
 
 					sh "echo '${env.BUILD_NUMBER}|${env.BUILD_URL}' > ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/BUILD"
 
-					sh "cp -fvr cp build/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
+					sh "cp -fvr build/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
 					//sh "cd ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/ && tar -Jcvvf ${ext}${sfx}-hosted.tar.xz *"
 				}
 				stash includes: "publishing/deploy/milkytracker/**", name: "${os}"
