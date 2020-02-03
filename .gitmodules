@@ -11,3 +11,5 @@
 [submodule "zziplib"]
 	path = src/submodules/zziplib
 	url = https://github.com/gdraheim/zziplib.git
+[submodule "src/submodules/zziplib"]
+	url = https://github.com/gdraheim/zziplib.git
