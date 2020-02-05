@@ -117,13 +117,12 @@ node('master') {
 			node {
 				buildStep('amigadev/crosstools:m68k-amigaos', 'm68k-amigaos')
 			}
-		}
-		/*,
-		'Build Linux Hosted x86_64 version - GCC 9.1.0 - Binutils 2.32': {
+		},
+		'Build ppc-morphos': {
 			node {
-				buildStep('linux-x86_64', 'GorillaSmall', '2.32', '9.1.0', false, 'contrib-installerlg')
+				buildStep('amigadev/crosstools:ppc-morphos', 'ppc-morphos')
 			}
-		}*/
+		}
 	)
 
 	stage("Publishing") {
@@ -133,7 +132,13 @@ node('master') {
 			// ${os}
 			unstash "m68k-amigaos"
 		} catch(err) {
-			notify('Stash not found')
+			notify('Stash m68k-amigaos not found')
+		}
+		
+		try {
+			unstash "ppc-morphos"
+		} catch(err) {
+			notify('Stash ppc-morphos not found')
 		}
 
 		if (env.TAG_NAME) {
