@@ -77,7 +77,7 @@ def buildStep(dockerImage, os) {
 				}
 				
 				dir("build") {
-					sh "PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig/:${SYSROOT}/share/pkgconfig/ cmake -G\"${generator}\" ${DEFINES} -DVER_EXTRA=\"-${fixed_os}-${fixed_job_name}\" .."
+					sh "PKG_CONFIG_PATH=/opt/${os}/lib/pkgconfig/:/opt/${os}/share/pkgconfig/ cmake -DM68K_CPU=68040 -DM68K_FPU=hard .."
 					def _NPROCESSORS_ONLN = sh (
 						script: 'getconf _NPROCESSORS_ONLN',
 						returnStdout: true
@@ -93,7 +93,7 @@ def buildStep(dockerImage, os) {
 
 					sh "echo '${env.BUILD_NUMBER}|${env.BUILD_URL}' > ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/BUILD"
 
-					sh "cp -fvr cp build/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
+					sh "cp -fvr build/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
 					//sh "cd ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/ && tar -Jcvvf ${ext}${sfx}-hosted.tar.xz *"
 				}
 				stash includes: "publishing/deploy/milkytracker/**", name: "${os}"
