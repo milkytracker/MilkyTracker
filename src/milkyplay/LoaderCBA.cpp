@@ -83,6 +83,7 @@ static void convertEffect(mp_ubyte& eff, mp_ubyte& op)
 
 		case 0x09:  // set panning
 			eff = 0x08;
+			op = XModule::vol128to255(op);
 			break;
 		
 		case 0x0a:  // sample offset
