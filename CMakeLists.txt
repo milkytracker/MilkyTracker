@@ -100,6 +100,8 @@ if(APPLE)
         )
     endif()
 
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+
     # Set variables for generating the Info.plist file
     set(MACOSX_BUNDLE_BUNDLE_VERSION "${VER_FULL}")
     set(MACOSX_BUNDLE_EXECUTABLE ${PROJECT_NAME})
