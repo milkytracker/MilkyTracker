@@ -42,6 +42,7 @@ static BOOL textureReady = NO;
 static GLuint uiVertexArrayName;
 static GLuint uiVertexBufferName;
 static GLuint uiTextureName;
+static GLuint uiBufferName;
 static GLuint focusRingVertexArrayName;
 static GLuint focusRingVertexBufferName;
 static GLuint shaderProgramName;
@@ -91,6 +92,12 @@ static BOOL drawFocusRing;
 - (BOOL)isFlipped
 {
 	return YES;
+}
+
+void checkError()
+{
+	GLenum e = glGetError();
+	if (e) NSLog(@"GLError: %i", e);
 }
 
 // ---------------------------------------------
@@ -162,6 +169,7 @@ static BOOL drawFocusRing;
 	texCoordAttrib = glGetAttribLocation(shaderProgramName, "texCoord");
 	posAttrib = glGetAttribLocation(shaderProgramName, "position");
 	colorUniform = glGetUniformLocation(shaderProgramName, "color");
+	//glUniform1i(glGetUniformLocation(shaderProgramName, "s"), 0);
 	
 	// Generate and bind UI VAO
 	glGenVertexArrays(1, &uiVertexArrayName);
@@ -246,7 +254,7 @@ static BOOL drawFocusRing;
 		 
 		 void main()
 		 {
-			 fragColor = mix(texture(s, texCoord_out), color, color.w);
+			 fragColor = mix(texture(s, texCoord_out), vec4(texCoord_out, 0., 1.), .5);
 		 }
 	);
 	
@@ -258,17 +266,34 @@ static BOOL drawFocusRing;
 	vertexShaderName = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShaderName, 1, &vertexShaderSrc, NULL);
 	glCompileShader(vertexShaderName);
+	GLint res;
+	glGetShaderiv(vertexShaderName, GL_COMPILE_STATUS, &res);
+	if (!res) NSLog(@"Vertex shader compilation fail");
+	checkError();
 	
 	// Compile fragment shader
 	fragmentShaderName = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShaderName, 1, &fragShaderSrc, NULL);
+	checkError();
 	glCompileShader(fragmentShaderName);
+	glGetShaderiv(fragmentShaderName, GL_COMPILE_STATUS, &res);
+	if (!res) NSLog(@"Fragment shader compilation fail");
+	checkError();
+	GLchar buf[1024];
+	GLsizei length;
+	glGetShaderInfoLog(fragmentShaderName, 1024, &length, buf);
+	//NSLog(buf);
+	puts(buf);
+
 	
 	// Attach shaders to program and link
 	program = glCreateProgram();
 	glAttachShader(program, vertexShaderName);
+	checkError();
 	glAttachShader(program, fragmentShaderName);
+	checkError();
 	glLinkProgram(program);
+	checkError();
 	
 	// We have a valid program; shaders no longer needed
 	glDeleteShader(vertexShaderName);
@@ -289,16 +314,25 @@ static BOOL drawFocusRing;
 	// Texture filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	
-	// Allocate texture storage
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
-	
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+
 	// Make OpenGL aware of row length for partial updates
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
 
 	// Pixel rows may not start on word-aligned boundaries, so use byte alignment
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	//glGenBuffers(1, &uiBufferName);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, uiBufferName);
+	//glBufferData(GL_PIXEL_UNPACK_BUFFER, 640*480*3, 0, GL_STREAM_DRAW);
+	checkError();
 	
+	// Allocate texture storage
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 640, 480, 0, GL_BGR, GL_UNSIGNED_BYTE, 0);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	checkError();
+
+	NSLog(@"Texture ready");
 	textureReady = YES;
 }
 
@@ -330,13 +364,23 @@ static BOOL drawFocusRing;
 		glPixelStorei(GL_UNPACK_SKIP_PIXELS, y * width + x);
 		
 		glBindVertexArray(uiVertexArrayName);
-		
+		//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, uiBufferName);
+
+
+
 		// Update texture
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, uiTextureName);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 640, 480, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 640, 480, 0, GL_BGR, GL_UNSIGNED_BYTE, 0);
+		//glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, 640*480*3, pixelData);
+
+		checkError();
 		
 		// Draw surface quad from triangle strip
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 640, 480, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+
 		// Draw focus ring if necessary
 		if (drawFocusRing)
 		{
