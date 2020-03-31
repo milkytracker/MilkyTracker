@@ -382,8 +382,8 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 	if (!disableMixing)
 		prepareBuffer();
 	
-	const register mp_sint32 numDevices = this->numDevices;
-	const register mp_uint32 bufferSize = this->bufferSize;
+	const mp_sint32 numDevices = this->numDevices;
+	const mp_uint32 bufferSize = this->bufferSize;
 	mp_sint32* mixBuffer = this->buffer;
 	
 	DeviceDescriptor* device = this->devices;	
@@ -440,11 +440,11 @@ inline void MasterMixer::swapOutBuffer(mp_sword* bufferOut)
 	if (filterHook)
 		filterHook->mix(buffer, bufferSize);
 
-	register mp_sint32* bufferIn = buffer;
-	const register mp_sint32 sampleShift = this->sampleShift; 
-	const register mp_sint32 lowerBound = -((128<<sampleShift)*256); 
-	const register mp_sint32 upperBound = ((128<<sampleShift)*256)-1;
-	const register mp_sint32 bufferSize = this->bufferSize*MP_NUMCHANNELS;
+	mp_sint32* bufferIn = buffer;
+	const mp_sint32 sampleShift = this->sampleShift; 
+	const mp_sint32 lowerBound = -((128<<sampleShift)*256); 
+	const mp_sint32 upperBound = ((128<<sampleShift)*256)-1;
+	const mp_sint32 bufferSize = this->bufferSize*MP_NUMCHANNELS;
 	
 	for (mp_sint32 i = 0; i < bufferSize; i++)
 	{
