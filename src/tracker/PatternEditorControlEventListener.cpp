@@ -91,7 +91,9 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 			// exclusive from horizontal scrolling.
 			if (params->deltaY)
 			{
-				PPEvent e = params->deltaY < 0 ? PPEvent(eBarScrollDown, -params->deltaY) : PPEvent(eBarScrollUp, params->deltaY);
+				pp_int32 dy = params->deltaY;
+				if(properties.invertMouseVscroll) dy = 0 - dy;
+				PPEvent e = dy < 0 ? PPEvent(eBarScrollDown, -dy) : PPEvent(eBarScrollUp, dy);
 				handleEvent(reinterpret_cast<PPObject*>(vLeftScrollbar), &e);
 			}
 			

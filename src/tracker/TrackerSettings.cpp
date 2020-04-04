@@ -210,6 +210,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("MULTICHN_RECORDKEYOFF", 1);
 	// disable note delay recording
 	settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", 0);
+	// Invert mousewheel?
+	settingsDatabase->store("INVERTMWHEEL", 0);
 	// Invert mousewheel zoom?  (normally wheelup zooms out: if inverted, wheelup zooms in)
 	settingsDatabase->store("INVERTMWHEELZOOM", 0);
 
@@ -576,6 +578,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("MULTICHN_RECORDNOTEDELAY") == 0)
 	{
 		recorderLogic->setRecordNoteDelay(v2 != 0);
+	}
+	else if (theKey->getKey().compareTo("INVERTMWHEEL") == 0)
+	{
+		patternEditorCtrl->setInvertMouseVscroll(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("INVERTMWHEELZOOM") == 0)
 	{
