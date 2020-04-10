@@ -1574,23 +1574,27 @@ void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
 	// this ratio needs to be calculated and compensated.
 	// The frequency will still shift if the ratio is not constant
 	// during a longer sample. Ce la vie.
-	pp_int32 ups=0,downs=0;
+	pp_int32 ups=0,downs=0,zeros=0;
 	for (pp_int32 i = 0; i < clipBoard->getWidth(); i++)
 	{
 		if (clipBoard->getSampleWord(i)<0)
 		{
 			downs++;
 		}
-		else
+		else if (clipBoard->getSampleWord(i)>0)
 		{
 			ups++;
 		}
+		else
+		{
+			zeros++;
+		}
 	}
-	if (!downs)
+	if (!downs and !zeros)
 	{
 		downs++; // div by zero prevention
 	}
-	float phaseRatio = (float)ups/(float)downs;
+	float phaseRatio = ((float)ups+(0.5f*(float)zeros))/((float)downs+(0.5f*(float)zeros));
 	float step;
 	float j = 0.0f;
 	for (pp_int32 i = sStart; i < sEnd; i++)
