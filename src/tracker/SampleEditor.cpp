@@ -880,6 +880,12 @@ void SampleEditor::PHPasteSample()
 	tool_PHPasteSample(&par);
 }
 
+void SampleEditor::FLPasteSample()
+{
+	FilterParameters par(0);
+	tool_FLPasteSample(&par);
+}
+
 void SampleEditor::convertSampleResolution(bool convert)
 {
 	FilterParameters par(1);
@@ -1639,6 +1645,82 @@ void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
 	postFilter();
 
 }
+
+void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(NULL, NULL);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	float step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+
+	// This filter mixes the current sample selection
+	// with a copy of itself, which is phase-shifted based on the
+	// envelope in the clipboard.
+	// For best traditional "flangy" results,
+	// the envelope should be a smoothly increasing or decreasing
+	// line:
+	// 0.25 period of a triangle wave at 25% volume works well,
+	// and so do  any other smooth ramps up or down to aprox 25%
+	// volume.
+	// Interesting effects can be achieved with hand drawn envelopes
+	float j = 0.0f;
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float frac = j - (float)floor(j);
+
+		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
+		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+		s = clipBoard->getSampleWord((pp_int32)j+1);
+		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
+
+		float f = (1.0f-frac)*f1 + frac*f2;
+
+		float g0 = getFloatSampleFromWaveform(i);
+
+		float h = (float)i+f*256.0f;
+		frac = h - (float)floor(h);
+		pp_int32 hi = (pp_int32)h;
+		f1 = getFloatSampleFromWaveform(hi);
+		f2 = getFloatSampleFromWaveform(hi+1);
+		float g1 = (1.0f-frac)*f1 + frac*f2;
+		setFloatSampleInWaveform(i, 0.5f*(g0+g1));
+		j+=step;
+	}
+
+	finishUndo();
+
+	postFilter();
+
+}
+
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {
