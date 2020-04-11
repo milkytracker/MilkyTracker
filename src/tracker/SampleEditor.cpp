@@ -1596,7 +1596,7 @@ void SampleEditor::tool_PHPasteSample(const FilterParameters* par)
 			zeros++;
 		}
 	}
-	if (!downs and !zeros)
+	if (!downs && !zeros)
 	{
 		downs++; // div by zero prevention
 	}
