@@ -78,7 +78,7 @@
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif
 // --------------------------------------------------------------------------
@@ -89,7 +89,7 @@ static SDL_TimerID			timer;
 static PPScreen*			myTrackerScreen		= NULL;
 static Tracker*				myTracker			= NULL;
 static PPDisplayDevice*		myDisplayDevice		= NULL;
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 static MidiReceiver*		myMidiReceiver		= NULL;
 #endif
 
@@ -223,7 +223,7 @@ static Uint32 SDLCALL timerCallback(Uint32 interval, void* param)
 	return interval;
 }
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 class MidiEventHandler : public MidiReceiver::MidiEventHandler
 {
 public:
@@ -829,7 +829,7 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 	// Startup procedure
 	myTracker->startUp(noSplash);
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	InitMidi();
 #endif
 
@@ -962,7 +962,7 @@ unrecognizedCommandLineSwitch:
 	initTracker(defaultBPP, orientation, swapRedBlue, noSplash);
 	globalMutex->unlock();
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	if (myMidiReceiver && recVelocity)
 	{
 		myMidiReceiver->setRecordVelocity(true);
@@ -1036,7 +1036,7 @@ unrecognizedCommandLineSwitch:
 	SDL_RemoveTimer(timer);
 
 	globalMutex->lock();
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	delete myMidiReceiver;
 #endif
 	delete myTracker;
