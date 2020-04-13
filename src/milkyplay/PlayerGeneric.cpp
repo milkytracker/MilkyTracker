@@ -202,15 +202,16 @@ PlayerGeneric::PlayerGeneric(mp_sint32 frequency, AudioDriverInterface* audioDri
 	
 PlayerGeneric::~PlayerGeneric()
 {
-	if (mixer)
-		delete mixer;
 
 	if (player)
 	{
-		if (mixer->isActive() && !mixer->isDeviceRemoved(player))
+		if (mixer && mixer->isActive() && !mixer->isDeviceRemoved(player))
 			mixer->removeDevice(player);
 		delete player;
 	}
+	
+	if (mixer)
+		delete mixer;
 
 	delete[] audioDriverName;
 	
