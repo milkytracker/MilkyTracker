@@ -657,6 +657,8 @@ void ChannelMixer::setNumChannels(mp_uint32 num)
 		mixerNumAllocatedChannels = num;
 		resetChannelsWithoutMuting();
 	}
+
+	mixerNumActiveChannels = num;
 }
 
 void ChannelMixer::setActiveChannels(mp_uint32 num)
