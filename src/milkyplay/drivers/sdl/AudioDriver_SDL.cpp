@@ -91,7 +91,9 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 	// Some soundcard drivers modify the wanted structure, so we copy it here
 	memcpy(&saved, &wanted, sizeof(wanted));
 
-	if(SDL_OpenAudio(&wanted, &obtained) < 0)
+	device = SDL_OpenAudioDevice(NULL, false, &wanted, &obtained, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
+
+	if (device == 0)
 	{
 		memcpy(&wanted, &saved, sizeof(wanted));
 		fprintf(stderr, "SDL: Failed to open audio device! (buffer = %d bytes)..\n", saved.samples*4);
@@ -100,19 +102,6 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 	}
 
 	printf("SDL: Using audio driver: %s\n", SDL_GetCurrentAudioDriver());
-
-	if(wanted.format != obtained.format)
-	{
-		fprintf(stderr, "SDL: Audio driver doesn't support 16-bit signed samples!\n");
-		return MP_DEVICE_ERROR;
-	}
-
-	if (wanted.channels != obtained.channels)
-	{
-		fprintf(stderr, "SDL: Failed to obtain requested audio format.  Suggested format:\n");
-		fprintf(stderr, "SDL: Frequency: %d\nChannels: %d\n", obtained.freq, obtained.channels);
-		return MP_DEVICE_ERROR;
-	}
 
 	// fallback for obtained sample rate
 	if (wanted.freq != obtained.freq)
@@ -130,33 +119,33 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 
 mp_sint32 AudioDriver_SDL::stop()
 {
-	SDL_PauseAudio(1);
+	SDL_PauseAudioDevice(device, 1);
 	deviceHasStarted = false;
 	return MP_OK;
 }
 
 mp_sint32 AudioDriver_SDL::closeDevice()
 {
-	SDL_CloseAudio();
+	SDL_CloseAudioDevice(device);
 	deviceHasStarted = false;
 	return MP_OK;
 }
 
 mp_sint32 AudioDriver_SDL::start()
 {
-	SDL_PauseAudio(0);
+	SDL_PauseAudioDevice(device, 0);
 	deviceHasStarted = true;
 	return MP_OK;
 }
 
 mp_sint32 AudioDriver_SDL::pause()
 {
-	SDL_PauseAudio(1);
+	SDL_PauseAudioDevice(device, 1);
 	return MP_OK;
 }
 
 mp_sint32 AudioDriver_SDL::resume()
 {
-	SDL_PauseAudio(0);
+	SDL_PauseAudioDevice(device, 0);
 	return MP_OK;
 }
