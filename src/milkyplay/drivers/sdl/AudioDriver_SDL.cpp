@@ -78,6 +78,9 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		return res;
 	}
 
+	SDL_InitSubSystem(SDL_INIT_AUDIO);
+
+	SDL_zero(wanted);
 	wanted.freq = mixFrequency;
 	wanted.format = AUDIO_S16SYS;
 	wanted.channels = 2; /* 1 = mono, 2 = stereo */
@@ -97,7 +100,7 @@ mp_sint32 AudioDriver_SDL::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 	{
 		memcpy(&wanted, &saved, sizeof(wanted));
 		fprintf(stderr, "SDL: Failed to open audio device! (buffer = %d bytes)..\n", saved.samples*4);
-		fprintf(stderr, "SDL: Try setting \"Force 2^n sizes\" in the config menu and restarting.\n");
+		fprintf(stderr, "SDL: %s\n", SDL_GetError());
 		return MP_DEVICE_ERROR;
 	}
 
