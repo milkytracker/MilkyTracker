@@ -66,6 +66,7 @@
 enum ControlIDs
 {
 	DISKMENU_BUTTON_FLIP = 7000,
+	DISKMENU_BUTTON_HD_RECORDER,
 	DISKMENU_BUTTON_EXIT,
 
 	DISKMENU_NORMAL_STATICTEXT_HEADING,
@@ -96,7 +97,7 @@ enum ControlIDs
 	DISKMENU_CLASSIC_BUTTON_SAVE,
 	DISKMENU_CLASSIC_LISTBOX_NAME,
 	DISKMENU_CLASSIC_LISTBOX_BROWSER,
-	
+
 	DISKMENU_CLASSIC_BUTTON_PREV,
 	DISKMENU_CLASSIC_BUTTON_NEXT,
 	DISKMENU_CLASSIC_BUTTON_PARENT,
@@ -109,7 +110,7 @@ enum ControlIDs
 
 	DISKMENU_CLASSIC_STATICTEXT_FILTEREXTENSIONS,
 	DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS,
-	
+
 	DISKMENU_CLASSIC_STATICTEXT_SORTBY,
 	DISKMENU_CLASSIC_BUTTON_SORTBY,
 	DISKMENU_CLASSIC_BUTTON_SORTORDER,
@@ -123,9 +124,9 @@ enum ControlIDs
 	DISKMENU_CLASSIC_BUTTON_DIR3,
 	DISKMENU_CLASSIC_BUTTON_DIR4,
 	DISKMENU_CLASSIC_BUTTON_STOREDIR, // this needs to be DISKMENU_CLASSIC_BUTTON_DIR5+1
-	
+
 	DISKMENU_CLASSIC_BUTTON_TYPE,
-	
+
 	RESPONDMESSAGEBOX_OVERWRITE,
 	RESPONDMESSAGEBOX_DELETE
 };
@@ -138,13 +139,13 @@ class DialogResponderDisk : public DialogResponder
 {
 private:
 	SectionDiskMenu& section;
-	
+
 public:
 	DialogResponderDisk(SectionDiskMenu& section) :
 		section(section)
 	{
 	}
-	
+
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
 		if (reinterpret_cast<PPDialogBase*>(sender)->getID() == RESPONDMESSAGEBOX_OVERWRITE)
@@ -158,7 +159,7 @@ public:
 		}
 		return 0;
 	}
-	
+
 	virtual pp_int32 ActionCancel(PPObject* sender)
 	{
 		return 0;
@@ -168,7 +169,7 @@ public:
 class PPDummySavePanel : public PPSavePanel
 {
 public:
-	PPDummySavePanel(const PPSystemString& defaultFileName) : 
+	PPDummySavePanel(const PPSystemString& defaultFileName) :
 		PPSavePanel(NULL, "", defaultFileName)
 	{
 		this->defaultFileName = defaultFileName;
@@ -178,32 +179,32 @@ public:
 	{
 		return ReturnCodeOK;
 	}
-	
-	virtual const PPSystemString& getFileName() 
-	{ 
-		return defaultFileName; 
-	}	
+
+	virtual const PPSystemString& getFileName()
+	{
+		return defaultFileName;
+	}
 };
 
 class ColorQueryListener : public PPListBox::ColorQueryListener
 {
 private:
 	SectionDiskMenu& sectionDiskMenu;
-	
+
 public:
 	ColorQueryListener(SectionDiskMenu& theSectionDiskMenu) :
 		sectionDiskMenu(theSectionDiskMenu)
 	{
 	}
-	
-	virtual PPColor getColor(pp_uint32 index, PPListBox& sender) 
+
+	virtual PPColor getColor(pp_uint32 index, PPListBox& sender)
 	{
 		PPListBoxFileBrowser& listBoxFiles = static_cast<PPListBoxFileBrowser&>(sender);
-	
+
 		const PPColor& fileColor = GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorTextHighlited);
 		const PPColor& dirColor = GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorForegroundText);
-	
-		return listBoxFiles.getPathEntry(index)->isFile() ? fileColor : dirColor; 
+
+		return listBoxFiles.getPathEntry(index)->isFile() ? fileColor : dirColor;
 	}
 };
 
@@ -237,10 +238,10 @@ SectionDiskMenu::SectionDiskMenu(Tracker& theTracker) :
 SectionDiskMenu::~SectionDiskMenu()
 {
 	delete colorQueryListener;
-	
+
 	delete fileFullPath;
 	delete file;
-	
+
 	delete normalViewControls;
 	delete classicViewControls;
 }
@@ -249,7 +250,7 @@ pp_int32 SectionDiskMenu::getCurrentSelectedSampleSaveType()
 {
 	if (sectionContainer == NULL)
 		return -1;
-		
+
 	switch (static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE))->getChoice())
 	{
 		case 0:
@@ -257,7 +258,7 @@ pp_int32 SectionDiskMenu::getCurrentSelectedSampleSaveType()
 		case 1:
 			return FileTypes::FileTypeSampleIFF;
 	}
-	
+
 	return -1;
 }
 
@@ -274,12 +275,12 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (screen->getModalControl())
 					break;
-				
+
 				tracker.loadTypeWithDialog(FileTypes::FileTypeSongAllModules);
 				break;
 			}
 
-		
+
 			case DISKMENU_NORMAL_BUTTON_SAVE_SONG:
 			{
 				switch (static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE))->getChoice())
@@ -287,13 +288,13 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 					case 0:
 						tracker.saveTypeWithDialog(FileTypes::FileTypeSongXM);
 						break;
-						
+
 					case 1:
 						tracker.saveTypeWithDialog(FileTypes::FileTypeSongMOD);
 						break;
-						
+
 					case 2:
-						tracker.sectionSwitcher->showUpperSection(tracker.sectionHDRecorder);
+						tracker.saveTypeWithDialog(FileTypes::FileTypeSongTMM);
 						break;
 				}
 
@@ -344,7 +345,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 
 			case DISKMENU_NORMAL_BUTTON_SAVE_SAMPLE:
 			{
-				tracker.saveTypeWithDialog(getCurrentSelectedSampleSaveType());	
+				tracker.saveTypeWithDialog(getCurrentSelectedSampleSaveType());
 				break;
 			}
 
@@ -353,7 +354,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				flip();
 				break;
 			}
-			
+
 			case DISKMENU_CLASSIC_BUTTON_TYPE_TYPE:
 			{
 				switchState(BrowseAll);
@@ -399,7 +400,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 			case DISKMENU_CLASSIC_BUTTON_PREV:
 				prev();
 				break;
-				
+
 			case DISKMENU_CLASSIC_BUTTON_NEXT:
 				next();
 				break;
@@ -433,14 +434,14 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				reload();
 				updateButtonStates();
 				break;
-				
+
 			case DISKMENU_CLASSIC_BUTTON_SORTORDER:
 				sortAscending = !sortAscending;
 				listBoxFiles->setSortAscending(sortAscending);
 				reload();
 				updateButtonStates();
 				break;
-				
+
 			case DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS:
 				updateFilter();
 				break;
@@ -452,7 +453,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 			case DISKMENU_CLASSIC_BUTTON_HEXTEND:
 				resizeBrowserHorizontally();
 				break;
-				
+
 			case DISKMENU_CLASSIC_BUTTON_STOREDIR:
 			{
 				storePath = !storePath;
@@ -461,7 +462,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				screen->paintControl(button);
 				break;
 			}
-			
+
 			case DISKMENU_CLASSIC_BUTTON_DIR0:
 			case DISKMENU_CLASSIC_BUTTON_DIR1:
 			case DISKMENU_CLASSIC_BUTTON_DIR2:
@@ -469,18 +470,18 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 			case DISKMENU_CLASSIC_BUTTON_DIR4:
 			{
 				PPButton* button = reinterpret_cast<PPButton*>(sender);
-				
+
 				PPString strKey = getKeyFromPredefPathButton(button);
-				
+
 				if (storePath)
 				{
 					PPString path = listBoxFiles->getCurrentPathAsASCIIString();
 					tracker.settingsDatabase->store(strKey, path);
-					
+
 					storePath = !storePath;
 					PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_STOREDIR));
 					button->setPressed(storePath);
-					screen->paintControl(button);				
+					screen->paintControl(button);
 				}
 				else
 				{
@@ -489,25 +490,42 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 					{
 						PPSystemString str(key->getStringValue());
 						bool res = listBoxFiles->gotoPath(str);
-						
+
 						if (!res)
-							tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Couldn't change directory.", Tracker::MessageBox_OK);		
-						
+							tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Couldn't change directory.", Tracker::MessageBox_OK);
+
 						screen->paintControl(listBoxFiles);
 					}
 					else
-						tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "No directory defined.", Tracker::MessageBox_OK);							
+						tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "No directory defined.", Tracker::MessageBox_OK);
 				}
-				
+
 				break;
 			}
-			
+
+			case DISKMENU_BUTTON_HD_RECORDER:
+			{
+				PPSystemString fileFullPath = listBoxFiles->getCurrentPathAsString();
+
+				fileFullPath.append(*this->file);
+
+				tracker.sectionHDRecorder->setCurrentFileName(fileFullPath);
+				tracker.sectionSwitcher->showUpperSection(tracker.sectionHDRecorder);
+				if (dialog &&
+					tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
+				{
+					tracker.screen->setModalControl(NULL);
+				}
+
+				break;
+			}
+
 			case DISKMENU_BUTTON_EXIT:
 				show(false);
 				break;
 
 		}
-		
+
 	}
 	else if (reinterpret_cast<PPControl*>(sender) == listBoxFiles && event->getID() == eConfirmed)
 	{
@@ -516,13 +534,13 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 	else if (event->getID() == eSelection)
 	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
-		{	
+		{
 			case DISKMENU_CLASSIC_LISTBOX_BROWSER:
 			{
 				updateFilenameEditFieldFromBrowser();
 				break;
 			}
-			
+
 			case DISKMENU_NORMAL_RADIOGROUP_SONGTYPE:
 			case DISKMENU_NORMAL_RADIOGROUP_PATTERNTYPE:
 			case DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE:
@@ -532,7 +550,7 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				updateFilenameEditFieldExtension(classicViewState);
 				break;
 		}
-		
+
 	}
 	else if (event->getID() == eFileSystemChanged)
 	{
@@ -548,8 +566,8 @@ pp_int32 SectionDiskMenu::handleEvent(PPObject* sender, PPEvent* event)
 				*fileFullPath = listBoxFiles->getCurrentPathAsString();
 				PPSystemString temp(*str);
 				*file = temp;
-				fileFullPath->append(*file);	
-				assureExtension();		
+				fileFullPath->append(*file);
+				assureExtension();
 				break;
 			}
 		}
@@ -565,29 +583,37 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	PPScreen* screen = tracker.screen;
 
 	PPContainer* container = new PPContainer(CONTAINER_ADVEDIT, tracker.screen, this, PPPoint(px, py), PPSize(320,UPPERLEFTSECTIONHEIGHT), false);
-	container->setColor(TrackerConfig::colorThemeMain);	
+	container->setColor(TrackerConfig::colorThemeMain);
 
 	container->addControl(new PPStaticText(DISKMENU_NORMAL_STATICTEXT_HEADING, NULL, NULL, PPPoint(px + 2, py + 2), "Disk operations", true, true));
 
-	pp_int32 buttonWidth = 8*4+4;
+	pp_int32 buttonWidth = 16*4+4;
 	pp_int32 buttonHeight = 11;
-	
-	pp_int32 x = px+container->getSize().width-(buttonWidth+4);
+
+	pp_int32 x = px+4;
 	pp_int32 y = py+container->getSize().height-(buttonHeight+4);
 
+	PPButton* button = new PPButton(DISKMENU_BUTTON_HD_RECORDER, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight+1));
+	button->setText("HD Recorder");
+	container->addControl(button);
+
+	buttonWidth = 8*4+4;
+	x = px+container->getSize().width-(buttonWidth+4);
+
 	container->addControl(new PPSeperator(0, screen, PPPoint(px + 2, y - 4), container->getSize().width - 4, TrackerConfig::colorThemeMain, true));
-	
-	PPButton* button = new PPButton(DISKMENU_BUTTON_EXIT, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight+1));
+
+	button = new PPButton(DISKMENU_BUTTON_EXIT, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight+1));
 	button->setText("Exit");
 	container->addControl(button);
-	
+
+
 	pp_int32 dx = 6;
 	pp_int32 dy = 16;
 	// ---- Song ----------
 	x = px + 2;
 	y = py + dy;
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x,y), "Song:", true));
-	
+
 	y+=12;
 	buttonWidth = 8*7+2;
 	button = new PPButton(DISKMENU_NORMAL_BUTTON_LOAD_SONG, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
@@ -598,23 +624,23 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setText("Save As");
 	container->addControl(button);
 	y+=buttonHeight;
-	
+
 	PPRadioGroup* radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 3*14));
-	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE)] = radioGroup->getLocation(); 
+	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_SONGTYPE)] = radioGroup->getLocation();
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xm");
 	radioGroup->addItem(".mod");
-	radioGroup->addItem(".wav");
+	radioGroup->addItem(".tmm");
 	container->addControl(radioGroup);
 
 	// ---- Pattern ----------
 	x += buttonWidth+dx;
 	y = py + dy;
 	container->addControl(new PPSeperator(0, screen, PPPoint(x - 4, y - 2), container->getLocation().y + container->getSize().height - y - 17, TrackerConfig::colorThemeMain, false));
-	
+
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x,y), "Patt:", true));
-	
+
 	y+=12;
 	button = new PPButton(DISKMENU_NORMAL_BUTTON_LOAD_PATTERN, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
 	button->setText("Load");
@@ -624,9 +650,9 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setText("Save As");
 	container->addControl(button);
 	y+=buttonHeight;
-	
+
 	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_PATTERNTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 30));
-	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_PATTERNTYPE)] = radioGroup->getLocation(); 
+	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_PATTERNTYPE)] = radioGroup->getLocation();
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xp");
@@ -638,7 +664,7 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(new PPSeperator(0, screen, PPPoint(x - 4, y - 2), container->getLocation().y + container->getSize().height - y - 17, TrackerConfig::colorThemeMain, false));
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x,y), "Track:", true));
-	
+
 	y+=12;
 	button = new PPButton(DISKMENU_NORMAL_BUTTON_LOAD_TRACK, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
 	button->setText("Load");
@@ -648,9 +674,9 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setText("Save As");
 	container->addControl(button);
 	y+=buttonHeight;
-	
+
 	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 30));
-	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE)] = radioGroup->getLocation(); 
+	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_TRACKTYPE)] = radioGroup->getLocation();
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xt");
@@ -662,7 +688,7 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(new PPSeperator(0, screen, PPPoint(x - 4, y - 2), container->getLocation().y + container->getSize().height - y - 17, TrackerConfig::colorThemeMain, false));
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x,y), "Instr:", true));
-	
+
 	y+=12;
 	button = new PPButton(DISKMENU_NORMAL_BUTTON_LOAD_INSTRUMENT, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
 	button->setText("Load");
@@ -672,9 +698,9 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setText("Save As");
 	container->addControl(button);
 	y+=buttonHeight;
-	
+
 	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 30));
-	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE)] = radioGroup->getLocation(); 
+	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE)] = radioGroup->getLocation();
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xi");
@@ -686,7 +712,7 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(new PPSeperator(0, screen, PPPoint(x - 4, y - 2), container->getLocation().y + container->getSize().height - y - 17, TrackerConfig::colorThemeMain, false));
 
 	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x,y), "Sample:", true));
-	
+
 	y+=12;
 	button = new PPButton(DISKMENU_NORMAL_BUTTON_LOAD_SAMPLE, screen, this, PPPoint(x, y), PPSize(buttonWidth,buttonHeight));
 	button->setText("Load");
@@ -696,17 +722,17 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setText("Save As");
 	container->addControl(button);
 	y+=buttonHeight;
-	
+
 	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 2*14));
-	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE)] = radioGroup->getLocation(); 
+	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE)] = radioGroup->getLocation();
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".wav");
 	radioGroup->addItem(".iff");
 	container->addControl(radioGroup);
-	
-	// Now get all controls built for the "normal" view (not the FT2 retro view) and save them, 
-	// so we can hide them later easily, without referring to the IDs or whatever 
+
+	// Now get all controls built for the "normal" view (not the FT2 retro view) and save them,
+	// so we can hide them later easily, without referring to the IDs or whatever
 	// (except for the section heading and the exit button)
 	PPSimpleVector<PPControl>& controls = container->getControls();
 	for (i = 0; i < controls.size(); i++)
@@ -716,10 +742,10 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 			normalViewControls->add(controls.get(i));
 		}
 	}
-	
+
 	// remember that, this is where we start gathering the controls for the "classic" view
 	pp_int32 firstClassicControlIndex = i + 1;
-	
+
 	// go on with some more stuff
 	x = container->getLocation().x + container->getSize().width - 28;
 	pp_int32 x4 = x;
@@ -729,10 +755,10 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	container->addControl(button);
-	
+
 	x = px + 2;
 	y = py + 2;
-	container->addControl(new PPStaticText(DISKMENU_CLASSIC_STATICTEXT_HEADING, NULL, NULL, PPPoint(x, y), "Disk op", true, true));	
+	container->addControl(new PPStaticText(DISKMENU_CLASSIC_STATICTEXT_HEADING, NULL, NULL, PPPoint(x, y), "Disk op", true, true));
 	y+=13;
 
 	// add type buttons
@@ -751,24 +777,24 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 		/*if (i == 0)
 			button = new PPButton(i + DISKMENU_CLASSIC_BUTTON_TYPE_TYPE, screen, this, PPPoint(x, y), PPSize(bWidth, bHeight), false, true, false);
 		else*/
-		
+
 		button = new PPButton(i + DISKMENU_CLASSIC_BUTTON_TYPE_TYPE, screen, this, PPPoint(x, y), PPSize(bWidth, bHeight), false);
-		
+
 		button->setColor(TrackerConfig::colorThemeMain);
 		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 		button->setText(buttonTexts[i]);
 		container->addControl(button);
 		y+=bHeight;
 	}
-	
+
 	pp_int32 x3 = x + bWidth + 3;
 
 	y+=5;
-	
+
 	// add save button
 	button = new PPButton(DISKMENU_CLASSIC_BUTTON_SAVE, screen, this, PPPoint(x, y), PPSize(bWidth, buttonHeight+1));
 	button->setText("Save");
-	container->addControl(button);	
+	container->addControl(button);
 
 	// file browser
 	pp_int32 lbWidth = (px + container->getSize().width) - x3 - 4;
@@ -785,11 +811,11 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 
 	y3+=2;
 	x3+=2;
-	
+
 	PPControl* ctrl;
-	
+
 	ctrl = new PPStaticText(DISKMENU_CLASSIC_STATICTEXT_SORTBY, NULL, NULL, PPPoint(x3, y3), "Sort by:", true);
-	container->addControl(ctrl);	
+	container->addControl(ctrl);
 	x3+=8*8;
 
 	button = new PPButton(DISKMENU_CLASSIC_BUTTON_SORTBY, screen, this, PPPoint(x3, y3-1), PPSize(51, 11), false);
@@ -809,7 +835,7 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	PPCheckBox* checkBox = new PPCheckBox(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS, screen, this, PPPoint(x3 + 12 * 8 + 2, y3 - 1));
 	container->addControl(checkBox);
 	container->addControl(new PPCheckBoxLabel(DISKMENU_CLASSIC_STATICTEXT_FILTEREXTENSIONS, NULL, this, PPPoint(x3, y3), "Type filter:", checkBox, true));
-	
+
 	buttonWidth = 27;
 	pp_int32 y5 = y3 + 12;
 	pp_int32 x5 = container->getLocation().x + container->getSize().width - buttonWidth - 5;
@@ -823,14 +849,14 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 		button = new PPButton(DISKMENU_CLASSIC_BUTTON_DIR0+i, screen, this, PPPoint(x5, y5), PPSize(buttonWidth, buttonHeight));
 		button->setFont(font);
 		button->setText(temp);
-		container->addControl(button);	
+		container->addControl(button);
 		y5+=buttonHeight+1;
 	}
 	button = new PPButton(DISKMENU_CLASSIC_BUTTON_STOREDIR, screen, this, PPPoint(x5, y5), PPSize(buttonWidth, 9), true, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Store");
-	container->addControl(button);	
-	
+	container->addControl(button);
+
 	// save edit list box
 	buttonWidth = container->getControlByID(DISKMENU_BUTTON_EXIT)->getLocation().x - (x + bWidth + 4) - 4;
 
@@ -862,24 +888,24 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 		button = new PPButton(DISKMENU_CLASSIC_BUTTON_PREV+i, screen, this, PPPoint(x, y), PPSize(bWidth, bHeight));
 		button->setFont(font);
 		button->setText(buttonTexts2[i]);
-		container->addControl(button);	
+		container->addControl(button);
 		x+=bWidth+1+buttonSpacing[i];
 	}
-	
+
 	x=x4-13*2;
 	button = new PPButton(DISKMENU_CLASSIC_BUTTON_VEXTEND, screen, this, PPPoint(x, y), PPSize(13, bHeight+1), false);
 	button->setText(TrackerConfig::stringButtonCollapsed);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	container->addControl(button);	
+	container->addControl(button);
 	x+=13;
 	button = new PPButton(DISKMENU_CLASSIC_BUTTON_HEXTEND, screen, this, PPPoint(x, y), PPSize(13, bHeight+1), false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText(">");
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	container->addControl(button);	
-	
+	container->addControl(button);
+
 	y = py+container->getSize().height-(buttonHeight+4);
 	container->addControl(new PPSeperator(0, screen, PPPoint(px + 2, y - 4), container->getSize().width - 4, TrackerConfig::colorThemeMain, true));
 
@@ -890,14 +916,14 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 		classicViewControls->add(controls.get(i));
 		controls.get(i)->hide(true);
 	}
-	
+
 	tracker.screen->addControl(container);
 
 	sectionContainer = container;
 
 	// fit dir buttons to browser listbox size
 	fitDirButtons();
-	
+
 	initialised = true;
 
 	showSection(false);
@@ -924,15 +950,19 @@ void SectionDiskMenu::show(bool bShow)
 				case ModuleEditor::ModSaveTypeXM:
 					radioGroup->setChoice(0);
 					break;
-					
+
 				case ModuleEditor::ModSaveTypeMOD:
 					radioGroup->setChoice(1);
 					break;
-					
+
+				case ModuleEditor::ModSaveTypeTMM:
+					radioGroup->setChoice(2);
+					break;
+
 				default:
 					ASSERT(false);
 			}
-		}		
+		}
 
 		// restore CWD in case it has been changed
 		// through the native file requester (e.g. on Windows)
@@ -946,22 +976,22 @@ void SectionDiskMenu::show(bool bShow)
 		// store CWD
 		currentPath = getCurrentPath();
 	}
-	
+
 	diskMenuVisible = bShow;
-	
+
 	SectionUpperLeft::show(bShow);
-	
+
 	if (bShow)
 	{
 #ifdef __LOWRES__
 		pp_int32 y = tracker.screen->getControlByID(CONTAINER_INPUTDEFAULT)->getLocation().y;
 		replaceInstrumentListBoxes(true, y);
 		tracker.getPatternEditorControl()->show(false);
-#endif		
+#endif
 		prepareSection();
-		lastFocusedControl = tracker.screen->getFocusedControl();		
+		lastFocusedControl = tracker.screen->getFocusedControl();
 		tracker.screen->setFocus(listBoxFiles);
-	
+
 		if (forceClassicBrowser)
 		{
 			showNormalView(false);
@@ -976,13 +1006,13 @@ void SectionDiskMenu::show(bool bShow)
 #ifdef __LOWRES__
 		replaceInstrumentListBoxes(false);
 		tracker.getPatternEditorControl()->show(true);
-#endif		
+#endif
 		tracker.screen->setFocus(lastFocusedControl);
 	}
 
 #ifdef __LOWRES__
 	pp_int32 deltay = sectionContainer->getSize().height - tracker.UPPERSECTIONDEFAULTHEIGHT();
-	
+
 	pp_int32 newSIPOffsetMove = bShow ? -deltay : deltay;
 
 	// Only move SIP panel up/down on show/hide when it's exactly the complementary
@@ -1010,12 +1040,12 @@ void SectionDiskMenu::update(bool repaint/* = true*/)
 bool SectionDiskMenu::isActiveEditing()
 {
 	PPListBox* listBox = static_cast<PPListBox*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_LISTBOX_NAME));
-	
+
 	ASSERT(listBox);
-	
-	if (tracker.screen->hasFocus(sectionContainer) && listBox->isEditing())							
+
+	if (tracker.screen->hasFocus(sectionContainer) && listBox->isEditing())
 		return true;
-		
+
 	return false;
 }
 
@@ -1077,7 +1107,7 @@ void SectionDiskMenu::selectSaveType(pp_uint32 type)
 			static_cast<PPRadioGroup*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE))->setChoice(1);
 			classicViewState = BrowseSamples;
 			break;
-			
+
 		default:
 			ASSERT(false);
 	}
@@ -1099,9 +1129,9 @@ pp_uint32 SectionDiskMenu::getDefaultConfigUInt32()
 pp_uint32 SectionDiskMenu::getConfigUInt32()
 {
 	pp_uint32 result = 0;
-	
+
 	// Classic view visible
-	result |= classicViewVisible ? 1 : 0;	
+	result |= classicViewVisible ? 1 : 0;
 	// Extended list box = Bit 1
 	result |= (listBoxFiles->getSize().height == fileBrowserExtent.height) ? 2 : 0;
 	// Extended list box = Bit 2
@@ -1110,10 +1140,10 @@ pp_uint32 SectionDiskMenu::getConfigUInt32()
 	result |= sortAscending ? 8 : 0;
 	// filter types = Bit 4
 	result |= static_cast<PPCheckBox*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS))->isChecked() ? 16 : 0;
-	
+
 	// filter types = Bit 24 and above
-	result |= (pp_uint32)listBoxFiles->getSortType() << 24;				
-	
+	result |= (pp_uint32)listBoxFiles->getSortType() << 24;
+
 	return result;
 }
 
@@ -1129,7 +1159,7 @@ void SectionDiskMenu::setConfigUInt32(pp_uint32 config)
 		showNormalView(true);
 		showClassicView(false);
 	}
-	
+
 	if ((config & 2) && listBoxFiles->getSize().height != fileBrowserExtent.height)
 	{
 		resizeBrowserVertically();
@@ -1169,7 +1199,7 @@ void SectionDiskMenu::setCurrentPath(const PPSystemString& path, bool reload/* =
 
 PPString SectionDiskMenu::getCurrentPathASCII()
 {
-	char* nameASCIIZ = listBoxFiles->getCurrentPathAsString().toASCIIZ();	
+	char* nameASCIIZ = listBoxFiles->getCurrentPathAsString().toASCIIZ();
 	PPString result(nameASCIIZ);
 	delete[] nameASCIIZ;
 	return result;
@@ -1184,9 +1214,9 @@ void SectionDiskMenu::resizeInstrumentContainer()
 	pp_int32 y = ctrl1->isVisible() ? ctrl1->getLocation().y : ctrl2->getLocation().y;
 
 	replaceAndResizeInstrumentListContainer(y);
-	
+
 	tracker.screen->paint(false);
-#endif	
+#endif
 }
 
 void SectionDiskMenu::setCycleFilenames(bool cycleFilenames)
@@ -1207,10 +1237,10 @@ void SectionDiskMenu::showNormalView(bool bShow)
 
 	for (i = 0; i < (unsigned)normalViewControls->size(); i++)
 		normalViewControls->get(i)->hide(!bShow);
-	
+
 	for (i = 0; i < sizeof(radioGroupLocations) / sizeof(PPPoint); i++)
 		static_cast<PPContainer*>(sectionContainer)->getControlByID(INDEXTORADIOGROUP(i))->setLocation(radioGroupLocations[i]);
-				
+
 	if (bShow && isActiveEditing())
 		tracker.screen->setFocus(lastFocusedControl);
 }
@@ -1218,12 +1248,12 @@ void SectionDiskMenu::showNormalView(bool bShow)
 void SectionDiskMenu::updateClassicView(bool repaint/* = true*/)
 {
 	pp_uint32 i;
-	
+
 	if (!classicViewVisible)
 		return;
-	
+
 	updateButtonStates(false);
-	
+
 	bool cond = classicViewState != BrowseAll;
 
 	static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_TYPE))->setClickable(cond);
@@ -1232,21 +1262,21 @@ void SectionDiskMenu::updateClassicView(bool repaint/* = true*/)
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_INSTRUMENT)->hide(cond);
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_SAMPLE)->hide(cond);
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_PATTERN)->hide(cond);
-	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_TRACK)->hide(cond);		
-	
+	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_TRACK)->hide(cond);
+
 	if (classicViewState == BrowseAll)
 	{
 		currentActiveRadioGroup = NULL;
 	}
 
 	PPPoint pos = static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_TYPE_MODULE)->getLocation();
-	
+
 	for (i = 0; i < sizeof(radioGroupLocations) / sizeof(PPPoint); i++)
 	{
 		static_cast<PPContainer*>(sectionContainer)->getControlByID(INDEXTORADIOGROUP(i))->setLocation(pos);
 		static_cast<PPContainer*>(sectionContainer)->getControlByID(INDEXTORADIOGROUP(i))->hide(true);
 	}
-	
+
 	switch (classicViewState)
 	{
 		case BrowseModules:
@@ -1275,13 +1305,13 @@ void SectionDiskMenu::updateClassicView(bool repaint/* = true*/)
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_STATICTEXT_SORTBY)->hide(cond);
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_SORTBY)->hide(cond);
 	static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_SORTORDER)->hide(cond);
-	
+
 	for (i = DISKMENU_CLASSIC_BUTTON_DIR0; i <= DISKMENU_CLASSIC_BUTTON_STOREDIR; i++)
 		static_cast<PPContainer*>(sectionContainer)->getControlByID(i)->hide(listBoxFiles->getSize().width == fileBrowserExtent.width);
 
 	if (currentActiveRadioGroup)
 		currentActiveRadioGroup->hide(false);
-	
+
 	if (repaint)
 		tracker.screen->paintControl(sectionContainer);
 }
@@ -1290,7 +1320,7 @@ void SectionDiskMenu::showClassicView(bool bShow)
 {
 	for (pp_int32 i = 0; i < classicViewControls->size(); i++)
 		classicViewControls->get(i)->hide(!bShow);
-		
+
 	classicViewVisible = bShow;
 
 	if (bShow)
@@ -1306,7 +1336,7 @@ bool SectionDiskMenu::isNormalViewVisible()
 	for (pp_int32 i = 0; i < normalViewControls->size(); i++)
 		if (!normalViewControls->get(i)->isVisible())
 			res = false;
-			
+
 	return res;
 }
 
@@ -1317,7 +1347,7 @@ bool SectionDiskMenu::isClassicViewVisible()
 	for (pp_int32 i = 0; i < classicViewControls->size(); i++)
 		if (!classicViewControls->get(i)->isVisible())
 			res = false;
-			
+
 	return res;
 }
 
@@ -1334,7 +1364,7 @@ void SectionDiskMenu::flip()
 		showNormalView(true);
 		showClassicView(false);
 	}
-	
+
 	PPScreen* screen = tracker.screen;
 
 	screen->paintControl(sectionContainer);
@@ -1344,11 +1374,11 @@ void SectionDiskMenu::updateFilenameEditFieldExtension(ClassicViewStates viewSta
 {
 	if (currentActiveRadioGroup)
 	{
-		PPSystemString file = this->file->stripExtension();		
+		PPSystemString file = this->file->stripExtension();
 		if (file.length())
-		{			
-			PPSystemString ext(currentActiveRadioGroup->getItem(currentActiveRadioGroup->getChoice()));			
-			file.append(ext);			
+		{
+			PPSystemString ext(currentActiveRadioGroup->getItem(currentActiveRadioGroup->getChoice()));
+			file.append(ext);
 			updateFilenameEditField(file);
 		}
 	}
@@ -1357,7 +1387,7 @@ void SectionDiskMenu::updateFilenameEditFieldExtension(ClassicViewStates viewSta
 void SectionDiskMenu::updateFilenameEditField(ClassicViewStates viewState)
 {
 	PPSystemString ext;
-	
+
 	if (currentActiveRadioGroup)
 		ext = PPSystemString(currentActiveRadioGroup->getItem(currentActiveRadioGroup->getChoice()));
 
@@ -1366,7 +1396,7 @@ void SectionDiskMenu::updateFilenameEditField(ClassicViewStates viewState)
 		case BrowseAll:
 			*file = tracker.moduleEditor->getModuleFileName();
 			break;
-			
+
 		case BrowseModules:
 			if (moduleTypeAdjust)
 				*file = tracker.moduleEditor->getModuleFileName();
@@ -1378,7 +1408,7 @@ void SectionDiskMenu::updateFilenameEditField(ClassicViewStates viewState)
 			break;
 		case BrowseInstruments:
 		{
-			*file = tracker.moduleEditor->getInstrumentFileName(tracker.listBoxInstruments->getSelectedIndex());			
+			*file = tracker.moduleEditor->getInstrumentFileName(tracker.listBoxInstruments->getSelectedIndex());
 			file->append(ext);
 			break;
 		}
@@ -1398,28 +1428,28 @@ void SectionDiskMenu::updateFilenameEditField(ClassicViewStates viewState)
 		{
 			*file = tracker.moduleEditor->getModuleFileName().stripExtension();
 			file->append(ext);
-			break;	
+			break;
 		}
 		case BrowseLAST:
 			break;
 
 	}
-	
+
 	updateFilenameEditField(*file);
 }
 
 void SectionDiskMenu::updateFilenameEditField(const PPSystemString& fileName)
 {
 	editFieldCurrentFile->clear();
-	
+
 	char* nameASCIIZ = fileName.toASCIIZ();
 	PPString str(nameASCIIZ);
 	editFieldCurrentFile->addItem(str);
 	delete[] nameASCIIZ;
-	
+
 	*file = fileName;
-	
-	tracker.screen->paintControl(editFieldCurrentFile);		
+
+	tracker.screen->paintControl(editFieldCurrentFile);
 }
 
 void SectionDiskMenu::updateFilenameEditFieldFromBrowser()
@@ -1449,7 +1479,7 @@ void SectionDiskMenu::handleLoadOrStep()
 void SectionDiskMenu::loadCurrentSelectedFile()
 {
 	PPSystemString fileFullPath = listBoxFiles->getCurrentPathAsString();
-	fileFullPath.append(listBoxFiles->getCurrentSelectedPathEntry()->getName());	
+	fileFullPath.append(listBoxFiles->getCurrentSelectedPathEntry()->getName());
 
 	switch (classicViewState)
 	{
@@ -1475,7 +1505,7 @@ void SectionDiskMenu::loadCurrentSelectedFile()
 			break;
 
 	}
-	
+
 	updateFilenameEditFieldExtension(classicViewState);
 }
 
@@ -1486,14 +1516,14 @@ void SectionDiskMenu::showOverwriteMessageBox()
 		delete dialog;
 		dialog = NULL;
 	}
-	
-	dialog = new PPDialogBase(tracker.screen, 
-							  responder, 
-							  RESPONDMESSAGEBOX_OVERWRITE, 
+
+	dialog = new PPDialogBase(tracker.screen,
+							  responder,
+							  RESPONDMESSAGEBOX_OVERWRITE,
 							  "Overwrite existing file?");
-	dialog->show();	
+	dialog->show();
 }
-	
+
 void SectionDiskMenu::prepareSave()
 {
 	if (editFieldCurrentFile->isEditing())
@@ -1502,13 +1532,13 @@ void SectionDiskMenu::prepareSave()
 	assureExtension();
 
 	PPSystemString fileFullPath = listBoxFiles->getCurrentPathAsString();
-	
+
 	PPSystemString file = this->file->stripExtension();
-	
+
 	if (file.length())
 	{
 		fileFullPath.append(*this->file);
-		
+
 		if (XMFile::exists(fileFullPath))
 		{
 			showOverwriteMessageBox();
@@ -1523,13 +1553,13 @@ void SectionDiskMenu::prepareSave()
 void SectionDiskMenu::saveCurrent()
 {
 	PPSystemString fileFullPath = listBoxFiles->getCurrentPathAsString();
-	
+
 	fileFullPath.append(*this->file);
-	
+
 	bool res = true;
-	
+
 	FileTypes saveType;
-	
+
 	switch (classicViewState)
 	{
 		case BrowseAll:
@@ -1542,27 +1572,19 @@ void SectionDiskMenu::saveCurrent()
 				case 0:
 					saveType = FileTypes::FileTypeSongXM;
 					break;
-					
+
 				case 1:
 					saveType = FileTypes::FileTypeSongMOD;
 					break;
-					
+
 				case 2:
-				{
-					tracker.sectionHDRecorder->setCurrentFileName(fileFullPath);
-					tracker.sectionSwitcher->showUpperSection(tracker.sectionHDRecorder);
-					if (dialog &&
-						tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
-					{
-						tracker.screen->setModalControl(NULL);
-					}
-					return;
-				}
+					saveType = FileTypes::FileTypeSongTMM;
+					break;
 			}
-			
+
 			break;
 		}
-		
+
 		case BrowseInstruments:
 			saveType = FileTypes::FileTypeInstrumentXI;
 			break;
@@ -1573,12 +1595,12 @@ void SectionDiskMenu::saveCurrent()
 				case 0:
 					saveType = FileTypes::FileTypeSampleWAV;
 					break;
-					
+
 				case 1:
 					saveType = FileTypes::FileTypeSampleIFF;
 					break;
 			}
-			
+
 			break;
 		}
 		case BrowsePatterns:
@@ -1591,7 +1613,7 @@ void SectionDiskMenu::saveCurrent()
 			break;
 
 	}
-	
+
 	res = tracker.prepareSavingWithDialog(saveType);
 
 	if (tracker.savePanel)
@@ -1601,20 +1623,20 @@ void SectionDiskMenu::saveCurrent()
 	}
 
 	if (res)
-	{		
-		tracker.saveTypeWithDialog(saveType, this);	
+	{
+		tracker.saveTypeWithDialog(saveType, this);
 	}
 	else
 	{
 		tracker.fileSystemChangedListener = this;
 	}
-	
+
 	if (dialog &&
 		tracker.screen->getModalControl() == dialog->getMessageBoxContainer())
 	{
 		tracker.screen->setModalControl(NULL);
 	}
-		
+
 }
 
 void SectionDiskMenu::showDeleteMessageBox()
@@ -1628,29 +1650,29 @@ void SectionDiskMenu::showDeleteMessageBox()
 void SectionDiskMenu::deleteCurrent()
 {
 	PPSystemString fileFullPath = listBoxFiles->getCurrentPathAsString();
-	
+
 	fileFullPath.append(listBoxFiles->getCurrentSelectedPathEntry()->getName());
-	
+
 	XMFile::remove(fileFullPath);
-	
+
 	reload();
 }
 
 void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 {
-	static const pp_uint32 IDs[] = 
+	static const pp_uint32 IDs[] =
 	{
-		DISKMENU_CLASSIC_BUTTON_PREV, 
-		DISKMENU_CLASSIC_BUTTON_NEXT, 
-		DISKMENU_CLASSIC_BUTTON_PARENT, 
-		DISKMENU_CLASSIC_BUTTON_ROOT, 
-		DISKMENU_CLASSIC_BUTTON_HOME, 
-		DISKMENU_CLASSIC_BUTTON_LOAD, 
-		DISKMENU_CLASSIC_BUTTON_DELETE, 
+		DISKMENU_CLASSIC_BUTTON_PREV,
+		DISKMENU_CLASSIC_BUTTON_NEXT,
+		DISKMENU_CLASSIC_BUTTON_PARENT,
+		DISKMENU_CLASSIC_BUTTON_ROOT,
+		DISKMENU_CLASSIC_BUTTON_HOME,
+		DISKMENU_CLASSIC_BUTTON_LOAD,
+		DISKMENU_CLASSIC_BUTTON_DELETE,
 		DISKMENU_CLASSIC_BUTTON_MAKEDIR
 	};
-	
-	const bool states[] = 
+
+	const bool states[] =
 	{
 		listBoxFiles->canPrev(),
 		listBoxFiles->canNext(),
@@ -1661,9 +1683,9 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 		listBoxFiles->currentSelectionIsFile(),
 		false
 	};
-	
+
 	ASSERT(sizeof(states)/sizeof(bool) == sizeof(IDs)/sizeof(pp_uint32));
-	
+
 	pp_uint32 i;
 	for (i = 0; i < sizeof(IDs)/sizeof(pp_uint32); i++)
 	{
@@ -1676,14 +1698,14 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 				tracker.screen->paintControl(button);
 		}
 	}
-	
+
 	const char* stateText = listBoxFiles->currentSelectionIsFile() ? "Load" : "Step";
 	PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_BUTTON_LOAD));
 	if (button->getText().compareTo(stateText) != 0)
 	{
 		button->setText(stateText);
 		if (repaint)
-			tracker.screen->paintControl(button);		
+			tracker.screen->paintControl(button);
 	}
 
 	stateText = sortAscending ? "\xfd" : "\xfe";
@@ -1692,7 +1714,7 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 	{
 		button->setText(stateText);
 		if (repaint)
-			tracker.screen->paintControl(button);		
+			tracker.screen->paintControl(button);
 	}
 
 	static const char* sortTypes[PPListBoxFileBrowser::NumSortRules] = {"Name", "Size", "Extension"};
@@ -1702,7 +1724,7 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 	{
 		button->setText(stateText);
 		if (repaint)
-			tracker.screen->paintControl(button);		
+			tracker.screen->paintControl(button);
 	}
 
 	PPString stateText2 = (listBoxFiles->getSize().height == fileBrowserExtent.height) ? TrackerConfig::stringButtonExtended : TrackerConfig::stringButtonCollapsed;
@@ -1711,7 +1733,7 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 	{
 		button->setText(stateText2);
 		if (repaint)
-			tracker.screen->paintControl(button);		
+			tracker.screen->paintControl(button);
 	}
 
 	stateText2 = (listBoxFiles->getSize().width == fileBrowserExtent.width) ? ">" : "<";
@@ -1720,16 +1742,16 @@ void SectionDiskMenu::updateButtonStates(bool repaint/* = true*/)
 	{
 		button->setText(stateText2);
 		if (repaint)
-			tracker.screen->paintControl(button);		
+			tracker.screen->paintControl(button);
 	}
-	
+
 	// update directory buttons
 #if 0
 	for (i = DISKMENU_CLASSIC_BUTTON_DIR0; i <= DISKMENU_CLASSIC_BUTTON_DIR4; i++)
 	{
-		PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(i));		
-		PPString strKey = getKeyFromPredefPathButton(button);		
-		PPDictionaryKey* key = tracker.settingsDatabase->restore(strKey);		
+		PPButton* button = static_cast<PPButton*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(i));
+		PPString strKey = getKeyFromPredefPathButton(button);
+		PPDictionaryKey* key = tracker.settingsDatabase->restore(strKey);
 		button->enable(key != NULL);
 	}
 #endif
@@ -1781,7 +1803,7 @@ void SectionDiskMenu::reload(bool repaint/* = true*/)
 	listBoxFiles->saveState();
 	listBoxFiles->refreshFiles();
 	listBoxFiles->restoreState(false);
-	
+
 	if (pathEntry)
 	{
 		for (pp_int32 i = 0; i < listBoxFiles->getNumItems(); i++)
@@ -1794,7 +1816,7 @@ void SectionDiskMenu::reload(bool repaint/* = true*/)
 		}
 		delete pathEntry;
 	}
-	
+
 	if (repaint)
 		tracker.screen->paintControl(listBoxFiles);
 
@@ -1805,9 +1827,9 @@ void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 	FileExtProvider fileExtProvider;
 
 	listBoxFiles->clearExtensions();
-	
+
 	const char* const* extensions = NULL;
-	
+
 	if (static_cast<PPCheckBox*>(static_cast<PPContainer*>(sectionContainer)->getControlByID(DISKMENU_CLASSIC_CHECKBOX_FILTEREXTENSIONS))->isChecked())
 	{
 		switch (classicViewState)
@@ -1827,15 +1849,15 @@ void SectionDiskMenu::updateFilter(bool repaint/* = true*/)
 			case BrowseTracks:
 				extensions = fileExtProvider.getTrackExtensions();
 				break;
-			case BrowseAll: 
+			case BrowseAll:
 			case BrowseLAST:
 				break;
 		}
 	}
-	
+
 	if (extensions)
 		listBoxFiles->addExtensions(extensions);
-	
+
 	reload(repaint);
 }
 
@@ -1844,7 +1866,7 @@ void SectionDiskMenu::switchState(ClassicViewStates viewState)
 	classicViewState = viewState;
 	updateFilter(false);
 	updateClassicView();
-	updateFilenameEditField(classicViewState);	
+	updateFilenameEditField(classicViewState);
 }
 
 void SectionDiskMenu::resizeBrowserVertically()
@@ -1856,7 +1878,7 @@ void SectionDiskMenu::resizeBrowserVertically()
 		size.height-=13;
 		listBoxFiles->setSize(size);
 		location.y+=13;
-		listBoxFiles->setLocation(location);		
+		listBoxFiles->setLocation(location);
 	}
 	else
 	{
@@ -1865,9 +1887,9 @@ void SectionDiskMenu::resizeBrowserVertically()
 		location.y-=13;
 		listBoxFiles->setLocation(location);
 	}
-	
+
 	fitDirButtons();
-	
+
 	updateClassicView();
 }
 
@@ -1884,7 +1906,7 @@ void SectionDiskMenu::resizeBrowserHorizontally()
 		size.width+=32;
 		listBoxFiles->setSize(size);
 	}
-	
+
 	updateClassicView();
 }
 
@@ -1895,7 +1917,7 @@ void SectionDiskMenu::fitDirButtons()
 	pp_int32 cy = ((listBoxFiles->getSize().height-2) - (height * 6));
 
 	pp_int32 y = listBoxFiles->getLocation().y + cy;
-		
+
 	for (pp_int32 i = DISKMENU_CLASSIC_BUTTON_DIR0; i <= DISKMENU_CLASSIC_BUTTON_STOREDIR; i++)
 	{
 		PPControl* ctrl = static_cast<PPContainer*>(sectionContainer)->getControlByID(i);
@@ -1912,12 +1934,12 @@ void SectionDiskMenu::fitDirButtons()
 PPString SectionDiskMenu::getKeyFromPredefPathButton(PPControl* button)
 {
 	pp_int32 id = button->getID();
-	
+
 	id -= DISKMENU_CLASSIC_BUTTON_DIR0;
-	
+
 	if (id >= 0 && id < 5)
 	{
-		static const char* keys[BrowseLAST] = 
+		static const char* keys[BrowseLAST] =
 		{
 			"PREDEF_PATH_ALL",
 			"PREDEF_PATH_MODULES",
@@ -1926,11 +1948,11 @@ PPString SectionDiskMenu::getKeyFromPredefPathButton(PPControl* button)
 			"PREDEF_PATH_PATTERNS",
 			"PREDEF_PATH_TRACKS",
 		};
-	
+
 		char result[1024];
-		
+
 		sprintf(result, "%s_%d", keys[classicViewState], id);
-		
+
 		return PPString(result);
 	}
 	else return "";

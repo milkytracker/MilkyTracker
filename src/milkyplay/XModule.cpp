@@ -1300,8 +1300,8 @@ const mp_sint32 XModule::sfinetunes[16] = {8363,8413,8463,8529,8581,8651,8723,87
 
 const mp_sbyte XModule::modfinetunes[16] = {0,16,32,48,64,80,96,112,-128,-112,-96,-80,-64,-48,-32,-16};
 
-const mp_ubyte XModule::numValidXMEffects = 24;
-const mp_ubyte XModule::validXMEffects[XModule::numValidXMEffects] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,20,21,25,27,29,33};
+const mp_ubyte XModule::numValidXMEffects = 26;
+const mp_ubyte XModule::validXMEffects[XModule::numValidXMEffects] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,25,27,29,33};
 
 //////////////////////////////////////////////////////////////////////////
 // various tools for loading and converting modules	     				//
@@ -1906,8 +1906,26 @@ XModule::XModule()
 
 	memset(&header,0,sizeof(TXMHeader));
 
-	if (instr)
+	if (instr) {
 		memset(instr,0,sizeof(TXMInstrument)*256);
+
+		// MAGIC :-D Apply standard settings
+		for(int i = 0; i < 256; i++) {
+			instr[i].tmm.type                    = 0;
+			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
+			instr[i].tmm.sine.basefreq           = 440;
+			instr[i].tmm.pulse.basefreq          = 440;
+			instr[i].tmm.additive.basefreq       = 440;
+			instr[i].tmm.pulse.width             = 16;
+			instr[i].tmm.additive.nharmonics     = 64;
+			instr[i].tmm.additive.bandwidth      = 20;
+			instr[i].tmm.additive.bwscale        = 1;
+			instr[i].tmm.additive.usescale       = 0;
+			instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
+			instr[i].tmm.additive.destroyer      = 0;
+			memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
+		}
+	}
 
 	if (smp)
 		memset(smp,0,sizeof(TXMSample)*MP_MAXSAMPLES);
@@ -2702,7 +2720,26 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		samplePointerIndex = 0;
 
 		if (instr)
+		{
 			memset(instr,0,sizeof(TXMInstrument)*256);
+
+			// MAGIC :-D Apply standard settings
+			for(int i = 0; i < 256; i++) {
+				instr[i].tmm.type                    = 0;
+				instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
+				instr[i].tmm.sine.basefreq           = 440;
+				instr[i].tmm.pulse.basefreq          = 440;
+				instr[i].tmm.additive.basefreq       = 440;
+				instr[i].tmm.pulse.width             = 16;
+				instr[i].tmm.additive.nharmonics     = 64;
+				instr[i].tmm.additive.bandwidth      = 20;
+				instr[i].tmm.additive.bwscale        = 1;
+				instr[i].tmm.additive.usescale       = 0;
+				instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
+				instr[i].tmm.additive.destroyer      = 0;
+				memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
+			}
+		}
 
 		// some default values please
 		if (smp)

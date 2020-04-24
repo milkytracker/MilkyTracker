@@ -1044,6 +1044,9 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 				case ModuleEditor::ModSaveTypeXM:
 					playerController->switchPlayMode(PlayerController::PlayMode_FastTracker2);
 					break;
+				case ModuleEditor::ModSaveTypeTMM:
+					playerController->switchPlayMode(PlayerController::PlayMode_FastTracker2);
+					break;
 				default:
 					ASSERT(false);
 			}

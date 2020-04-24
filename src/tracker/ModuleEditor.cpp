@@ -684,7 +684,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 	if (module->getType() == XModule::ModuleType_TMM) {
 		type = module->getType();
 	}
-	if (module->getType() != XModule::ModuleType_XM)
+	else if (module->getType() != XModule::ModuleType_XM)
 	{
 		type = module->getType();
 

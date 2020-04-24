@@ -45,37 +45,55 @@ void PPTools::convertToHex(char* name, pp_uint32 value, pp_uint32 numDigits)
 	name[i] = 0;
 }
 
-pp_uint32 PPTools::getDecNumDigits(pp_uint32 value)
+pp_uint32 PPTools::getDecNumDigits(pp_uint32 x)
 {
-	if (value == 0)
-		return 1;
+	if (x == 0)
+		return 0;
 
-	pp_uint32 i = 0;
-	pp_uint32 start = 1;
-	while (value / start)
-	{
-		i++;
-		start*=10;
-	}
+    if (x >= 10000) {
+        if (x >= 10000000) {
+            if (x >= 100000000) {
+                if (x >= 1000000000)
+                    return 10;
+                return 9;
+            }
+            return 8;
+        }
+        if (x >= 100000) {
+            if (x >= 1000000)
+                return 7;
+            return 6;
+        }
+        return 5;
+    }
+    if (x >= 100) {
+        if (x >= 1000)
+            return 4;
+        return 3;
+    }
+    if (x >= 10)
+        return 2;
 
-	return i;
+    return 1;
 }
 
 void PPTools::convertToDec(char* name, pp_uint32 value, pp_uint32 numDigits)
 {
-	pp_uint32 i;
+	pp_uint32 i = 0;
 	pp_uint32 start = 1;
-	for (i = 0; i < numDigits-1; i++)
-		start*=10;
 
-	for (i = 0; i < numDigits; i++)
-	{
-		name[i] = hex[(value / start)%10];
-		start/=10;
+	if(numDigits > 0) {
+		for (i = 0; i < numDigits-1; i++)
+			start*=10;
+
+		for (i = 0; i < numDigits; i++)
+		{
+			name[i] = hex[(value / start)%10];
+			start/=10;
+		}
 	}
 
 	name[i] = 0;
-	//sprintf(name, "%d", value);
 }
 
 // you're responsible for deleting this vector

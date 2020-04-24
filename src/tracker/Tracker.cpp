@@ -2901,6 +2901,12 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionXM));
 			break;
 
+		case FileTypes::FileTypeSongTMM:
+			savePanel = new PPSavePanel(screen, "Save Titan Magic Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeTMM));
+			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionTMM),
+									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionTMM));
+			break;
+
 		case FileTypes::FileTypePatternXP:
 		{
 			PPSystemString fileName = moduleEditor->getModuleFileName().stripExtension();
@@ -2992,6 +2998,11 @@ bool Tracker::saveTypeWithDialog(FileTypes eSaveType, EventListenerInterface* fi
 				case FileTypes::FileTypeSongXM:
 					commitListBoxChanges();
 					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeXM);
+					break;
+
+				case FileTypes::FileTypeSongTMM:
+					commitListBoxChanges();
+					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeTMM);
 					break;
 
 				case FileTypes::FileTypeTrackXT:
@@ -3132,6 +3143,10 @@ void Tracker::saveAs()
 
 		case ModuleEditor::ModSaveTypeXM:
 			saveType(FileTypes::FileTypeSongXM);
+			break;
+
+		case ModuleEditor::ModSaveTypeTMM:
+			saveType(FileTypes::FileTypeSongTMM);
 			break;
 
 		default:
