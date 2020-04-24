@@ -1853,9 +1853,17 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
 	return MP_OK;
 }
 
-mp_sint32 XModule::saveMagicalModule(const SYSCHAR* fileName)
+mp_sint32 XModule::saveMagicalModule(const SYSCHAR* fileName, bool isExtended)
 {
-	return saveExtendedModule(fileName, 1);
+	mp_sint32 res;
+
+	if(isExtended) {
+		res = saveExtendedModule(fileName, 1);
+	} else {
+		//res = saveProtrackerModule(fileName, 1);
+	}
+
+	return res;
 }
 
 static mp_uword swap(mp_uword x)

@@ -50,7 +50,7 @@ TabManager::Document::Document(ModuleEditor* moduleEditor, PlayerController* pla
 	playerController(playerController)
 {
 }
-	
+
 TabManager::Document::~Document()
 {
 	// player controller is deleted from the PlayerMaster
@@ -63,7 +63,7 @@ TabManager::TabManager(Tracker& tracker) :
 	stopOnTabSwitch(false),
 	resumeOnTabSwitch(false)
 {
-	documents = new PPSimpleVector<Document>();	
+	documents = new PPSimpleVector<Document>();
 }
 
 TabManager::~TabManager()
@@ -79,7 +79,8 @@ TabHeaderControl* TabManager::getTabHeaderControl()
 ModuleEditor* TabManager::createModuleEditor()
 {
 	ModuleEditor* moduleEditor = new ModuleEditor();
-	moduleEditor->createNewSong(tracker.playerController->getPlayMode() == PlayerController::PlayMode_FastTracker2 ? 8 : 4);	
+	moduleEditor->setPlayerController(tracker.playerController);
+	moduleEditor->createNewSong(tracker.playerController->getPlayMode() == PlayerController::PlayMode_FastTracker2 ? 8 : 4);
 	moduleEditor->setCurrentPatternIndex(moduleEditor->getOrderPosition(0));
 	return moduleEditor;
 }
@@ -93,10 +94,10 @@ PlayerController* TabManager::createPlayerController()
 #else
 	PlayerController* playerController = tracker.playerMaster->createPlayerController(false);
 #endif
-	
+
 	if (playerController == NULL)
 		return NULL;
-	
+
 	applyPlayerDefaults(playerController);
 	return playerController;
 }
@@ -116,7 +117,7 @@ void TabManager::applyPlayerDefaults(PlayerController* playerController)
 	{
 		playerController->switchPlayMode(PlayerController::PlayMode_FastTracker2, false);
 	}
-	
+
 	bool v = tracker.settingsDatabase->restore("PLAYMODE_ADVANCED_ALLOW8xx")->getBoolValue();
 	playerController->enablePlayModeOption(PlayerController::PlayModeOptionPanning8xx, v);
 
@@ -135,37 +136,37 @@ void TabManager::applyPlayerDefaults(PlayerController* playerController)
 			for (i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				playerController->setPanning((pp_uint8)i, panning[i]);
 		}
-		delete[] panning;		
+		delete[] panning;
 	}
-	
+
 }
 
 void TabManager::openNewTab(PlayerController* playerController/* = NULL*/, ModuleEditor* moduleEditor/* = NULL*/)
 {
 #ifndef __LOWRES__
 	TabHeaderControl* tabHeader = getTabHeaderControl();
-	
+
 	if (playerController == NULL)
 	{
 		playerController = createPlayerController();
 		if (playerController == NULL)
 		{
-			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Too many open modules.", Tracker::MessageBox_OK);	
+			tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Too many open modules.", Tracker::MessageBox_OK);
 			return;
 		}
 	}
-	
+
 	if (moduleEditor == NULL)
 	{
 		moduleEditor = createModuleEditor();
 	}
-	
-	playerController->attachModuleEditor(moduleEditor);					
+
+	playerController->attachModuleEditor(moduleEditor);
 	moduleEditor->attachPlayerCriticalSection(playerController->getCriticalSection());
-	playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());	
-	
+	playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());
+
 	Document* doc = new Document(moduleEditor, playerController);
-	documents->add(doc);	
+	documents->add(doc);
 
 	TabTitleProvider tabTitleProvider(*moduleEditor);
 	PPString tabTitle = tabTitleProvider.getTabTitle();
@@ -174,13 +175,13 @@ void TabManager::openNewTab(PlayerController* playerController/* = NULL*/, Modul
 #else
 	if (moduleEditor == NULL || playerController == NULL)
 		return;
-		
-	playerController->attachModuleEditor(moduleEditor);					
-	moduleEditor->attachPlayerCriticalSection(playerController->getCriticalSection());
-	playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());	
 
-	documents->add(new Document(moduleEditor, playerController));	
-#endif	
+	playerController->attachModuleEditor(moduleEditor);
+	moduleEditor->attachPlayerCriticalSection(playerController->getCriticalSection());
+	playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());
+
+	documents->add(new Document(moduleEditor, playerController));
+#endif
 }
 
 void TabManager::switchToTab(pp_uint32 index)
@@ -234,31 +235,31 @@ void TabManager::closeTab(pp_int32 index/* = -1*/)
 			j++;
 		}
 	}
-	
+
 	tabHeader->clear();
 
 	for (i = 0; i < j; i++)
 	{
-		if ((signed)tabs[i].ID > moduleIndex)	
+		if ((signed)tabs[i].ID > moduleIndex)
 			tabs[i].ID--;
 	}
-	
+
 	Document* doc = documents->removeNoDestroy(moduleIndex);
-	
+
 	if (index >= documents->size())
 		index = documents->size()-1;
-	
+
 	for (i = 0; i < j; i++)
 	{
 		tabHeader->addTab(tabs[i]);
 	}
-	
+
 	delete[] tabs;
 
 	tabHeader->setSelectedTab(index);
 
 	switchToTab(tabHeader->getTab(index)->ID);
-	
+
 	if (doc->moduleEditor != tracker.moduleEditor)
 	{
 		tracker.playerMaster->destroyPlayerController(doc->playerController);
@@ -280,26 +281,26 @@ void TabManager::selectModuleEditor(Document* document)
 	{
 		// store current position
 		tracker.moduleEditor->setCurrentCursorPosition(tracker.getPatternEditor()->getCursor());
-		
+
 		// switch
 		tracker.moduleEditor = document->moduleEditor;
-		tracker.playerController = document->playerController;		
-		
+		tracker.playerController = document->playerController;
+
 		if (stopOnTabSwitch)
 			tracker.playerLogic->stopAll();
-		
+
 		if (tracker.playerController->isPaused())
 		{
 			if (!resumeOnTabSwitch)
 				tracker.playerLogic->stopSong();
 			tracker.playerController->unpause();
 		}
-		
+
 		// update
-		tracker.updateAfterTabSwitch();		
+		tracker.updateAfterTabSwitch();
 	}
 	currentDocument = document;
-		
+
 #endif
 }
 
@@ -344,7 +345,7 @@ void TabManager::cycleTab(pp_int32 offset)
 		index = tabHeader->getNumTabs()-1;
 	if (index < 0)
 		index = 0;
-	
+
 	if (index != tabHeader->getSelectedTabIndex())
 	{
 		tabHeader->setSelectedTab(index);

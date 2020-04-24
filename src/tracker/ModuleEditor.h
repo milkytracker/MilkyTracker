@@ -27,6 +27,7 @@
 #include "BasicTypes.h"
 #include "PatternEditorTools.h"
 #include "SongLengthEstimator.h"
+#include "PlayerController.h"
 
 class XIInstrument;
 class PatternEditor;
@@ -98,6 +99,7 @@ private:
 	class ChangesListener* changesListener;
 	ModuleServices* moduleServices;
 	PlayerCriticalSection* playerCriticalSection;
+	PlayerController* playerController;
 
 	bool changed;
 
@@ -148,6 +150,9 @@ public:
 	SampleEditor* getSampleEditor() { return sampleEditor; }
 	EnvelopeEditor* getEnvelopeEditor() { return envelopeEditor; }
 	ModuleServices* getModuleServices() { return moduleServices; }
+
+	void setPlayerController(PlayerController* playerController) { this->playerController = playerController; }
+	PlayerController* getPlayerController() { return playerController; }
 
 	void attachPlayerCriticalSection(PlayerCriticalSection* playerCriticalSection) { this->playerCriticalSection = playerCriticalSection; }
 

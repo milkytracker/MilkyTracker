@@ -792,7 +792,7 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 			break;
 
 		case ModSaveTypeTMM:
-			res = module->saveMagicalModule(fileName) == 0;
+			res = module->saveMagicalModule(fileName, playerController->getPlayMode() == PlayerController::PlayMode_FastTracker2) == 0;
 			break;
 	}
 
@@ -812,7 +812,6 @@ mp_sint32 ModuleEditor::saveBackup(const SYSCHAR* fileName)
 {
 	return module->saveExtendedModule(fileName);
 }
-
 
 void ModuleEditor::increaseSongLength()
 {

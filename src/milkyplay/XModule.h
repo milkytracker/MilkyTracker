@@ -646,8 +646,8 @@ public:
 	// Module exporters								 //
 	///////////////////////////////////////////////////
 	mp_sint32		saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm = 0);		// FT2 (.XM)
-	mp_sint32		saveProtrackerModule(const SYSCHAR* fileName);   // Protracker compatible (.MOD)
-	mp_sint32		saveMagicalModule(const SYSCHAR* fileName);                  // TiTAN Magical Module (.TMM)
+	mp_sint32		saveProtrackerModule(const SYSCHAR* fileName);   					// Protracker compatible (.MOD)
+	mp_sint32		saveMagicalModule(const SYSCHAR* fileName, bool isExtended = true);	// TiTAN Magical Module (.TMM)
 
 	///////////////////////////////////////////////////
 	// module loaded?								 //

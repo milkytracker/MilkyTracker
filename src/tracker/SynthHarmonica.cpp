@@ -31,10 +31,10 @@
 
 #define SH_PI 3.1415926535897932384626433832795f
 
-SynthHarmonica::SynthHarmonica(pp_int32 id, 
-									 PPScreen* parentScreen, 
-									 EventListenerInterface* eventListener, 
-									 const PPPoint& location, 
+SynthHarmonica::SynthHarmonica(pp_int32 id,
+									 PPScreen* parentScreen,
+									 EventListenerInterface* eventListener,
+									 const PPPoint& location,
 									 const PPSize& size,
 									 DialogSynth* m) :
 	PPControl(id, parentScreen, eventListener, location, size),
@@ -44,9 +44,9 @@ SynthHarmonica::SynthHarmonica(pp_int32 id,
 {
 	// default color
 	color.set(0, 0, 0);
-	
+
 	ourOwnBorderColor.set(192, 192, 192);
-	
+
 	visibleWidth = size.width - 2;
 	visibleHeight = size.height - 2;
 
@@ -66,7 +66,7 @@ void SynthHarmonica::paint(PPGraphicsAbstract* g)
 	drawThickBorder(g, *borderColor);
 
 	// Draw bg
-	PPRect drawingRect(location.x + 2, location.y + 2, location.x + size.width-2, location.y + size.height-2);	
+	PPRect drawingRect(location.x + 2, location.y + 2, location.x + size.width-2, location.y + size.height-2);
 	g->setRect(drawingRect);
 	g->setColor(0, 0, 0);
 	g->fill();
@@ -78,17 +78,17 @@ void SynthHarmonica::paint(PPGraphicsAbstract* g)
 
 		barRect.x1+= i * barw;
 		barRect.x2 = barRect.x1 + barw - 1;
-		
+
 		if(i&1) {
-			g->setColor(0x22, 0x22, 0x22);	
+			g->setColor(0x22, 0x22, 0x22);
 		} else {
-			g->setColor(0x33, 0x33, 0x33);	
+			g->setColor(0x33, 0x33, 0x33);
 		}
 		g->fill(barRect);
 
 		barRect.y1+= (1.0f - wave[i]) * drawingRect.height();
-		
-		g->setColor(0x00, 0xAA, 0xFF);	
+
+		g->setColor(0x00, 0xAA, 0xFF);
 		g->fill(barRect);
 	}
 
@@ -96,12 +96,12 @@ void SynthHarmonica::paint(PPGraphicsAbstract* g)
 
 
 pp_int32 SynthHarmonica::dispatchEvent(PPEvent* event)
-{ 
+{
 	if (eventListener == NULL)
 		return -1;
 
 	switch (event->getID())
-	{	
+	{
 		case eLMouseDrag:
 		case eRMouseDrag:
 		case eLMouseDown:
@@ -110,6 +110,9 @@ pp_int32 SynthHarmonica::dispatchEvent(PPEvent* event)
 			PPPoint *p = (PPPoint*)event->getDataPtr();
 			int x = p->x - location.x,
 				y = p->y - location.y;
+
+			if(x < 0 || y < 0 || x >= size.width || y >= size.height)
+				break;
 
 			float i = (float)x / ((float)size.width / (float)harmonics);
 
