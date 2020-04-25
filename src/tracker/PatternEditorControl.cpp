@@ -732,6 +732,34 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			g->drawString(name,px, py);
 		}
 	}
+	
+	
+	// --------------------- draw moved selection ---------------------
+
+	if (hasValidSelection() && moveSelection)
+	{
+		// location -- screen position of the top-left corner of the pattern editor window
+		pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
+		pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
+		
+		pp_int32 i1 = selectionStart.row + moveSelectionRows;
+		pp_int32 j1 = selectionStart.channel + moveSelectionChannels;
+		pp_int32 i2 = selectionEnd.row + moveSelectionRows;
+		pp_int32 j2 = selectionEnd.channel + moveSelectionChannels;
+		
+		pp_int32 x1 = (location.x + (j1-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
+		pp_int32 y1 = (location.y + (i1-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
+		
+		pp_int32 x2 = (location.x + (j2-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionEnd.inner]+cursorSizes[selectionEnd.inner] + (getRowCountWidth() + 3);
+		pp_int32 y2 = (location.y + (i2-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight()*2 + 4);
+		
+		g->setColor(textColor);
+		g->drawHLine(x1, x2, y1);
+		g->drawHLine(x1, x2, y2);
+		g->drawVLine(y1, y2, x1);
+		g->drawVLine(y1, y2 + 1, x2);
+		
+	}
 
 	for (j = startPos; j < numVisibleChannels; j++)
 	{

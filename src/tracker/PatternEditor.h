@@ -155,6 +155,8 @@ private:
 		LastChangeCut,
 		LastChangePaste,
 		LastChangeDeleteSelection,
+		LastChangeMoveSelection,
+		LastChangeCloneSelection,
 		
 		LastChangeExpandPattern,
 		LastChangeShrinkPattern,
@@ -263,6 +265,7 @@ public:
 	void setSelectionEnd(const PatternEditorTools::Position& pos) { selection.end = pos; }
 	void resetSelection() { selection.reset(); }
 	bool hasValidSelection();
+	bool selectionContains(const PatternEditorTools::Position& pos);
 	void selectChannel(pp_int32 channel);
 	void selectAll();
 
@@ -413,6 +416,10 @@ public:
 	void insertLine(pp_int32 row);
 	void deleteNote(pp_int32 channel, pp_int32 row);
 	void deleteLine(pp_int32 row);
+
+	// --- moving entire selection -------------------------------------------
+	void moveSelection(pp_int32 channels, pp_int32 rows);
+	void cloneSelection(pp_int32 channels, pp_int32 rows);
 
 };
 

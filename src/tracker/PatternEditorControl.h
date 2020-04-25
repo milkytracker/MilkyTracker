@@ -170,6 +170,10 @@ private:
 	pp_int32 selectionTicker;
 
 	bool hasDragged;
+	
+	bool moveSelection;
+	PatternEditorTools::Position moveSelectionInitialPos;
+	PatternEditorTools::Position moveSelectionFinalPos;
 
 	// edit menu
 	pp_int32 menuPosX;

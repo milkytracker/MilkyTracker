@@ -393,37 +393,45 @@ unmuteAll:
 				
 					if (preCursor.channel >= patternEditor->getNumChannels())
 						break;
-				
-					// start selecting row
-					if (!(::getKeyModifier() & selectionKeyModifier))
-					{
-						patternEditor->getSelection().start.channel = patternEditor->getSelection().end.channel = preCursor.channel;
-						patternEditor->getSelection().start.row = patternEditor->getSelection().end.row = preCursor.row;
-					}
-					else
-					{
-						patternEditor->getSelection().end.channel = preCursor.channel;
-						patternEditor->getSelection().end.row = preCursor.row;
-					}
-
-					pp_int32 innerPos = cp.x % slotSize;
-
+					
 					preCursor.inner = 0;
-					if (!(::getKeyModifier() & selectionKeyModifier))
-						patternEditor->getSelection().start.inner = 0;
-					patternEditor->getSelection().end.inner = 0;
+					
+					pp_int32 innerPos = cp.x % slotSize;
 					for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
 					{
 						if (innerPos >= cursorPositions[i] &&
 							innerPos < cursorPositions[i+1])
 						{
 							preCursor.inner = i;
-							if (!(::getKeyModifier() & selectionKeyModifier))
-								patternEditor->getSelection().start.inner = i;
-							patternEditor->getSelection().end.inner = i;
 							break;
 						}
 					}
+					
+					if (patternEditor->selectionContains(preCursor))
+					{
+						startSelection = false;
+						moveSelection = true;
+						moveSelectionInitialPos = preCursor;
+						moveSelectionFinalPos = preCursor;
+					}
+					else
+					{
+						if (!(::getKeyModifier() & selectionKeyModifier))
+						{
+							// start selection from mouse cursor position
+							patternEditor->getSelection().start.channel = patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().start.row = patternEditor->getSelection().end.row = preCursor.row;
+							patternEditor->getSelection().start.inner = patternEditor->getSelection().end.inner = preCursor.inner;
+						}
+						else
+						{
+							// resume selection from mouse cursor position
+							patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().end.row = preCursor.row;
+							patternEditor->getSelection().end.inner = preCursor.inner;
+						}
+					}
+
 				}
 
 				ppreCursor = &preCursor;
@@ -444,8 +452,22 @@ unmuteAll:
 			}
 			
 			menuInvokeChannel = -1;
-
-			if (!hasDragged && !(::getKeyModifier() & selectionKeyModifier) && ppreCursor)
+			
+			if (moveSelection && moveSelectionFinalPos != moveSelectionInitialPos)
+			{
+				pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
+				pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
+				
+				if (::getKeyModifier() & selectionKeyModifier)
+					patternEditor->cloneSelection(moveSelectionChannels, moveSelectionRows);
+				else
+					patternEditor->moveSelection(moveSelectionChannels, moveSelectionRows);
+				
+				// TODO: clamp to prevent pasting out of bounds
+				
+				
+			}	
+			else if (!hasDragged && !(::getKeyModifier() & selectionKeyModifier) && ppreCursor)
 			{
 				if (properties.clickToCursor)
 				{
@@ -467,9 +489,12 @@ unmuteAll:
 				patternEditor->resetSelection();
 			}
 			
-			parentScreen->paintControl(this);
 
 			startSelection = false;
+			moveSelection = false;
+
+			parentScreen->paintControl(this);
+
 			ppreCursor = NULL;
 
 			break;
@@ -480,14 +505,13 @@ unmuteAll:
 			{
 				caughtControl->dispatchEvent(event);
 				break;
-			}			
+			}
 			
-			if (!startSelection)
+			if (!moveSelection && !startSelection)
 				break;
 			
 			hasDragged = true;
-
-			goto markSelection;
+			goto markOrMoveSelection;
 			//break;
 		}
 
@@ -569,7 +593,7 @@ unmuteAll:
 				break;
 			}
 
-markSelection:
+markOrMoveSelection:
 			PPPoint cp = *((PPPoint*)event->getDataPtr());
 
 			PPPoint cp2 = cp;
@@ -637,12 +661,16 @@ markSelection:
 			pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
 			pp_int32 visibleChannels = (visibleWidth) / slotSize;
 			
-			//if (newStartIndex < visibleRows && 
-			//	newStartPos < visibleChannels)
-			//{
-				mp_sint32 cursorPositionRow = newStartIndex + startIndex;				
-				mp_sint32 cursorPositionChannel = newStartPos + startPos;
-
+			mp_sint32 cursorPositionRow = newStartIndex + startIndex;
+			mp_sint32 cursorPositionChannel = newStartPos + startPos;
+			
+			if (moveSelection)
+			{
+				moveSelectionFinalPos.channel = cursorPositionChannel;
+				moveSelectionFinalPos.row = cursorPositionRow;	
+			}
+			else
+			{
 				if (cursorPositionRow < 0) cursorPositionRow = 0;
 				if (cursorPositionChannel < 0) cursorPositionChannel = 0;
 
@@ -677,7 +705,7 @@ markSelection:
 				
 				setScrollbarPositions(startIndex, startPos);
 				
-			//}
+			}
 			
 			parentScreen->paintControl(this);
 
