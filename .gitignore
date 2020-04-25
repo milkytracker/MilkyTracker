@@ -4,3 +4,6 @@ build/
 # Resources generated with docerator on OSX
 resources/pictures/docicons/osx/MilkyTracker-*.icns
 resources/pictures/docicons/osx/docerator/
+
+# Editor config files
+.vscode/

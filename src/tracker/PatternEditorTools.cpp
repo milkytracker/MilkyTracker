@@ -1718,6 +1718,40 @@ void PatternEditorTools::normalize()
 	
 }
 
+bool PatternEditorTools::selectionContains(const TXMPattern* pattern, const Position& ss, const Position& se, const Position& pos)
+{
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
+	
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
+		return false;
+	
+	// only entire instrument column is allowed
+	if (selectionStartInner >= 1 && selectionStartInner<=2)
+		selectionStartInner = 1;
+	if (selectionEndInner >= 1 && selectionEndInner<=2)
+		selectionEndInner = 2;
+	// only entire volume column can be selected
+	if (selectionStartInner >= 3 && selectionStartInner<=4)
+		selectionStartInner = 3;
+	if (selectionEndInner >= 3 && selectionEndInner<=4)
+		selectionEndInner = 4;
+	
+	bool outside =
+		pos.row < selectionStartRow || pos.row > selectionEndRow ||
+		pos.channel < selectionStartChannel || pos.channel > selectionEndChannel ||
+		(pos.channel == selectionStartChannel && pos.inner < selectionStartInner) ||
+		(pos.channel == selectionEndChannel && pos.inner > selectionEndInner);
+	
+	return !outside;
+}
+
 bool PatternEditorTools::hasValidSelection(const TXMPattern* pattern, const Position& ss, const Position& se, pp_int32 numVisibleChannels/* = -1*/)
 {
 	if (pattern == NULL || pattern->patternData == NULL)
@@ -1888,4 +1922,140 @@ void PatternEditorTools::slotClear(mp_ubyte* dst, pp_int32 from, pp_int32 to)
 	i++;
 }
 
-
+bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, pp_int32 moveChannels, pp_int32 moveRows, bool clear)
+{
+	Position targetStart = ss;
+	Position targetEnd = se;
+	targetStart.channel += moveChannels;
+	targetStart.row += moveRows;
+	targetEnd.channel += moveChannels;
+	targetEnd.row += moveRows;
+	
+	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
+		return false;
+	if (!PatternEditorTools::hasValidSelection(pattern, targetStart, targetEnd))
+		return false;
+	
+	pp_int32 selectionStartChannel;
+	pp_int32 selectionStartRow;
+	pp_int32 selectionStartInner;
+	pp_int32 selectionEndChannel;
+	pp_int32 selectionEndRow;
+	pp_int32 selectionEndInner;
+	
+	if (!normalizeSelection(pattern, ss, se, 
+							selectionStartChannel, selectionStartRow, selectionStartInner,
+							selectionEndChannel, selectionEndRow,selectionEndInner))
+		return 0;
+	
+	// only entire instrument column is allowed
+	if (selectionStartInner >= 1 && selectionStartInner<=2)
+		selectionStartInner = 1;
+	if (selectionEndInner >= 1 && selectionEndInner<=2)
+		selectionEndInner = 2;
+	// only entire volume column can be selected
+	if (selectionStartInner >= 3 && selectionStartInner<=4)
+		selectionStartInner = 3;
+	if (selectionEndInner >= 3 && selectionEndInner<=4)
+		selectionEndInner = 4;
+	
+	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
+	pp_int32 selectionHeight = selectionEndRow - selectionStartRow + 1;
+	
+	mp_sint32 slotSize = pattern->effnum * 2 + 2;
+	ASSERT(slotSize == 6);
+	
+	mp_sint32 rowSizeDst = slotSize*selectionWidth;
+	mp_sint32 rowSizeSrc = slotSize*pattern->channum;
+	mp_sint32 bufferSize = selectionHeight * rowSizeDst;
+	
+	mp_ubyte* buffer = new mp_ubyte[bufferSize];
+	
+	if (buffer == NULL)
+		return false;
+	
+	memset(buffer, 0, bufferSize);
+	
+	// copy to temporary buffer, erase source if desired
+	
+	for (pp_int32 i = 0; i < selectionHeight; i++)
+	{
+		pp_int32 rowSrc = selectionStartRow + i;
+		
+		if (rowSrc < 0 || rowSrc >= pattern->rows)
+			continue;
+		
+		for (pp_int32 j = 0; j < selectionWidth; j++)
+		{
+			pp_int32 channelSrc = selectionStartChannel + j;
+			
+			if (channelSrc < 0 || channelSrc >= pattern->channum)
+				continue;
+			
+			mp_ubyte* src = pattern->patternData + rowSrc*rowSizeSrc + channelSrc*slotSize;
+			mp_ubyte* dst = buffer + i*rowSizeDst + j*slotSize;
+		
+			if (selectionWidth == 1)
+			{
+				PatternEditorTools::slotCopy(dst, src, selectionStartInner, selectionEndInner);
+				if (clear)
+					PatternEditorTools::slotClear(src, selectionStartInner, selectionEndInner);
+			}
+			else if (j == 0)
+			{
+				PatternEditorTools::slotCopy(dst, src, selectionStartInner, 7);
+				if (clear)
+					PatternEditorTools::slotClear(src, selectionStartInner, 7);
+			}
+			else if (j+selectionStartChannel == selectionEndChannel)
+			{
+				PatternEditorTools::slotCopy(dst, src, 0, selectionEndInner);
+				if (clear)
+					PatternEditorTools::slotClear(src, 0, selectionEndInner);
+			}
+			else
+			{
+				PatternEditorTools::slotCopy(dst, src, 0, 7);
+				if (clear)
+					PatternEditorTools::slotClear(src, 0, 7);
+			}
+		}
+	}
+	
+	// destination position
+	pp_int32 offsetStartChannel = selectionStartChannel + moveChannels;
+	pp_int32 offsetStartRow = selectionStartRow + moveRows;
+	
+	// paste from temporary buffer to target location
+	for (pp_int32 i = 0; i < selectionHeight; i++)
+	{
+		pp_int32 rowDst = offsetStartRow + i;
+		
+		if (rowDst < 0 || rowDst >= pattern->rows)
+			continue;
+		
+		for (pp_int32 j = 0; j < selectionWidth; j++)
+		{
+			pp_int32 channelDst = offsetStartChannel + j;
+			
+			if (channelDst < 0 || channelDst >= pattern->channum)
+				continue;
+			
+			mp_ubyte* src = buffer + i*rowSizeDst + j*slotSize;
+			mp_ubyte* dst = pattern->patternData + rowDst*rowSizeSrc + channelDst*slotSize;
+			
+			if (selectionWidth == 1)
+				PatternEditorTools::slotCopy(dst, src, selectionStartInner, selectionEndInner);
+			else if (j == 0)
+				PatternEditorTools::slotCopy(dst, src, selectionStartInner, 7);
+			else if (j+selectionStartChannel == selectionEndChannel)
+				PatternEditorTools::slotCopy(dst, src, 0, selectionEndInner);
+			else
+				PatternEditorTools::slotCopy(dst, src, 0, 7);
+		}
+	}
+	
+	delete[] buffer;
+	
+	return true;
+}
