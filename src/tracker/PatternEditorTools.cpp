@@ -1924,16 +1924,25 @@ void PatternEditorTools::slotClear(mp_ubyte* dst, pp_int32 from, pp_int32 to)
 
 bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, pp_int32 moveChannels, pp_int32 moveRows, bool clear)
 {
+	Position targetStart = ss;
+	Position targetEnd = se;
+	targetStart.channel += moveChannels;
+	targetStart.row += moveRows;
+	targetEnd.channel += moveChannels;
+	targetEnd.row += moveRows;
+	
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
 		return 0;
-
+	if (!PatternEditorTools::hasValidSelection(pattern, targetStart, targetEnd))
+		return 0;
+	
 	pp_int32 selectionStartChannel;
 	pp_int32 selectionStartRow;
 	pp_int32 selectionStartInner;
 	pp_int32 selectionEndChannel;
 	pp_int32 selectionEndRow;
 	pp_int32 selectionEndInner;
-
+	
 	if (!normalizeSelection(pattern, ss, se, 
 							selectionStartChannel, selectionStartRow, selectionStartInner,
 							selectionEndChannel, selectionEndRow,selectionEndInner))

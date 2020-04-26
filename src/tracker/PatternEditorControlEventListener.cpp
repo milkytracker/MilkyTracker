@@ -358,19 +358,9 @@ unmuteAll:
 				pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
 				pp_int32 visibleChannels = (visibleWidth) / slotSize;
 				
-				// copy of current selection
+				// backup selection, so that it may be restored when context menu is activated by long-press
 				patternEditor->getSelection().backup();
 				
-				// If we're pressing the shift key start selection 
-				// at current cursor position
-				if (::getKeyModifier() & selectionKeyModifier)
-				{
-					if (patternEditor->getSelection().start.isValid())
-						patternEditor->getSelection().end = patternEditor->getCursor();
-					else
-						patternEditor->getSelection().start = patternEditor->getCursor();
-				}
-
 				preCursor = patternEditor->getCursor();
 
 				if (newStartIndex < visibleRows && newStartIndex >= 0)
@@ -419,16 +409,15 @@ unmuteAll:
 						if (!(::getKeyModifier() & selectionKeyModifier))
 						{
 							// start selection from mouse cursor position
-							patternEditor->getSelection().start.channel = patternEditor->getSelection().end.channel = preCursor.channel;
-							patternEditor->getSelection().start.row = patternEditor->getSelection().end.row = preCursor.row;
-							patternEditor->getSelection().start.inner = patternEditor->getSelection().end.inner = preCursor.inner;
+							patternEditor->getSelection().start = preCursor;
+							patternEditor->getSelection().end = preCursor;
 						}
 						else
 						{
 							// resume selection from mouse cursor position
-							patternEditor->getSelection().end.channel = preCursor.channel;
-							patternEditor->getSelection().end.row = preCursor.row;
-							patternEditor->getSelection().end.inner = preCursor.inner;
+							if (!patternEditor->getSelection().start.isValid())
+								patternEditor->getSelection().start = patternEditor->getCursor();
+							patternEditor->getSelection().end = preCursor;
 						}
 					}
 
@@ -755,17 +744,17 @@ markOrMoveSelection:
 				case VK_ALT:
 					assureCursor = false;
 					if (selectionKeyModifier & KeyModifierALT)
-						keyboardStartSelection = true;
+						selectionModifierKeyDown();
 					break;
 				case VK_SHIFT:
 					assureCursor = false;
 					if (selectionKeyModifier & KeyModifierSHIFT)
-						keyboardStartSelection = true;
+						selectionModifierKeyDown();
 					break;
 				case VK_CONTROL:
 					assureCursor = false;
 					if (selectionKeyModifier & KeyModifierCTRL)
-						keyboardStartSelection = true;
+						selectionModifierKeyDown();
 					break;
 			
 				default:
@@ -841,15 +830,15 @@ markOrMoveSelection:
 			{
 				case VK_SHIFT:
 					if (selectionKeyModifier & KeyModifierSHIFT)
-						keyboardStartSelection = false;					
+						selectionModifierKeyUp();
 					break;
 				case VK_ALT:
 					if (selectionKeyModifier & KeyModifierALT)
-						keyboardStartSelection = false;					
+						selectionModifierKeyUp();
 					break;
 				case VK_CONTROL:
 					if (selectionKeyModifier & KeyModifierCTRL)
-						keyboardStartSelection = false;					
+						selectionModifierKeyUp();
 					break;
 			}
 			break;
@@ -867,6 +856,21 @@ markOrMoveSelection:
 leave:
 	return 0;
 }
+
+void PatternEditorControl::selectionModifierKeyDown()
+{
+	keyboardStartSelection = true;
+	if (moveSelection)
+		parentScreen->paintControl(this);
+}
+
+void PatternEditorControl::selectionModifierKeyUp()
+{
+	keyboardStartSelection = false;
+	if (moveSelection)
+		parentScreen->paintControl(this);
+}
+
 
 pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 {

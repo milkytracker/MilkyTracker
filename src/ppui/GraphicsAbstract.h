@@ -161,6 +161,10 @@ protected:
 		*a = *b;
 		*b = h;
 	}
+	static pp_int32 modulo(pp_int32 a, pp_int32 b)
+	{
+		return ((a % b + b) % b);
+	}
 
 	pp_int32 width, height;
 
@@ -330,6 +334,41 @@ public:
 	virtual void fillVerticalShaded(const PPColor& colSrc, const PPColor& colDst, bool invertShading)
 	{
 		fillVerticalShaded(currentClipRect, colSrc, colDst, invertShading);
+	}
+	
+	
+	void drawHLineDashed(pp_int32 x1, pp_int32 x2, pp_int32 y, pp_int32 dashLength, pp_int32 dashOffset = 0)
+	{
+		if (x2 < x1)
+			swap(&x1, &x2);
+		
+		pp_int32 head = x1;
+		pp_int32 tail = x1 + dashLength - modulo(dashOffset, dashLength);
+		
+		while (tail < x2)
+		{
+			drawHLine(head, tail-1, y);
+			head = tail;
+			tail += dashLength;
+		}
+		drawHLine(head, x2, y);
+	}
+	
+	void drawVLineDashed(pp_int32 y1, pp_int32 y2, pp_int32 x, pp_int32 dashLength, pp_int32 dashOffset = 0)
+	{
+		if (y2 < y1)
+			swap(&y1, &y2);
+		
+		pp_int32 head = y1;
+		pp_int32 tail = y1 + dashLength - modulo(dashOffset, dashLength);
+		
+		while (tail < y2)
+		{
+			drawVLine(head, tail-1, x);
+			head = tail;
+			tail += dashLength;
+		}
+		drawVLine(head, y2, x);
 	}
 };
 
