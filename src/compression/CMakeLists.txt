@@ -186,11 +186,20 @@ if(WIN32)
         )
 
         # zlib adds a 'd' suffix to debug builds of the library
-        set(ZLIB_LIBRARIES
-            debug ${ZLIB_DESTDIR}/lib/zlibstaticd.lib
-            optimized ${ZLIB_DESTDIR}/lib/zlibstatic.lib
-            CACHE INTERNAL "ZLIB_LIBRARIES"
-        )
+
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            set(ZLIB_LIBRARIES
+                debug ${ZLIB_DESTDIR}/lib/zlibstaticd.lib
+                optimized ${ZLIB_DESTDIR}/lib/zlibstatic.lib
+                CACHE INTERNAL "ZLIB_LIBRARIES"
+            )
+        else()
+            set(ZLIB_LIBRARIES
+                debug ${ZLIB_DESTDIR}/lib/libzlibstaticd.a
+                optimized ${ZLIB_DESTDIR}/lib/libzlibstatic.a
+                CACHE INTERNAL "ZLIB_LIBRARIES"
+            )
+        endif()
 
         ExternalProject_Add(zlib
             SOURCE_DIR ${ZLIB_SUBMODULE_DIR}

@@ -161,6 +161,9 @@ elseif(WIN32)
             "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MTd"
         )
         set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
+    else()
+        # For GCC on Windows (using generator "MSYS Makefiles")
+        add_definitions(-DWIN32)
     endif()
 
     # Prevent Windows.h from clashing with the Standard Template Library so we
