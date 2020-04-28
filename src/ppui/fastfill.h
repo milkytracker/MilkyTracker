@@ -34,8 +34,9 @@ static __attribute__((noinline)) void fill_dword(pp_uint32* buff, pp_uint32 dw, 
 static inline void fill_dword(pp_uint32* buff, pp_uint32 dw, pp_uint32 len)
 #endif
 {
-#if defined(__ppc__) && defined(__GNUC__)
+#if defined(__ppc__) && defined(__GNUC__) && !defined(__clang__)
 	// PPC assembly FTW!!1!
+	// XXX broken with clang
 	// r3 = buff
 	// r4 = dw
 	// r5 = len
@@ -94,7 +95,8 @@ static __attribute__((noinline)) void fill_dword_vertical(pp_uint32* buff, pp_ui
 static inline void fill_dword_vertical(pp_uint32* buff, pp_uint32 dw, pp_uint32 len, pp_uint32 pitch)
 #endif
 {
-#if defined(__ppc__) && defined(__GNUC__)
+#if defined(__ppc__) && defined(__GNUC__) && !defined(__clang__)
+	// XXX broken with clang
 	asm volatile("nop\n" // align loop start to 16 byte boundary
 				 "nop\n" // same
 				 "nop\n" // same
