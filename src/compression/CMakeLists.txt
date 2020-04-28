@@ -195,7 +195,7 @@ if(WIN32)
             )
         else()
             set(ZLIB_LIBRARIES
-                debug ${ZLIB_DESTDIR}/lib/libzlibstaticd.a
+                debug ${ZLIB_DESTDIR}/lib/libzlibstatic.a
                 optimized ${ZLIB_DESTDIR}/lib/libzlibstatic.a
                 CACHE INTERNAL "ZLIB_LIBRARIES"
             )
