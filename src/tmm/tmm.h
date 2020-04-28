@@ -2,60 +2,7 @@
 #define TMM_H
 
 #include "kiss_fft.h"
-
-enum
-{
-	TMM_TYPE_NONE = 0,
-	TMM_TYPE_ADX,
-	TMM_TYPE_NOISE,
-	TMM_TYPE_SINE,
-	TMM_TYPE_PULSE,
-	TMM_TYPE_ADDITIVE
-};
-
-enum
-{
-	TMM_NOISETYPE_WHITE = 0,
-	TMM_NOISETYPE_PINK,
-	TMM_NOISETYPE_BROWN
-};
-
-struct TTMMNoise
-{
-	unsigned char type;
-};
-
-struct TTMMSine
-{
-	unsigned short basefreq;
-};
-
-struct TTMMPulse
-{
-	unsigned short basefreq;
-	char width;
-};
-
-struct TTMMAdditive
-{
-	unsigned char  nharmonics;
-	unsigned short basefreq;
-	unsigned char  bandwidth;
-	unsigned short bwscale;
-	unsigned char  usescale;
-	unsigned char  harmonics[64];
-	unsigned char  phasenoisetype;
-	unsigned char  destroyer;
-};
-
-struct TTMMSettings
-{
-	unsigned char type;
-	TTMMNoise     noise;
-	TTMMSine      sine;
-	TTMMPulse     pulse;
-	TTMMAdditive  additive;
-};
+#include "tmm_preset.h"
 
 class TMM
 {

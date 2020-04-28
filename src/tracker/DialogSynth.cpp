@@ -86,7 +86,8 @@ enum {
 	BUTTON_HARMONICA_HALF_EACH,
 	BUTTON_HARMONICA_DOUBLE_EACH,
 	BUTTON_HARMONICA_HALF_EVEN,
-	BUTTON_HARMONICA_DOUBLE_EVEN
+	BUTTON_HARMONICA_DOUBLE_EVEN,
+	BUTTON_SYNTH_SAVE_SETTINGS
 };
 
 DialogSynth::DialogSynth(
@@ -117,6 +118,10 @@ DialogSynth::DialogSynth(
 	radioType->addItem("Additive");
 
 	messageBoxContainerGeneric->addControl(radioType);
+
+	button = new PPButton(BUTTON_SYNTH_SAVE_SETTINGS, screen, this, PPPoint(x+20, y + 40 + 100), PPSize(100, 11));
+	button->setText("Save TMI");
+	messageBoxContainerGeneric->addControl(button);
 
 	pp_int32 cx = x + 130, cy = y + 40, rx = cx + 335;
 
@@ -362,6 +367,11 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 			bool updateHarmonica = false;
 
 			switch (reinterpret_cast<PPControl*>(sender)->getID()) {
+			case BUTTON_SYNTH_SAVE_SETTINGS:
+				{
+					tracker->saveType(FileTypes::FileTypeInstrumentTMI);
+				}
+				break;
 			case CHECKBOX_ADDITIVE_USESCALE:
 				{
 					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();

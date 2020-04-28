@@ -1613,6 +1613,21 @@ bool ModuleEditor::saveInstrument(const SYSCHAR* fileName, mp_sint32 index)
 	return res;
 }
 
+bool ModuleEditor::saveTMI(const SYSCHAR* fileName, mp_sint32 index)
+{
+	ASSERT(index < module->header.insnum);
+
+	TTMMSettings * tmmsettings = &module->instr[index].tmm;
+	FILE * f = fopen(fileName, "wb");
+	if(f) {
+		fwrite(tmmsettings, sizeof(TTMMSettings), 1, f);
+		fclose(f);
+
+		return true;
+	}
+	return false;
+}
+
 bool ModuleEditor::zapInstrument(mp_sint32 index)
 {
 	ASSERT(index < module->header.insnum);

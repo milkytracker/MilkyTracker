@@ -66,6 +66,7 @@ const char* FileExtProvider::moduleExtensions[] =
 const char* FileExtProvider::instrumentExtensions[] =
 {
 	"xi","FT2 Instruments",
+	"tmi","Titan Magic Instruments",
 	"pat","GUS Patches",
 	NULL, NULL
 };

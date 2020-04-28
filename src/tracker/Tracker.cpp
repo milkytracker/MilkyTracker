@@ -2506,6 +2506,7 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 			return DecompressorBase::HintTracks;
 
 		case FileTypes::FileTypeSongAllInstruments:
+		case FileTypes::FileTypeInstrumentTMI:
 		case FileTypes::FileTypeInstrumentXI:
 			return DecompressorBase::HintInstruments;
 
@@ -2937,6 +2938,16 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			break;
 		}
 
+		case FileTypes::FileTypeInstrumentTMI:
+		{
+			PPSystemString sampleFileName = "test";
+			sampleFileName.append(".tmi");
+			savePanel = new PPSavePanel(screen, "Save Magic Instrument", sampleFileName);
+			savePanel->addExtension(fileExtProvider.getInstrumentExtension(FileExtProvider::InstrumentExtensionTMI),
+									fileExtProvider.getInstrumentDescription(FileExtProvider::InstrumentExtensionTMI));
+			break;
+		}
+
 		case FileTypes::FileTypeSampleWAV:
 		{
 			PPSystemString sampleFileName = moduleEditor->getSampleFileName(listBoxInstruments->getSelectedIndex(), listBoxSamples->getSelectedIndex());
@@ -3020,6 +3031,10 @@ bool Tracker::saveTypeWithDialog(FileTypes eSaveType, EventListenerInterface* fi
 				case FileTypes::FileTypeInstrumentXI:
 					commitListBoxChanges();
 					res = moduleEditor->saveInstrument(file, listBoxInstruments->getSelectedIndex());
+					break;
+
+				case FileTypes::FileTypeInstrumentTMI:
+					res = moduleEditor->saveTMI(file, listBoxInstruments->getSelectedIndex());
 					break;
 
 				case FileTypes::FileTypeSampleWAV:

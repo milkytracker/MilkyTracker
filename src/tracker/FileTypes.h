@@ -47,6 +47,7 @@ struct FileTypes
 		FileTypeTrackXT,
 		FileTypeSongAllInstruments,
 		FileTypeInstrumentXI,
+		FileTypeInstrumentTMI,
 		FileTypeSongAllSamples,
 		FileTypeSampleWAV,
 		FileTypeSampleIFF

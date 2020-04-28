@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "tmm.h"
 
+
 TMM::TMM(int p_samplerate) : m_samplerate(p_samplerate)
 {
 	m_noise = new Noise;
@@ -84,3 +85,17 @@ TMM::GenerateSamples(TTMMSettings* p_settings, short* p_samples, int p_size)
 
 	return size;
 }
+
+#if defined(P_AMIGA)
+extern "C" int
+tmm_generate_samples(int rate, TTMMSettings * p_settings, short * p_samples, int p_size)
+{
+    TMM * tmm = new TMM(rate);
+
+    int ret = tmm->GenerateSamples(p_settings, p_samples, p_size);
+
+    delete tmm;
+
+    return ret;
+}
+#endif

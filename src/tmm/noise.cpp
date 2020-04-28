@@ -28,7 +28,7 @@ TMM::Noise::White(double p_scale)
 	m_white  = m_seed >> 9;
 	m_white |= 0x40000000;
 
-	return ((*(double*)&m_white) - 3.0) * p_scale;
+	return (double)(((*(float*)&m_white) - 3.0) * p_scale);
 }
 
 int
@@ -56,7 +56,7 @@ TMM::Noise::Brown()
 		}
 	}
 
-	return m_brown *0.0625;
+	return m_brown * 0.0625;
 }
 
 double

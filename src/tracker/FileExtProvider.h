@@ -111,6 +111,7 @@ public:
 	enum InstrumentExtensions
 	{
 		InstrumentExtensionXI,
+		InstrumentExtensionTMI,
 		InstrumentExtensionPAT,
 
 		InstrumentExtensionLAST,

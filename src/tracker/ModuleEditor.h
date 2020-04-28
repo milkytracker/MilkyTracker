@@ -325,6 +325,7 @@ public:
 	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index);
 	// save instrument
 	bool saveInstrument(const SYSCHAR* fileName, mp_sint32 index);
+	bool saveTMI(const SYSCHAR* fileName, mp_sint32 index);
 
 	// zap (clear) instrument
 	bool zapInstrument(mp_sint32 index);
