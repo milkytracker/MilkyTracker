@@ -1980,10 +1980,20 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	
 	for (pp_int32 i = 0; i < selectionHeight; i++)
 	{
+		pp_int32 rowSrc = selectionStartRow + i;
+		
+		if (rowSrc < 0 || rowSrc >= pattern->rows)
+			continue;
+		
 		for (pp_int32 j = 0; j < selectionWidth; j++)
 		{
-			mp_ubyte* src = pattern->patternData + (selectionStartRow+i)*rowSizeSrc+(selectionStartChannel+j)*slotSize;
-			mp_ubyte* dst = buffer + i*rowSizeDst+j*slotSize;
+			pp_int32 channelSrc = selectionStartChannel + j;
+			
+			if (channelSrc < 0 || channelSrc >= pattern->channum)
+				continue;
+			
+			mp_ubyte* src = pattern->patternData + rowSrc*rowSizeSrc + channelSrc*slotSize;
+			mp_ubyte* dst = buffer + i*rowSizeDst + j*slotSize;
 		
 			if (selectionWidth == 1)
 			{
@@ -2019,10 +2029,20 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	// paste from temporary buffer to target location
 	for (pp_int32 i = 0; i < selectionHeight; i++)
 	{
+		pp_int32 rowDst = offsetStartRow + i;
+		
+		if (rowDst < 0 || rowDst >= pattern->rows)
+			continue;
+		
 		for (pp_int32 j = 0; j < selectionWidth; j++)
 		{
-			mp_ubyte* src = buffer + i*rowSizeDst+j*slotSize;
-			mp_ubyte* dst = pattern->patternData + (offsetStartRow+i)*rowSizeSrc+(offsetStartChannel+j)*slotSize;
+			pp_int32 channelDst = offsetStartChannel + j;
+			
+			if (channelDst < 0 || channelDst >= pattern->channum)
+				continue;
+			
+			mp_ubyte* src = buffer + i*rowSizeDst + j*slotSize;
+			mp_ubyte* dst = pattern->patternData + rowDst*rowSizeSrc + channelDst*slotSize;
 			
 			if (selectionWidth == 1)
 				PatternEditorTools::slotCopy(dst, src, selectionStartInner, selectionEndInner);

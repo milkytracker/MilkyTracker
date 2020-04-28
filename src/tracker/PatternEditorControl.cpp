@@ -826,30 +826,44 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		pp_int32 i2 = selectionEnd.row + moveSelectionRows;
 		pp_int32 j2 = selectionEnd.channel + moveSelectionChannels;
 		
-		pp_int32 x1 = (location.x + (j1-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
-		pp_int32 y1 = (location.y + (i1-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
+		if (i2 >= 0 && j2 >= 0 && i1 < pattern->rows && j1 < numVisibleChannels)
+		{
+			#define CLAMP(a, min, max) ((a) < (min) ? (min) : ((a) >= (max) ? (max-1) : (a)))
+			
+			i1 = CLAMP(i1, 0, pattern->rows);
+			i2 = CLAMP(i2, 0, pattern->rows);
+			j1 = CLAMP(j1, 0, numVisibleChannels);
+			j2 = CLAMP(j2, 0, numVisibleChannels);
+			
+			#undef CLAMP
+			
+			pp_int32 x1 = (location.x + (j1-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
+			pp_int32 y1 = (location.y + (i1-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
+			
+			pp_int32 x2 = (location.x + (j2-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionEnd.inner]+cursorSizes[selectionEnd.inner] + (getRowCountWidth() + 3);
+			pp_int32 y2 = (location.y + (i2-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight()*2 + 2);
+			
+			// use a different color for cloning the selection instead of moving it
+			if (::getKeyModifier() & selectionKeyModifier)
+				g->setColor(hiLightPrimary);
+			else
+				g->setColor(textColor);
+			
+			const pp_int32 dashLen = 6;
+			
+			// inner dashed lines
+			g->drawHLineDashed(x1, x2, y1, dashLen, 3);
+			g->drawHLineDashed(x1, x2, y2, dashLen, 3);
+			g->drawVLineDashed(y1, y2, x1, dashLen, 3);
+			g->drawVLineDashed(y1, y2+1, x2, dashLen, 3);
+			
+			// outer dashed lines
+			g->drawHLineDashed(x1-1, x2+1, y1-1, dashLen, 1);
+			g->drawHLineDashed(x1-1, x2+1, y2+1, dashLen, 3);
+			g->drawVLineDashed(y1-1, y2+1, x1-1, dashLen, 1);
+			g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3);
+		}
 		
-		pp_int32 x2 = (location.x + (j2-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionEnd.inner]+cursorSizes[selectionEnd.inner] + (getRowCountWidth() + 3);
-		pp_int32 y2 = (location.y + (i2-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight()*2 + 2);
-		
-		if (::getKeyModifier() & selectionKeyModifier)
-			g->setColor(hiLightPrimary);   // for cloning the selection instead of moving it
-		else
-			g->setColor(textColor);
-		
-		const pp_int32 dashLen = 6;
-		
-		// inner dashed lines
-		g->drawHLineDashed(x1, x2, y1, dashLen, 3);
-		g->drawHLineDashed(x1, x2, y2, dashLen, 3);
-		g->drawVLineDashed(y1, y2, x1, dashLen, 3);
-		g->drawVLineDashed(y1, y2+1, x2, dashLen, 3);
-		
-		// outer dashed lines
-		g->drawHLineDashed(x1-1, x2+1, y1-1, dashLen, 1);
-		g->drawHLineDashed(x1-1, x2+1, y2+1, dashLen, 3);
-		g->drawVLineDashed(y1-1, y2+1, x1-1, dashLen, 1);
-		g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3);
 	}
 	
 	// draw scrollbars

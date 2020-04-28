@@ -265,6 +265,7 @@ public:
 	void setSelectionEnd(const PatternEditorTools::Position& pos) { selection.end = pos; }
 	void resetSelection() { selection.reset(); }
 	bool hasValidSelection();
+	bool canMoveSelection(pp_int32 channels, pp_int32 rows);
 	bool selectionContains(const PatternEditorTools::Position& pos);
 	void selectChannel(pp_int32 channel);
 	void selectAll();

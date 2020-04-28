@@ -447,15 +447,14 @@ unmuteAll:
 				pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
 				pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
 				
-				if (::getKeyModifier() & selectionKeyModifier)
-					patternEditor->cloneSelection(moveSelectionChannels, moveSelectionRows);
-				else
-					patternEditor->moveSelection(moveSelectionChannels, moveSelectionRows);
-				
-				// TODO: clamp to prevent pasting out of bounds
-				
-				
-			}	
+				if (patternEditor->canMoveSelection(moveSelectionChannels, moveSelectionRows))
+				{
+					if (::getKeyModifier() & selectionKeyModifier)
+						patternEditor->cloneSelection(moveSelectionChannels, moveSelectionRows);
+					else
+						patternEditor->moveSelection(moveSelectionChannels, moveSelectionRows);
+				}
+			}
 			else if (!hasDragged && !(::getKeyModifier() & selectionKeyModifier) && ppreCursor)
 			{
 				if (properties.clickToCursor)

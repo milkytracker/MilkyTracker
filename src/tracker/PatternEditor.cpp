@@ -213,7 +213,18 @@ bool PatternEditor::hasValidSelection()
 
 bool PatternEditor::selectionContains(const PatternEditorTools::Position& pos)
 {
-	return PatternEditorTools::selectionContains(pattern ,selection.start, selection.end, pos);
+	return PatternEditorTools::selectionContains(pattern, selection.start, selection.end, pos);
+}
+
+bool PatternEditor::canMoveSelection(pp_int32 channels, pp_int32 rows)
+{
+	PatternEditorTools::Position ss = selection.start;
+	PatternEditorTools::Position se = selection.end;
+	ss.channel += channels;
+	ss.row += rows;
+	se.channel += channels;
+	se.row += rows;
+	return PatternEditorTools::hasValidSelection(pattern, ss, se, getNumChannels());
 }
 
 void PatternEditor::selectChannel(pp_int32 channel)
