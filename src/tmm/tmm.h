@@ -66,15 +66,15 @@ private:
 		unsigned long m_seed;
 		unsigned long m_count;
 		unsigned long m_white;
-		float         m_pink;
-		float         m_brown;
-		float         m_pinkStore[16];
+		double        m_pink;
+		double        m_brown;
+		double        m_pinkStore[16];
 	public:
 		inline int   CTZ(int p_num);
 		void         Seed(unsigned long p_seed = 0);
-		float        White(float p_scale = 0.5f);
-		float        Pink(void);
-		float        Brown(void);
+		double       White(double p_scale = 0.5f);
+		double       Pink(void);
+		double       Brown(void);
 
 		Noise();
 		~Noise();

@@ -61,7 +61,7 @@ TMM::Additive::InverseFFT(TTMMAdditive* p_settings)
 	if(p_settings->destroyer) {
 		// Convert absolute of complex result to get samples (yes, we use the numerical noise here ... sounds noisy, but is cool =p)
 		for(i = 0; i < m_bins; i++) {
-			m_samples[i] = sqrtf(
+			m_samples[i] = sqrt(
 				(m_ifft_out[i].r * m_ifft_out[i].r) +
 				(m_ifft_out[i].i * m_ifft_out[i].i)
 			);
@@ -133,7 +133,7 @@ TMM::Additive::Process(TTMMAdditive* p_settings)
 	default:
 	case TMM_NOISETYPE_WHITE:
 		for(i = 0; i < m_bins >> 1; i++) {
-			m_freq_phase[i] = (rand() / ((float)RAND_MAX + 1)) * 2.0 * M_PI;
+			m_freq_phase[i] = ((double)rand() / ((double)RAND_MAX + 1)) * 2.0 * M_PI;
 		}
 		break;
 	case TMM_NOISETYPE_BROWN:

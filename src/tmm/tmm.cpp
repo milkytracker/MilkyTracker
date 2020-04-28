@@ -26,21 +26,21 @@ TMM::GenerateSamples(TTMMSettings* p_settings, short* p_samples, int p_size)
 			case TMM_NOISETYPE_WHITE:
 				{
 					for(unsigned int i = 0; i < p_size; i++) {
-						p_samples[i] = (short)m_noise->White(32767.0f);
+						p_samples[i] = (short)m_noise->White(32767.0);
 					}
 				}
 				break;
 			case TMM_NOISETYPE_PINK:
 				{
 					for(unsigned int i = 0; i < p_size; i++) {
-						p_samples[i] = (short)(m_noise->Pink() * 65535.0f);
+						p_samples[i] = (short)(m_noise->Pink() * 65535.0);
 					}
 				}
 				break;
 			case TMM_NOISETYPE_BROWN:
 				{
 					for(unsigned int i = 0; i < p_size; i++) {
-						p_samples[i] = (short)(m_noise->Brown() * 65535.0f);
+						p_samples[i] = (short)(m_noise->Brown() * 65535.0);
 					}
 				}
 				break;
@@ -50,8 +50,8 @@ TMM::GenerateSamples(TTMMSettings* p_settings, short* p_samples, int p_size)
 	case TMM_TYPE_SINE:
 		{
 			for(unsigned int i = 0; i < 32; i++) {
-				float s = sinf((2.0f * M_PI * 261.63f * (float)i) / 8363.0f);
-				p_samples[i] = (short)(s * 32767.0f);
+				double s = sin((2.0 * M_PI * 261.63f * (double)i) / 8363.0);
+				p_samples[i] = (short)(s * 32767.0);
 			}
 			size = 32;
 		}

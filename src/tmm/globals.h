@@ -6,5 +6,8 @@
 
 #include <time.h>
 #include <math.h>
+#if defined(P_AMIGA)
+#   include <math-68881.h>
+#endif
 
 #endif /* TMM_GLOBALS_H */
