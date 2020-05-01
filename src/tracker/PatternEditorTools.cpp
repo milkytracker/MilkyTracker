@@ -1774,12 +1774,14 @@ void PatternEditorTools::slotCopy(mp_ubyte* dst, mp_ubyte* src, pp_int32 from, p
 {
 	pp_int32 i = 0;
 	
+	// copy note
 	if (i >= from && i <= to)
 	{
 		*dst = *src;
 	}
 	i++;
-		
+	
+	// copy instrument first digit
 	if (i >= from && i <= to)
 	{
 		*(dst+1) &= 0x0F;
@@ -1787,26 +1789,30 @@ void PatternEditorTools::slotCopy(mp_ubyte* dst, mp_ubyte* src, pp_int32 from, p
 	}
 	i++;
 	
+	// copy instrument second digit
 	if (i >= from && i <= to)
 	{
 		*(dst+1) &= 0xF0;
 		*(dst+1) |= *(src+1)&0xF;		
 	}
 	i++;
-
+	
+	// copy volume
 	if (i >= from && i <= to)
 	{
 		*(dst+2) = *(src+2);
 		*(dst+3) = *(src+3);
 	}
 	i+=2;
-
+	
+	// copy effect type
 	if (i >= from && i <= to)
 	{
 		*(dst+4) = *(src+4);
 	}
 	i++;
-
+	
+	// copy effect parameter first digit
 	if (i >= from && i <= to)
 	{
 		*(dst+5) &= 0x0F;
@@ -1814,24 +1820,33 @@ void PatternEditorTools::slotCopy(mp_ubyte* dst, mp_ubyte* src, pp_int32 from, p
 	}
 	i++;
 	
+	// copy effect parameter second digit
 	if (i >= from && i <= to)
 	{
 		*(dst+5) &= 0xF0;
 		*(dst+5) |= *(src+5)&0xF;		
 	}
 	i++;
+	
+	// special cases for arpeggio effect:
+	if (*(dst+4) == 0x20 && *(dst+5) == 0)
+		*(dst+4) = 0;
+	else if (*(dst+4) == 0 && *(dst+5) != 0)
+		*(dst+4) = 0x20;
 }
 
 void PatternEditorTools::slotTransparentCopy(mp_ubyte* dst, mp_ubyte* src, pp_int32 from, pp_int32 to)
 {
 	pp_int32 i = 0;
 	
+	// copy note
 	if (i >= from && i <= to && *src)
 	{
 		*dst = *src;
 	}
 	i++;
-		
+	
+	// copy instrument first digit
 	if (i >= from && i <= to && (*(src+1)&0xF0))
 	{
 		*(dst+1) &= 0x0F;
@@ -1839,26 +1854,30 @@ void PatternEditorTools::slotTransparentCopy(mp_ubyte* dst, mp_ubyte* src, pp_in
 	}
 	i++;
 	
+	// copy instrument second digit
 	if (i >= from && i <= to && (*(src+1)&0xF))
 	{
 		*(dst+1) &= 0xF0;
 		*(dst+1) |= *(src+1)&0xF;		
 	}
 	i++;
-
+	
+	// copy volume
 	if (i >= from && i <= to && (*(src+2) || *(src+3)))
 	{
 		*(dst+2) = *(src+2);
 		*(dst+3) = *(src+3);
 	}
 	i+=2;
-
+	
+	// copy effect type
 	if (i >= from && i <= to && (*(src+4)))
 	{
 		*(dst+4) = *(src+4);
 	}
 	i++;
-
+	
+	// copy effect parameter first digit
 	if (i >= from && i <= to && (*(src+5)&0xF0))
 	{
 		*(dst+5) &= 0x0F;
@@ -1866,60 +1885,80 @@ void PatternEditorTools::slotTransparentCopy(mp_ubyte* dst, mp_ubyte* src, pp_in
 	}
 	i++;
 	
+	// copy effect parameter second digit
 	if (i >= from && i <= to && (*(src+5)&0xF))
 	{
 		*(dst+5) &= 0xF0;
 		*(dst+5) |= *(src+5)&0xF;		
 	}
 	i++;
+	
+	// special cases for arpeggio effect:
+	if (*(dst+4) == 0x20 && *(dst+5) == 0)
+		*(dst+4) = 0;
+	else if (*(dst+4) == 0 && *(dst+5) != 0)
+		*(dst+4) = 0x20;
 }
 
 void PatternEditorTools::slotClear(mp_ubyte* dst, pp_int32 from, pp_int32 to)
 {
 	pp_int32 i = 0;
 	
+	// clear note
 	if (i >= from && i <= to)
 	{
 		*dst = 0;
 	}
 	i++;
-		
+	
+	// clear instrument first digit
 	if (i >= from && i <= to)
 	{
 		*(dst+1) &= 0x0F;
 	}
 	i++;
 	
+	// clear instrument second digit
 	if (i >= from && i <= to)
 	{
 		*(dst+1) &= 0xF0;
 	}
 	i++;
 
+	// clear volume
 	if (i >= from && i <= to)
 	{
 		*(dst+2) = 0;
 		*(dst+3) = 0;
 	}
 	i+=2;
-
+	
+	// clear effect type
 	if (i >= from && i <= to)
 	{
 		*(dst+4) = 0;
 	}
 	i++;
-
+	
+	// clear effect parameter first digit
 	if (i >= from && i <= to)
 	{
 		*(dst+5) &= 0x0F;
 	}
 	i++;
 	
+	// clear effect parameter second digit
 	if (i >= from && i <= to)
 	{
 		*(dst+5) &= 0xF0;
 	}
 	i++;
+	
+	// special cases for arpeggio effect:
+	if (*(dst+4) == 0x20 && *(dst+5) == 0)
+		*(dst+4) = 0;
+	else if (*(dst+4) == 0 && *(dst+5) != 0)
+		*(dst+4) = 0x20;
 }
 
 bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, pp_int32 moveChannels, pp_int32 moveRows, bool clear)
