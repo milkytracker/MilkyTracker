@@ -56,14 +56,14 @@ void PatternEditor::ClipBoard::makeCopy(TXMPattern& pattern, const PatternEditor
 		return;
 
 	// only entire instrument column is allowed
-	if (selectionStart.inner >= 1 && selectionStart.inner<=2)
+	if (selectionStart.inner >= 1 && selectionStart.inner <= 2)
 		selectionStart.inner = 1;
-	if (selectionEnd.inner >= 1 && selectionEnd.inner<=2)
+	if (selectionEnd.inner >= 1 && selectionEnd.inner <= 2)
 		selectionEnd.inner = 2;
 	// only entire volume column can be selected
-	if (selectionStart.inner >= 3 && selectionStart.inner<=4)
+	if (selectionStart.inner >= 3 && selectionStart.inner <= 4)
 		selectionStart.inner = 3;
-	if (selectionEnd.inner >= 3 && selectionEnd.inner<=4)
+	if (selectionEnd.inner >= 3 && selectionEnd.inner <= 4)
 		selectionEnd.inner = 4;
 	
 	selectionWidth = selectionEnd.channel - selectionStart.channel + 1;
@@ -71,6 +71,7 @@ void PatternEditor::ClipBoard::makeCopy(TXMPattern& pattern, const PatternEditor
 
 	mp_sint32 slotSize = pattern.effnum * 2 + 2;
 	
+	// sanity check: only operate on internal XM pattern data
 	ASSERT(slotSize == 6);
 	
 	mp_sint32 rowSizeDst = slotSize*selectionWidth;

@@ -1257,7 +1257,7 @@ bool PatternEditor::writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op,
 	patternTools.setPosition(pattern, cursor.channel, cursor.row);
 	
 	// only write effect, when valid effect 
-	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x30)
+	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x20)
 	if (eff)
 		patternTools.setEffect(effNum, eff, op);
 	else
@@ -1290,7 +1290,7 @@ void PatternEditor::writeDirectEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op
 	patternTools.setPosition(pattern, track, row);
 	
 	// only write effect, when valid effect 
-	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x30)
+	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x20)
 	if (eff)
 		patternTools.setEffect(effNum, eff, op);
 }
