@@ -163,7 +163,14 @@ elseif(WIN32)
         set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
     else()
         # For GCC on Windows (using generator "MSYS Makefiles")
-        add_definitions(-DWIN32)
+		add_definitions(-DWIN32)
+
+		# Enable console output for debug builds
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -mconsole")
+
+		# Static linking of libstdc++ / glibc and other possible components
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
     endif()
 
     # Prevent Windows.h from clashing with the Standard Template Library so we
