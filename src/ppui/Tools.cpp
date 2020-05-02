@@ -173,3 +173,8 @@ bool PPTools::decodeByteArray(pp_uint8* array, pp_uint32 size, const PPString& s
 	return true;
 }
 
+pp_int32 PPTools::clamp(pp_int32 a, pp_int32 min, pp_int32 max)
+{
+	return (a < min ? min : (a >= max ? max-1 : a));
+}
+

@@ -47,6 +47,8 @@ public:
 	
 	static PPString encodeByteArray(const pp_uint8* array, pp_uint32 size);	
 	static bool decodeByteArray(pp_uint8* array, pp_uint32 size, const PPString& str);
+	
+	static pp_int32 clamp(pp_int32 a, pp_int32 min, pp_int32 max);
 };
 
 #endif

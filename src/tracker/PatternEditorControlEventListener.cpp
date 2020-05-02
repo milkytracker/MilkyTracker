@@ -366,9 +366,18 @@ unmuteAll:
 				if (newStartIndex < visibleRows && newStartIndex >= 0)
 				{
 					if (newStartIndex + startIndex < 0)
-						break;
-
-					preCursor.row = newStartIndex + startIndex;
+					{
+						patternEditor->resetSelection();
+						preCursor.row = 0;
+					}
+					else if (newStartIndex + startIndex >= patternEditor->getNumRows())
+					{
+						preCursor.row = patternEditor->getNumRows()-1;
+					}
+					else
+					{
+						preCursor.row = newStartIndex + startIndex;
+					}
 				}
 
 				if (newStartPos < visibleHeight && newStartPos >= 0)
@@ -380,20 +389,27 @@ unmuteAll:
 						break;
 
 					preCursor.channel = newStartPos + startPos;
+					preCursor.inner = 0;
 				
 					if (preCursor.channel >= patternEditor->getNumChannels())
-						break;
-					
-					preCursor.inner = 0;
-					
-					pp_int32 innerPos = cp.x % slotSize;
-					for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
 					{
-						if (innerPos >= cursorPositions[i] &&
-							innerPos < cursorPositions[i+1])
+						// clicked beyond rightmost channel, start selection from the edge
+						patternEditor->resetSelection();
+						preCursor.channel = patternEditor->getNumChannels() - 1;
+						preCursor.inner = 7;
+					}
+					else
+					{
+						// find which column in the channel was clicked
+						pp_int32 innerPos = cp.x % slotSize;
+						for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
 						{
-							preCursor.inner = i;
-							break;
+							if (innerPos >= cursorPositions[i] &&
+								innerPos < cursorPositions[i+1])
+							{
+								preCursor.inner = i;
+								break;
+							}
 						}
 					}
 					
@@ -651,6 +667,7 @@ markOrMoveSelection:
 			
 			mp_sint32 cursorPositionRow = newStartIndex + startIndex;
 			mp_sint32 cursorPositionChannel = newStartPos + startPos;
+			mp_sint32 cursorPositionInner;
 			
 			if (moveSelection)
 			{
@@ -659,37 +676,39 @@ markOrMoveSelection:
 			}
 			else
 			{
-				if (cursorPositionRow < 0) cursorPositionRow = 0;
-				if (cursorPositionChannel < 0) cursorPositionChannel = 0;
-
-				//if (cursorPositionRow < 0 || cursorPositionChannel < 0) 
-				//	break;
-
-				if (cursorPositionChannel >= patternEditor->getNumChannels())
+				if (cursorPositionRow < 0)
+					cursorPositionRow = 0;
+				else if (cursorPositionRow >= patternEditor->getNumRows())
+					cursorPositionRow = patternEditor->getNumRows()-1;
+				
+				if (cursorPositionChannel < 0)
 				{
-					patternEditor->getSelection().end.channel = patternEditor->getNumChannels()-1;
-					patternEditor->getSelection().end.inner = 7;
+					cursorPositionChannel = 0;
+					cursorPositionInner = 0;
+				}
+				else if (cursorPositionChannel >= patternEditor->getNumChannels())
+				{
+					cursorPositionChannel = patternEditor->getNumChannels()-1;
+					cursorPositionInner = 7;
 				}
 				else
 				{
-					
-					// start selecting row
-					patternEditor->getSelection().end.channel = cursorPositionChannel;
-					patternEditor->getSelection().end.row = cursorPositionRow;			
-					
 					pp_int32 innerPos = cp.x % slotSize;
 					
-					//selectionEnd.inner = 7;
 					for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
 					{
 						if (innerPos >= cursorPositions[i] &&
 							innerPos < cursorPositions[i+1])
 						{
-							patternEditor->getSelection().end.inner = i;
+							cursorPositionInner = i;
 							break;
 						}
 					}
 				}
+				
+				patternEditor->getSelection().end.row = cursorPositionRow;
+				patternEditor->getSelection().end.channel = cursorPositionChannel;
+				patternEditor->getSelection().end.inner = cursorPositionInner;
 				
 				setScrollbarPositions(startIndex, startPos);
 				
