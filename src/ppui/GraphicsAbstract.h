@@ -342,16 +342,17 @@ public:
 		if (x2 < x1)
 			swap(&x1, &x2);
 		
-		pp_int32 head = x1;
-		pp_int32 tail = x1 + dashLength - modulo(dashOffset, dashLength);
+		pp_int32 tail = x1;
+		pp_int32 head = x1 + dashLength - modulo(dashOffset, dashLength);
 		
-		while (tail < x2)
+		while (head-1 < x2)
 		{
-			drawHLine(head, tail-1, y);
-			head = tail;
-			tail += dashLength;
+			drawHLine(tail, head-1, y);
+			tail = head;
+			head += dashLength;
 		}
-		drawHLine(head, x2, y);
+		if (tail < x2)
+			drawHLine(tail, x2, y);
 	}
 	
 	void drawVLineDashed(pp_int32 y1, pp_int32 y2, pp_int32 x, pp_int32 dashLength, pp_int32 dashOffset = 0)
@@ -359,16 +360,17 @@ public:
 		if (y2 < y1)
 			swap(&y1, &y2);
 		
-		pp_int32 head = y1;
-		pp_int32 tail = y1 + dashLength - modulo(dashOffset, dashLength);
+		pp_int32 tail = y1;
+		pp_int32 head = y1 + dashLength - modulo(dashOffset, dashLength);
 		
-		while (tail < y2)
+		while (head-1 < y2)
 		{
-			drawVLine(head, tail-1, x);
-			head = tail;
-			tail += dashLength;
+			drawVLine(tail, head-1, x);
+			tail = head;
+			head += dashLength;
 		}
-		drawVLine(head, y2, x);
+		if (tail < y2)
+			drawVLine(tail, y2, x);
 	}
 };
 

@@ -853,15 +853,15 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			
 			// inner dashed lines
 			g->drawHLineDashed(x1, x2, y1, dashLen, 3);
-			g->drawHLineDashed(x1, x2, y2, dashLen, 3);
+			g->drawHLineDashed(x1, x2, y2, dashLen, 3+y2-y1);
 			g->drawVLineDashed(y1, y2, x1, dashLen, 3);
-			g->drawVLineDashed(y1, y2+1, x2, dashLen, 3);
+			g->drawVLineDashed(y1, y2+2, x2, dashLen, 3+x2-x1);
 			
 			// outer dashed lines
 			g->drawHLineDashed(x1-1, x2+1, y1-1, dashLen, 1);
-			g->drawHLineDashed(x1-1, x2+1, y2+1, dashLen, 3);
+			g->drawHLineDashed(x1-1, x2, y2+1, dashLen, 3+y2-y1);
 			g->drawVLineDashed(y1-1, y2+1, x1-1, dashLen, 1);
-			g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3);
+			g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3+x2-x1);
 		}
 		
 	}
