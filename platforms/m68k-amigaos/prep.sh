@@ -17,7 +17,7 @@ export SUBMODULES="${CURPATH}/src/submodules"
 rm -rf ${SUBMODULES}/zlib/build
 mkdir -p ${SUBMODULES}/zlib/build
 cd ${SUBMODULES}/zlib/build
-cmake .. -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM68K_COMMON="${M68K_COMMON} -O3 -fno-exceptions -w -DBIG_ENDIAN -DAMIGA -fpermissive -std=c++14"
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM68K_COMMON="${M68K_COMMON} -O3 -fno-exceptions -w -DBIG_ENDIAN -DAMIGA -fpermissive -std=c++14"
 cmake --build . --config Release --target install -- -j$(getconf _NPROCESSORS_ONLN)
 cd ${SUBMODULES}
 
@@ -31,7 +31,7 @@ git pull
 rm -rf ${SUBMODULES}/SDL/build
 mkdir -p ${SUBMODULES}/SDL/build
 cd ${SUBMODULES}/SDL/build
-cmake .. -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM68K_COMMON="${M68K_COMMON} -O3 -fno-exceptions -w -DBIG_ENDIAN -DAMIGA -fpermissive -std=c++14"
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM68K_COMMON="${M68K_COMMON} -O3 -fno-exceptions -w -DBIG_ENDIAN -DAMIGA -fpermissive -std=c++14"
 cmake --build . --config Release --target install -- -j$(getconf _NPROCESSORS_ONLN)
 cd ${SUBMODULES}
 
