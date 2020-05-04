@@ -57,13 +57,13 @@ def buildStep(dockerImage, os) {
 				}
 
 				if (!env.CHANGE_ID) {
-					sh "rm -rfv ${env.WORKSPACE}/publishing/deploy/*"
+					sh "rm -rf ${env.WORKSPACE}/publishing/deploy/*"
 					sh "mkdir -p ${env.WORKSPACE}/publishing/deploy/milkytracker"
 				}
 				
 				sh "mkdir -p build/"
 				sh "mkdir -p lib/"
-				sh "rm -rfv build/*"
+				sh "rm -rf build/*"
 
 				slackSend color: "good", channel: "#jenkins", message: "Starting ${os} build target..."
 				
