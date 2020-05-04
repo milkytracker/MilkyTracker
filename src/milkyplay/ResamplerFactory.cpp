@@ -41,7 +41,7 @@
 #include "ResamplerSinc.h"
 #include "ResamplerAmiga.h"
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 template<>
 mp_sint32* ResamplerSincTableBase<16>::sinc_table = NULL;
 

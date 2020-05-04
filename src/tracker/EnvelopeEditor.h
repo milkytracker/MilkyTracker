@@ -48,7 +48,7 @@ public:
 		EnvelopeTypePanning = 1
 	};
 
-#ifndef AMIGA
+#ifndef __AMIGA__
 private:
 #endif
 	class ClipBoard : public PPSingleton<ClipBoard>
@@ -67,7 +67,7 @@ private:
 		
 		friend class PPSingleton<ClipBoard>;
 	};
-#ifdef AMIGA
+#ifdef __AMIGA__
 private:
 #endif
 

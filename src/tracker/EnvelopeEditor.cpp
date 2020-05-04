@@ -32,7 +32,7 @@
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 template<>
 EnvelopeEditor::ClipBoard* PPSingleton<EnvelopeEditor::ClipBoard>::instance = NULL;
 #endif
@@ -51,7 +51,7 @@ void EnvelopeEditor::ClipBoard::makeCopy(TEnvelope& envelope)
 {
 	if (envelopeCopy == NULL)
 		envelopeCopy = new TEnvelope;
-	
+
 	*envelopeCopy = envelope;
 }
 

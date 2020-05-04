@@ -108,7 +108,7 @@ mp_sint32 AudioDriver_AHI::initDevice(mp_sint32 bufferSizeInWords, mp_uint32 mix
 		return MP_DEVICE_ERROR;
 	}
 /*
-#ifdef AMIGA
+#ifdef __AMIGA__
 	printf("AHI: Using audio driver: %s\n", AHI_AudioDriverName(name, 32));
 #else
 	printf("AHI: Using audio driver: %s\n", AHI_GetCurrentAudioDriver());

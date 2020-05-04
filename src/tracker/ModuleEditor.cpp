@@ -698,7 +698,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		}
 
 		PPSystemString tempFile(getTempFilename());
-#if !defined(__AMIGA__) && !defined(AMIGA)
+#if !defined(__AMIGA__)
 		try
 		{
 #endif
@@ -707,7 +707,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 				return res;
 
 			res = module->loadModule(tempFile) == MP_OK;
-#if !defined(__AMIGA__) && !defined(AMIGA)
+#if !defined(__AMIGA__)
 		} catch (const std::bad_alloc &) {
 			return false;
 		}

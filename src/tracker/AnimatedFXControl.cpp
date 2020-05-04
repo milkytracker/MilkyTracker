@@ -64,7 +64,7 @@ static const char* text =
 "David Ross (EQ code), "
 "Heikki Orsila/Stuart Caie/Claudio Matsuoka (PowerPacker decrunching), "
 "Julian 'jua' Harnath (Haiku port), "
-"Varthall (Amiga port), "
+"Varthall (Amiga port), Marlon (Amiga port) "
 "Christopher 'Deltafire' O'Neill (current maintainer), "
 "Dale 'd0pefish' Whinham (Cocoa and SDL2 ports, current maintainer), "
 "Henri Isojarvi (GUS fixes, GUI improvements), Corvus Corax (sample editor code), David Seifert."

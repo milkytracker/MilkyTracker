@@ -18,7 +18,7 @@
  #define UNLZX_TIME
  */
 
-#if defined(AMIGA)
+#if defined(__AMIGA__)
 #include <exec/types.h>
 LONG mkdir(STRPTR path, UWORD perm);
 #endif

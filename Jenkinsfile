@@ -61,9 +61,9 @@ def buildStep(dockerImage, os) {
 					sh "mkdir -p ${env.WORKSPACE}/publishing/deploy/milkytracker"
 				}
 				
-				sh "mkdir -p build/"
+				sh "mkdir -p build-${os}/"
 				sh "mkdir -p lib/"
-				sh "rm -rf build/*"
+				sh "rm -rf build-${os}/*"
 
 				slackSend color: "good", channel: "#jenkins", message: "Starting ${os} build target..."
 				
@@ -73,7 +73,7 @@ def buildStep(dockerImage, os) {
 					notify('Prep not found')
 				}
 				
-				dir("build") {
+				dir("build-${os}") {
 					sh "PKG_CONFIG_PATH=/opt/${os}/lib/pkgconfig/:/opt/${os}/share/pkgconfig/:/opt/${os}/usr/lib/pkgconfig/:/opt/${os}/usr/share/pkgconfig/ cmake -DM68K_CPU=68040 -DM68K_FPU=hard .."
 					def _NPROCESSORS_ONLN = sh (
 						script: 'getconf _NPROCESSORS_ONLN',

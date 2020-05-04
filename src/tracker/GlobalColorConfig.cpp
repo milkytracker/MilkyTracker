@@ -32,7 +32,7 @@
 #include "TrackerConfig.h"
 #include "PPUIConfig.h"
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 template<> 
 GlobalColorConfig * PPSingleton<GlobalColorConfig>::instance = NULL;
 #endif

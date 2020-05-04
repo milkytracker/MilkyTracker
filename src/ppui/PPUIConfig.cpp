@@ -30,8 +30,8 @@
 
 #include "PPUIConfig.h"
 
-#ifdef AMIGA
-template<> 
+#ifdef __AMIGA__
+template<>
 PPUIConfig * PPSingleton<PPUIConfig>::instance = NULL;
 #endif
 

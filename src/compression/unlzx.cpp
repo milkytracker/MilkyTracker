@@ -12,7 +12,7 @@
 
 #include <ctype.h>
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 static const char *version_string = "$VER: UnLZX " UNLZX_VERSION " (" UNLZX_VERDATE ")";
 #endif /* AMIGA */
 
@@ -1257,7 +1257,7 @@ int main(int argc, char **argv)
 				unlzx->use_outdir = 1;
 				
 				tmp = strlen((char*)unlzx->output_dir) - 1;
-#ifdef AMIGA
+#ifdef __AMIGA__
 				if ((unlzx->output_dir[tmp] != '/') && (unlzx->output_dir[tmp] != ':'))
 				{
 					unlzx->output_dir[tmp+1] = '/';

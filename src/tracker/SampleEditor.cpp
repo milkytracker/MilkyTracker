@@ -37,7 +37,7 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 #define powf	pow
 #define fabsf	fabs
 template<>

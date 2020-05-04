@@ -32,7 +32,7 @@
 
 #define SCROLLBARWIDTH SCROLLBUTTONSIZE
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 template<> 
 PianoBitmapSmall * PPSingleton<PianoBitmapSmall>::instance = NULL;
 template<> 

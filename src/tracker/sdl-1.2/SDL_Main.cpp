@@ -31,7 +31,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#if defined(__AMIGA__) || defined(AMIGA) || defined(__amigaos4__)
+#if defined(__AMIGA__) || defined(__amigaos4__)
 #include <exec/exec.h>
 #ifndef AFB_68080
 #define AFB_68080 10
