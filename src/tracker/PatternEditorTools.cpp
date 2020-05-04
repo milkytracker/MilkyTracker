@@ -155,14 +155,14 @@ void PatternEditorTools::clearSelection(const PatternEditorTools::Position& ss, 
 		return;
 		
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 		
 	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
@@ -393,14 +393,14 @@ pp_int32 PatternEditorTools::insRemapSelection(const Position& ss, const Positio
 		return 0;
 		
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 		
 	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
@@ -496,14 +496,14 @@ pp_int32 PatternEditorTools::noteTransposeSelection(const Position& ss, const Po
 		return 0;
 		
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 		
 	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
@@ -624,14 +624,14 @@ pp_int32 PatternEditorTools::interpolateValuesInSelection(const PatternEditorToo
 		return 0;
 
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 	// only entire effect operand column
 	if (selectionStartInner >= 6 && selectionStartInner<=7)
@@ -1733,14 +1733,14 @@ bool PatternEditorTools::selectionContains(const TXMPattern* pattern, const Posi
 		return false;
 	
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 	
 	bool outside =
@@ -1971,9 +1971,9 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	targetEnd.row += moveRows;
 	
 	if (!PatternEditorTools::hasValidSelection(pattern, ss, se))
-		return 0;
+		return false;
 	if (!PatternEditorTools::hasValidSelection(pattern, targetStart, targetEnd))
-		return 0;
+		return false;
 	
 	pp_int32 selectionStartChannel;
 	pp_int32 selectionStartRow;
@@ -1985,23 +1985,25 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	if (!normalizeSelection(pattern, ss, se, 
 							selectionStartChannel, selectionStartRow, selectionStartInner,
 							selectionEndChannel, selectionEndRow,selectionEndInner))
-		return 0;
+		return false;
 	
 	// only entire instrument column is allowed
-	if (selectionStartInner >= 1 && selectionStartInner<=2)
+	if (selectionStartInner >= 1 && selectionStartInner <= 2)
 		selectionStartInner = 1;
-	if (selectionEndInner >= 1 && selectionEndInner<=2)
+	if (selectionEndInner >= 1 && selectionEndInner <= 2)
 		selectionEndInner = 2;
 	// only entire volume column can be selected
-	if (selectionStartInner >= 3 && selectionStartInner<=4)
+	if (selectionStartInner >= 3 && selectionStartInner <= 4)
 		selectionStartInner = 3;
-	if (selectionEndInner >= 3 && selectionEndInner<=4)
+	if (selectionEndInner >= 3 && selectionEndInner <= 4)
 		selectionEndInner = 4;
 	
 	pp_int32 selectionWidth = selectionEndChannel - selectionStartChannel + 1;
 	pp_int32 selectionHeight = selectionEndRow - selectionStartRow + 1;
 	
 	mp_sint32 slotSize = pattern->effnum * 2 + 2;
+	
+	// sanity check: only operate on internal XM pattern data
 	ASSERT(slotSize == 6);
 	
 	mp_sint32 rowSizeDst = slotSize*selectionWidth;
@@ -2011,7 +2013,7 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	mp_ubyte* buffer = new mp_ubyte[bufferSize];
 	
 	if (buffer == NULL)
-		return 0;
+		return false;
 	
 	memset(buffer, 0, bufferSize);
 	
@@ -2096,5 +2098,5 @@ bool PatternEditorTools::moveSelection(const Position& ss, const Position& se, p
 	
 	delete[] buffer;
 	
-	return 1;
+	return true;
 }
