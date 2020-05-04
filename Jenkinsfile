@@ -48,11 +48,8 @@ def buildStep(dockerImage, os) {
 
 			def dockerImageRef = docker.image("${dockerImage}")
 			dockerImageRef.pull()
-			dockerImageRef.inside("-u 0:0 -u root -w /tmp/work") {
-
-				sh "apt update"
-				sh "apt install -y curl automake autoconf libtool unzip"
-				
+			dockerImageRef.inside("-e HOME='/tmp' --privileged --network=host -w /tmp/work") {
+			
 				checkout scm
 		
 				if (env.CHANGE_ID) {
