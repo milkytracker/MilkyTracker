@@ -22,12 +22,12 @@ cmake --build . --config Release --target install -- -j$(getconf _NPROCESSORS_ON
 cd ${SUBMODULES}
 
 # SDL1.2
-wget https://github.com/AmigaPorts/SDL/archive/SDL-1.2-AmigaOS3.zip -O SDL-1.2.zip
-unzip SDL-1.2.zip
-
-rm -rf SDL-SDL-1.2-AmigaOS3/build
-mkdir -p SDL-SDL-1.2-AmigaOS3/build
-cd SDL-SDL-1.2-AmigaOS3/build
+rm -rf SDL
+git clone https://github.com/AmigaPorts/SDL.git SDL
+cd SDL
+git checkout SDL-1.2-AmigaOS3
+mkdir -p build
+cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM68K_COMMON="${M68K_COMMON} -O3 -fno-exceptions -w -DBIG_ENDIAN -DAMIGA -fpermissive -std=c++14"
 cmake --build . --config Release --target install -- -j$(getconf _NPROCESSORS_ONLN)
 cd ${SUBMODULES}
