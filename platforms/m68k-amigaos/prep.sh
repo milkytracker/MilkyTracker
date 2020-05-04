@@ -32,9 +32,15 @@ cmake .. -DCMAKE_INSTALL_PREFIX=${SYSROOT} -DM68K_CPU=68040 -DM68K_FPU=hard -DM6
 cmake --build . --config Release --target install -- -j$(getconf _NPROCESSORS_ONLN)
 cd ${SUBMODULES}
 
+# Zziplib
+cd ${SUBMODULES}/zziplib
+./autogen.sh --host=${TARGET}
+CFLAGS="${M68K_CFLAGS}" CXXFLAGS="${M68K_CXXFLAGS}" ./configure --disable-sdltest --disable-shared --enable-static --host=${TARGET} --prefix=${SYSROOT}
+make -j$(getconf _NPROCESSORS_ONLN)
+make install
+cd ${SUBMODULES}
+
 # lhasa
-#wget https://github.com/SDL-mirror/SDL_mixer/archive/SDL-1.2.tar.gz -O SDL_mixer-SDL-1.2.tar.gz
-#tar -xvf SDL_mixer-SDL-1.2.tar.gz
 cd ${SUBMODULES}/lhasa
 ./autogen.sh --host=${TARGET}
 CFLAGS="${M68K_CFLAGS}" CXXFLAGS="${M68K_CXXFLAGS}" ./configure --disable-sdltest --disable-shared --enable-static --host=${TARGET} --prefix=${SYSROOT}
