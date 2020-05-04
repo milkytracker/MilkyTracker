@@ -74,7 +74,7 @@ def buildStep(dockerImage, os) {
 				}
 
 				dir("build/${os}") {
-					sh "PKG_CONFIG_PATH=/opt/${os}/lib/pkgconfig/:/opt/${os}/share/pkgconfig/:/opt/${os}/usr/lib/pkgconfig/:/opt/${os}/usr/share/pkgconfig/ cmake -DM68K_CPU=68040 -DM68K_FPU=hard .."
+					sh "PKG_CONFIG_PATH=/opt/${os}/lib/pkgconfig/:/opt/${os}/share/pkgconfig/:/opt/${os}/usr/lib/pkgconfig/:/opt/${os}/usr/share/pkgconfig/ cmake -DM68K_CPU=68040 -DM68K_FPU=hard ../.."
 					def _NPROCESSORS_ONLN = sh (
 						script: 'getconf _NPROCESSORS_ONLN',
 						returnStdout: true
