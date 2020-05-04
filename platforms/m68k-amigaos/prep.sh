@@ -34,7 +34,6 @@ cd ${SUBMODULES}
 
 # Zziplib
 cd ${SUBMODULES}/zziplib
-./autogen.sh --host=${TARGET}
 CFLAGS="${M68K_CFLAGS}" CXXFLAGS="${M68K_CXXFLAGS}" ./configure --disable-sdltest --disable-shared --enable-static --host=${TARGET} --prefix=${SYSROOT}
 make -j$(getconf _NPROCESSORS_ONLN)
 make install
