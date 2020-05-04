@@ -99,8 +99,7 @@ def buildStep(dockerImage, os) {
 	} catch(err) {
 		slackSend color: "danger", channel: "#jenkins", message: "Build Failed: ${fixed_job_name} #${env.BUILD_NUMBER} Target: ${os} DockerImage: ${dockerImage} (<${env.BUILD_URL}|Open>)"
 		currentBuild.result = 'FAILURE'
-		notify('Build failed')
-		throw err
+		notify("Build Failed: ${fixed_job_name} #${env.BUILD_NUMBER} Target: ${os} DockerImage: ${dockerImage}")
 	}
 }
 
@@ -153,7 +152,6 @@ node('master') {
 			sh "scp publishing/deploy/BUILDTIME $DEPLOYHOST:~/public_html/downloads/nightly/milkytracker/"
 
 			slackSend color: "good", channel: "#jenkins", message: "New ${fixed_job_name} build #${env.BUILD_NUMBER} to web (<https://dl.amigadev.com/${deploy_url}|https://dl.amigadev.com/${deploy_url}>)"
-			//ircNotify targets: "#aros_caffeine", customMessage: "New ${fixed_job_name} build #${env.BUILD_NUMBER} to web: https://dl.amigadev.com/${deploy_url}"
 		}
 	}
 }
