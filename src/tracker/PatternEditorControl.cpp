@@ -22,6 +22,7 @@
 
 #include "PatternEditorControl.h"
 #include "GraphicsAbstract.h"
+#include "Tools.h"
 #include "Screen.h"
 #include "Control.h"
 #include "Font.h"
@@ -828,14 +829,10 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		
 		if (i2 >= 0 && j2 >= 0 && i1 < pattern->rows && j1 < numVisibleChannels)
 		{
-			#define CLAMP(a, min, max) ((a) < (min) ? (min) : ((a) >= (max) ? (max-1) : (a)))
-			
-			i1 = CLAMP(i1, 0, pattern->rows);
-			i2 = CLAMP(i2, 0, pattern->rows);
-			j1 = CLAMP(j1, 0, numVisibleChannels);
-			j2 = CLAMP(j2, 0, numVisibleChannels);
-			
-			#undef CLAMP
+			i1 = PPTools::clamp(i1, 0, pattern->rows);
+			i2 = PPTools::clamp(i2, 0, pattern->rows);
+			j1 = PPTools::clamp(j1, 0, numVisibleChannels);
+			j2 = PPTools::clamp(j2, 0, numVisibleChannels);
 			
 			pp_int32 x1 = (location.x + (j1-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
 			pp_int32 y1 = (location.y + (i1-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
