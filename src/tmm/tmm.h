@@ -54,12 +54,22 @@ private:
 	Noise*    m_noise;
 	Additive* m_additive;
 	int       m_samplerate;
+    int       m_bits;
 public:
+	class Converter
+	{
+
+	public:
+		Converter();
+		~Converter();
+	};
+
 	void ADXInflate();
 	void ADXDeflate();
 	int  GenerateSamples(TTMMSettings*, short*, int);
+    int  ConvertToMOD(void * in, unsigned int sin, void ** out, unsigned int * sout);
 
-	TMM(int p_samplerate);
+	TMM(int samplerate, int bits);
 	~TMM();
 };
 

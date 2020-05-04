@@ -1,3 +1,7 @@
+//
+// Minimal libstdc++ implementation to keep the executable size small
+//
+
 #include <stdlib.h>
 
 void * operator new(size_t sz)

@@ -2,7 +2,9 @@
 #include "tmm.h"
 
 
-TMM::TMM(int p_samplerate) : m_samplerate(p_samplerate)
+TMM::TMM(int p_samplerate, int p_bits)
+: m_samplerate(p_samplerate)
+, m_bits(p_bits)
 {
 	m_noise = new Noise;
 	m_noise->Seed();
@@ -86,11 +88,16 @@ TMM::GenerateSamples(TTMMSettings* p_settings, short* p_samples, int p_size)
 	return size;
 }
 
-#if defined(P_AMIGA)
-extern "C" int
-tmm_generate_samples(int rate, TTMMSettings * p_settings, short * p_samples, int p_size)
+int
+TMM::ConvertToMOD(void * in, unsigned int sin, void ** out, unsigned int * sout)
 {
-    TMM * tmm = new TMM(rate);
+    return 0;
+}
+
+extern "C" int
+tmm_generate_samples(int rate, int bits, TTMMSettings * p_settings, short * p_samples, int p_size)
+{
+    TMM * tmm = new TMM(rate, bits);
 
     int ret = tmm->GenerateSamples(p_settings, p_samples, p_size);
 
@@ -98,4 +105,15 @@ tmm_generate_samples(int rate, TTMMSettings * p_settings, short * p_samples, int
 
     return ret;
 }
-#endif
+
+extern "C" int
+tmm_convert_to_mod(int rate, int bits, void * in, unsigned int sin, void ** out, unsigned int * sout)
+{
+    TMM * tmm = new TMM(rate, bits);
+
+    int ret = tmm->ConvertToMOD(in, sin, out, sout);
+
+    delete tmm;
+
+    return ret;
+}

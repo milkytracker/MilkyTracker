@@ -55,11 +55,13 @@ typedef struct TTMMSettings_s
 	TTMMAdditive  additive;
 } TTMMSettings;
 
-#if defined(P_AMIGA)
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
-int tmm_generate_samples(int rate, TTMMSettings * p_settings, short * p_samples, int p_size);
+int tmm_generate_samples(int rate, int bits, TTMMSettings * p_settings, short * p_samples, int p_size);
+int tmm_convert_to_mod(int rate, int bits, void * in, unsigned int sin, void ** out, unsigned int * sout);
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* TMM_PRESET_H */
