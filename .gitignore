@@ -20,3 +20,6 @@ Makefile
 CMakeCache.txt
 CMakeFiles
 *.a
+.idea/
+build-*/
+cmake-*

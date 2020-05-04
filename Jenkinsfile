@@ -60,20 +60,20 @@ def buildStep(dockerImage, os) {
 					sh "rm -rf ${env.WORKSPACE}/publishing/deploy/*"
 					sh "mkdir -p ${env.WORKSPACE}/publishing/deploy/milkytracker"
 				}
-				
-				sh "mkdir -p build-${os}/"
+
+				sh "rm -rf build/*"
+				sh "mkdir -p build/${os}/"
 				sh "mkdir -p lib/"
-				sh "rm -rf build-${os}/*"
 
 				slackSend color: "good", channel: "#jenkins", message: "Starting ${os} build target..."
-				
+
 				try {
 					sh "platforms/${os}/prep.sh"
 				} catch(err) {
 					notify('Prep not found')
 				}
-				
-				dir("build-${os}") {
+
+				dir("build/${os}") {
 					sh "PKG_CONFIG_PATH=/opt/${os}/lib/pkgconfig/:/opt/${os}/share/pkgconfig/:/opt/${os}/usr/lib/pkgconfig/:/opt/${os}/usr/share/pkgconfig/ cmake -DM68K_CPU=68040 -DM68K_FPU=hard .."
 					def _NPROCESSORS_ONLN = sh (
 						script: 'getconf _NPROCESSORS_ONLN',
@@ -84,14 +84,13 @@ def buildStep(dockerImage, os) {
 					sh "cp src/tracker/milkytracker milkytracker-${os}"
 					archiveArtifacts artifacts: "milkytracker-${os}"
 				}
-				
+
 				if (!env.CHANGE_ID) {
 					sh "mkdir -p ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
 
 					sh "echo '${env.BUILD_NUMBER}|${env.BUILD_URL}' > ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/BUILD"
 
-					sh "cp -fvr build/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
-					//sh "cd ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/ && tar -Jcvvf ${ext}${sfx}-hosted.tar.xz *"
+					sh "cp -fvr build/${os}/src/tracker/milkytracker ${env.WORKSPACE}/publishing/deploy/milkytracker/${os}/"
 				}
 				stash includes: "publishing/deploy/milkytracker/**", name: "${os}"
 				slackSend color: "good", channel: "#jenkins", message: "Build ${fixed_job_name} #${env.BUILD_NUMBER} Target: ${os} DockerImage: ${dockerImage} successful!"
