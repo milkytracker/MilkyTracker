@@ -100,6 +100,7 @@ private:
 		bool clickToCursor;
 		bool multiChannelEdit;
 		ScrollModes scrollMode;
+		bool invertMouseVscroll;
 		pp_uint32 muteFade;
 		char zeroEffectCharacter;
 		bool ptNoteLimit;
@@ -120,6 +121,7 @@ private:
 			clickToCursor(true), 
 			multiChannelEdit(false),
 			scrollMode(ScrollModeToEnd),
+			invertMouseVscroll(false),
 			muteFade(32768),
 			zeroEffectCharacter('\xf4'),
 			ptNoteLimit(false)
@@ -202,7 +204,8 @@ public:
 	void setFont(PPFont* font);
 
 	void setShowFocus(bool showFocus) { properties.showFocus = showFocus; }
-	void setScrollMode(ScrollModes mode) { properties.scrollMode = mode; adjustScrollBarPositionsAndSizes(); assureCursorVisible(); } 
+	void setScrollMode(ScrollModes mode) { properties.scrollMode = mode; adjustScrollBarPositionsAndSizes(); assureCursorVisible(); }
+	void setInvertMouseVscroll(bool invert) { properties.invertMouseVscroll = invert; }
 
 	// from PPControl
 	virtual void setSize(const PPSize& size);

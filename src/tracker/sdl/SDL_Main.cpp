@@ -64,6 +64,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <limits.h>
 
 #include <SDL.h>
 #include "SDL_KeyTranslation.h"
@@ -77,7 +78,7 @@
 #include "PPSystem_POSIX.h"
 #include "PPPath_POSIX.h"
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif
 // --------------------------------------------------------------------------
@@ -88,7 +89,7 @@ static SDL_TimerID			timer;
 static PPScreen*			myTrackerScreen		= NULL;
 static Tracker*				myTracker			= NULL;
 static PPDisplayDevice*		myDisplayDevice		= NULL;
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 static MidiReceiver*		myMidiReceiver		= NULL;
 #endif
 
@@ -222,7 +223,7 @@ static Uint32 SDLCALL timerCallback(Uint32 interval, void* param)
 	return interval;
 }
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 class MidiEventHandler : public MidiReceiver::MidiEventHandler
 {
 public:
@@ -828,7 +829,7 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 	// Startup procedure
 	myTracker->startUp(noSplash);
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	InitMidi();
 #endif
 
@@ -880,6 +881,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Event event;
 	char *loadFile = 0;
+	char loadFileAbsPath[PATH_MAX];
 
 	pp_int32 defaultBPP = -1;
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
@@ -960,7 +962,7 @@ unrecognizedCommandLineSwitch:
 	initTracker(defaultBPP, orientation, swapRedBlue, noSplash);
 	globalMutex->unlock();
 
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	if (myMidiReceiver && recVelocity)
 	{
 		myMidiReceiver->setRecordVelocity(true);
@@ -971,7 +973,7 @@ unrecognizedCommandLineSwitch:
 	{
 		PPSystemString newCwd = path.getCurrent();
 		path.change(oldCwd);
-		SendFile(loadFile);
+		SendFile(realpath(loadFile, loadFileAbsPath));
 		path.change(newCwd);
 		pp_uint16 chr[3] = {VK_RETURN, 0, 0};
 		PPEvent event(eKeyDown, &chr, sizeof(chr));
@@ -1034,7 +1036,7 @@ unrecognizedCommandLineSwitch:
 	SDL_RemoveTimer(timer);
 
 	globalMutex->lock();
-#ifdef HAVE_LIBASOUND
+#ifdef HAVE_LIBRTMIDI
 	delete myMidiReceiver;
 #endif
 	delete myTracker;

@@ -10,6 +10,7 @@ matrix:
       apt:
         packages:
         - libjack-dev
+        - liblhasa-dev
         - librtmidi-dev
         - libsdl2-dev
         - libzzip-dev

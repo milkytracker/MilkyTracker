@@ -252,6 +252,7 @@ public:
 	void AMPasteSample();
 	void FMPasteSample();
 	void PHPasteSample();
+	void FLPasteSample();
 	void convertSampleResolution(bool convert);
 
 	// remember to stop playing before using this
@@ -319,6 +320,7 @@ public:
 	void tool_AMPasteSample(const FilterParameters* par);
 	void tool_FMPasteSample(const FilterParameters* par);
 	void tool_PHPasteSample(const FilterParameters* par);
+	void tool_FLPasteSample(const FilterParameters* par);
 	
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);

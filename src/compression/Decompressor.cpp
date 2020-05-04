@@ -42,9 +42,9 @@ bool DecompressorBase::identify()
 	return identify(f);
 }
 
-void DecompressorBase::setFilename(const PPSystemString& filename)
+void DecompressorBase::setFilename(const PPSystemString& fileName)
 {
-	this->fileName = filename;
+	this->fileName = fileName;
 }
 
 Decompressor::Decompressor(const PPSystemString& fileName) :
@@ -139,17 +139,17 @@ DecompressorBase* Decompressor::clone()
 }
 
 
-void Decompressor::setFilename(const PPSystemString& filename)
+void Decompressor::setFilename(const PPSystemString& fileName)
 {
 	DecompressorBase::setFilename(fileName);
 	
 	adjustFilenames(fileName);
 }
 	
-void Decompressor::adjustFilenames(const PPSystemString& filename)
+void Decompressor::adjustFilenames(const PPSystemString& fileName)
 {
 	for (pp_int32 i = 0; i < decompressors.size(); i++)
-		decompressors.get(i)->setFilename(filename);
+		decompressors.get(i)->setFilename(fileName);
 }
 
 PPSimpleVector<DecompressorBase>& Decompressor::decompressorList()

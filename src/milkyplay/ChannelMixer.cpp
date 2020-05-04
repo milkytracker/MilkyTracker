@@ -657,6 +657,8 @@ void ChannelMixer::setNumChannels(mp_uint32 num)
 		mixerNumAllocatedChannels = num;
 		resetChannelsWithoutMuting();
 	}
+
+	mixerNumActiveChannels = num;
 }
 
 void ChannelMixer::setActiveChannels(mp_uint32 num)
@@ -1196,13 +1198,6 @@ mp_sint32 ChannelMixer::setBufferSize(mp_uint32 bufferSize)
 	if (this->mixBufferSize == bufferSize)
 		return MP_OK;
 
-	if (initialized)
-	{
-		mp_sint32 err = closeDevice();
-		if (err != MP_OK)
-			return err;
-	}
-	
 	this->mixBufferSize = bufferSize;
 	
 	// channels contain information depending up the buffer size

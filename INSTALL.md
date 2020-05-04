@@ -9,18 +9,19 @@ The CMake configuration will auto-detect the platform it is building on, but can
 be configured to force an SDL build if required by setting the `FORCESDL`
 option.
 
+**NOTE:** The use of `FORCESDL` is for developers only. No support is provided
+for SDL builds on Windows/macOS.
 
 # Dependencies
 
-To build the SDL port of MilkyTracker you will need the following development
-libraries installed on your system:
+To build the **SDL port** of MilkyTracker (used for Linux) you will need the
+following development libraries installed on your system:
 
-- ALSA (optional, needed for Linux MIDI support)
-- RtMidi (for Linux MIDI support)
+- RtMidi/ALSA (optional, for Linux MIDI support)
 - JACK (optional)
 - SDL2
 
-For all non-Windows/macOS ports, the decompression libs (optional):
+For all **non-Windows/macOS ports**, the decompression libs (optional):
 
 - lhasa
 - zlib
@@ -28,8 +29,17 @@ For all non-Windows/macOS ports, the decompression libs (optional):
 
 These are also provided as Git submodules, see below.
 
+For example, on Ubuntu 18.04, you might run the following command to satisfy all
+of the above dependencies:
+```
+$ sudo apt-get install libjack-dev liblhasa-dev \
+librtmidi-dev libsdl2-dev libzzip-dev
+```
 
-# Submodules
+Other distros might use different naming schemes for their packages. Please
+search your distro's package manager for the above library names.
+
+# Submodules (Windows/macOS only)
 
 The following Git submodules are provided for linking into the Windows and macOS
 binaries:

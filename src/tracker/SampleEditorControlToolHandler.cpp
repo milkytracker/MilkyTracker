@@ -158,7 +158,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Number of periods:");
 			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1000.0f, 1000.0f, 2); 
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, 1000.0f, 1); 
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, (float)(1024*1024*5), 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.waveFormVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormVolume : 100.0f);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
 			break;

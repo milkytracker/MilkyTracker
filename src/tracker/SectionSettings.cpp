@@ -240,8 +240,9 @@ enum ControlIDs
 	STATICTEXT_SETTINGS_SCOPESAPPEARANCE,
 	RADIOGROUP_SETTINGS_SCOPESAPPEARANCE,
 
+	CHECKBOX_SETTINGS_INVERTMWHEEL,
 	CHECKBOX_SETTINGS_INVERTMWHEELZOOM,
-	
+
 	// Page V (only on desktop version)
 	RADIOGROUP_SETTINGS_STOPBACKGROUNDBEHAVIOUR,
 	CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY,
@@ -1637,12 +1638,17 @@ public:
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
 
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Mouse Wheel", true, true));
 		y2+=4+11;
-		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEEL, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Inv. mwheel zoom:", checkBox, true));
-		
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Inv PatEd scroll:", checkBox, true));
+
+		y2+=12;
+
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Invert zoom:", checkBox, true));
 
 		y2+=12;
 	}
@@ -1651,6 +1657,8 @@ public:
 	{
 		pp_int32 v = settingsDatabase->restore("INVERTMWHEELZOOM")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEELZOOM))->checkIt(v!=0);
+		v = settingsDatabase->restore("INVERTMWHEEL")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEEL))->checkIt(v!=0);
 	}
 };
 
@@ -2196,6 +2204,15 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				mp_sint32 value = (reinterpret_cast<PPCheckBox*>(sender)->isChecked() ? 1 : 0) | (type << 1);
 				tracker.settingsDatabase->store("SCOPES", value);
 				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_INVERTMWHEEL:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("INVERTMWHEEL", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				break;
 			}
 

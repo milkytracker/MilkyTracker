@@ -26,16 +26,18 @@
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bpp, Uint32 flags)
 {
+	size_t namelen = 0;
 	char rendername[256] = { 0 };
 	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
 
 	for (int it = 0; it < SDL_GetNumRenderDrivers(); it++)
 	{
 		SDL_RendererInfo info;
-		SDL_GetRenderDriverInfo(it,&info);
+		SDL_GetRenderDriverInfo(it, &info);
 
-		strncat(rendername, info.name, 9);
-		strncat(rendername, " ", 1);
+		namelen += strlen(info.name) + 1;
+		strncat(rendername, info.name, sizeof(rendername) - namelen);
+		strncat(rendername, " ", sizeof(rendername) - namelen);
 
 		if (strncmp("opengles2", info.name, 9) == 0)
 		{

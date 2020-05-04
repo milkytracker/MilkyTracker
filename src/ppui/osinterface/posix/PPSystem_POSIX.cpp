@@ -111,7 +111,7 @@ const SYSCHAR* System::getConfigFileName()
 	path.Append("milkytracker_config");
 	strcpy(buffer, path.Path());	
 	return buffer;
-#endif
+#else
 #ifdef __amigaos4__
 	char *home = NULL;
 #else
@@ -124,7 +124,7 @@ const SYSCHAR* System::getConfigFileName()
 		return buffer;
 	}
 	// Old location was in the home directory
-	char oldLoc[PATH_MAX];
+	char oldLoc[PATH_MAX + 1];
 	strncpy(oldLoc, home, PATH_MAX);
 	strncat(oldLoc, "/.milkytracker_config", PATH_MAX);
 	// New location based on xdg basedir spec
@@ -143,8 +143,8 @@ const SYSCHAR* System::getConfigFileName()
 	// Move possible existing config into new location if not already present
 	if(home && access(oldLoc, F_OK) == 0 && access(buffer, F_OK) != 0)
 		rename(oldLoc, buffer);
-
 	return buffer;
+#endif
 }
 
 void System::msleep(int msecs)

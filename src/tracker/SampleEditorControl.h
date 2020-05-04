@@ -278,6 +278,7 @@ private:
 		MenuCommandIDAMPaste,
 		MenuCommandIDFMPaste,
 		MenuCommandIDPHPaste,
+		MenuCommandIDFLPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
