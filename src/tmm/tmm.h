@@ -2,7 +2,7 @@
 #define TMM_H
 
 #include "kiss_fft.h"
-#include "tmm_preset.h"
+#include "tmm_structs.h"
 
 class TMM
 {
@@ -51,22 +51,36 @@ private:
 		~Additive();
 	};
 
-	Noise*    m_noise;
-	Additive* m_additive;
-	int       m_samplerate;
-    int       m_bits;
+	Noise*      m_noise;
+	Additive*   m_additive;
+	int         m_samplerate;
+    int         m_bits;
+
+	int         GenerateSamples16(TTMMSettings*, short *, int);
+    int         GenerateSamples8(TTMMSettings*, char *, int);
 public:
 	class Converter
 	{
-
+    private:
+        ::TMM         * m_tmm;
+        void          * m_tmm_data;
+        unsigned int    m_tmm_size;
+        void         ** m_pmod_data;
+        unsigned int  * m_pmod_size;
 	public:
-		Converter();
+        void            SetTMMSource(void *, unsigned int);
+        void            SetMODDest(void **, unsigned int *);
+
+        bool            IsSourceValid() const;
+        int             Convert();
+
+		Converter(::TMM * tmm);
 		~Converter();
 	};
 
 	void ADXInflate();
 	void ADXDeflate();
-	int  GenerateSamples(TTMMSettings*, short*, int);
+	int  GenerateSamples(TTMMSettings*, void *, int);
     int  ConvertToMOD(void * in, unsigned int sin, void ** out, unsigned int * sout);
 
 	TMM(int samplerate, int bits);

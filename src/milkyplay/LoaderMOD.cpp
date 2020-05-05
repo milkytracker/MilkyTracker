@@ -162,7 +162,9 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 	ModuleTypes moduleType = ModuleTypeUnknown;
 	if (strcmp(id, "M15") == 0)
 		moduleType = ModuleTypeIns15;
-	else if (isMagic || strcmp(id, "MOD") == 0)
+	else if (strcmp(id, "MOD") == 0)
+		moduleType = ModuleTypeIns31;
+	else if (isMagic)
 		moduleType = ModuleTypeIns31;
 
 	if (moduleType == ModuleTypeUnknown)
