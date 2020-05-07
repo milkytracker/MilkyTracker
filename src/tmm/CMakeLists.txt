@@ -1,8 +1,9 @@
 add_library(tmm STATIC
     # Sources
     kiss_fft.c
-    additive.cpp
-    noise.cpp
+    tmm_additive.cpp
+    tmm_convert.cpp
+    tmm_noise.cpp
     tmm.cpp
     
     # Headers
@@ -10,6 +11,7 @@ add_library(tmm STATIC
     adx.h
     globals.h
     kiss_fft.h
+    tmm_structs.h
     tmm.h
 )
 

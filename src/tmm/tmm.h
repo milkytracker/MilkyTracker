@@ -22,6 +22,7 @@ private:
 		double       White(double p_scale = 0.5f);
 		double       Pink(void);
 		double       Brown(void);
+		void         Reset(void);
 
 		Noise();
 		~Noise();
@@ -56,8 +57,10 @@ private:
 	int         m_samplerate;
     int         m_bits;
 
-	int         GenerateSamples16(TTMMSettings*, short *, int);
     int         GenerateSamples8(TTMMSettings*, char *, int);
+	int         GenerateSamples16(TTMMSettings*, short *, int);
+    void        MoveToZeroCrossing8(TTMMSettings*, char *, int);
+    void        MoveToZeroCrossing16(TTMMSettings*, short *, int);
 public:
 	class Converter
 	{

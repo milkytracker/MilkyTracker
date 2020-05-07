@@ -16,6 +16,73 @@ TMM::~TMM()
 	delete m_noise;
 }
 
+void
+TMM::MoveToZeroCrossing8(TTMMSettings * p_settings, char * p_samples, int p_size)
+{
+	// Check if sample starts with a zero crossing
+	if(p_samples[0] == 0)
+		return;
+
+	int i, j, minpos = -1;
+	int min;
+	char * scp = new char[p_size];
+
+	// If not, find smallest value and its position
+	min = 128;
+	for(i = 0; i < p_size; i++) {
+		int s = abs(p_samples[i]);
+		if(s < min) {
+			min = s;
+			minpos = i;
+
+			if(min == 0)
+				break;
+		}
+	}
+
+	// Now move the whole sample to the "next-to-zero"-crossing
+	memcpy(scp, p_samples, p_size * sizeof(char));
+	for(i = 0, j = minpos; i < p_size; i++, j++) {
+		p_samples[i] = scp[j % p_size];
+	}
+
+	delete[] scp;
+}
+
+void
+TMM::MoveToZeroCrossing16(TTMMSettings * p_settings, short * p_samples, int p_size)
+{
+	// Check if sample starts with a zero crossing
+	if(p_samples[0] == 0)
+		return;
+
+	int i, j, minpos = -1;
+	int min;
+	short * scp = new short[p_size];
+
+	memcpy(scp, p_samples, p_size * sizeof(short));
+
+	// If not, find smallest value and its position
+	min = 32768;
+	for(i = 0; i < p_size; i++) {
+		int s = abs(p_samples[i]);
+		if(s < min) {
+			min = s;
+			minpos = i;
+
+			if(min == 0)
+				break;
+		}
+	}
+
+	// Now move the whole sample to the "next-to-zero"-crossing
+	for(i = 0, j = minpos; i < p_size; i++, j++) {
+		p_samples[i] = scp[j % p_size];
+	}
+
+	delete[] scp;
+}
+
 int
 TMM::GenerateSamples8(TTMMSettings * p_settings, char * p_samples, int p_size)
 {
@@ -161,10 +228,24 @@ TMM::GenerateSamples16(TTMMSettings * p_settings, short * p_samples, int p_size)
 int
 TMM::GenerateSamples(TTMMSettings * p_settings, void * p_samples, int p_size)
 {
+	int ret;
+	unsigned short flags = p_settings->extensions.flags;
+
 	if(m_bits == 16) {
-		return GenerateSamples16(p_settings, (short *) p_samples, p_size);
+		ret = GenerateSamples16(p_settings, (short *) p_samples, p_size);
+
+		if(flags & TMM_FLAG_LOOP_FWD && flags & TMM_FLAG_FIX_ZERO) {
+			MoveToZeroCrossing16(p_settings, (short *) p_samples, ret);
+		}
+	} else {
+		ret = GenerateSamples8(p_settings, (char *) p_samples, p_size);
+
+		if(flags & TMM_FLAG_LOOP_FWD && flags & TMM_FLAG_FIX_ZERO) {
+			MoveToZeroCrossing8(p_settings, (char *) p_samples, ret);
+		}
 	}
-	return GenerateSamples8(p_settings, (char *) p_samples, p_size);
+
+	return ret;
 }
 
 int

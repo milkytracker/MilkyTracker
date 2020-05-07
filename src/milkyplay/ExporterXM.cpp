@@ -1595,6 +1595,11 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, bool isMagic)
 							f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
 							break;
 						}
+
+						instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
+						instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
+
+						f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
 					}
 				} else {
 					f.writeByte(0);
@@ -2016,6 +2021,11 @@ unused:
 					f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
 					break;
 				}
+
+				instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
+				instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
+
+				f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
 			}
 		}
 	}

@@ -2,13 +2,23 @@
 #include "tmm.h"
 
 TMM::Noise::Noise()
-: m_white(0), m_count(1), m_brown(0.0), m_pink(0)
 {
-	memset(m_pinkStore, 0, 16 * sizeof(double));
+	Reset();
 }
 
 TMM::Noise::~Noise()
 {
+}
+
+void
+TMM::Noise::Reset()
+{
+	memset(m_pinkStore, 0, 16 * sizeof(double));
+
+	m_white = 0;
+	m_count = 1;
+	m_brown = 0.0;
+	m_pink = 0;
 }
 
 void
@@ -45,7 +55,7 @@ double
 TMM::Noise::Brown()
 {
 	while (true) {
-		double  r = White();
+		double r = White();
 
 		m_brown += r;
 

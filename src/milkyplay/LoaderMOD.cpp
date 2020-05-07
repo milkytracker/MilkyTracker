@@ -303,6 +303,14 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 					f.read(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
 					break;
 				}
+
+				mp_uint32 cpos = f.posWithBaseOffset();
+				mp_uword magic = f.readWord();
+				f.seekWithBaseOffset(cpos);
+
+				if(magic == TMM_EXT_MAGIC) {
+					f.read(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
+				}
 			}
 		}
 	}

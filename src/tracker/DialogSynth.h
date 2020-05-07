@@ -31,7 +31,7 @@
 
 #include "DialogBase.h"
 #include "Tracker.h"
-	
+
 class DialogSynth : public PPDialogBase
 {
 private:
@@ -48,8 +48,11 @@ private:
 	class PPSlider       *sliderAdditiveBasefreq;
 	class PPSlider       *sliderAdditiveBandwidth;
 	class PPSlider       *sliderAdditiveBWScale;
-	class PPCheckBox     *checkUseScale;
-	class PPCheckBox     *checkDestroyer;
+	class PPCheckBox     *checkBoxUseScale;
+	class PPCheckBox     *checkBoxDestroyer;
+	class PPCheckBox     *checkBoxLoopForward;
+	class PPCheckBox     *checkBoxFixZeroCrossing;
+	class PPCheckBox     *checkBoxFixDC;
 	class PPRadioGroup   *radioNoisePhaseNoiseType;
 	class SynthHarmonica *synthHarmonica;
 
@@ -61,7 +64,7 @@ private:
 	pp_uint32 idx;
 public:
 	DialogSynth(
-		PPScreen* screen, 
+		PPScreen* screen,
 		DialogResponder* responder,
 		pp_int32 id,
 		const PPString& caption,

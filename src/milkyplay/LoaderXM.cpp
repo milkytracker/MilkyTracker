@@ -513,6 +513,14 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						f.read(&instr[y].tmm.additive, sizeof(TTMMAdditive), 1);
 						break;
 					}
+
+					mp_uint32 cpos = f.posWithBaseOffset();
+					mp_uword magic = f.readWord();
+					f.seekWithBaseOffset(cpos);
+
+					if(magic == TMM_EXT_MAGIC) {
+						f.read(&instr[y].tmm.extensions, sizeof(TTMMExtensions), 1);
+					}
 				}
 
 				f.readWords(&instr[y].samp,1);
@@ -698,7 +706,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						}
 
 						if(module->type == XModule::ModuleType_TMM && instr[y].tmm.type > 0) {
-							TMM* tmm = new TMM(44100);
+							TMM* tmm = new TMM(44100, 16);
 							short* data = new short[32768];
 
 							tmm->GenerateSamples(&instr[y].tmm, data, XModule::getc4spd(0, 0));

@@ -51,6 +51,7 @@ TMM::Converter::Convert()
     unsigned char * d;
     TTMMModuleSample smps[MOD_COUNT_SAMPLES];
     char * data[MOD_COUNT_SAMPLES];
+    unsigned int len[MOD_COUNT_SAMPLES];
     unsigned int slen = 0, plen;
     unsigned char songlen;
     unsigned char seq[MOD_LEN_ORDER];
@@ -71,10 +72,14 @@ TMM::Converter::Convert()
         ts.type = smp->tmm_type;
 
 #if !defined(P_AMIGA)
-        smp->len = SWAPW(smp->len) << 1;
-        smp->loopstart = SWAPW(smp->loopstart) << 1;
-        smp->looplen = SWAPW(smp->looplen) << 1;
+        smp->len = SWAPW(smp->len);
+        smp->loopstart = SWAPW(smp->loopstart);
+        smp->looplen = SWAPW(smp->looplen);
 #endif
+
+        smp->len <<= 1;
+        smp->loopstart <<= 1;
+        smp->looplen <<= 1;
 
         switch(ts.type) {
         case TMM_TYPE_NOISE:
@@ -85,34 +90,35 @@ TMM::Converter::Convert()
             memcpy(&ts.sine, p, sizeof(TTMMSine));
             p += sizeof(TTMMSine);
 #if defined(P_AMIGA)
-            ts.sine.basefreq = BO_SWAPW(ts.sine.basefreq);
+            ts.sine.basefreq = SWAPW(ts.sine.basefreq);
 #endif
             break;
         case TMM_TYPE_PULSE:
             memcpy(&ts.pulse, p, sizeof(TTMMPulse));
             p += sizeof(TTMMPulse);
 #if defined(P_AMIGA)
-            ts.pulse.basefreq = BO_SWAPW(ts.pulse.basefreq);
+            ts.pulse.basefreq = SWAPW(ts.pulse.basefreq);
 #endif
             break;
         case TMM_TYPE_ADDITIVE:
             memcpy(&ts.additive, p, sizeof(TTMMAdditive));
             p += sizeof(TTMMAdditive);
 #if defined(P_AMIGA)
-            ts.additive.basefreq = BO_SWAPW(ts.additive.basefreq);
-            ts.additive.bwscale = BO_SWAPW(ts.additive.bwscale);
+            ts.additive.basefreq = SWAPW(ts.additive.basefreq);
+            ts.additive.bwscale = SWAPW(ts.additive.bwscale);
 #endif
             break;
         case TMM_TYPE_NONE: default:
             // Skip normal samples
             data[i] = NULL;
+            len[i] = smp->len;
             slen += smp->len;
             continue;
         }
 
         // Generate samples
         data[i] = (char *) malloc(32768);
-        smp->len = m_tmm->GenerateSamples(&ts, data[i], 32768);
+        len[i] = smp->len = m_tmm->GenerateSamples(&ts, data[i], 32768);
         slen += smp->len;
     }
 
@@ -138,20 +144,26 @@ TMM::Converter::Convert()
     memset(d, 0, *m_pmod_size);
 
     // Skip name
+    sprintf((char *)d, "TMM%08d", 6052020);
     d += MOD_LEN_NAME;
 
     // Copy over sample descriptions
     for(i = 0; i < MOD_COUNT_SAMPLES; i++) {
+        smps[i].len >>= 1;
+        smps[i].loopstart >>= 1;
+        smps[i].looplen >>= 1;
+#if !defined(P_AMIGA)
         smps[i].len = SWAPW(smps[i].len);
         smps[i].loopstart = SWAPW(smps[i].loopstart);
         smps[i].looplen = SWAPW(smps[i].looplen);
+#endif
         memcpy(d, &smps[i], MOD_LEN_SAMPLE_DESC);
         d += MOD_LEN_SAMPLE_DESC;
     }
 
     // Song length and restart byte
     *(d++) = songlen;
-    *(d++) = 0x1a;
+    *(d++) = 0x7f;
 
     // Write sequence
     for(i = 0; i < MOD_LEN_ORDER; i++) {
@@ -167,15 +179,15 @@ TMM::Converter::Convert()
     p += plen;
 
     // Copy samples
-    for(i = 0; i < 31; i++) {
+    for(i = 0; i < MOD_COUNT_SAMPLES; i++) {
         if(data[i]) {
-            memcpy(d, data[i], smps[i].len);
-            d += smps[i].len;
+            memcpy(d, data[i], len[i]);
+            d += len[i];
             free(data[i]);
         } else {
-            memcpy(d, p, smps[i].len);
-            d += smps[i].len;
-            p += smps[i].len;
+            memcpy(d, p, len[i]);
+            d += len[i];
+            p += len[i];
         }
     }
 

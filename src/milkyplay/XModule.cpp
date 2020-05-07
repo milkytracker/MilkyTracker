@@ -1857,6 +1857,8 @@ bool XModule::cleanUp()
 		// MAGIC
 		for(int i = 0; i < 256; i++) {
 			instr[i].tmm.type                    = 0;
+			instr[i].tmm.extensions.magic        = TMM_EXT_MAGIC;
+			instr[i].tmm.extensions.ver          = TMM_EXT_VERSION;
 			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
 			instr[i].tmm.sine.basefreq           = 440;
 			instr[i].tmm.pulse.basefreq          = 440;
@@ -1912,6 +1914,8 @@ XModule::XModule()
 		// MAGIC
 		for(int i = 0; i < 256; i++) {
 			instr[i].tmm.type                    = 0;
+			instr[i].tmm.extensions.magic        = TMM_EXT_MAGIC;
+			instr[i].tmm.extensions.ver          = TMM_EXT_VERSION;
 			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
 			instr[i].tmm.sine.basefreq           = 440;
 			instr[i].tmm.pulse.basefreq          = 440;
@@ -2726,6 +2730,8 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 			// MAGIC
 			for(int i = 0; i < 256; i++) {
 				instr[i].tmm.type                    = 0;
+				instr[i].tmm.extensions.magic        = TMM_EXT_MAGIC;
+				instr[i].tmm.extensions.ver          = TMM_EXT_VERSION;
 				instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
 				instr[i].tmm.sine.basefreq           = 440;
 				instr[i].tmm.pulse.basefreq          = 440;

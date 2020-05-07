@@ -8,10 +8,9 @@ TMM::Additive::Additive(int p_bins, int p_samplerate)
 	m_ifft_in    = new kiss_fft_cpx[m_bins];
 	m_ifft_out   = new kiss_fft_cpx[m_bins];
 	m_freq_amp   = new double[m_bins >> 1];
-	m_freq_phase = new double[m_bins];
+	m_freq_phase = new double[m_bins >> 1];
 	m_samples    = new double[m_bins];
 	m_noise      = new TMM::Noise;
-	m_noise->Seed();
 }
 
 TMM::Additive::~Additive()
@@ -82,7 +81,8 @@ TMM::Additive::Normalize(TTMMAdditive* p_settings)
 
 	// Eval maximum value
 	for(i = 0; i < m_bins; i++) {
-		if(fabs(m_samples[i]) > max) max = fabs(m_samples[i]);
+		if(fabs(m_samples[i]) > max)
+			max = fabs(m_samples[i]);
 	}
 
 	// Clamp value
@@ -137,11 +137,15 @@ TMM::Additive::Process(TTMMAdditive* p_settings)
 		}
 		break;
 	case TMM_NOISETYPE_BROWN:
+		m_noise->Reset();
+		m_noise->Seed(1588799834);
 		for(i = 0; i < m_bins >> 1; i++) {
 			m_freq_phase[i] = (0.5 + m_noise->Brown()) * 2.0 * M_PI;
 		}
 		break;
 	case TMM_NOISETYPE_PINK:
+		m_noise->Reset();
+		m_noise->Seed(1588799834);
 		for(i = 0; i < m_bins >> 1; i++) {
 			m_freq_phase[i] = (0.5 + m_noise->Pink()) * 2.0 * M_PI;
 		}

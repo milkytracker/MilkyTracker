@@ -42,13 +42,13 @@
 #include <math.h>
 
 enum {
-	SYNTH_RADIOGROUP_SYNTHTYPE = 1337000,
-	SYNTH_RADIOGROUP_NOISETYPE,
-	SYNTH_RADIOGROUP_NOISEPHASENOISETYPE,
-	SYNTH_CONTAINER_SINE,
-	SYNTH_CONTAINER_PULSE,
-	SYNTH_CONTAINER_NOISE,
-	SYNTH_CONTAINER_ADDITIVE,
+	RADIOGROUP_SYNTHTYPE = 1337000,
+	RADIOGROUP_NOISETYPE,
+	RADIOGROUP_NOISEPHASENOISETYPE,
+	CONTAINER_SINE,
+	CONTAINER_PULSE,
+	CONTAINER_NOISE,
+	CONTAINER_ADDITIVE,
 	SYNTH_HARMONICA,
 	STATICTEXT_ADDITIVE_HARMONICS,
 	STATICTEXT_ADDITIVE_BASEFREQ,
@@ -87,7 +87,13 @@ enum {
 	BUTTON_HARMONICA_DOUBLE_EACH,
 	BUTTON_HARMONICA_HALF_EVEN,
 	BUTTON_HARMONICA_DOUBLE_EVEN,
-	BUTTON_SYNTH_SAVE_SETTINGS
+	BUTTON_SAVE_INSTRUMENT,
+	CHECKBOX_LOOP_FORWARD,
+	CHECKBOX_FIX_ZERO_CROSSING,
+	CHECKBOX_FIX_DC,
+	STATICTEXT_LOOP_FORWARD,
+	STATICTEXT_FIX_ZERO_CROSSING,
+	STATICTEXT_FIX_DC
 };
 
 DialogSynth::DialogSynth(
@@ -105,11 +111,11 @@ DialogSynth::DialogSynth(
 
 	mod = tracker->getModuleEditor()->getModule();
 	idx = index;
-	tmm = new TMM(44100); // @todo
+	tmm = new TMM(44100, 16);
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x, y = getMessageBoxContainer()->getLocation().y;
 
-	radioType = new PPRadioGroup(SYNTH_RADIOGROUP_SYNTHTYPE, screen, this, PPPoint(x + 20, y + 40), PPSize(100, 100));
+	radioType = new PPRadioGroup(RADIOGROUP_SYNTHTYPE, screen, this, PPPoint(x + 20, y + 40), PPSize(100, 100));
 	radioType->addItem("None");
 	radioType->addItem("ADX");
 	radioType->addItem("Noise");
@@ -119,17 +125,29 @@ DialogSynth::DialogSynth(
 
 	messageBoxContainerGeneric->addControl(radioType);
 
-	button = new PPButton(BUTTON_SYNTH_SAVE_SETTINGS, screen, this, PPPoint(x+20, y + 40 + 100), PPSize(100, 11));
+	checkBoxLoopForward = new PPCheckBox(CHECKBOX_LOOP_FORWARD, screen, this, PPPoint(x + 20, y + 40 + 100), false);
+	messageBoxContainerGeneric->addControl(checkBoxLoopForward);
+	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_LOOP_FORWARD, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 2), "Loop Fwd", true));
+
+	checkBoxFixZeroCrossing = new PPCheckBox(CHECKBOX_FIX_ZERO_CROSSING, screen, this, PPPoint(x + 20, y + 40 + 100 + 15), false);
+	messageBoxContainerGeneric->addControl(checkBoxFixZeroCrossing);
+	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_ZERO_CROSSING, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 2), "Fix 0", true));
+
+	checkBoxFixDC = new PPCheckBox(CHECKBOX_FIX_DC, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15), false);
+	messageBoxContainerGeneric->addControl(checkBoxFixDC);
+	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_DC, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 15 + 2), "Fix DC", true));
+
+	button = new PPButton(BUTTON_SAVE_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 15), PPSize(100, 11));
 	button->setText("Save TMI");
 	messageBoxContainerGeneric->addControl(button);
 
 	pp_int32 cx = x + 130, cy = y + 40, rx = cx + 335;
 
-	containerNoise = new PPContainer(SYNTH_CONTAINER_NOISE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
+	containerNoise = new PPContainer(CONTAINER_NOISE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		containerNoise->addControl(new PPStaticText(STATICTEXT_NOISE_TYPE, screen, NULL, PPPoint(cx + 5, cy + 5),  "Type", true));
 
-		radioNoiseType = new PPRadioGroup(SYNTH_RADIOGROUP_NOISETYPE, screen, this, PPPoint(rx - 160, cy + 5), PPSize(100, 100));
+		radioNoiseType = new PPRadioGroup(RADIOGROUP_NOISETYPE, screen, this, PPPoint(rx - 160, cy + 5), PPSize(100, 100));
 		radioNoiseType->addItem("White");
 		radioNoiseType->addItem("Pink");
 		radioNoiseType->addItem("Brown");
@@ -139,7 +157,7 @@ DialogSynth::DialogSynth(
 	}
 	messageBoxContainerGeneric->addControl(containerNoise);
 
-	containerSine = new PPContainer(SYNTH_CONTAINER_SINE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
+	containerSine = new PPContainer(CONTAINER_SINE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		containerSine->addControl(new PPStaticText(STATICTEXT_SINE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + 5),  "Base freq", true));
 
@@ -154,7 +172,7 @@ DialogSynth::DialogSynth(
 	}
 	messageBoxContainerGeneric->addControl(containerSine);
 
-	containerPulse = new PPContainer(SYNTH_CONTAINER_PULSE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
+	containerPulse = new PPContainer(CONTAINER_PULSE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		containerPulse->addControl(new PPStaticText(STATICTEXT_PULSE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + 5),  "Base freq",   true));
 		containerPulse->addControl(new PPStaticText(STATICTEXT_PULSE_WIDTH,    screen, NULL, PPPoint(cx + 5, cy + 20), "Pulse width", true));
@@ -177,7 +195,7 @@ DialogSynth::DialogSynth(
 	}
 	messageBoxContainerGeneric->addControl(containerPulse);
 
-	containerAdditive = new PPContainer(SYNTH_CONTAINER_ADDITIVE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
+	containerAdditive = new PPContainer(CONTAINER_ADDITIVE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_HARMONICS,  screen, NULL, PPPoint(cx + 5, cy + 5),  "Harmonics",        true));
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BASEFREQ,   screen, NULL, PPPoint(cx + 5, cy + 20), "Base freq",        true));
@@ -215,13 +233,13 @@ DialogSynth::DialogSynth(
 		sliderAdditiveBWScale->setMaxValue(1000);
 		containerAdditive->addControl(sliderAdditiveBWScale);
 
-		checkUseScale = new PPCheckBox(CHECKBOX_ADDITIVE_USESCALE, screen, this, PPPoint(rx - 120, cy + 65), false);
-		containerAdditive->addControl(checkUseScale);
+		checkBoxUseScale = new PPCheckBox(CHECKBOX_ADDITIVE_USESCALE, screen, this, PPPoint(rx - 120, cy + 65), false);
+		containerAdditive->addControl(checkBoxUseScale);
 
-		checkDestroyer = new PPCheckBox(CHECKBOX_ADDITIVE_DESTROYER, screen, this, PPPoint(rx - 120, cy + 80), false);
-		containerAdditive->addControl(checkDestroyer);
+		checkBoxDestroyer = new PPCheckBox(CHECKBOX_ADDITIVE_DESTROYER, screen, this, PPPoint(rx - 120, cy + 80), false);
+		containerAdditive->addControl(checkBoxDestroyer);
 
-		radioNoisePhaseNoiseType = new PPRadioGroup(SYNTH_RADIOGROUP_NOISEPHASENOISETYPE, screen, this, PPPoint(rx - 120, cy + 95), PPSize(100, 100));
+		radioNoisePhaseNoiseType = new PPRadioGroup(RADIOGROUP_NOISEPHASENOISETYPE, screen, this, PPPoint(rx - 120, cy + 95), PPSize(100, 100));
 		radioNoisePhaseNoiseType->addItem("White");
 		radioNoisePhaseNoiseType->addItem("Pink");
 		radioNoisePhaseNoiseType->addItem("Brown");
@@ -307,8 +325,11 @@ pp_int32 DialogSynth::loadSettings()
 	SLIDER_SET_VALUE(sliderAdditiveBandwidth, containerAdditive, VALUE_ADDITIVE_BANDWIDTH, settings->additive.bandwidth);
 	SLIDER_SET_VALUE(sliderAdditiveBWScale,   containerAdditive, VALUE_ADDITIVE_BWSCALE,   settings->additive.bwscale);
 
-	checkUseScale->checkIt(settings->additive.usescale);
-	checkDestroyer->checkIt(settings->additive.destroyer);
+	checkBoxUseScale->checkIt(settings->additive.usescale);
+	checkBoxDestroyer->checkIt(settings->additive.destroyer);
+	checkBoxLoopForward->checkIt(settings->extensions.flags & TMM_FLAG_LOOP_FWD);
+	checkBoxFixZeroCrossing->checkIt(settings->extensions.flags & TMM_FLAG_FIX_ZERO);
+	checkBoxFixDC->checkIt(settings->extensions.flags & TMM_FLAG_FIX_DC);
 
 	radioNoisePhaseNoiseType->setChoice(settings->additive.phasenoisetype);
 
@@ -367,7 +388,7 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 			bool updateHarmonica = false;
 
 			switch (reinterpret_cast<PPControl*>(sender)->getID()) {
-			case BUTTON_SYNTH_SAVE_SETTINGS:
+			case BUTTON_SAVE_INSTRUMENT:
 				{
 					tracker->saveType(FileTypes::FileTypeInstrumentTMI);
 				}
@@ -384,6 +405,45 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
 					mod->instr[idx].tmm.additive.destroyer = (int)checked;
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_LOOP_FORWARD:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+
+					if(checked) {
+						mod->instr[idx].tmm.extensions.flags |= TMM_FLAG_LOOP_FWD;
+					} else {
+						mod->instr[idx].tmm.extensions.flags &= ~TMM_FLAG_LOOP_FWD;
+					}
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_FIX_ZERO_CROSSING:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+
+					if(checked) {
+						mod->instr[idx].tmm.extensions.flags |= TMM_FLAG_FIX_ZERO;
+					} else {
+						mod->instr[idx].tmm.extensions.flags &= ~TMM_FLAG_FIX_ZERO;
+					}
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_FIX_DC:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+
+					if(checked) {
+						mod->instr[idx].tmm.extensions.flags |= TMM_FLAG_FIX_DC;
+					} else {
+						mod->instr[idx].tmm.extensions.flags &= ~TMM_FLAG_FIX_DC;
+					}
 
 					generateSample();
 				}
@@ -465,7 +525,7 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 	case eSelection:
 		{
 			switch (reinterpret_cast<PPControl*>(sender)->getID()) {
-			case SYNTH_RADIOGROUP_SYNTHTYPE:
+			case RADIOGROUP_SYNTHTYPE:
 				{
 					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
 					enableContainer(choice);
@@ -473,14 +533,14 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 					generateSample();
 				}
 				break;
-			case SYNTH_RADIOGROUP_NOISETYPE:
+			case RADIOGROUP_NOISETYPE:
 				{
 					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
 					mod->instr[idx].tmm.noise.type = choice;
 					generateSample();
 				}
 				break;
-			case SYNTH_RADIOGROUP_NOISEPHASENOISETYPE:
+			case RADIOGROUP_NOISEPHASENOISETYPE:
 				{
 					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
 					mod->instr[idx].tmm.additive.phasenoisetype = choice;
@@ -598,7 +658,7 @@ void DialogSynth::generateSample()
 	int freq = XModule::getc4spd(0, 0);
 
 	// @todo support protracker playmode = 8-bit
-	dst->type      = 1 | 16; // looped, 16-bit
+	dst->type      = 16; // 16-bit
 	dst->loopstart = 0;
 	dst->venvnum   = editor->instruments[idx].volumeEnvelope+1;
 	dst->penvnum   = editor->instruments[idx].panningEnvelope+1;
@@ -613,6 +673,11 @@ void DialogSynth::generateSample()
 	dst->sample  = (mp_sbyte*)mod->allocSampleMem(262144 * 2); // @todo depending from synth type
 	dst->samplen = this->tmm->GenerateSamples(&mod->instr[idx].tmm, (short*)dst->sample, freq);
 	dst->looplen = dst->samplen;
+
+	// Loop?
+	if(mod->instr[idx].tmm.extensions.flags & TMM_FLAG_LOOP_FWD) {
+		dst->type |= 1;
+	}
 
 	switch(mod->instr[idx].tmm.type) {
 	case TMM_TYPE_NONE:     strcpy(mod->instr[idx].name, "");                 break;
