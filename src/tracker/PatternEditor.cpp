@@ -211,6 +211,22 @@ bool PatternEditor::hasValidSelection()
 	return PatternEditorTools::hasValidSelection(pattern, selection.start, selection.end, getNumChannels());
 }
 
+bool PatternEditor::selectionContains(const PatternEditorTools::Position& pos)
+{
+	return PatternEditorTools::selectionContains(pattern, selection.start, selection.end, pos);
+}
+
+bool PatternEditor::canMoveSelection(pp_int32 channels, pp_int32 rows)
+{
+	PatternEditorTools::Position ss = selection.start;
+	PatternEditorTools::Position se = selection.end;
+	ss.channel += channels;
+	ss.row += rows;
+	se.channel += channels;
+	se.row += rows;
+	return PatternEditorTools::hasValidSelection(pattern, ss, se, getNumChannels());
+}
+
 void PatternEditor::selectChannel(pp_int32 channel)
 {
 	if (pattern == NULL)
@@ -1241,7 +1257,7 @@ bool PatternEditor::writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op,
 	patternTools.setPosition(pattern, cursor.channel, cursor.row);
 	
 	// only write effect, when valid effect 
-	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x30)
+	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x20)
 	if (eff)
 		patternTools.setEffect(effNum, eff, op);
 	else
@@ -1274,7 +1290,7 @@ void PatternEditor::writeDirectEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op
 	patternTools.setPosition(pattern, track, row);
 	
 	// only write effect, when valid effect 
-	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x30)
+	// (0 is not a valid effect in my internal format, arpeggio is mapped to 0x20)
 	if (eff)
 		patternTools.setEffect(effNum, eff, op);
 }
@@ -1814,4 +1830,56 @@ void PatternEditor::deleteLine(pp_int32 row)
 	memset((pattern->rows-1)*rowSize + pattern->patternData, 0, rowSize);
 	
 	finishUndo(LastChangeDeleteLine);
+}
+
+
+void PatternEditor::moveSelection(pp_int32 channels, pp_int32 rows)
+{
+	PatternEditorTools::Position targetStart = selection.start;
+	PatternEditorTools::Position targetEnd = selection.end;
+	targetStart.row += rows;
+	targetStart.channel += channels;
+	targetEnd.row += rows;
+	targetEnd.channel += channels;
+	
+	if (!PatternEditorTools::hasValidSelection(pattern, selection.start, selection.end))
+		return;
+	if (!PatternEditorTools::hasValidSelection(pattern, targetStart, targetEnd))
+		return;
+	
+	prepareUndo();
+	
+	PatternEditorTools tools(pattern);
+	tools.moveSelection(selection.start, selection.end, channels, rows, true);
+	
+	selection.start = targetStart;
+	selection.end = targetEnd;
+	
+	finishUndo(LastChangeMoveSelection);
+}
+
+
+void PatternEditor::cloneSelection(pp_int32 channels, pp_int32 rows)
+{
+	PatternEditorTools::Position targetStart = selection.start;
+	PatternEditorTools::Position targetEnd = selection.end;
+	targetStart.row += rows;
+	targetStart.channel += channels;
+	targetEnd.row += rows;
+	targetEnd.channel += channels;
+	
+	if (!PatternEditorTools::hasValidSelection(pattern, selection.start, selection.end))
+		return;
+	if (!PatternEditorTools::hasValidSelection(pattern, targetStart, targetEnd))
+		return;
+	
+	prepareUndo();
+	
+	PatternEditorTools tools(pattern);
+	tools.moveSelection(selection.start, selection.end, channels, rows, false);  // don't erase source notes
+	
+	selection.start = targetStart;
+	selection.end = targetEnd;
+	
+	finishUndo(LastChangeCloneSelection);
 }

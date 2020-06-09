@@ -158,6 +158,7 @@ public:
 	void attachPattern(TXMPattern* pattern) { this->pattern = pattern; }
 
 	void clearSelection(const Position& ss, const Position& se);
+	bool moveSelection(const Position& ss, const Position& se, pp_int32 moveChannels, pp_int32 moveRows, bool clear);
 	bool expandPattern();
 	bool shrinkPattern();
 
@@ -200,6 +201,7 @@ public:
 	static void slotTransparentCopy(mp_ubyte* dst, mp_ubyte* src, pp_int32 from, pp_int32 to);
 	static void slotClear(mp_ubyte* dst, pp_int32 from, pp_int32 to);
 
+	static bool selectionContains(const TXMPattern* pattern, const Position& ss, const Position& se, const Position& pos);
 	static bool hasValidSelection(const TXMPattern* pattern, const Position& ss, const Position& se, pp_int32 numVisibleChannels = -1);
 
 	static bool normalizeSelection(const TXMPattern* pattern, 
