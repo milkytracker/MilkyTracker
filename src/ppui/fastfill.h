@@ -28,11 +28,10 @@
  *
  */
 
-#include <string.h>
-
 static inline void fill_dword(pp_uint32* buff, pp_uint32 dw, pp_uint32 len)
 {
-	memset(buff, dw, len);
+	while (len--)
+		*(buff++) = dw;
 }
 
 static inline void fill_dword_vertical(pp_uint32* buff, pp_uint32 dw, pp_uint32 len, pp_uint32 pitch)
