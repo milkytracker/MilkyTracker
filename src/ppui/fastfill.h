@@ -30,26 +30,8 @@
 
 static inline void fill_dword(pp_uint32* buff, pp_uint32 dw, pp_uint32 len)
 {
-	pp_uint32 newlen = len >> 2;
-	pp_uint32 remlen = len & 3;
-	if (newlen)
-	{
-		do
-		{
-			*buff = dw;
-			*(buff+1) = dw;
-			*(buff+2) = dw;
-			*(buff+3) = dw;
-			buff += 4;
-		} while (--newlen);
-	}
-	if (remlen)
-	{
-		do
-		{
-			*buff++ = dw;
-		} while (--remlen);
-	}
+	while (len--)
+		*(buff++) = dw;
 }
 
 static inline void fill_dword_vertical(pp_uint32* buff, pp_uint32 dw, pp_uint32 len, pp_uint32 pitch)
