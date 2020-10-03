@@ -70,6 +70,11 @@ typedef struct TTMMAdditive_s
 	unsigned char   harmonics[64];
 	unsigned char   phasenoisetype;
 	unsigned char   destroyer;
+	unsigned short  envatt;
+	unsigned short  envdec;
+	unsigned short  envsus;
+	unsigned short  envhold;
+	unsigned short  envrel;
 } TTMMAdditive;
 
 #pragma pack(push, 1)

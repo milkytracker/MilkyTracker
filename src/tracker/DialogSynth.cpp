@@ -40,6 +40,7 @@
 #include "SectionSamples.h"
 #include "tmm.h"
 #include <math.h>
+#include <time.h>
 
 enum {
 	RADIOGROUP_SYNTHTYPE = 1337000,
@@ -57,6 +58,11 @@ enum {
 	STATICTEXT_ADDITIVE_DETUNE,
 	STATICTEXT_ADDITIVE_BWSCALE,
 	STATICTEXT_ADDITIVE_RNDSEED,
+	STATICTEXT_ADDITIVE_ENV_ATT,
+	STATICTEXT_ADDITIVE_ENV_DEC,
+	STATICTEXT_ADDITIVE_ENV_SUS,
+	STATICTEXT_ADDITIVE_ENV_HOLD,
+	STATICTEXT_ADDITIVE_ENV_REL,
 	STATICTEXT_ADDITIVE_LPFREQ,
 	STATICTEXT_ADDITIVE_HPFREQ,
 	STATICTEXT_ADDITIVE_WAVEFORM,
@@ -74,6 +80,11 @@ enum {
 	VALUE_ADDITIVE_RNDSEED,
 	VALUE_ADDITIVE_LPFREQ,
 	VALUE_ADDITIVE_HPFREQ,
+	VALUE_ADDITIVE_ENV_ATT,
+	VALUE_ADDITIVE_ENV_DEC,
+	VALUE_ADDITIVE_ENV_SUS,
+	VALUE_ADDITIVE_ENV_HOLD,
+	VALUE_ADDITIVE_ENV_REL,
 	VALUE_PULSE_BASEFREQ,
 	VALUE_PULSE_WIDTH,
 	VALUE_SINE_BASEFREQ,
@@ -85,15 +96,21 @@ enum {
 	SLIDER_ADDITIVE_RNDSEED,
 	SLIDER_ADDITIVE_LPFREQ,
 	SLIDER_ADDITIVE_HPFREQ,
+	SLIDER_ADDITIVE_ENV_ATT,
+	SLIDER_ADDITIVE_ENV_DEC,
+	SLIDER_ADDITIVE_ENV_SUS,
+	SLIDER_ADDITIVE_ENV_HOLD,
+	SLIDER_ADDITIVE_ENV_REL,
 	SLIDER_PULSE_BASEFREQ,
 	SLIDER_PULSE_WIDTH,
 	SLIDER_SINE_BASEFREQ,
 	CHECKBOX_ADDITIVE_USESCALE,
 	CHECKBOX_ADDITIVE_DESTROYER,
 	BUTTON_HARMONICA_GEN_ZERO,
-	BUTTON_HARMONICA_GEN_PROPORTIONAL,
-	BUTTON_HARMONICA_GEN_RECIPROCAL,
+	BUTTON_HARMONICA_GEN_RANDOM,
 	BUTTON_HARMONICA_GEN_FULL,
+	BUTTON_HARMONICA_MOD_LINEAR,
+	BUTTON_HARMONICA_MOD_RECIPROCAL,
 	BUTTON_HARMONICA_MULT_FORMANTS,
 	BUTTON_HARMONICA_HALF_ALL,
 	BUTTON_HARMONICA_DOUBLE_ALL,
@@ -103,6 +120,8 @@ enum {
 	BUTTON_HARMONICA_DOUBLE_ODD,
 	BUTTON_HARMONICA_REVERSE,
 	BUTTON_HARMONICA_INVERT,
+	BUTTON_HARMONICA_SMOOTH,
+	BUTTON_HARMONICA_UNDO,
 	BUTTON_LOAD_INSTRUMENT,
 	BUTTON_SAVE_INSTRUMENT,
 	CHECKBOX_LOOP_FORWARD,
@@ -112,6 +131,8 @@ enum {
 	STATICTEXT_FIX_ZERO_CROSSING,
 	STATICTEXT_FIX_DC
 };
+
+static float undo[128] = {0.0f};
 
 DialogSynth::DialogSynth(
 	PPScreen* screen,
@@ -168,7 +189,7 @@ DialogSynth::DialogSynth(
 	{
 		containerNoise->addControl(new PPStaticText(STATICTEXT_NOISE_TYPE, screen, NULL, PPPoint(cx + 5, cy + 5),  "Type", true));
 
-		radioNoiseType = new PPRadioGroup(RADIOGROUP_NOISETYPE, screen, this, PPPoint(rx - 160, cy + 5), PPSize(100, 100));
+		radioNoiseType = new PPRadioGroup(RADIOGROUP_NOISETYPE, screen, this, PPPoint(rx - 180, cy + 5), PPSize(100, 100));
 		radioNoiseType->addItem("White");
 		radioNoiseType->addItem("Pink");
 		radioNoiseType->addItem("Brown");
@@ -182,7 +203,7 @@ DialogSynth::DialogSynth(
 	{
 		containerSine->addControl(new PPStaticText(STATICTEXT_SINE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + 5),  "Base freq", true));
 
-		containerSine->addControl(new PPStaticText(VALUE_SINE_BASEFREQ, screen, NULL, PPPoint(rx - 160, cy + 5), ""));
+		containerSine->addControl(new PPStaticText(VALUE_SINE_BASEFREQ, screen, NULL, PPPoint(rx - 180, cy + 5), ""));
 		sliderSineBasefreq = new PPSlider(SLIDER_SINE_BASEFREQ, screen, this, PPPoint(rx - 120, cy + 5), 110, true);
 		sliderSineBasefreq->setBarSize(1);
 		sliderSineBasefreq->setMinValue(1);
@@ -198,14 +219,14 @@ DialogSynth::DialogSynth(
 		containerPulse->addControl(new PPStaticText(STATICTEXT_PULSE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + 5),  "Base freq",   true));
 		containerPulse->addControl(new PPStaticText(STATICTEXT_PULSE_WIDTH,    screen, NULL, PPPoint(cx + 5, cy + 20), "Pulse width", true));
 
-		containerPulse->addControl(new PPStaticText(VALUE_PULSE_BASEFREQ, screen, NULL, PPPoint(rx - 160, cy + 5), ""));
+		containerPulse->addControl(new PPStaticText(VALUE_PULSE_BASEFREQ, screen, NULL, PPPoint(rx - 180, cy + 5), ""));
 		sliderPulseBasefreq = new PPSlider(SLIDER_PULSE_BASEFREQ, screen, this, PPPoint(rx - 120, cy + 5), 110, true);
 		sliderPulseBasefreq->setBarSize(1);
 		sliderPulseBasefreq->setMinValue(1);
 		sliderPulseBasefreq->setMaxValue(4400);
 		containerPulse->addControl(sliderPulseBasefreq);
 
-		containerPulse->addControl(new PPStaticText(VALUE_PULSE_WIDTH, screen, NULL, PPPoint(rx - 160, cy + 20), ""));
+		containerPulse->addControl(new PPStaticText(VALUE_PULSE_WIDTH, screen, NULL, PPPoint(rx - 180, cy + 20), ""));
 		sliderPulseWidth = new PPSlider(SLIDER_PULSE_WIDTH, screen, this, PPPoint(rx - 120, cy + 20), 110, true);
 		sliderPulseWidth->setBarSize(1);
 		sliderPulseWidth->setMinValue(1);
@@ -221,7 +242,7 @@ DialogSynth::DialogSynth(
 		pp_int32 cry = 5;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_HARMONICS, screen, NULL, PPPoint(cx + 5, cy + cry), "Harmonics", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HARMONICS, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HARMONICS, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveHarmonics = new PPSlider(SLIDER_ADDITIVE_HARMONICS, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveHarmonics->setBarSize(256);
 		sliderAdditiveHarmonics->setMinValue(4);
@@ -230,7 +251,7 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "Base freq", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BASEFREQ, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BASEFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveBasefreq = new PPSlider(SLIDER_ADDITIVE_BASEFREQ, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveBasefreq->setBarSize(1);
 		sliderAdditiveBasefreq->setMinValue(1);
@@ -239,7 +260,7 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BANDWIDTH, screen, NULL, PPPoint(cx + 5, cy + cry), "Bandwidth", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BANDWIDTH, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BANDWIDTH, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveBandwidth = new PPSlider(SLIDER_ADDITIVE_BANDWIDTH, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveBandwidth->setBarSize(256);
 		sliderAdditiveBandwidth->setMinValue(1);
@@ -248,7 +269,7 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DETUNE, screen, NULL, PPPoint(cx + 5, cy + cry), "Detune", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DETUNE, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DETUNE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveDetune = new PPSlider(SLIDER_ADDITIVE_DETUNE, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveDetune->setBarSize(256);
 		sliderAdditiveDetune->setMinValue(0);
@@ -257,7 +278,7 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BWSCALE, screen, NULL, PPPoint(cx + 5, cy + cry), "BW scale", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BWSCALE, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BWSCALE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveBWScale = new PPSlider(SLIDER_ADDITIVE_BWSCALE, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveBWScale->setBarSize(256);
 		sliderAdditiveBWScale->setMinValue(10);
@@ -276,7 +297,7 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_RNDSEED, screen, NULL, PPPoint(cx + 5, cy + cry), "RND seed", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_RNDSEED, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_RNDSEED, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveRandomSeed = new PPSlider(SLIDER_ADDITIVE_RNDSEED, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveRandomSeed->setBarSize(256);
 		sliderAdditiveRandomSeed->setMinValue(1);
@@ -293,7 +314,7 @@ DialogSynth::DialogSynth(
 		cry += 50;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_LPFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "LP cutoff", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_LPFREQ, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_LPFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveLoPassFreq = new PPSlider(SLIDER_ADDITIVE_LPFREQ, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveLoPassFreq->setBarSize(256);
 		sliderAdditiveLoPassFreq->setMinValue(1);
@@ -302,80 +323,134 @@ DialogSynth::DialogSynth(
 		cry += 15;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_HPFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "HP cutoff", true));
-		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HPFREQ, screen, NULL, PPPoint(rx - 160, cy + cry), ""));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HPFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveHiPassFreq = new PPSlider(SLIDER_ADDITIVE_HPFREQ, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
 		sliderAdditiveHiPassFreq->setBarSize(256);
 		sliderAdditiveHiPassFreq->setMinValue(1);
 		sliderAdditiveHiPassFreq->setMaxValue(220);
 		containerAdditive->addControl(sliderAdditiveHiPassFreq);
-		cry += 20;
+		cry += 15;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_ATT, screen, NULL, PPPoint(cx + 5, cy + cry), "Attack", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_ATT, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveEnvAtt = new PPSlider(SLIDER_ADDITIVE_ENV_ATT, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveEnvAtt->setBarSize(256);
+		sliderAdditiveEnvAtt->setMinValue(0);
+		sliderAdditiveEnvAtt->setMaxValue(32768);
+		containerAdditive->addControl(sliderAdditiveEnvAtt);
+		cry += 15;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_DEC, screen, NULL, PPPoint(cx + 5, cy + cry), "Decay", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_DEC, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveEnvDec = new PPSlider(SLIDER_ADDITIVE_ENV_DEC, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveEnvDec->setBarSize(256);
+		sliderAdditiveEnvDec->setMinValue(0);
+		sliderAdditiveEnvDec->setMaxValue(32768);
+		containerAdditive->addControl(sliderAdditiveEnvDec);
+		cry += 15;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_SUS, screen, NULL, PPPoint(cx + 5, cy + cry), "Sustain level", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_SUS, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveEnvSus = new PPSlider(SLIDER_ADDITIVE_ENV_SUS, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveEnvSus->setBarSize(256);
+		sliderAdditiveEnvSus->setMinValue(0);
+		sliderAdditiveEnvSus->setMaxValue(32768);
+		containerAdditive->addControl(sliderAdditiveEnvSus);
+		cry += 15;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_HOLD, screen, NULL, PPPoint(cx + 5, cy + cry), "Hold", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_HOLD, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveEnvHold = new PPSlider(SLIDER_ADDITIVE_ENV_HOLD, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveEnvHold->setBarSize(256);
+		sliderAdditiveEnvHold->setMinValue(0);
+		sliderAdditiveEnvHold->setMaxValue(32768);
+		containerAdditive->addControl(sliderAdditiveEnvHold);
+		cry += 15;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_REL, screen, NULL, PPPoint(cx + 5, cy + cry), "Release", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_REL, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveEnvRel = new PPSlider(SLIDER_ADDITIVE_ENV_REL, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveEnvRel->setBarSize(256);
+		sliderAdditiveEnvRel->setMinValue(0);
+		sliderAdditiveEnvRel->setMaxValue(32768);
+		containerAdditive->addControl(sliderAdditiveEnvRel);
+		cry += 15;
 
 		// ------------------------------------------------------
 
-		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_WAVEFORM, screen, NULL, PPPoint(cx + 5, cy + cry), "Wave Editor", true));
-		cry += 15;
-
-		synthHarmonica = new SynthHarmonica(SYNTH_HARMONICA, screen, this, PPPoint(cx + 5, cy + cry), PPSize(324, 120), this);
+		synthHarmonica = new SynthHarmonica(SYNTH_HARMONICA, screen, this, PPPoint(cx + 5, cy + cry), PPSize(324, 65), this);
 		containerAdditive->addControl(synthHarmonica);
-		cry += 120 + 5;
+		cry += 65 + 5;
 
 		button = new PPButton(BUTTON_HARMONICA_GEN_ZERO, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Gen Zero");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_GEN_PROPORTIONAL, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_GEN_RANDOM, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Gen Proportional");
+		button->setText("Gen Random");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_GEN_RECIPROCAL, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
-		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Gen Reciprocal");
-		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_GEN_FULL, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_GEN_FULL, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Gen Full");
 		containerAdditive->addControl(button);
+		button = new PPButton(BUTTON_HARMONICA_MOD_LINEAR, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Mod Linear");
+		containerAdditive->addControl(button);
 		cry += 11;
 
-		button = new PPButton(BUTTON_HARMONICA_HALF_ALL, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_MOD_RECIPROCAL, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Mod Reciprocal");
+		containerAdditive->addControl(button);
+		button = new PPButton(BUTTON_HARMONICA_HALF_ALL, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Half all");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_DOUBLE_ALL, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_DOUBLE_ALL, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Double all");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_HALF_EVEN, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_HALF_EVEN, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Half even");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_DOUBLE_EVEN, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		cry += 11;
+
+		button = new PPButton(BUTTON_HARMONICA_DOUBLE_EVEN, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Double even");
 		containerAdditive->addControl(button);
-		cry += 11;
-
-		button = new PPButton(BUTTON_HARMONICA_HALF_ODD, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_HALF_ODD, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Half odd");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_DOUBLE_ODD, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_DOUBLE_ODD, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Double odd");
 		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_MULT_FORMANTS, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button = new PPButton(BUTTON_HARMONICA_MULT_FORMANTS, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Vocalize");
-		containerAdditive->addControl(button);
-		button = new PPButton(BUTTON_HARMONICA_REVERSE, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
-		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		button->setText("Reverse");
 		containerAdditive->addControl(button);
 		cry += 11;
 
 		button = new PPButton(BUTTON_HARMONICA_INVERT, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Invert");
+		containerAdditive->addControl(button);
+		button = new PPButton(BUTTON_HARMONICA_REVERSE, screen, this, PPPoint(cx + 5 + 80 + 1, cy + cry), PPSize(80, 10));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Reverse");
+		containerAdditive->addControl(button);
+		button = new PPButton(BUTTON_HARMONICA_SMOOTH, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Smooth");
+		containerAdditive->addControl(button);
+		button = new PPButton(BUTTON_HARMONICA_UNDO, screen, this, PPPoint(cx + 5 + 80 + 1 + 80 + 1 + 80 + 1, cy + cry), PPSize(80, 10));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText("Undo");
 		containerAdditive->addControl(button);
 
 		containerAdditive->hide(true);
@@ -414,6 +489,11 @@ pp_int32 DialogSynth::loadSettings()
 	SLIDER_SET_VALUE(sliderAdditiveRandomSeed, containerAdditive, VALUE_ADDITIVE_RNDSEED,   settings->additive.rndseed);
 	SLIDER_SET_VALUE(sliderAdditiveLoPassFreq, containerAdditive, VALUE_ADDITIVE_LPFREQ,    settings->additive.lpfreq);
 	SLIDER_SET_VALUE(sliderAdditiveHiPassFreq, containerAdditive, VALUE_ADDITIVE_HPFREQ,    settings->additive.hpfreq);
+	SLIDER_SET_VALUE(sliderAdditiveEnvAtt,     containerAdditive, VALUE_ADDITIVE_ENV_ATT,   settings->additive.envatt);
+	SLIDER_SET_VALUE(sliderAdditiveEnvDec,     containerAdditive, VALUE_ADDITIVE_ENV_DEC,   settings->additive.envdec);
+	SLIDER_SET_VALUE(sliderAdditiveEnvSus,     containerAdditive, VALUE_ADDITIVE_ENV_SUS,   settings->additive.envsus);
+	SLIDER_SET_VALUE(sliderAdditiveEnvHold,    containerAdditive, VALUE_ADDITIVE_ENV_HOLD,  settings->additive.envhold);
+	SLIDER_SET_VALUE(sliderAdditiveEnvRel,     containerAdditive, VALUE_ADDITIVE_ENV_REL,   settings->additive.envrel);
 
 	checkBoxUseScale->checkIt(settings->additive.usescale);
 	checkBoxDestroyer->checkIt(settings->additive.destroyer);
@@ -478,6 +558,8 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 	case eCommand:
 		{
 			bool updateHarmonica = false;
+			float store[128];
+			memcpy(store, synthHarmonica->wave, 128 * sizeof(float));
 
 			switch (reinterpret_cast<PPControl*>(sender)->getID()) {
 			case BUTTON_LOAD_INSTRUMENT:
@@ -552,21 +634,28 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				}
 				updateHarmonica = true;
 				break;
-			case BUTTON_HARMONICA_GEN_PROPORTIONAL:
+			case BUTTON_HARMONICA_GEN_RANDOM:
+				srand(time(NULL));
 				for(int i = 0; i < mod->instr[idx].tmm.additive.nharmonics; i++) {
-					synthHarmonica->wave[i] = (float)i / (float)mod->instr[idx].tmm.additive.nharmonics;
-				}
-				updateHarmonica = true;
-				break;
-			case BUTTON_HARMONICA_GEN_RECIPROCAL:
-				for(int i = 0; i < mod->instr[idx].tmm.additive.nharmonics; i++) {
-					synthHarmonica->wave[i] = 1.0f / (1.0f + (float)i);
+					synthHarmonica->wave[i] = (float)(rand()%32768) / 32768.0f;
 				}
 				updateHarmonica = true;
 				break;
 			case BUTTON_HARMONICA_GEN_FULL:
 				for(int i = 0; i < mod->instr[idx].tmm.additive.nharmonics; i++) {
 					synthHarmonica->wave[i] = 1.0f;
+				}
+				updateHarmonica = true;
+				break;
+			case BUTTON_HARMONICA_MOD_LINEAR:
+				for(int i = 0; i < mod->instr[idx].tmm.additive.nharmonics; i++) {
+					synthHarmonica->wave[i] *= (float)i / (float)mod->instr[idx].tmm.additive.nharmonics;
+				}
+				updateHarmonica = true;
+				break;
+			case BUTTON_HARMONICA_MOD_RECIPROCAL:
+				for(int i = 0; i < mod->instr[idx].tmm.additive.nharmonics; i++) {
+					synthHarmonica->wave[i] *= 1.0f / (1.0f + (float)i);
 				}
 				updateHarmonica = true;
 				break;
@@ -638,6 +727,25 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				}
 				updateHarmonica = true;
 				break;
+			case BUTTON_HARMONICA_SMOOTH:
+				{
+					float copy[128];
+					memcpy(copy, synthHarmonica->wave, 128 * sizeof(float));
+
+					int nh = mod->instr[idx].tmm.additive.nharmonics;
+					for(int i = 0; i < nh; i++) {
+						double lh = i == 0 ? copy[nh - 1] : copy[i-1];
+						double rh = i == nh - 1 ? copy[0] : copy[i+1];
+
+						synthHarmonica->wave[i] = (lh + copy[i] + rh) / 3.0f;
+					}
+				}
+				updateHarmonica = true;
+				break;
+			case BUTTON_HARMONICA_UNDO:
+				memcpy(synthHarmonica->wave, undo, 128 * sizeof(float));
+				updateHarmonica = true;
+				break;
 			}
 
 			if(updateHarmonica) {
@@ -646,6 +754,7 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				PPEvent e(eHarmonicaUpdated);
 				handleEvent(this, &e);
 
+				memcpy(undo, store, 128 * sizeof(float));
 				generateSample();
 			}
 		}
@@ -717,6 +826,61 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 					parentScreen->paint();
 
 					mod->instr[idx].tmm.additive.rndseed = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_ENV_ATT:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_ENV_ATT))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.envatt = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_ENV_DEC:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_ENV_DEC))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.envdec = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_ENV_SUS:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_ENV_SUS))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.envsus = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_ENV_HOLD:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_ENV_HOLD))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.envhold = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_ENV_REL:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_ENV_REL))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.envrel = val;
 
 					generateSample();
 				}

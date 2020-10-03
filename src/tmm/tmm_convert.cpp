@@ -107,6 +107,11 @@ TMM::Converter::Convert()
             ts.additive.basefreq = SWAPW(ts.additive.basefreq);
             ts.additive.bwscale = SWAPW(ts.additive.bwscale);
             ts.additive.rndseed = SWAPW(ts.additive.rndseed);
+            ts.additive.envatt = SWAPW(ts.additive.envatt);
+            ts.additive.envdec = SWAPW(ts.additive.envdec);
+            ts.additive.envsus = SWAPW(ts.additive.envsus);
+            ts.additive.envhold = SWAPW(ts.additive.envhold);
+            ts.additive.envrel = SWAPW(ts.additive.envrel);
 #endif
             break;
         case TMM_TYPE_NONE: default:

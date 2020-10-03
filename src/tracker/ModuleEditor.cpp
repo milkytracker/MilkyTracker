@@ -1435,6 +1435,11 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	instruments[index].instrument->tmm.additive.usescale       = 0;
 	instruments[index].instrument->tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
 	instruments[index].instrument->tmm.additive.destroyer      = 0;
+	instruments[index].instrument->tmm.additive.envatt         = 0;
+	instruments[index].instrument->tmm.additive.envdec         = 0;
+	instruments[index].instrument->tmm.additive.envsus         = 32768;
+	instruments[index].instrument->tmm.additive.envhold        = 32768;
+	instruments[index].instrument->tmm.additive.envrel         = 0;
 	memset(&instruments[index].instrument->tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
 
 	// Wipe samples first

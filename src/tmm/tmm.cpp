@@ -10,10 +10,12 @@ TMM::TMM(int p_samplerate, int p_bits)
 	m_additive = new Additive(32768, m_samplerate);
 	m_lpfilter = new LoPass(m_samplerate);
 	m_hpfilter = new HiPass(m_samplerate);
+	m_env = new Envelope(m_samplerate);
 }
 
 TMM::~TMM()
 {
+	delete m_env;
 	delete m_hpfilter;
 	delete m_lpfilter;
 	delete m_additive;
@@ -145,8 +147,14 @@ TMM::GenerateSamples8(TTMMSettings * p_settings, char * p_samples, int p_size)
 		break;
 	case TMM_TYPE_ADDITIVE:
 		{
-			p_settings->additive.harmonics[0] = 0;
 			double * samples = m_additive->Process(&p_settings->additive);
+
+			m_lpfilter->SetCutoff((double)p_settings->additive.lpfreq * 100.0);
+			samples = m_lpfilter->Process(samples, 32768);
+
+			m_hpfilter->SetCutoff((double)p_settings->additive.hpfreq * 100.0);
+			samples = m_hpfilter->Process(samples, 32768);
+
 			for(int i = 0; i < 32768; i++) {
 				p_samples[i] = (char) (samples[i] * 127.0);
 			}
@@ -223,6 +231,13 @@ TMM::GenerateSamples16(TTMMSettings * p_settings, short * p_samples, int p_size)
 
 			m_hpfilter->SetCutoff((double)p_settings->additive.hpfreq * 100.0);
 			samples = m_hpfilter->Process(samples, 32768);
+
+			m_env->SetAttack((double)p_settings->additive.envatt / 32768.0);
+			m_env->SetDecay((double)p_settings->additive.envdec / 32768.0);
+			m_env->SetSustain((double)p_settings->additive.envsus / 32768.0);
+			m_env->SetHold((double)p_settings->additive.envhold / 32768.0);
+			m_env->SetRelease((double)p_settings->additive.envrel / 32768.0);
+			samples = m_env->Process(samples, 32768);
 
 			for(int i = 0; i < 32768; i++) {
 				p_samples[i] = (short)(samples[i] * 32767.0);

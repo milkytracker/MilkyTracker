@@ -52,6 +52,11 @@ private:
 	class PPSlider       *sliderAdditiveRandomSeed;
 	class PPSlider       *sliderAdditiveLoPassFreq;
 	class PPSlider       *sliderAdditiveHiPassFreq;
+	class PPSlider       *sliderAdditiveEnvAtt;
+	class PPSlider       *sliderAdditiveEnvDec;
+	class PPSlider       *sliderAdditiveEnvSus;
+	class PPSlider       *sliderAdditiveEnvHold;
+	class PPSlider       *sliderAdditiveEnvRel;
 	class PPCheckBox     *checkBoxUseScale;
 	class PPCheckBox     *checkBoxDestroyer;
 	class PPCheckBox     *checkBoxLoopForward;

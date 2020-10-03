@@ -1874,6 +1874,11 @@ bool XModule::cleanUp()
 			instr[i].tmm.additive.usescale       = 0;
 			instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
 			instr[i].tmm.additive.destroyer      = 0;
+			instr[i].tmm.additive.envatt         = 0;
+			instr[i].tmm.additive.envdec         = 0;
+			instr[i].tmm.additive.envsus         = 32768;
+			instr[i].tmm.additive.envhold        = 32768;
+			instr[i].tmm.additive.envrel         = 0;
 			memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
 		}
 	}
@@ -1935,6 +1940,11 @@ XModule::XModule()
 			instr[i].tmm.additive.usescale       = 0;
 			instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
 			instr[i].tmm.additive.destroyer      = 0;
+			instr[i].tmm.additive.envatt         = 0;
+			instr[i].tmm.additive.envdec         = 0;
+			instr[i].tmm.additive.envsus         = 32768;
+			instr[i].tmm.additive.envhold        = 32768;
+			instr[i].tmm.additive.envrel         = 0;
 			memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
 		}
 	}
@@ -2755,6 +2765,11 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 				instr[i].tmm.additive.usescale       = 0;
 				instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
 				instr[i].tmm.additive.destroyer      = 0;
+				instr[i].tmm.additive.envatt         = 0;
+				instr[i].tmm.additive.envdec         = 0;
+				instr[i].tmm.additive.envsus         = 32768;
+				instr[i].tmm.additive.envhold        = 32768;
+				instr[i].tmm.additive.envrel         = 0;
 				memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
 			}
 		}

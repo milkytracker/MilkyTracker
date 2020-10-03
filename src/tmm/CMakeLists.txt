@@ -3,6 +3,7 @@ add_library(tmm STATIC
     kiss_fft.c
     tmm_additive.cpp
     tmm_convert.cpp
+    tmm_envelope.cpp
     tmm_filter.cpp
     tmm_noise.cpp
     tmm.cpp

@@ -88,10 +88,32 @@ private:
 		HiPass(int p_rate) : Filter(p_rate) {}
 	};
 
+	class Envelope
+	{
+	private:
+		int          	m_rate;
+		int  			m_att;
+		int				m_dec;
+		double          m_sus;
+		int				m_hold;
+		int				m_rel;
+	public:
+		void			SetAttack(double p_att);
+		void			SetDecay(double p_dec);
+		void			SetSustain(double p_sus);
+		void			SetHold(double p_hold);
+		void			SetRelease(double p_rel);
+
+		double* 	  	Process(double* samples, int nsamples);
+
+		Envelope(int p_rate);
+	};
+
 	Noise*      m_noise;
 	Additive*   m_additive;
 	LoPass* 	m_lpfilter;
 	HiPass* 	m_hpfilter;
+	Envelope*   m_env;
 	int         m_samplerate;
     int         m_bits;
 
