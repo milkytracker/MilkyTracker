@@ -1082,19 +1082,19 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 #ifndef __LOWRES__
-	button = new PPButton(BUTTON_INSTRUMENTEDITOR_CLEAR, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 92, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
+	button = new PPButton(BUTTON_INSTRUMENTEDITOR_CLEAR, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 62, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Zap");
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_INSTRUMENTEDITOR_LOAD, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 61, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
+	button = new PPButton(BUTTON_INSTRUMENTEDITOR_LOAD, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 31, y+dy+tinyButtonOffset), PPSize(15, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Load");
+	button->setText("L");
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_INSTRUMENTEDITOR_SAVE, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 30, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
+	button = new PPButton(BUTTON_INSTRUMENTEDITOR_SAVE, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 15, y+dy+tinyButtonOffset), PPSize(15, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Save");
+	button->setText("S");
 	container->addControl(button);
 #else
 	button = new PPButton(BUTTON_INSTRUMENTS_FLIP, screen, this, PPPoint(container->getLocation().x + container->getSize().width - 27, y+dy+tinyButtonOffset - 1), PPSize(24, 11), false);
