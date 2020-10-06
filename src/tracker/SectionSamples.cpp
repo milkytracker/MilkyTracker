@@ -36,7 +36,7 @@
 #include "TrackerConfig.h"
 #include "ModuleEditor.h"
 #include "SamplePlayer.h"
-#include "PatternEditorControl.h"	
+#include "PatternEditorControl.h"
 #include "SampleEditorControl.h"
 #include "SectionInstruments.h"
 #include "DialogBase.h"
@@ -65,13 +65,13 @@ class DialogResponderSamples : public DialogResponder
 {
 private:
 	SectionSamples& section;
-	
+
 public:
 	DialogResponderSamples(SectionSamples& section) :
 		section(section)
 	{
 	}
-	
+
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
@@ -83,11 +83,11 @@ public:
 			case MESSAGEBOX_CROPSAMPLE:
 				section.getSampleEditorControl()->getSampleEditor()->cropSample();
 				break;
-				
+
 			case MESSAGEBOX_MINIMIZESAMPLE:
 				section.getSampleEditorControl()->getSampleEditor()->minimizeSample();
 				break;
-				
+
 			case MESSAGEBOX_CONVERTSAMPLE:
 				section.getSampleEditorControl()->getSampleEditor()->convertSampleResolution(true);
 				section.getSampleEditorControl()->showAll();
@@ -95,7 +95,7 @@ public:
 		}
 		return 0;
 	}
-	
+
 	virtual pp_int32 ActionNo(PPObject* sender)
 	{
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
@@ -106,7 +106,7 @@ public:
 				break;
 		}
 		return 0;
-	}	
+	}
 };
 
 SectionSamples::SectionSamples(Tracker& theTracker) :
@@ -153,7 +153,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				if (isEmptySample())
 					tracker.showMessageBox(MESSAGEBOX_UNIVERSAL, "Sample is empty.", Tracker::MessageBox_OK);
 				else
@@ -190,9 +190,9 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_SAMPLE_PLAY_DISPLAY:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
-				samplePlayer.playSample(*sampleEditor->getSample(), 
-										currentSamplePlayNote, 
-										sampleEditorControl->getCurrentPosition(), 
+				samplePlayer.playSample(*sampleEditor->getSample(),
+										currentSamplePlayNote,
+										sampleEditorControl->getCurrentPosition(),
 										sampleEditorControl->getCurrentPosition() + sampleEditorControl->getCurrentDisplayRange());
 				break;
 			}
@@ -287,7 +287,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 					sampleEditorControl->increaseRangeStart();
 					refresh();
 				}
-				else 
+				else
 					sampleEditor->increaseRepeatStart();
 				break;
 
@@ -347,7 +347,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				handleCropSample();
 				break;
 			}
-			
+
 			case BUTTON_SAMPLE_EDIT_VOL:
 			{
 				if (event->getID() != eCommand)
@@ -356,7 +356,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				getSampleEditorControl()->invokeSetSampleVolume();
 				break;
 			}
-			
+
 			case BUTTON_SAMPLE_EDIT_DRAW:
 			{
 				if (event->getID() != eCommand)
@@ -368,7 +368,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				screen->paintControl(button);
 				break;
 			}
-			
+
 			case BUTTON_SAMPLE_ZOOM_PLUS:
 				getSampleEditorControl()->scrollWheelZoomIn();
 				break;
@@ -376,8 +376,8 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_SAMPLE_ZOOM_MINUS:
 				getSampleEditorControl()->scrollWheelZoomOut();
 				break;
-				
-			
+
+
 			case STATICTEXT_REPSTART:
 			case STATICTEXT_REPLEN:
 			case STATICTEXT_SAMPLE_REPSTART:
@@ -385,7 +385,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_SHOWRANGE:
 				if (event->getID() != eCommand)
 					break;
-				
+
 				showRangeOffsets = !showRangeOffsets;
 				refresh();
 				break;
@@ -393,23 +393,23 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_FLIPNUMBERFORMAT:
 				if (event->getID() != eCommand)
 					break;
-					
+
 				toggleOffsetFormat();
 				refresh();
 				break;
-			
+
 			case BUTTON_SHOWCONTEXTMENU:
 				if (event->getID() != eCommand)
 					break;
-				
+
 				getSampleEditorControl()->invokeContextMenu(reinterpret_cast<PPControl*>(sender)->getLocation(), false);
 				break;
-				
+
 		}
 	}
 	else if (event->getID() == eSelection)
 	{
-		
+
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			case RADIOGROUP_SAMPLE_RESTYPE:
@@ -417,7 +417,7 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				handleConvertSampleResolution();
 				break;
 			}
-						
+
 			case RADIOGROUP_SAMPLE_LOOPTYPE:
 			{
 				sampleEditor->setLoopType((mp_ubyte)((reinterpret_cast<PPRadioGroup*>(sender)->getChoice())&3));
@@ -478,7 +478,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 {
 	PPScreen* screen = tracker.screen;
 
-	containerEntire = new PPTransparentContainer(CONTAINER_ENTIRESMPSECTION, screen, this, 
+	containerEntire = new PPTransparentContainer(CONTAINER_ENTIRESMPSECTION, screen, this,
 												 PPPoint(0, 0), PPSize(screen->getWidth(), screen->getHeight()));
 
 #ifndef __LOWRES__
@@ -505,7 +505,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	sampleEditorControl->setBorderColor(TrackerConfig::colorThemeMain);
 
 	sampleEditorContainer->addControl(sampleEditorControl);
-	
+
 	containerEntire->addControl(sampleEditorContainer);
 
 	pp_int32 x2 = x;
@@ -514,8 +514,8 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(conSize1,dHeight), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+2), "C-5", false));		
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+2), "C-5", false));
 
 	pp_int32 size = (pp_int32)(conSize1*0.2183908045977f);
 	pp_int32 size2 = (pp_int32)(conSize1*0.4367816091954f);
@@ -524,7 +524,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
 	button->setText("Up");
 	container->addControl(button);
-	
+
 	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm+1));
 	button->setText("Dn");
 	container->addControl(button);
@@ -536,7 +536,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
 	button->setText("Wav");
 	container->addControl(button);
-	
+
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
 	button->setText("Rng");
 	container->addControl(button);
@@ -560,7 +560,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ALL, screen, this, PPPoint(x2+2, y2+2+bHeight), PPSize(size, bHeightm));
 	button->setText("Rng all");
 	container->addControl(button);
-	
+
 	pp_int32 h = button->getSize().width;
 
 	button = new PPButton(BUTTON_SAMPLE_UNDO, screen, this, PPPoint(x2+2, y2+2+bHeight*2), PPSize((size>>1), bHeightm+1));
@@ -584,7 +584,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	containerEntire->addControl(container);
-	
+
 	x2 += container->getSize().width;
 
 	size = (conSize3-5);
@@ -645,13 +645,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 		radioGroup->addItem("Ping-pong");
 	radioGroup->addItem("One shot");
 
-	container->addControl(radioGroup);	
+	container->addControl(radioGroup);
 
 	containerEntire->addControl(container);
 
 	// load container
 	pp_int32 ty = y2;
-	
+
 	x2+=container->getSize().width;
 
 	container = new PPContainer(CONTAINER_SAMPLE_EDIT4, screen, this, PPPoint(x2, ty), PPSize(conSize6,27), false);
@@ -663,12 +663,12 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	radioGroup->addItem("8-bit");
 	radioGroup->addItem("16-bit");
 
-	container->addControl(radioGroup);	
-	
+	container->addControl(radioGroup);
+
 	containerEntire->addControl(container);
 
 	ty+=container->getSize().height;
-	
+
 	// ----------- load/save
 	size = (conSize6-4)/2-1;
 
@@ -677,13 +677,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 
 	button = new PPButton(BUTTON_SAMPLE_LOAD, screen, this, PPPoint(x2+2, ty+2), PPSize(size, 12));
 	button->setText("Load");
-	container->addControl(button);	
+	container->addControl(button);
 
 	size2 = (container->getLocation().x + container->getSize().width) - (x2+2+size+1) - 3;
 
 	button = new PPButton(BUTTON_SAMPLE_SAVE, screen, this, PPPoint(x2+2+size+1, ty+2), PPSize(size2, 12));
 	button->setText("Save");
-	container->addControl(button);	
+	container->addControl(button);
 
 	// ----------- exit
 	pp_int32 y3 = ty + 13;
@@ -701,17 +701,17 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container = new PPContainer(CONTAINER_SAMPLE_EDIT5, screen, this, PPPoint(x2, y2), PPSize(conSize7,56), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(STATICTEXT_DISPLAY, NULL, NULL, PPPoint(x2 + 2 + 2, y2 + 4), screen->getWidth() < 800 ? "Displ." : "Display", true));		
-	container->addControl(new PPStaticText(STATICTEXT_LENGTH, NULL, NULL, PPPoint(x2 + 2 + 2, y2 + 4+13), "Length", true));		
-	container->addControl(new PPStaticText(STATICTEXT_REPSTART, screen, this, PPPoint(x2 + 2 + 2, y2 + 4+13*2), "Repeat", true));		
-	container->addControl(new PPStaticText(STATICTEXT_REPLEN, screen, this, PPPoint(x2 + 2 + 2, y2 + 4+13*3), "Replen.", true));		
+	container->addControl(new PPStaticText(STATICTEXT_DISPLAY, NULL, NULL, PPPoint(x2 + 2 + 2, y2 + 4), screen->getWidth() < 800 ? "Displ." : "Display", true));
+	container->addControl(new PPStaticText(STATICTEXT_LENGTH, NULL, NULL, PPPoint(x2 + 2 + 2, y2 + 4+13), "Length", true));
+	container->addControl(new PPStaticText(STATICTEXT_REPSTART, screen, this, PPPoint(x2 + 2 + 2, y2 + 4+13*2), "Repeat", true));
+	container->addControl(new PPStaticText(STATICTEXT_REPLEN, screen, this, PPPoint(x2 + 2 + 2, y2 + 4+13*3), "Replen.", true));
 
 	x2 = screen->getWidth()-43-3 - 4 - 8*8;
 
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_DISPLAY, screen, this, PPPoint(x2, y2 + 4), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_LENGTH, screen, this, PPPoint(x2, y2 + 4+13), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPSTART, screen, this, PPPoint(x2, y2 + 4+13*2), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPLENGTH, screen, this, PPPoint(x2, y2 + 4+13*3), "12345678", false));		
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_DISPLAY, screen, this, PPPoint(x2, y2 + 4), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_LENGTH, screen, this, PPPoint(x2, y2 + 4+13), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPSTART, screen, this, PPPoint(x2, y2 + 4+13*2), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPLENGTH, screen, this, PPPoint(x2, y2 + 4+13*3), "12345678", false));
 
 	x2 = screen->getWidth()-43-3;
 
@@ -772,13 +772,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(87,12*3+4), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + 14), "C-5", false));		
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + 14), "C-5", false));
 
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+38, y2+2+12), PPSize(18, 11));
 	button->setText("Up");
 	container->addControl(button);
-	
+
 	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+38, y2+2+24), PPSize(18, 11));
 	button->setText("Dn");
 	container->addControl(button);
@@ -790,7 +790,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + 56, y2+2), PPSize(26, 11));
 	button->setText("Wav");
 	container->addControl(button);
-	
+
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + 56, y2+2+12), PPSize(26, 11));
 	button->setText("Rng");
 	container->addControl(button);
@@ -837,7 +837,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	containerEntire->addControl(container);
-	
+
 	x2 += container->getSize().width;
 
 	container = new PPContainer(CONTAINER_SAMPLE_EDIT1, screen, this, PPPoint(x2, y2), PPSize(47,12*3+4), false);
@@ -879,18 +879,18 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	x2 = x;
 
 	y2+=container->getSize().height;
-	
+
 	container = new PPContainer(CONTAINER_SHOWCONTEXTMENU, screen, this, PPPoint(x2, y2), PPSize(17,52), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
 	button = new PPButton(BUTTON_SHOWCONTEXTMENU, screen, this, PPPoint(x2+2, y2+2), PPSize(12, container->getSize().height - 5));
 	button->setVerticalText(true);
 	button->setText("Menu");
-	container->addControl(button);	
+	container->addControl(button);
 
 	containerEntire->addControl(container);
 
-	x2+=container->getSize().width;		
+	x2+=container->getSize().width;
 
 	container = new PPContainer(CONTAINER_SAMPLE_EDIT3, screen, this, PPPoint(x2, y2), PPSize(65,52), false);
 	container->setColor(TrackerConfig::colorThemeMain);
@@ -904,8 +904,8 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	radioGroup->addItem("Ping-pong");
 	radioGroup->addItem("One shot");
 
-	container->addControl(radioGroup);	
-	
+	container->addControl(radioGroup);
+
 	containerEntire->addControl(container);
 
 	x2+=container->getSize().width;
@@ -920,8 +920,8 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	radioGroup->addItem("8-bit");
 	radioGroup->addItem("16-bit");
 
-	container->addControl(radioGroup);	
-	
+	container->addControl(radioGroup);
+
 	containerEntire->addControl(container);
 
 	// Zoom container
@@ -930,13 +930,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 
 	button = new PPButton(BUTTON_SAMPLE_ZOOM_PLUS, screen, this, PPPoint(container->getLocation().x+2, y2+2), PPSize(11, 10));
 	button->setText("+");
-	container->addControl(button);	
+	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_ZOOM_MINUS, screen, this, PPPoint(button->getLocation().x, y2+2+button->getSize().height+1), PPSize(11, 9));
 	button->setText("-");
-	container->addControl(button);	
+	container->addControl(button);
 
-	containerEntire->addControl(container);	
+	containerEntire->addControl(container);
 
 	pp_int32 y3 = y2 + container->getSize().height;
 
@@ -970,15 +970,15 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container = new PPContainer(CONTAINER_SAMPLE_EDIT5, screen, this, PPPoint(x2, y2), PPSize(172,52), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(STATICTEXT_DISPLAY, NULL, NULL, PPPoint(x2 + 2, y2 + 4), "Display", true));		
-	container->addControl(new PPStaticText(STATICTEXT_LENGTH, NULL, NULL, PPPoint(x2 + 2, y2 + 4+12), "Length", true));		
-	container->addControl(new PPStaticText(STATICTEXT_REPSTART, screen, this, PPPoint(x2 + 2, y2 + 4+12*2), "Repeat", true));		
-	container->addControl(new PPStaticText(STATICTEXT_REPLEN, screen, this, PPPoint(x2 + 2, y2 + 4+12*3), "Replen.", true));		
+	container->addControl(new PPStaticText(STATICTEXT_DISPLAY, NULL, NULL, PPPoint(x2 + 2, y2 + 4), "Display", true));
+	container->addControl(new PPStaticText(STATICTEXT_LENGTH, NULL, NULL, PPPoint(x2 + 2, y2 + 4+12), "Length", true));
+	container->addControl(new PPStaticText(STATICTEXT_REPSTART, screen, this, PPPoint(x2 + 2, y2 + 4+12*2), "Repeat", true));
+	container->addControl(new PPStaticText(STATICTEXT_REPLEN, screen, this, PPPoint(x2 + 2, y2 + 4+12*3), "Replen.", true));
 
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_DISPLAY, screen, this, PPPoint(x2 + 2 + 58, y2 + 4), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_LENGTH, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPSTART, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12*2), "12345678", false));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPLENGTH, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12*3), "12345678", false));		
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_DISPLAY, screen, this, PPPoint(x2 + 2 + 58, y2 + 4), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_LENGTH, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPSTART, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12*2), "12345678", false));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_REPLENGTH, screen, this, PPPoint(x2 + 2 + 58, y2 + 4+12*3), "12345678", false));
 
 	button = new PPButton(BUTTON_SAMPLE_EDIT_CLEAR, screen, this, PPPoint(x2+126, y2+2), PPSize(43, 11));
 	button->setText("Clear");
@@ -1037,7 +1037,7 @@ void SectionSamples::realign()
 {
 	pp_uint32 maxShould = tracker.MAXEDITORHEIGHT();
 	pp_uint32 maxIs = containerEntire->getLocation().y + containerEntire->getSize().height;
-	
+
 	if (maxIs != maxShould)
 	{
 		pp_int32 offset = maxShould - maxIs;
@@ -1067,7 +1067,7 @@ void SectionSamples::show(bool bShow)
 	SectionAbstract::show(bShow);
 
 	visible = bShow;
-	
+
 	if (!initialised)
 	{
 		init();
@@ -1079,7 +1079,7 @@ void SectionSamples::show(bool bShow)
 
 #ifndef __LOWRES__
 		realign();
-#endif		
+#endif
 
 		if (bShow)
 		{
@@ -1099,10 +1099,10 @@ void SectionSamples::show(bool bShow)
 			replaceInstrumentListBoxes(false);
 #endif
 		}
-		
+
 		update();
 		showSection(bShow);
-	}	
+	}
 
 #ifdef __LOWRES__
 	// If instrument section is shown (bShow = true)
@@ -1141,10 +1141,10 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 {
 	if (!initialised)
 		return;
-		
+
 	PPScreen* screen = tracker.screen;
 	SampleEditor* sampleEditor = sampleEditorControl->getSampleEditor();
-		
+
 	if (!force && screen->getModalControl() && screen->getModalControl() == tracker.messageBoxContainerGeneric)
 		return;
 
@@ -1153,18 +1153,18 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 
 	if (!visible)
 		return;
-	
+
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT3));
 
 	sampleEditorControl->setRelativeNote(currentSamplePlayNote - ModuleEditor::MAX_NOTE/2);
 
-	static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SAMPLE_LOOPTYPE))->setChoice(sampleEditor->getLoopType() & 3);	
-	
+	static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SAMPLE_LOOPTYPE))->setChoice(sampleEditor->getLoopType() & 3);
+
 	PPContainer* container2 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT4));
-	static_cast<PPRadioGroup*>(container2->getControlByID(RADIOGROUP_SAMPLE_RESTYPE))->setChoice(sampleEditor->is16Bit() ? 1 : 0);	
-	
+	static_cast<PPRadioGroup*>(container2->getControlByID(RADIOGROUP_SAMPLE_RESTYPE))->setChoice(sampleEditor->is16Bit() ? 1 : 0);
+
 	PPContainer* container3 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT5));
-	
+
 	setOffsetText(STATICTEXT_SAMPLE_LENGTH, sampleEditor->getSampleLen());
 	setOffsetText(STATICTEXT_SAMPLE_DISPLAY, sampleEditorControl->getCurrentDisplayRange());
 
@@ -1181,13 +1181,13 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 		pp_int32 sEnd = sampleEditorControl->getSelectionEnd();
 		if (sStart >= 0 && sEnd >= 0)
 		{
-			setOffsetText(STATICTEXT_SAMPLE_REPSTART, sStart);	
-			setOffsetText(STATICTEXT_SAMPLE_REPLENGTH, sEnd);	
+			setOffsetText(STATICTEXT_SAMPLE_REPSTART, sStart);
+			setOffsetText(STATICTEXT_SAMPLE_REPLENGTH, sEnd);
 		}
 		else
 		{
-			static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_REPSTART))->setText("--------");	
-			static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_REPLENGTH))->setText("--------");	
+			static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_REPSTART))->setText("--------");
+			static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_REPLENGTH))->setText("--------");
 		}
 	}
 	else
@@ -1195,16 +1195,16 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 		static_cast<PPButton*>(container3->getControlByID(BUTTON_SHOWRANGE))->setText("Rep");
 		static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_REPSTART))->setText("Repeat");
 		static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_REPLEN))->setText("Replen.");
-		
-		setOffsetText(STATICTEXT_SAMPLE_REPSTART, sampleEditorControl->getRepeatStart());	
-		setOffsetText(STATICTEXT_SAMPLE_REPLENGTH, sampleEditorControl->getRepeatLength());	
+
+		setOffsetText(STATICTEXT_SAMPLE_REPSTART, sampleEditorControl->getRepeatStart());
+		setOffsetText(STATICTEXT_SAMPLE_REPLENGTH, sampleEditorControl->getRepeatLength());
 	}
-	
+
 	PPContainer* container4 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_PLAY));
 	char noteName[4];
 	PatternTools::getNoteName(noteName, currentSamplePlayNote+1);
 	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_PLAYNOTE))->setText(noteName);
-		
+
 	PPContainer* container5 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_RANGE));
 	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_RANGE_ALL))->setClickable(!sampleEditor->isEmptySample());
 	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_RANGE_SHOWALL))->setClickable(!sampleEditor->isEmptySample());
@@ -1212,7 +1212,7 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_RANGE_SHOW))->setClickable(sampleEditorControl->hasValidSelection());
 	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_APPLY_LASTFILTER))->setClickable(sampleEditor->tool_canApplyLastFilter());
 	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_UNDO))->setClickable(sampleEditor->canUndo());
-	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_REDO))->setClickable(sampleEditor->canRedo());	
+	static_cast<PPButton*>(container5->getControlByID(BUTTON_SAMPLE_REDO))->setClickable(sampleEditor->canRedo());
 
 	PPContainer* container6 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT2));
 	static_cast<PPButton*>(container6->getControlByID(BUTTON_SAMPLE_EDIT_CROP))->setClickable(sampleEditorControl->hasValidSelection());
@@ -1220,19 +1220,19 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	static_cast<PPButton*>(container6->getControlByID(BUTTON_SAMPLE_EDIT_DRAW))->setClickable(!sampleEditor->isEmptySample());
 
 	PPContainer* container7 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_PLAY));
-	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_RANGE))->setClickable(sampleEditorControl->hasValidSelection());	
-	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_WAVE))->setClickable(!sampleEditor->isEmptySample());	
-	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_DISPLAY))->setClickable(!sampleEditor->isEmptySample());	
-	
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_RANGE))->setClickable(sampleEditorControl->hasValidSelection());
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_WAVE))->setClickable(!sampleEditor->isEmptySample());
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_DISPLAY))->setClickable(!sampleEditor->isEmptySample());
+
 	PPContainer* container9 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT1));
 	bool b = (sampleEditorControl->getCurrentRangeLength()) > 0 && sampleEditorControl->hasValidSelection();
 	static_cast<PPButton*>(container9->getControlByID(BUTTON_SAMPLE_EDIT_CUT))->setClickable(b);
 	static_cast<PPButton*>(container9->getControlByID(BUTTON_SAMPLE_EDIT_COPY))->setClickable(b);
 	static_cast<PPButton*>(container9->getControlByID(BUTTON_SAMPLE_EDIT_PASTE))->setClickable(sampleEditor->canPaste());
-	
+
 	PPContainer* container10 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_LOADSAVE));
-	static_cast<PPButton*>(container10->getControlByID(BUTTON_SAMPLE_SAVE))->setClickable(!sampleEditor->isEmptySample());		
-	
+	static_cast<PPButton*>(container10->getControlByID(BUTTON_SAMPLE_SAVE))->setClickable(!sampleEditor->isEmptySample());
+
 	screen->paintControl(container10, false);
 	screen->paintControl(container9, false);
 	screen->paintControl(container6, false);
@@ -1243,7 +1243,7 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	screen->paintControl(container3, false);
 	screen->paintControl(sampleEditorControl, false);
 	if (repaint)
-		screen->update();		
+		screen->update();
 }
 
 void SectionSamples::updateSampleWindow(bool repaint/* = true*/)
@@ -1251,7 +1251,7 @@ void SectionSamples::updateSampleWindow(bool repaint/* = true*/)
 	PPScreen* screen = tracker.screen;
 	screen->paintControl(sampleEditorControl, false);
 	if (repaint)
-		screen->update();		
+		screen->update();
 }
 
 void SectionSamples::updateAfterLoad()
@@ -1259,19 +1259,19 @@ void SectionSamples::updateAfterLoad()
 	tracker.updateInstrumentsListBox(false);
 	tracker.updateSamplesListBox(false);
 	tracker.sectionInstruments->update(false);
-	update(false);	
+	update(false);
 }
 
-SampleEditorControl* SectionSamples::getSampleEditorControl(bool forceAttach/* = true*/) 
+SampleEditorControl* SectionSamples::getSampleEditorControl(bool forceAttach/* = true*/)
 {
-	if (forceAttach && 
-		sampleEditorControl && 
+	if (forceAttach &&
+		sampleEditorControl &&
 		sampleEditorControl->getSampleEditor()->getSample() == NULL)
 	{
 		tracker.moduleEditor->reloadSample(tracker.listBoxInstruments->getSelectedIndex(), tracker.listBoxSamples->getSelectedIndex());
 	}
-	
-	return sampleEditorControl; 
+
+	return sampleEditorControl;
 }
 
 void SectionSamples::resetSampleEditor()
@@ -1288,14 +1288,14 @@ bool SectionSamples::isEmptySample()
 void SectionSamples::setOffsetFormat(pp_uint32 offsetFormat)
 {
 	this->offsetFormat = offsetFormat;
-	
+
 	sampleEditorControl->setOffsetFormat((SampleEditorControl::OffsetFormats)offsetFormat);
 }
 
 void SectionSamples::toggleOffsetFormat()
 {
 	offsetFormat = (offsetFormat + 1) % (SampleEditorControl::OffsetFormatMillis+1);
-	
+
 	sampleEditorControl->setOffsetFormat((SampleEditorControl::OffsetFormats)offsetFormat);
 }
 
@@ -1304,13 +1304,13 @@ void SectionSamples::setOffsetText(pp_uint32 ID, pp_uint32 offset)
 	switch (offsetFormat)
 	{
 		case SampleEditorControl::OffsetFormatDec:
-			static_cast<PPStaticText*>(containerEntire->getControlByID(ID))->setValue(offset, false, 8);		
+			static_cast<PPStaticText*>(containerEntire->getControlByID(ID))->setValue(offset, false, 8);
 			break;
 
 		case SampleEditorControl::OffsetFormatHex:
-			static_cast<PPStaticText*>(containerEntire->getControlByID(ID))->setValue(offset, true, 8);		
+			static_cast<PPStaticText*>(containerEntire->getControlByID(ID))->setValue(offset, true, 8);
 			break;
-		
+
 		case SampleEditorControl::OffsetFormatMillis:
 		{
 			pp_uint32 millis = sampleEditorControl->getSampleEditor()->convertSmpPosToMillis(offset, currentSamplePlayNote - ModuleEditor::MAX_NOTE/2);
@@ -1357,7 +1357,7 @@ void SectionSamples::handleClearSample()
 	{
 		if (sampleEditor->isUndoStackEnabled())
 		{
-			sampleEditor->clearSample();					
+			sampleEditor->clearSample();
 		}
 		else
 		{
@@ -1419,7 +1419,7 @@ void SectionSamples::handleConvertSampleResolution()
 	}
 	else
 	{
-		sampleEditor->convertSampleResolution(false);				
+		sampleEditor->convertSampleResolution(false);
 		update();
 	}
 }

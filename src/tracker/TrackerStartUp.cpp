@@ -37,6 +37,7 @@
 #include "PlayerMaster.h"
 #include "SystemMessage.h"
 #include "version.h"
+#include "SectionDiskMenu.h"
 
 // Logo picture
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
@@ -181,8 +182,6 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	else
 		screen->enableDisplay(false);	
 
-	initUI();	
-
 	pp_int32 dTime;
 
 	if (!noSplash)
@@ -209,6 +208,9 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 		settingsDatabase = settingsDatabaseCopy;
 		settingsDatabaseCopy = NULL;
 	}
+
+	sectionDiskMenu->specialMagic = settingsDatabase->restore("SPECIALMAGIC")->getIntValue() != 0;
+	initUI();
 
 	// apply ALL settings, not just the different ones
 	applySettings(settingsDatabase, NULL, true, false);

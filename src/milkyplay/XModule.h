@@ -647,7 +647,7 @@ public:
 	///////////////////////////////////////////////////
 	mp_sint32		saveExtendedModule(const SYSCHAR* fileName, bool isMagic = false);		// FT2 (.XM)
 	mp_sint32		saveProtrackerModule(const SYSCHAR* fileName, bool isMagic = false); 	// Protracker compatible (.MOD)
-	mp_sint32		saveMagicalModule(const SYSCHAR* fileName, bool isExtended = true);		// TiTAN Magical Module (.TMM)
+	mp_sint32		saveMagicalModule(const SYSCHAR* fileName, bool isExtended = true);		// Titan's Magic Module (.TMM)
 
 	///////////////////////////////////////////////////
 	// module loaded?								 //

@@ -16,7 +16,6 @@ enum
 
 #define TMM_FLAG_LOOP_FWD   (1 << 0)
 #define TMM_FLAG_FIX_ZERO   (1 << 1)
-#define TMM_FLAG_FIX_DC     (1 << 2)
 
 enum
 {

@@ -59,7 +59,7 @@ struct PPMenu
 		pp_int32 identifier;
 		pp_uint32 state;
 		PPContextMenu* subMenu;
-		
+
 		Entry(const PPString& s, pp_int32 theId, pp_uint32 stat = 0, PPContextMenu* aSubMenu = NULL) :
 			name(s),
 			identifier(theId),
@@ -67,40 +67,40 @@ struct PPMenu
 			subMenu(aSubMenu)
 		{
 		}
-		
+
 	};
-	
+
 	PPSimpleVector<Entry> items;
 	PPFont* font;
-	
+
 	const PPColor* backColor;
 	const PPColor* borderColor;
 	const PPColor* selectionColor;
-	
+
 	const PPColor* textBrightColor;
 	const PPColor* textDarkColor;
-	
+
 	bool subMenu;
 	PPContextMenu* parentMenu;
-	
+
 	PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgColor, bool bSubMenu = false);
-	
-	pp_uint32 getMaxWidth() const;			
+
+	pp_uint32 getMaxWidth() const;
 	pp_uint32 getEntryHeight() const;
 	PPRect getBoundingRect() const;
-	
+
 	bool setState(pp_int32 theId, pp_uint32 newState);
-	
+
 	void setSubMenu(bool bSubMenu) { subMenu = bSubMenu; }
 	bool isSubMenu() const { return subMenu; }
-	
+
 	void setParentMenu(PPContextMenu* parent) { parentMenu = parent; }
 	PPContextMenu* getParentMenu() const { return parentMenu; }
-	
+
 	void paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 menuSelection);
 
 	void setFont(PPFont* font) { this->font = font; }
-	
+
 	void setTextBrightColor(const PPColor& color) { textBrightColor = &color; }
 	void setTextDarkColor(const PPColor& color) { textDarkColor = &color; }
 };

@@ -66,7 +66,8 @@ static mp_sint32 mot2int(mp_sint32 x)
 const char* LoaderMOD::identifyModule(const mp_ubyte* buffer)
 {
 	// MAGIC
-	if(buffer[0] == 232) {
+	if(buffer[0] == 232)
+	{
 		return "TM4";
 	}
 

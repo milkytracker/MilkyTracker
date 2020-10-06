@@ -58,7 +58,7 @@ private:
 	PPPoint currentPosition;
 	pp_int32 currentOffset;
 
-	PPScrollbar* hScrollbar;	
+	PPScrollbar* hScrollbar;
 
 	PPControl* caughtControl;
 	bool controlCaughtByLMouseButton, controlCaughtByRMouseButton;
@@ -75,7 +75,7 @@ private:
 	pp_int32 selectionStartCopy, selectionEndCopy;
 
 	pp_int32 currentRepeatStart, currentRepeatLength;
-	
+
 	struct ShowMark
 	{
 		pp_int32 pos;
@@ -100,20 +100,20 @@ private:
 
 	// selection
 	pp_int32 selectionTicker;
-	
+
 	// necessary for controlling
 	SampleEditor* sampleEditor;
-	
+
 	pp_int32 relativeNote;
 	OffsetFormats offsetFormat;
 
 	mp_sint32 getVisibleLength();
-	
+
 	float calcScale(mp_sint32 len);
 	float calcScale();
-	
+
 protected:
-	virtual void translateCoordinates(PPPoint& cp) 
+	virtual void translateCoordinates(PPPoint& cp)
 	{
 		PPControl::translateCoordinates(cp);
 		cp.x -= 1;
@@ -121,11 +121,11 @@ protected:
 	}
 
 public:
-	SampleEditorControl(pp_int32 id, 
-				 PPScreen* parentScreen, 
-				 EventListenerInterface* eventListener, 
-				 const PPPoint& location, 
-				 const PPSize& size, 
+	SampleEditorControl(pp_int32 id,
+				 PPScreen* parentScreen,
+				 EventListenerInterface* eventListener,
+				 const PPPoint& location,
+				 const PPSize& size,
 				 bool border = true);
 
 	virtual ~SampleEditorControl();
@@ -137,7 +137,7 @@ public:
 	static void formatMillisFraction(char* buffer, size_t size, pp_uint32 millis, pp_uint32 totalMillis);
 
 	// from PPControl
-	virtual void paint(PPGraphicsAbstract* graphics);	
+	virtual void paint(PPGraphicsAbstract* graphics);
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
@@ -146,17 +146,17 @@ public:
 
 public:
 	// controlling editor from outside
-	void attachSampleEditor(SampleEditor* sampleEditor);	
-	
+	void attachSampleEditor(SampleEditor* sampleEditor);
+
 	void setDrawMode(bool b) { drawMode = b; }
 	bool getDrawMode() const { return drawMode; }
 
 	void setOffsetFormat(OffsetFormats offsetFormat) { this->offsetFormat = offsetFormat; }
 	OffsetFormats getOffsetFormat() const { return offsetFormat; }
-	
+
 	void setRelativeNote(pp_int32 relativeNote) { this->relativeNote = relativeNote; }
 	pp_int32 getRelativeNote() const { return relativeNote; }
-	
+
 	// manipulating range (selection)
 	void showRange();
 	void rangeAll(bool updateNotify = false);
@@ -167,19 +167,19 @@ public:
 
 	void increaseRangeEnd();
 	void decreaseRangeEnd();
-	
+
 	bool canZoomOut();
 	void zoomOut(float factor = 2.0f, pp_int32 center = -1);
-	
+
 	void zoomIn(float factor = 0.5f, pp_int32 center = -1);
-	
+
 	void scrollWheelZoomOut(const PPPoint* p = NULL)
 	{
 		if (p)
 			zoomOut(1.25f, positionToSample(*p));
 		else
 			zoomOut(1.25f);
-			
+
 		notifyUpdate();
 	}
 
@@ -194,12 +194,12 @@ public:
 	}
 
 	void setInvertMWheelZoom(bool invert) { invertMWheelZoom = invert; }
-	
+
 	void showAll();
 
 	pp_int32 getCurrentPosition();
 	pp_int32 getCurrentRangeLength() { return sampleEditor->getSelectionLength(); }
-	pp_int32 getCurrentDisplayRange(); 
+	pp_int32 getCurrentDisplayRange();
 
 	pp_int32 getSelectionStart() const { return sampleEditor->getLogicalSelectionStart(); }
 	pp_int32 getSelectionEnd() const { return sampleEditor->getLogicalSelectionEnd(); }
@@ -214,7 +214,7 @@ public:
 	bool showMarksVisible();
 
 	void reset();
-	
+
 	SampleEditor* getSampleEditor() { return sampleEditor; }
 
 private:
@@ -239,7 +239,7 @@ private:
 
 	void notifyUpdate()
 	{
-		PPEvent e(eUpdated);						
+		PPEvent e(eUpdated);
 		eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 	}
 
@@ -250,17 +250,17 @@ private:
 		float xScale;
 		float minScale;
 		pp_int32 startPos;
-		pp_int32 barPos; 
+		pp_int32 barPos;
 		pp_int32 barScale;
-		
+
 		UndoInfo()
 		{
 		}
 
-		UndoInfo(float xScale, 
+		UndoInfo(float xScale,
 				 float minScale,
 				 pp_int32 startPos,
-				 pp_int32 barPos = -1, 
+				 pp_int32 barPos = -1,
 				 pp_int32 barScale = -1) :
 			xScale(xScale),
 			minScale(minScale),
@@ -302,18 +302,18 @@ private:
 		MenuCommandIDGenerateTriangle,
 		MenuCommandIDGenerateSawtooth
 	};
-	
+
 	void executeMenuCommand(pp_int32 commandId);
 
 	virtual void editorNotification(EditorBase* sender, EditorBase::EditorNotifications notification);
-	
+
 public:
 	void invokeSetSampleVolume() { executeMenuCommand(MenuCommandIDVolumeBoost); }
-	
+
 	bool contextMenuVisible();
 	void invokeContextMenu(const PPPoint& p, bool translatePoint = true);
 	void hideContextMenu();
-	
+
 	// --- Sample tool responder
 private:
 	class ToolHandlerResponder : public DialogResponder
@@ -346,17 +346,17 @@ private:
 			SampleToolTypeGenerateTriangle,
 			SampleToolTypeGenerateSawtooth
 		};
-	
+
 	private:
 		SampleEditorControl& sampleEditorControl;
 		SampleToolTypes sampleToolType;
-		
+
 	public:
 		ToolHandlerResponder(SampleEditorControl& theSampleEditorControl);
 
 		void setSampleToolType(SampleToolTypes type) { sampleToolType = type; }
 		SampleToolTypes getSampleToolType() { return sampleToolType; }
-				
+
 		virtual pp_int32 ActionOkay(PPObject* sender);
 		virtual pp_int32 ActionCancel(PPObject* sender);
 	};
@@ -365,17 +365,17 @@ private:
 
 	PPDialogBase* dialog;
 	ToolHandlerResponder* toolHandlerResponder;
-	
+
 	bool invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypes type);
 	bool invokeTool(ToolHandlerResponder::SampleToolTypes type);
-	
+
 	SampleEditorControlLastValues lastValues;
-	
+
 	void resetLastValues()
 	{
 		lastValues.reset();
-	}	
-	
+	}
+
 public:
 	SampleEditorControlLastValues& getLastValues() { return lastValues; }
 };

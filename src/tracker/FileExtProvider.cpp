@@ -56,7 +56,7 @@ const char* FileExtProvider::moduleExtensions[] =
 	"ptm","Polytracker",
 	"s3m","Screamtracker 3",
 	"stm","Screamtracker 2",
-	"tmm","Titan Magic Module",
+	"tmm","Titan's Magic Module",
 	"ult","Ultratracker",
 	"uni","MikMod",
 	"xm","Fasttracker 2",
@@ -66,7 +66,7 @@ const char* FileExtProvider::moduleExtensions[] =
 const char* FileExtProvider::instrumentExtensions[] =
 {
 	"xi","FT2 Instruments",
-	"tmi","Titan Magic Instruments",
+	"tmi","Titan's Magic Instruments",
 	"pat","GUS Patches",
 	NULL, NULL
 };
@@ -191,4 +191,3 @@ const char* const* FileExtProvider::getColorExtensions()
 
 const char* FileExtProvider::getColorExtension(ColorExtensions extension) { return colorExtensions[extension*2]; }
 const char* FileExtProvider::getColorDescription(ColorExtensions extension) { return colorExtensions[extension*2+1]; }
-

@@ -37,7 +37,7 @@ SystemMessage::SystemMessage(PPScreen& screen, Messages message) :
 	message(message)
 {
 }
-	
+
 void SystemMessage::show()
 {
 	const char* header = NULL;
@@ -54,10 +54,10 @@ void SystemMessage::show()
 			header = "Error";
 			message = "The video mode you've selected isn't available on your gfx card/monitor.";
 			break;
-			
+
 		case MessageResChangeRestart:
 			header = "Please restart";
-			message = "MilkyTracker needs to be restarted to apply new video mode.";
+			message = "MilkyTracker needs to be restarted to apply new settings.";
 			break;
 
 		case MessageLimitedInput:
@@ -65,10 +65,10 @@ void SystemMessage::show()
 			message = "Due to limited input this edit mode might not be fully usable on a low-res device.";
 			break;
 	}
-	
+
 	if (header && message)
 	{
-		PPMessageBox messageBox(&screen, header, message);		
+		PPMessageBox messageBox(&screen, header, message);
 		messageBox.runModal();
 	}
 }

@@ -52,7 +52,7 @@ LPCTSTR szValidExtensions[] =
 	_T("ptm"), _T("Polytracker"),
 	_T("s3m"), _T("Screamtracker 3"),
 	_T("stm"), _T("Screamtracker 2"),
-	_T("tmm"), _T("Titan Magic Module"),
+	_T("tmm"), _T("Titan's Magic Module"),
 	_T("ult"), _T("Ultratracker"),
 	_T("uni"), _T("MikMod"),
 	_T("xm"), _T("Fasttracker II"),
@@ -985,5 +985,3 @@ void CreateKeyDialog(HINSTANCE hInst, HWND hWnd)
 	HWND hWndD = CreateDialog(hInst, MAKEINTRESOURCE(IDD_TABDIALOG), hWnd, TabDialogProc);
 	ShowWindow(hWndD, SW_SHOW);
 }
-
-

@@ -2918,7 +2918,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			break;
 
 		case FileTypes::FileTypeSongTMM:
-			savePanel = new PPSavePanel(screen, "Save Titan Magic Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeTMM));
+			savePanel = new PPSavePanel(screen, "Save Titan's Magic Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeTMM));
 			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionTMM),
 									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionTMM));
 			break;

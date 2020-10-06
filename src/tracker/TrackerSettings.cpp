@@ -56,6 +56,7 @@
 #include "Tools.h"
 #include "TitlePageManager.h"
 #include "version.h"
+#include "Button.h"
 
 void Tracker::buildDefaultSettings()
 {
@@ -214,6 +215,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("INVERTMWHEEL", 0);
 	// Invert mousewheel zoom?  (normally wheelup zooms out: if inverted, wheelup zooms in)
 	settingsDatabase->store("INVERTMWHEELZOOM", 0);
+	// Special feature: Titan's Magic features
+	settingsDatabase->store("SPECIALMAGIC", 0);
 
 	// ---------- Tabs ----------
 	// Control playing of background tabs
@@ -587,6 +590,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		sectionSamples->getSampleEditorControl()->setInvertMWheelZoom(v2 != 0);
 		sectionInstruments->getEnvelopeEditorControl()->setInvertMWheelZoom(v2 != 0);
+	}
+	else if (theKey->getKey().compareTo("SPECIALMAGIC") == 0)
+	{
+		magicButton->hide(v2 == 0);
 	}
 	// ----------------------- Tabs -------------------------
 	else if (theKey->getKey().compareTo("TABS_STOPBACKGROUNDBEHAVIOUR") == 0)

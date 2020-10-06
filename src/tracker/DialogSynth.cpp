@@ -127,10 +127,8 @@ enum {
 	BUTTON_SAVE_INSTRUMENT,
 	CHECKBOX_LOOP_FORWARD,
 	CHECKBOX_FIX_ZERO_CROSSING,
-	CHECKBOX_FIX_DC,
 	STATICTEXT_LOOP_FORWARD,
-	STATICTEXT_FIX_ZERO_CROSSING,
-	STATICTEXT_FIX_DC
+	STATICTEXT_FIX_ZERO_CROSSING
 };
 
 static float undo[128] = {0.0f};
@@ -169,17 +167,13 @@ DialogSynth::DialogSynth(
 
 	checkBoxFixZeroCrossing = new PPCheckBox(CHECKBOX_FIX_ZERO_CROSSING, screen, this, PPPoint(x + 20, y + 40 + 100 + 15), false);
 	messageBoxContainerGeneric->addControl(checkBoxFixZeroCrossing);
-	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_ZERO_CROSSING, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 2), "Fix 0", true));
+	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_ZERO_CROSSING, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 2), "Move to ZC", true));
 
-	checkBoxFixDC = new PPCheckBox(CHECKBOX_FIX_DC, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15), false);
-	messageBoxContainerGeneric->addControl(checkBoxFixDC);
-	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_DC, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 15 + 2), "Fix DC", true));
-
-	button = new PPButton(BUTTON_LOAD_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 25), PPSize(100, 11));
+	button = new PPButton(BUTTON_LOAD_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 +  25), PPSize(100, 11));
 	button->setText("Load TMI");
 	messageBoxContainerGeneric->addControl(button);
 
-	button = new PPButton(BUTTON_SAVE_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 25 + 15), PPSize(100, 11));
+	button = new PPButton(BUTTON_SAVE_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 25 + 15), PPSize(100, 11));
 	button->setText("Save TMI");
 	messageBoxContainerGeneric->addControl(button);
 
@@ -493,7 +487,6 @@ pp_int32 DialogSynth::loadSettings()
 	checkBoxDestroyer->checkIt(settings->additive.destroyer);
 	checkBoxLoopForward->checkIt(settings->extensions.flags & TMM_FLAG_LOOP_FWD);
 	checkBoxFixZeroCrossing->checkIt(settings->extensions.flags & TMM_FLAG_FIX_ZERO);
-	checkBoxFixDC->checkIt(settings->extensions.flags & TMM_FLAG_FIX_DC);
 
 	radioNoisePhaseNoiseType->setChoice(settings->additive.phasenoisetype);
 
@@ -604,19 +597,6 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 						mod->instr[idx].tmm.extensions.flags |= TMM_FLAG_FIX_ZERO;
 					} else {
 						mod->instr[idx].tmm.extensions.flags &= ~TMM_FLAG_FIX_ZERO;
-					}
-
-					generateSample();
-				}
-				break;
-			case CHECKBOX_FIX_DC:
-				{
-					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
-
-					if(checked) {
-						mod->instr[idx].tmm.extensions.flags |= TMM_FLAG_FIX_DC;
-					} else {
-						mod->instr[idx].tmm.extensions.flags &= ~TMM_FLAG_FIX_DC;
 					}
 
 					generateSample();
@@ -999,7 +979,7 @@ void DialogSynth::generateSample()
 		dst->volfade   = editor->instruments[idx].volfade << 1;
 
 		// Find out sample resolution
-		int res = 8;
+		int res = 16;
 #ifdef __AMIGA__
 		res = GetAudioDriverResolution();
 #endif

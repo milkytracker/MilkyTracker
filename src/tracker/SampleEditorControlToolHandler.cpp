@@ -43,25 +43,25 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		delete dialog;
 		dialog = NULL;
 	}
-	
+
 	toolHandlerResponder->setSampleToolType(type);
-	
+
 	switch (type)
 	{
 		case ToolHandlerResponder::SampleToolTypeNew:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Create new sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter size in samples:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0);
 			if (lastValues.newSampleSize != SampleEditorControlLastValues::invalidIntValue())
 				static_cast<DialogWithValues*>(dialog)->setValueOne((float)lastValues.newSampleSize);
 			else
 				static_cast<DialogWithValues*>(dialog)->setValueOne(100.0f);
 			break;
-			
+
 		case ToolHandlerResponder::SampleToolTypeVolume:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Boost sample volume" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter new volume in percent:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
 			break;
 
@@ -69,12 +69,12 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Fade sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter start volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Enter end volume in percent:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(-10000.0f, 10000.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2);
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(-10000.0f, 10000.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
 			break;
-			
+
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Ignore bits from MSB [0..]");
@@ -85,7 +85,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		case ToolHandlerResponder::SampleToolTypeDCOffset:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "DC offset" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter offset in percent [-100..100]");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-100, 100.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-100, 100.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.DCOffset != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.DCOffset : 0.0f);
 			break;
 
@@ -93,7 +93,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogResample(parentScreen, toolHandlerResponder, PP_DEFAULT_ID);
 			if (sampleEditor->isValidSample())
 			{
-				if (lastValues.resampleInterpolationType != SampleEditorControlLastValues::invalidIntValue()) 
+				if (lastValues.resampleInterpolationType != SampleEditorControlLastValues::invalidIntValue())
 					static_cast<DialogResample*>(dialog)->setInterpolationType(lastValues.resampleInterpolationType);
 
 				static_cast<DialogResample*>(dialog)->setAdjustFtAndRelnote(lastValues.adjustFtAndRelnote);
@@ -126,7 +126,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		case ToolHandlerResponder::SampleToolTypeGenerateSilence:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Insert silence" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter size in samples:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(3, 1024*1024*10-1, 0);
 			if (lastValues.silenceSize != SampleEditorControlLastValues::invalidIntValue())
 				static_cast<DialogWithValues*>(dialog)->setValueOne((float)lastValues.silenceSize);
 			else
@@ -141,14 +141,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			noiseFilterTypes.add(new PPString("Pink"));
 			noiseFilterTypes.add(new PPString("Brown"));
 
-			dialog = new DialogGroupSelection(parentScreen, 
-											  toolHandlerResponder, 
-											  PP_DEFAULT_ID, 
+			dialog = new DialogGroupSelection(parentScreen,
+											  toolHandlerResponder,
+											  PP_DEFAULT_ID,
 											  "Select noise type" PPSTR_PERIODS,
 											  noiseFilterTypes);
 			break;
 		}
-		
+
 		case ToolHandlerResponder::SampleToolTypeGenerateSine:
 		case ToolHandlerResponder::SampleToolTypeGenerateSquare:
 		case ToolHandlerResponder::SampleToolTypeGenerateTriangle:
@@ -157,7 +157,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Generate waveform" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
 			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Volume in percent:");
 			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Number of periods:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1000.0f, 1000.0f, 2); 
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-1000.0f, 1000.0f, 2);
 			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(0.0f, (float)(1024*1024*5), 2);
 			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.waveFormVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormVolume : 100.0f);
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
@@ -166,9 +166,9 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		default:
 			break;
 	}
-	
+
 	dialog->show();
-	
+
 	return true;
 }
 
@@ -246,9 +246,9 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
 		{
 			pp_uint32 numBands = static_cast<DialogEQ*>(dialog)->getNumBandsAsInt();
-			
+
 			float* last = NULL;
-			
+
 			if (numBands == 3)
 			{
 				lastValues.hasEQ3BandValues = true;
@@ -259,7 +259,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 				lastValues.hasEQ10BandValues = true;
 				last = lastValues.EQ10BandValues;
 			}
-			
+
 			FilterParameters par(numBands);
 			for (pp_uint32 i = 0; i < numBands; i++)
 			{
@@ -287,7 +287,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_generateNoise(&par);
 			break;
 		}
-		
+
 		case ToolHandlerResponder::SampleToolTypeGenerateSine:
 		{
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
@@ -298,7 +298,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_generateSine(&par);
 			break;
 		}
-		
+
 		case ToolHandlerResponder::SampleToolTypeGenerateSquare:
 		{
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
@@ -309,7 +309,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			sampleEditor->tool_generateSquare(&par);
 			break;
 		}
-		
+
 		case ToolHandlerResponder::SampleToolTypeGenerateTriangle:
 		{
 			lastValues.waveFormVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
@@ -334,7 +334,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		default:
 			break;
 	}
-	
+
 	return true;
 }
 

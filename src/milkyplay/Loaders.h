@@ -80,7 +80,7 @@ DECLARE_LOADERCLASS(LoaderPTM)		// PolyTracker
 DECLARE_LOADERCLASS(LoaderS3M)		// ScreamTracker III
 DECLARE_LOADERCLASS(LoaderSTM)		// ScreamTracker II
 DECLARE_LOADERCLASS(LoaderSFX)		// SoundFX module (very similiar to SoundTracker, 15 ins, kept in LoaderMOD.cpp)
-DECLARE_LOADERCLASS(LoaderTMM)      // Titan Magic Module
+DECLARE_LOADERCLASS(LoaderTMM)      // Titan's Magic Module
 DECLARE_LOADERCLASS(LoaderULT)		// Ultratracker
 DECLARE_LOADERCLASS(LoaderUNI)		// MikMod internal module
 DECLARE_LOADERCLASS(LoaderXM)		// FT2 Extended Module

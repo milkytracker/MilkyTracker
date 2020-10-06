@@ -718,14 +718,23 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 							if(smp[s].type & 16) {
 								module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768 * sizeof(short));
+								if(!module->smp[s].sample) {
+									delete[] data;
+									return MP_OUT_OF_MEMORY;
+								}
 								memcpy(module->smp[s].sample, data, 32768 * sizeof(short));
 							} else {
 								module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768);
+								if(!module->smp[s].sample) {
+									delete[] data;
+									return MP_OUT_OF_MEMORY;
+								}
 								for(int q = 0; q < 32768; q++) {
 									module->smp[s].sample[q] = data[q] / 256.0f;
 								}
 							}
 
+							delete[] data;
 							delete tmm;
 						} else {
 							mp_sint32 result = module->loadModuleSample(

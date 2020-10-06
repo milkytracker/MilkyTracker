@@ -410,11 +410,13 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 
 			// magic sample
 			case BUTTON_INSTRUMENT_MAGIC:
+			{
 				if (event->getID() != eCommand)
 					break;
 
 				showMagicDialog();
 				break;
+			}
 
 			// test instrument chooser
 			case BUTTON_INSTRUMENTEDITOR_COPY:
@@ -1718,6 +1720,6 @@ void SectionInstruments::showMagicDialog()
 		dialog = NULL;
 	}
 
-	dialog = new DialogSynth(tracker.screen, responder, RESPONDMESSAGEBOX_MAGIC, "Magic!", &tracker, tracker.listBoxInstruments->getSelectedIndex());
+	dialog = new DialogSynth(tracker.screen, responder, RESPONDMESSAGEBOX_MAGIC, "Titan's Magic Toolbox", &tracker, tracker.listBoxInstruments->getSelectedIndex());
 	dialog->show();
 }

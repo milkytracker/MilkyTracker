@@ -61,7 +61,6 @@ private:
 	class PPCheckBox     *checkBoxDestroyer;
 	class PPCheckBox     *checkBoxLoopForward;
 	class PPCheckBox     *checkBoxFixZeroCrossing;
-	class PPCheckBox     *checkBoxFixDC;
 	class PPRadioGroup   *radioNoisePhaseNoiseType;
 	class SynthHarmonica *synthHarmonica;
 
