@@ -179,6 +179,13 @@ DialogSynth::DialogSynth(
 
 	pp_int32 cx = x + 130, cy = y + 40, rx = cx + 335;
 
+	containerADX = new PPContainer(CONTAINER_NOISE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
+	{
+		containerADX->addControl(new PPStaticText(STATICTEXT_NOISE_TYPE, screen, NULL, PPPoint(cx + 5, cy + 5),  "Not implemented yet!", true));
+		containerADX->hide(true);
+	}
+	messageBoxContainerGeneric->addControl(containerADX);
+
 	containerNoise = new PPContainer(CONTAINER_NOISE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		containerNoise->addControl(new PPStaticText(STATICTEXT_NOISE_TYPE, screen, NULL, PPPoint(cx + 5, cy + 5),  "Type", true));
@@ -511,12 +518,14 @@ pp_int32 DialogSynth::loadSettings()
 
 void DialogSynth::enableContainer(pp_uint32 choice)
 {
+	containerADX->hide(true);
 	containerNoise->hide(true);
 	containerSine->hide(true);
 	containerPulse->hide(true);
 	containerAdditive->hide(true);
 
 	switch(choice) {
+	case 1: containerADX->show(true); break;
 	case 2: containerNoise->show(true); break;
 	case 3: containerSine->show(true); break;
 	case 4: containerPulse->show(true); break;

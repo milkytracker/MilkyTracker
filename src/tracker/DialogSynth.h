@@ -41,6 +41,7 @@ private:
 	class PPContainer    *containerSine;
 	class PPContainer    *containerPulse;
 	class PPContainer    *containerNoise;
+	class PPContainer    *containerADX;
 	class PPSlider       *sliderPulseBasefreq;
 	class PPSlider       *sliderPulseWidth;
 	class PPSlider       *sliderSineBasefreq;
