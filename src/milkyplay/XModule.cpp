@@ -1519,7 +1519,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 		if (flags & ST_UNSIGNED)
 		{
 			for (i = 0; i < length; i++) 
-				dstPtr[i] = (dstPtr[i]^32767);
+				dstPtr[i] = (dstPtr[i]^32768);
 		}
 	}
 	// 8 bit sample
@@ -1539,7 +1539,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 		if (flags & ST_UNSIGNED)
 		{
 			for (mp_uint32 i = 0; i < length; i++) 
-				smpPtr[i] ^= 127;
+				smpPtr[i] ^= 128;
 		}
 	}
 
