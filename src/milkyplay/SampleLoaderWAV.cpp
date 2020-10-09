@@ -689,7 +689,7 @@ mp_sint32 SampleLoaderWAV::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 		mp_ubyte* dstPtr = new mp_ubyte[smp->samplen]; 
 		mp_ubyte* dst = dstPtr;
 		for (mp_uint32 i = 0; i < smp->samplen; i++)
-			*dstPtr++ = ((mp_sbyte)smp->getSampleValue(i))^127;
+			*dstPtr++ = ((mp_sbyte)smp->getSampleValue(i))^128;
 		f.write(dst, 1, smp->samplen);
 		delete[] dst;
 	}
