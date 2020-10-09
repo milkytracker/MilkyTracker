@@ -1097,16 +1097,16 @@ selectingAndResizing:
 					pp_int32 x2 = (pp_int32)((sEnd)/xScale)-startPos + location.x + 2;
 					
 					pp_int32 minDist = (scrollDist>>4);
-					if (minDist < 1) minDist = 1;
+					if (minDist < 4) minDist = 4;
 					
 					pp_int32 sDist1 = abs(x1 - p->x);
 					pp_int32 sDist2 = abs(p->x - x2);
 					
-					if (sDist1 >= 0 && sDist1 <= minDist && (::getKeyModifier() == KeyModifierCTRL))
+					if (sDist1 >= 0 && sDist1 <= minDist)
 					{
 						type = MouseCursorTypeResizeLeft;
 					}
-					else if (sDist2 >= 0 && sDist2 <= minDist && (::getKeyModifier() == KeyModifierCTRL))
+					else if (sDist2 >= 0 && sDist2 <= minDist)
 					{
 						type = MouseCursorTypeResizeRight;
 					}
