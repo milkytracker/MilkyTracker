@@ -55,6 +55,8 @@ enum {
 	STATICTEXT_ADDITIVE_HARMONICS,
 	STATICTEXT_ADDITIVE_BASEFREQ,
 	STATICTEXT_ADDITIVE_USESCALE,
+	STATICTEXT_ADDITIVE_USEFILTERS,
+	STATICTEXT_ADDITIVE_USEENV,
 	STATICTEXT_ADDITIVE_BANDWIDTH,
 	STATICTEXT_ADDITIVE_DETUNE,
 	STATICTEXT_ADDITIVE_BWSCALE,
@@ -106,6 +108,8 @@ enum {
 	SLIDER_PULSE_WIDTH,
 	SLIDER_SINE_BASEFREQ,
 	CHECKBOX_ADDITIVE_USESCALE,
+	CHECKBOX_ADDITIVE_USEFILTERS,
+	CHECKBOX_ADDITIVE_USEENV,
 	CHECKBOX_ADDITIVE_DESTROYER,
 	BUTTON_HARMONICA_GEN_ZERO,
 	BUTTON_HARMONICA_GEN_RANDOM,
@@ -241,6 +245,7 @@ DialogSynth::DialogSynth(
 	containerAdditive = new PPContainer(CONTAINER_ADDITIVE, screen, this, PPPoint(cx, cy), PPSize(335, 400));
 	{
 		pp_int32 cry = 5;
+		pp_int32 ym = 12;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_HARMONICS, screen, NULL, PPPoint(cx + 5, cy + cry), "Harmonics", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HARMONICS, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -249,7 +254,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveHarmonics->setMinValue(4);
 		sliderAdditiveHarmonics->setMaxValue(64);
 		containerAdditive->addControl(sliderAdditiveHarmonics);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BASEFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "Base freq", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BASEFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -258,7 +263,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveBasefreq->setMinValue(1);
 		sliderAdditiveBasefreq->setMaxValue(1000);
 		containerAdditive->addControl(sliderAdditiveBasefreq);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BANDWIDTH, screen, NULL, PPPoint(cx + 5, cy + cry), "Bandwidth", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BANDWIDTH, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -267,7 +272,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveBandwidth->setMinValue(1);
 		sliderAdditiveBandwidth->setMaxValue(200);
 		containerAdditive->addControl(sliderAdditiveBandwidth);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DETUNE, screen, NULL, PPPoint(cx + 5, cy + cry), "Detune", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DETUNE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -276,7 +281,12 @@ DialogSynth::DialogSynth(
 		sliderAdditiveDetune->setMinValue(0);
 		sliderAdditiveDetune->setMaxValue(128);
 		containerAdditive->addControl(sliderAdditiveDetune);
-		cry += 15;
+		cry += ym;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USESCALE, screen, NULL, PPPoint(cx + 5, cy + cry), "Use BW scale", true));
+		checkBoxUseScale = new PPCheckBox(CHECKBOX_ADDITIVE_USESCALE, screen, this, PPPoint(rx - 120, cy + cry), false);
+		containerAdditive->addControl(checkBoxUseScale);
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_BWSCALE, screen, NULL, PPPoint(cx + 5, cy + cry), "BW scale", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_BWSCALE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -285,17 +295,12 @@ DialogSynth::DialogSynth(
 		sliderAdditiveBWScale->setMinValue(10);
 		sliderAdditiveBWScale->setMaxValue(1000);
 		containerAdditive->addControl(sliderAdditiveBWScale);
-		cry += 15;
-
-		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USESCALE, screen, NULL, PPPoint(cx + 5, cy + cry), "Use BW scale", true));
-		checkBoxUseScale = new PPCheckBox(CHECKBOX_ADDITIVE_USESCALE, screen, this, PPPoint(rx - 120, cy + cry), false);
-		containerAdditive->addControl(checkBoxUseScale);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DESTROYER, screen, NULL, PPPoint(cx + 5, cy + cry), "Destroyer mode", true));
 		checkBoxDestroyer = new PPCheckBox(CHECKBOX_ADDITIVE_DESTROYER, screen, this, PPPoint(rx - 120, cy + cry), false);
 		containerAdditive->addControl(checkBoxDestroyer);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_RNDSEED, screen, NULL, PPPoint(cx + 5, cy + cry), "RND seed", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_RNDSEED, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -304,15 +309,20 @@ DialogSynth::DialogSynth(
 		sliderAdditiveRandomSeed->setMinValue(1);
 		sliderAdditiveRandomSeed->setMaxValue(2500);
 		containerAdditive->addControl(sliderAdditiveRandomSeed);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_PHASENOISE, screen, NULL, PPPoint(cx + 5, cy + cry), "Phase noise", true));
-		radioNoisePhaseNoiseType = new PPRadioGroup(RADIOGROUP_NOISEPHASENOISETYPE, screen, this, PPPoint(rx - 120, cy + cry), PPSize(100, 50));
+		radioNoisePhaseNoiseType = new PPRadioGroup(RADIOGROUP_NOISEPHASENOISETYPE, screen, this, PPPoint(rx - 120, cy + cry), PPSize(100, 5 + ym * 3));
 		radioNoisePhaseNoiseType->addItem("White");
 		radioNoisePhaseNoiseType->addItem("Pink");
 		radioNoisePhaseNoiseType->addItem("Brown");
 		containerAdditive->addControl(radioNoisePhaseNoiseType);
-		cry += 50;
+		cry += 5 + ym * 3;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USEFILTERS, screen, NULL, PPPoint(cx + 5, cy + cry), "Use filters", true));
+		checkBoxUseFilters = new PPCheckBox(CHECKBOX_ADDITIVE_USEFILTERS, screen, this, PPPoint(rx - 120, cy + cry), false);
+		containerAdditive->addControl(checkBoxUseFilters);
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_LPFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "LP cutoff", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_LPFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -321,7 +331,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveLoPassFreq->setMinValue(1);
 		sliderAdditiveLoPassFreq->setMaxValue(220);
 		containerAdditive->addControl(sliderAdditiveLoPassFreq);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_HPFREQ, screen, NULL, PPPoint(cx + 5, cy + cry), "HP cutoff", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_HPFREQ, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -330,7 +340,12 @@ DialogSynth::DialogSynth(
 		sliderAdditiveHiPassFreq->setMinValue(1);
 		sliderAdditiveHiPassFreq->setMaxValue(220);
 		containerAdditive->addControl(sliderAdditiveHiPassFreq);
-		cry += 15;
+		cry += ym;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USEENV, screen, NULL, PPPoint(cx + 5, cy + cry), "Use envelope", true));
+		checkBoxUseEnv = new PPCheckBox(CHECKBOX_ADDITIVE_USEENV, screen, this, PPPoint(rx - 120, cy + cry), false);
+		containerAdditive->addControl(checkBoxUseEnv);
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_ATT, screen, NULL, PPPoint(cx + 5, cy + cry), "Attack", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_ATT, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -339,7 +354,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveEnvAtt->setMinValue(0);
 		sliderAdditiveEnvAtt->setMaxValue(32768);
 		containerAdditive->addControl(sliderAdditiveEnvAtt);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_DEC, screen, NULL, PPPoint(cx + 5, cy + cry), "Decay", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_DEC, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -348,7 +363,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveEnvDec->setMinValue(0);
 		sliderAdditiveEnvDec->setMaxValue(32768);
 		containerAdditive->addControl(sliderAdditiveEnvDec);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_SUS, screen, NULL, PPPoint(cx + 5, cy + cry), "Sustain level", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_SUS, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -357,7 +372,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveEnvSus->setMinValue(0);
 		sliderAdditiveEnvSus->setMaxValue(32768);
 		containerAdditive->addControl(sliderAdditiveEnvSus);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_HOLD, screen, NULL, PPPoint(cx + 5, cy + cry), "Hold", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_HOLD, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -366,7 +381,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveEnvHold->setMinValue(0);
 		sliderAdditiveEnvHold->setMaxValue(32768);
 		containerAdditive->addControl(sliderAdditiveEnvHold);
-		cry += 15;
+		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_ENV_REL, screen, NULL, PPPoint(cx + 5, cy + cry), "Release", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_ENV_REL, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
@@ -375,7 +390,7 @@ DialogSynth::DialogSynth(
 		sliderAdditiveEnvRel->setMinValue(0);
 		sliderAdditiveEnvRel->setMaxValue(32768);
 		containerAdditive->addControl(sliderAdditiveEnvRel);
-		cry += 15;
+		cry += ym;
 
 		// ------------------------------------------------------
 
@@ -491,6 +506,8 @@ pp_int32 DialogSynth::loadSettings()
 	SLIDER_SET_VALUE(sliderAdditiveEnvRel,     containerAdditive, VALUE_ADDITIVE_ENV_REL,   settings->additive.envrel);
 
 	checkBoxUseScale->checkIt(settings->additive.usescale);
+	checkBoxUseFilters->checkIt(settings->additive.usefilters);
+	checkBoxUseEnv->checkIt(settings->additive.useenv);
 	checkBoxDestroyer->checkIt(settings->additive.destroyer);
 	checkBoxLoopForward->checkIt(settings->extensions.flags & TMM_FLAG_LOOP_FWD);
 	checkBoxFixZeroCrossing->checkIt(settings->extensions.flags & TMM_FLAG_FIX_ZERO);
@@ -573,6 +590,22 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
 					mod->instr[idx].tmm.additive.usescale = (int)checked;
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_ADDITIVE_USEFILTERS:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+					mod->instr[idx].tmm.additive.usefilters = (int)checked;
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_ADDITIVE_USEENV:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+					mod->instr[idx].tmm.additive.useenv = (int)checked;
 
 					generateSample();
 				}

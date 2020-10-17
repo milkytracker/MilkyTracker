@@ -41,7 +41,7 @@ TMM::Additive::Profile(double p_fi, double p_bwi)
 }
 
 void
-TMM::Additive::InverseFFT(TTMMAdditive* p_settings)
+TMM::Additive::InverseFFT(TTMMAdditive2* p_settings)
 {
 	int i;
 
@@ -74,7 +74,7 @@ TMM::Additive::InverseFFT(TTMMAdditive* p_settings)
 }
 
 void
-TMM::Additive::Normalize(TTMMAdditive* p_settings)
+TMM::Additive::Normalize(TTMMAdditive2* p_settings)
 {
 	int i;
 	double max = 0.0;
@@ -104,7 +104,7 @@ TMM::Additive::Normalize(TTMMAdditive* p_settings)
 }
 
 double*
-TMM::Additive::Process(TTMMAdditive* p_settings)
+TMM::Additive::Process(TTMMAdditive2* p_settings)
 {
 	int i, nh;
 

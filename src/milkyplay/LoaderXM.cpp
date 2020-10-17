@@ -494,11 +494,19 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			else
 			{
 				f.read(&instr[y].name,1,22);
+
+				mp_uint32 cpos = f.posWithBaseOffset();
 				f.read(&instr[y].type,1,1);
 
 				// MAGIC
-				if(module->type == XModule::ModuleType_TMM && instr[y].type > 0) {
+				if(module->type == XModule::ModuleType_TMM && instr[y].type == 0x71) {
+					f.seekWithBaseOffset(cpos);
+
+					f.read(&instr[y].tmm.extensions, sizeof(TTMMExtensions), 1);
+					f.read(&instr[y].type,1,1);
+
 					instr[y].tmm.type = instr[y].type;
+
 					switch(instr[y].tmm.type) {
 					case TMM_TYPE_NOISE:
 						f.read(&instr[y].tmm.noise, sizeof(TTMMNoise), 1);
@@ -510,16 +518,8 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 						f.read(&instr[y].tmm.pulse, sizeof(TTMMPulse), 1);
 						break;
 					case TMM_TYPE_ADDITIVE:
-						f.read(&instr[y].tmm.additive, sizeof(TTMMAdditive), 1);
+						f.read(&instr[y].tmm.additive, sizeof(TTMMAdditive2), 1);
 						break;
-					}
-
-					mp_uint32 cpos = f.posWithBaseOffset();
-					mp_uword magic = f.readWord();
-					f.seekWithBaseOffset(cpos);
-
-					if(magic == TMM_EXT_MAGIC) {
-						f.read(&instr[y].tmm.extensions, sizeof(TTMMExtensions), 1);
 					}
 				}
 

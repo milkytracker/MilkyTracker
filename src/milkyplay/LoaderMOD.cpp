@@ -287,9 +287,15 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 
 		// MAGIC
 		if(isMagic) {
+			mp_uint32 cpos = f.posWithBaseOffset();
 			mp_ubyte tmmType = f.readByte();
-			if(tmmType > 0) {
-				instr[i].tmm.type = tmmType;
+
+			if(tmmType == 0x71) {
+				f.seekWithBaseOffset(cpos);
+
+				f.read(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
+				instr[i].tmm.type = f.readByte();
+
 				switch(instr[i].tmm.type) {
 				case TMM_TYPE_NOISE:
 					f.read(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
@@ -301,16 +307,8 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 					f.read(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
 					break;
 				case TMM_TYPE_ADDITIVE:
-					f.read(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+					f.read(&instr[i].tmm.additive, sizeof(TTMMAdditive2), 1);
 					break;
-				}
-
-				mp_uint32 cpos = f.posWithBaseOffset();
-				mp_uword magic = f.readWord();
-				f.seekWithBaseOffset(cpos);
-
-				if(magic == TMM_EXT_MAGIC) {
-					f.read(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
 				}
 			}
 		}

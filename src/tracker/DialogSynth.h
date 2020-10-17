@@ -59,6 +59,8 @@ private:
 	class PPSlider       *sliderAdditiveEnvHold;
 	class PPSlider       *sliderAdditiveEnvRel;
 	class PPCheckBox     *checkBoxUseScale;
+	class PPCheckBox     *checkBoxUseFilters;
+	class PPCheckBox     *checkBoxUseEnv;
 	class PPCheckBox     *checkBoxDestroyer;
 	class PPCheckBox     *checkBoxLoopForward;
 	class PPCheckBox     *checkBoxFixZeroCrossing;

@@ -43,10 +43,10 @@ private:
 
 		inline double Profile(double p_fi, double p_bwi);
 		inline double RelativeFreq(double p_freq, double p_detune);
-		inline void   Normalize(TTMMAdditive*);
-		inline void   InverseFFT(TTMMAdditive*);
+		inline void   Normalize(TTMMAdditive2*);
+		inline void   InverseFFT(TTMMAdditive2*);
 	public:
-		double*       Process(TTMMAdditive*);
+		double*       Process(TTMMAdditive2*);
 
 		Additive(int p_bins, int p_samplerate);
 		~Additive();

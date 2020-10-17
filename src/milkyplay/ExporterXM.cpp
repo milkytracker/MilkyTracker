@@ -1580,7 +1580,13 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, bool isMagic)
 					if(!instr[i].tmm.type) {
 						f.writeByte(0);
 					} else {
+						instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
+						instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
+
+						f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
+
 						f.writeByte(instr[i].tmm.type);
+
 						switch(instr[i].tmm.type) {
 						case TMM_TYPE_NOISE:
 							f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
@@ -1592,14 +1598,9 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, bool isMagic)
 							f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
 							break;
 						case TMM_TYPE_ADDITIVE:
-							f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+							f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive2), 1);
 							break;
 						}
-
-						instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
-						instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
-
-						f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
 					}
 				} else {
 					f.writeByte(0);
@@ -2006,7 +2007,13 @@ unused:
 			if(!instr[i].tmm.type) {
 				f.writeByte(0);
 			} else {
+				instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
+				instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
+
+				f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
+
 				f.writeByte(instr[i].tmm.type);
+
 				switch(instr[i].tmm.type) {
 				case TMM_TYPE_NOISE:
 					f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
@@ -2018,14 +2025,9 @@ unused:
 					f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
 					break;
 				case TMM_TYPE_ADDITIVE:
-					f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+					f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive2), 1);
 					break;
 				}
-
-				instr[i].tmm.extensions.magic = TMM_EXT_MAGIC;
-				instr[i].tmm.extensions.ver = TMM_EXT_VERSION;
-
-				f.write(&instr[i].tmm.extensions, sizeof(TTMMExtensions), 1);
 			}
 		}
 	}

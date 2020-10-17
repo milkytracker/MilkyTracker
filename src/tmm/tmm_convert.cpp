@@ -77,6 +77,8 @@ TMM::Converter::Convert()
         smp->looplen = SWAPW(smp->looplen);
 #endif
 
+        // @todo NEW FORMAT
+
         smp->len <<= 1;
         smp->loopstart <<= 1;
         smp->looplen <<= 1;
@@ -101,8 +103,8 @@ TMM::Converter::Convert()
 #endif
             break;
         case TMM_TYPE_ADDITIVE:
-            memcpy(&ts.additive, p, sizeof(TTMMAdditive));
-            p += sizeof(TTMMAdditive);
+            memcpy(&ts.additive, p, sizeof(TTMMAdditive2));
+            p += sizeof(TTMMAdditive2);
 #if defined(P_AMIGA)
             ts.additive.basefreq = SWAPW(ts.additive.basefreq);
             ts.additive.bwscale = SWAPW(ts.additive.bwscale);
