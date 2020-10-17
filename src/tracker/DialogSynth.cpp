@@ -419,18 +419,18 @@ DialogSynth::DialogSynth(
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DISTDRIVE, screen, NULL, PPPoint(cx + 5, cy + cry), "Dist. drive", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DISTDRIVE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveDistDrive = new PPSlider(SLIDER_ADDITIVE_DISTDRIVE, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
-		sliderAdditiveDistDrive->setBarSize(256);
+		sliderAdditiveDistDrive->setBarSize(1);
 		sliderAdditiveDistDrive->setMinValue(0);
-		sliderAdditiveDistDrive->setMaxValue(255);
+		sliderAdditiveDistDrive->setMaxValue(240);
 		containerAdditive->addControl(sliderAdditiveDistDrive);
 		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DISTGAIN, screen, NULL, PPPoint(cx + 5, cy + cry), "Dist. gain", true));
 		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DISTGAIN, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
 		sliderAdditiveDistGain = new PPSlider(SLIDER_ADDITIVE_DISTGAIN, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
-		sliderAdditiveDistGain->setBarSize(256);
+		sliderAdditiveDistGain->setBarSize(1);
 		sliderAdditiveDistGain->setMinValue(0);
-		sliderAdditiveDistGain->setMaxValue(255);
+		sliderAdditiveDistGain->setMaxValue(240);
 		containerAdditive->addControl(sliderAdditiveDistGain);
 		cry += ym;
 

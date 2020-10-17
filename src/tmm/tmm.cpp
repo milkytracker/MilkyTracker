@@ -165,6 +165,28 @@ TMM::GenerateSamples8(TTMMSettings * p_settings, char * p_samples, int p_size)
 				samples = m_env->Process(samples, 32768);
 			}
 
+			if(p_settings->additive.usedist) {
+				double drive = (double)p_settings->additive.distdrive / 16;
+				double gain = (double)p_settings->additive.distgain / 80;
+
+				for(int i = 0; i < 32768; i++) {
+					double s = samples[i];
+
+					if(p_settings->additive.disttype == 1) {
+						s = pow(tanh(pow(fabs(s * drive), 5.0)), 0.2);
+						if(samples[i] < 0.0)
+							s *= -1;
+					} else {
+						s = tanh(s * drive);
+					}
+
+					s *= gain;
+					s = s < -1.0 ? -1.0 : (s > 1.0 ? 1.0 : s);
+
+					samples[i] = s;
+				}
+			}
+
 			for(int i = 0; i < 32768; i++) {
 				p_samples[i] = (char) (samples[i] * 127.0);
 			}
@@ -250,6 +272,28 @@ TMM::GenerateSamples16(TTMMSettings * p_settings, short * p_samples, int p_size)
 				m_env->SetHold((double)p_settings->additive.envhold / 32768.0);
 				m_env->SetRelease((double)p_settings->additive.envrel / 32768.0);
 				samples = m_env->Process(samples, 32768);
+			}
+
+			if(p_settings->additive.usedist) {
+				double drive = (double)p_settings->additive.distdrive / 16;
+				double gain = (double)p_settings->additive.distgain / 80;
+
+				for(int i = 0; i < 32768; i++) {
+					double s = samples[i];
+
+					if(p_settings->additive.disttype == 1) {
+						s = pow(tanh(pow(fabs(s * drive), 5.0)), 0.2);
+						if(samples[i] < 0.0)
+							s *= -1;
+					} else {
+						s = tanh(s * drive);
+					}
+
+					s *= gain;
+					s = s < -1.0 ? -1.0 : (s > 1.0 ? 1.0 : s);
+
+					samples[i] = s;
+				}
 			}
 
 			for(int i = 0; i < 32768; i++) {
