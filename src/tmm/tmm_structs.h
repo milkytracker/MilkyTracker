@@ -120,10 +120,14 @@ typedef struct TTMMAdditive2_s
 	unsigned short  	envsus;
 	unsigned short  	envhold;
 	unsigned short  	envrel;
-	unsigned char   	reserved3[21];
+	unsigned char   	reserved3[5];
 
-	// 0x90 Distortion
-	//unsigned char   usedist;
+	// 0x80 Distortion
+	unsigned char       usedist;
+	unsigned char       disttype;
+	unsigned char       distdrive;
+	unsigned char       distgain;
+	unsigned char   	reserved4[12];
 } TTMMAdditive2;
 
 //

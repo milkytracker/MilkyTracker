@@ -45,8 +45,9 @@
 
 enum {
 	RADIOGROUP_SYNTHTYPE = 1337000,
-	RADIOGROUP_NOISETYPE,
-	RADIOGROUP_NOISEPHASENOISETYPE,
+	RADIOGROUP_NOISE_TYPE,
+	RADIOGROUP_ADDITIVE_PHASENOISE,
+	RADIOGROUP_ADDITIVE_DISTTYPE,
 	CONTAINER_SINE,
 	CONTAINER_PULSE,
 	CONTAINER_NOISE,
@@ -71,6 +72,10 @@ enum {
 	STATICTEXT_ADDITIVE_WAVEFORM,
 	STATICTEXT_ADDITIVE_PHASENOISE,
 	STATICTEXT_ADDITIVE_DESTROYER,
+	STATICTEXT_ADDITIVE_USEDIST,
+	STATICTEXT_ADDITIVE_DISTTYPE,
+	STATICTEXT_ADDITIVE_DISTDRIVE,
+	STATICTEXT_ADDITIVE_DISTGAIN,
 	STATICTEXT_SINE_BASEFREQ,
 	STATICTEXT_PULSE_BASEFREQ,
 	STATICTEXT_PULSE_WIDTH,
@@ -88,6 +93,8 @@ enum {
 	VALUE_ADDITIVE_ENV_SUS,
 	VALUE_ADDITIVE_ENV_HOLD,
 	VALUE_ADDITIVE_ENV_REL,
+	VALUE_ADDITIVE_DISTDRIVE,
+	VALUE_ADDITIVE_DISTGAIN,
 	VALUE_PULSE_BASEFREQ,
 	VALUE_PULSE_WIDTH,
 	VALUE_SINE_BASEFREQ,
@@ -104,6 +111,8 @@ enum {
 	SLIDER_ADDITIVE_ENV_SUS,
 	SLIDER_ADDITIVE_ENV_HOLD,
 	SLIDER_ADDITIVE_ENV_REL,
+	SLIDER_ADDITIVE_DISTDRIVE,
+	SLIDER_ADDITIVE_DISTGAIN,
 	SLIDER_PULSE_BASEFREQ,
 	SLIDER_PULSE_WIDTH,
 	SLIDER_SINE_BASEFREQ,
@@ -111,6 +120,7 @@ enum {
 	CHECKBOX_ADDITIVE_USEFILTERS,
 	CHECKBOX_ADDITIVE_USEENV,
 	CHECKBOX_ADDITIVE_DESTROYER,
+	CHECKBOX_ADDITIVE_USEDIST,
 	BUTTON_HARMONICA_GEN_ZERO,
 	BUTTON_HARMONICA_GEN_RANDOM,
 	BUTTON_HARMONICA_GEN_FULL,
@@ -194,7 +204,7 @@ DialogSynth::DialogSynth(
 	{
 		containerNoise->addControl(new PPStaticText(STATICTEXT_NOISE_TYPE, screen, NULL, PPPoint(cx + 5, cy + 5),  "Type", true));
 
-		radioNoiseType = new PPRadioGroup(RADIOGROUP_NOISETYPE, screen, this, PPPoint(rx - 180, cy + 5), PPSize(100, 100));
+		radioNoiseType = new PPRadioGroup(RADIOGROUP_NOISE_TYPE, screen, this, PPPoint(rx - 180, cy + 5), PPSize(100, 100));
 		radioNoiseType->addItem("White");
 		radioNoiseType->addItem("Pink");
 		radioNoiseType->addItem("Brown");
@@ -312,12 +322,13 @@ DialogSynth::DialogSynth(
 		cry += ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_PHASENOISE, screen, NULL, PPPoint(cx + 5, cy + cry), "Phase noise", true));
-		radioNoisePhaseNoiseType = new PPRadioGroup(RADIOGROUP_NOISEPHASENOISETYPE, screen, this, PPPoint(rx - 120, cy + cry), PPSize(100, 5 + ym * 3));
-		radioNoisePhaseNoiseType->addItem("White");
-		radioNoisePhaseNoiseType->addItem("Pink");
-		radioNoisePhaseNoiseType->addItem("Brown");
+		radioNoisePhaseNoiseType = new PPRadioGroup(RADIOGROUP_ADDITIVE_PHASENOISE, screen, this, PPPoint(rx - 120, cy + cry), PPSize(100, 5 + ym));
+		radioNoisePhaseNoiseType->setHorizontal(true);
+		radioNoisePhaseNoiseType->addItem("W");
+		radioNoisePhaseNoiseType->addItem("P");
+		radioNoisePhaseNoiseType->addItem("BR");
 		containerAdditive->addControl(radioNoisePhaseNoiseType);
-		cry += 5 + ym * 3;
+		cry += 5 + ym;
 
 		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USEFILTERS, screen, NULL, PPPoint(cx + 5, cy + cry), "Use filters", true));
 		checkBoxUseFilters = new PPCheckBox(CHECKBOX_ADDITIVE_USEFILTERS, screen, this, PPPoint(rx - 120, cy + cry), false);
@@ -392,11 +403,42 @@ DialogSynth::DialogSynth(
 		containerAdditive->addControl(sliderAdditiveEnvRel);
 		cry += ym;
 
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_USEDIST, screen, NULL, PPPoint(cx + 5, cy + cry), "Use distortion", true));
+		checkBoxUseDist = new PPCheckBox(CHECKBOX_ADDITIVE_USEDIST, screen, this, PPPoint(rx - 120, cy + cry), false);
+		containerAdditive->addControl(checkBoxUseDist);
+		cry += ym;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DISTTYPE, screen, NULL, PPPoint(cx + 5, cy + cry), "Dist. type", true));
+		radioDistType = new PPRadioGroup(RADIOGROUP_ADDITIVE_DISTTYPE, screen, this, PPPoint(rx - 120, cy + cry), PPSize(100, 5 + ym));
+		radioDistType->setHorizontal(true);
+		radioDistType->addItem("Soft");
+		radioDistType->addItem("Hard");
+		containerAdditive->addControl(radioDistType);
+		cry += 5 + ym;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DISTDRIVE, screen, NULL, PPPoint(cx + 5, cy + cry), "Dist. drive", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DISTDRIVE, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveDistDrive = new PPSlider(SLIDER_ADDITIVE_DISTDRIVE, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveDistDrive->setBarSize(256);
+		sliderAdditiveDistDrive->setMinValue(0);
+		sliderAdditiveDistDrive->setMaxValue(255);
+		containerAdditive->addControl(sliderAdditiveDistDrive);
+		cry += ym;
+
+		containerAdditive->addControl(new PPStaticText(STATICTEXT_ADDITIVE_DISTGAIN, screen, NULL, PPPoint(cx + 5, cy + cry), "Dist. gain", true));
+		containerAdditive->addControl(new PPStaticText(VALUE_ADDITIVE_DISTGAIN, screen, NULL, PPPoint(rx - 180, cy + cry), ""));
+		sliderAdditiveDistGain = new PPSlider(SLIDER_ADDITIVE_DISTGAIN, screen, this, PPPoint(rx - 120, cy + cry), 110, true);
+		sliderAdditiveDistGain->setBarSize(256);
+		sliderAdditiveDistGain->setMinValue(0);
+		sliderAdditiveDistGain->setMaxValue(255);
+		containerAdditive->addControl(sliderAdditiveDistGain);
+		cry += ym;
+
 		// ------------------------------------------------------
 
-		synthHarmonica = new SynthHarmonica(SYNTH_HARMONICA, screen, this, PPPoint(cx + 5, cy + cry), PPSize(324, 65), this);
+		synthHarmonica = new SynthHarmonica(SYNTH_HARMONICA, screen, this, PPPoint(cx + 5, cy + cry), PPSize(323, 70), this);
 		containerAdditive->addControl(synthHarmonica);
-		cry += 65 + 5;
+		cry += 70 + 2;
 
 		button = new PPButton(BUTTON_HARMONICA_GEN_ZERO, screen, this, PPPoint(cx + 5, cy + cry), PPSize(80, 10));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
@@ -504,15 +546,19 @@ pp_int32 DialogSynth::loadSettings()
 	SLIDER_SET_VALUE(sliderAdditiveEnvSus,     containerAdditive, VALUE_ADDITIVE_ENV_SUS,   settings->additive.envsus);
 	SLIDER_SET_VALUE(sliderAdditiveEnvHold,    containerAdditive, VALUE_ADDITIVE_ENV_HOLD,  settings->additive.envhold);
 	SLIDER_SET_VALUE(sliderAdditiveEnvRel,     containerAdditive, VALUE_ADDITIVE_ENV_REL,   settings->additive.envrel);
+	SLIDER_SET_VALUE(sliderAdditiveDistDrive,  containerAdditive, VALUE_ADDITIVE_DISTDRIVE, settings->additive.distdrive);
+	SLIDER_SET_VALUE(sliderAdditiveDistGain,   containerAdditive, VALUE_ADDITIVE_DISTGAIN,  settings->additive.distgain);
 
 	checkBoxUseScale->checkIt(settings->additive.usescale);
 	checkBoxUseFilters->checkIt(settings->additive.usefilters);
 	checkBoxUseEnv->checkIt(settings->additive.useenv);
+	checkBoxUseDist->checkIt(settings->additive.usedist);
 	checkBoxDestroyer->checkIt(settings->additive.destroyer);
 	checkBoxLoopForward->checkIt(settings->extensions.flags & TMM_FLAG_LOOP_FWD);
 	checkBoxFixZeroCrossing->checkIt(settings->extensions.flags & TMM_FLAG_FIX_ZERO);
 
 	radioNoisePhaseNoiseType->setChoice(settings->additive.phasenoisetype);
+	radioDistType->setChoice(settings->additive.disttype);
 
 	PPEvent e(eValueChanged);
 	handleEvent(reinterpret_cast<PPObject*>(sliderAdditiveHarmonics), &e);
@@ -606,6 +652,14 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
 					mod->instr[idx].tmm.additive.useenv = (int)checked;
+
+					generateSample();
+				}
+				break;
+			case CHECKBOX_ADDITIVE_USEDIST:
+				{
+					bool checked = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+					mod->instr[idx].tmm.additive.usedist = (int)checked;
 
 					generateSample();
 				}
@@ -786,17 +840,24 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 					generateSample();
 				}
 				break;
-			case RADIOGROUP_NOISETYPE:
+			case RADIOGROUP_NOISE_TYPE:
 				{
 					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
 					mod->instr[idx].tmm.noise.type = choice;
 					generateSample();
 				}
 				break;
-			case RADIOGROUP_NOISEPHASENOISETYPE:
+			case RADIOGROUP_ADDITIVE_PHASENOISE:
 				{
 					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
 					mod->instr[idx].tmm.additive.phasenoisetype = choice;
+					generateSample();
+				}
+				break;
+			case RADIOGROUP_ADDITIVE_DISTTYPE:
+				{
+					pp_uint32 choice = *((pp_uint32*)event->getDataPtr());
+					mod->instr[idx].tmm.additive.disttype = choice;
 					generateSample();
 				}
 				break;
@@ -952,6 +1013,28 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 					parentScreen->paint();
 
 					mod->instr[idx].tmm.additive.detune = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_DISTDRIVE:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_DISTDRIVE))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.distdrive = val;
+
+					generateSample();
+				}
+				break;
+			case SLIDER_ADDITIVE_DISTGAIN:
+				{
+					pp_uint32 val = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+					reinterpret_cast<PPStaticText*>(containerAdditive->getControlByID(VALUE_ADDITIVE_DISTGAIN))->setValue(val, false);
+					parentScreen->paint();
+
+					mod->instr[idx].tmm.additive.distgain = val;
 
 					generateSample();
 				}

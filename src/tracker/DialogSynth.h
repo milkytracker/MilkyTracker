@@ -37,6 +37,7 @@ class DialogSynth : public PPDialogBase
 private:
 	class PPRadioGroup   *radioType;
 	class PPRadioGroup   *radioNoiseType;
+	class PPRadioGroup   *radioDistType;
 	class PPContainer    *containerAdditive;
 	class PPContainer    *containerSine;
 	class PPContainer    *containerPulse;
@@ -58,9 +59,12 @@ private:
 	class PPSlider       *sliderAdditiveEnvSus;
 	class PPSlider       *sliderAdditiveEnvHold;
 	class PPSlider       *sliderAdditiveEnvRel;
+	class PPSlider       *sliderAdditiveDistDrive;
+	class PPSlider       *sliderAdditiveDistGain;
 	class PPCheckBox     *checkBoxUseScale;
 	class PPCheckBox     *checkBoxUseFilters;
 	class PPCheckBox     *checkBoxUseEnv;
+	class PPCheckBox     *checkBoxUseDist;
 	class PPCheckBox     *checkBoxDestroyer;
 	class PPCheckBox     *checkBoxLoopForward;
 	class PPCheckBox     *checkBoxFixZeroCrossing;
