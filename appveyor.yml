@@ -32,7 +32,7 @@ deploy:
   description: Release $(appveyor_repo_tag_name)
   provider: GitHub
   auth_token:
-    secure: XtZUHo/SWVXr89Z4YQYylRE8lDQue+JwuaQdqEG/P57GePwPJipKzlPSxp8qOFiG
+    secure: k4eMw7MSycoyZwL8VfdAS8ejNXnwhFQ0KOVpif3IqyQDUrOGeGRyCHXm7FsD4kjb
   artifact: /milkytracker.*\.zip/
   prerelease: false
   overwrite: true
