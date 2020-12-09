@@ -1,5 +1,28 @@
 # MilkyTracker ChangeLog
 
+## 12/12/2020 (v1.03):
+
+### What's new:
+* Improved FT2 accuracy
+* Alt-Backspace alternative for insert keybindings
+* Improved mousewheel / touchpad scrolling for Windows/OSX/SDL2
+* Option to invert mousewheel for pattern editor
+* New flanger effect
+* Allow quarter periods in sample generator
+* Click and drag to move selection in pattern editor
+* More intuitive cutting/pasting of partial FX commands
+* Allow selections by clicking outside the pattern bounds
+* Easier and more intuitive sample selection resizing
+
+### Bugs fixed:
+* Various compatibility fixes
+* Jam channels stop working after applying settings
+* Improper WAV chunk parsing for odd sizes
+* Multiple heap & buffer overflow vulnerabilities
+* MacOS compatibility
+* Inverted samoples during signed to unsigned conversion
+* ...and more, see git commit history for details
+
 ## 24/02/2018 (v1.02):
 
 ### What's new:
