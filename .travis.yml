@@ -1,11 +1,10 @@
 language: cpp
 git:
   submodules: true
-matrix:
+jobs:
   include:
   - os: linux
     dist: bionic
-    sudo: required
     addons:
       apt:
         packages:
@@ -36,8 +35,7 @@ matrix:
     script: *cmake_build
 deploy:
   provider: releases
-  api_key:
-    secure: "tuoM4T5yYeqtmqjK5m9+zsVkLYqfwD/Lf5nyXPaONDRvgo7lh46OvNXPcHCu4QK6j80PmmzvhK/B0L836puEQpcaKsksdO8WTp3Lw4wPiidOC30rw+OR9jDnJzbPmv+PXxmqENIDUccLhDKpB9IGfosgcaxERvlvJZ44XlHnmgIPhXrKlESDnrV44snFJ/JkjlcNJr55nOdbCHTEUrW3J+kkYqjA3kyMW9/rS+iWx2PRLYKUBQDh+7U6frEjI8E4Ygpr5L6Cm7T2SuOWJhp+8tu9fEDZtfCngrU8ZTYclgAIqCyh1o6BU9ljcpU26CBcDYnNcqeFV8a7GcK/D32ix26rMvff9Ngei2uWs9ZYTGSSSC8CGnVpfPxi2ZSN15/pvqxhwr6I5Z/V/RX5+ZjdAyU6IIHo7GGt2y/e/zkoxfOBeiv1EV+gPZPbKafKkDX1Xghxp8t64qXynMctKiM3KCbcLRi+Z0Srym+lrIHYY2jo/cWk88VK6xGjCk5SDtQlkJgxN72Jbyy4kWMPIa7aOzrSA9WbUXG26osw38sNIGe5Rs1pErvSKMV3slLWBBDtzvh1Z/zUO34W6FyKilBwoE3zTvE/lnAZtBWyk0QCNxJvLReqNGZE53Zk8VuGmBQ9S9aIXqm21CSuEYVpvhogXAj82ePNH9Dy3B4A0KIqUBY="
+  token: $GITHUB_TOKEN
   skip_cleanup: true
   file_glob: true
   file: build/milkytracker-*
