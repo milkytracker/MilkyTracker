@@ -56,9 +56,6 @@ set(VER_YY 03)
 set(VER_ZZ 00)
 set(VER_FULL "${VER_X}.${VER_YY}.${VER_ZZ}")
 
-# Final build filename, for example "milkytracker-1.02.00-win32.zip"
-set(BUILD_FILENAME "milkytracker-${VER_FULL}-${SYSTEM_NAME_LOWER}")
-
 # Generate version header from the above
 configure_file(
     ${PROJECT_SOURCE_DIR}/src/tracker/version.h.in
@@ -85,7 +82,6 @@ endif()
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
 set(CPACK_PACKAGE_VENDOR "MilkyTracker Team")
 set(CPACK_PACKAGE_CONTACT "support@milkytracker.org")
-set(CPACK_PACKAGE_FILE_NAME ${BUILD_FILENAME})
 set(CPACK_PACKAGE_VERSION_MAJOR ${VER_X})
 set(CPACK_PACKAGE_VERSION_MINOR ${VER_YY})
 set(CPACK_PACKAGE_VERSION_PATCH ${VER_ZZ})

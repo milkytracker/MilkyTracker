@@ -163,7 +163,7 @@ elseif(WIN32)
 
         set(RTAUDIO_BUILD_SHARED_LIBS OFF)
         set(RTAUDIO_BUILD_TESTING OFF)
-        add_subdirectory(${RTAUDIO_SUBMODULE_DIR} ${CMAKE_BINARY_DIR}/src/submodules/rtaudio)
+        add_subdirectory(${RTAUDIO_SUBMODULE_DIR} ${CMAKE_BINARY_DIR}/src/submodules/rtaudio EXCLUDE_FROM_ALL)
 
         target_sources(milkyplay
             PRIVATE
