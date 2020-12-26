@@ -540,9 +540,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 
 		// CAPS-lock
 		case SC_CAPSLOCK:
-#ifndef WIN32
 		case SC_1:
-#endif
 			return PatternTools::getNoteOffNote();
 
 		case SC_SMALLERGREATER:
