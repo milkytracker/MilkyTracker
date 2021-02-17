@@ -29,6 +29,7 @@
 #include "PlayerCriticalSection.h"
 #include "TrackerConfig.h"
 #include "PPSystem.h"
+#include "XIInstrument.h"
 
 static const char validCharacters[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!.";
 
@@ -114,7 +115,8 @@ ModuleEditor::ModuleEditor() :
 	currentPatternIndex(0),
 	currentInstrumentIndex(0),
 	currentSampleIndex(0),
-	enumerationIndex(-1)
+	enumerationIndex(-1),
+	dialogSynth(NULL)
 {
 	instruments = new TEditorInstrument[MAX_INSTRUMENTS];
 
@@ -1613,6 +1615,25 @@ bool ModuleEditor::saveInstrument(const SYSCHAR* fileName, mp_sint32 index)
 	return res;
 }
 
+bool ModuleEditor::loadTMI(const SYSCHAR* fileName, mp_sint32 index)
+{
+	ASSERT(index < module->header.insnum);
+
+	TTMMSettings * tmmsettings = &module->instr[index].tmm;
+	FILE * f = fopen(fileName, "rb");
+	if(f) {
+		fread(tmmsettings, sizeof(TTMMSettings), 1, f);
+		fclose(f);
+
+		if(dialogSynth) {
+			dialogSynth->loadSettings();
+		}
+
+		return true;
+	}
+	return false;
+}
+
 bool ModuleEditor::saveTMI(const SYSCHAR* fileName, mp_sint32 index)
 {
 	ASSERT(index < module->header.insnum);
@@ -2523,3 +2544,7 @@ PPSystemString ModuleEditor::getTempFilename()
 	return PPSystemString(System::getTempFileName());
 }
 
+void ModuleEditor::setDialogSynth(DialogSynth * dialogSynth)
+{
+	this->dialogSynth = dialogSynth;
+}

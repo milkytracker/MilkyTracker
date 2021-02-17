@@ -87,6 +87,7 @@ enum {
 	BUTTON_HARMONICA_DOUBLE_EACH,
 	BUTTON_HARMONICA_HALF_EVEN,
 	BUTTON_HARMONICA_DOUBLE_EVEN,
+	BUTTON_LOAD_INSTRUMENT,
 	BUTTON_SAVE_INSTRUMENT,
 	CHECKBOX_LOOP_FORWARD,
 	CHECKBOX_FIX_ZERO_CROSSING,
@@ -137,7 +138,11 @@ DialogSynth::DialogSynth(
 	messageBoxContainerGeneric->addControl(checkBoxFixDC);
 	messageBoxContainerGeneric->addControl(new PPStaticText(STATICTEXT_FIX_DC, screen, NULL, PPPoint(x + 20 + 15, y + 40 + 100 + 15 + 15 + 2), "Fix DC", true));
 
-	button = new PPButton(BUTTON_SAVE_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 15), PPSize(100, 11));
+	button = new PPButton(BUTTON_LOAD_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 25), PPSize(100, 11));
+	button->setText("Load TMI");
+	messageBoxContainerGeneric->addControl(button);
+
+	button = new PPButton(BUTTON_SAVE_INSTRUMENT, screen, this, PPPoint(x + 20, y + 40 + 100 + 15 + 15 + 25 + 15), PPSize(100, 11));
 	button->setText("Save TMI");
 	messageBoxContainerGeneric->addControl(button);
 
@@ -346,6 +351,8 @@ pp_int32 DialogSynth::loadSettings()
 
 	enableContainer(mod->instr[idx].tmm.type);
 
+	generateSample();
+
 	return 0;
 }
 
@@ -388,6 +395,12 @@ pp_int32 DialogSynth::handleEvent(PPObject* sender, PPEvent* event)
 			bool updateHarmonica = false;
 
 			switch (reinterpret_cast<PPControl*>(sender)->getID()) {
+			case BUTTON_LOAD_INSTRUMENT:
+				{
+					tracker->getModuleEditor()->setDialogSynth(this);
+					tracker->loadType(FileTypes::FileTypeInstrumentTMI);
+				}
+				break;
 			case BUTTON_SAVE_INSTRUMENT:
 				{
 					tracker->saveType(FileTypes::FileTypeInstrumentTMI);
@@ -670,8 +683,8 @@ void DialogSynth::generateSample()
 	dst->vibrate   = editor->instruments[idx].vibrate;
 	dst->volfade   = editor->instruments[idx].volfade << 1;
 
-	dst->sample  = (mp_sbyte*)mod->allocSampleMem(262144 * 2); // @todo depending from synth type
-	dst->samplen = this->tmm->GenerateSamples(&mod->instr[idx].tmm, (short*)dst->sample, freq);
+	dst->sample  = (mp_sbyte *) mod->allocSampleMem(262144 * 2); // @todo depending from synth type
+	dst->samplen = this->tmm->GenerateSamples(&mod->instr[idx].tmm, (void *) dst->sample, freq);
 	dst->looplen = dst->samplen;
 
 	// Loop?

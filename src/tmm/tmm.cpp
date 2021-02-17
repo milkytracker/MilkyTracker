@@ -212,7 +212,6 @@ TMM::GenerateSamples16(TTMMSettings * p_settings, short * p_samples, int p_size)
 		break;
 	case TMM_TYPE_ADDITIVE:
 		{
-			p_settings->additive.harmonics[0] = 0;
 			double * samples = m_additive->Process(&p_settings->additive);
 			for(int i = 0; i < 32768; i++) {
 				p_samples[i] = (short)(samples[i] * 32767.0);

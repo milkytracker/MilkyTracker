@@ -455,7 +455,7 @@ mp_sint32 LoaderMOD::load(XMFileBase& f, XModule* module)
 
 			if(cinstr->tmm.type > 0) {
 				// @hack reserve a slot
-				module->smp[i].sample = (mp_sbyte*)module->allocSampleMem(1);
+				module->smp[i].sample = (mp_sbyte *) module->allocSampleMem(262144 * 2);
 				continue;
 			}
 		}

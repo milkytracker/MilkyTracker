@@ -28,6 +28,7 @@
 #include "PatternEditorTools.h"
 #include "SongLengthEstimator.h"
 #include "PlayerController.h"
+#include "DialogSynth.h"
 
 class XIInstrument;
 class PatternEditor;
@@ -141,6 +142,7 @@ private:
 
 	pp_int32 enumerationIndex;
 
+	DialogSynth * dialogSynth;
 public:
 	ModuleEditor();
 	~ModuleEditor();
@@ -325,6 +327,10 @@ public:
 	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index);
 	// save instrument
 	bool saveInstrument(const SYSCHAR* fileName, mp_sint32 index);
+
+	// TMI
+	void setDialogSynth(DialogSynth * dialogSynth);
+	bool loadTMI(const SYSCHAR* fileName, mp_sint32 index);
 	bool saveTMI(const SYSCHAR* fileName, mp_sint32 index);
 
 	// zap (clear) instrument

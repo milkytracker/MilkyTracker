@@ -704,6 +704,7 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xi");
+
 	container->addControl(radioGroup);
 
 	// ---- Sample ----------

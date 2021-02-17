@@ -2725,6 +2725,13 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			break;
 		}
 
+		case FileTypes::FileTypeInstrumentTMI:
+		{
+			loadingParameters.res = moduleEditor->loadTMI(loadingParameters.filename, listBoxInstruments->getSelectedIndex());
+			sectionInstruments->updateAfterLoad();
+			break;
+		}
+
 		case FileTypes::FileTypeSongAllSamples:
 		{
 			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
@@ -2830,6 +2837,14 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 		{
 			openPanel = new PPOpenPanel(screen, "Open Sample");
 			openPanel->addExtensions(fileExtProvider.getSampleExtensions());
+			break;
+		}
+
+		case FileTypes::FileTypeInstrumentTMI:
+		{
+			openPanel = new PPOpenPanel(screen, "Open TMI");
+			openPanel->addExtension(fileExtProvider.getInstrumentExtension(FileExtProvider::InstrumentExtensionTMI),
+									fileExtProvider.getInstrumentDescription(FileExtProvider::InstrumentExtensionTMI));
 			break;
 		}
 	}
@@ -2940,7 +2955,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 
 		case FileTypes::FileTypeInstrumentTMI:
 		{
-			PPSystemString sampleFileName = "test";
+			PPSystemString sampleFileName = "";
 			sampleFileName.append(".tmi");
 			savePanel = new PPSavePanel(screen, "Save Magic Instrument", sampleFileName);
 			savePanel->addExtension(fileExtProvider.getInstrumentExtension(FileExtProvider::InstrumentExtensionTMI),
