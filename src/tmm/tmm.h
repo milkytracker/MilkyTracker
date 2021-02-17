@@ -42,7 +42,7 @@ private:
 		TMM::Noise*   m_noise;
 
 		inline double Profile(double p_fi, double p_bwi);
-		inline double RelativeFreq(double p_freq);
+		inline double RelativeFreq(double p_freq, double p_detune);
 		inline void   Normalize(TTMMAdditive*);
 		inline void   InverseFFT(TTMMAdditive*);
 	public:
@@ -52,8 +52,46 @@ private:
 		~Additive();
 	};
 
+	class Filter
+	{
+	protected:
+		int            m_rate;
+		double         m_a[3];
+		double         m_b[2];
+		double 		   m_cutoff;
+		double 		   m_q;
+		double         m_s[2];
+		double         m_f[2];
+
+		virtual void Preprocess() = 0;
+
+		Filter(int p_rate);
+	public:
+		void		   SetCutoff(double p_cutoff);
+		void		   SetQ(double p_q);
+		double* 	   Process(double* samples, int nsamples);
+	};
+
+	class LoPass : public Filter
+	{
+	protected:
+		virtual void Preprocess();
+	public:
+		LoPass(int p_rate) : Filter(p_rate) {}
+	};
+
+	class HiPass : public Filter
+	{
+	protected:
+		virtual void Preprocess();
+	public:
+		HiPass(int p_rate) : Filter(p_rate) {}
+	};
+
 	Noise*      m_noise;
 	Additive*   m_additive;
+	LoPass* 	m_lpfilter;
+	HiPass* 	m_hpfilter;
 	int         m_samplerate;
     int         m_bits;
 

@@ -8,10 +8,14 @@ TMM::TMM(int p_samplerate, int p_bits)
 	m_noise = new Noise;
 	m_noise->Seed();
 	m_additive = new Additive(32768, m_samplerate);
+	m_lpfilter = new LoPass(m_samplerate);
+	m_hpfilter = new HiPass(m_samplerate);
 }
 
 TMM::~TMM()
 {
+	delete m_hpfilter;
+	delete m_lpfilter;
 	delete m_additive;
 	delete m_noise;
 }
@@ -213,6 +217,13 @@ TMM::GenerateSamples16(TTMMSettings * p_settings, short * p_samples, int p_size)
 	case TMM_TYPE_ADDITIVE:
 		{
 			double * samples = m_additive->Process(&p_settings->additive);
+
+			m_lpfilter->SetCutoff((double)p_settings->additive.lpfreq * 100.0);
+			samples = m_lpfilter->Process(samples, 32768);
+
+			m_hpfilter->SetCutoff((double)p_settings->additive.hpfreq * 100.0);
+			samples = m_hpfilter->Process(samples, 32768);
+
 			for(int i = 0; i < 32768; i++) {
 				p_samples[i] = (short)(samples[i] * 32767.0);
 			}

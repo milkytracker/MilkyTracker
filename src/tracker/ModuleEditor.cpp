@@ -1427,7 +1427,11 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	instruments[index].instrument->tmm.pulse.width             = 16;
 	instruments[index].instrument->tmm.additive.nharmonics     = 64;
 	instruments[index].instrument->tmm.additive.bandwidth      = 20;
+	instruments[index].instrument->tmm.additive.detune         = 64;
 	instruments[index].instrument->tmm.additive.bwscale        = 1;
+	instruments[index].instrument->tmm.additive.rndseed        = 1337;
+	instruments[index].instrument->tmm.additive.lpfreq         = 220;
+	instruments[index].instrument->tmm.additive.hpfreq         = 0;
 	instruments[index].instrument->tmm.additive.usescale       = 0;
 	instruments[index].instrument->tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
 	instruments[index].instrument->tmm.additive.destroyer      = 0;

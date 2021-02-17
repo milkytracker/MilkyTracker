@@ -3,9 +3,10 @@ add_library(tmm STATIC
     kiss_fft.c
     tmm_additive.cpp
     tmm_convert.cpp
+    tmm_filter.cpp
     tmm_noise.cpp
     tmm.cpp
-    
+
     # Headers
     _kiss_fft_guts.h
     adx.h

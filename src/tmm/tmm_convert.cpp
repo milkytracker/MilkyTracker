@@ -106,6 +106,7 @@ TMM::Converter::Convert()
 #if defined(P_AMIGA)
             ts.additive.basefreq = SWAPW(ts.additive.basefreq);
             ts.additive.bwscale = SWAPW(ts.additive.bwscale);
+            ts.additive.rndseed = SWAPW(ts.additive.rndseed);
 #endif
             break;
         case TMM_TYPE_NONE: default:

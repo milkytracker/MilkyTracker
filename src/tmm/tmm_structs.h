@@ -2,7 +2,7 @@
 #define TMM_PRESET_H
 
 #define TMM_EXT_MAGIC   0x7171
-#define TMM_EXT_VERSION 1
+#define TMM_EXT_VERSION 2
 
 enum
 {
@@ -61,7 +61,11 @@ typedef struct TTMMAdditive_s
 	unsigned char   nharmonics;
 	unsigned short  basefreq;
 	unsigned char   bandwidth;
+	unsigned char   detune;
 	unsigned short  bwscale;
+	unsigned short  rndseed;
+	unsigned char   lpfreq;
+	unsigned char   hpfreq;
 	unsigned char   usescale;
 	unsigned char   harmonics[64];
 	unsigned char   phasenoisetype;

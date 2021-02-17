@@ -25,9 +25,9 @@ TMM::Additive::~Additive()
 }
 
 double
-TMM::Additive::RelativeFreq(double p_freq)
+TMM::Additive::RelativeFreq(double p_freq, double p_detune)
 {
-	return p_freq * (1.0 + p_freq * 0.1);
+	return p_freq * (1.0 + p_freq * p_detune);
 }
 
 double
@@ -98,8 +98,7 @@ TMM::Additive::Normalize(TTMMAdditive* p_settings)
 		}
 	} else {
 		for(i = 0; i < m_bins; i++) {
-			double s = m_samples[i] / (max * M_SQRT2);
-			m_samples[i] = s;
+			m_samples[i] /= max * M_SQRT2;
 		}
 	}
 }
@@ -115,13 +114,14 @@ TMM::Additive::Process(TTMMAdditive* p_settings)
 	}
 
 	// Generate harmonic profile
-	for(nh = 1; nh < p_settings->nharmonics; nh++) {
+	for(nh = 1; nh <= p_settings->nharmonics; nh++) {
 		double
-			hs    = p_settings->usescale ? pow(RelativeFreq(nh), (double)p_settings->bwscale / 1000.0) : nh,
+			det   = ((double)p_settings->detune / 64.0) - 1.0,
+			hs    = p_settings->usescale ? pow(RelativeFreq(nh, det), (double)p_settings->bwscale / 500.0) : RelativeFreq(nh, det),
 			bw_hz = (pow(2.0, (double)p_settings->bandwidth / 1200.0) - 1.0) * (double)p_settings->basefreq * hs,
 			bwi   = bw_hz / (2.0 * (double)m_samplerate),
 			fi    = ((double)p_settings->basefreq * hs) / (double)m_samplerate,
-			h     = (double)p_settings->harmonics[nh] / 255.0;
+			h     = (double)p_settings->harmonics[nh-1] / 255.0;
 
 		for(i = 0; i < m_bins >> 1; i++) {
 			m_freq_amp[i] += (Profile(((double)i / (double)m_bins) - fi, bwi) * h);
@@ -129,23 +129,25 @@ TMM::Additive::Process(TTMMAdditive* p_settings)
 	}
 
 	// Add some random phases
+	int rndseed = p_settings->rndseed * p_settings->rndseed;
 	switch(p_settings->phasenoisetype) {
 	default:
 	case TMM_NOISETYPE_WHITE:
+		srand(rndseed);
 		for(i = 0; i < m_bins >> 1; i++) {
-			m_freq_phase[i] = ((double)rand() / ((double)RAND_MAX + 1)) * 2.0 * M_PI;
+			m_freq_phase[i] = ((double)rand() / ((double)RAND_MAX + 1.0)) * 2.0 * M_PI;
 		}
 		break;
 	case TMM_NOISETYPE_BROWN:
 		m_noise->Reset();
-		m_noise->Seed(1588799834);
+		m_noise->Seed(rndseed);
 		for(i = 0; i < m_bins >> 1; i++) {
 			m_freq_phase[i] = (0.5 + m_noise->Brown()) * 2.0 * M_PI;
 		}
 		break;
 	case TMM_NOISETYPE_PINK:
 		m_noise->Reset();
-		m_noise->Seed(1588799834);
+		m_noise->Seed(rndseed);
 		for(i = 0; i < m_bins >> 1; i++) {
 			m_freq_phase[i] = (0.5 + m_noise->Pink()) * 2.0 * M_PI;
 		}

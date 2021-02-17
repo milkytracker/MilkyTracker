@@ -47,7 +47,11 @@ private:
 	class PPSlider       *sliderAdditiveHarmonics;
 	class PPSlider       *sliderAdditiveBasefreq;
 	class PPSlider       *sliderAdditiveBandwidth;
+	class PPSlider       *sliderAdditiveDetune;
 	class PPSlider       *sliderAdditiveBWScale;
+	class PPSlider       *sliderAdditiveRandomSeed;
+	class PPSlider       *sliderAdditiveLoPassFreq;
+	class PPSlider       *sliderAdditiveHiPassFreq;
 	class PPCheckBox     *checkBoxUseScale;
 	class PPCheckBox     *checkBoxDestroyer;
 	class PPCheckBox     *checkBoxLoopForward;
