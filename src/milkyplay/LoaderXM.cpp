@@ -62,50 +62,54 @@ const char* LoaderXM::identifyModule(const mp_ubyte* buffer)
 //////////////////////////////////////////////////////
 mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 {
-	mp_ubyte insData[230];		
+	mp_ubyte insData[230];
 	mp_sint32 smpReloc[MP_MAXINSSAMPS];
 	mp_ubyte nbu[MP_MAXINSSAMPS];
 	mp_uint32 fileSize = 0;
-			
+
 	module->cleanUp();
 
 	// this will make code much easier to read
 	TXMHeader*		header = &module->header;
 	TXMInstrument*	instr  = module->instr;
 	TXMSample*		smp	   = module->smp;
-	TXMPattern*		phead  = module->phead;	
+	TXMPattern*		phead  = module->phead;
 
 	// we're already out of memory here
 	if (!phead || !instr || !smp)
 		return MP_OUT_OF_MEMORY;
-	
+
 	fileSize = f.sizeWithBaseOffset();
-	
-	f.read(&header->sig,1,17);
+
+	if(module->type == XModule::ModuleType_TMM) {
+		f.read(&header->sig,1,7);
+	} else {
+		f.read(&header->sig,1,17);
+	}
 	f.read(&header->name,1,20);
 	f.read(&header->whythis1a,1,1);
 	header->whythis1a=0;
 	f.read(&header->tracker,1,20);
 	f.readWords(&header->ver,1);
-	
-	if (header->ver != 0x102 && 
+
+	if (header->ver != 0x102 &&
 		header->ver != 0x103 && // untested
 		header->ver != 0x104)
 		return MP_LOADER_FAILED;
-	
+
 	f.readDwords(&header->hdrsize,1);
-	
+
 	header->hdrsize-=4;
-	
+
 	mp_uint32 hdrSize = 0x110;
 	if (header->hdrsize > hdrSize)
 		hdrSize = header->hdrsize;
-				
+
 	mp_ubyte* hdrBuff = new mp_ubyte[hdrSize];
 	memset(hdrBuff, 0, hdrSize);
-	
+
 	f.read(hdrBuff, 1, header->hdrsize);
-	
+
 	header->ordnum = LittleEndian::GET_WORD(hdrBuff);
 	header->restart = LittleEndian::GET_WORD(hdrBuff+2);
 	header->channum = LittleEndian::GET_WORD(hdrBuff+4);
@@ -121,27 +125,27 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 		return MP_LOADER_FAILED;
 
 	delete[] hdrBuff;
-	
+
 	header->mainvol=255;
-	header->flags = XModule::MODULE_XMNOTECLIPPING | 
-		XModule::MODULE_XMARPEGGIO | 
-		XModule::MODULE_XMPORTANOTEBUFFER | 
+	header->flags = XModule::MODULE_XMNOTECLIPPING |
+		XModule::MODULE_XMARPEGGIO |
+		XModule::MODULE_XMPORTANOTEBUFFER |
 		XModule::MODULE_XMVOLCOLUMNVIBRATO;
 
 	header->uppernotebound = 119;
-	
+
 	mp_sint32 i,y,sc;
 	for (i=0;i<32;i++) header->pan[i]=0x80;
-	
+
 	// old version?
 	if (header->ver == 0x102 || header->ver == 0x103)
 	{
 		mp_sint32 s = 0;
 		mp_sint32 e = 0;
 		for (y=0;y<header->insnum;y++) {
-			
+
 			f.readDwords(&instr[y].size,1);
-			f.read(&instr[y].name,1,22);		
+			f.read(&instr[y].name,1,22);
 			f.read(&instr[y].type,1,1);
 			mp_uword numSamples = 0;
 			f.readWords(&numSamples,1);
@@ -162,23 +166,23 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			f.readDwords(&instr[y].shsize,1);
 
 			memset(insData, 0, 230);
-			
+
 			if (instr[y].size - 33 > 230)
 				return MP_OUT_OF_MEMORY;
-			
+
 			f.read(insData, 1, instr[y].size - 33);
-						
+
 			if (instr[y].samp) {
 				mp_ubyte* insDataPtr = insData;
-				
+
 				memcpy(nbu, insDataPtr, MP_MAXINSSAMPS);
 				insDataPtr+=MP_MAXINSSAMPS;
-				
+
 				TEnvelope venv;
 				TEnvelope penv;
 				memset(&venv,0,sizeof(venv));
 				memset(&penv,0,sizeof(penv));
-				
+
 				mp_sint32 k;
 				for (k = 0; k < XM_ENVELOPENUMPOINTS; k++)
 				{
@@ -192,10 +196,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					penv.env[k][1] = LittleEndian::GET_WORD(insDataPtr+2);
 					insDataPtr+=4;
 				}
-				
-				venv.num = *insDataPtr++;	
+
+				venv.num = *insDataPtr++;
 				if (venv.num > XM_ENVELOPENUMPOINTS) venv.num = XM_ENVELOPENUMPOINTS;
-				penv.num = *insDataPtr++;	
+				penv.num = *insDataPtr++;
 				if (penv.num > XM_ENVELOPENUMPOINTS) penv.num = XM_ENVELOPENUMPOINTS;
 				venv.sustain = *insDataPtr++;
 				venv.loops = *insDataPtr++;
@@ -204,51 +208,51 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				penv.loops = *insDataPtr++;
 				penv.loope = *insDataPtr++;
 				venv.type = *insDataPtr++;
-				penv.type = *insDataPtr++;				
-				
+				penv.type = *insDataPtr++;
+
 				mp_ubyte vibtype, vibsweep, vibdepth, vibrate;
 				mp_uword volfade;
-				
+
 				vibtype = *insDataPtr++;
 				vibsweep = *insDataPtr++;
 				vibdepth = *insDataPtr++;
 				vibrate = *insDataPtr++;
-				
+
 				vibdepth<<=1;
-				
+
 				volfade = LittleEndian::GET_WORD(insDataPtr);
 				insDataPtr+=2;
 				volfade<<=1;
-				
+
 				//instr[y].res = LittleEndian::GET_WORD(insDataPtr);
 				insDataPtr+=2;
-				
+
 				for (mp_sint32 l=0;l<XM_ENVELOPENUMPOINTS;l++) {
 					venv.env[l][1]<<=2;
 					penv.env[l][1]<<=2;
 				}
-				
-				if (!module->addVolumeEnvelope(venv)) 
+
+				if (!module->addVolumeEnvelope(venv))
 					return MP_OUT_OF_MEMORY;
-				if (!module->addPanningEnvelope(penv)) 
+				if (!module->addPanningEnvelope(penv))
 					return MP_OUT_OF_MEMORY;
-				
+
 				mp_sint32 g=0, sc;
 				for (sc=0;sc<instr[y].samp;sc++) {
-					
+
 					smp[g+s].flags=3;
 					smp[g+s].venvnum=e+1;
 					smp[g+s].penvnum=e+1;
-					
+
 					smp[g+s].vibtype=vibtype;
 					smp[g+s].vibsweep=vibsweep;
 					smp[g+s].vibdepth=vibdepth;
 					smp[g+s].vibrate=vibrate;
 					smp[g+s].volfade=volfade;
-					
+
 					// not sure why I did that, actually doesn't make sense
 					//if (!(venv.type&1)) smp[g+s].volfade=0;
-					
+
 					f.readDwords(&smp[g+s].samplen,1);
 					f.readDwords(&smp[g+s].loopstart,1);
 					f.readDwords(&smp[g+s].looplen,1);
@@ -263,13 +267,13 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					f.read(&smp[g+s].relnote,1,1);
 					f.read(&smp[g+s].res,1,1);
 					f.read(&smp[g+s].name,1,22);
-					
+
 					char line[30];
 					memset(line, 0, sizeof(line));
-					XModule::convertStr(line, smp[g+s].name, 23, false);					
+					XModule::convertStr(line, smp[g+s].name, 23, false);
 					if (line[0])
 						module->addSongMessageLine(line);
-					
+
 					// ignore empty samples
 #ifndef MILKYTRACKER
 					// ignore empty samples when not being a tracker
@@ -291,11 +295,11 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					if (smpReloc[nbu[sc]] == -1)
 						instr[y].snum[sc] = -1;
 					else
-						instr[y].snum[sc] = smpReloc[nbu[sc]]+s;					
+						instr[y].snum[sc] = smpReloc[nbu[sc]]+s;
 				}
 
 				e++;
-				
+
 			}
 			else
 			{
@@ -307,18 +311,18 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			s+=16;
 #else
 			s+=instr[y].samp;
-#endif				
-				
-			
+#endif
+
+
 		}
-		
+
 		header->smpnum=s;
 		header->volenvnum=e;
 		header->panenvnum=e;
 	}
-	
+
 	for (y=0;y<header->patnum;y++) {
-		
+
 		if (header->ver == 0x104 || header->ver == 0x103)
 		{
 			f.readDwords(&phead[y].len,1);
@@ -331,47 +335,47 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			f.readDwords(&phead[y].len,1);
 			f.read(&phead[y].ptype,1,1);
 			phead[y].rows = (mp_uword)f.readByte()+1;
-			f.readWords(&phead[y].patdata,1);			
+			f.readWords(&phead[y].patdata,1);
 		}
-		
+
 		phead[y].effnum=2;
 		phead[y].channum=(mp_ubyte)header->channum;
-		
+
 		phead[y].patternData = new mp_ubyte[phead[y].rows*header->channum*6];
-		
+
 		// out of memory?
 		if (phead[y].patternData == NULL)
 		{
 			return MP_OUT_OF_MEMORY;
 		}
-		
+
 		memset(phead[y].patternData,0,phead[y].rows*header->channum*6);
-		
+
 		if (phead[y].patdata) {
 			mp_ubyte *buffer = new mp_ubyte[phead[y].patdata];
-			
+
 			// out of memory?
 			if (buffer == NULL)
 			{
-				return MP_OUT_OF_MEMORY;			
+				return MP_OUT_OF_MEMORY;
 			}
-			
+
 			f.read(buffer,1,phead[y].patdata);
-			
+
 			//printf("%i\n", phead[y].patdata);
-			
+
 			mp_sint32 pc = 0, bc = 0;
 			for (mp_sint32 r=0;r<phead[y].rows;r++) {
 				for (mp_sint32 c=0;c<header->channum;c++) {
-					
+
 					mp_ubyte slot[5];
 					memset(slot,0,5);
-					
+
 					if ((buffer[pc]&128)) {
-						
+
 						mp_ubyte pb = buffer[pc];
 						pc++;
-						
+
 						if ((pb&1)) {
 							//phead[y].patternData[bc]=buffer[pc];
 							slot[0]=buffer[pc];
@@ -397,72 +401,72 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 							slot[4]=buffer[pc];
 							pc++;
 						}
-						
+
 					}
 					else {
 						//memcpy(phead[y].patternData+bc,buffer+pc,5);
 						memcpy(slot,buffer+pc,5);
 						pc+=5;
 					}
-					
+
 					char gl=0;
 					for (mp_sint32 i=0;i<XModule::numValidXMEffects;i++)
 						if (slot[3]==XModule::validXMEffects[i]) gl=1;
-					
+
 					if (!gl) slot[3]=slot[4]=0;
-					
+
 					if ((slot[3]==0xC)||(slot[3]==0x10)) {
 						slot[4] = XModule::vol64to255(slot[4]);
 						/*mp_sint32 bl = slot[4];
 						if (bl>64) bl=64;
 						slot[4]=(bl*261120)>>16;*/
 					}
-					
+
 					if ((!slot[3])&&(slot[4])) slot[3]=0x20;
-					
+
 					if (slot[3]==0xE) {
 						slot[3]=(slot[4]>>4)+0x30;
 						slot[4]=slot[4]&0xf;
 					}
-					
+
 					if (slot[3]==0x21) {
 						slot[3]=(slot[4]>>4)+0x40;
 						slot[4]=slot[4]&0xf;
 					}
-					
+
 					if (slot[0]==97) slot[0]=XModule::NOTE_OFF;
-					
+
 					phead[y].patternData[bc]=slot[0];
 					phead[y].patternData[bc+1]=slot[1];
-					
+
 					XModule::convertXMVolumeEffects(slot[2], phead[y].patternData[bc+2], phead[y].patternData[bc+3]);
 
 					phead[y].patternData[bc+4]=slot[3];
 					phead[y].patternData[bc+5]=slot[4];
-					
+
 					/*if ((y==3)&&(c==2)) {
 						for (mp_sint32 bl=0;bl<6;bl++) cprintf("%x ",phead[y].patternData[bc+bl]);
 					cprintf("\r\n");
 					getch();
 					};*/
-					
+
 					/*printf("Note : %i\r\n",phead[y].patternData[bc]);
 					printf("Ins  : %i\r\n",phead[y].patternData[bc+1]);
 					printf("Vol  : %i\r\n",phead[y].patternData[bc+2]);
 					printf("Eff  : %i\r\n",phead[y].patternData[bc+3]);
 					printf("Effop: %i\r\n",phead[y].patternData[bc+4]);
 					getch();*/
-					
+
 					bc+=6;
 				} // for c
-					
+
 			} // for r
-				
+
 			delete[] buffer;
 		}
-			
+
 	}
-		
+
 	if (header->ver == 0x104)
 	{
 		mp_sint32 s = 0;
@@ -473,11 +477,11 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			// seems to store more instruments in the header than in the actual file
 			if (f.posWithBaseOffset() >= fileSize)
 				break;
-		
+
 			//TXMInstrument* ins = &instr[y];
-		
+
 			f.readDwords(&instr[y].size,1);
-			
+
 			if (instr[y].size < 29)
 			{
 				mp_ubyte buffer[29];
@@ -489,8 +493,28 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 			}
 			else
 			{
-				f.read(&instr[y].name,1,22);		
+				f.read(&instr[y].name,1,22);
 				f.read(&instr[y].type,1,1);
+
+				// load da magic? =d
+				if(module->type == XModule::ModuleType_TMM && instr[y].type > 0) {
+					instr[y].tmm.type = instr[y].type;
+					switch(instr[y].tmm.type) {
+					case TMM_TYPE_NOISE:
+						f.read(&instr[y].tmm.noise, sizeof(TTMMNoise), 1);
+						break;
+					case TMM_TYPE_SINE:
+						f.read(&instr[y].tmm.sine, sizeof(TTMMSine), 1);
+						break;
+					case TMM_TYPE_PULSE:
+						f.read(&instr[y].tmm.pulse, sizeof(TTMMPulse), 1);
+						break;
+					case TMM_TYPE_ADDITIVE:
+						f.read(&instr[y].tmm.additive, sizeof(TTMMAdditive), 1);
+						break;
+					}
+				}
+
 				f.readWords(&instr[y].samp,1);
 			}
 			if (instr[y].samp > MP_MAXINSSAMPS)
@@ -510,40 +534,40 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 			f.readDwords(&instr[y].shsize,1);
 #ifdef VERBOSE
-			printf("%i/%i: %i, %i, %i, %s\n",y,header->insnum-1,instr[y].size,instr[y].shsize,instr[y].samp,instr[y].name);			
+			printf("%i/%i: %i, %i, %i, %s\n",y,header->insnum-1,instr[y].size,instr[y].shsize,instr[y].samp,instr[y].name);
 #endif
 			memset(insData, 0, 230);
-			
+
 			if (instr[y].size - 33 > 230)
 			{
 				//return -7;
 				break;
 			}
-			
+
 			f.read(insData, 1, instr[y].size - 33);
-			
+
 			/*printf("%i\r\n",instr[y].size);
 			printf("%s\r\n",instr[y].name);
 			printf("%i\r\n",instr[y].type);
 			printf("%i\r\n",instr[y].samp);
 			printf("%i\r\n",instr[y].shsize);*/
 			//getch();
-					
+
 			memset(smpReloc, 0, sizeof(smpReloc));
-			
+
 			if (instr[y].samp) {
 				mp_ubyte* insDataPtr = insData;
-				
+
 				//f.read(&nbu,1,96);
-				
+
 				memcpy(nbu, insDataPtr, MP_MAXINSSAMPS);
 				insDataPtr+=MP_MAXINSSAMPS;
-				
+
 				TEnvelope venv;
 				TEnvelope penv;
 				memset(&venv,0,sizeof(venv));
 				memset(&penv,0,sizeof(penv));
-				
+
 				mp_sint32 k;
 				for (k = 0; k < XM_ENVELOPENUMPOINTS; k++)
 				{
@@ -557,10 +581,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 					penv.env[k][1] = LittleEndian::GET_WORD(insDataPtr+2);
 					insDataPtr+=4;
 				}
-				
-				venv.num = *insDataPtr++;	
+
+				venv.num = *insDataPtr++;
 				if (venv.num > XM_ENVELOPENUMPOINTS) venv.num = XM_ENVELOPENUMPOINTS;
-				penv.num = *insDataPtr++;					
+				penv.num = *insDataPtr++;
 				if (penv.num > XM_ENVELOPENUMPOINTS) penv.num = XM_ENVELOPENUMPOINTS;
 				venv.sustain = *insDataPtr++;
 				venv.loops = *insDataPtr++;
@@ -569,55 +593,55 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				penv.loops = *insDataPtr++;
 				penv.loope = *insDataPtr++;
 				venv.type = *insDataPtr++;
-				penv.type = *insDataPtr++;				
-				
+				penv.type = *insDataPtr++;
+
 				mp_ubyte vibtype, vibsweep, vibdepth, vibrate;
 				mp_uword volfade;
-				
+
 				vibtype = *insDataPtr++;
 				vibsweep = *insDataPtr++;
 				vibdepth = *insDataPtr++;
 				vibrate = *insDataPtr++;
-				
+
 				vibdepth<<=1;
-				
+
 				//f.readWords(&volfade,1);
 				volfade = LittleEndian::GET_WORD(insDataPtr);
 				insDataPtr+=2;
 				volfade<<=1;
-				
+
 				//instr[y].res = LittleEndian::GET_WORD(insDataPtr);
 				insDataPtr+=2;
-				
+
 				for (mp_sint32 l=0;l<XM_ENVELOPENUMPOINTS;l++) {
 					venv.env[l][1]<<=2;
 					penv.env[l][1]<<=2;
 				}
-				
-				if (!module->addVolumeEnvelope(venv)) 
+
+				if (!module->addVolumeEnvelope(venv))
 					return MP_OUT_OF_MEMORY;
-				if (!module->addPanningEnvelope(penv)) 
+				if (!module->addPanningEnvelope(penv))
 					return MP_OUT_OF_MEMORY;
-				
+
 				mp_sint32 g=0, sc;
 				for (sc=0;sc<instr[y].samp;sc++) {
 					//TXMSample* smpl = &smp[g+s];
-					
+
 					smp[g+s].flags=3;
 					smp[g+s].venvnum=e+1;
 					smp[g+s].penvnum=e+1;
-					
+
 					smp[g+s].vibtype=vibtype;
 					smp[g+s].vibsweep=vibsweep;
 					smp[g+s].vibdepth=vibdepth;
 					smp[g+s].vibrate=vibrate;
 					smp[g+s].volfade=volfade;
-					
+
 					// not sure why I did that, actually doesn't make sense
 					//if (!(venv.type&1)) smp[g+s].volfade=0;
-					
+
 					f.readDwords(&smp[g+s].samplen,1);
-					
+
 					f.readDwords(&smp[g+s].loopstart,1);
 					f.readDwords(&smp[g+s].looplen,1);
 					smp[g+s].vol=XModule::vol64to255(f.readByte());
@@ -634,10 +658,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 					char line[30];
 					memset(line, 0, sizeof(line));
-					XModule::convertStr(line, smp[g+s].name, 23, false);					
+					XModule::convertStr(line, smp[g+s].name, 23, false);
 					if (line[0])
 						module->addSongMessageLine(line);
-					
+
 #ifndef MILKYTRACKER
 					// ignore empty samples when not being a tracker
 					if (smp[g+s].samplen) {
@@ -654,47 +678,56 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 				instr[y].samp = g;
 
-				for (sc = 0; sc < MP_MAXINSSAMPS; sc++) {					
+				for (sc = 0; sc < MP_MAXINSSAMPS; sc++) {
 					if (smpReloc[nbu[sc]] == -1)
 						instr[y].snum[sc] = -1;
 					else
 						instr[y].snum[sc] = smpReloc[nbu[sc]]+s;
 				}
-						
+
 				for (sc=0;sc<instr[y].samp;sc++) {
-				
+
 					if (smp[s].samplen)
 					{
 						bool adpcm = (smp[s].res == 0xAD);
-					
+
 						mp_uint32 oldSize = smp[s].samplen;
-						if (smp[s].type&16) 
+						if (smp[s].type&16)
 						{
 							smp[s].samplen>>=1;
 							smp[s].loopstart>>=1;
 							smp[s].looplen>>=1;
 						}
-						
-						mp_sint32 result = module->loadModuleSample(f, s, 
-													 adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA, 
-													 adpcm ? (XModule::ST_PACKING_ADPCM | XModule::ST_16BIT) : (XModule::ST_DELTA | XModule::ST_16BIT), 
-													 oldSize);
-						if (result != MP_OK)
-							return result;					
-						
+
+						if(!instr[y].tmm.type) {
+							mp_sint32 result = module->loadModuleSample(
+								f, s,
+								adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA,
+								adpcm ? (XModule::ST_PACKING_ADPCM | XModule::ST_16BIT) : (XModule::ST_DELTA | XModule::ST_16BIT),
+								oldSize);
+
+							if (result != MP_OK)
+								return result;
+						} else {
+							TMM* tmm = new TMM(44100);
+							module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768 * 2);
+							tmm->GenerateSamples(&instr[y].tmm, (short*)module->smp[s].sample, XModule::getc4spd(0, 0));
+							delete tmm;
+						}
+
 						if (adpcm)
 							smp[s].res = 0;
 					}
-					
+
 					s++;
-					
+
 					if (s>=MP_MAXSAMPLES)
 						return MP_OUT_OF_MEMORY;
-					
+
 				}
 
 				e++;
-				
+
 			}
 			else
 			{
@@ -704,14 +737,14 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 #ifdef MILKYTRACKER
 			s+=16 - instr[y].samp;
-#endif				
-			
+#endif
+
 		}
-		
+
 		header->smpnum=s;
 		header->volenvnum=e;
-		header->panenvnum=e;		
-		
+		header->panenvnum=e;
+
 	}
 	else
 	{
@@ -722,47 +755,47 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				if (smp[s].samplen)
 				{
 					mp_uint32 oldSize = smp[s].samplen;
-					if (smp[s].type&16) 
+					if (smp[s].type&16)
 					{
 						smp[s].samplen>>=1;
 						smp[s].loopstart>>=1;
 						smp[s].looplen>>=1;
 					}
-					
+
 					mp_sint32 result = module->loadModuleSample(f, s, XModule::ST_DELTA, XModule::ST_DELTA | XModule::ST_16BIT, oldSize);
 					if (result != MP_OK)
-						return result;					
+						return result;
 				}
-				
+
 				s++;
-				
+
 				if (s>=MP_MAXSAMPLES)
-					return MP_OUT_OF_MEMORY;				
+					return MP_OUT_OF_MEMORY;
 			}
-			
+
 #ifdef MILKYTRACKER
 			s+=16 - instr[y].samp;
 #endif
-			
-		}		
+
+		}
 	}
-	
+
 	// convert modplug stereo samples
 	for (mp_sint32 s = 0; s < header->smpnum; s++)
 	{
 		if (smp[s].type & 32)
-		{		
+		{
 			// that's what's allowed, stupid modplug tracker
-			smp[s].type &= 3+16;					
+			smp[s].type &= 3+16;
 
 			if (smp[s].sample == NULL)
 				continue;
-			
-			if (!(smp[s].type&16)) {			
+
+			if (!(smp[s].type&16)) {
 				smp[s].samplen>>=1;
 				smp[s].loopstart>>=1;
 				smp[s].looplen>>=1;
-				
+
 				mp_sbyte* sample = (mp_sbyte*)smp[s].sample;
 				mp_sint32 samplen = smp[s].samplen;
 				for (mp_sint32 i = 0; i < samplen; i++)
@@ -778,7 +811,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				smp[s].samplen>>=1;
 				smp[s].loopstart>>=1;
 				smp[s].looplen>>=1;
-				
+
 				mp_sword* sample = (mp_sword*)smp[s].sample;
 				mp_sint32 samplen = smp[s].samplen;
 				for (mp_sint32 i = 0; i < samplen; i++)
@@ -790,12 +823,12 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				}
 			}
 		}
-		
+
 		// correct loop type 0x03 (undefined)
 		// will become ping pong loop
 		// note that FT2 will refuse to load XM files with such a loop type
 		if ((smp[s].type & 0x3) == 0x3)
-			smp[s].type&=~1;		
+			smp[s].type&=~1;
 	}
 
 	// correct number of patterns if necessary, otherwise the post processing will remove
@@ -804,10 +837,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 	for (i = 0; i < header->ordnum; i++)
 		if (header->ord[i]+1 > header->patnum)
 		{
-			header->patnum = header->ord[i]+1;	
+			header->patnum = header->ord[i]+1;
 			addPatterns = true;
 		}
-	
+
 	// if the pattern number has been adjusted, add some empty patterns
 	if (addPatterns)
 	{
@@ -819,17 +852,17 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				phead[i].channum = (mp_ubyte)header->channum;
 
 				phead[i].patternData = new mp_ubyte[phead[i].rows*header->channum*6];
-			
+
 				// out of memory?
 				if (phead[i].patternData == NULL)
 				{
 					return MP_OUT_OF_MEMORY;
 				}
-		
+
 				memset(phead[i].patternData,0,phead[i].rows*header->channum*6);
 			}
 	}
-	
+
 	// check for MODPLUG extensions
 	if (f.posWithBaseOffset() + 8 <= fileSize)
 	{
@@ -839,14 +872,14 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 		{
 			mp_uint32 len = f.readDword();
 			module->allocateSongMessage(len+1);
-			
+
 			memset(module->message, 0, len+1);
-			
+
 			f.read(module->message, 1, len);
 		}
 	}
-	
+
 	module->postProcessSamples();
-	
+
 	return MP_OK;
 }

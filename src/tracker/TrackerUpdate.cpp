@@ -58,8 +58,8 @@ void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
 	if (button == NULL)
 		return;
-	button->setPressed(b);	
-	
+	button->setPressed(b);
+
 	if (repaint)
 		screen->paintControl(button);
 }
@@ -114,7 +114,7 @@ bool Tracker::updatePeakLevelControl()
 
 	if (!peakLevelControl)
 		return false;
-	
+
 	if (!peakLevelControl->isVisible())
 		return false;
 
@@ -169,7 +169,7 @@ bool Tracker::updatePeakLevelControl()
 		peakLevelControl->setPeak(1, newPeak);
 		bUpdateR = true;
 	}
-	
+
 	if (bUpdateEntire)
 	{
 		screen->paintControl(screen->getControlByID(CONTAINER_ABOUT), false);
@@ -191,16 +191,16 @@ bool Tracker::updatePlayTime()
 
 	if (!playTimeText->isVisible())
 		return false;
-	
+
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 
 	char buffer[100], buffer2[100];
-	
+
 	pp_int32 playtime = (pp_int32)playerController->getPlayTime();
-	
+
 	if (!playerController->isPlaying())
 		playtime = 0;
-		
+
 	pp_int32 seconds = playtime % 60;
 	pp_int32 minutes = (playtime / 60) % 60;
 	pp_int32 hours = (playtime / 3600) % 100;
@@ -232,16 +232,16 @@ bool Tracker::updatePlayTime()
 		pp_int32 hours = (playtime / 3600) % 100;
 		sprintf(buffer2,"(%02i:%02i:%02i)", hours, minutes, seconds);
 	}
-	
+
 	strcat(buffer, buffer2);
-	
+
 	if (strcmp(playTimeText->getText(), buffer) != 0)
 	{
 		playTimeText->setText(buffer);
 		screen->paintControl(container, false);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -251,9 +251,9 @@ bool Tracker::updatePlayTime()
 void Tracker::updateSongTitle(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	
+
 	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE));
-	
+
 	listBox->clear();
 	char str[MP_MAXTEXT+1];
 	moduleEditor->getTitle(str, ModuleEditor::MAX_TITLETEXT);
@@ -295,7 +295,7 @@ void Tracker::updateOrderlist(bool repaint/* = true*/)
 void Tracker::updateSongLength(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ORDERLIST));
-	
+
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ORDERLIST_SONGLENGTH))->setHexValue(moduleEditor->getNumOrders(), 2);
 
 	listBoxOrderList->setShowIndex(true);
@@ -313,7 +313,7 @@ void Tracker::updateSongLength(bool repaint)
 	for (pp_int32 i = 0; i < moduleEditor->getNumOrders(); i++)
 	{
 		char orderlistEntry[4];
-		
+
 		PatternTools::convertToHex(orderlistEntry, moduleEditor->getOrderPosition(i), 2);
 
 		if (update)
@@ -338,7 +338,7 @@ void Tracker::updateSongRepeat(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ORDERLIST));
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ORDERLIST_REPEAT))->setHexValue(moduleEditor->getRepeatPos(), 2);
-	
+
 	screen->paintControl(container, repaint);
 }
 
@@ -352,7 +352,7 @@ bool Tracker::updateSpeed(bool repaint)
 	playerController->getSpeed(bpm, speed);
 	mainvol = playerController->getSongMainVolume();
 
-	if (bpm != lastBPM || 
+	if (bpm != lastBPM ||
 		lastSpeed != speed ||
 		lastMainVol != mainvol)
 	{
@@ -360,10 +360,10 @@ bool Tracker::updateSpeed(bool repaint)
 		lastSpeed = speed;
 		lastMainVol = mainvol;
 		PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SPEED));
-		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_SPEED))->setIntValue(speed, 2);		
+		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_SPEED))->setIntValue(speed, 2);
 		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_BPM))->setIntValue(bpm, 3);
 		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_MAINVOL))->setHexValue((mainvol*64)/255, 2);
-		
+
 		screen->paintControl(container, repaint);
 		return true;
 	}
@@ -381,7 +381,7 @@ void Tracker::updatePatternAddAndOctave(bool repaint)
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_PATTERNADD))->setIntValue(currentPatternAdd, 2);
 	pp_int32 currentOctave = getPatternEditor()->getCurrentOctave();
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SPEED_OCTAVE))->setIntValue(currentOctave-1, 2);
-	
+
 	screen->paintControl(container, repaint);
 }
 
@@ -391,9 +391,9 @@ void Tracker::updatePatternAddAndOctave(bool repaint)
 ///////////////////////////////////////////
 void Tracker::updatePatternIndex(bool repaint)
 {
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_PATTERN));	
+	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_PATTERN));
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_PATTERN_INDEX))->setHexValue(moduleEditor->getCurrentPatternIndex(), 2);
-	
+
 #ifdef __LOWRES__
 	{
 		PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_JAMMENU));
@@ -413,7 +413,7 @@ void Tracker::updatePatternLength(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_PATTERN));
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_PATTERN_LENGTH))->setHexValue(getPatternEditor()->getNumRows(),3);
-	
+
 	screen->paintControl(container, repaint);
 }
 
@@ -425,7 +425,7 @@ void Tracker::updatePattern(bool repaint)
 	updatePatternEditorControl(false);
 	updatePatternIndex(false);
 	updatePatternLength(false);
-	
+
 	if (repaint)
 		screen->update();
 }
@@ -434,13 +434,13 @@ void Tracker::updatePattern(bool repaint)
 // update samples listbox
 ///////////////////////////////////////////
 void Tracker::updateSamplesListBox(bool repaint)
-{	
+{
 	listBoxSamples->saveState();
-				
+
 	listBoxSamples->clear();
-	
-	fillSampleListBox(listBoxSamples, listBoxInstruments->getSelectedIndex());			
-				
+
+	fillSampleListBox(listBoxSamples, listBoxInstruments->getSelectedIndex());
+
 	listBoxSamples->restoreState();
 
 	// check for visibility of parent container before updating
@@ -472,11 +472,11 @@ void Tracker::updateSamplesListBox(bool repaint)
 void Tracker::updateInstrumentsListBox(bool repaint)
 {
 	listBoxInstruments->saveState();
-				
+
 	listBoxInstruments->clear();
-	
+
 	fillInstrumentListBox(listBoxInstruments);
-				
+
 	listBoxInstruments->restoreState();
 
 	// check for visibility of parent container before updating
@@ -492,18 +492,18 @@ void Tracker::updateInstrumentsListBox(bool repaint)
 void Tracker::updatePatternEditorControl(/*TXMPattern* pattern, */bool repaint/* = true*/, bool fast/* = false*/)
 {
 	PatternEditorControl* patternEditorCtrl = getPatternEditorControl();
-	
+
 	moduleEditor->reloadCurrentPattern();
-	
+
 	TXMPattern* pattern = getPatternEditor()->getPattern();
-	
+
 	if (pattern)
 	{
 		if (isEditingCurrentOrderlistPattern())
 			patternEditorCtrl->setOrderlistIndex(getOrderListBoxIndex());
 		else
 			patternEditorCtrl->setOrderlistIndex(-1);
-		
+
 		//patternEditorCtrl->attachPattern(pattern, moduleEditor->getModule());
 	}
 
@@ -530,20 +530,20 @@ void Tracker::updateSampleEditorAndInstrumentSection(bool repaint/* = true*/)
 void Tracker::updateSongInfo(bool repaint/* = true*/)
 {
 	updateSongTitle(repaint);
-				
+
 	updateSongLength(repaint);
 	updateSongRepeat(repaint);
-				
+
 	//updateBPM(repaint);
-	updateSpeed(repaint);                                                                      
+	updateSpeed(repaint);
 	updatePatternAddAndOctave(repaint);
-				
+
 	updatePatternIndex(repaint);
 	updatePatternLength(repaint);
-				
+
 	updateInstrumentsListBox(repaint);
-	updateSamplesListBox(repaint);				
-				
+	updateSamplesListBox(repaint);
+
 	getPatternEditorControl()->reset();
 	getPatternEditorControl()->unmuteAll();
 	sectionInstruments->resetEnvelopeEditor();
@@ -554,7 +554,7 @@ void Tracker::updateSongInfo(bool repaint/* = true*/)
 	setNumChannels(moduleEditor->getNumChannels(), false);
 
 	updatePatternEditorControl(repaint);
-				
+
 	updateSampleEditorAndInstrumentSection(repaint);
 
 	updateWindowTitle(moduleEditor->getModuleFileName());
@@ -576,10 +576,10 @@ void Tracker::updateInstrumentChooser(bool repaint/* = true*/)
 	ModuleEditor* dst = listBoxDstModule ? tabManager->getModuleEditorFromTabIndex(listBoxDstModule->getSelectedIndex()) : this->moduleEditor;
 
 	listBoxSrc->saveState();
-	listBoxSrc->clear();	
+	listBoxSrc->clear();
 	fillInstrumentListBox(listBoxSrc, src);
 	listBoxSrc->restoreState();
-	
+
 	listBoxDst->saveState();
 	listBoxDst->clear();
 	fillInstrumentListBox(listBoxDst, dst);
@@ -593,18 +593,18 @@ void Tracker::updateInstrumentChooser(bool repaint/* = true*/)
 
 	listBoxSrc->saveState();
 	listBoxSrc->clear();
-	
-	fillSampleListBox(listBoxSrc, srcInsIndex, src);	
+
+	fillSampleListBox(listBoxSrc, srcInsIndex, src);
 
 	listBoxSrc->restoreState();
-	
+
 	listBoxDst->saveState();
 	listBoxDst->clear();
-	
+
 	fillSampleListBox(listBoxDst, dstInsIndex, dst);
 
 	listBoxDst->restoreState();
-	
+
 	if (repaint)
 		screen->update();
 }
@@ -612,28 +612,28 @@ void Tracker::updateInstrumentChooser(bool repaint/* = true*/)
 void Tracker::updateTabTitle()
 {
 	TabHeaderControl* tabHeader = static_cast<TabHeaderControl*>(screen->getControlByID(TABHEADER_CONTROL));
-	
+
 	if (tabHeader != NULL)
 	{
 		TabTitleProvider tabTitleProvider(*moduleEditor);
 		PPString tabTitle = tabTitleProvider.getTabTitle();
 		if (moduleEditor->hasChanged())
 			tabTitle.append("*");
-		
+
 		bool refresh = false;
-		
+
 		for (pp_int32 i = 0; i < (signed)tabHeader->getNumTabs(); i++)
 		{
 			if (tabManager->getModuleEditorFromTabIndex(i) == this->moduleEditor)
 			{
 				if (tabHeader->getTab(i)->text.compareTo(tabTitle) != 0)
-				{					
+				{
 					tabHeader->setTabHeaderText(i, tabTitle);
 					refresh = true;
 				}
 			}
 		}
-		
+
 		if (refresh)
 			screen->paintControl(tabHeader);
 	}
@@ -643,7 +643,8 @@ void Tracker::updateWindowTitle()
 {
 	if (moduleEditor->hasChanged() != lastState)
 	{
-		PPSystemString title = "MilkyTracker - ";
+		// MAGIC
+		PPSystemString title = "Titan's MilkyMagic - ";
 
 		title.append(currentFileName);
 
@@ -651,9 +652,9 @@ void Tracker::updateWindowTitle()
 			title.append(" (modified)");
 
 		screen->setTitle(title);
-		
+
 		updateTabTitle();
-		
+
 		lastState = moduleEditor->hasChanged();
 	}
 }
@@ -671,12 +672,12 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 {
 	mp_sint32 thePos, theRow;
 	playerController->getPosition(thePos, theRow);
-	
+
 #if 0
 	static int counter = 0;
 	if (thePos == 0 && theRow == 63 && (theRow != lastRow || thePos != lastPos))
 		counter++;
-		
+
 	if (counter == 2)
 	{
 		int i = 0;
@@ -684,14 +685,14 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 		i--;
 	}
 #endif
-	
+
 	if (pos == -1)
 		pos = thePos;
 	if (row == -1)
 		row = theRow;
-	
+
 	bool redraw = false;
-	
+
 	// I'm now trying to understand what happens here ------>
 	// When the current row is different from the last row
 	// or the current order position is different from the last one
@@ -703,12 +704,12 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 		// order list position updates and stuff ------>
 		if (!playerController->isPlayingPattern() && shouldFollowSong())
 		{
-			// if the current order list index is different from the current 
+			// if the current order list index is different from the current
 			// order list position from the player UPDATE ------>
 			if (getOrderListBoxIndex() != pos)
 			{
-				listBoxOrderList->setSelectedIndex(pos, false);	
-				moduleEditor->setCurrentOrderIndex(pos);		
+				listBoxOrderList->setSelectedIndex(pos, false);
+				moduleEditor->setCurrentOrderIndex(pos);
 				// in low res mode we also need to update
 				// the order position in the "Jam"-section
 #ifdef __LOWRES__
@@ -719,9 +720,9 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 				moduleEditor->setCurrentPatternIndex(moduleEditor->getOrderPosition(pos));
 				// update pattern editor with current order list pattern
 				// but don't redraw/update, just get it from the module editor and attach it to the pattern editor
-				updatePatternEditorControl(false, true);			
+				updatePatternEditorControl(false, true);
 			}
-			
+
 			if (!fast)
 			{
 				// update pattern property fields
@@ -734,7 +735,7 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 			// order list, otherwise the user has probably selected a different
 			// pattern while playing takes place
 			if (moduleEditor->getCurrentPatternIndex() == moduleEditor->getOrderPosition(pos))
-			{			
+			{
 				// song positon is only used in non-follow mode
 				getPatternEditorControl()->setSongPosition(-1, -1);
 				// but we should probably update the current row in the pattern editor as well
@@ -758,19 +759,19 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 			getPatternEditorControl()->setSongPosition(-1, -1);
 			getPatternEditorControl()->setRow(row, fast ? false : !getPatternEditorControl()->isDraggingVertical());
 		}
-		else		
+		else
 		{
 			getPatternEditorControl()->setSongPosition(pos, row);
 		}
-		
+
 		updatePatternEditorControl(false, fast);
-	
+
 		redraw = true;
 
 		lastRow = row;
 		lastPos = pos;
 	}
-	
+
 	if (!fast)
 		return updateSpeed(false) || redraw;
 	else
@@ -780,15 +781,15 @@ bool Tracker::updateSongPosition(pp_int32 pos/* = -1*/, pp_int32 row/* = -1*/, b
 void Tracker::updateRecordButton(PPContainer* container, const PPColor& pColor)
 {
 	ASSERT(container);
-	
-	// now if the parent container is visible, 
+
+	// now if the parent container is visible,
 	// we're going to update the record button
 	if (container->isVisible())
 	{
 		// get button from container
 		PPButton* button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
 		ASSERT(button);
-		
+
 		// if it's visible and the color is not what we're going to set
 		// set new text color and repaint
 		if (button->isVisible() && (&pColor) != button->getTextColor())
@@ -808,12 +809,12 @@ void Tracker::doFollowSong()
 		// If the pattern editor has got the focus
 		// we're in record mode, so get the record button text color
 		const PPColor& pColor = getPatternEditorControl()->gotFocus() ? TrackerConfig::colorRecordModeButtonText : PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText);
-		
+
 		// we're going to update the record button
 		updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU)), pColor);
-		
+
 #ifdef __LOWRES__
-		// in low-res mode, the record buttons appears 
+		// in low-res mode, the record buttons appears
 		// also in some other containers (e.g. TINYMENU) ...
 		updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_TINYMENU)), pColor);
 
@@ -821,10 +822,10 @@ void Tracker::doFollowSong()
 		updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_JAMMENU)), pColor);
 #endif
 	}
-	
+
 	// check if the piano has been updated
 	bool updatePiano = updatePianoControl(sectionInstruments->getPianoControl());
-	
+
 	// check if the play time has been updated
 	bool updatePlayTime = this->updatePlayTime();
 
@@ -853,7 +854,7 @@ void Tracker::doFollowSong()
 	{
 		bool showMarksVisibleOld = sampleEditorControl->isVisible() ? sampleEditorControl->showMarksVisible() : false;
 		bool updateSample = false;
-	
+
 		TXMSample* smp = getSampleEditor()->getSample();
 
 		for (pp_int32 i = 0; i < playerController->getAllNumPlayingChannels(); i++)
@@ -861,7 +862,7 @@ void Tracker::doFollowSong()
 			pp_int32 pos, vol, pan;
 			if (playerController->isSamplePlaying(*smp, i, pos, vol, pan))
 			{
-				// it is there 
+				// it is there
 				// => set the position mark
 				sampleEditorControl->setShowMark(i, pos, vol, pan);
 				updateSample = true;
@@ -877,11 +878,11 @@ void Tracker::doFollowSong()
 				}
 			}
 		}
-		
+
 		if (updateSample && sampleEditorControl->isVisible())
 		{
 			bool showMarksVisible = sampleEditorControl->showMarksVisible();
-			
+
 			// if either show marks HAVE BEEN visible and they're no longer visble OR
 			// no show marks have been visible and now they're some visible
 			// => redraw
@@ -891,35 +892,35 @@ void Tracker::doFollowSong()
 				importantRefresh = true;
 			}
 		}
-		
+
 	}
-	
+
 	if (sectionInstruments->isEnvelopeVisible())
 	{
 		EnvelopeEditorControl* eeCtrl = sectionInstruments->getEnvelopeEditorControl();
-		
+
 		bool redrawEnvelopeEditor = false;
-		
+
 		if (eeCtrl->hasShowMarks())
 		{
 			eeCtrl->clearShowMarks();
 			redrawEnvelopeEditor = true;
-		}	
+		}
 
 		EnvelopeEditor* ee = getEnvelopeEditor();
 
 		for (pp_int32 i = 0; i < playerController->getPlayerNumPlayingChannels(); i++)
-		{	
+		{
 			pp_int32 pos;
 			if (playerController->isEnvelopePlaying(*ee->getEnvelope(), sectionInstruments->getVisibleEnvelopeType(), i, pos))
 			{
 				eeCtrl->setShowMark(i, pos);
-				
+
 				if (pos != -1)
 					redrawEnvelopeEditor = true;
-			}				
+			}
 		}
-		
+
 		if (redrawEnvelopeEditor)
 		{
 			sectionInstruments->updateEnvelopeWindow(false);
@@ -927,15 +928,15 @@ void Tracker::doFollowSong()
 		}
 
 	}
-	
-	if (playerController->isPlaying() && 
+
+	if (playerController->isPlaying() &&
 		!playerController->isPlayingRowOnly()/* && getFollowSong()*/)
-	{	
+	{
 		importantRefresh |= updateSongPosition();
 	}
-	
+
 	bool updatePeak = updatePeakLevelControl();
-	
+
 	bool updateScopes = false;
 	if (scopesControl && scopesControl->isVisible())
 	{
@@ -946,18 +947,18 @@ void Tracker::doFollowSong()
 			return;
 		}
 		else if (updateScopes)
-			screen->paintControl(scopesControl, false);			
+			screen->paintControl(scopesControl, false);
 	}
-	
+
 	importantRefresh |= updatePiano;
-	
+
 	if (!importantRefresh)
 	{
 		if (updatePeak || updatePlayTime)
 		{
 			screen->updateControl(screen->getControlByID(CONTAINER_ABOUT));
 		}
-		
+
 		if (updateScopes)
 		{
 			screen->updateControl(scopesControl);
@@ -976,24 +977,24 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 		estimateSongLength();
 	else
 		moduleEditor->getModuleServices()->resetEstimatedSongLength();
-	
+
 	// special updates
 	listBoxOrderList->setSelectedIndex(0);
 	moduleEditor->setCurrentOrderIndex(0);
-	
+
 	moduleEditor->setCurrentPatternIndex(moduleEditor->getOrderPosition(0));
-	
+
 	listBoxInstruments->setSelectedIndex(0);
 	moduleEditor->setCurrentInstrumentIndex(0);
 	listBoxSamples->setSelectedIndex(0);
 	moduleEditor->setCurrentSampleIndex(0);
-	
+
 	updateSongInfo(false);
-	
+
 	playerController->resetMainVolume();
 	getPatternEditorControl()->setChannel(0,0);
 	getPatternEditorControl()->setCurrentInstrument(1);
-	
+
 	if (wasPlaying)
 	{
 		if (!wasPlayingPattern && shouldFollowSong())
@@ -1011,21 +1012,21 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 			getPatternEditorControl()->setRow(0);
 		}
 	}
-	else		
+	else
 	{
 		getPatternEditorControl()->setSongPosition(-1, -1);
 		getPatternEditorControl()->setRow(0);
 	}
-	
+
 	if (loadResult)
 	{
 		playerController->resetPlayTimeCounter();
-		
+
 		sectionHDRecorder->resetCurrentFileName();
 		sectionHDRecorder->adjustOrders();
-		
-		updateWindowTitle(moduleEditor->getModuleFileName());					
-		
+
+		updateWindowTitle(moduleEditor->getModuleFileName());
+
 		// !!! Remember this !!!
 		// It's important to apply new speed settings before the playmode is switched
 		playerController->setSpeed(moduleEditor->getSongBPM(), moduleEditor->getSongTickSpeed());
@@ -1058,35 +1059,35 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 			eventKeyDownBinding_PlayPattern();
 		}
 	}
-	
+
 	updateSongInfo(false);
 }
 
 void Tracker::updateAfterTabSwitch()
 {
 	pp_int32 i;
-	
+
 	getPatternEditorControl()->attachPatternEditor(moduleEditor->getPatternEditor());
 	sectionSamples->getSampleEditorControl(false)->attachSampleEditor(moduleEditor->getSampleEditor());
 	sectionInstruments->getEnvelopeEditorControl()->attachEnvelopeEditor(moduleEditor->getEnvelopeEditor());
 	// -----------------------------------------------------------------------
 	sectionHDRecorder->resetCurrentFileName();
 	sectionHDRecorder->adjustOrders();
-	
+
 	updateSongTitle(false);
-				
+
 	updateSongLength(false);
 	updateSongRepeat(false);
-				
-	updateSpeed(false);                                                                      
+
+	updateSpeed(false);
 	updatePatternAddAndOctave(false);
-				
+
 	updatePatternIndex(false);
 	updatePatternLength(false);
-				
+
 	updateInstrumentsListBox(false);
-	updateSamplesListBox(false);				
-				
+	updateSamplesListBox(false);
+
 	// -----------------------------------------------------------------------
 	// restore old positions
 	listBoxInstruments->setSelectedIndex(moduleEditor->getCurrentInstrumentIndex(), false);
@@ -1109,7 +1110,7 @@ void Tracker::updateAfterTabSwitch()
 	scopesControl->attachSource(playerController);
 	updateSampleEditorAndInstrumentSection(false);
 	updateWindowTitle(moduleEditor->getModuleFileName());
-	
+
 	// apply muting from playercontroller
 	const pp_int32 numChannels = TrackerConfig::numPlayerChannels;
 	for (i = 0; i < numChannels; i++)
@@ -1118,7 +1119,7 @@ void Tracker::updateAfterTabSwitch()
 		muteChannels[i] = b ? 1 : 0;
 		getPatternEditorControl()->muteChannel(i, b);
 		scopesControl->muteChannel(i, b);
-		
+
 		b = playerController->isChannelRecording(i);
 		scopesControl->recordChannel(i, b);
 	}

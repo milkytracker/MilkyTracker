@@ -57,7 +57,7 @@ private:
 	char** tempList;
 
 	PPSimpleVector<PPString> tempExtensions;
-	
+
 	const char* const* fillList(const char* const* baseList, ExtensionTypes type);
 
 public:
@@ -65,7 +65,7 @@ public:
 		tempList(NULL)
 	{
 	}
-	
+
 	~FileExtProvider()
 	{
 		delete[] tempList;
@@ -96,17 +96,18 @@ public:
 		ModuleExtensionPTM,
 		ModuleExtensionS3M,
 		ModuleExtensionSTM,
+		ModuleExtensionTMM,
 		ModuleExtensionULT,
 		ModuleExtensionUNI,
 		ModuleExtensionXM,
-		
+
 		ModuleExtensionLAST,
-	};	
-	
+	};
+
 	const char* const* getModuleExtensions();
 	const char* getModuleExtension(ModuleExtensions extension);
 	const char* getModuleDescription(ModuleExtensions extension);
-	
+
 	enum InstrumentExtensions
 	{
 		InstrumentExtensionXI,
@@ -118,7 +119,7 @@ public:
 	const char* const* getInstrumentExtensions();
 	const char* getInstrumentExtension(InstrumentExtensions extension);
 	const char* getInstrumentDescription(InstrumentExtensions extension);
-	
+
 	enum SampleExtensions
 	{
 		SampleExtensionWAV,
@@ -133,18 +134,18 @@ public:
 	const char* const* getSampleExtensions();
 	const char* getSampleExtension(SampleExtensions extension);
 	const char* getSampleDescription(SampleExtensions extension);
-	
+
 	enum PatternExtensions
 	{
 		PatternExtensionXP,
-		
+
 		PatternExtensionLAST
 	};
-	
-	const char* const* getPatternExtensions();	
+
+	const char* const* getPatternExtensions();
 	const char* getPatternExtension(PatternExtensions extension);
 	const char* getPatternDescription(PatternExtensions extension);
-	
+
 	enum TrackExtensions
 	{
 		TrackExtensionXT,

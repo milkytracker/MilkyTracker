@@ -53,7 +53,7 @@ DECLARE_LOADERCLASS(Loader669)		// 669 Composer (Uses special FAR Player)
 DECLARE_LOADERCLASS(LoaderAMF_1)	// Asylum Music Format 1.0
 DECLARE_LOADERCLASS(LoaderAMF_2)	// Digital Sound And Music Interface (DMP module format)
 DECLARE_LOADERCLASS(LoaderAMSv1)	// Extreme Tracker AMS
-DECLARE_LOADERCLASS(LoaderAMSv2)	// Velvet Studio AMS 
+DECLARE_LOADERCLASS(LoaderAMSv2)	// Velvet Studio AMS
 DECLARE_LOADERCLASS(LoaderDBM)		// Digibooster Pro
 DECLARE_LOADERCLASS(LoaderCBA)		// Chuck Biscuits / Black Artist special format (only one Music Disk)
 DECLARE_LOADERCLASS(LoaderDIGI)		// Digibooster 1.x
@@ -79,7 +79,8 @@ DECLARE_LOADERCLASS(LoaderPSMv2)	// new Epic MegaGames MASI (Jazz Jack Rabbit, .
 DECLARE_LOADERCLASS(LoaderPTM)		// PolyTracker
 DECLARE_LOADERCLASS(LoaderS3M)		// ScreamTracker III
 DECLARE_LOADERCLASS(LoaderSTM)		// ScreamTracker II
-DECLARE_LOADERCLASS(LoaderSFX)		// SoundFX module (very similiar to SoundTracker, 15 ins, kept in LoaderMOD.cpp) 
+DECLARE_LOADERCLASS(LoaderSFX)		// SoundFX module (very similiar to SoundTracker, 15 ins, kept in LoaderMOD.cpp)
+DECLARE_LOADERCLASS(LoaderTMM)      // Titan Magic Module
 DECLARE_LOADERCLASS(LoaderULT)		// Ultratracker
 DECLARE_LOADERCLASS(LoaderUNI)		// MikMod internal module
 DECLARE_LOADERCLASS(LoaderXM)		// FT2 Extended Module

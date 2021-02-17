@@ -40,6 +40,11 @@ target_include_directories(osinterface
         ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
+target_link_libraries(osinterface
+    PRIVATE
+        tmm
+)
+
 # Add platform-specific sources and include paths
 if(APPLE)
     target_sources(osinterface

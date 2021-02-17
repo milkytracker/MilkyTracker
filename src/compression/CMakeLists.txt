@@ -51,6 +51,7 @@ target_include_directories(compression
         ${CMAKE_CURRENT_SOURCE_DIR}/../milkyplay
         ${CMAKE_CURRENT_SOURCE_DIR}/../ppui
         ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
+        ${CMAKE_CURRENT_SOURCE_DIR}/../tmm
 )
 
 # Under macOS and Windows, build sources from Git submodules if present

@@ -85,24 +85,24 @@ static inline pp_int32 myMod(pp_int32 a, pp_int32 b)
 }
 
 #ifndef __LOWRES__
-pp_int32 Tracker::SCOPESHEIGHT() 
+pp_int32 Tracker::SCOPESHEIGHT()
 {
 	return (48*screen->getHeight()) / 480;
 }
 
-pp_int32 Tracker::CURRENTSCOPESHEIGHT() 
+pp_int32 Tracker::CURRENTSCOPESHEIGHT()
 {
 	if (!scopesControl)
 		return 0;
-	
+
 	if (scopesControl->isVisible())
 		return SCOPESHEIGHT();
 
 	return 0;
 }
 
-pp_int32 Tracker::SAMPLESECTIONDEFAULTHEIGHT()		
-{ 
+pp_int32 Tracker::SAMPLESECTIONDEFAULTHEIGHT()
+{
 	return screen->getHeight() < 480 ? 180 : 240;
 }
 
@@ -141,7 +141,7 @@ Tracker::Tracker() :
 	editMode(EditModeFastTracker),
 	extendedOrderlist(false),
 	followSong(true),
-	caughtMouseInUpperLeftCorner(false), 
+	caughtMouseInUpperLeftCorner(false),
 	useClassicBrowser(false),
 	savePanel(NULL),
 	fileSystemChangedListener(NULL)
@@ -151,12 +151,12 @@ Tracker::Tracker() :
 	settingsDatabase = new TrackerSettingsDatabase();
 
 	buildDefaultSettings();
-	
+
 	tabManager = new TabManager(*this);
-	
+
 	playerMaster = new PlayerMaster(TrackerConfig::numTabs);
 	playerController = tabManager->createPlayerController();
-	
+
 	moduleEditor = tabManager->createModuleEditor();
 
 	playerLogic = new PlayerLogic(*this);
@@ -164,16 +164,16 @@ Tracker::Tracker() :
 
 	// Sections
 	sectionSwitcher = new SectionSwitcher(*this);
-	
+
 	sections = new PPSimpleVector<SectionAbstract>();
-	
+
 	sectionTranspose = new SectionTranspose(*this);
 	sections->add(sectionTranspose);
 	sectionAdvancedEdit = new SectionAdvancedEdit(*this);
 	sections->add(sectionAdvancedEdit);
 	sectionDiskMenu = new SectionDiskMenu(*this);
 	sections->add(sectionDiskMenu);
-	sectionHDRecorder = new SectionHDRecorder(*this);	
+	sectionHDRecorder = new SectionHDRecorder(*this);
 	sections->add(sectionHDRecorder);
 	sectionSettings = new SectionSettings(*this);
 	sections->add(sectionSettings);
@@ -193,12 +193,12 @@ Tracker::Tracker() :
 	toolInvokeHelper = new ToolInvokeHelper(*this);
 
 	pp_int32 i;
-	
+
 	muteChannels = new bool[TrackerConfig::maximumPlayerChannels];
-	
+
 	for (i = 0; i < TrackerConfig::maximumPlayerChannels; i++)
 		muteChannels[i] = false;
-		
+
 	initKeyBindings();
 }
 
@@ -206,7 +206,7 @@ Tracker::~Tracker()
 {
 	delete eventKeyDownBindingsMilkyTracker;
 	delete eventKeyDownBindingsFastTracker;
-	
+
 	delete toolInvokeHelper;
 	delete responder;
 	delete dialog;
@@ -219,15 +219,15 @@ Tracker::~Tracker()
 	delete playerLogic;
 
 	delete playerMaster;
-	
+
 	delete messageBoxContainerGeneric;
-		
+
 	delete[] muteChannels;
-	
+
 	delete instrumentChooser;
-		
-	delete settingsDatabaseCopy;		
-	delete settingsDatabase; 
+
+	delete settingsDatabaseCopy;
+	delete settingsDatabase;
 }
 
 PatternEditor* Tracker::getPatternEditor()
@@ -255,12 +255,12 @@ void Tracker::setOrderListIndex(pp_int32 index)
 	// do not accept values which exceed the current number of orders
 	if (index >= moduleEditor->getNumOrders())
 		index = moduleEditor->getNumOrders()-1;
-		
+
 	listBoxOrderList->setSelectedIndex(index);
 	updateOrderlist();
 	// fake selection from orderlist, so everything will be updated correctly
 	PPEvent e(eSelection, &index, sizeof(index));
-	handleEvent(reinterpret_cast<PPObject*>(listBoxOrderList), &e);		
+	handleEvent(reinterpret_cast<PPObject*>(listBoxOrderList), &e);
 }
 
 bool Tracker::isEditingCurrentOrderlistPattern()
@@ -270,26 +270,28 @@ bool Tracker::isEditingCurrentOrderlistPattern()
 
 pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerController)
 {
-	if (PPControl* ctrl = screen->getModalControl())
+	// MAGIC
+	PPControl* ctrl = screen->getModalControl();
+	if (ctrl && ctrl->getID() != RESPONDMESSAGEBOX_MAGIC)
 	{
 		note--;
-	
+
 		PPContainer* container = static_cast<PPContainer*>(ctrl);
-	
+
 		PPListBox* listBoxSrc = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC));
 		PPListBox* listBoxSrcSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
-		PPListBox* listBoxSrcModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC3));		
+		PPListBox* listBoxSrcModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC3));
 		PPListBox* listBoxDst = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST));
 		PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 		PPListBox* listBoxDstModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST3));
-		
+
 		if (!listBoxSrc || !listBoxDst)
 			return -1;
 
 		PPListBox* focusedListBox = static_cast<PPListBox*>(container->getFocusedControl());
 		if (focusedListBox == NULL)
 			return getPatternEditorControl()->isInstrumentEnabled() ? listBoxInstruments->getSelectedIndex() + 1 : 0;
-		
+
 		// not having any module selection boxes
 		if (listBoxSrc && listBoxDst &&
 			!listBoxSrcModule && !listBoxDstModule)
@@ -299,8 +301,8 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 				focusedListBox == listBoxDst)
 				return focusedListBox->getSelectedIndex() + 1;
 		}
-		
-		// focus is on instruments		
+
+		// focus is on instruments
 		if (focusedListBox == listBoxSrc ||
 			focusedListBox == listBoxSrcModule)
 		{
@@ -315,7 +317,7 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 			// return the selected index from the focused list box
 			return listBoxDst->getSelectedIndex() + 1;
 		}
-		
+
 		// if focus is on one of the samples list boxes set up some sample playing
 		// on the sample playing channels of the current player
 		ModuleEditor* src = listBoxSrcModule ? tabManager->getModuleEditorFromTabIndex(listBoxSrcModule->getSelectedIndex()) : this->moduleEditor;
@@ -344,7 +346,7 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 										note);
 			return -1;
 		}
-		
+
 		return focusedListBox->getSelectedIndex() + 1;
 	}
 	else
@@ -370,7 +372,7 @@ void Tracker::showSongSettings(bool show)
 
 void Tracker::showMainOptions(bool show)
 {
-	screen->getControlByID(CONTAINER_MENU)->show(show);	
+	screen->getControlByID(CONTAINER_MENU)->show(show);
 }
 
 void Tracker::showMainMenu(bool show, bool showInstrumentSelector)
@@ -384,7 +386,7 @@ void Tracker::showMainMenu(bool show, bool showInstrumentSelector)
 	if (!show)
 	{
 		showSongSettings(false);
-		showMainOptions(false);		
+		showMainOptions(false);
 		screen->getControlByID(CONTAINER_LOWRES_MENUSWITCH)->show(false);
 		screen->getControlByID(CONTAINER_INSTRUMENTLIST)->show(false);
 		screen->getControlByID(CONTAINER_LOWRES_TINYMENU)->show(false);
@@ -401,9 +403,9 @@ void Tracker::showMainMenu(bool show, bool showInstrumentSelector)
 void Tracker::selectScopesControl(pp_int32 ctrlType)
 {
 	scopesControl->setCurrentClickType((ScopesControl::ClickTypes)ctrlType);
-	
+
 	updateScopesControlButtons();
-	
+
 	screen->paintControl(screen->getControlByID(CONTAINER_SCOPECONTROL));
 }
 
@@ -412,17 +414,17 @@ void Tracker::updateScopesControlButtons()
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SCOPECONTROL));
 
 	ASSERT(container);
-	
+
 	if (!container->isVisible())
 		return;
-		
+
 	if (!scopesControl)
 		return;
-					
+
 	static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_MUTE))->setPressed(false);
 	static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_SOLO))->setPressed(false);
 	static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_REC))->setPressed(false);
-					
+
 	switch (scopesControl->getCurrentClickType())
 	{
 		case ScopesControl::ClickTypeMute:
@@ -431,7 +433,7 @@ void Tracker::updateScopesControlButtons()
 		case ScopesControl::ClickTypeSolo:
 			static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_SOLO))->setPressed(true);
 			break;
-		case ScopesControl::ClickTypeRec:		
+		case ScopesControl::ClickTypeRec:
 			static_cast<PPButton*>(container->getControlByID(BUTTON_SCOPECONTROL_REC))->setPressed(true);
 			break;
 	}
@@ -441,17 +443,17 @@ void Tracker::toggleJamMenuPianoSize()
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_JAMMENU));
 	ASSERT(container);
-	
+
 	PianoControl* pCtrl = static_cast<PianoControl*>(container->getControlByID(PIANO_CONTROL));
 	ASSERT(pCtrl);
-	
+
 	bool largePiano = (pCtrl->getxScale() == 6 && pCtrl->getyScale() == 3);
-	
+
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_JAMMENU_TOGGLEPIANOSIZE));
 	ASSERT(button);
-	
+
 	button->setText(largePiano ? TrackerConfig::stringButtonCollapsed : TrackerConfig::stringButtonExtended);
-	
+
 	if (largePiano)
 	{
 		container->setSize(PPSize(container->getSize().width, container->getSize().height - 25*2));
@@ -460,7 +462,7 @@ void Tracker::toggleJamMenuPianoSize()
 		pCtrl->setxScale(3);
 		pCtrl->setyScale(1);
 		pCtrl->setSize(PPSize(screen->getWidth() - 4, 25*1+12));
-		
+
 		getPatternEditorControl()->setSize(PPSize(getPatternEditorControl()->getSize().width, getPatternEditorControl()->getSize().height + 25*2));
 	}
 	else
@@ -474,7 +476,7 @@ void Tracker::toggleJamMenuPianoSize()
 
 		getPatternEditorControl()->setSize(PPSize(getPatternEditorControl()->getSize().width, getPatternEditorControl()->getSize().height - 25*2));
 	}
-	
+
 	screen->paint();
 }
 
@@ -489,13 +491,13 @@ void Tracker::flipInstrumentListBoxes()
 
 	PPPoint insPos = listBoxIns->getLocation();
 	PPSize insSize = listBoxIns->getSize();
-	
+
 	PPPoint smpPos = listBoxSmp->getLocation();
 	PPSize smpSize = listBoxSmp->getSize();
 
 	listBoxSmp->setLocation(insPos);
 	listBoxSmp->setSize(insSize);
-	
+
 	listBoxIns->setLocation(smpPos);
 	listBoxIns->setSize(smpSize);
 
@@ -539,8 +541,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 	}
 	else if (event->getID() == eKeyDown ||
 			 event->getID() == eKeyChar ||
-			 event->getID() == eKeyUp) 
-	{	
+			 event->getID() == eKeyUp)
+	{
 		processShortcuts(event);
 	}
 	else if (event->getID() == eTimer)
@@ -558,7 +560,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 	else if (event->getID() == eLMouseUp)
 	{
 		PPPoint* p = (PPPoint*)event->getDataPtr();
-		
+
 		if ((p->x <= TrackerConfig::trackerExitBounds.x && p->y <= TrackerConfig::trackerExitBounds.y) && caughtMouseInUpperLeftCorner)
 		{
 			event->cancel();
@@ -578,16 +580,16 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				eventKeyDownBinding_InvokeSectionHDRecorder();
 				break;
 			}*/
-			
+
 			case BUTTON_INSTRUMENT:
 			{
 				if (event->getID() != eCommand)
 					break;
-			
+
 				enableInstrument(!getPatternEditorControl()->isInstrumentEnabled());
 				break;
 			}
@@ -596,12 +598,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-			
+
 				TitlePageManager titlePageManager(*screen);
 				titlePageManager.setPeakControlHeadingColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 				break;
 			}
-					
+
 			case BUTTON_ABOUT_SHOWTITLE:
 			{
 				if (event->getID() != eCommand)
@@ -620,7 +622,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				titlePageManager.showTitlePage(TitlePageManager::PageTime);
 				break;
 			}
-			
+
 			case BUTTON_ABOUT_ESTIMATESONGLENGTH:
 			{
 				if (event->getID() != eCommand)
@@ -678,7 +680,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				screen->paintControl(screen->getControlByID(CONTAINER_ORDERLIST));
 				break;
 			}
-		
+
 			case BUTTON_SPEEDCONTAINERFLIP:
 			{
 				if (event->getID() != eCommand)
@@ -687,7 +689,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				screen->paintControl(screen->getControlByID(CONTAINER_SPEED));
 				break;
 			}
-		
+
 #ifdef __LOWRES__
 			// -------- submenus ------------------------------
 			case BUTTON_APP_EXIT:
@@ -706,12 +708,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				PPButton* button = reinterpret_cast<PPButton*>(sender);
-				
-				sectionSwitcher->switchToSubMenu((SectionSwitcher::ActiveLowerSectionPages)(button->getID() - BUTTON_0));		
+
+				sectionSwitcher->switchToSubMenu((SectionSwitcher::ActiveLowerSectionPages)(button->getID() - BUTTON_0));
 				break;
 			}
 #endif
-				
+
 			// -------- generic message box -------------------
 			case PP_MESSAGEBOX_BUTTON_YES:
 			case PP_MESSAGEBOX_BUTTON_NO:
@@ -736,15 +738,15 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case PP_MESSAGEBOX_BUTTON_USER14:
 			case PP_MESSAGEBOX_BUTTON_USER15:
 			{
-				bool res = messageBoxEventListener(screen->getModalControl()->getID(), 
+				bool res = messageBoxEventListener(screen->getModalControl()->getID(),
 												   reinterpret_cast<PPControl*>(sender)->getID());
-				
+
 				if (res)
 					screen->setModalControl(NULL);  // repaints
-				
+
 				break;
 			}
-			
+
 			case MAINMENU_PLAY_SONG:
 				playerLogic->playSong();
 				break;
@@ -768,22 +770,22 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 				if (dialog)
 					delete dialog;
-				
+
 				if (responder)
 					delete responder;
-					
-				responder = new ZapHandler(Zapper(*this));				
-				dialog = new DialogZap(screen, responder, PP_DEFAULT_ID);	
+
+				responder = new ZapHandler(Zapper(*this));
+				dialog = new DialogZap(screen, responder, PP_DEFAULT_ID);
 
 				dialog->show();
 				break;
-			
-			// open song	
+
+			// open song
 			case MAINMENU_LOAD:
 			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				eventKeyDownBinding_Open();
 				break;
 			}
@@ -808,10 +810,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 			// disk op
 			case MAINMENU_DISKMENU:
-			{				
+			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				eventKeyDownBinding_InvokeSectionDiskMenu();
 				break;
 			}
@@ -869,20 +871,20 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 			// settings
 			case MAINMENU_ADVEDIT:
-			{				
+			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				eventKeyDownBinding_InvokeSectionAdvancedEdit();
 				break;
 			}
 
 			// transpose
 			case MAINMENU_TRANSPOSE:
-			{				
+			{
 				if (event->getID() != eCommand)
 					break;
-				
+
 				eventKeyDownBinding_InvokeSectionTranspose();
 				break;
 			}
@@ -892,7 +894,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-					
+
 				eventKeyDownBinding_InvokeSectionSettings();
 				break;
 			}
@@ -902,7 +904,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-					
+
 				eventKeyDownBinding_InvokeSectionQuickOptions();
 				break;
 			}
@@ -912,7 +914,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-					
+
 				eventKeyDownBinding_InvokeSectionOptimize();
 				break;
 			}
@@ -921,19 +923,19 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-					
+
 				eventKeyDownBinding_InvokeSectionAbout();
 				break;
 			}
-			
+
 #ifdef __LOWRES__
 			case BUTTON_SAMPLES_INVOKEHDRECORDER:
 			{
 				if (event->getID() != eCommand)
 					break;
 
-				// The bottom section fills up the entire screen 
-				// so we first need to hide the entire section before we can show 
+				// The bottom section fills up the entire screen
+				// so we first need to hide the entire section before we can show
 				// the HD recorder section
 				screen->pauseUpdate(true);
 				sectionSwitcher->hideBottomSection();
@@ -945,7 +947,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 #endif
-			
+
 			case BUTTON_ORDERLIST_SONGLENGTH_PLUS:
 				moduleEditor->increaseSongLength();
 				updateSongLength();
@@ -957,7 +959,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updateSongLength();
 				sectionHDRecorder->adjustOrders();
 				break;
-			
+
 			case BUTTON_ORDERLIST_REPEAT_PLUS:
 				moduleEditor->increaseRepeatPos();
 				updateSongRepeat();
@@ -1014,7 +1016,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updateOrderlist();
 				playerLogic->continuePlayingSong();
 				break;
-			
+
 			// select previous pattern in current orderlist position
 			case BUTTON_ORDERLIST_PREVIOUS:
 				moduleEditor->decreaseOrderPosition(getOrderListBoxIndex());
@@ -1024,21 +1026,21 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 			case BUTTON_OCTAVE_MINUS:
 				getPatternEditor()->decreaseCurrentOctave();
-				updatePatternAddAndOctave();				
+				updatePatternAddAndOctave();
 				break;
 			case BUTTON_OCTAVE_PLUS:
 				getPatternEditor()->increaseCurrentOctave();
-				updatePatternAddAndOctave();				
+				updatePatternAddAndOctave();
 				break;
 
 			case BUTTON_ADD_PLUS:
 				getPatternEditorControl()->increaseRowInsertAdd();
-				updatePatternAddAndOctave();				
+				updatePatternAddAndOctave();
 				break;
-			
+
 			case BUTTON_ADD_MINUS:
 				getPatternEditorControl()->decreaseRowInsertAdd();
-				updatePatternAddAndOctave();				
+				updatePatternAddAndOctave();
 				break;
 
 			case BUTTON_BPM_PLUS:
@@ -1046,38 +1048,38 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				setChanged();
 				mp_sint32 bpm,speed;
 				playerController->getSpeed(bpm, speed);
-				playerController->setSpeed(bpm+1, speed);				
-				updateSpeed();				
+				playerController->setSpeed(bpm+1, speed);
+				updateSpeed();
 				break;
 			}
-			
+
 			case BUTTON_BPM_MINUS:
 			{
 				setChanged();
 				mp_sint32 bpm,speed;
 				playerController->getSpeed(bpm, speed);
 				playerController->setSpeed(bpm-1, speed);
-				updateSpeed();				
+				updateSpeed();
 				break;
 			}
-			
+
 			case BUTTON_SPEED_PLUS:
 			{
 				setChanged();
 				mp_sint32 bpm,speed;
 				playerController->getSpeed(bpm, speed);
 				playerController->setSpeed(bpm, speed+1);
-				updateSpeed();				
+				updateSpeed();
 				break;
 			}
-			
+
 			case BUTTON_SPEED_MINUS:
 			{
 				setChanged();
 				mp_sint32 bpm,speed;
 				playerController->getSpeed(bpm, speed);
 				playerController->setSpeed(bpm, speed-1);
-				updateSpeed();				
+				updateSpeed();
 				break;
 			}
 
@@ -1090,14 +1092,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_PATTERN_MINUS:
 				eventKeyDownBinding_PreviousPattern();
 				break;
-			
+
 			// expand current pattern
 			case BUTTON_PATTERN_EXPAND:
 				getPatternEditor()->expandPattern();
 				updatePatternLength(false);
 				screen->update();
 				break;
-			
+
 			// shrink current pattern
 			case BUTTON_PATTERN_SHRINK:
 				getPatternEditor()->shrinkPattern();
@@ -1111,7 +1113,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updatePatternLength(false);
 				screen->update();
 				break;
-			
+
 			// decrease length
 			case BUTTON_PATTERN_SIZE_MINUS:
 				getPatternEditor()->resizePattern(moduleEditor->getPattern(moduleEditor->getCurrentPatternIndex())->rows - 1);
@@ -1129,7 +1131,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_JAMMENU_PREVORDERLIST:
 				selectPreviousOrder();
 				break;
-			
+
 			case BUTTON_JAMMENU_NEXTINSTRUMENT:
 				selectNextInstrument();
 				break;
@@ -1148,7 +1150,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_INSTRUMENTS_FLIP:
 				if (event->getID() != eCommand)
 					break;
-				
+
 				flipInstrumentListBoxes();
 				break;
 #endif
@@ -1157,9 +1159,9 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_MENU_ITEM_ADDCHANNELS:
 			case BUTTON_MENU_ITEM_SUBCHANNELS:
 			{
-				mp_sint32 numChannels = moduleEditor->getNumChannels() + 
+				mp_sint32 numChannels = moduleEditor->getNumChannels() +
 										(reinterpret_cast<PPControl*>(sender)->getID() == BUTTON_MENU_ITEM_ADDCHANNELS ? 2 : -2);
-				
+
 				if (numChannels > TrackerConfig::numPlayerChannels)
 					numChannels = TrackerConfig::numPlayerChannels;
 				if (numChannels < 2)
@@ -1181,13 +1183,13 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				pp_uint32 i = listBoxInstruments->getSelectedIndex();
 				moduleEditor->freeInstrument();
 				updateInstrumentsListBox(false);
-				
+
 				if (listBoxInstruments->getSelectedIndex() != i)
 				{
 					getPatternEditorControl()->setCurrentInstrument(listBoxInstruments->getSelectedIndex() + 1);
 					updateSampleEditorAndInstrumentSection(false);
 				}
-				
+
 				screen->update();
 				break;
 			}
@@ -1207,16 +1209,16 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 #ifdef __LOWRES__
 			case BUTTON_SCOPECONTROL_MUTE:
 				if (event->getID() != eCommand)
-					break;					
+					break;
 				selectScopesControl(ScopesControl::ClickTypeMute);
 				break;
-				
+
 			case BUTTON_SCOPECONTROL_SOLO:
 				if (event->getID() != eCommand)
 					break;
 				selectScopesControl(ScopesControl::ClickTypeSolo);
 				break;
-				
+
 			case BUTTON_SCOPECONTROL_REC:
 				if (event->getID() != eCommand)
 					break;
@@ -1224,10 +1226,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 #endif
 		}
-		
+
 		// Check if something has changed
 		updateWindowTitle();
-		
+
 	}
 	else if (event->getID() == ePreSelection)
 	{
@@ -1243,7 +1245,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 		}
 	}
 	else if (event->getID() == eSelection)
-	{		
+	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			case TABHEADER_CONTROL:
@@ -1252,14 +1254,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				tabManager->switchToTab(index);
 				break;
 			}
-		
+
 			// new pattern has been selected in the orderlist
 			case LISTBOX_ORDERLIST:
 			{
 				pp_int32 orderIndex = *((pp_int32*)event->getDataPtr());
 				moduleEditor->setCurrentOrderIndex(orderIndex);
 				moduleEditor->setCurrentPatternIndex(moduleEditor->getOrderPosition(orderIndex));
-				
+
 				updatePatternEditorControl(false);
 				updatePatternIndex(false);
 				updatePatternLength(false);
@@ -1267,7 +1269,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updateJamMenuOrder(false);
 #endif
 				screen->update();
-				
+
 				if (playerController->isPlayingPattern())
 					playerLogic->continuePlayingPattern();
 				else
@@ -1279,7 +1281,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case LISTBOX_INSTRUMENTS:
 			{
 				pp_int32 index = *((pp_int32*)event->getDataPtr()) + 1;
-				selectInstrument(index);		
+				selectInstrument(index);
 				screen->update();
 				break;
 			}
@@ -1290,11 +1292,11 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				moduleEditor->setCurrentSampleIndex(index);
 				updateSampleEditorAndInstrumentSection(false);
 				for (pp_int32 i = 0; i < sections->size(); i++)
-					sections->get(i)->notifySampleSelect(index);						
-				screen->update();				
+					sections->get(i)->notifySampleSelect(index);
+				screen->update();
 				break;
 			}
-			
+
 			// Instrument chooser
 			case INSTRUMENT_CHOOSER_LIST_SRC3:
 			case INSTRUMENT_CHOOSER_LIST_DST3:
@@ -1327,11 +1329,11 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				{
 					listBoxChangeIns->clear();
 					listBoxChangeSmp->clear();
-					
+
 					fillInstrumentListBox(listBoxChangeIns,
 										  tabManager->getModuleEditorFromTabIndex((reinterpret_cast<PPListBox*>(sender))->getSelectedIndex()));
 
-					fillSampleListBox(listBoxChangeSmp, listBoxChangeIns->getSelectedIndex(), 
+					fillSampleListBox(listBoxChangeSmp, listBoxChangeIns->getSelectedIndex(),
 									  tabManager->getModuleEditorFromTabIndex((reinterpret_cast<PPListBox*>(sender))->getSelectedIndex()));
 				}
 
@@ -1346,8 +1348,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						break;
 				}
 
-				staticText->setText(buffer);				
-				screen->paintControl(screen->getModalControl());				
+				staticText->setText(buffer);
+				screen->paintControl(screen->getModalControl());
 				break;
 			}
 
@@ -1356,21 +1358,21 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case INSTRUMENT_CHOOSER_LIST_DST:
 			{
 				PPContainer* container = static_cast<PPContainer*>(screen->getModalControl());
-				
+
 				PPStaticText* staticText = static_cast<PPStaticText*>(container->getControlByID(INSTRUMENT_CHOOSER_USERSTR1));
-					
+
 				PPListBox* listBoxSrc = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC));
 				PPListBox* listBoxDst = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST));
 
 				PPListBox* listBoxSrcModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC3));
 				PPListBox* listBoxDstModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST3));
-				
+
 				ModuleEditor* src = listBoxSrcModule ? tabManager->getModuleEditorFromTabIndex(listBoxSrcModule->getSelectedIndex()) : this->moduleEditor;
-				ModuleEditor* dst = listBoxDstModule ? tabManager->getModuleEditorFromTabIndex(listBoxDstModule->getSelectedIndex()) : this->moduleEditor;				
-				
+				ModuleEditor* dst = listBoxDstModule ? tabManager->getModuleEditorFromTabIndex(listBoxDstModule->getSelectedIndex()) : this->moduleEditor;
+
 				PPListBox* listBoxChange = NULL;
 				ModuleEditor* moduleEditor = this->moduleEditor;
-				
+
 				// A new instrument has been selected in either of the two instrument list boxes
 				// now it's up to update the samples belonging to the instrument in the sample listboxes
 				if (reinterpret_cast<PPControl*>(sender)->getID() == INSTRUMENT_CHOOSER_LIST_SRC)
@@ -1383,13 +1385,13 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					listBoxChange = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 					moduleEditor = dst;
 				}
-					
+
 				if (listBoxChange)
 				{
 					listBoxChange->clear();
 					fillSampleListBox(listBoxChange, reinterpret_cast<PPListBox*>(sender)->getSelectedIndex(), moduleEditor);
 				}
-				
+
 				// update text depending on the type of the instrument chooser dialog
 				switch (container->getID())
 				{
@@ -1403,9 +1405,9 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						sprintf(buffer, "Remap ins. %x to %x", listBoxSrc->getSelectedIndex()+1, listBoxDst->getSelectedIndex()+1);
 						break;
 				}
-				
-				staticText->setText(buffer);				
-				screen->paintControl(screen->getModalControl());				
+
+				staticText->setText(buffer);
+				screen->paintControl(screen->getModalControl());
 				break;
 			}
 
@@ -1413,12 +1415,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			case INSTRUMENT_CHOOSER_LIST_DST2:
 			{
 				PPContainer* container = static_cast<PPContainer*>(screen->getModalControl());
-				
+
 				PPStaticText* staticText = static_cast<PPStaticText*>(container->getControlByID(INSTRUMENT_CHOOSER_USERSTR2));
-					
+
 				PPListBox* listBoxSrc = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
 				PPListBox* listBoxDst = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
-				
+
 				switch (container->getID())
 				{
 					case INSTRUMENT_CHOOSER_COPY:
@@ -1428,12 +1430,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						sprintf(buffer, "Swap smp. %x with %x", listBoxSrc->getSelectedIndex(), listBoxDst->getSelectedIndex());
 						break;
 				}
-				
-				staticText->setText(buffer);				
+
+				staticText->setText(buffer);
 				screen->paintControl(screen->getModalControl());
 				break;
 			}
-			
+
 		}
 
 	}
@@ -1446,26 +1448,26 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				moduleEditor->setTitle(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_TITLETEXT);
 				break;
 			}
-		
+
 			case LISTBOX_INSTRUMENTS:
 			{
-				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(), 
+				moduleEditor->setInstrumentName(listBoxInstruments->getSelectedIndex(),
 												**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), ModuleEditor::MAX_INSTEXT);
 				break;
 			}
-			
+
 			case LISTBOX_SAMPLES:
 			{
-				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())), 
+				moduleEditor->setCurrentSampleName(**(reinterpret_cast<const PPString* const*>(event->getDataPtr())),
 												   ModuleEditor::MAX_SMPTEXT);
 				break;
 			}
-			
+
 			// channels have been muted/unmuted in pattern editor
 			case PATTERN_EDITOR:
 			{
 				const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
-				
+
 				for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 				{
 					muteChannels[i] = muteChannelsPtr[i];
@@ -1473,12 +1475,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					playerController->muteChannel(i, b);
 					scopesControl->muteChannel(i, b);
 				}
-				
+
 				if (scopesControl->needsUpdate())
 					screen->paintControl(scopesControl);
 				break;
 			}
-			
+
 			// channels have been muted/unmuted in scopes
 			case SCOPES_CONTROL:
 			{
@@ -1487,7 +1489,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					case ScopesControl::ChangeValueMuting:
 					{
 						const bool* muteChannelsPtr = reinterpret_cast<const bool*>(event->getDataPtr());
-						
+
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
 							muteChannels[i] = muteChannelsPtr[i];
@@ -1495,31 +1497,31 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 							playerController->muteChannel(i, b);
 							getPatternEditorControl()->muteChannel(i, b);
 						}
-						
+
 						if (scopesControl->needsUpdate())
 							screen->paintControl(scopesControl, false);
 						screen->paintControl(getPatternEditorControl(), false);
-						
+
 						screen->update();
 						break;
-					}					
-					
+					}
+
 					case ScopesControl::ChangeValueRecording:
 					{
 						const pp_uint8* recordChannelsPtr = reinterpret_cast<const pp_uint8*>(event->getDataPtr());
-						
+
 						for (pp_int32 i = 0; i < TrackerConfig::numPlayerChannels; i++)
 						{
 							bool b = (recordChannelsPtr[i] != 0);
 							playerController->recordChannel(i, b);
 							getPatternEditorControl()->recordChannel(i, b);
 						}
-						
+
 						playerController->resetFirstPlayingChannel();
-						
+
 						if (scopesControl->needsUpdate())
 							screen->paintControl(scopesControl, false);
-						
+
 						screen->update();
 						break;
 					}
@@ -1527,11 +1529,11 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
-		}	
+		}
 
 		// Check if something has changed
 		updateWindowTitle();
-	
+
 	}
 	else if (event->getID() == eUpdated)
 	{
@@ -1578,14 +1580,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						}
 						// Calculate new position within pattern and update player position
 						ASSERT(row > 0);
-						
-						// when we're in wraparound mode and we're not in the last 
+
+						// when we're in wraparound mode and we're not in the last
 						// pattern & row of the last order, wrap around cursor in current pattern
 						if (!b || patternEditorControl->getWrapAround())
 							patternEditorControl->setRow(myMod(row - numRows, patternEditor->getNumRows()), false);
 						else
 							patternEditorControl->setRow(numRows-1, false);
-						
+
 						updateSongLength(true);
 						updatePatternIndex(true);
 						updatePatternLength(true);
@@ -1615,14 +1617,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						}
 						// Calculate new position within pattern and update player position
 						ASSERT(row < 0);
-						
-						// when we're in wraparound mode and we're not in the last 
+
+						// when we're in wraparound mode and we're not in the last
 						// pattern & row of the last order, wrap around cursor in current pattern
 						if (!b || patternEditorControl->getWrapAround())
 							patternEditorControl->setRow(myMod(patternEditor->getNumRows() + row, patternEditor->getNumRows()), false);
 						else
 							patternEditorControl->setRow(0, false);
-							
+
 						updateSongLength(true);
 						updatePatternIndex(true);
 						updatePatternLength(true);
@@ -1694,12 +1696,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						// if we are in the last order of the order list and in the last row of this order don't advance to the next pattern
 						else if (!patternEditorControl->getWrapAround() && listBoxOrderList->isLastEntry())
 						{
-							patternEditorControl->setRow(numRows - 1, false);							
+							patternEditorControl->setRow(numRows - 1, false);
 						}
 						else
 						{
 							// Calculate new position within pattern and update player position
-							ASSERT(row > 0);						
+							ASSERT(row > 0);
 							patternEditorControl->setRow(myMod(row - numRows, patternEditor->getNumRows()), false);
 						}
 
@@ -1708,10 +1710,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						updatePatternLength(true);
 						updateSongRow();
 						return 1;
-						
+
 					// Not wrapped at all... Just calculate new position within pattern and update player position
 					case PatternEditorControl::AdvanceCodeSelectNewRow:
-						if (shouldFollowSong() && 
+						if (shouldFollowSong() &&
 							isEditingCurrentOrderlistPattern())
 							updateSongRow();
 						break;
@@ -1724,13 +1726,13 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 	else if (event->getID() == eFullScreen)
 	{
 		TrackerSettingsDatabase* settingsDatabaseCopySecond = new TrackerSettingsDatabase(*settingsDatabase);
-		
+
 		if (settingsDatabaseCopy)
 			settingsDatabaseCopy->store("FULLSCREEN", !screen->isFullScreen());
 		settingsDatabaseCopySecond->store("FULLSCREEN", !screen->isFullScreen());
-		
+
 		applySettings(settingsDatabaseCopySecond, settingsDatabase);
-		
+
 		delete settingsDatabase;
 		settingsDatabase = settingsDatabaseCopySecond;
 
@@ -1764,17 +1766,17 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 			switch (messageBoxID)
 			{
 				case INSTRUMENT_CHOOSER_COPY:
-					this->moduleEditor->copyInstrument(*dst, listBoxDst->getSelectedIndex(), 
+					this->moduleEditor->copyInstrument(*dst, listBoxDst->getSelectedIndex(),
 													   *src, listBoxSrc->getSelectedIndex());
 					break;
 				case INSTRUMENT_CHOOSER_SWAP:
-					this->moduleEditor->swapInstruments(*dst, listBoxDst->getSelectedIndex(), 
+					this->moduleEditor->swapInstruments(*dst, listBoxDst->getSelectedIndex(),
 														*src, listBoxSrc->getSelectedIndex());
 					break;
 				default:
 					ASSERT(false);
 			}
-			
+
 			if (messageBoxButtonID == PP_MESSAGEBOX_BUTTON_USER3)
 			{
 				pp_int32 index = listBoxDst->getSelectedIndex()+1;
@@ -1782,30 +1784,30 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 				index = listBoxSrc->getSelectedIndex()+1;
 				listBoxSrc->setSelectedIndex(index, false, true);
 			}
-			
+
 			break;
 		}
-			
+
 		case PP_MESSAGEBOX_BUTTON_USER2:
 		case PP_MESSAGEBOX_BUTTON_USER4:
 		{
 			PPListBox* listBoxSrcSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
 			PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
-			
+
 			switch (messageBoxID)
 			{
 				case INSTRUMENT_CHOOSER_COPY:
-					this->moduleEditor->copySample(*dst, listBoxDst->getSelectedIndex(), listBoxDstSmp->getSelectedIndex(), 
+					this->moduleEditor->copySample(*dst, listBoxDst->getSelectedIndex(), listBoxDstSmp->getSelectedIndex(),
 												   *src, listBoxSrc->getSelectedIndex(), listBoxSrcSmp->getSelectedIndex());
 					break;
 				case INSTRUMENT_CHOOSER_SWAP:
-					this->moduleEditor->swapSamples(*dst, listBoxDst->getSelectedIndex(), listBoxDstSmp->getSelectedIndex(), 
+					this->moduleEditor->swapSamples(*dst, listBoxDst->getSelectedIndex(), listBoxDstSmp->getSelectedIndex(),
 													*src, listBoxSrc->getSelectedIndex(), listBoxSrcSmp->getSelectedIndex());
 					break;
 				default:
 					ASSERT(false);
 			}
-			
+
 			if (messageBoxButtonID == PP_MESSAGEBOX_BUTTON_USER4)
 			{
 				pp_int32 index = listBoxDstSmp->getSelectedIndex()+1;
@@ -1815,7 +1817,7 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 			}
 			break;
 		}
-		
+
 		// swap source/destination list boxes
 		case PP_MESSAGEBOX_BUTTON_USER5:
 		{
@@ -1823,8 +1825,8 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 				return true;
 
 			PPListBox* listBoxSrcSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
-			PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));			
-				
+			PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
+
 			pp_int32 srcModIndex = listBoxSrcModule->getSelectedIndex();
 			pp_int32 dstModIndex = listBoxDstModule->getSelectedIndex();
 
@@ -1836,15 +1838,15 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 
 			listBoxSrcModule->setSelectedIndex(dstModIndex, false);
 			listBoxDstModule->setSelectedIndex(srcModIndex, false);
-			
+
 			updateInstrumentChooser(false);
-			
+
 			listBoxSrc->setSelectedIndex(dstInsIndex, false);
-			listBoxDst->setSelectedIndex(srcInsIndex, false);			
+			listBoxDst->setSelectedIndex(srcInsIndex, false);
 
 			listBoxSrcSmp->setSelectedIndex(dstSmpIndex, false);
-			listBoxDstSmp->setSelectedIndex(srcSmpIndex, false);		
-			
+			listBoxDstSmp->setSelectedIndex(srcSmpIndex, false);
+
 			updateInstrumentChooser(true);
 			screen->paint();
 			return true;
@@ -1877,15 +1879,15 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 			dst->freeInstrument();
 			break;
 		}
-		
+
 		case PP_MESSAGEBOX_BUTTON_USER6:
-		{	
+		{
 			// play source
 			SamplePlayer samplePlayer(*src, *playerController);
 			PPListBox* listBoxSrcSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC2));
 
 			samplePlayer.playSample(listBoxSrc->getSelectedIndex(),
-									listBoxSrcSmp->getSelectedIndex(), 
+									listBoxSrcSmp->getSelectedIndex(),
 									sectionSamples->getCurrentSamplePlayNote());
 			return true;
 		}
@@ -1897,17 +1899,17 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 			PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 
 			samplePlayer.playSample(listBoxDst->getSelectedIndex(),
-									listBoxDstSmp->getSelectedIndex(), 
+									listBoxDstSmp->getSelectedIndex(),
 									sectionSamples->getCurrentSamplePlayNote());
 			return true;
 		}
-		
+
 		default:
 			return false;
 	}
 
 	updateInstrumentChooser(false);
-	
+
 	if (listBoxInstruments->getSelectedIndex() == listBoxDst->getSelectedIndex() &&
 		dst == this->moduleEditor)
 	{
@@ -1915,12 +1917,12 @@ bool Tracker::swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButto
 		sectionInstruments->resetEnvelopeEditor();
 		sectionSamples->resetSampleEditor();
 	}
-	
+
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(PP_MESSAGEBOX_BUTTON_CANCEL));
 	button->setText("Done");
-	
+
 	sectionSamples->updateAfterLoad();
-	
+
 	screen->paint();
 	return true;
 }
@@ -1966,12 +1968,12 @@ bool Tracker::messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBox
 					PPContainer* container = static_cast<PPContainer*>(screen->getModalControl());
 					PPListBox* listBoxSrc = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_SRC));
 					PPListBox* listBoxDst = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST));
-					
+
 					pp_int32 newIns = listBoxDst->getSelectedIndex()+1;
 					pp_int32 oldIns = listBoxSrc->getSelectedIndex()+1;
-					
+
 					pp_int32 res = 0;
-					
+
 					switch (messageBoxButtonID)
 					{
 						case PP_MESSAGEBOX_BUTTON_USER1:
@@ -1987,20 +1989,20 @@ bool Tracker::messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBox
 							res = getPatternEditor()->insRemapSelection(oldIns, newIns);
 							break;
 					}
-					
+
 					char buffer[100];
 					sprintf(buffer, "%i Instruments have been remapped", res);
 					showMessageBox(MESSAGEBOX_UNIVERSAL, buffer, MessageBox_OK);
-					
+
 					screen->paint();
 					return false;
 				}
 			}
 
 			break;
-		}		
+		}
 	}
-	
+
 	return true;
 }
 
@@ -2013,22 +2015,22 @@ bool Tracker::isActiveEditing()
 	// check for focus of song title edit field
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 	PPListBox* listBox = static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE));
-	
-	if (screen->hasFocus(container) && listBox->isEditing())							
+
+	if (screen->hasFocus(container) && listBox->isEditing())
 		return true;
 
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_INSTRUMENTLIST));
 	listBox = listBoxInstruments;
 
-	if (screen->hasFocus(container) && listBox->isEditing())							
+	if (screen->hasFocus(container) && listBox->isEditing())
 		return true;
 
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_INSTRUMENTLIST));
 	listBox = listBoxSamples;
 
-	if (screen->hasFocus(container) && listBox->isEditing())							
+	if (screen->hasFocus(container) && listBox->isEditing())
 		return true;
-		
+
 	if (sectionDiskMenu->isActiveEditing())
 		return true;
 
@@ -2097,7 +2099,7 @@ void Tracker::setProspectiveMode(bool b, bool repaint/* = true*/)
 	getPatternEditorControl()->setProspective(b);
 	updateAboutToggleButton(BUTTON_ABOUT_PROSPECTIVE, b, repaint);
 }
-	
+
 bool Tracker::getCursorWrapAround()
 {
 	return getPatternEditorControl()->getWrapAround();
@@ -2110,7 +2112,7 @@ void Tracker::setCursorWrapAround(bool b, bool repaint/* = true*/)
 }
 
 void Tracker::setLiveSwitch(bool b, bool repaint/* = true*/)
-{	
+{
 	playerLogic->setLiveSwitch(b);
 	updateAboutToggleButton(BUTTON_ABOUT_LIVESWITCH, b, repaint);
 }
@@ -2119,10 +2121,10 @@ void Tracker::updateSongRow(bool checkFollowSong/* = true*/)
 {
 	if (checkFollowSong && !shouldFollowSong())
 		return;
-		
+
 	mp_sint32 row = getPatternEditorControl()->getCurrentRow();
 	mp_sint32 pos = listBoxOrderList->getSelectedIndex();
-	
+
 	playerController->setPatternPos(pos, row);
 }
 
@@ -2133,7 +2135,7 @@ void Tracker::selectInstrument(pp_int32 instrument)
 	moduleEditor->setCurrentInstrumentIndex(instrument-1);
 
 	getPatternEditorControl()->setCurrentInstrument(instrument);
-	
+
 	sectionTranspose->setCurrentInstrument(instrument, false);
 
 	updateSamplesListBox(false);
@@ -2176,7 +2178,7 @@ void Tracker::fillSampleListBox(PPListBox* listBox, pp_int32 insIndex, ModuleEdi
 void Tracker::fillModuleListBox(PPListBox* listBox)
 {
 #ifndef __LOWRES__
-	TabHeaderControl* tabHeader = static_cast<TabHeaderControl*>(screen->getControlByID(TABHEADER_CONTROL));	
+	TabHeaderControl* tabHeader = static_cast<TabHeaderControl*>(screen->getControlByID(TABHEADER_CONTROL));
 	for (pp_int32 i = 0; i < (signed)tabHeader->getNumTabs(); i++)
 	{
 		TabTitleProvider tabTitleProvider(*tabManager->getModuleEditorFromTabIndex(i));
@@ -2189,13 +2191,13 @@ void Tracker::rearrangePatternEditorControl()
 {
 #ifdef __LOWRES__
 	PatternEditorControl* control = getPatternEditorControl();
-	
+
 	if (control)
 	{
 		PPPoint location = control->getLocation();
-		
+
 		pp_int32 height = inputContainerCurrent->getLocation().y;
-		
+
 		control->setSize(PPSize(screen->getWidth(), height - location.y));
 		if (inputContainerCurrent)
 			inputContainerCurrent->show(true);
@@ -2208,7 +2210,7 @@ void Tracker::rearrangePatternEditorControlOrInstrumentContainer()
 	if (sectionDiskMenu->isDiskMenuVisible())
 		sectionDiskMenu->resizeInstrumentContainer();
 	else
-		rearrangePatternEditorControl();	
+		rearrangePatternEditorControl();
 }
 
 void Tracker::showScopes(bool visible, pp_uint32 style)
@@ -2244,14 +2246,14 @@ void Tracker::showScopes(bool visible, pp_uint32 style)
 		getPatternEditorControl()->setSize(size);
 		getPatternEditorControl()->setLocation(location);
 	}
-	
-	// store settings 
+
+	// store settings
 	settingsDatabase->store("SCOPES", (visible ? 1 : 0) | (style << 1));
-	
+
 	// if config menu is visible, update the toggles
 	if (sectionSettings->isVisible())
 		sectionSettings->update(false);
-	
+
 #endif
 
 	screen->paint();
@@ -2268,7 +2270,7 @@ void Tracker::setInputControl(SIPs sip)
 			inputContainerCurrent->hide(false);
 			break;
 		}
-		
+
 		case SIPExtended:
 		{
 			inputContainerCurrent = inputContainerExtended;
@@ -2286,20 +2288,20 @@ void Tracker::setInputControl(SIPs sip)
 void Tracker::expandOrderlist(bool b)
 {
 	extendedOrderlist = b;
-	
+
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ORDERLIST));
-	
+
 	PPPoint p = container->getLocation();
 	pp_int32 x = p.x;
 	pp_int32 y = p.y;
-	
+
 	ASSERT(container);
-	
+
 	if (b)
 	{
 		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_PLUS)->setLocation(PPPoint(x+2 + 78-2, y+2+12+12+12));
 		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_MINUS)->setLocation(PPPoint(x+2 + 78-2 + 17, y+2+12+12+12));
-		
+
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_PLUS)->hide(true);
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_MINUS)->hide(true);
 		container->getControlByID(STATICTEXT_ORDERLIST_SONGLENGTH)->setLocation(PPPoint(x+ 8*12, y+2+12+12+12+2+12));
@@ -2308,7 +2310,7 @@ void Tracker::expandOrderlist(bool b)
 		container->getControlByID(1)->hide(false);
 		container->getControlByID(2)->hide(true);
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ORDERLIST_EXTENT))->setText(TrackerConfig::stringButtonExtended);
-	
+
 		PPSize size = container->getControlByID(LISTBOX_ORDERLIST)->getSize();
 		size.height = 60;
 		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);
@@ -2331,7 +2333,7 @@ void Tracker::expandOrderlist(bool b)
 		size.height = 36;
 		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);
 	}
-	
+
 }
 
 void Tracker::flipSpeedSection()
@@ -2341,10 +2343,10 @@ void Tracker::flipSpeedSection()
 
 	PPControl* control = container->getControlByID(STATICTEXT_SPEED_OCTAVE);
 	ASSERT(control);
-	
+
 	pp_int32 dy = container->getControlByID(STATICTEXT_SPEED_SPEED)->getLocation().y -
 				  container->getControlByID(STATICTEXT_SPEED_BPM)->getLocation().y;
-	
+
 	if (control->isHidden())
 	{
 		// Show octave integer field
@@ -2365,7 +2367,7 @@ void Tracker::flipSpeedSection()
 		// show mainvol description text ("Mainvol")
 		control = container->getControlByID(STATICTEXT_SPEED_MAINVOL_DESC);
 		control->hide(false);
-		
+
 		// hide BPM text fields + buttons
 		control = container->getControlByID(STATICTEXT_SPEED_BPM);
 		control->hide(true);
@@ -2420,7 +2422,7 @@ void Tracker::flipSpeedSection()
 		control->hide(true);
 		control = container->getControlByID(STATICTEXT_SPEED_MAINVOL_DESC);
 		control->hide(true);
-		
+
 		// show bpm text + buttons
 		control = container->getControlByID(STATICTEXT_SPEED_BPM);
 		control->hide(false);
@@ -2466,7 +2468,7 @@ void Tracker::enableInstrument(bool b)
 	getPatternEditorControl()->enableInstrument(b);
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_INSTRUMENTLIST));
 	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_INSTRUMENT));	
+	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_INSTRUMENT));
 	ASSERT(button);
 	button->setPressed(b);
 	listBoxInstruments->setOnlyShowIndexSelection(!b);
@@ -2478,7 +2480,7 @@ void Tracker::commitListBoxChanges()
 {
 	if (listBoxInstruments->isEditing())
 		listBoxInstruments->commitChanges();
-	
+
 	if (listBoxSamples->isEditing())
 		listBoxSamples->commitChanges();
 }
@@ -2492,7 +2494,7 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 {
 	switch (type)
 	{
-		case FileTypes::FileTypeSongAllModules:			
+		case FileTypes::FileTypeSongAllModules:
 		case FileTypes::FileTypeSongMOD:
 		case FileTypes::FileTypeSongXM:
 			return DecompressorBase::HintModules;
@@ -2521,7 +2523,7 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 void Tracker::prepareLoadSaveUI()
 {
 #ifdef __LOWRES__
-		// The bottom section fills up the entire screen 
+		// The bottom section fills up the entire screen
 		// so we first need to hide the entire section before we can show the disk menu
 		screen->pauseUpdate(true);
 		sectionSwitcher->hideBottomSection();
@@ -2559,7 +2561,7 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 		}
 		else
 		{
-			showMessageBox(MESSAGEBOX_UNIVERSAL, "Unrecognized type/corrupt file", MessageBox_OK);			
+			showMessageBox(MESSAGEBOX_UNIVERSAL, "Unrecognized type/corrupt file", MessageBox_OK);
 			return false;
 		}
 	}
@@ -2567,7 +2569,7 @@ bool Tracker::loadGenericFileType(const PPSystemString& fileName)
 	switch (type)
 	{
 		case FileIdentificator::FileTypeModule:
-			return loadTypeFromFile(FileTypes::FileTypeSongAllModules, fileName);		
+			return loadTypeFromFile(FileTypes::FileTypeSongAllModules, fileName);
 		case FileIdentificator::FileTypeInstrument:
 			return loadTypeFromFile(FileTypes::FileTypeSongAllInstruments, fileName);
 		case FileIdentificator::FileTypeSample:
@@ -2586,17 +2588,17 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 	loadingParameters.deleteFile = false;
 	loadingParameters.didOpenTab = false;
 	loadingParameters.eType = eType;
-	loadingParameters.filename = fileName;	
+	loadingParameters.filename = fileName;
 	loadingParameters.preferredFilename = fileName;
 	loadingParameters.suspendPlayer = suspendPlayer;
 	loadingParameters.repaint = repaint;
 
 	loadingParameters.res = true;
-	
+
 	if (saveCheck && eType == FileTypes::FileTypeSongAllModules && !checkForChangesOpenModule())
 		return false;
-	
-	loadingParameters.lastError = "Error while loading/unknown format";	
+
+	loadingParameters.lastError = "Error while loading/unknown format";
 
 	signalWaitState(true);
 
@@ -2611,7 +2613,7 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 	bool rowPlay = playerController->isPlayingRowOnly();
 	loadingParameters.wasPlaying = rowPlay ? false : (playerController->isPlaying() || playerController->isPlayingPattern());
 	loadingParameters.wasPlayingPattern = rowPlay ? false : playerController->isPlayingPattern();
-	
+
 	if (loadingParameters.suspendPlayer)
 	{
 #ifndef __LOWRES__
@@ -2619,12 +2621,12 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 #endif
 		playerController->suspendPlayer();
 	}
-	
+
 	// check for compressed file type
 	FileIdentificator* fileIdentificator = new FileIdentificator(fileName);
 	FileIdentificator::FileTypes type = fileIdentificator->getFileType();
 	delete fileIdentificator;
-	
+
 	if (type == FileIdentificator::FileTypeCompressed)
 	{
 		// if this is compressed, try to decompress
@@ -2633,7 +2635,7 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 		if (decompressor.decompress(tempFile, (DecompressorBase::Hints)fileTypeToHint(eType)))
 		{
 			// we compressed to a temporary file
-			// load that instead, but keep the original file name as preferred 
+			// load that instead, but keep the original file name as preferred
 			// base name for the module we're going to edit
 			loadingParameters.preferredFilename = loadingParameters.filename;
 			loadingParameters.filename = tempFile;
@@ -2648,35 +2650,35 @@ bool Tracker::prepareLoading(FileTypes eType, const PPSystemString& fileName, bo
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
 bool Tracker::finishLoading()
 {
 	signalWaitState(false);
-	
+
 	if (loadingParameters.repaint)
 	{
 		screen->paint();
 		updateWindowTitle(moduleEditor->getModuleFileName());
 	}
-	
+
 	if (!loadingParameters.res && !loadingParameters.abortLoading)
-		showMessageBox(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK);	
-	
+		showMessageBox(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK);
+
 	if (loadingParameters.suspendPlayer)
 	{
 		playerController->resumePlayer(true);
 		scopesControl->enable(true);
 	}
-	
+
 	if (loadingParameters.deleteFile)
 		Decompressor::removeFile(loadingParameters.filename);
-		
+
 	if (!loadingParameters.res && loadingParameters.didOpenTab)
 		tabManager->closeTab();
-	
+
 	return loadingParameters.abortLoading ? true : loadingParameters.res;
 }
 
@@ -2685,7 +2687,7 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 	bool res = prepareLoading(eType, fileName, suspendPlayer, repaint, saveCheck);
 	if (!res)
 		return false;
-	
+
 	switch (eType)
 	{
 		case FileTypes::FileTypeSongAllModules:
@@ -2696,91 +2698,91 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 			else
 				loadingParameters.res = moduleEditor->openSong(loadingParameters.filename,
 				NULL);
-			
-			updateAfterLoad(loadingParameters.res, loadingParameters.wasPlaying, loadingParameters.wasPlayingPattern);			
+
+			updateAfterLoad(loadingParameters.res, loadingParameters.wasPlaying, loadingParameters.wasPlayingPattern);
 			break;
 		}
-			
+
 		case FileTypes::FileTypePatternXP:
 		{
 			loadingParameters.res = getPatternEditor()->loadExtendedPattern(loadingParameters.filename);
 			updateSongInfo();
 			break;
 		}
-			
+
 		case FileTypes::FileTypeTrackXT:
 		{
 			loadingParameters.res = getPatternEditor()->loadExtendedTrack(loadingParameters.filename);
 			updateSongInfo();
 			break;
 		}
-			
+
 		case FileTypes::FileTypeSongAllInstruments:
 		{
 			loadingParameters.res = moduleEditor->loadInstrument(loadingParameters.filename, listBoxInstruments->getSelectedIndex());
 			sectionInstruments->updateAfterLoad();
 			break;
 		}
-			
+
 		case FileTypes::FileTypeSongAllSamples:
 		{
 			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
-			
+
 			pp_int32 chnIndex = 0;
 			if (numSampleChannels <= 0)
 			{
 				loadingParameters.res = false;
 				break;
 			}
-			else if (numSampleChannels > 1 && 
+			else if (numSampleChannels > 1 &&
 					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
 				if (dialog)
 					delete dialog;
-				
+
 				if (responder)
 					delete responder;
-					
-				responder = new SampleLoadChannelSelectionHandler(*this);				
-				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);	
-				
+
+				responder = new SampleLoadChannelSelectionHandler(*this);
+				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);
+
 				// Add names of sample channels to instrument box
 				for (pp_int32 i = 0; i < numSampleChannels; i++)
 					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
-				
+
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
 				static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
-				
+
 				signalWaitState(false);
-				
+
 				dialog->show();
 				return true;
 			}
-			else if (numSampleChannels > 1 && 
+			else if (numSampleChannels > 1 &&
 					 settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 			{
 				chnIndex = -1;
 			}
 
 			if (loadingParameters.preferredFilename.length())
-				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
-																 listBoxInstruments->getSelectedIndex(), 
-																 listBoxSamples->getSelectedIndex(), 
+				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename,
+																 listBoxInstruments->getSelectedIndex(),
+																 listBoxSamples->getSelectedIndex(),
 																 chnIndex,
 																 loadingParameters.preferredFilename);
 			else
-				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
-																 listBoxInstruments->getSelectedIndex(), 
-																 listBoxSamples->getSelectedIndex(), 
+				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename,
+																 listBoxInstruments->getSelectedIndex(),
+																 listBoxSamples->getSelectedIndex(),
 																 chnIndex);
 
 			sectionSamples->updateAfterLoad();
 			break;
 		}
-			
+
 	}
-	
+
 	return finishLoading();
 }
 
@@ -2801,19 +2803,19 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 			openPanel->addExtensions(fileExtProvider.getModuleExtensions());
 			break;
 		}
-	
+
 		case FileTypes::FileTypePatternXP:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Extended Pattern");
 			openPanel->addExtensions(fileExtProvider.getPatternExtensions());
-			break;			
+			break;
 		}
 
 		case FileTypes::FileTypeTrackXT:
 		{
 			openPanel = new PPOpenPanel(screen, "Open Extended Track");
 			openPanel->addExtensions(fileExtProvider.getTrackExtensions());
-			break;			
+			break;
 		}
 
 		case FileTypes::FileTypeSongAllInstruments:
@@ -2833,22 +2835,22 @@ bool Tracker::loadTypeWithDialog(FileTypes eLoadType, bool suspendPlayer/* = tru
 
 	if (!openPanel)
 		return false;
-	
+
 	bool res = true;
-		
+
 	if (openPanel->runModal() == PPModalDialog::ReturnCodeOK)
 	{
 		PPSystemString file = openPanel->getFileName();
-	
+
 		if (file.length())
 		{
 			PPSystemString fileName = file;
 			res = loadTypeFromFile(eLoadType, fileName, suspendPlayer, repaint, false);
 		}
-	
+
 		delete openPanel;
 	}
-	
+
 	return res;
 }
 
@@ -2874,7 +2876,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 	FileExtProvider fileExtProvider;
 
 	currentSaveFileType = eSaveType;
-	
+
 	switch (eSaveType)
 	{
 		case FileTypes::FileTypeSongMOD:
@@ -2882,23 +2884,23 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			savePanel = new PPSavePanel(screen, "Save Protracker Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeMOD));
 			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionMOD),
 									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionMOD));
-			
+
 			pp_uint32 err = moduleEditor->getPTIncompatibilityCode();
-			
+
 			if (err)
 			{
 				buildMODSaveErrorWarning(err);
 				return false;
-			}				
+			}
 			break;
 		}
-			
+
 		case FileTypes::FileTypeSongXM:
 			savePanel = new PPSavePanel(screen, "Save Extended Module", moduleEditor->getModuleFileName(ModuleEditor::ModSaveTypeXM));
 			savePanel->addExtension(fileExtProvider.getModuleExtension(FileExtProvider::ModuleExtensionXM),
 									fileExtProvider.getModuleDescription(FileExtProvider::ModuleExtensionXM));
 			break;
-			
+
 		case FileTypes::FileTypePatternXP:
 		{
 			PPSystemString fileName = moduleEditor->getModuleFileName().stripExtension();
@@ -2906,9 +2908,9 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			savePanel = new PPSavePanel(screen, "Save Extended Pattern", fileName);
 			savePanel->addExtension(fileExtProvider.getPatternExtension(FileExtProvider::PatternExtensionXP),
 									fileExtProvider.getPatternDescription(FileExtProvider::PatternExtensionXP));
-			break;			
+			break;
 		}
-			
+
 		case FileTypes::FileTypeTrackXT:
 		{
 			PPSystemString fileName = moduleEditor->getModuleFileName().stripExtension();
@@ -2916,9 +2918,9 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			savePanel = new PPSavePanel(screen, "Save Extended Track", fileName);
 			savePanel->addExtension(fileExtProvider.getTrackExtension(FileExtProvider::TrackExtensionXT),
 									fileExtProvider.getTrackDescription(FileExtProvider::TrackExtensionXT));
-			break;			
+			break;
 		}
-			
+
 		case FileTypes::FileTypeInstrumentXI:
 		{
 			PPSystemString sampleFileName = moduleEditor->getInstrumentFileName(listBoxInstruments->getSelectedIndex());
@@ -2928,7 +2930,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 									fileExtProvider.getInstrumentDescription(FileExtProvider::InstrumentExtensionXI));
 			break;
 		}
-			
+
 		case FileTypes::FileTypeSampleWAV:
 		{
 			PPSystemString sampleFileName = moduleEditor->getSampleFileName(listBoxInstruments->getSelectedIndex(), listBoxSamples->getSelectedIndex());
@@ -2938,7 +2940,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 									fileExtProvider.getSampleDescription(FileExtProvider::SampleExtensionWAV));
 			break;
 		}
-			
+
 		case FileTypes::FileTypeSampleIFF:
 		{
 			PPSystemString sampleFileName = moduleEditor->getSampleFileName(listBoxInstruments->getSelectedIndex(), listBoxSamples->getSelectedIndex());
@@ -2949,7 +2951,7 @@ bool Tracker::prepareSavingWithDialog(FileTypes eSaveType)
 			break;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -2963,105 +2965,105 @@ bool Tracker::saveTypeWithDialog(FileTypes eSaveType, EventListenerInterface* fi
 			this->fileSystemChangedListener = fileSystemChangedListener;
 			return true;
 		}
-		
+
 		if (!savePanel)
 			return true;
 	}
-	
+
 	bool res = true;
-	
+
 	if (savePanel->runModal() == PPModalDialog::ReturnCodeOK)
 	{
 		PPSystemString file = savePanel->getFileName();
-		
+
 		if (file.length())
 		{
 			loadingParameters.lastError = "Error while saving";
-			
+
 			signalWaitState(true);
-			
+
 			switch (eSaveType)
 			{
 				case FileTypes::FileTypeSongMOD:
 					commitListBoxChanges();
 					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeMOD);
 					break;
-					
+
 				case FileTypes::FileTypeSongXM:
 					commitListBoxChanges();
 					res = moduleEditor->saveSong(file, ModuleEditor::ModSaveTypeXM);
 					break;
-					
+
 				case FileTypes::FileTypeTrackXT:
 				{
 					res = getPatternEditor()->saveExtendedTrack(file);
 					break;
 				}
-					
+
 				case FileTypes::FileTypePatternXP:
 				{
 					res = getPatternEditor()->saveExtendedPattern(file);
 					break;
 				}
-					
+
 				case FileTypes::FileTypeInstrumentXI:
 					commitListBoxChanges();
 					res = moduleEditor->saveInstrument(file, listBoxInstruments->getSelectedIndex());
 					break;
-					
+
 				case FileTypes::FileTypeSampleWAV:
 					commitListBoxChanges();
-					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(), 
+					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(),
 												   listBoxSamples->getSelectedIndex(), ModuleEditor::SampleFormatTypeWAV);
 					break;
-					
+
 				case FileTypes::FileTypeSampleIFF:
 					commitListBoxChanges();
-					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(), 
+					res = moduleEditor->saveSample(file, listBoxInstruments->getSelectedIndex(),
 												   listBoxSamples->getSelectedIndex(), ModuleEditor::SampleFormatTypeIFF);
 					break;
 			}
-			
+
 			if (res && fileSystemChangedListener)
 			{
 				PPEvent event(eFileSystemChanged);
 				fileSystemChangedListener->handleEvent(reinterpret_cast<PPObject*>(this), &event);
 			}
-			
+
 			signalWaitState(false);
 			screen->paint();
 			updateWindowTitle(moduleEditor->getModuleFileName());
 		}
-		
+
 	}
-	
+
 	if (!res)
-		showMessageBox(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK);	
-	
+		showMessageBox(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK);
+
 	delete savePanel;
 	savePanel = NULL;
 	fileSystemChangedListener = NULL;
-	
+
 	return res;
 }
 
 bool Tracker::saveCurrentModuleAsSelectedType()
 {
 	signalWaitState(true);
-	
+
 	loadingParameters.lastError = "Error while saving.\nFile might be write protected.";
-	
+
 	pp_int32 res = moduleEditor->saveSong(moduleEditor->getModuleFileNameFull(), moduleEditor->getSaveType());
 	signalWaitState(false);
 
 	if (!res)
-		showMessageBoxSized(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK, -1, -1);	
-	
+		showMessageBoxSized(MESSAGEBOX_UNIVERSAL, loadingParameters.lastError, MessageBox_OK, -1, -1);
+
 	screen->paint();
-	
+
 	if (res)
 		updateWindowTitle();
-	
+
 	return res == 0;
 }
 
@@ -3070,17 +3072,17 @@ void Tracker::saveType(FileTypes eType)
 	if (useClassicBrowser)
 	{
 		prepareLoadSaveUI();
-	
+
 		sectionDiskMenu->selectSaveType(eType);
-		
+
 		if (eType == FileTypes::FileTypeSongWAV)
 			sectionDiskMenu->setModuleTypeAdjust(false);
-		
+
 		eventKeyDownBinding_InvokeSectionDiskMenu();
-		
+
 		if (eType == FileTypes::FileTypeSongWAV)
 			sectionDiskMenu->setModuleTypeAdjust(true);
-	
+
 		finishLoadSaveUI();
 	}
 	else
@@ -3100,7 +3102,7 @@ void Tracker::save()
 		if (moduleEditor->getSaveType() == ModuleEditor::ModSaveTypeMOD)
 		{
 			pp_uint32 err = moduleEditor->getPTIncompatibilityCode();
-			
+
 			if (err)
 			{
 				// remove save panel
@@ -3115,11 +3117,11 @@ void Tracker::save()
 				buildMODSaveErrorWarning((pp_int32)err);
 				return;
 			}
-		}				
+		}
 		saveCurrentModuleAsSelectedType();
 	}
 }
-	
+
 void Tracker::saveAs()
 {
 	switch (moduleEditor->getSaveType())
@@ -3131,7 +3133,7 @@ void Tracker::saveAs()
 		case ModuleEditor::ModSaveTypeXM:
 			saveType(FileTypes::FileTypeSongXM);
 			break;
-			
+
 		default:
 			ASSERT(false);
 	}
@@ -3157,9 +3159,9 @@ void Tracker::handleSaveCancel()
 void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 {
 	static const char* warnings[] = {"Song contains more than 31 instruments\nSave anyway?",
-									 
+
 									 "Song uses linear frequencies\nSave anyway?",
-									 
+
 									 "Song contains incompatible samples \n\n"\
 									 "Check for the following conditions:\n"\
 									 "* No 16 bit samples                \n"\
@@ -3167,7 +3169,7 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 									 "* No ping-pong looping             \n"\
 									 "* Panning is set to 0x80 (middle)  \n"\
 									 "* Relative note is C-4 (number 0)  \n\nSave anyway?",
-									  
+
 									 "Song contains FT2-style instruments\n\n"\
 									 "Check for the following conditions:\n"\
 									 "* No envelopes                     \n"\
@@ -3180,19 +3182,19 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 									 "* Only notes between C-3 and B-5   \n"\
 									 "* Volume column is not used        \n"\
 									 "* Only effects between 0 and F     \n\nSave anyway?"};
-	
+
 	if (dialog)
 		delete dialog;
-	
+
 	if (responder)
 		delete responder;
-	
-	responder = new SaveProceedHandler(*this);				
-				
+
+	responder = new SaveProceedHandler(*this);
+
 	dialog = new PPDialogBase(screen, responder, MESSAGEBOX_SAVEPROCEED, "");
-	
-	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318, -1, false);	
-	
+
+	showMessageBoxSized(MESSAGEBOX_SAVEPROCEED, warnings[error-1], MessageBox_YESNO, 318, -1, false);
+
 	// Transfer ownership of modal overlayed container to dialog
 	// => also set new event listener
 	dialog->setMessageBoxContainer(messageBoxContainerGeneric);
@@ -3200,9 +3202,9 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 	PPSimpleVector<PPControl>& controls = messageBoxContainerGeneric->getControls();
 	for (pp_int32 i = 0; i < controls.size(); i++)
 		controls.get(i)->setEventListener(dialog);
-	
+
 	messageBoxContainerGeneric = NULL;
-	
+
 	dialog->show();
 }
 
@@ -3210,7 +3212,7 @@ void Tracker::estimateSongLength(bool signalWait/* = false*/)
 {
 	if (signalWait)
 		signalWaitState(true);
-		
+
 	moduleEditor->getModuleServices()->estimateSongLength();
 
 	if (signalWait)
@@ -3222,6 +3224,6 @@ void Tracker::estimateSongLength(bool signalWait/* = false*/)
 
 void Tracker::signalWaitState(bool b)
 {
-	screen->signalWaitState(b, TrackerConfig::colorThemeMain);	
+	screen->signalWaitState(b, TrackerConfig::colorThemeMain);
 }
 

@@ -20,14 +20,14 @@ short		nInvalidKeys[]	= {91,132};
 
 #define INDEXTOSTATEIMAGEMASK(i) ((i) << 12)
 
-#ifndef ListView_SetCheckState 
+#ifndef ListView_SetCheckState
 #define ListView_SetCheckState(h, i, f) \
-        ListView_SetItemState(h, i, INDEXTOSTATEIMAGEMASK((f) + 1), LVIS_STATEIMAGEMASK) 
+        ListView_SetItemState(h, i, INDEXTOSTATEIMAGEMASK((f) + 1), LVIS_STATEIMAGEMASK)
 #endif
 
 LPCTSTR szExecutable = _T("MilkyTracker.exe");
 
-LPCTSTR szValidExtensions[] = 
+LPCTSTR szValidExtensions[] =
 	{_T("669"),_T("Composer 669"),
 	_T("amf"), _T("Asylum Music Format 1.0"),
 	_T("ams"), _T("Velvet Studio / Extreme Tracker"),
@@ -52,6 +52,7 @@ LPCTSTR szValidExtensions[] =
 	_T("ptm"), _T("Polytracker"),
 	_T("s3m"), _T("Screamtracker 3"),
 	_T("stm"), _T("Screamtracker 2"),
+	_T("tmm"), _T("Titan Magic Module"),
 	_T("ult"), _T("Ultratracker"),
 	_T("uni"), _T("MikMod"),
 	_T("xm"), _T("Fasttracker II"),
@@ -92,7 +93,7 @@ unsigned int DEFINEKEY(unsigned int vk, unsigned int modifier = 0, unsigned int 
 
 void SetupKeyDatabase()
 {
-	keyDatabase = new TrackerSettingsDatabase();	
+	keyDatabase = new TrackerSettingsDatabase();
 
 	keyDatabase->store("KEY:Cursor up", DEFINEKEY(VK_UP));
 	keyDatabase->store("KEY:Cursor down", DEFINEKEY(VK_DOWN));
@@ -126,7 +127,7 @@ void SetupKeyDatabase()
 	}
 
 	const PPDictionaryKey* theKey = keyDatabase->getFirstKey();
-	
+
 	int j = 0;
 	while (theKey)
 	{
@@ -139,13 +140,13 @@ void SetupKeyDatabase()
 		{
 			for (unsigned int i = 0; i <= strlen(szText); i++)
 				mappings[j].functionName[i] = szText[i];
-			
+
 			unsigned int v = theKey->getIntValue();
-			
+
 			mappings[j].buttonCode = (WORD)(v & 0xFFFF);
 			mappings[j].keyModifiers = (BYTE)(v >> 16);
 			mappings[j].virtualKeyCode = (BYTE)(v >> 24);
-			
+
 			j++;
 		}
 		theKey = keyDatabase->getNextKey();
@@ -168,7 +169,7 @@ void ShutdownKeyDatabase()
 		}
 
 		char szText[512];
-		
+
 		for (unsigned int i = 0; i <= _tcslen(mappings[j].functionName); i++)
 			szText[i] = (char)mappings[j].functionName[i];
 
@@ -180,7 +181,7 @@ void ShutdownKeyDatabase()
 	// If one of the mapped buttons is used by key on keyboard
 	// give warning
 	const PPDictionaryKey* theKey = keyDatabase->restore("ALLOWVIRTUALKEYS");
-					
+
 	if (theKey && isKeyboardKey)
 	{
 		BOOL allowExternalKeys = theKey->getIntValue();
@@ -193,85 +194,85 @@ void ShutdownKeyDatabase()
 	}
 
 	XMFile f(System::getConfigFileName(_T("keys.cfg")), true);
-	
-	keyDatabase->serialize(f);	
+
+	keyDatabase->serialize(f);
 }
 
-typedef BOOL (__stdcall *UnregisterFunc1Proc)( UINT, UINT ); 
+typedef BOOL (__stdcall *UnregisterFunc1Proc)( UINT, UINT );
 
 
 void RegisterKeys(HWND hWnd)
 {
-	HINSTANCE hCoreDll; 
-	
-	UnregisterFunc1Proc procUndergisterFunc; 
-	
-	hCoreDll = LoadLibrary(_T("coredll.dll")); 
-	
-	ASSERT(hCoreDll); 
-	
-	procUndergisterFunc = (UnregisterFunc1Proc)GetProcAddress( hCoreDll, _T("UnregisterFunc1")); 
-	
-	ASSERT(procUndergisterFunc); 
-	
-	for (int i=0x0; i<=0xc0; i++) 
+	HINSTANCE hCoreDll;
+
+	UnregisterFunc1Proc procUndergisterFunc;
+
+	hCoreDll = LoadLibrary(_T("coredll.dll"));
+
+	ASSERT(hCoreDll);
+
+	procUndergisterFunc = (UnregisterFunc1Proc)GetProcAddress( hCoreDll, _T("UnregisterFunc1"));
+
+	ASSERT(procUndergisterFunc);
+
+	for (int i=0x0; i<=0xc0; i++)
 	{
-		procUndergisterFunc(MOD_KEYUP, i); 
-		RegisterHotKey(hWnd, i, MOD_KEYUP, i); 
-	} 
-	
-	for (i=0xc1; i<=0xff; i++) 
+		procUndergisterFunc(MOD_KEYUP, i);
+		RegisterHotKey(hWnd, i, MOD_KEYUP, i);
+	}
+
+	for (i=0xc1; i<=0xff; i++)
 	{
-		procUndergisterFunc(MOD_WIN | MOD_KEYUP, i); 
-		RegisterHotKey(hWnd, i, MOD_WIN | MOD_KEYUP, i); 
-	} 
-	
+		procUndergisterFunc(MOD_WIN | MOD_KEYUP, i);
+		RegisterHotKey(hWnd, i, MOD_WIN | MOD_KEYUP, i);
+	}
+
 	FreeLibrary(hCoreDll);
 }
 
 void UnregisterKeys(HWND hWnd)
 {
-	for (int i=0; i<=0xff; i++) 
+	for (int i=0; i<=0xff; i++)
 	{
-		UnregisterHotKey(hWnd, i); 
-	} 	
+		UnregisterHotKey(hWnd, i);
+	}
 }
 
 static void SetupListView(HWND hWndDlg)
 {
 	HWND hWndListView = GetDlgItem(hWndDlg, IDC_LIST1);
-	
-	ListView_SetExtendedListViewStyle(hWndListView, 
+
+	ListView_SetExtendedListViewStyle(hWndListView,
 	ListView_GetExtendedListViewStyle(hWndListView) | LVS_EX_FULLROWSELECT);
 
 	LVCOLUMN lvColumn;
-	
+
 	lvColumn.mask = LVCF_TEXT | LVCF_WIDTH;
-	
+
 	// ---- Setup columns ---
 	lvColumn.cx = 140;
 	lvColumn.pszText = _T("Function");
-	
+
 	ListView_InsertColumn(hWndListView, 0, &lvColumn);
-	
+
 	lvColumn.cx = 66;
 	lvColumn.pszText = _T("Button");
-	
+
 	ListView_InsertColumn(hWndListView, 1, &lvColumn);
 }
 
 static void BuildKeyList(HWND hWndDlg)
 {
 	HWND hWndListView = GetDlgItem(hWndDlg, IDC_LIST1);
-	
+
 	ListView_DeleteAllItems(hWndListView);
-	
+
 	// ---- Insert items ----
 	LVITEM lvItem;
 	memset(&lvItem,0,sizeof(lvItem));
-	
+
 	lvItem.mask = LVIF_TEXT;
-	
+
 	for (int i = 0; i < NUM_KEYS; i++)
 	{
 		TCHAR szKeyCode[33];
@@ -281,14 +282,14 @@ static void BuildKeyList(HWND hWndDlg)
 			wsprintf(szKeyCode, _T("%i"), mappings[i].buttonCode);
 
 		lvItem.iItem = i;
-		
+
 		lvItem.pszText = mappings[i].functionName+4;
-		
+
 		ListView_InsertItem(hWndListView, &lvItem);
-		
+
 		ListView_SetItemText(hWndListView, lvItem.iItem ,1, szKeyCode);
 	}
-	
+
 }
 
 static void UpdateKeyList(HWND hWndDlg, TButtonMapping* mapping)
@@ -307,13 +308,13 @@ static void UpdateKeyList(HWND hWndDlg, TButtonMapping* mapping)
 				_tcscpy(szKeyCode, _T("(unused)"));
 			else
 				wsprintf(szKeyCode, _T("%i"), mappings[i].buttonCode);
-			
+
 			lvItem.iItem = i;
-			
+
 			ListView_SetItemText(hWndListView, lvItem.iItem ,1, szKeyCode);
 		}
 	}
-	
+
 }
 
 void SetNewKey(HWND hWndDlg, TButtonMapping* currentMapping,unsigned short nKeyCode)
@@ -326,10 +327,10 @@ void SetNewKey(HWND hWndDlg, TButtonMapping* currentMapping,unsigned short nKeyC
 		if (mappings[i].buttonCode == nKeyCode)
 		{
 			mappings[i].buttonCode = -1;
-			
+
 			UpdateKeyList(hWndDlg, mappings + i);
 		}
-	
+
 	currentMapping->buttonCode = nKeyCode;
 }
 
@@ -339,7 +340,7 @@ static void UpdateKeyCodes(HWND hWndDlg, TButtonMapping* currentMapping)
 
 	if (currentMapping && currentMapping->buttonCode != 65535)
 	{
-		SetDlgItemInt(hWndDlg, IDC_KEYEDIT1, currentMapping->buttonCode, TRUE);	
+		SetDlgItemInt(hWndDlg, IDC_KEYEDIT1, currentMapping->buttonCode, TRUE);
 	}
 	else
 	{
@@ -352,7 +353,7 @@ static void ShowInputTextfield(HWND hWndDlg, BOOL bShow)
 {
 	HWND hWnd = GetDlgItem(hWndDlg, IDC_STATIC1);
 	ShowWindow(hWnd, bShow ? SW_SHOW : SW_HIDE);
-	
+
 	hWnd = GetDlgItem(hWndDlg, IDC_STATIC2);
 	ShowWindow(hWnd, bShow ? SW_SHOW : SW_HIDE);
 
@@ -377,7 +378,7 @@ static void CheckRadioButtons(HWND hWndRadioButtons[], int numEntries, int check
 			if (checked)
 				::SendMessage(hWndRadioButtons[i], BM_SETCHECK, BST_UNCHECKED, 0);
 		}
-	
+
 	bool checked = (::SendMessage(hWndRadioButtons[checkIndex], BM_GETCHECK, 0, 0) == BST_CHECKED);
 	if (!checked)
 		::SendMessage(hWndRadioButtons[checkIndex], BM_SETCHECK, BST_CHECKED, 0);
@@ -417,7 +418,7 @@ static void UpdateCheckboxesAndRadioButtons(HWND hWndDlg)
 		SendMessage(hWnd, BM_SETCHECK, theKey->getIntValue() ? BST_CHECKED : BST_UNCHECKED, 0);
 	else
 		SendMessage(hWnd, BM_SETCHECK, BST_UNCHECKED, 0);
-	
+
 	// double pixels
 	theKey = keyDatabase->restore("DOUBLEPIXELS");
 
@@ -458,11 +459,11 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 			return TRUE;
 		}
 
-		case WM_NOTIFY: 
+		case WM_NOTIFY:
         {
 
 			LPNMHDR pnmh = (LPNMHDR) lParam;
-			
+
 			LV_DISPINFO *pLvdi = (LV_DISPINFO *)lParam;
 			NM_LISTVIEW *pNm = (NM_LISTVIEW *)lParam;
 
@@ -476,7 +477,7 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 						{
 							currentMapping = mappings + pNm->iItem;
 							UpdateKeyCodes(hWndDlg, currentMapping);
-							
+
 							ShowInputTextfield(hWndDlg, TRUE);
 
 							bSetKey = TRUE;
@@ -486,26 +487,26 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 							lvItem.mask = LVIF_PARAM;
 							lvItem.iItem = pNm->iItem;
-							
+
 							ListView_GetItem(pNm->hdr.hwndFrom,&lvItem);
-							
+
 							return 0;*/
 							break;
 						}
                     }
                 }
                 break;
-            
-			
+
+
 			}
             return 0;
-        } 
-        break; 
+        }
+        break;
 
 
 		case WM_HOTKEY:
-		{	
-			
+		{
+
 			UINT nVirtKey = HIWORD(lParam);
 
 			if (!bSetKey)
@@ -528,15 +529,15 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 			currentMapping = NULL;
 
 			UpdateKeyCodes(hWndDlg, currentMapping);
-			
+
 			ShowInputTextfield(hWndDlg, FALSE);
 
 			bSetKey = FALSE;
-			
+
 			break;
 		}
-		
-		
+
+
 		case WM_COMMAND:
 		{
 			switch(LOWORD(wParam))
@@ -545,19 +546,19 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 				{
 					for (int i = 0; i < NUM_KEYS; i++)
 						mappings[i].buttonCode = -1;
-					
+
 					BuildKeyList(hWndDlg);
 					break;
 				}
 			}
-			
-			break;            
+
+			break;
 		}
 
 
 		case WM_CLOSE:
 			UnregisterKeys(hWndDlg);
-			
+
 			DestroyWindow(hWndDlg);
 			return TRUE;
 			break;
@@ -565,11 +566,11 @@ static BOOL CALLBACK KeyDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 		case WM_CTLCOLORSTATIC:
 		{
 			HBRUSH hbr = (HBRUSH)DefWindowProc(hWndDlg, uMsg, wParam, lParam);
-			
+
 			HDC hdcStatic = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
 
-			int dlgID = GetDlgCtrlID(hwndStatic); 
+			int dlgID = GetDlgCtrlID(hwndStatic);
 			switch (dlgID)
 			{
 				case IDC_KEY:
@@ -603,41 +604,41 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 				case IDC_RADIO_ORIENTATION_90CW:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("ORIENTATION");
-					
+
 					if (theKey)
 						keyDatabase->store("ORIENTATION", 0);
 
 					UpdateCheckboxesAndRadioButtons(hWndDlg);
 					break;
 				}
-			
+
 				case IDC_RADIO_ORIENTATION_90CCW:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("ORIENTATION");
-					
+
 					if (theKey)
 						keyDatabase->store("ORIENTATION", 1);
 
 					UpdateCheckboxesAndRadioButtons(hWndDlg);
 					break;
 				}
-			
+
 				case IDC_RADIO_ORIENTATION_NORMAL:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("ORIENTATION");
-					
+
 					if (theKey)
 						keyDatabase->store("ORIENTATION", 2);
 
 					UpdateCheckboxesAndRadioButtons(hWndDlg);
 					break;
 				}
-			
+
 
 				case IDC_CHECKALLOWVKEYS:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("ALLOWVIRTUALKEYS");
-					
+
 					if (theKey)
 					{
 						pp_int32 newVal = !theKey->getIntValue();
@@ -651,7 +652,7 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 				case IDC_CHECKHIDETASKBAR:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("HIDETASKBAR");
-					
+
 					if (theKey)
 					{
 						pp_int32 newVal = !theKey->getIntValue();
@@ -661,11 +662,11 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 					UpdateCheckboxesAndRadioButtons(hWndDlg);
 					break;
 				}
-				
+
 				case IDC_CHECKDOUBLEPIXELS:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("DOUBLEPIXELS");
-					
+
 					if (theKey)
 					{
 						pp_int32 newVal = !theKey->getIntValue();
@@ -679,7 +680,7 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 				case IDC_DONTTURNOFFDEVICE:
 				{
 					const PPDictionaryKey* theKey = keyDatabase->restore("DONTTURNOFFDEVICE");
-					
+
 					if (theKey)
 					{
 						pp_int32 newVal = !theKey->getIntValue();
@@ -690,8 +691,8 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 					break;
 				}
 			}
-			
-			break;            
+
+			break;
 		}
 
 
@@ -708,19 +709,19 @@ static BOOL CALLBACK OtherDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPA
 static void UpdateRegistryFromListView(HWND hWndDlg)
 {
 	HWND hWndListView = ::GetDlgItem(hWndDlg, IDC_LIST2);
-	
+
 	int i = 0;
-	
+
 	while (szValidExtensions[i*2] != NULL)
 	{
 		BOOL bState = ListView_GetCheckState(hWndListView, i);
-		
+
 		if (RegQueryFileInfo(szExecutable, hInstance, szValidExtensions[i*2]) && (!bState))
 		{
 			RegUnregisterFileInfo(szExecutable, hInstance, szValidExtensions[i*2]);
 		}
 		else if (bState)
-		{						
+		{
 			RegFileInfo(szExecutable, hInstance, szValidExtensions[i*2], 0); // IDI_APP
 		}
 
@@ -738,43 +739,43 @@ static BOOL CALLBACK FileAssociationDialogProc(HWND hWndDlg, UINT uMsg, WPARAM w
 		{
 			ListView_SetExtendedListViewStyle(hWndListView, LVS_EX_CHECKBOXES);
 
-			ListView_SetExtendedListViewStyle(hWndListView, 
+			ListView_SetExtendedListViewStyle(hWndListView,
 											  ListView_GetExtendedListViewStyle(hWndListView) | LVS_EX_FULLROWSELECT);
 
 
 			int res;
-			
+
 			LVCOLUMN lvColumn;
-			
+
 			lvColumn.mask = LVCF_TEXT | LVCF_WIDTH;
-			
+
 			// file list view
 			lvColumn.cx = 70;
 			lvColumn.pszText = _T("Extension");
-			
+
 			res = ListView_InsertColumn(hWndListView, 0, &lvColumn);
-			
+
 			lvColumn.cx = 240;
 			lvColumn.pszText = _T("Description");
-			
+
 			res = ListView_InsertColumn(hWndListView, 1, &lvColumn);
 
 			LVITEM lvItem;
 			memset(&lvItem,0,sizeof(lvItem));
-			
+
 			lvItem.mask = LVIF_TEXT;
-			
+
 			int i = 0;
 
 			while (szValidExtensions[i*2] != NULL)
 			{
 				lvItem.iItem = i;
 				lvItem.pszText = const_cast<LPTSTR>(szValidExtensions[i*2]);
-			
+
 				res = ListView_InsertItem(hWndListView,&lvItem);
-				
+
 				ListView_SetItemText(hWndListView, lvItem.iItem ,1, const_cast<LPTSTR>(szValidExtensions[i*2+1]));
-			
+
 				ListView_SetCheckState(hWndListView, i, RegQueryFileInfo(szExecutable, hInstance, szValidExtensions[i*2]));
 
 				i++;
@@ -783,24 +784,24 @@ static BOOL CALLBACK FileAssociationDialogProc(HWND hWndDlg, UINT uMsg, WPARAM w
 			return TRUE;
 		}
 
-		
+
 		case WM_COMMAND:
 		{
 			if ((LOWORD(wParam) == IDC_SELECT_ALL))
 			{
 				int i = 0;
-					
+
 				while (szValidExtensions[i*2] != NULL)
 				{
 					ListView_SetCheckState(hWndListView, i, 1);
 					i++;
-				}				
+				}
 				return TRUE;
 			}
 			else if ((LOWORD(wParam) == IDC_DESELECT_ALL))
 			{
 				int i = 0;
-					
+
 				while (szValidExtensions[i*2] != NULL)
 				{
 					ListView_SetCheckState(hWndListView, i, 0);
@@ -823,14 +824,14 @@ static BOOL CALLBACK FileAssociationDialogProc(HWND hWndDlg, UINT uMsg, WPARAM w
 static void CheckForMilkyTrackerAppExe()
 {
     TCHAR szModule[MAX_PATH];
-    
+
 	GetFullAppPath(szExecutable, hInstance, szModule, MAX_PATH);
 
 	if (!XMFile::exists(szModule))
 	{
 		TCHAR szText[2048];
 		::LoadString(hInstance, IDS_WARNING_MILKYTRACKERAPPEXENOTFOUND, szText, 2048);
-		::MessageBox(hWndMain, szText, _T("Warning"), MB_OK);		
+		::MessageBox(hWndMain, szText, _T("Warning"), MB_OK);
 	}
 }
 
@@ -842,7 +843,7 @@ static void ShowTab(HWND hWndDlg, int nSel)
 	GetClientRect(hWndTabCtrl, &l_rectClient);
 	TabCtrl_AdjustRect(hWndTabCtrl, FALSE, &l_rectClient);
 	GetWindowRect(hWndTabCtrl, &l_rectWnd);
-	
+
 	POINT p1,p2;
 	p1.x = l_rectWnd.left;
 	p1.y = l_rectWnd.top;
@@ -851,17 +852,17 @@ static void ShowTab(HWND hWndDlg, int nSel)
 
 	ScreenToClient(hWndDlg,&p1);
 	ScreenToClient(hWndDlg,&p2);
-	
+
 	l_rectWnd.left = p1.x;
 	l_rectWnd.top = p1.y;
 	l_rectWnd.right = p2.x;
 	l_rectWnd.bottom = p2.y;
-	
+
 	OffsetRect(&l_rectClient, l_rectWnd.left,l_rectWnd.top);
-	
+
 	int width = l_rectClient.right - l_rectClient.left;
 	int height = l_rectClient.bottom - l_rectClient.top;
-	
+
 	SetWindowPos(g_hWndTabs[nSel], HWND_TOP, l_rectClient.left, l_rectClient.top, width, height, SWP_SHOWWINDOW);
 }
 
@@ -907,13 +908,13 @@ static BOOL CALLBACK TabDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 			for (int i = 0; i < NUMTABS; i++)
 			{
-				g_hWndTabs[i] = CreateDialog(hInstance, 
-											 MAKEINTRESOURCE(g_nTabDialogIDs[i]), 
-											 hWndDlg, 
-											 g_pDialogProcs[i]);				
+				g_hWndTabs[i] = CreateDialog(hInstance,
+											 MAKEINTRESOURCE(g_nTabDialogIDs[i]),
+											 hWndDlg,
+											 g_pDialogProcs[i]);
 			}
 
-			ShowTab(hWndDlg, 0);			
+			ShowTab(hWndDlg, 0);
 
 			TabCtrl_SetCurFocus(hWndTabCtrl, 0);
 
@@ -923,17 +924,17 @@ static BOOL CALLBACK TabDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 		case WM_NOTIFY:
 		{
 			LPNMHDR pnmh = (LPNMHDR) lParam;
-			
+
 			switch (pnmh->code)
 			{
 				case TCN_SELCHANGE:
 				{
-					
+
 					HWND hWndTabCtrl = GetDlgItem(hWndDlg, IDC_TAB1);
-				
+
 					int nSel = TabCtrl_GetCurSel(hWndTabCtrl);
-					
-					ShowTab(hWndDlg, nSel);			
+
+					ShowTab(hWndDlg, nSel);
 
 					break;
 				}
@@ -941,7 +942,7 @@ static BOOL CALLBACK TabDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 			break;
 
 		}
-		
+
 		case WM_COMMAND:
 		{
 			if ((LOWORD(wParam) == IDOK))
@@ -952,7 +953,7 @@ static BOOL CALLBACK TabDialogProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 				SendMessage(hWndMain, WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, 0), (LPARAM)hWndDlg);
 				SendMessage (hWndMain, WM_CLOSE, 0, 0);
-				
+
 				return TRUE;
 			}
 			else if ((LOWORD(wParam) == IDCANCEL))

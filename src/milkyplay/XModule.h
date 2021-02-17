@@ -38,12 +38,14 @@
 
 #include "XMFile.h"
 
+#include "tmm.h"
+
 #define MP_MAXTEXT 32
 #define MP_MAXORDERS 256
 #define MP_MAXINS 255
 #define MP_MAXINSSAMPS 96
 
-struct TXMHeader 
+struct TXMHeader
 {
 	char		sig[17];
 	char		name[MP_MAXTEXT];
@@ -65,7 +67,7 @@ struct TXMHeader
 	mp_uword	freqtab;
 	mp_ubyte	uppernotebound;	// additional: note limit if not zero
 	mp_sbyte	relnote;		// additional: semitone adjust value
-	mp_dword    flags;			// additional: some flags 
+	mp_dword    flags;			// additional: some flags
 	mp_uword	tempo;
 	mp_uword	speed;
 	mp_uword	mainvol;
@@ -74,9 +76,9 @@ struct TXMHeader
 };
 
 // ** BEWARE :) **
-// the order of the different elements concerning the envelope info 
+// the order of the different elements concerning the envelope info
 // is not like in the xm format
-struct TEnvelope 
+struct TEnvelope
 {
 	mp_uword	env[256][2];
 	mp_ubyte	num,sustain,susloope,loops,loope,type,speed;
@@ -106,14 +108,16 @@ struct TXMInstrument
 	mp_uword	venvnum;		// Impulse Tracker envelopes can't be sample-based (different envelopes can map to the same sample) ...
 	mp_uword	penvnum;		// ... (only when IF_ITENVELOPES flag is set)
 	mp_uword	fenvnum;
-	mp_uword	vibenvnum;		
+	mp_uword	vibenvnum;
 	mp_uword	pitchenvnum;	// IT pitch envelope
-	
+
 	mp_uword	res;			// when bit 3 (= 8) of flags is set, take this as global instrument vol (Impulse Tracker)
-	
+
 	mp_ubyte	ifc;			// IT Initial Filter cutoff
 	mp_ubyte	ifr;			// IT Initial Filter resonance
 	//char		extra[20];
+
+	TTMMSettings tmm;
 };
 
 // some words about the samples:
@@ -121,11 +125,11 @@ struct TXMInstrument
 // accessing it directly if you don't exactly know what you are doing because
 // to avoid sample clicks when looping samples, it uses a tricky double buffering
 // technique between smoothed out sample loop areas and the original sample data
-// If you need to modify sample data yourself, use the provided methods 
+// If you need to modify sample data yourself, use the provided methods
 // getSampleValue and setSampleValue and call postProcessSamples when you're done
 // modifying the sample, so the loop information is updated correctly
 // Also call postProcessSamples when you're changing the loop information
-struct TXMSample 
+struct TXMSample
 {
 private:
 	struct TLoopDoubleBuffProps
@@ -136,16 +140,16 @@ private:
 			StateUsed,
 			StateDirty,
 		};
-		
+
 		mp_uint32 samplesize;
 		mp_ubyte state[4];
 		mp_uint32 lastloopend;
 	};
 
-	enum 
+	enum
 	{
 		LoopAreaBackupSize = 4,
-		LoopAreaBackupSizeMaxInBytes = 8,		
+		LoopAreaBackupSizeMaxInBytes = 8,
 		EmptySize = 8,
 		LeadingPadding = sizeof(TLoopDoubleBuffProps) + LoopAreaBackupSizeMaxInBytes + EmptySize,
 		TrailingPadding = 16,
@@ -194,26 +198,26 @@ public:
 	static mp_ubyte* allocPaddedMem(mp_uint32 size)
 	{
 		mp_ubyte* result = new mp_ubyte[getPaddedSize(size)];
-		
+
 		if (result == NULL)
 			return NULL;
-		
+
 		// clear out padding space
 		memset(result, 0, TXMSample::LeadingPadding);
 		memset(result+size+TXMSample::LeadingPadding, 0, TXMSample::TrailingPadding);
-		
+
 		TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)result;
 		loopBufferProps->samplesize = size;
-		
+
 		return result + TXMSample::LeadingPadding;
 	}
-	
+
 	static void freePaddedMem(mp_ubyte* mem)
 	{
 		// behave safely on NULL
 		if (mem == NULL)
 			return;
-			
+
 		delete[] getPadStartAddr(mem);
 	}
 
@@ -223,7 +227,7 @@ public:
 		mp_ubyte* _dst = ((mp_ubyte*)dst) - TXMSample::LeadingPadding;
 		memcpy(_dst, _src, getPaddedSize(size));
 	}
-	
+
 	static mp_uint32 getSampleSizeInBytes(mp_ubyte* mem)
 	{
 		TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr(mem);
@@ -247,7 +251,7 @@ public:
 	mp_sint32 getSampleValue(mp_ubyte* sample, mp_uint32 index);
 	void setSampleValue(mp_uint32 index, mp_sint32 value);
 	void setSampleValue(mp_ubyte* sample, mp_uint32 index, mp_sint32 value);
-	
+
 #ifdef MILKYTRACKER
 	bool equals(const TXMSample& sample) const
 	{
@@ -269,7 +273,7 @@ public:
 	friend class XModule;
 };
 
-struct TXMPattern 
+struct TXMPattern
 {
 	mp_uint32	len;
 	mp_ubyte	ptype;
@@ -278,7 +282,7 @@ struct TXMPattern
 	mp_ubyte	channum;
 	mp_uword	patdata;
 	mp_ubyte*   patternData;
-	
+
 	mp_sint32 compress(mp_ubyte* dest) const;
 	mp_sint32 decompress(mp_ubyte* src, mp_sint32 len);
 #ifdef MILKYTRACKER
@@ -286,8 +290,8 @@ struct TXMPattern
 	bool loadExtendedPattern(const SYSCHAR* fileName);
 
 	bool saveExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel) const;
-	bool loadExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel);	
-	
+	bool loadExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel);
+
 	const TXMPattern& operator=(const TXMPattern& src);
 #endif
 };
@@ -311,7 +315,7 @@ public:
 	{
 	public:
 		// make GCC shut up
-		virtual ~LoaderInterface() { }		
+		virtual ~LoaderInterface() { }
 		// returns c-string which identifies the module, NULL if loader can't identify module
 		// IMPORTANT: buffer MUST contain eIdentifyBufferSize bytes of the beginning of the file
 		virtual const char* identifyModule(const mp_ubyte* buffer)			= 0;
@@ -348,38 +352,39 @@ public:
 		ModuleType_S3M,
 		ModuleType_STM,
 		ModuleType_SFX,
+		ModuleType_TMM,
 		ModuleType_UNI,
 		ModuleType_ULT,
 		ModuleType_XM,
 		ModuleType_NONE = -1,
-	};	
-	
+	};
+
 	class SampleLoader
 	{
 	protected:
 		XMFileBase& f;
-	
+
 	public:
 		SampleLoader(XMFileBase& file) :
 			f(file)
 		{
 		}
-		
+
 		virtual ~SampleLoader()
 		{
 		}
 
 		virtual mp_sint32 load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize) = 0;
 		virtual mp_sint32 load_sample_16bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize) = 0;
-	};	
-	
+	};
+
 private:
 	struct TLoaderInfo
 	{
 		LoaderInterface* loader;
 		ModuleTypes moduleType;
 	};
-	
+
 public:
 	enum
 	{
@@ -398,7 +403,7 @@ public:
 	static const mp_sint32  periods[12];
 	static const mp_sint32	sfinetunes[16];
 	static const mp_sbyte	modfinetunes[16];
-	
+
 	static const mp_ubyte	numValidXMEffects;
 	static const mp_ubyte	validXMEffects[];
 
@@ -406,7 +411,7 @@ public:
 	// different stuff for importing different module types into own format //
 	//////////////////////////////////////////////////////////////////////////
 	static mp_sint32	FixedMUL(mp_sint32 a,mp_sint32 b) { return ((mp_sint32)(((mp_int64)(a)*(mp_int64)(b))>>16)); }
-		
+
 	///////////////////////////////////////////////////////
 	// convert relative note + finetune into C4 speed    //
 	///////////////////////////////////////////////////////
@@ -415,28 +420,28 @@ public:
 	// convert C4 speed into relative note + finetune    //
 	///////////////////////////////////////////////////////
 	static void			convertc4spd(mp_uint32 c4spd, mp_sbyte* finetune, mp_sbyte* relnote);
-	
+
 	static mp_uint32	amigaPeriodToNote(mp_uint32 period);
 
 	///////////////////////////////////////////////////////
 	// load sample into memory							 //
 	///////////////////////////////////////////////////////
-	static bool			loadSample(XMFileBase& f, void* buffer, 
-								   mp_uint32 size, mp_uint32 length, 
+	static bool			loadSample(XMFileBase& f, void* buffer,
+								   mp_uint32 size, mp_uint32 length,
 								   mp_sint32 flags = ST_DEFAULT);
-	
+
 	///////////////////////////////////////////////////////
 	// load a bunch of samples into memory				 //
 	///////////////////////////////////////////////////////
 	mp_sint32			loadModuleSample(XMFileBase& f, mp_sint32 index,
 										 mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT,
 										 mp_uint32 alternateSize = 0);
-	
-	mp_sint32			loadModuleSamples(XMFileBase& f, 
+
+	mp_sint32			loadModuleSamples(XMFileBase& f,
 										  mp_sint32 flags8 = ST_DEFAULT, mp_sint32 flags16 = ST_16BIT);
-	
+
 	static void			convertXMVolumeEffects(mp_ubyte volume, mp_ubyte& eff, mp_ubyte& op);
-	
+
 	///////////////////////////////////////////////////////
 	// Allocate sample memory and store pointer in pool  //
 	// *Note* that this memory is always padded with 16  //
@@ -474,7 +479,7 @@ private:
 	// Identify module
 	ModuleTypes		type;
 
-	// Indicates whether a file is loaded or if it's just an empty song 
+	// Indicates whether a file is loaded or if it's just an empty song
 	bool			moduleLoaded;
 
 	// each module comes with it's own sample-memory management (MILKYPLAY_MAXSAMPLES samples max.)
@@ -492,7 +497,7 @@ private:
 	static bool		addEnvelope(TEnvelope*& envs,const TEnvelope& env,mp_uint32& numEnvsAlloc,mp_uint32& numEnvs);
 	// fix broken envelopes (1 point envelope for example)
 	static void		fixEnvelopes(TEnvelope* envs, mp_uint32 numEnvs);
-	
+
 	// holds available loader instances
 	class LoaderManager
 	{
@@ -505,11 +510,11 @@ private:
 		mp_sint32		iteratorCounter;
 
 		void registerLoader(LoaderInterface* loader, ModuleTypes type);
-		
+
 	public:
-		LoaderManager();		
+		LoaderManager();
 		~LoaderManager();
-		
+
 		TLoaderInfo* getFirstLoaderInfo();
 		TLoaderInfo* getNextLoaderInfo();
 	};
@@ -519,7 +524,7 @@ private:
 	bool			validate();
 
 public:
-	
+
 	// Module flags
 	enum
 	{
@@ -541,7 +546,7 @@ public:
 		MODULE_ITLINKPORTAMEM			= 32768,
 		MODULE_ITTEMPOSLIDE				= 65536,
 	};
-	
+
 	enum
 	{
 		NOTE_LAST	= 120,
@@ -552,15 +557,15 @@ public:
 		SubSongMarkEffect	= 0x1E,
 		SubSongMarkOperand	= 0xFF,
 	};
-		
+
 	TXMHeader		header;		// module header
 	TXMInstrument*	instr;		// all instruments (256 of them)
 	TXMSample*		smp;		// all samples (256 of them, only 255 can be used)
 	TXMPattern*		phead;		// all pattern headers (256 of them)
-	
+
 	mp_uint32		messageBytesAlloc;
 	char*			message;	// song message
-	
+
 	TEnvelope*		venvs;
 	mp_uint32		numVEnvsAlloc;
 	mp_uint32		numVEnvs; // should be equal to header.venvnum
@@ -570,7 +575,7 @@ public:
 	mp_uint32		numPEnvsAlloc;
 	mp_uint32		numPEnvs; // should be equal to header.penvnum
  	bool			addPanningEnvelope(const TEnvelope& env) { return addEnvelope(penvs, env, numPEnvsAlloc, numPEnvs); }
-	
+
 	TEnvelope*		fenvs;
 	mp_uint32		numFEnvsAlloc;
 	mp_uint32		numFEnvs; // should be equal to header.fenvnum
@@ -585,7 +590,7 @@ public:
 	mp_uint32		numPitchEnvsAlloc;
 	mp_uint32		numPitchEnvs; // should be equal to header.vibenvnum
 	bool			addPitchEnvelope(TEnvelope& env) { return addEnvelope(pitchenvs, env, numPitchEnvsAlloc, numPitchEnvs); }
-	
+
 	///////////////////////////////////////////////////////
 	// convert volume from range [0..64] to [0..255]     //
 	///////////////////////////////////////////////////////
@@ -605,14 +610,14 @@ public:
 	// convert volume from range [0..128] to [0..255]    //
 	///////////////////////////////////////////////////////
 	static mp_sint32		vol128to255(mp_sint32 vol) { return ((vol>128?128:vol)*130560+65535)>>16; }
-	
+
 	static mp_sint32		pan15to255(mp_sint32 pan) { return pan>=0xF?0xFF:(pan<<4); }
-	
+
 	///////////////////////////////////////////////////
 	// Allocate necessary memory for song structures //
 	///////////////////////////////////////////////////
 					XModule();
-	
+
 	///////////////////////////////////////////////////
 	// Clean up										//
 	///////////////////////////////////////////////////
@@ -630,24 +635,25 @@ public:
 	// of the file									 //
 	///////////////////////////////////////////////////
 	static const char*	identifyModule(const mp_ubyte* buffer);
-	
+
 	///////////////////////////////////////////////////
 	// generic module loader						 //
 	///////////////////////////////////////////////////
 	mp_sint32		loadModule(XMFileBase& f, bool scanForSubSongs = false);
-	mp_sint32		loadModule(const SYSCHAR* fileName, bool scanForSubSongs = false);	 
+	mp_sint32		loadModule(const SYSCHAR* fileName, bool scanForSubSongs = false);
 
 	///////////////////////////////////////////////////
 	// Module exporters								 //
 	///////////////////////////////////////////////////
-	mp_sint32		saveExtendedModule(const SYSCHAR* fileName);		// FT2 (.XM)
+	mp_sint32		saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm = 0);		// FT2 (.XM)
 	mp_sint32		saveProtrackerModule(const SYSCHAR* fileName);   // Protracker compatible (.MOD)
+	mp_sint32		saveMagicalModule(const SYSCHAR* fileName);                  // TiTAN Magical Module (.TMM)
 
 	///////////////////////////////////////////////////
 	// module loaded?								 //
 	///////////////////////////////////////////////////
 	bool			isModuleLoaded() const { return moduleLoaded; }
-	
+
 	///////////////////////////////////////////////////
 	// string processing							 //
 	///////////////////////////////////////////////////
@@ -656,14 +662,14 @@ public:
 	void			getTitle(char* str, bool filter = true) const;
 	void			getSignature(char* str, bool filter = true) const;
 	void			getTracker(char* str, bool filter = true) const;
-	
+
 	///////////////////////////////////////////////////
 	// dealing with song message				     //
 	///////////////////////////////////////////////////
-	
+
 	// allocate empty song message
 	void			allocateSongMessage(mp_uint32 initialSize = 512);
-	
+
 	// add one more line of text to the song message
 	void			addSongMessageLine(const char* line);
 
@@ -673,11 +679,11 @@ public:
 	mp_sint32		getNextSongMessageLineLength();
 	// get line
 	void			getSongMessageLine(char* line);
-	
+
 	void			buildSubSongTable();
-	
+
 	mp_sint32		getNumSubSongs() const { return numSubSongs; }
-	
+
 	mp_sint32		getSubSongPosStart(mp_sint32 i) const;
 	mp_sint32		getSubSongPosEnd(mp_sint32 i) const;
 
@@ -686,7 +692,7 @@ public:
 	///////////////////////////////////////////////////
 	// Remove stupid empty = 0xFE orders
 	void			removeOrderSkips();
-	// Remove unused patterns 
+	// Remove unused patterns
 	mp_sint32		removeUnusedPatterns(bool evaluate);
 
 	// these are located in ExporterXM.cpp
@@ -710,6 +716,9 @@ public:
 	};
 
 	IsPTCompatibleErrorCodes isPTCompatible();
-};	
+
+	friend class LoaderXM;
+	friend class LoaderTMM;
+};
 
 #endif

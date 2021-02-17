@@ -78,7 +78,7 @@ void Tracker::processShortcuts(PPEvent* event)
 		case EditModeFastTracker:
 			processShortcutsFastTracker(event);
 			break;
-			
+
 		default:
 			ASSERT(false);
 	}
@@ -107,7 +107,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			{
 				if (::getKeyModifier())
 					goto processBindings;
-					
+
 				if (static_cast<PPControl*>(getPatternEditorControl()) != screen->getFocusedControl())
 				{
 					getPatternEditorControl()->dispatchEvent(event);
@@ -118,28 +118,28 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			default:
 			{
 processBindings:
-				pp_int32 keyModifier = ::getKeyModifier(); 
+				pp_int32 keyModifier = ::getKeyModifier();
 				bool res = executeBinding(eventKeyDownBindings, keyCode);
 
 				if (res && !isActiveEditing())
 					event->cancel();
-					
+
 				if (res || keyModifier)
 					break;
-			
+
 				if (editMode == EditModeMilkyTracker)
 				{
 					if (sectionDiskMenu->isFileBrowserVisible() &&
 						sectionDiskMenu->fileBrowserHasFocus())
 						break;
 				}
-			
+
 				PatternEditorControl* patternEditorControl = getPatternEditorControl();
 
 				// translate key to note
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
 
-				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);	
+				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);
 				break;
 			}
 
@@ -147,9 +147,9 @@ processBindings:
 	}
 	else if (event->getID() == eKeyUp)
 	{
-		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr()); 
+		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
-		
+
 		switch (keyCode)
 		{
 			case VK_SPACE:
@@ -157,17 +157,17 @@ processBindings:
 				playerLogic->finishTraceAndRowPlay();
 				break;
 			}
-				
+
 			default:
 			{
 				PatternEditorControl* patternEditorControl = getPatternEditorControl();
-				
-				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);				
-				
-				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
+
+				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);
+
+				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);
 			}
 		}
-		
+
 	}
 }
 
@@ -216,7 +216,7 @@ void Tracker::selectPreviousInstrument()
 // MilkyTracker uses focus handling on most editable controls while FT2 doesn't
 // ----------------------------------------------------------------------------
 // 1. a defined set of keys always are always routed to to the pattern editor
-// 2. If record mode is ON all keyboard events are also routed to pattern editor 
+// 2. If record mode is ON all keyboard events are also routed to pattern editor
 //    (no matter if it can handle them or not)
 // 3. Keys are not routed into any other control except for editing
 ///////////////////////////////////////////////////////////////////////////////
@@ -233,9 +233,13 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 
 	if (event->getID() == eKeyDown)
 	{
+		// MAGIC
+		PPControl* modalcontrol = screen->getModalControl();
+		bool modal = modalcontrol && modalcontrol->getID() != RESPONDMESSAGEBOX_MAGIC;
+
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
-	
+
 		switch (scanCode)
 		{
 			case SC_WTF:
@@ -264,9 +268,8 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 			case SC_H:
 			case SC_J:
 			case SC_K:
-				if (screen->getModalControl())
-					break;
-				
+				if (modal) break;
+
 				if (::getKeyModifier() == KeyModifierALT)
 				{
 					getPatternEditorControl()->dispatchEvent(event);
@@ -290,24 +293,24 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				}
 				break;
 		}
-	
+
 		switch (keyCode)
 		{
 			case VK_SPACE:
 			{
 				if (screen->getModalControl())
 					break;
-					
+
 				if (::getKeyModifier())
 					goto processOthers;
-			
+
 				if (playerController->isPlaying() || playerController->isPlayingPattern())
 				{
 					playerLogic->stopSong();
 					event->cancel();
 					break;
 				}
-				
+
 				playerLogic->stopSong();
 
 				eventKeyDownBinding_ToggleFT2Edit();
@@ -327,7 +330,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				getPatternEditorControl()->dispatchEvent(event);
 				event->cancel();
 				break;
-			
+
 			// Transpose (regardless of modifers)
 			case VK_F1:
 			case VK_F2:
@@ -354,7 +357,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 				}
 				processShortcutsMilkyTracker(event);
 				break;
-				
+
 			// Some special keys always going to the pattern editor (like undo, redo, mute etc.)
 			case 'A':
 			case 'C':
@@ -368,10 +371,10 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 					// modal dialogs for instrument preview playback
 					if (!::getKeyModifier())
 						goto processOthers;
-						
+
 					break;
 				}
-				
+
 				if (::getKeyModifier() == (KeyModifierCTRL|KeyModifierALT))
 				{
 					getPatternEditorControl()->dispatchEvent(event);
@@ -383,7 +386,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 			case 'I':
 				if (screen->getModalControl())
 					break;
-				
+
 				if (::getKeyModifier() == KeyModifierSHIFT)
 				{
 					getPatternEditorControl()->dispatchEvent(event);
@@ -395,7 +398,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 			case 'M':
 				if (screen->getModalControl())
 					break;
-				
+
 				if (::getKeyModifier() == KeyModifierSHIFT ||
 					::getKeyModifier() == (KeyModifierSHIFT|KeyModifierCTRL))
 				{
@@ -435,7 +438,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 							listBoxInstruments->dispatchEvent(event);
 							event->cancel();
 							break;
-						
+
 						// Select new order using Shift+Left/Right
 						case VK_LEFT:
 						{
@@ -474,7 +477,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 							eventKeyDownBinding_PreviousPattern();
 							event->cancel();
 							break;
-							
+
 						case VK_RIGHT:
 							eventKeyDownBinding_NextPattern();
 							event->cancel();
@@ -496,7 +499,7 @@ void Tracker::processShortcutsFastTracker(PPEvent* event)
 processOthers:
 				processShortcutsMilkyTracker(event);
 
-				if (screen->getModalControl())
+				if (modal)
 					break;
 
 				if (recorderLogic->getRecordMode())
@@ -532,7 +535,7 @@ processOthers:
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 		//pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
-	
+
 		switch (keyCode)
 		{
 			// Those are the keykombinations which are always routed to pattern editor control as long
@@ -576,7 +579,7 @@ void Tracker::switchEditMode(EditModes mode)
 
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
 	ASSERT(container);
-	
+
 	// Assign keyboard bindings
 	getPatternEditorControl()->setShowFocus(b);
 	listBoxInstruments->setShowFocus(b);
@@ -587,19 +590,19 @@ void Tracker::switchEditMode(EditModes mode)
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
 	ASSERT(container);
 	static_cast<PPListBox*>(container->getControlByID(LISTBOX_SONGTITLE))->setShowFocus(b);
-	
+
 	if (b)
 	{
-		eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;	
+		eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 		screen->setFocus(listBoxInstruments, false);
 	}
 	else
 	{
-		eventKeyDownBindings = eventKeyDownBindingsFastTracker;	
+		eventKeyDownBindings = eventKeyDownBindingsFastTracker;
 		recorderLogic->setRecordMode(true);
 		eventKeyDownBinding_ToggleFT2Edit();
 	}
-	
+
 	getPatternEditorControl()->switchEditMode(mode);
 
 	editMode = mode;
@@ -615,10 +618,10 @@ static void simulateMouseClickEvent(PPControl* ctrl)
 	PPPoint p = ctrl->getLocation();
 	p.x+=ctrl->getSize().width >> 1;
 	p.y+=ctrl->getSize().height >> 1;
-	
+
 	PPEvent e1(eLMouseDown, &p, sizeof(PPPoint));
 	PPEvent e2(eLMouseUp, &p, sizeof(PPPoint));
-	
+
 	ctrl->dispatchEvent(&e1);
 	ctrl->dispatchEvent(&e2);
 }

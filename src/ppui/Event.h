@@ -99,7 +99,8 @@ enum EEventDescriptor
 	eCanceled,					// e.g. cancel-press
 	eTimer,
 	eFullScreen,
-	eAppQuit
+	eAppQuit,
+	eHarmonicaUpdated
 };
 
 /////////////////////////////////////////////////////////////////

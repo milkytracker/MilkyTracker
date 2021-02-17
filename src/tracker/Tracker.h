@@ -111,24 +111,24 @@ private:
 	pp_int32 NUMSUBMENUS()						{ return 5; }
 	pp_int32 MAXEDITORHEIGHT();
 #endif
-	
+
 	bool* muteChannels;
-	
+
 	TabManager* tabManager;
 	PlayerController* playerController;
 	PlayerMaster* playerMaster;
 	ModuleEditor* moduleEditor;
 	class PlayerLogic* playerLogic;
 	class RecorderLogic* recorderLogic;
-	
+
 	PatternEditorControl* patternEditorControl;
 	PeakLevelControl* peakLevelControl;
 	ScopesControl* scopesControl;
 	PPStaticText* playTimeText;
-	
+
 	// - Sections --------------------------------------------------------------
 	class SectionSwitcher* sectionSwitcher;
-	
+
 	PPSimpleVector<SectionAbstract>* sections;
 	SectionTranspose* sectionTranspose;
 	SectionAdvancedEdit* sectionAdvancedEdit;
@@ -140,13 +140,13 @@ private:
 	SectionQuickOptions* sectionQuickOptions;
 	SectionOptimize* sectionOptimize;
 	SectionAbout* sectionAbout;
-	
+
 	InputControlListener* inputControlListener;
-	
+
 	DialogResponder* responder;
 	PPDialogBase* dialog;
 	ToolInvokeHelper* toolInvokeHelper;
-	
+
 	PPScreen* screen;
 
 	TrackerSettingsDatabase* settingsDatabase;
@@ -159,11 +159,11 @@ private:
 	EditModes editMode;
 
 	// - Misc. settings --------------------------------------------------------
-	bool extendedOrderlist;	
+	bool extendedOrderlist;
 	bool followSong;
-	bool caughtMouseInUpperLeftCorner;	
+	bool caughtMouseInUpperLeftCorner;
 	bool useClassicBrowser;
-	
+
 	// - Keyboard bindings -----------------------------------------------------
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindings;
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindingsMilkyTracker;
@@ -173,14 +173,14 @@ private:
 	void buildDefaultSettings();
 	void applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& settings, pp_uint32 version);
 
-	static void getMixerSettingsFromDatabase(TMixerSettings& mixerSettings, 
+	static void getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 											 TrackerSettingsDatabase& currentSettings);
 
-	void applySettings(TrackerSettingsDatabase* newSettings, 
-					   TrackerSettingsDatabase* currentSettings = NULL, 
+	void applySettings(TrackerSettingsDatabase* newSettings,
+					   TrackerSettingsDatabase* currentSettings = NULL,
 					   bool applyMixerSettings = true,
 					   bool allowMixerRestart = true);
-	
+
 	// - global controls -------------------------------------------------------
 	PPListBox* listBoxOrderList;
 	PPListBox* listBoxInstruments;
@@ -192,12 +192,12 @@ private:
 	void initSectionPattern(pp_int32 x, pp_int32 y);
 	void initSectionMainOptions(pp_int32 x, pp_int32 y);
 	void initListboxesSection(pp_int32 x, pp_int32 y);
-	
+
 	// - instrument selector dialog --------------------------------------------
 	void initAdvEdit();
 
-	void initInstrumentChooser(pp_int32 id, const PPString& buttonText, const PPString& buttonText2, const PPString& caption, 
-							   const PPString& userString1, const PPString& userString2,  
+	void initInstrumentChooser(pp_int32 id, const PPString& buttonText, const PPString& buttonText2, const PPString& caption,
+							   const PPString& userString1, const PPString& userString2,
 							   pp_int32 srcSelection = -1, pp_int32 srcSelection2 = -1, pp_int32 srcSelection3 = -1);
 	void updateInstrumentChooser(bool repaint = true);
 
@@ -222,7 +222,7 @@ private:
 	PPContainer* inputContainerExtended;
 	void initInputContainerDefault(pp_int32 x, pp_int32 y);
 	void initInputContainerExtended(pp_int32 x, pp_int32 y);
-	
+
 	enum SIPs
 	{
 		SIPDefault,
@@ -243,7 +243,7 @@ private:
 	void updateOrderlist(bool repaint = true);
 	void updateSongLength(bool repaint = true);
 	void updateSongRepeat(bool repaint = true);
-	
+
 	void updateBPM(bool repaint = true);
 	bool updateSpeed(bool repaint = true);
 	void updatePatternAddAndOctave(bool repaint = true);
@@ -256,7 +256,7 @@ private:
 	void updateInstrumentsListBox(bool repaint = true);
 
 	void updateSongInfo(bool repaint = true);
-	
+
 	void updateTabTitle();
 	void updateWindowTitle();
 	void updateWindowTitle(const PPSystemString& fileName);
@@ -267,7 +267,7 @@ private:
 
 	void updateSampleEditor(bool repaint = true, bool force = false);
 	void updateSampleEditorAndInstrumentSection(bool repaint = true);
-	
+
 	void updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingPattern);
 	void updateAfterTabSwitch();
 
@@ -275,7 +275,7 @@ private:
 	// Show/hide main section (song settings + main menu)
 	void showSongSettings(bool show);
 	void showMainOptions(bool show);
-	
+
 #ifdef __LOWRES__
 	void selectScopesControl(pp_int32 ctrlType);
 	void updateScopesControlButtons();
@@ -284,7 +284,7 @@ private:
 #endif
 
 	void showMainMenu(bool show, bool showInstrumentSelector);
-	
+
 	void showScopes(bool visible, pp_uint32 style);
 	// - misc. -----------------------------------------------------------------
 	pp_int32 lastPos, lastRow;
@@ -294,12 +294,12 @@ private:
 		lastPos = lastRow = -1;
 		lastSpeed = lastBPM = lastMainVol = -1;
 	}
-	
+
 	bool updateSongPosition(pp_int32 pos = -1, pp_int32 row = -1, bool fast = false);
 	// this always repaints, so no bool return value
 	void updateRecordButton(PPContainer* container, const PPColor& pColor);
 	void doFollowSong();
-	
+
 	PatternEditorControl* getPatternEditorControl() { return patternEditorControl; }
 	void updatePatternEditorControl(bool repaint = true, bool fast = false);
 	PatternEditor* getPatternEditor();
@@ -310,7 +310,7 @@ private:
 	void setOrderListIndex(pp_int32 index);
 	bool isEditingCurrentOrderlistPattern();
 	pp_int32 getInstrumentToPlay(pp_int32 note, PlayerController*& playerController);
-	
+
 	void setNumChannels(pp_int32 numChannels, bool repaint = true);
 
 	bool isActiveEditing();
@@ -318,32 +318,32 @@ private:
 	void ensureSongStopped(bool bResetMainVolume, bool suspend);
 	void ensureSongPlaying(bool continuePlaying);
 	void initPlayback();
-	
+
 	bool shouldFollowSong();
-	
+
 	bool getFollowSong();
 	void setFollowSong(bool b, bool repaint = true);
-	
+
 	bool getProspectiveMode();
 	void setProspectiveMode(bool b, bool repaint = true);
-	
+
 	bool getCursorWrapAround();
 	void setCursorWrapAround(bool b, bool repaint = true);
 
 	void setLiveSwitch(bool b, bool repaint = true);
-	
+
 	void updateSongRow(bool checkFollowSong = true);
-	
+
 	void selectInstrument(pp_int32 instrument);
 	void fillInstrumentListBox(PPListBox* listBox, ModuleEditor* moduleEditor = NULL);
 	void fillSampleListBox(PPListBox* listBox, pp_int32 insIndex, ModuleEditor* moduleEditor = NULL);
 	void fillModuleListBox(PPListBox* listBox);
-	
+
 	void setChanged();
 
 	bool checkForChanges(ModuleEditor* module = NULL);
 	bool checkForChangesOpenModule();
-	
+
 	bool swapAndCopyHandler(pp_int32 messageBoxID, pp_int32 messageBoxButtonID);
 	void handleQuit();
 	bool messageBoxEventListener(pp_int32 messageBoxID, pp_int32 messageBoxButtonID);
@@ -354,14 +354,14 @@ private:
 	void expandOrderlist(bool b);
 
 	void flipSpeedSection();
-	
+
 	void enableInstrument(bool b);
 
-	void commitListBoxChanges();	
+	void commitListBoxChanges();
 
 	// Signal waitstate
 	void signalWaitState(bool b);
-	
+
 	// - Load/Save -------------------------------------------------------------
 	FileTypes currentSaveFileType;
 	PPSavePanel* savePanel;
@@ -379,11 +379,11 @@ private:
 		bool res;
 		PPString lastError;
 		bool wasPlaying;
-		bool wasPlayingPattern;	
+		bool wasPlayingPattern;
 		bool abortLoading;
 		bool deleteFile;
 		bool didOpenTab;
-		
+
 		TPrepareLoadingParameters() :
 			abortLoading(false),
 			deleteFile(false),
@@ -399,25 +399,25 @@ private:
 
 	bool loadGenericFileType(const PPSystemString& fileName);
 
-	bool prepareLoading(FileTypes eType, 
-						const PPSystemString& fileName, 
-						bool suspendPlayer, 
-						bool repaint, bool 
+	bool prepareLoading(FileTypes eType,
+						const PPSystemString& fileName,
+						bool suspendPlayer,
+						bool repaint, bool
 						saveCheck);
 
 	bool finishLoading();
 
-	bool loadTypeFromFile(FileTypes eType, 
-						  const PPSystemString& fileName, 
-						  bool suspendPlayer = true, 
-						  bool repaint = true, 
+	bool loadTypeFromFile(FileTypes eType,
+						  const PPSystemString& fileName,
+						  bool suspendPlayer = true,
+						  bool repaint = true,
 						  bool saveCheck = true);
 
-	bool loadTypeWithDialog(FileTypes eType, 
-							bool suspendPlayer = true, 
+	bool loadTypeWithDialog(FileTypes eType,
+							bool suspendPlayer = true,
 							bool repaint = true);
 	void loadType(FileTypes eType);
-	
+
 	bool prepareSavingWithDialog(FileTypes eType);
 	bool saveTypeWithDialog(FileTypes eType, EventListenerInterface* fileSystemChangedListener = NULL);
 	bool saveCurrentModuleAsSelectedType();
@@ -426,7 +426,7 @@ private:
 	void saveAs();
 	void handleSaveProceed();
 	void handleSaveCancel();
-	
+
 	void buildMODSaveErrorWarning(pp_int32 error);
 	void estimateSongLength(bool signalWait = false);
 
@@ -434,7 +434,7 @@ public:
 	Tracker();
 
 	virtual ~Tracker();
-	
+
 	void setScreen(PPScreen* screen) { this->screen = screen; }
 
 	void initUI();
@@ -443,7 +443,7 @@ public:
 
 	// PPEvent listener
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
-	
+
 	PPSize getWindowSizeFromDatabase();
 	bool getFullScreenFlagFromDatabase();
 	pp_int32 getScreenScaleFactorFromDatabase();
@@ -454,43 +454,44 @@ public:
 
 	// Tracker startup
 	void startUp(bool forceNoSplash = false);
-		
+
 	// Tracker shutdown
 	bool shutDown();
-	
+
 	mp_sint32 saveModule(const PPSystemString& fileName);
 
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);
 
+	class ModuleEditor* getModuleEditor() { return this->moduleEditor; }
 private:
 	void switchEditMode(EditModes mode);
 
 	// Process keyboard events according to current edit mode
 	void processShortcuts(PPEvent* event);
-	
+
 	// Process messagebox shortcuts (RETURN & ESC)
 	bool processMessageBoxShortcuts(PPEvent* event);
 
 	void processShortcutsMilkyTracker(PPEvent* event);
-	
+
 	void selectNextOrder(bool wrap = false);
 	void selectPreviousOrder(bool wrap = false);
 
 	void selectNextInstrument();
 	void selectPreviousInstrument();
-	
+
 	void processShortcutsFastTracker(PPEvent* event);
 
 	// - Keyboard bindings -----------------------------------------------------
 	pp_int16 currentKeyCode;
-	
+
 	bool executeBinding(const PPKeyBindings<TTrackerKeyBindingHandler>* bindings, pp_uint16 keyCode);
-	void initKeyBindings();	
-	
+	void initKeyBindings();
+
 	void eventKeyDownBinding_OpenTab();
 	void eventKeyDownBinding_CloseTab();
-	
+
 	void eventKeyDownBinding_SwitchToNextTab();
 	void eventKeyDownBinding_SwitchToPreviousTab();
 
@@ -504,7 +505,7 @@ private:
 	void eventKeyDownBinding_SelectOctave6();
 	void eventKeyDownBinding_SelectOctave7();
 	void eventKeyDownBinding_SelectOctave8();
-	
+
 	void eventKeyDownBinding_PlaySong();
 	void eventKeyDownBinding_PlayPattern();
 	void eventKeyDownBinding_PlayPosition();
@@ -514,17 +515,17 @@ private:
 	void eventKeyDownBinding_PlayRow();
 	void eventKeyDownBinding_PlayTrace();
 	void eventKeyDownBinding_Stop();
-	void eventKeyDownBinding_Edit();	
+	void eventKeyDownBinding_Edit();
 
 	void eventKeyDownBinding_UnmuteAll();
 
 	void eventKeyDownBinding_Open();
 	void eventKeyDownBinding_Save();
 	void eventKeyDownBinding_SaveAs();
-	
+
 	void eventKeyDownBinding_NextPattern();
 	void eventKeyDownBinding_PreviousPattern();
-	
+
 	// - Invoke sections
 	void eventKeyDownBinding_InvokeMainScreen();
 	void eventKeyDownBinding_InvokeSectionInstruments();
@@ -537,7 +538,7 @@ private:
 	void eventKeyDownBinding_InvokeSectionQuickOptions();
 	void eventKeyDownBinding_InvokeSectionOptimize();
 	void eventKeyDownBinding_InvokeSectionAbout();
-	
+
 	// Some handy shortcuts
 	void eventKeyDownBinding_ToggleFT2Edit();
 	void eventKeyDownBinding_ToggleFollowSong();
@@ -546,13 +547,13 @@ private:
 	void eventKeyDownBinding_ToggleLiveSwitch();
 	void eventKeyDownBinding_ToggleRecordKeyOff();
 	void eventKeyDownBinding_ToggleScopes();
-	
+
 	void eventKeyDownBinding_InvokePatternToolVolumeScalePattern();
 	void eventKeyDownBinding_InvokePatternToolVolumeScaleTrack();
 	void eventKeyDownBinding_InvokePatternToolVolumeScaleSelection();
 
 	void eventKeyDownBinding_InvokeQuickChooseInstrument();
-	
+
 	// - Some FT2 standard bindings
 	void eventKeyDownBinding_TransposeCurInsTrackDown();
 	void eventKeyDownBinding_TransposeCurInsTrackUp();
@@ -571,7 +572,7 @@ private:
 
 	void eventKeyDownBinding_TransposeAllInsBlockDown();
 	void eventKeyDownBinding_TransposeAllInsBlockUp();
-	
+
 	void eventKeyDownBinding_ExitApplication();
 
     // Contributed by 8ch (http://modarchive.org/forums/index.php?topic=2713.0):
@@ -603,12 +604,14 @@ private:
 	friend class ToolInvokeHelper;
 	friend class SaveProceedHandler;
 	friend class PanningSettingsContainer;
-	
+
 	friend class TabManager;
 	friend class PlayerLogic;
 	friend class RecorderLogic;
 	friend class Zapper;
 	friend class SectionSwitcher;
+
+	friend class DialogSynth;
 };
 
 #endif

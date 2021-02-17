@@ -50,46 +50,46 @@ void TXMSample::smoothLooping()
 		return;
 
 	mp_sbyte* data = (mp_sbyte*)this->sample;
-	
+
 	const mp_sint32 blockSize = 8;
-	
+
 	mp_sint32 max,t;
-	
+
 	float v1 = data[loopstart];
 	float v2 = data[loopstart+looplen];
-	
+
 	float avg = (v1+v2)*0.5f;
-	
+
 	// step 1: Fade to avg from what's coming before loopstart
 	max = loopstart;
 	if (max > blockSize) max = blockSize;
 	for (t = 0; t < max; t++)
 	{
 		float ft = (float)t/(float)max;
-		mp_sint32 index = loopstart - max + t;					
+		mp_sint32 index = loopstart - max + t;
 		mp_sint32 src = data[index];
 		float final = src * (1.0f - ft) + (avg * ft);
 		data[index] = (mp_sbyte)final;
 	}
-	
+
 	// step 2: Fade from avg into what's coming after loopstart
 	max = blockSize;
 	for (t = 0; t < max; t++)
 	{
 		float ft = (float)t/(float)max;
-		mp_sint32 index = loopstart + t;					
+		mp_sint32 index = loopstart + t;
 		mp_sint32 dst = data[index];
 		float final = avg * (1.0f - ft) + (dst * ft);
 		data[index] = (mp_sbyte)final;
 	}
-	
+
 	// step 3
 	for (t = 0; t < blockSize; t++)
 	{
 		mp_sint32 index = loopstart+looplen - blockSize + t;
-		
+
 		mp_sint32 src = data[index];
-		
+
 		float ft = (float)t/(float)blockSize;
 		float final = src * (1.0f - ft) + (avg * ft);
 		data[index] = (mp_sbyte)final;
@@ -100,19 +100,19 @@ void TXMSample::restoreLoopArea()
 {
 	if (sample == NULL)
 		return;
-	
+
 	mp_ubyte* originalSample = getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps);
 	mp_uint32 saveLen = (type&16) ? LoopAreaBackupSize * sizeof(mp_sword) : LoopAreaBackupSize;
-	
+
 	TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-	
+
 	ASSERT(saveLen <= LeadingPadding / 2);
 
 	// 16 bit sample
 	if (type&16)
 	{
 		mp_sword* data = (mp_sword*)this->sample;
-		
+
 		// save "real" loop area back from double buffer to sample
 		if ((loopBufferProps->state[1] & 16) == (type & 16))
 			memcpy(data+loopBufferProps->lastloopend, originalSample, saveLen);
@@ -125,10 +125,10 @@ void TXMSample::restoreLoopArea()
 		loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
 	}
 	// 8 bit sample
-	else 
-	{			
+	else
+	{
 		mp_sbyte* data = (mp_sbyte*)this->sample;
-	
+
 		// save "real" loop area back from double buffer to sample
 		if ((loopBufferProps->state[1] & 16) == (type & 16))
 			memcpy(data+loopBufferProps->lastloopend, originalSample, saveLen);
@@ -146,9 +146,9 @@ void TXMSample::restoreOriginalState()
 {
 	if (sample == NULL)
 		return;
-	
+
 	TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-	
+
 	if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateDirty ||
 		loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed)
 	{
@@ -173,45 +173,45 @@ void TXMSample::postProcessSamples()
 		type &= ~3;
 	if (sample == NULL)
 		return;
-	
+
 	mp_ubyte* originalSample = getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps);
 	mp_uint32 saveLen = (type&16) ? LoopAreaBackupSize * sizeof(mp_sword) : LoopAreaBackupSize;
-	
+
 	TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
-	
+
 	ASSERT(saveLen <= sizeof(buffer));
 	ASSERT(saveLen <= LeadingPadding / 2);
-	
+
 	const mp_ubyte importantFlags = 3 + 16;
-	
+
 	if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateDirty ||
 		(((loopBufferProps->lastloopend != loopend) ||
-		  (loopBufferProps->state[1] != (type & importantFlags))) && 
+		  (loopBufferProps->state[1] != (type & importantFlags))) &&
 		 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed))
 	{
 		restoreLoopArea();
 	}
-	
+
 	// 16 bit sample
 	if (type&16)
 	{
 		mp_sword* data = (mp_sword*)this->sample;
-		
-		if (!(type&3)) 
+
+		if (!(type&3))
 		{
 			data[-1]=data[0];
 			data[-2]=data[1];
 			data[-3]=data[2];
 			data[-4]=data[3];
-			
+
 			data[samplen]=data[samplen-1];
 			data[samplen+1]=data[samplen-2];
 			data[samplen+3]=data[samplen-3];
 			data[samplen+4]=data[samplen-4];
 		}
-		else if ((type&3) && 
+		else if ((type&3) &&
 				 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
-		{ 
+		{
 			// forward loop
 			if ((type&3) == 1)
 			{
@@ -220,15 +220,15 @@ void TXMSample::postProcessSamples()
 				data[-2] = data[loopend-2];
 				data[-3] = data[loopend-3];
 				data[-4] = data[loopend-4];
-				
+
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
-				
+
 				memcpy(buffer, data+loopstart, saveLen);
-				memcpy(data+loopend, buffer, saveLen);	
+				memcpy(data+loopend, buffer, saveLen);
 			}
 			else if ((type&3) == 2)
 			{
@@ -242,32 +242,32 @@ void TXMSample::postProcessSamples()
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
-				
+
 				data[loopend] = data[loopend-1];
 				data[loopend+1] = data[loopend-2];
 				data[loopend+2] = data[loopend-3];
 				data[loopend+3] = data[loopend-4];
-			}			
-		}			
+			}
+		}
 	}
 	// 8 bit sample
-	else 
-	{			
+	else
+	{
 		mp_sbyte* data = (mp_sbyte*)this->sample;
-	
-		if (!(type&3)) 
+
+		if (!(type&3))
 		{
 			data[-1] = data[0];
 			data[-2] = data[1];
 			data[-3] = data[2];
 			data[-4] = data[3];
-			
+
 			data[samplen] = data[samplen-1];
 			data[samplen+1] = data[samplen-2];
 			data[samplen+2] = data[samplen-3];
 			data[samplen+3] = data[samplen-4];
 		}
-		else if ((type&3) && 
+		else if ((type&3) &&
 				 loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
 		{
 			// forward loop
@@ -278,13 +278,13 @@ void TXMSample::postProcessSamples()
 				data[-2] = data[loopend-2];
 				data[-3] = data[loopend-3];
 				data[-4] = data[loopend-4];
-				
+
 				// save portions after loopend, gets overwritten now
 				memcpy(originalSample, data+loopend, saveLen);
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
-				
+
 				memcpy(buffer, data+loopstart, saveLen);
 				memcpy(data+loopend, buffer, saveLen);
 			}
@@ -301,7 +301,7 @@ void TXMSample::postProcessSamples()
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUsed;
 				loopBufferProps->state[1] = type & importantFlags;
 				loopBufferProps->lastloopend = loopend;
-				
+
 				data[loopend] = data[loopend-1];
 				data[loopend+1] = data[loopend-2];
 				data[loopend+2] = data[loopend-3];
@@ -318,13 +318,13 @@ mp_sint32 TXMSample::getSampleValue(mp_uint32 index)
 {
 	if (type & 16)
 	{
-		if ((type & 3) && index >= loopstart+looplen && 
+		if ((type & 3) && index >= loopstart+looplen &&
 			index < loopstart+looplen+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
 			if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUnused)
 				return *(((mp_sword*)sample)+index);
-			
+
 			mp_sword* buff = (mp_sword*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
 			return *(buff + (index - (loopstart+looplen)));
 		}
@@ -333,7 +333,7 @@ mp_sint32 TXMSample::getSampleValue(mp_uint32 index)
 	}
 	else
 	{
-		if ((type & 3) && index >= loopstart+looplen && 
+		if ((type & 3) && index >= loopstart+looplen &&
 			index < loopstart+looplen+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -360,7 +360,7 @@ void TXMSample::setSampleValue(mp_uint32 index, mp_sint32 value)
 {
 	if (type & 16)
 	{
-		if ((type & 3) && index >= loopstart+looplen && 
+		if ((type & 3) && index >= loopstart+looplen &&
 			index < loopstart+looplen+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -372,16 +372,16 @@ void TXMSample::setSampleValue(mp_uint32 index, mp_sint32 value)
 
 			mp_sword* buff = (mp_sword*)(getPadStartAddr((mp_ubyte*)sample) + sizeof(TLoopDoubleBuffProps));
 			*(buff + (index - (loopstart+looplen))) = (mp_sword)value;
-			
+
 			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
 		}
-		else if ((type & 3) && index >= loopstart && 
+		else if ((type & 3) && index >= loopstart &&
 				 index < loopstart+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
 			if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed)
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
-			
+
 			*(((mp_sword*)sample)+index) = (mp_sword)value;
 		}
 		else
@@ -389,7 +389,7 @@ void TXMSample::setSampleValue(mp_uint32 index, mp_sint32 value)
 	}
 	else
 	{
-		if ((type & 3) && index >= loopstart+looplen && 
+		if ((type & 3) && index >= loopstart+looplen &&
 			index < loopstart+looplen+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
@@ -404,13 +404,13 @@ void TXMSample::setSampleValue(mp_uint32 index, mp_sint32 value)
 
 			loopBufferProps->state[0] = TLoopDoubleBuffProps::StateDirty;
 		}
-		else if ((type & 3) && index >= loopstart && 
+		else if ((type & 3) && index >= loopstart &&
 				 index < loopstart+LoopAreaBackupSize)
 		{
 			TLoopDoubleBuffProps* loopBufferProps = (TLoopDoubleBuffProps*)getPadStartAddr((mp_ubyte*)sample);
 			if (loopBufferProps->state[0] == TLoopDoubleBuffProps::StateUsed)
 				loopBufferProps->state[0] = TLoopDoubleBuffProps::StateUnused;
-			
+
 			*(sample+index) = (mp_sbyte)value;
 		}
 		else
@@ -443,9 +443,9 @@ private:
 	mp_dword* source_buffer;			/* source buffer */
 	mp_dword* source_position;			/* actual reading position */
 	mp_ubyte source_remaining_bits;		/* bits remaining in read dword */
-	
+
 	bool it215;
-	
+
 public:
 		ITSampleLoader(XMFileBase& file, bool isIt215 = false) :
 		SampleLoader(file),
@@ -455,21 +455,21 @@ public:
 		it215(isIt215)
 	{
 	}
-	
-	virtual ~ITSampleLoader() 
+
+	virtual ~ITSampleLoader()
 	{
 		free_IT_compressed_block();
 	}
-	
+
 	mp_dword read_n_bits_from_IT_compressed_block(mp_ubyte p_bits_to_read);
-	
+
 	mp_sint32 read_IT_compressed_block ();
-	
+
 	void free_IT_compressed_block ();
-	
+
 	// second parameter is ignored
 	virtual mp_sint32 load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize);
-	
+
 	// second parameter is ignored
 	virtual mp_sint32 load_sample_16bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize);
 };
@@ -480,15 +480,15 @@ public:
 
 * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE */
 
-mp_dword ITSampleLoader::read_n_bits_from_IT_compressed_block (mp_ubyte p_bits_to_read) {				
-	
+mp_dword ITSampleLoader::read_n_bits_from_IT_compressed_block (mp_ubyte p_bits_to_read) {
+
     mp_dword aux_return_value;
-	
+
     mp_dword val;
     mp_ubyte *buffer=(mp_ubyte*)source_position;
-	
+
     if ( p_bits_to_read <= source_remaining_bits ) {
-		
+
     	val=buffer[3];
 		val<<=8;
     	val|=buffer[2];
@@ -496,16 +496,16 @@ mp_dword ITSampleLoader::read_n_bits_from_IT_compressed_block (mp_ubyte p_bits_t
     	val|=buffer[1];
 		val<<=8;
     	val|=buffer[0];
-		
+
 		aux_return_value = val & ((1 << p_bits_to_read) - 1);
 		val >>= p_bits_to_read;
 		source_remaining_bits -= p_bits_to_read;
-		
+
 		buffer[3]=val>>24;
     	buffer[2]=(val>>16)&0xFF;
     	buffer[1]=(val>>8)&0xFF;
     	buffer[0]=(val)&0xFF;
-		
+
     } else {
     	aux_return_value=buffer[3];
 		aux_return_value<<=8;
@@ -514,7 +514,7 @@ mp_dword ITSampleLoader::read_n_bits_from_IT_compressed_block (mp_ubyte p_bits_t
     	aux_return_value|=buffer[1];
 		aux_return_value<<=8;
     	aux_return_value|=buffer[0];
-		
+
 		mp_dword nbits = p_bits_to_read - source_remaining_bits;
 		//	aux_return_value = *source_position;
 		source_position++;
@@ -533,13 +533,13 @@ mp_dword ITSampleLoader::read_n_bits_from_IT_compressed_block (mp_ubyte p_bits_t
     	buffer[2]=(val>>16)&0xFF;
     	buffer[1]=(val>>8)&0xFF;
     	buffer[0]=(val)&0xFF;
-		
+
     }
-	
+
     return aux_return_value;
 }
 
-mp_sint32 ITSampleLoader::read_IT_compressed_block () {				
+mp_sint32 ITSampleLoader::read_IT_compressed_block () {
 
 	mp_uword size;
 
@@ -568,7 +568,7 @@ mp_sint32 ITSampleLoader::read_IT_compressed_block () {
 	return FUNCTION_SUCCESS;
 }
 
-void ITSampleLoader::free_IT_compressed_block () {				
+void ITSampleLoader::free_IT_compressed_block () {
 
 
 	if (source_buffer!=NULL) delete[] (mp_ubyte*)source_buffer;
@@ -578,7 +578,7 @@ void ITSampleLoader::free_IT_compressed_block () {
 }
 
 mp_sint32 ITSampleLoader::load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize) {
-	
+
 	mp_sbyte *dest_buffer;		/* destination buffer which will be returned */
    	mp_uword block_length;		/* length of compressed data block in samples */
 	mp_uword block_position;		/* position in block */
@@ -594,10 +594,10 @@ mp_sint32 ITSampleLoader::load_sample_8bits(void* p_dest_buffer, mp_sint32 compr
 
 	memset (dest_buffer, 0, p_buffsize);
 
-	dest_position = dest_buffer;		
+	dest_position = dest_buffer;
 
 	/* now unpack data till the dest buffer is full */
-	
+
 	while (p_buffsize) {
 	/* read a new block of compressed data and reset variables */
 		if ( read_IT_compressed_block() ) return FUNCTION_FAILED;
@@ -651,7 +651,7 @@ mp_sint32 ITSampleLoader::load_sample_8bits(void* p_dest_buffer, mp_sint32 compr
 			} else { /* illegal width, abort */
 
 				free_IT_compressed_block();
-			
+
 				return FUNCTION_FAILED;
 			}
 
@@ -701,7 +701,7 @@ mp_sint32 ITSampleLoader::load_sample_16bits(void* p_dest_buffer, mp_sint32 comp
 
 	memset (dest_buffer, 0, p_buffsize*2);
 
-	dest_position = dest_buffer;		
+	dest_position = dest_buffer;
 
 	while (p_buffsize) {
 	/* read a new block of compressed data and reset variables */
@@ -759,7 +759,7 @@ mp_sint32 ITSampleLoader::load_sample_16bits(void* p_dest_buffer, mp_sint32 comp
 			 	//ERROR("Sample has illegal BitWidth ");
 
 				free_IT_compressed_block();
-			
+
 				return FUNCTION_FAILED;
 			}
 
@@ -803,7 +803,7 @@ class MDLSampleLoader : public XModule::SampleLoader
 private:
 	mp_ubyte* tmpBuffer;
 	mp_ubyte* dstBuffer;
-	
+
 	// MDL unpacking
 	static mp_ubyte readbits(mp_ubyte* buffer,mp_uint32& bitcount,mp_uint32& bytecount,mp_sint32 numbits)
 	{
@@ -818,14 +818,14 @@ private:
 		}
 		return val;
 	}
-	
+
 	// MDL unpacking
-	static mp_ubyte depackbyte(mp_ubyte* packed,mp_uint32& bitcount,mp_uint32& bytecount) 
+	static mp_ubyte depackbyte(mp_ubyte* packed,mp_uint32& bitcount,mp_uint32& bytecount)
 	{
 		mp_ubyte b = 0;
 		mp_ubyte sign = readbits(packed,bitcount,bytecount,1);
 		mp_ubyte bit = readbits(packed,bitcount,bytecount,1);
-		
+
 		if (bit) {
 			b = readbits(packed,bitcount,bytecount,3);
 			goto next;
@@ -840,10 +840,10 @@ loop:;
 		else b+=readbits(packed,bitcount,bytecount,4);
 next:;
 		if (sign) b^=255;
-		
+
 		return b;
 	}
-	
+
 	void cleanUp()
 	{
 		if (tmpBuffer)
@@ -851,14 +851,14 @@ next:;
 			delete[] tmpBuffer;
 			tmpBuffer = NULL;
 		}
-		
+
 		if (dstBuffer)
 		{
 			delete[] dstBuffer;
 			dstBuffer = NULL;
 		}
 	}
-	
+
 public:
 		MDLSampleLoader(XMFileBase& file) :
 		SampleLoader(file),
@@ -866,13 +866,13 @@ public:
 		dstBuffer(NULL)
 	{
 	}
-	
-	virtual ~MDLSampleLoader() 
+
+	virtual ~MDLSampleLoader()
 	{
 		cleanUp();
 	}
-	
-	virtual mp_sint32 load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize);	
+
+	virtual mp_sint32 load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize);
 	virtual mp_sint32 load_sample_16bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize);
 };
 
@@ -882,34 +882,34 @@ mp_sint32 MDLSampleLoader::load_sample_8bits(void* buffer, mp_sint32 size, mp_si
 
 	tmpBuffer = new mp_ubyte[size+32];
 	memset(tmpBuffer,0,size+32);
-	
+
 	if (tmpBuffer == NULL)
 		return FUNCTION_FAILED;
 
 	f.read(tmpBuffer,1,size);
-	
+
 	dstBuffer = new mp_ubyte[length+64];
-	
+
 	if (dstBuffer == NULL)
 		return FUNCTION_FAILED;
-	
+
 	memset(dstBuffer,0,length+64);
-	
+
 	mp_uint32 bitcount=0, bytecount=0;
-	
+
 	mp_sint32 i=0;
-	
-	while (bytecount < (unsigned)size && i < length) 
+
+	while (bytecount < (unsigned)size && i < length)
 	{
-		dstBuffer[i++]=depackbyte((mp_ubyte*)tmpBuffer,bitcount,bytecount);							
+		dstBuffer[i++]=depackbyte((mp_ubyte*)tmpBuffer,bitcount,bytecount);
 	}
-	
+
 	mp_sbyte b1=0;
-	for (i = 0; i < length; i++) 
+	for (i = 0; i < length; i++)
 		dstBuffer[i] = b1+=dstBuffer[i];
-	
+
 	memcpy(buffer,dstBuffer,length);
-	
+
 	return FUNCTION_SUCCESS;
 }
 
@@ -919,39 +919,39 @@ mp_sint32 MDLSampleLoader::load_sample_16bits(void* buffer, mp_sint32 size, mp_s
 
 	tmpBuffer = new mp_ubyte[size+32];
 	memset(tmpBuffer,0,size+32);
-	
+
 	if (tmpBuffer == NULL)
 		return FUNCTION_FAILED;
-		
+
 	f.read(tmpBuffer,1,size);
 
 	dstBuffer = new mp_ubyte[length*2+64];
-	
+
 	if (dstBuffer == NULL)
 		return FUNCTION_FAILED;
-	
+
 	memset(dstBuffer,0,length+64);
-	
+
 	mp_uint32 bitcount=0, bytecount=0;
-	
+
 	mp_sint32 i=0;
-	
-	while (bytecount<(unsigned)size && i < length*2) 
+
+	while (bytecount<(unsigned)size && i < length*2)
 	{
 		dstBuffer[i++]=readbits((mp_ubyte*)tmpBuffer,bitcount,bytecount,8);
 		dstBuffer[i++]=depackbyte((mp_ubyte*)tmpBuffer,bitcount,bytecount);
 	}
-	
+
 	mp_sbyte b1=0;
-	for (i = 0; i < length; i++) 
+	for (i = 0; i < length; i++)
 		dstBuffer[i*2+1] = b1+=dstBuffer[i*2+1];
-	
+
 	mp_sword* dstBuffer16 = (mp_sword*)buffer;
 	mp_ubyte* srcBuffer = (mp_ubyte*)dstBuffer;
-	
+
 	for (i = 0; i < length; i++)
 		*dstBuffer16++ = LittleEndian::GET_WORD(srcBuffer+=2);
-	
+
 	return FUNCTION_SUCCESS;
 }
 
@@ -969,7 +969,7 @@ class ADPCMSampleLoader : public XModule::SampleLoader
 {
 private:
 	mp_ubyte* tmpBuffer;
-	
+
 	void cleanUp()
 	{
 		if (tmpBuffer)
@@ -978,15 +978,15 @@ private:
 			tmpBuffer = NULL;
 		}
 	}
-	
+
 public:
 		ADPCMSampleLoader(XMFileBase& file) :
 		SampleLoader(file),
 		tmpBuffer(NULL)
 	{
 	}
-	
-	virtual ~ADPCMSampleLoader() 
+
+	virtual ~ADPCMSampleLoader()
 	{
 		cleanUp();
 	}
@@ -994,23 +994,23 @@ public:
 	virtual mp_sint32 load_sample_8bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize)
 	{
 		cleanUp();
-	
+
 		mp_sbyte deltaValues[16];
-		
+
 		// read delta values table
 		f.read(deltaValues, 1, 16);
-	
+
 		// this is the actual size of the compressed size
 		const mp_uint32 blockSize = (p_buffsize + 1) / 2;
 
 		// allocate some memory for it
 		tmpBuffer = new mp_ubyte[blockSize];
-	
+
 		// read compressed data
 		f.read(tmpBuffer, 1, blockSize);
-	
+
 		mp_sbyte b1 = 0;
-		
+
 		mp_sbyte* srcPtr = (mp_sbyte*)p_dest_buffer;
 		for (mp_uint32 i = 0; i < blockSize; i++)
 		{
@@ -1019,10 +1019,10 @@ public:
 			index = tmpBuffer[i] >> 4;
 			*srcPtr++ = b1+=deltaValues[index];
 		}
-	
+
 		return FUNCTION_SUCCESS;
 	}
-	
+
 	virtual mp_sint32 load_sample_16bits(void* p_dest_buffer, mp_sint32 compressedSize, mp_sint32 p_buffsize)
 	{
 		cleanUp();
@@ -1078,7 +1078,7 @@ mp_sint32 TXMPattern::compress(mp_ubyte* dest) const
 				}
 			}
 		}
-		
+
 		return len;
 	}
 
@@ -1115,9 +1115,9 @@ mp_sint32 TXMPattern::compress(mp_ubyte* dest) const
 			else
 			{
 				*dstPtr++ = 128 + j;
-				
+
 				ASSERT(128+j < 255);
-				
+
 				len++;
 			}
 		}
@@ -1166,7 +1166,7 @@ mp_sint32 TXMPattern::decompress(mp_ubyte* src, mp_sint32 len)
 			i++;
 		}
 	}
-	
+
 	return MP_OK;
 }
 
@@ -1187,7 +1187,7 @@ const TXMPattern& TXMPattern::operator=(const TXMPattern& src)
 		ptype = src.ptype;
 		rows = src.rows;
 	}
-	
+
 	return *this;
 }
 
@@ -1200,7 +1200,7 @@ XModule::LoaderManager::LoaderManager() :
 		numAllocatedLoaders(0),
 		iteratorCounter(-1)
 {
-#ifndef MP_XMONLY 
+#ifndef MP_XMONLY
 	registerLoader(new Loader669(), ModuleType_669);
 	registerLoader(new LoaderAMF_1(), ModuleType_AMF);
 	registerLoader(new LoaderAMF_2(), ModuleType_AMF);
@@ -1230,15 +1230,16 @@ XModule::LoaderManager::LoaderManager() :
 	registerLoader(new LoaderS3M(), ModuleType_S3M);
 	registerLoader(new LoaderSTM(), ModuleType_STM);
 	registerLoader(new LoaderSFX(), ModuleType_SFX);
+	registerLoader(new LoaderTMM(), ModuleType_TMM);
 	registerLoader(new LoaderUNI(), ModuleType_UNI);
-	registerLoader(new LoaderULT(), ModuleType_ULT);	
-	registerLoader(new LoaderXM(), ModuleType_XM);	
+	registerLoader(new LoaderULT(), ModuleType_ULT);
+	registerLoader(new LoaderXM(), ModuleType_XM);
 	// Game Music Creator may not be recognized perfectly
 	registerLoader(new LoaderGMC(), ModuleType_GMC);
 	// Last loader is MOD because there is a slight chance that other formats will be misinterpreted as 15 ins. MODs
 	registerLoader(new LoaderMOD(), ModuleType_MOD);
 #else
-	registerLoader(new LoaderXM(), ModuleType_XM);	
+	registerLoader(new LoaderXM(), ModuleType_XM);
 #endif
 }
 
@@ -1246,7 +1247,7 @@ XModule::LoaderManager::~LoaderManager()
 {
 	for (mp_uint32 i = 0; i < numLoaders; i++)
 		delete loaders[i].loader;
-		
+
 	delete[] loaders;
 }
 
@@ -1255,18 +1256,18 @@ void XModule::LoaderManager::registerLoader(LoaderInterface* loader, ModuleTypes
 	if (numLoaders+1 > numAllocatedLoaders)
 	{
 		numAllocatedLoaders+=16;
-		
+
 		TLoaderInfo* newLoaders = new TLoaderInfo[numAllocatedLoaders];
 		for (mp_uint32 i = 0; i < numLoaders; i++)
 			newLoaders[i] = loaders[i];
-			
+
 		delete[] loaders;
 		loaders = newLoaders;
 	}
-	
+
 	loaders[numLoaders].loader = loader;
 	loaders[numLoaders].moduleType = type;
-	
+
 	numLoaders++;
 }
 
@@ -1324,9 +1325,9 @@ mp_sint32 XModule::getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 
 	mp_sbyte octave = (relnote+96)/12;
 	mp_sbyte note = (relnote+96)%12;
-	
+
 	mp_sbyte o2 = octave-8;
-	
+
 	if (xmfine<0)
 	{
 		xmfine+=(mp_sbyte)128;
@@ -1340,7 +1341,7 @@ mp_sint32 XModule::getc4spd(mp_sint32 relnote,mp_sint32 finetune)
 
 	if (o2>=0)
 	{
-		c4spd<<=o2;		
+		c4spd<<=o2;
 	}
 	else
 	{
@@ -1373,7 +1374,7 @@ aloop:
 		ebp = dc4;
 		ch = cl;
 		cl++;
-		if (cl<119) goto aloop; 
+		if (cl<119) goto aloop;
 	}
 	cl = 0;
 aloop2:
@@ -1393,19 +1394,19 @@ aloop2:
 	}
 	xmfine++;
 	if (xmfine<256) goto aloop2;
-	
+
 	ch-=48;
 	*finetune = (mp_sbyte)cl;
 	*relnote = (mp_sbyte)ch;
 
 }
 
-mp_uint32 XModule::amigaPeriodToNote(mp_uint32 period) 
+mp_uint32 XModule::amigaPeriodToNote(mp_uint32 period)
 {
-	for (mp_sint32 y = 0; y < 120; y++) 
+	for (mp_sint32 y = 0; y < 120; y++)
 	{
 		mp_uint32 per = (periods[y%12]*16>>((y/12)))>>2;
-		if (period >= per) 
+		if (period >= per)
 			return y+1;
 	}
 
@@ -1415,30 +1416,30 @@ mp_uint32 XModule::amigaPeriodToNote(mp_uint32 period)
 ////////////////////////////////////////////
 // Load sample into given memory.		  //
 // Sample size is in BYTES not in samples //
-// Sample length is number of samples,    // 
+// Sample length is number of samples,    //
 ////////////////////////////////////////////
 bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 length,mp_sint32 flags /* = ST_DEFAULT */)
 {
 	mp_ubyte* tmpBuffer = NULL;
 	mp_ubyte* dstBuffer = NULL;
-	
+
 	// MDL style packing
 	if (flags & ST_PACKING_MDL)
 	{
-	
+
 		MDLSampleLoader sampleLoader(f);
-		
+
 		if (flags & ST_16BIT)
 		{
-			if (sampleLoader.load_sample_16bits(buffer, size, length)) 
+			if (sampleLoader.load_sample_16bits(buffer, size, length))
 				return false;
 		}
 		else
 		{
-			if (sampleLoader.load_sample_8bits(buffer, size, length)) 
+			if (sampleLoader.load_sample_8bits(buffer, size, length))
 				return false;
 		}
-		
+
 		return true;
 	}
 	else if ((flags & ST_PACKING_IT) || (flags & ST_PACKING_IT215))
@@ -1447,15 +1448,15 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 
 		if (flags & ST_16BIT)
 		{
-			if (sampleLoader.load_sample_16bits(buffer, -1, length)) 
+			if (sampleLoader.load_sample_16bits(buffer, -1, length))
 				return false;
 		}
 		else
 		{
-			if (sampleLoader.load_sample_8bits(buffer, -1, length)) 
+			if (sampleLoader.load_sample_8bits(buffer, -1, length))
 				return false;
 		}
-		
+
 		return true;
 	}
 	else if (flags & ST_PACKING_ADPCM)
@@ -1464,15 +1465,15 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 
 		if (flags & ST_16BIT)
 		{
-			if (sampleLoader.load_sample_16bits(buffer, size, length)) 
+			if (sampleLoader.load_sample_16bits(buffer, size, length))
 				return false;
 		}
 		else
 		{
-			if (sampleLoader.load_sample_8bits(buffer, size, length)) 
+			if (sampleLoader.load_sample_8bits(buffer, size, length))
 				return false;
 		}
-		
+
 		return true;
 	}
 	else
@@ -1481,7 +1482,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 		f.read(buffer,flags & ST_16BIT ? 2 : 1, length);
 	}
 
-	// 16 bit sample 
+	// 16 bit sample
 	if (flags & ST_16BIT)
 	{
 		mp_sword* dstPtr = (mp_sword*)buffer;
@@ -1491,7 +1492,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 		if (flags & ST_DELTA_PTM)
 		{
 			mp_sbyte b1=0;
-			for (mp_uint32 i = 0; i < length*2; i++) 
+			for (mp_uint32 i = 0; i < length*2; i++)
 				srcPtr[i] = b1+=srcPtr[i];
 		}
 
@@ -1506,12 +1507,12 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 			for (i = 0; i < length; i++)
 				dstPtr[i] = LittleEndian::GET_WORD(srcPtr+i*2);
 		}
-		
+
 		// delta-storing
 		if (flags & ST_DELTA)
 		{
 			mp_sword b1=0;
-			for (i = 0; i < length; i++) 
+			for (i = 0; i < length; i++)
 				dstPtr[i] = b1+=dstPtr[i];
 		}
 
@@ -1524,14 +1525,14 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	}
 	// 8 bit sample
 	else
-	{	
+	{
 		mp_sbyte* smpPtr = (mp_sbyte*)buffer;
-	
+
 		// delta-storing
 		if (flags & ST_DELTA)
 		{
 			mp_sbyte b1=0;
-			for (mp_uint32 i = 0; i < length; i++) 
+			for (mp_uint32 i = 0; i < length; i++)
 				smpPtr[i] = b1+=smpPtr[i];
 		}
 
@@ -1552,7 +1553,7 @@ bool XModule::loadSample(XMFileBase& f,void* buffer,mp_uint32 size,mp_uint32 len
 	return true;
 }
 
-mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index, 
+mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 									mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/,
 									mp_uint32 alternateSize/* = 0*/)
 {
@@ -1560,14 +1561,14 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen*2;
 		if(finalSize < 8) finalSize = 8;
-		
+
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
-		
+
 		if (smp[index].sample == NULL)
 		{
 			return MP_OUT_OF_MEMORY;
 		}
-		
+
 		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags16))
 		{
 			return MP_OUT_OF_MEMORY;
@@ -1577,31 +1578,31 @@ mp_sint32 XModule::loadModuleSample(XMFileBase& f, mp_sint32 index,
 	{
 		mp_uint32 finalSize = alternateSize ? alternateSize : smp[index].samplen;
 		if(finalSize < 4) finalSize = 4;
-		
+
 		smp[index].sample = (mp_sbyte*)allocSampleMem(finalSize);
-		
+
 		if (smp[index].sample == NULL)
 		{
 			return MP_OUT_OF_MEMORY;
 		}
-		
+
 		if (!loadSample(f,smp[index].sample, finalSize, smp[index].samplen, flags8))
 		{
 			return MP_OUT_OF_MEMORY;
-		}		
+		}
 	}
-	
+
 	return MP_OK;
 }
 
 mp_sint32 XModule::loadModuleSamples(XMFileBase& f, mp_sint32 flags8/* = ST_DEFAULT*/, mp_sint32 flags16/* = ST_16BIT*/)
 {
-	for (mp_sint32 i = 0; i < header.smpnum; i++) 
-	{		
+	for (mp_sint32 i = 0; i < header.smpnum; i++)
+	{
 		mp_sint32 res = loadModuleSample(f, i, flags8, flags16);
 		if (res != MP_OK)
 			return res;
-	}	
+	}
 	return MP_OK;
 }
 
@@ -1609,7 +1610,7 @@ mp_sint32 XModule::loadModuleSamples(XMFileBase& f, mp_sint32 flags8/* = ST_DEFA
 // Before using the sample postprocessing //
 // please make sure that the memory       //
 // allocated for the samples has another  //
-// 16 bytes padding space				  // 
+// 16 bytes padding space				  //
 ////////////////////////////////////////////
 void XModule::postProcessSamples(bool heavy/* = false*/)
 {
@@ -1628,10 +1629,10 @@ void XModule::postProcessSamples(bool heavy/* = false*/)
 			smp->sample = NULL;
 			continue;
 		}
-		
+
 		if (heavy)
 			smp->smoothLooping();
-		
+
 		smp->postProcessSamples();
 	}
 
@@ -1641,7 +1642,7 @@ void XModule::setDefaultPanning()
 {
 	for (mp_sint32 i = 0; i < header.channum; i++)
 	{
-		if (i & 1) 
+		if (i & 1)
 			header.pan[i] = 192;
 		else
 			header.pan[i] = 64;
@@ -1681,7 +1682,7 @@ void XModule::freeSampleMem(mp_ubyte* mem, bool assertCheck/* = true*/)
 			}
 		}
 	}
-	
+
 	if (assertCheck)
 	{
 		ASSERT(found);
@@ -1714,7 +1715,7 @@ void XModule::removeSamplePtr(mp_ubyte* ptr)
 }
 #endif
 
-bool XModule::addEnvelope(TEnvelope*& envs, 
+bool XModule::addEnvelope(TEnvelope*& envs,
 						  const TEnvelope& env,
 						  mp_uint32& numEnvsAlloc,
 						  mp_uint32& numEnvs)
@@ -1735,7 +1736,7 @@ bool XModule::addEnvelope(TEnvelope*& envs,
 	{
 		if (numEnvs >= numEnvsAlloc)
 		{
-			
+
 			numEnvsAlloc+=8;
 
 			TEnvelope* tmpEnvs = new TEnvelope[numEnvsAlloc];
@@ -1746,14 +1747,14 @@ bool XModule::addEnvelope(TEnvelope*& envs,
 			memcpy(tmpEnvs,envs,numEnvs*sizeof(TEnvelope));
 
 			delete[] envs;
-			
+
 			envs = tmpEnvs;
 		}
-		
+
 		envs[numEnvs++] = env;
 
 	}
-	
+
 	return true;
 }
 
@@ -1774,7 +1775,7 @@ void XModule::fixEnvelopes(TEnvelope* envs, mp_uint32 numEnvs)
 			// x-coordinate is just a few ticks right from point one
 			env->env[1][0] = env->env[0][0] + 64;
 			env->num++;
-		}		
+		}
 	}
 }
 
@@ -1792,7 +1793,7 @@ bool XModule::cleanUp()
 	if (penvs)
 	{
 		delete[] penvs;
-		penvs = NULL; 
+		penvs = NULL;
 		numPEnvsAlloc = numPEnvs = 0;
 	}
 	if (fenvs)
@@ -1829,33 +1830,51 @@ bool XModule::cleanUp()
 	for (i = 0; i < header.patnum; i++)
 #endif
 	{
-		if (phead[i].patternData) 
+		if (phead[i].patternData)
 		{
 			delete[] phead[i].patternData;
 			phead[i].patternData = NULL;
 		}
-		
+
 	}
 
 	// release sample-memory
 	for (i = 0; i < samplePointerIndex; i++)
 	{
-		if (samplePool[i]) 
+		if (samplePool[i])
 		{
 			TXMSample::freePaddedMem(samplePool[i]);
 			samplePool[i] = NULL;
 		}
 	}
 	samplePointerIndex = 0;
-	
+
 	memset(&header,0,sizeof(TXMHeader));
-	
-	if (instr)
+
+	if (instr) {
 		memset(instr,0,sizeof(TXMInstrument)*256);
-	
+
+		// MAGIC :-D Apply standard settings
+		for(int i = 0; i < 256; i++) {
+			instr[i].tmm.type                    = 0;
+			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
+			instr[i].tmm.sine.basefreq           = 440;
+			instr[i].tmm.pulse.basefreq          = 440;
+			instr[i].tmm.additive.basefreq       = 440;
+			instr[i].tmm.pulse.width             = 16;
+			instr[i].tmm.additive.nharmonics     = 64;
+			instr[i].tmm.additive.bandwidth      = 20;
+			instr[i].tmm.additive.bwscale        = 1;
+			instr[i].tmm.additive.usescale       = 0;
+			instr[i].tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
+			instr[i].tmm.additive.destroyer      = 0;
+			memset(&instr[i].tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
+		}
+	}
+
 	if (smp)
 		memset(smp,0,sizeof(TXMSample)*MP_MAXSAMPLES);
-	
+
 	if (phead)
 		memset(phead,0,sizeof(TXMPattern)*256);
 
@@ -1889,21 +1908,21 @@ XModule::XModule()
 
 	if (instr)
 		memset(instr,0,sizeof(TXMInstrument)*256);
-	
+
 	if (smp)
 		memset(smp,0,sizeof(TXMSample)*MP_MAXSAMPLES);
-	
+
 	if (phead)
 		memset(phead,0,sizeof(TXMPattern)*256);
 
 	// subsong stuff
 	memset(subSongPositions, 0, sizeof(subSongPositions));
 	numSubSongs = 0;
-	
+
 	venvs = NULL;
 	numVEnvsAlloc = numVEnvs = 0;
 
-	penvs = NULL; 
+	penvs = NULL;
 	numPEnvsAlloc = numPEnvs = 0;
 
 	fenvs = NULL;
@@ -1914,7 +1933,7 @@ XModule::XModule()
 
 	pitchenvs = NULL;
 	numPitchEnvsAlloc = numPitchEnvs = 0;
-	
+
 	message = NULL;
 	messageBytesAlloc = 0;
 }
@@ -1942,7 +1961,7 @@ const char* XModule::identifyModule(const mp_ubyte* buffer)
 		{
 			return id;
 		}
-		
+
 		loaderInfo = loaderManager.getNextLoaderInfo();
 	}
 	return NULL;
@@ -1951,7 +1970,7 @@ const char* XModule::identifyModule(const mp_ubyte* buffer)
 mp_sint32 XModule::loadModule(const SYSCHAR* fileName, bool scanForSubSongs/* = false*/)
 {
 	XMFile f(fileName);
-	return f.isOpen() ? loadModule(f, scanForSubSongs) : -8; 
+	return f.isOpen() ? loadModule(f, scanForSubSongs) : -8;
 }
 
 mp_sint32 XModule::loadModule(XMFileBase& f, bool scanForSubSongs/* = false*/)
@@ -1977,22 +1996,22 @@ mp_sint32 XModule::loadModule(XMFileBase& f, bool scanForSubSongs/* = false*/)
 			if (err == MP_OK)
 			{
 				moduleLoaded = true;
-				
+
 				bool res = validate();
 
 				if (!res)
 					return MP_OUT_OF_MEMORY;
-				
+
 				type = loaderInfo->moduleType;
 				if (scanForSubSongs)
 					buildSubSongTable();
 			}
 			return err;
 		}
-		
+
 		loaderInfo = loaderManager.getNextLoaderInfo();
 	}
-	
+
 #ifdef MILKYTRACKER
 	return MP_UNKNOWN_FORMAT;
 #else
@@ -2008,16 +2027,16 @@ bool XModule::validate()
 
 	if (header.insnum == 0)
 		header.insnum++;
-	
+
 	/*for (mp_sint32 i = 0; i < header.ordnum; i++)
 		if (header.ord[i] >= header.patnum)
 			header.ord[i] = 0;*/
-			
+
 	// if we're not having any pattern just create an empty dummy pattern
 	if (!header.patnum)
 	{
 		header.patnum++;
-		
+
 		phead[0].rows = 64;
 #ifdef MILKYTRACKER
 		phead[0].effnum = 2;
@@ -2025,32 +2044,32 @@ bool XModule::validate()
 		phead[0].effnum = 1;
 #endif
 		phead[0].channum = (mp_ubyte)header.channum;
-		
+
 		phead[0].patternData = new mp_ubyte[phead[0].rows*header.channum*(2+phead[0].effnum*2)];
-		
+
 		// out of memory?
 		if (phead[0].patternData == NULL)
 		{
 			return false;
 		}
-		
+
 		memset(phead[0].patternData,0,phead[0].rows*header.channum*(2+phead[0].effnum*2));
 	}
-		
+
 	removeOrderSkips();
-	
+
 	if (!header.ordnum)
 	{
 		header.ordnum++;
 		header.ord[0] = 0;
 	}
-	
+
 	fixEnvelopes(venvs, numVEnvs);
 	fixEnvelopes(penvs, numPEnvs);
 	fixEnvelopes(fenvs, numFEnvs);
 	fixEnvelopes(vibenvs, numVibEnvs);
 	fixEnvelopes(pitchenvs, numPitchEnvs);
-	
+
 	return true;
 }
 
@@ -2061,18 +2080,18 @@ void XModule::convertStr(char* strIn, const char* strOut, mp_sint32 nLen, bool f
 	for (i = 0; i < nLen; i++)
 	{
 		strIn[i] = strOut[i];
-		
+
 		// must be an asciiz string
 		if (strIn[i] == '\0')
 			break;
-		
+
 		// Filter non-viewable characters
-		if (filter && (strIn[i]<32 || (unsigned)strIn[i]>127)) 
+		if (filter && (strIn[i]<32 || (unsigned)strIn[i]>127))
 			strIn[i] = 32;
 	}
 
 	i = nLen-1;
-	while (i>=0 && strIn[i]<=32) 
+	while (i>=0 && strIn[i]<=32)
 		i--;
 
 	i++;
@@ -2121,11 +2140,11 @@ void XModule::allocateSongMessage(mp_uint32 initialSize/* = 512*/)
 	{
 		delete[] message;
 		message = NULL;
-		messageBytesAlloc = 0;		
+		messageBytesAlloc = 0;
 	}
-	
+
 	message = new char[initialSize];
-	
+
 	if (message)
 	{
 		memset(message, 0, initialSize);
@@ -2136,11 +2155,11 @@ void XModule::allocateSongMessage(mp_uint32 initialSize/* = 512*/)
 // add one more line of text to songmessage
 void XModule::addSongMessageLine(const char* line)
 {
-	
+
 	if (!message)
 	{
 		allocateSongMessage();
-		if (!message) 
+		if (!message)
 			return;
 	}
 
@@ -2148,7 +2167,7 @@ void XModule::addSongMessageLine(const char* line)
 	mp_uint32 nSize = (mp_uint32)strlen(line) + 1;
 
 	mp_uint32 size = oSize + nSize + 2;
-	
+
 	if (size > messageBytesAlloc)
 	{
 		char* tempMessage = new char[size];
@@ -2161,20 +2180,20 @@ void XModule::addSongMessageLine(const char* line)
 			delete[] message;
 			message = tempMessage;
 		}
-		else 
+		else
 			return;
 	}
 
 	// if this is not the first line in song message,
 	// add CR to the previous line
 	if (strlen(message) != 0)
-	{		
+	{
 		message[strlen(message)] = 0x0D;
 		message[strlen(message)+1] = '\0';
 	}
 
 	strcat(message, line);
-	
+
 }
 
 // start iterating text lines (get size of line)
@@ -2182,44 +2201,44 @@ mp_sint32 XModule::getFirstSongMessageLineLength()
 {
 	if (message == NULL)
 		return -1;
-	
+
 	// no song message at all
 	if (*message == '\0')
 		return -1;
 
 	messagePtr = message;
-	
+
 	mp_sint32 i = 0;
 	while (messagePtr[i] != 0x0D && messagePtr[i] != '\0')
 		i++;
-		
+
 	return i;
 }
 
 // get next size text line
 mp_sint32 XModule::getNextSongMessageLineLength()
 {
-	
+
 	if (message == NULL)
-		return -1;	
+		return -1;
 
 	// advance to next line first
 	while (*messagePtr != 0x0D && *messagePtr != '\0')
 		messagePtr++;
-		
+
 	// we reached end of song message
 	if (*messagePtr == '\0')
 		return -1;
-	
+
 	ASSERT(*messagePtr == 0x0D);
-	
+
 	// skip CR
 	messagePtr++;
-	
+
 	mp_sint32 i = 0;
 	while (messagePtr[i] != 0x0D && messagePtr[i] != '\0')
 		i++;
-		
+
 	return i;
 }
 
@@ -2232,7 +2251,7 @@ void XModule::getSongMessageLine(char* line)
 		line[i] = messagePtr[i];
 		i++;
 	}
-	
+
 	line[i] = '\0';
 }
 
@@ -2241,7 +2260,7 @@ void XModule::buildSubSongTable()
 {
 	if (!moduleLoaded)
 		return;
-		
+
 	mp_ubyte* positionLookup = new mp_ubyte[header.ordnum*256];
 
 	if (positionLookup == NULL)
@@ -2263,37 +2282,37 @@ void XModule::buildSubSongTable()
 
 	while (true)
 	{
-		
+
 		bool breakMain = false;
-		
+
 		while (!breakMain)
 		{
-			
-			/*if (header.ord[poscnt]==254) 
-			{ 
-				while (header.ord[poscnt]==254) 
-				{ 
-					poscnt++; 
-					if (poscnt>=header.ordnum) 
+
+			/*if (header.ord[poscnt]==254)
+			{
+				while (header.ord[poscnt]==254)
+				{
+					poscnt++;
+					if (poscnt>=header.ordnum)
 					{
 						breakMain = true;
 						break;
 					}
-				} 
+				}
 			}*/
-			
+
 			if (!breakMain)
 			{
-				
+
 				mp_sint32 ord = header.ord[poscnt];
 				if (ord < header.patnum)
 				{
 					mp_ubyte* pattern = phead[ord].patternData;
-					
+
 					mp_sint32 r = rowcnt;
-					
+
 					mp_sint32 i = poscnt*256+r;
-					
+
 					if (!positionLookup[i])
 						positionLookup[i]++;
 					else
@@ -2304,38 +2323,38 @@ void XModule::buildSubSongTable()
 						breakMain = true;
 						continue;
 					}
-					
+
 					pbreak = pbreakpos = pjump = pjumppos = pjumprow = 0;
-					
+
 					for (mp_sint32 c = 0; c < phead[ord].channum; c++)
 					{
-						
+
 						mp_sint32 slotSize = 2 + 2*phead[ord].effnum;
-						
+
 						mp_ubyte* slot = pattern + r*phead[ord].channum*slotSize + c*slotSize;
-						
+
 						for (mp_sint32 e = 0; e < phead[ord].effnum; e++)
 						{
 							mp_ubyte eff = slot[2+e*2];
 							mp_ubyte eop = slot[2+e*2+1];
-							
+
 							switch (eff)
 							{
-								case 0x0B : 
+								case 0x0B :
 								{
 									pjump = 1;
 									pjumppos = eop;
 									pjumprow = 0;
 									break;
 								}
-									
-								case 0x0D : 
+
+								case 0x0D :
 								{
 									pbreak=1;
 									pbreakpos = (eop>>4)*10+(eop&0xf);
 									break;
 								}
-								
+
 								case 0x0F:
 								{
 									if (eop == 0)
@@ -2349,7 +2368,7 @@ void XModule::buildSubSongTable()
 									}
 									break;
 								}
-								
+
 								case SubSongMarkEffect:
 								{
 									if (eop == SubSongMarkOperand)
@@ -2360,7 +2379,7 @@ void XModule::buildSubSongTable()
 										continue;
 									}
 								}
-								
+
 								case 0x2B:
 								{
 									pjump = 1;
@@ -2368,55 +2387,55 @@ void XModule::buildSubSongTable()
 									pjumprow = slot[2+((e+1)%phead[ord].effnum)*2+1];
 									break;
 								}
-							}		
+							}
 						} // effects
-						
+
 					} // channels
-					
+
 					if (poscnt > poscntMax)
 						poscntMax = poscnt;
 
 					// player logic
 					// break pattern?
-					if (pbreak&&(poscnt<(header.ordnum-1))) 
+					if (pbreak&&(poscnt<(header.ordnum-1)))
 					{
 						if (!pjump)
 							poscnt++;
 						rowcnt=pbreakpos-1;
 					}
-					else if (pbreak&&(poscnt==(header.ordnum-1))) 
+					else if (pbreak&&(poscnt==(header.ordnum-1)))
 					{
 						if (!pjump)
 							poscnt=0;
 						rowcnt=pbreakpos-1;
 					}
-					
+
 					// pattern jump?
-					if (pjump) 
+					if (pjump)
 					{
 						if (!pbreak)
 							rowcnt = pjumprow-1;
-						
-						if (pjumppos < header.ordnum) 
+
+						if (pjumppos < header.ordnum)
 							poscnt = pjumppos;
 					}
-					
+
 					rowcnt++;
-					
+
 					// make sure we're getting the right pattern, position might
 					// have changed because of position jumps or pattern breaks
 					ord = header.ord[poscnt];
 					if (rowcnt >= phead[ord].rows)
 					{
 						poscnt++;
-					
+
 						rowcnt = 0;
-						
+
 						if (poscnt >= header.ordnum)
 						{
 							poscnt = 0;
 						}
-						
+
 					}
 skipChannels:;
 				}
@@ -2424,30 +2443,30 @@ skipChannels:;
 				{
 					mp_sint32 i = poscnt*256;
 					memset(positionLookup+i, 1, 256);
-					poscnt++;					
+					poscnt++;
 					rowcnt = 0;
 					if (poscnt >= header.ordnum)
 						poscnt = 0;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		if (numSubSongs >= 256)
 			break;
-		
+
 		bool allPlayed = true;
 		for (poscnt = 0; poscnt < header.ordnum; poscnt++)
 		{
 			mp_sint32 ord = header.ord[poscnt];
-			
+
 			if (ord < header.patnum)
 			{
 				bool played = false;
-			
+
 				mp_sint32 slotSize = 2 + 2*phead[ord].effnum;
-				
+
 				for (mp_sint32 i = 0; i < phead[ord].rows; i++)
 				{
 					if (positionLookup[poscnt*256+i])
@@ -2456,7 +2475,7 @@ skipChannels:;
 						break;
 					}
 				}
-				
+
 				if (!played)
 				{
 					bool empty = true;
@@ -2477,7 +2496,7 @@ skipChannels:;
 						played = true;
 					}
 				}
-				
+
 				if (!played)
 				{
 					subSongPositions[numSubSongs*2] = poscnt;
@@ -2491,14 +2510,14 @@ skipChannels:;
 				}
 			}
 		}
-		
+
 		if (allPlayed)
 			break;
-		
+
 	}
-	
+
 	delete[] positionLookup;
-		
+
 #if 0
 	if (subSongPositions[(numSubSongs-1)*2+1] < header.ordnum - 1)
 	{
@@ -2507,17 +2526,17 @@ skipChannels:;
 		subSongPositions[(numSubSongs-1)*2+1] = header.ordnum - 1;
 	}
 #endif
-	
+
 	//subSongPositions[3*2] = 3;
 	//subSongPositions[3*2+1] = 10;
 
 	//for (mp_sint32 i = 0; i < numSubSongs*2; i++)
 	//	printf("%i: %i\n",i,subSongPositions[i]);
 	//printf("\n\n");
-	
+
 	mp_sint32 i,j = 0,k = 0;
 	mp_sint32 tempSubSongPositions[256*2];
-	for (i = 0; i < numSubSongs*2; i++)	
+	for (i = 0; i < numSubSongs*2; i++)
 		tempSubSongPositions[i] = subSongPositions[i];
 
 	// find subsets of sub songs and merge them
@@ -2525,26 +2544,26 @@ skipChannels:;
 	{
 		mp_sint32 start = tempSubSongPositions[i*2];
 		mp_sint32 end = tempSubSongPositions[i*2+1];
-		
+
 		if (start != -1 && end != -1)
 		{
-			
+
 			for (j = 0; j < numSubSongs; j++)
 			{
 				if (j != i)
 				{
-					if ((start <= tempSubSongPositions[j*2]) && 
+					if ((start <= tempSubSongPositions[j*2]) &&
 						(end >= tempSubSongPositions[j*2+1]))
 					{
 						tempSubSongPositions[j*2] = tempSubSongPositions[j*2+1] = -1;
 					}
-					else if ((start <= tempSubSongPositions[j*2]) && 
+					else if ((start <= tempSubSongPositions[j*2]) &&
 							 (end >= tempSubSongPositions[j*2]))
 					{
 						end = tempSubSongPositions[j*2+1];
 						tempSubSongPositions[j*2] = tempSubSongPositions[j*2+1] = -1;
 					}
-					else if ((start <= tempSubSongPositions[j*2+1]) && 
+					else if ((start <= tempSubSongPositions[j*2+1]) &&
 							 (end >= tempSubSongPositions[j*2+1]))
 					{
 						start = tempSubSongPositions[j*2];
@@ -2553,11 +2572,11 @@ skipChannels:;
 				}
 			}
 		}
-		
+
 		tempSubSongPositions[i*2] = start;
 		tempSubSongPositions[i*2+1] = end;
 	}
-	
+
 	// cut out sets which have been merged/replaced
 	for (i = 0; i < numSubSongs; i++)
 	{
@@ -2566,20 +2585,20 @@ skipChannels:;
 			subSongPositions[k*2] = (mp_ubyte)tempSubSongPositions[i*2];
 			subSongPositions[k*2+1] = (mp_ubyte)tempSubSongPositions[i*2+1];
 			k++;
-		}	
+		}
 	}
-	
+
 	//printf("subsongs initial: %i, after: %i\n", numSubSongs, k);
-	
+
 	numSubSongs = k;
-	
+
 	//for (mp_sint32 i = 0; i < numSubSongs*2; i++)
 	//	printf("%i: %i\n",i,subSongPositions[i]);
-	
+
 	// one subsong is no subsong
 	if (numSubSongs == 1)
 		numSubSongs = 0;
-	
+
 }
 
 // get subsong pos
@@ -2587,7 +2606,7 @@ mp_sint32 XModule::getSubSongPosStart(mp_sint32 i) const
 {
 	if (i >= 0 && i < numSubSongs)
 		return subSongPositions[i*2];
-		
+
 	return 0;
 }
 
@@ -2595,7 +2614,7 @@ mp_sint32 XModule::getSubSongPosEnd(mp_sint32 i) const
 {
 	if (i >= 0 && i < numSubSongs)
 		return subSongPositions[i*2+1];
-		
+
 	return 0;
 }
 
@@ -2616,12 +2635,12 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		for (i = 0; i < header.patnum; i++)
 #endif
 		{
-			if (phead[i].patternData) 
+			if (phead[i].patternData)
 			{
 				delete[] phead[i].patternData;
 				phead[i].patternData = NULL;
 			}
-			
+
 		}
 		memset(header.ord, 0, sizeof(header.ord));
 		// song length
@@ -2641,7 +2660,7 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		if (penvs)
 		{
 			delete[] penvs;
-			penvs = NULL; 
+			penvs = NULL;
 			numPEnvsAlloc = numPEnvs = 0;
 		}
 		if (fenvs)
@@ -2662,18 +2681,18 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 			pitchenvs = NULL;
 			numPitchEnvsAlloc = numPitchEnvs = 0;
 		}
-		
+
 		if (message)
 		{
 			delete[] message;
 			message = NULL;
 			messageBytesAlloc = 0;
 		}
-		
+
 		// release sample-memory
 		for (i = 0; i < samplePointerIndex; i++)
 		{
-			if (samplePool[i]) 
+			if (samplePool[i])
 			{
 				TXMSample::freePaddedMem(samplePool[i]);
 				samplePool[i] = NULL;
@@ -2681,15 +2700,15 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		}
 
 		samplePointerIndex = 0;
-		
+
 		if (instr)
 			memset(instr,0,sizeof(TXMInstrument)*256);
-		
+
 		// some default values please
 		if (smp)
 		{
 			memset(smp,0,sizeof(TXMSample)*MP_MAXSAMPLES);
-		
+
 			for (i = 0; i < MP_MAXSAMPLES; i++)
 			{
 				smp[i].vol = 0xff;
@@ -2698,7 +2717,7 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 				smp[i].volfade = 65535;
 			}
 		}
-		
+
 		header.insnum = 128;
 		header.smpnum = 128*16;
 		header.volenvnum = 0;
@@ -2707,12 +2726,12 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		header.vibenvnum = 0;
 		header.pitchenvnum = 0;
 	}
-	
+
 	// clear entire song
 	if (clearPatterns && clearInstruments)
 	{
 		memset(&header,0,sizeof(TXMHeader));
-		
+
 		header.insnum = 128;
 		header.smpnum = 128*16;
 
@@ -2723,9 +2742,9 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		header.channum = numChannels;
 		header.freqtab = 1;
 		header.mainvol = 255;
-		
+
 		// number of patterns
-		
+
 		header.speed = 125;
 		header.tempo = 6;
 
@@ -2735,13 +2754,13 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 			message = NULL;
 			messageBytesAlloc = 0;
 		}
-	
+
 		setDefaultPanning();
 	}
 
-	header.flags = XModule::MODULE_XMNOTECLIPPING | 
-		XModule::MODULE_XMARPEGGIO | 
-		XModule::MODULE_XMPORTANOTEBUFFER | 
+	header.flags = XModule::MODULE_XMNOTECLIPPING |
+		XModule::MODULE_XMARPEGGIO |
+		XModule::MODULE_XMPORTANOTEBUFFER |
 		XModule::MODULE_XMVOLCOLUMNVIBRATO;
 
 }
@@ -2750,25 +2769,25 @@ void XModule::removeOrderSkips()
 {
 	mp_sint32 newOrderListReloc[256];
 	mp_ubyte newOrderList[256];
-	
+
 	mp_sint32 i,j;
-	
+
 	j = 0;
 	for (i = 0; i < header.ordnum; i++)
 	{
 		if (header.ord[i] < header.patnum)
 		{
-			newOrderListReloc[i] = j; 
+			newOrderListReloc[i] = j;
 			newOrderList[j++] = header.ord[i];
 		}
 		else
 		{
-			newOrderListReloc[i] = -1; 
+			newOrderListReloc[i] = -1;
 		}
 	}
-	
+
 	mp_sint32 newLen = j;
-	
+
 	for (i = 0; i < header.ordnum; i++)
 	{
 		if (newOrderListReloc[i] == -1)
@@ -2781,7 +2800,7 @@ void XModule::removeOrderSkips()
 			newOrderListReloc[i] = reloc;
 		}
 	}
-	
+
 	for (i = 0; i < header.patnum; i++)
 	{
 		if (phead[i].patternData)
@@ -2804,13 +2823,13 @@ void XModule::removeOrderSkips()
 			}
 		}
 	}
-	
+
 	header.ordnum = newLen;
-	
+
 	memset(header.ord, 0, sizeof(header.ord));
-	
+
 	memcpy(header.ord, newOrderList, newLen);
-	
+
 }
 
 mp_sint32 XModule::removeUnusedPatterns(bool evaluate)
@@ -2874,7 +2893,7 @@ mp_sint32 XModule::removeUnusedPatterns(bool evaluate)
 			j = patRelocTable[i];
 			phead[j] = tempPHeads[i];
 		}
-		else 
+		else
 		{
 			delete[] tempPHeads[i].patternData;
 			tempPHeads[i].patternData = NULL;
@@ -2903,7 +2922,7 @@ void XModule::postLoadAnalyser()
 
 	for (i = 0; i < header.patnum; i++)
 	{
-	
+
 		if (phead[i].patternData)
 		{
 			mp_ubyte* data = phead[i].patternData;
@@ -2917,10 +2936,10 @@ void XModule::postLoadAnalyser()
 				mp_sint32 lastCycleIns = -1;
 				mp_sint32 lastIns = -1;
 				bool hasCycled = false;
-			
+
 				for (r = 0; r < phead[i].rows; r++)
 				{
-					
+
 					mp_ubyte* slot = data + r*rowSize + c*slotSize;
 
 					if (!oldPTProbability)
@@ -2937,7 +2956,7 @@ void XModule::postLoadAnalyser()
 							hasCycled = false;
 							lastCycleIns = -1;
 						}
-						
+
 						if (insCycleCounter >= 3 && hasCycled)
 						{
 #ifdef VERBOSE
@@ -2945,7 +2964,7 @@ void XModule::postLoadAnalyser()
 #endif
 							oldPTProbability = true;
 						}
-					
+
 						// another try:
 						if (lastIns != -1)
 						{
@@ -2960,13 +2979,13 @@ void XModule::postLoadAnalyser()
 					}
 
 					if (slot[1])
-						lastIns = slot[1];					
-					
+						lastIns = slot[1];
+
 				}
 			}
 		}
 	}
-	
+
 	if (oldPTProbability)
 		header.flags |= MODULE_OLDPTINSTRUMENTCHANGE;
 
@@ -2984,13 +3003,13 @@ void XModule::convertXMVolumeEffects(mp_ubyte vol, mp_ubyte& effect, mp_ubyte& o
 		effect = 0x0C;
 		operand = XModule::vol64to255(vol-0x10);
 	}
-	
+
 	if (vol>=0x60) {
 		mp_ubyte eff = vol>>4;
 		mp_ubyte op  = vol&0xf;
 		/*printf("%x, %x\r\n",eff,op);
 		getch();*/
-		if (op) 
+		if (op)
 		{
 			switch (eff) {
 				case 0x6 : {
@@ -3033,7 +3052,7 @@ void XModule::convertXMVolumeEffects(mp_ubyte vol, mp_ubyte& effect, mp_ubyte& o
 					effect=0x3;
 					operand=op<<4;
 				}; break;
-					
+
 			}
 		}
 		else
@@ -3051,38 +3070,38 @@ void XModule::convertXMVolumeEffects(mp_ubyte vol, mp_ubyte& effect, mp_ubyte& o
 					effect=0x3;
 					operand=op;
 				}; break;
-					
+
 			}
 		}
 	}
-	
+
 }
 
 XModule::IsPTCompatibleErrorCodes XModule::isPTCompatible()
 {
 	mp_sint32 i;
-	
+
 	// step 1: linear frequencies are used
 	if (header.freqtab & 1)
 		return IsPTCompatibleErrorCodeLinearFrequencyUsed;
-	
+
 	// step 2: find last used instrument, if greater than 31 => too many samples
 	mp_sint32 insNum = header.insnum;
 	for (i = header.insnum - 1; i > 0; i--)
 	{
 		mp_ubyte buffer[MP_MAXTEXT+1];
-		
+
 		convertStr(reinterpret_cast<char*>(buffer), reinterpret_cast<char*>(instr[i].name), MP_MAXTEXT, false);
-		
+
 		if (strlen((char*)buffer))
 		{
 			insNum = i+1;
 			break;
 		}
-		
+
 		if (instr[i].samp)
 		{
-			
+
 			mp_sint32 lasts = -1;
 #ifdef MILKYTRACKER
 			for (mp_sint32 j = 0; j < 96; j++)
@@ -3091,12 +3110,12 @@ XModule::IsPTCompatibleErrorCodes XModule::isPTCompatible()
 #endif
 			{
 				mp_sint32 s = instr[i].snum[j];
-				
+
 				if (lasts != -1 && s != lasts)
 					return IsPTCompatibleErrorCodeIncompatibleInstruments;
-				
+
 				lasts = s;
-							
+
 				if (s >= 0)
 				{
 					convertStr(reinterpret_cast<char*>(buffer), reinterpret_cast<char*>(smp[s].name), MP_MAXTEXT, false);
@@ -3104,19 +3123,19 @@ XModule::IsPTCompatibleErrorCodes XModule::isPTCompatible()
 					{
 						insNum = i+1;
 						goto insFound;
-					}					
+					}
 				}
-			}		
+			}
 		}
 	}
-	
+
 insFound:
 	if (i == 0)
-		insNum = 1;		
-	
+		insNum = 1;
+
 	if (insNum > 31)
 		return IsPTCompatibleErrorCodeTooManyInstruments;
-	
+
 	// step 3: incompatible samples
 	for (i = 0; i < MP_MAXSAMPLES; i++)
 	{
@@ -3124,39 +3143,39 @@ insFound:
 			((smp[i].type & 16) || (smp[i].type & 3) == 2 ||
 			smp[i].relnote || smp[i].pan != 0x80)))
 			return IsPTCompatibleErrorCodeIncompatibleSamples;
-		
+
 		if (smp[i].venvnum)
 		{
 			if (venvs[smp[i].venvnum-1].type & 1)
 				return IsPTCompatibleErrorCodeIncompatibleInstruments;
 		}
-		
+
 		if (smp[i].penvnum)
 		{
 			if (penvs[smp[i].penvnum-1].type & 1)
 				return IsPTCompatibleErrorCodeIncompatibleInstruments;
 		}
-		
+
 		if (smp[i].vibdepth && smp[i].vibrate)
 			return IsPTCompatibleErrorCodeIncompatibleInstruments;
 	}
-	
+
 	// step 4: incompatible patterns
 	for (i = 0; i < header.patnum; i++)
 	{
 		mp_sint32 slotSize = phead[i].effnum * 2 + 2;
 		mp_sint32 rowSizeSrc = slotSize*phead[i].channum;
-	
+
 		if (phead[i].rows != 64)
 			return IsPTCompatibleErrorCodeIncompatiblePatterns;
-	
+
 		for (mp_sint32 r = 0; r < phead[i].rows; r++)
 			for (mp_sint32 c = 0; c < header.channum; c++)
 			{
 				if (c < phead[i].channum)
 				{
 					mp_ubyte* src = phead[i].patternData + r*rowSizeSrc+c*slotSize;
-				
+
 					// check note range
 					mp_ubyte note = *src;
 					if (note)
@@ -3165,19 +3184,19 @@ insFound:
 						if (!(note >= 36 && note < 36+12*3))
 							return IsPTCompatibleErrorCodeIncompatiblePatterns;
 					}
-					
+
 					// check volume command
 					mp_ubyte eff = *(src+2);
 					if (eff)
 						return IsPTCompatibleErrorCodeIncompatiblePatterns;
-						
+
 					// check for normal commands
 					eff = *(src+4);
 					if (eff > 0xF && (eff < 0x30 || eff >=0x3F) && eff != 0x20)
 						return IsPTCompatibleErrorCodeIncompatiblePatterns;
 				}
 			}
-	
+
 	}
 
 	return IsPTCompatibleErrorCodeNoError;

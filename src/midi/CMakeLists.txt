@@ -31,6 +31,7 @@ target_include_directories(midi
         ${CMAKE_CURRENT_SOURCE_DIR}/../milkyplay
         ${CMAKE_CURRENT_SOURCE_DIR}/../ppui
         ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface
+        ${CMAKE_CURRENT_SOURCE_DIR}/../tmm
         ${CMAKE_CURRENT_SOURCE_DIR}/../tracker
 )
 

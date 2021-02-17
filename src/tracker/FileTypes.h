@@ -19,7 +19,7 @@
  *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  *  FileTypes.h
  *  milkytracker_universal
@@ -41,6 +41,7 @@ struct FileTypes
 		FileTypeSongAllModules,
 		FileTypeSongMOD,
 		FileTypeSongXM,
+		FileTypeSongTMM,
 		FileTypeSongWAV,
 		FileTypePatternXP,
 		FileTypeTrackXT,
@@ -50,24 +51,24 @@ struct FileTypes
 		FileTypeSampleWAV,
 		FileTypeSampleIFF
 	};
-	
+
 	Types type;
 
-	FileTypes() : 
+	FileTypes() :
 		type(FileTypeAllFiles)
 	{
 	}
-	
-	FileTypes(Types type) : 
+
+	FileTypes(Types type) :
 		type(type)
 	{
 	}
 
-	FileTypes(pp_int32 type) : 
+	FileTypes(pp_int32 type) :
 		type((Types)type)
 	{
 	}
-	
+
 	operator pp_int32() const
 	{
 		return (pp_int32)type;

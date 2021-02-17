@@ -31,7 +31,7 @@
 #include "FileExtProvider.h"
 #include "Decompressor.h"
 
-const char* FileExtProvider::moduleExtensions[] = 
+const char* FileExtProvider::moduleExtensions[] =
 {
 	"669","Composer669",
 	"amf","Asylum Music Format",
@@ -56,20 +56,21 @@ const char* FileExtProvider::moduleExtensions[] =
 	"ptm","Polytracker",
 	"s3m","Screamtracker 3",
 	"stm","Screamtracker 2",
+	"tmm","Titan Magic Module",
 	"ult","Ultratracker",
 	"uni","MikMod",
 	"xm","Fasttracker 2",
 	NULL, NULL
 };
 
-const char* FileExtProvider::instrumentExtensions[] = 
+const char* FileExtProvider::instrumentExtensions[] =
 {
 	"xi","FT2 Instruments",
 	"pat","GUS Patches",
 	NULL, NULL
 };
 
-const char* FileExtProvider::sampleExtensions[] = 
+const char* FileExtProvider::sampleExtensions[] =
 {
 	"wav","WAV uncompressed",
 	"iff","IFF (un)compressed",
@@ -79,19 +80,19 @@ const char* FileExtProvider::sampleExtensions[] =
 	NULL, NULL
 };
 
-const char* FileExtProvider::patternExtensions[] = 
+const char* FileExtProvider::patternExtensions[] =
 {
 	"xp","FT2 Pattern",
 	NULL, NULL
 };
 
-const char* FileExtProvider::trackExtensions[] = 
+const char* FileExtProvider::trackExtensions[] =
 {
 	"xt","FT2 Track",
 	NULL, NULL
 };
 
-const char* FileExtProvider::colorExtensions[] = 
+const char* FileExtProvider::colorExtensions[] =
 {
 	"mct","MilkyTracker colors",
 	NULL, NULL
@@ -106,12 +107,12 @@ const char* const* FileExtProvider::fillList(const char* const* baseList, Extens
 	{
 		if (baseList[i] == NULL)
 			break;
-	
+
 		tempExtensions.add(new PPString(baseList[i]));
-		
+
 		i++;
 	}
-	
+
 	// misuse a decompressor to retrieve the file types it can decompress
 	// they're not ordered though
 	Decompressor decompressor("");
@@ -119,7 +120,7 @@ const char* const* FileExtProvider::fillList(const char* const* baseList, Extens
 	if (decompressor.doesServeHint((DecompressorBase::Hints)type))
 	{
 		const PPSimpleVector<Descriptor>& src = decompressor.getDescriptors((DecompressorBase::Hints)type);
-	
+
 		for (pp_int32 j = 0; j < src.size(); j++)
 		{
 			tempExtensions.add(new PPString(src.get(j)->extension));
@@ -130,7 +131,7 @@ const char* const* FileExtProvider::fillList(const char* const* baseList, Extens
 
 	delete[] tempList;
 	tempList = new char*[i+2];
-	
+
 	pp_int32 j = 0;
 	for (j = 0; j < i; j++)
 	{
@@ -188,5 +189,5 @@ const char* const* FileExtProvider::getColorExtensions()
 }
 
 const char* FileExtProvider::getColorExtension(ColorExtensions extension) { return colorExtensions[extension*2]; }
-const char* FileExtProvider::getColorDescription(ColorExtensions extension) { return colorExtensions[extension*2+1]; }	
+const char* FileExtProvider::getColorDescription(ColorExtensions extension) { return colorExtensions[extension*2+1]; }
 

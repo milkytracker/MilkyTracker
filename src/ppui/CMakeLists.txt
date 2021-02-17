@@ -109,7 +109,11 @@ target_include_directories(ppui
         osinterface
 )
 
-target_link_libraries(ppui PRIVATE osinterface)
+target_link_libraries(ppui
+    PRIVATE 
+        osinterface
+        tmm
+)
 
 # Add platform-specific sources and include paths
 if(APPLE)

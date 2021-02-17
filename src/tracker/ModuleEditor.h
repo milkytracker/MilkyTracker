@@ -38,7 +38,7 @@ class PlayerCriticalSection;
 class ModuleEditor
 {
 public:
-	enum 
+	enum
 	{
 		// FT2 noterange
 		MAX_NOTE = 96,
@@ -59,14 +59,14 @@ public:
 	{
 		TXMInstrument* instrument;
 
-		// since TXMInstruments holds only references to the *used* samples 
+		// since TXMInstruments holds only references to the *used* samples
 		// we need another list of samples here in case the user wants to
-		// add a new sample that isn't used yet 
-		
+		// add a new sample that isn't used yet
+
 		// fasttracker 2 can only handle 16 samples
 		mp_sint32 numUsedSamples;
 		mp_sint32 usedSamples[16];
-	
+
 		// FT2 can only handle 96 notes
 		mp_ubyte nbu[MAX_NOTE];
 
@@ -86,9 +86,10 @@ public:
 	{
 		ModSaveTypeDefault = -1,
 		ModSaveTypeXM,
-		ModSaveTypeMOD
+		ModSaveTypeMOD,
+		ModSaveTypeTMM
 	};
-	
+
 private:
 	XModule* module;
 	PatternEditor* patternEditor;
@@ -111,13 +112,13 @@ private:
 	void adjustExtension(bool hasExtension = true);
 
 	TEditorInstrument* instruments;
-	
+
 	// convert MilkyPlay instrument at index i to our more XM-style instrument
 	void convertInstrument(mp_sint32 i);
 
 	// create a mapping which helps to treat MilkyPlay style instruments like XM ones
 	void buildInstrumentTable();
-	
+
 	// make sure everything is fine
 	void validateInstruments();
 
@@ -127,9 +128,9 @@ private:
 	XIInstrument* extractXIInstrument(mp_sint32 index);
 
 	bool allocatePattern(TXMPattern* pattern);
-	
+
 	mp_sint32 lastRequestedPatternIndex;
-	
+
 	mp_sint32 currentOrderIndex;
 	mp_sint32 currentPatternIndex;
 	mp_sint32 currentInstrumentIndex;
@@ -147,7 +148,7 @@ public:
 	SampleEditor* getSampleEditor() { return sampleEditor; }
 	EnvelopeEditor* getEnvelopeEditor() { return envelopeEditor; }
 	ModuleServices* getModuleServices() { return moduleServices; }
-	
+
 	void attachPlayerCriticalSection(PlayerCriticalSection* playerCriticalSection) { this->playerCriticalSection = playerCriticalSection; }
 
 	PPSystemString getModuleFileNameFull(ModSaveTypes extension = ModSaveTypeDefault);
@@ -177,10 +178,10 @@ public:
 	void reloadSample(mp_sint32 insIndex, mp_sint32 smpIndex);
 	void reloadEnvelope(mp_sint32 insIndex, mp_sint32 smpIndex, mp_sint32 type);
 
-	// --------- Access to module information/module data --------------------------- 
+	// --------- Access to module information/module data ---------------------------
 	void setNumChannels(mp_uint32 channels);
 	mp_uint32 getNumChannels() const { return module->header.channum; }
-	
+
 	void setTitle(const char* name, mp_uint32 length);
 	void getTitle(char* name, mp_uint32 length) const;
 
@@ -219,7 +220,7 @@ public:
 	void setSampleName(mp_sint32 insIndex, mp_sint32 smpIndex, const char* name, mp_uint32 length);
 	void getSampleName(mp_sint32 insIndex, mp_sint32 smpIndex, char* name, mp_uint32 length) const;
 	void setCurrentSampleName(const char* name, mp_uint32 length);
-	
+
 private:
 	TXMSample* getFirstSampleInfo();
 	TXMSample* getNextSampleInfo();
@@ -235,11 +236,11 @@ public:
 	bool createNewSong(mp_uword numChannels = 8);
 	void createEmptySong(bool clearPatterns = true, bool clearInstruments = true, mp_sint32 numChannels = 8);
 	bool isEmpty() const;
-						 
-	bool openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFileName = NULL);	
+
+	bool openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFileName = NULL);
 	bool saveSong(const SYSCHAR* fileName, ModSaveTypes saveType = ModSaveTypeXM);
 	mp_sint32 saveBackup(const SYSCHAR* fileName);
-	
+
 	void increaseSongLength();
 	void decreaseSongLength();
 
@@ -252,7 +253,7 @@ public:
 	bool insertNewOrderPosition(mp_sint32 index);
 	// delete position from orderlist
 	void deleteOrderPosition(mp_sint32 index);
-	// duplicate current position and add one 
+	// duplicate current position and add one
 	bool seqCurrentOrderPosition(mp_sint32 index, bool clone = false);
 
 	// get pattern index at order position
@@ -277,18 +278,18 @@ public:
 
 	// free last sample within given instrument (obsolete)
 	void freeSample(mp_sint32 index);
-	
+
 	// deallocate memory used by sample
 	void clearSample(mp_sint32 smpIndex);
 	void clearSample(mp_sint32 insIndex, mp_sint32 smpIndex);
 
 	// load sample
-	bool loadSample(const SYSCHAR* fileName, 
-					mp_sint32 insIndex, 
-					mp_sint32 smpIndex, 
+	bool loadSample(const SYSCHAR* fileName,
+					mp_sint32 insIndex,
+					mp_sint32 smpIndex,
 					mp_sint32 channelIndex,
 					const SYSCHAR* preferredFileName = NULL);
-	
+
 	// retrieve number of channels contained in a sample on disk
 	mp_sint32 getNumSampleChannels(const SYSCHAR* fileName);
 
@@ -301,7 +302,7 @@ public:
 		SampleFormatTypeWAV,
 		SampleFormatTypeIFF
 	};
-	
+
 	bool saveSample(const SYSCHAR* fileName, mp_sint32 insIndex, mp_sint32 smpIndex, SampleFormatTypes format);
 
 	// create sample filename from sample name information
@@ -309,12 +310,12 @@ public:
 
 	// postprocessing of samples, when changes are made
 	void finishSamples();
-	
+
 	// allocate one more instrument
 	mp_sint32 allocateInstrument();
 	// free last instrument
 	void freeInstrument();
-	
+
 	// load instrument
 	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index);
 	// save instrument
@@ -326,16 +327,16 @@ public:
 	// create instrument filename from instrument name information
 	const PPSystemString& getInstrumentFileName(mp_sint32 index);
 
-	bool copyInstrument(ModuleEditor& dstModule, mp_sint32 dstIndex, 
+	bool copyInstrument(ModuleEditor& dstModule, mp_sint32 dstIndex,
 						ModuleEditor& srcModule, mp_sint32 srcIndex);
-	bool swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex, 
+	bool swapInstruments(ModuleEditor& dstModule, mp_sint32 dstIndex,
 						 ModuleEditor& srcModule, mp_sint32 srcIndex);
-	
-	bool copySample(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex, 
+
+	bool copySample(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex,
 					ModuleEditor& srcModule, mp_sint32 srcInsIndex, mp_sint32 srcIndex);
-	bool swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex, 
+	bool swapSamples(ModuleEditor& dstModule, mp_sint32 dstInsIndex, mp_sint32 dstIndex,
 					 ModuleEditor& srcModule, mp_sint32 srcInsIndex, mp_sint32 srcIndex);
-	
+
 	// get note->sample LUT
 	const mp_ubyte* getSampleTable(mp_sint32 index);
 
@@ -344,13 +345,13 @@ public:
 
 	// update instrument autovibrato / volume fadeout stuff
 	void updateInstrumentData(mp_sint32 index);
-	
+
 	// remap instruments in entire song
-	pp_int32 insRemapSong(pp_int32 oldIns, pp_int32 newIns);	
+	pp_int32 insRemapSong(pp_int32 oldIns, pp_int32 newIns);
 
 	// transpose notes in entire song
-	pp_int32 noteTransposeSong(const PatternEditorTools::TransposeParameters& transposeParameters, bool evaluate = false);	
-	
+	pp_int32 noteTransposeSong(const PatternEditorTools::TransposeParameters& transposeParameters, bool evaluate = false);
+
 	// panning effect conversion
 	enum PanConversionTypes
 	{
@@ -359,7 +360,7 @@ public:
 		PanConversionTypeRemove_E8x,
 		PanConversionTypeRemove_8xx
 	};
-	
+
 	pp_int32 panConvertSong(PanConversionTypes type);
 
 	// Optimizing features operating on the entire song
@@ -375,16 +376,17 @@ public:
 	pp_int32 zeroOperands(const PatternEditorTools::OperandOptimizeParameters& optimizeParameters, bool evaluate);
 	pp_int32 fillOperands(const PatternEditorTools::OperandOptimizeParameters& optimizeParameters, bool evaluate);
 
-	void optimizeSamples(bool convertTo8Bit, bool minimize, 
+	void optimizeSamples(bool convertTo8Bit, bool minimize,
 						 mp_sint32& numConvertedSamples, mp_sint32& numMinimizedSamples,
 						 bool evaluate);
-						 
+
 public:
 	static void insertText(char* dst, const char* src, mp_sint32 max);
-	
+
 	static PPSystemString getTempFilename();
-	
+
 	friend class ChangesListener;
+	friend class DialogSynth;
 };
 
 #endif

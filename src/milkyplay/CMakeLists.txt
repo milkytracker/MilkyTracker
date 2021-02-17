@@ -50,6 +50,7 @@ add_library(milkyplay STATIC
     LoaderPTM.cpp
     LoaderS3M.cpp
     LoaderSTM.cpp
+    LoaderTMM.cpp
     LoaderULT.cpp
     LoaderUNI.cpp
     LoaderXM.cpp
@@ -115,6 +116,11 @@ target_include_directories(milkyplay
         # Include the CMake-generated version header from the build directory
         # (version string required when saving modules)
         ${PROJECT_BINARY_DIR}/src/tracker
+)
+
+target_link_libraries(milkyplay
+    PRIVATE
+        tmm
 )
 
 # Add platform-specific sources, include paths, definitions and link libraries

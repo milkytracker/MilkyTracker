@@ -54,6 +54,7 @@
 #include "EnvelopeEditorControl.h"
 #include "PatternEditorControl.h"
 #include "DialogBase.h"
+#include "DialogSynth.h"
 
 #include "PlayerController.h"
 #include "InputControlListener.h"
@@ -70,13 +71,13 @@ class DialogResponderInstruments : public DialogResponder
 {
 private:
 	SectionInstruments& section;
-	
+
 public:
 	DialogResponderInstruments(SectionInstruments& section) :
 		section(section)
 	{
 	}
-	
+
 	virtual pp_int32 ActionOkay(PPObject* sender)
 	{
 		switch (reinterpret_cast<PPDialogBase*>(sender)->getID())
@@ -88,7 +89,7 @@ public:
 			}
 		}
 		return 0;
-	}	
+	}
 };
 
 EnvelopeEditor* SectionInstruments::getEnvelopeEditor()
@@ -115,14 +116,14 @@ SectionInstruments::SectionInstruments(Tracker& theTracker) :
 {
 	predefinedVolumeEnvelopes = new EnvelopeContainer(TrackerConfig::numPredefinedEnvelopes);
 	predefinedPanningEnvelopes = new EnvelopeContainer(TrackerConfig::numPredefinedEnvelopes);
-	
+
 	// Store default predefined envelopes
 	for (pp_int32 i = 0; i < TrackerConfig::numPredefinedEnvelopes; i++)
 	{
-		TEnvelope e = EnvelopeContainer::decodeEnvelope(TrackerConfig::defaultPredefinedVolumeEnvelope); 
+		TEnvelope e = EnvelopeContainer::decodeEnvelope(TrackerConfig::defaultPredefinedVolumeEnvelope);
 		predefinedVolumeEnvelopes->store(i, e);
-		
-		e = EnvelopeContainer::decodeEnvelope(TrackerConfig::defaultPredefinedPanningEnvelope); 
+
+		e = EnvelopeContainer::decodeEnvelope(TrackerConfig::defaultPredefinedPanningEnvelope);
 		predefinedPanningEnvelopes->store(i, e);
 	}
 }
@@ -165,31 +166,31 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				pp_int32 i = reinterpret_cast<PPControl*>(sender)->getID() - BUTTON_ENVELOPE_PREDEF_0;
-				
+
 				EnvelopeContainer* predefinedEnvelopes = NULL;
-				
+
 				switch (currentEnvelopeType)
 				{
 					case EnvelopeEditor::EnvelopeTypeVolume: predefinedEnvelopes = predefinedVolumeEnvelopes; break;
 					case EnvelopeEditor::EnvelopeTypePanning: predefinedEnvelopes = predefinedPanningEnvelopes; break;
 					default: ASSERT(false);
 				}
-				
+
 				if (storeEnvelope)
 				{
 					const TEnvelope* env = envelopeEditorControl->getEnvelope();
 					predefinedEnvelopes->store(i, *env);
 					storeEnvelope = !storeEnvelope;
-					
+
 					PPButton* button = static_cast<PPButton*>(containerEnvelopes->getControlByID(BUTTON_ENVELOPE_PREDEF_STORE));
 					button->setPressed(storeEnvelope);
 				}
 				else
 				{
-					const TEnvelope* env = predefinedEnvelopes->restore(i);					
+					const TEnvelope* env = predefinedEnvelopes->restore(i);
 					getEnvelopeEditor()->pasteOther(*env);
 				}
-				
+
 				update();
 				break;
 			}
@@ -201,13 +202,13 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 
 				storeEnvelope = !storeEnvelope;
 				PPButton* button = reinterpret_cast<PPButton*>(sender);
-				
+
 				button->setPressed(storeEnvelope);
-				
+
 				screen->paintControl(button);
 				break;
 			}
-		
+
 			case BUTTON_ENVELOPE_VOLUME:
 				if (event->getID() != eCommand)
 					break;
@@ -235,7 +236,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				getEnvelopeEditor()->enableEnvelope(reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
-			
+
 			case CHECKBOX_ENVELOPE_SUSTAIN:
 				if (event->getID() != eCommand)
 					break;
@@ -243,7 +244,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				getEnvelopeEditor()->enableSustain(reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
-			
+
 			case CHECKBOX_ENVELOPE_LOOP:
 				if (event->getID() != eCommand)
 					break;
@@ -279,32 +280,32 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				getEnvelopeEditor()->deletePoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_SUSTAIN_PLUS:
 				getEnvelopeEditor()->selectNextSustainPoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_SUSTAIN_MINUS:
 				getEnvelopeEditor()->selectPreviousSustainPoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_LOOPSTART_PLUS:
 				getEnvelopeEditor()->selectNextLoopStartPoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_LOOPSTART_MINUS:
 				getEnvelopeEditor()->selectPreviousLoopStartPoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_LOOPEND_PLUS:
 				getEnvelopeEditor()->selectNextLoopEndPoint();
 				update();
 				break;
-			
+
 			case BUTTON_ENVELOPE_LOOPEND_MINUS:
 				getEnvelopeEditor()->selectPreviousLoopEndPoint();
 				update();
@@ -314,7 +315,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				envelopeEditorControl->setScale(envelopeEditorControl->getScale() >> 1);
 				update();
 				break;
-				
+
 			case BUTTON_ENVELOPE_ZOOMOUT:
 				envelopeEditorControl->setScale(envelopeEditorControl->getScale() << 1);
 				update();
@@ -325,7 +326,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 				envelopeEditorControl->invokeToolParameterDialog(EnvelopeEditorControl::EnvelopeToolTypeScaleX);
 				break;
-				
+
 			case BUTTON_ENVELOPE_SCALEY:
 				if (event->getID() != eCommand)
 					break;
@@ -363,7 +364,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 			case BUTTON_PIANO_EDIT:
 				if (event->getID() != eCommand)
 					break;
-					
+
 				getPianoControl()->setMode(PianoControl::ModeEdit);
 				update();
 				break;
@@ -386,7 +387,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 
 				handleZapInstrument();
 				break;
-			
+
 			// load instrument
 			case BUTTON_INSTRUMENTEDITOR_LOAD:
 			{
@@ -407,6 +408,14 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			// magic sample
+			case BUTTON_INSTRUMENT_MAGIC:
+				if (event->getID() != eCommand)
+					break;
+
+				showMagicDialog();
+				break;
+
 			// test instrument chooser
 			case BUTTON_INSTRUMENTEDITOR_COPY:
 			{
@@ -416,9 +425,9 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Copy ins. %x to %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Copy smp. %x to %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample" PPSTR_PERIODS, 
-											  buffer, buffer2, 
-											  tracker.listBoxInstruments->getSelectedIndex(), 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_COPY, "Copy ins", "Copy smp", "Copy instrument/sample" PPSTR_PERIODS,
+											  buffer, buffer2,
+											  tracker.listBoxInstruments->getSelectedIndex(),
 											  tracker.listBoxSamples->getSelectedIndex(),
 											  tracker.tabManager->getSelectedTabIndex());
 				screen->setModalControl(tracker.instrumentChooser);
@@ -434,9 +443,9 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 				sprintf(buffer, "Swap ins. %x with %x", tracker.listBoxInstruments->getSelectedIndex()+1, 1);
 				sprintf(buffer2, "Swap smp. %x with %x", tracker.listBoxSamples->getSelectedIndex(), 0);
 
-				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample" PPSTR_PERIODS, 
-											  buffer, buffer2, 
-											  tracker.listBoxInstruments->getSelectedIndex(), 
+				tracker.initInstrumentChooser(INSTRUMENT_CHOOSER_SWAP, "Swap ins", "Swap smp", "Swap instrument/sample" PPSTR_PERIODS,
+											  buffer, buffer2,
+											  tracker.listBoxInstruments->getSelectedIndex(),
 											  tracker.listBoxSamples->getSelectedIndex(),
 											  tracker.tabManager->getSelectedTabIndex());
 				screen->setModalControl(tracker.instrumentChooser);
@@ -462,7 +471,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				pp_int32 v = *((pp_int32*)event->getDataPtr());
 
-				tracker.inputControlListener->sendNote(v);			
+				tracker.inputControlListener->sendNote(v);
 				break;
 			}
 		}
@@ -537,16 +546,16 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 			case PIANO_CONTROL:
 			{
 				tracker.setChanged();
-				pp_int32 i = tracker.listBoxInstruments->getSelectedIndex();	
+				pp_int32 i = tracker.listBoxInstruments->getSelectedIndex();
 				moduleEditor->updateSampleTable(i, *(reinterpret_cast<const pp_uint8* const*>(event->getDataPtr())));
 				break;
-			}		
+			}
 		}
 	}
 	else if (event->getID() == eUpdated)
 	{
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
-		{			
+		{
 			case CONTAINER_ENVELOPES:
 			{
 				updateEnvelopeEditor(true, false);
@@ -554,7 +563,7 @@ pp_int32 SectionInstruments::handleEvent(PPObject* sender, PPEvent* event)
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -567,7 +576,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 {
 	PPScreen* screen = tracker.screen;
 
-	containerEntire = new PPTransparentContainer(CONTAINER_ENTIREINSSECTION, screen, this, 
+	containerEntire = new PPTransparentContainer(CONTAINER_ENTIREINSSECTION, screen, this,
 												 PPPoint(0, 0), PPSize(screen->getWidth(), screen->getHeight()));
 
 #ifndef __LOWRES__
@@ -580,16 +589,16 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEntire->addControl(containerEnvelopes);
 	containerEnvelopes->setColor(TrackerConfig::colorThemeMain);
 
-	envelopeEditorControl = new EnvelopeEditorControl(CONTAINER_ENVELOPES, screen, this, PPPoint(x + 2, y + 2 + 10), 
+	envelopeEditorControl = new EnvelopeEditorControl(CONTAINER_ENVELOPES, screen, this, PPPoint(x + 2, y + 2 + 10),
 													  PPSize(containerEnvelopes->getSize().width-96,containerEnvelopes->getSize().height-17));
 	envelopeEditorControl->attachEnvelopeEditor(tracker.getEnvelopeEditor());
 	envelopeEditorControl->setBorderColor(TrackerConfig::colorThemeMain);
-	
+
 	pp_int32 scale = 256*screen->getWidth() / 800;
-	
+
 	envelopeEditorControl->setxMax(scale);
 	//envelopeEditor->attachEnvelope(moduleEditor->getVolumeEnvelope(0,0));
-	
+
 	containerEnvelopes->addControl(envelopeEditorControl);
 
 	PPButton* button = new PPButton(BUTTON_ENVELOPE_VOLUME, screen, this, PPPoint(x + 2, y + 1), PPSize(64, 11), false, true, false);
@@ -597,7 +606,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	button->setText("Volume");
 	containerEnvelopes->addControl(button);
-	
+
 	button = new PPButton(BUTTON_ENVELOPE_PANNING, screen, this, PPPoint(x + 2 + 64, y + 1), PPSize(64, 11), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
@@ -634,17 +643,17 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Undo");
 		containerEnvelopes->addControl(button);
-		
+
 		button = new PPButton(BUTTON_ENVELOPE_REDO, screen, this, PPPoint(x + envelopeEditorControl->getSize().width-88, y + 2), PPSize(26, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Redo");
 		containerEnvelopes->addControl(button);
-		
+
 		button = new PPButton(BUTTON_ENVELOPE_COPY, screen, this, PPPoint(x + envelopeEditorControl->getSize().width-59, y + 2), PPSize(26, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Copy");
 		containerEnvelopes->addControl(button);
-		
+
 		button = new PPButton(BUTTON_ENVELOPE_PASTE, screen, this, PPPoint(x + envelopeEditorControl->getSize().width-32, y + 2), PPSize(26, 9));
 		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 		button->setText("Paste");
@@ -656,7 +665,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_ENVELOPE_ADD, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 8, y4 + 2), PPSize(40, 11));
 	button->setText("Add");
 	containerEnvelopes->addControl(button);
-	
+
 	button = new PPButton(BUTTON_ENVELOPE_DELETE, screen, this, PPPoint(x + envelopeEditorControl->getSize().width + 8 + 41, y4 + 2), PPSize(40, 11));
 	button->setText("Del");
 	containerEnvelopes->addControl(button);
@@ -735,18 +744,18 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_ENVELOPE_SCALEX, screen, this, PPPoint(tx+3, ty), PPSize(8*5+1, 13));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Scale X");
-	containerEnvelopes->addControl(button);		
+	containerEnvelopes->addControl(button);
 
 	tx+=button->getSize().width+1;
 	button = new PPButton(BUTTON_ENVELOPE_SCALEY, screen, this, PPPoint(tx+3, ty), PPSize(8*5+2, 13));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Scale Y");
-	containerEnvelopes->addControl(button);	
-	
+	containerEnvelopes->addControl(button);
+
 	ty+=button->getSize().height+2;
 
 	tx = x + envelopeEditorControl->getSize().width + 4;
-	
+
 	containerEnvelopes->addControl(new PPSeperator(0, screen, PPPoint(tx-2, ty), 8*5*2+8+4, containerEnvelopes->getColor(), true));
 
 	ty+=5;
@@ -754,26 +763,26 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_ENVELOPE_ZOOMIN, screen, this, PPPoint(tx+3, ty), PPSize(8*5+1, 10));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Zoom in");
-	containerEnvelopes->addControl(button);	
-	
+	containerEnvelopes->addControl(button);
+
 	tx+=button->getSize().width+1;
 	button = new PPButton(BUTTON_ENVELOPE_ZOOMOUT, screen, this, PPPoint(tx+3, ty), PPSize(8*5+2, 10));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Zoom out");
-	containerEnvelopes->addControl(button);	
+	containerEnvelopes->addControl(button);
 
-	// ----------------- instrument info ----------------- 
+	// ----------------- instrument info -----------------
 	//y+=containerEnvelopes->getSize().height;
 	x+=containerEnvelopes->getSize().width;
-	
+
 	PPContainer* container = new PPContainer(CONTAINER_INSTRUMENTS_INFO1, screen, this, PPPoint(x, y), PPSize(w4,34+4), false);
 	containerEntire->addControl(container);
 	containerSampleSlider = container;
-	
+
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Volume", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*9, y + 4), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Volume", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*9, y + 4), "FF", false));
 
 	//PPSlider* slider = new PPSlider(SLIDER_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*7+2, y + 2), 51, true);
 	PPSlider* slider = new PPSlider(SLIDER_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*11+2, y + 2), 68, true);
@@ -781,15 +790,15 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Panning", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Panning", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + 12), 68, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 24), "F.tune", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*7, y + 4 + 24), "-128", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 24), "F.tune", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*7, y + 4 + 24), "-128", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + 24), 68, true);
 	slider->setBarSize(16384);
@@ -810,7 +819,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	container->addControl(button);
 
-	// load & save 
+	// load & save
 	y+=container->getSize().height;
 
 	container = new PPContainer(CONTAINER_INSTRUMENTS_INFO5, screen, this, PPPoint(nx, y), PPSize(w3,39), false);
@@ -846,7 +855,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button->setText("Swap");
 	container->addControl(button);
 
-	y+=container->getSize().height;	
+	y+=container->getSize().height;
 
 	y = y4;
 
@@ -858,38 +867,38 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerInstrumentSlider = container;
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Fadeout", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*8, y + 4), "FFF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Fadeout", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*8, y + 4), "FFF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*11+2, y + 2), 68, true);
 	slider->setMaxValue(0x1000);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Vibspeed", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Vibspeed", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + 12), 68, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*2), "Vibdepth", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*10, y + 4 + 12*2), "F", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*2), "Vibdepth", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*10, y + 4 + 12*2), "F", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + 12*2), 68, true);
 	slider->setMaxValue(0xf);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*3), "Vibsweep", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12*3), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*3), "Vibsweep", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*9, y + 4 + 12*3), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + 12*3), 68, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*4), "Type:", true));	
-	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12*4), "Type:", true));
+
 	PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SAMPLE_VIBTYPE, screen, this, PPPoint(x + 2 + 5*8, y + 4 + 12*3 + 8), PPSize(w4, 20));
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
@@ -910,8 +919,8 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	y+=height;
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 2), "Relative note:", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_RELNOTE, screen, this, PPPoint(x + 4 + 15*8 - 4, y + 2), "C-4", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 2), "Relative note:", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_RELNOTE, screen, this, PPPoint(x + 4 + 15*8 - 4, y + 2), "C-4", false));
 
 	button = new PPButton(BUTTON_SAMPLE_RELNOTENUM_OCTUP, screen, this, PPPoint(x + 4, y + 1 + 12), PPSize(78+19, 11));
 	button->setText("Octave up");
@@ -931,7 +940,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	// piano
 	y+=container->getSize().height;
-	
+
 	PPContainer* pianoContainer = new PPContainer(CONTAINER_PIANO, screen, this, PPPoint(0, y), PPSize(screen->getWidth(),25*2+SCROLLBUTTONSIZE+4), false);
 	containerEntire->addControl(pianoContainer);
 	pianoContainer->setColor(TrackerConfig::colorThemeMain);
@@ -940,15 +949,15 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	pp_int32 pianoWidth = screen->getWidth()-2-40;
 	if (pianoWidth > 898)
 		pianoWidth = 898;
-	
+
 	pp_int32 dx = 0;
-		
-	pianoControl = new PianoControl(PIANO_CONTROL, screen, this, PPPoint(1+40+dx, y+1), PPSize(pianoWidth, 25*2+12), ModuleEditor::MAX_NOTE); 
+
+	pianoControl = new PianoControl(PIANO_CONTROL, screen, this, PPPoint(1+40+dx, y+1), PPSize(pianoWidth, 25*2+12), ModuleEditor::MAX_NOTE);
 	// show C-2
 	pianoControl->assureNoteVisible(12*2);
 	pianoControl->setBorderColor(TrackerConfig::colorThemeMain);
 	pianoContainer->addControl(pianoControl);
-	
+
 	button = new PPButton(BUTTON_PIANO_PLAY, screen, this, PPPoint(1, y+1), PPSize(38+dx, 20), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
@@ -965,7 +974,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, PPPoint(2, y+1+2*20), PPSize(36+dx, 20));
 	button->setText("Stop");
-	pianoContainer->addControl(button);		
+	pianoContainer->addControl(button);
 #else
 	// envelope stuff
 	containerEnvelopes = new PPContainer(CONTAINER_ENVELOPES, screen, this, PPPoint(x, y), PPSize(320,69+4), false);
@@ -975,7 +984,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	envelopeEditorControl = new EnvelopeEditorControl(CONTAINER_ENVELOPES, screen, this, PPPoint(x + 2, y + 2 + 10), PPSize(224,59));
 	envelopeEditorControl->attachEnvelopeEditor(tracker.getEnvelopeEditor());
 	envelopeEditorControl->setBorderColor(TrackerConfig::colorThemeMain);
-	
+
 	containerEnvelopes->addControl(envelopeEditorControl);
 
 	PPButton* button = new PPButton(BUTTON_ENVELOPE_VOLUME, screen, this, PPPoint(x + 2, y + 1), PPSize(32, 11), false, true, false);
@@ -983,7 +992,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	button->setText("Vol");
 	containerEnvelopes->addControl(button);
-	
+
 	button = new PPButton(BUTTON_ENVELOPE_PANNING, screen, this, PPPoint(x + 2 + 32, y + 1), PPSize(32, 11), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
@@ -1021,16 +1030,16 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	button = new PPButton(BUTTON_ENVELOPE_ZOOMIN, screen, this, PPPoint(statict->getLocation().x + 5*5, y + 2), PPSize(12, 9));
 	button->setText(TrackerConfig::stringButtonPlus);
-	containerEnvelopes->addControl(button);	
+	containerEnvelopes->addControl(button);
 
 	button = new PPButton(BUTTON_ENVELOPE_ZOOMOUT, screen, this, PPPoint(button->getLocation().x + button->getSize().width+1, y + 2), PPSize(12, 9));
 	button->setText(TrackerConfig::stringButtonMinus);
-	containerEnvelopes->addControl(button);	
+	containerEnvelopes->addControl(button);
 
 	button = new PPButton(BUTTON_ENVELOPE_ADD, screen, this, PPPoint(x + 224 + 36, y + 2), PPSize(28, 11));
 	button->setText("Add");
 	containerEnvelopes->addControl(button);
-	
+
 	button = new PPButton(BUTTON_ENVELOPE_DELETE, screen, this, PPPoint(x + 224 + 4 + 61, y + 2), PPSize(28, 11));
 	button->setText("Del");
 	containerEnvelopes->addControl(button);
@@ -1039,7 +1048,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEnvelopes->addControl(new PPCheckBox(CHECKBOX_ENVELOPE_SUSTAIN, screen, this, PPPoint(x + 224 + 4, y + 2 + 14)));
 
 	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 224 + 4 + 13, y + 2 + 15), "Sustain:", true));
-	
+
 	containerEnvelopes->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 224 + 4, y + 2 + 15 + 12), "Point", true));
 
 	// sustain point field
@@ -1090,31 +1099,31 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 
 	containerEnvelopes->addControl(button);
 
-	// --------------- instrument info --------------- 
+	// --------------- instrument info ---------------
 	y+=containerEnvelopes->getSize().height;
-	
+
 	PPContainer* container = new PPContainer(CONTAINER_INSTRUMENTS_INFO1, screen, this, PPPoint(x, y), PPSize(116,34+4), false);
 	containerEntire->addControl(container);
 	containerSampleSlider = container;
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Vol.", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*5, y + 4), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Vol.", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*5, y + 4), "FF", false));
 
 	PPSlider* slider = new PPSlider(SLIDER_SAMPLE_VOLUME, screen, this, PPPoint(x + 4 + 8*7+2, y + 2), 51, true);
 	slider->setMaxValue(64);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Pan.", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*5, y + 4 + 12), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 12), "Pan.", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*5, y + 4 + 12), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_PANNING, screen, this, PPPoint(x + 4 + 8*7+2, y + 2 + 12), 51, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 24), "Ft.", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*3, y + 4 + 12*2), "-128", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 24), "Ft.", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*3, y + 4 + 12*2), "-128", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_FINETUNE, screen, this, PPPoint(x + 4 + 8*7+2, y + 2 + 24), 51, true);
 	slider->setBarSize(16384);
@@ -1128,8 +1137,8 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerEntire->addControl(container);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 37), "Rel.note:", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_RELNOTE, screen, this, PPPoint(x + 4 + 16*5 - 4, y + 4 + 37), "C-4", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + 37), "Rel.note:", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_RELNOTE, screen, this, PPPoint(x + 4 + 16*5 - 4, y + 4 + 37), "C-4", false));
 
 	button = new PPButton(BUTTON_SAMPLE_RELNOTENUM_OCTUP, screen, this, PPPoint(x + 4, y + 3 + 36 + 12), PPSize(56, 10));
 	button->setText("Octave up");
@@ -1161,38 +1170,38 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	containerInstrumentSlider = container;
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Fadeout", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*8, y + 4), "FFF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4), "Fadeout", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*8, y + 4), "FFF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VOLFADE, screen, this, PPPoint(x + 4 + 8*11+2, y + 2), 68, true);
 	slider->setMaxValue(0x1000);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy), "Vibspeed", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*9, y + 4 + dy), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy), "Vibspeed", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*9, y + 4 + dy), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBSPEED, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + dy), 68, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*2), "Vibdepth", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*10, y + 4 + dy*2), "F", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*2), "Vibdepth", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*10, y + 4 + dy*2), "F", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBDEPTH, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + dy*2), 68, true);
 	slider->setMaxValue(0xf);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*3), "Vibsweep", true));	
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*9, y + 4 + dy*3), "FF", false));	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*3), "Vibsweep", true));
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*9, y + 4 + dy*3), "FF", false));
 
 	slider = new PPSlider(SLIDER_SAMPLE_VIBSWEEP, screen, this, PPPoint(x + 4 + 8*11+2, y + 2 + dy*3), 68, true);
 	slider->setBarSize(16384);
 	container->addControl(slider);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*4), "Type:", true));	
-	
+	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x + 4, y + 4 + dy*4), "Type:", true));
+
 	PPRadioGroup* radioGroup = new PPRadioGroup(RADIOGROUP_SAMPLE_VIBTYPE, screen, this, PPPoint(x + 2 + 5*8, y + 4 + dy*4 - 4), PPSize(204, 20));
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
@@ -1207,7 +1216,7 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	// sucks
 	pp_int32 nx = x + container->getSize().width;
 
-	// load & save 
+	// load & save
 	container = new PPContainer(CONTAINER_INSTRUMENTS_INFO5, screen, this, PPPoint(nx, y), PPSize(39,23), false);
 	containerEntire->addControl(container);
 	container->setColor(TrackerConfig::colorThemeMain);
@@ -1258,22 +1267,22 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_INSTRUMENTEDITOR_EXIT, screen, &tracker, PPPoint(nx + 2, y + 2+13), PPSize(34, 12));
 	button->setText("Exit");
 	container->addControl(button);
-	
+
 	// piano
 	y+=container->getSize().height;
-	
+
 	PPContainer* pianoContainer = new PPContainer(CONTAINER_PIANO, screen, this, PPPoint(0, y), PPSize(screen->getWidth(),25+SCROLLBUTTONSIZE+4), false);
 	containerEntire->addControl(pianoContainer);
 	pianoContainer->setColor(TrackerConfig::colorThemeMain);
 
 	// piano test
-	pianoControl = new PianoControl(PIANO_CONTROL, screen, this, 
-									PPPoint(1+32, y+1), PPSize(screen->getWidth()-2-32, 25+12), ModuleEditor::MAX_NOTE); 
+	pianoControl = new PianoControl(PIANO_CONTROL, screen, this,
+									PPPoint(1+32, y+1), PPSize(screen->getWidth()-2-32, 25+12), ModuleEditor::MAX_NOTE);
 	// show C-3
 	pianoControl->assureNoteVisible(12*4);
 	pianoControl->setBorderColor(TrackerConfig::colorThemeMain);
 	pianoControl->setMode(PianoControl::ModePlay);
-	
+
 	pianoContainer->addControl(pianoControl);
 
 	button = new PPButton(BUTTON_PIANO_PLAY, screen, this, PPPoint(1, y+1), PPSize(30, 12), false, true, false);
@@ -1296,30 +1305,30 @@ void SectionInstruments::init(pp_int32 x, pp_int32 y)
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Stop");
 	pianoContainer->addControl(button);
-	
+
 #endif
 	containerEntire->adjustContainerSize();
 	screen->addControl(containerEntire);
 
 	initialised = true;
-	
-	showSection(false);	
+
+	showSection(false);
 }
 
 void SectionInstruments::realign()
 {
 	pp_uint32 maxShould = tracker.MAXEDITORHEIGHT();
 	pp_uint32 maxIs = containerEntire->getLocation().y + containerEntire->getSize().height;
-	
+
 	if (maxIs != maxShould)
 	{
 		pp_int32 offset = maxShould - maxIs;
 		containerEntire->move(PPPoint(0, offset));
 	}
-	
+
 	PatternEditorControl* control = tracker.getPatternEditorControl();
 	PPScreen* screen = tracker.screen;
-	
+
 	if (visible)
 	{
 		control->setSize(PPSize(screen->getWidth(),
@@ -1338,10 +1347,10 @@ void SectionInstruments::show(bool bShow)
 	screen->pauseUpdate(true);
 #endif
 	SectionAbstract::show(bShow);
-	
+
 	visible = bShow;
 	containerEntire->show(bShow);
-	
+
 	if (!initialised)
 	{
 		init();
@@ -1350,22 +1359,22 @@ void SectionInstruments::show(bool bShow)
 	if (initialised)
 	{
 		PatternEditorControl* control = tracker.getPatternEditorControl();
-		
+
 #ifndef __LOWRES__
 		realign();
 #endif
-		
+
 		if (bShow)
 		{
 			if (control)
 			{
 #ifdef __LOWRES__
-				control->show(false);				
+				control->show(false);
 				replaceInstrumentListBoxes(true);
 #endif
-				tracker.hideInputControl();				
+				tracker.hideInputControl();
 			}
-			
+
 			update(false);
 		}
 		else if (control)
@@ -1375,9 +1384,9 @@ void SectionInstruments::show(bool bShow)
 			replaceInstrumentListBoxes(false);
 #endif
 		}
-		
+
 		showSection(bShow);
-	}	
+	}
 
 #ifdef __LOWRES__
 	// If instrument section is shown (bShow = true)
@@ -1405,16 +1414,16 @@ void SectionInstruments::updateSampleSliders(bool repaint/* = true*/)
 
 	SampleEditor* sampleEditor = tracker.getSampleEditor();
 
-	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_VOLUME))->setCurrentValue(sampleEditor->getFT2Volume());	
-	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_VOLUME))->setHexValue(sampleEditor->getFT2Volume(), 2);	
+	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_VOLUME))->setCurrentValue(sampleEditor->getFT2Volume());
+	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_VOLUME))->setHexValue(sampleEditor->getFT2Volume(), 2);
 
-	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_PANNING))->setCurrentValue(sampleEditor->getPanning());	
-	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_PANNING))->setHexValue(sampleEditor->getPanning(), 2);	
+	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_PANNING))->setCurrentValue(sampleEditor->getPanning());
+	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_PANNING))->setHexValue(sampleEditor->getPanning(), 2);
 
 	mp_sint32 ft = sampleEditor->getFinetune();
 
-	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_FINETUNE))->setCurrentValue((mp_uint32)(ft+128));	
-	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_FINETUNE))->setIntValue(ft, 4, true);	
+	static_cast<PPSlider*>(container2->getControlByID(SLIDER_SAMPLE_FINETUNE))->setCurrentValue((mp_uint32)(ft+128));
+	static_cast<PPStaticText*>(container2->getControlByID(STATICTEXT_SAMPLE_FINETUNE))->setIntValue(ft, 4, true);
 
 	screen->paintControl(container2, repaint);
 }
@@ -1442,15 +1451,15 @@ void SectionInstruments::updateInstrumentSliders(bool repaint/* = true*/)
 	}
 
 	static_cast<PPSlider*>(container4->getControlByID(SLIDER_SAMPLE_VIBSPEED))->setCurrentValue(ins->vibrate);
-	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBSPEED))->setHexValue(ins->vibrate, 2);	
+	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBSPEED))->setHexValue(ins->vibrate, 2);
 
 	static_cast<PPSlider*>(container4->getControlByID(SLIDER_SAMPLE_VIBDEPTH))->setCurrentValue(ins->vibdepth);
-	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBDEPTH))->setHexValue(ins->vibdepth, 1);	
+	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBDEPTH))->setHexValue(ins->vibdepth, 1);
 
 	static_cast<PPSlider*>(container4->getControlByID(SLIDER_SAMPLE_VIBSWEEP))->setCurrentValue(ins->vibsweep);
-	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBSWEEP))->setHexValue(ins->vibsweep, 2);	
+	static_cast<PPStaticText*>(container4->getControlByID(STATICTEXT_SAMPLE_VIBSWEEP))->setHexValue(ins->vibsweep, 2);
 
-	static_cast<PPRadioGroup*>(container4->getControlByID(RADIOGROUP_SAMPLE_VIBTYPE))->setChoice(ins->vibtype);	
+	static_cast<PPRadioGroup*>(container4->getControlByID(RADIOGROUP_SAMPLE_VIBTYPE))->setChoice(ins->vibtype);
 
 	screen->paintControl(container4, repaint);
 }
@@ -1459,14 +1468,14 @@ void SectionInstruments::notifyTabSwitch()
 {
 	if (isVisible())
 		realign();
-	
+
 	updateEnvelopeEditor(false, true);
 	resetPianoAssignment();
 }
 
 void SectionInstruments::notifySampleSelect(pp_int32 index)
 {
-	PianoControl* pianoControl = getPianoControl();				
+	PianoControl* pianoControl = getPianoControl();
 	if (pianoControl)
 		pianoControl->setSampleIndex(index);
 }
@@ -1490,7 +1499,7 @@ void SectionInstruments::update(bool repaint)
 	char noteName[40];
 	SampleEditor* sampleEditor = tracker.getSampleEditor();
 
-#ifndef __LOWRES__ 
+#ifndef __LOWRES__
 	if (sampleEditor->getRelNoteNum() > 0)
 		sprintf(noteName,"    (+%i)",(pp_int32)sampleEditor->getRelNoteNum());
 	else
@@ -1500,7 +1509,7 @@ void SectionInstruments::update(bool repaint)
 	PatternTools::getNoteName(noteName, sampleEditor->getRelNoteNum() + 4*12 + 1);
 #endif
 
-	static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_RELNOTE))->setText(noteName);		
+	static_cast<PPStaticText*>(container3->getControlByID(STATICTEXT_SAMPLE_RELNOTE))->setText(noteName);
 
 	pianoControl->setSampleTable(moduleEditor->getSampleTable(tracker.listBoxInstruments->getSelectedIndex()));
 
@@ -1558,14 +1567,14 @@ void SectionInstruments::updateEnvelopeEditor(bool repaint/* = true*/, bool reAt
 	}
 
 	PPScreen* screen = tracker.screen;
-	
+
 	PPContainer* container = containerEnvelopes;
 
 	pp_int32 envIndex = -1;
 	if (currentEnvelopeType == EnvelopeEditor::EnvelopeTypeVolume)
 	{
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_VOLUME))->setPressed(true);
-		static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_PANNING))->setPressed(false);		
+		static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_PANNING))->setPressed(false);
 		envIndex = 0;
 		envelopeEditorControl->setShowVCenter(false);
 	}
@@ -1579,10 +1588,10 @@ void SectionInstruments::updateEnvelopeEditor(bool repaint/* = true*/, bool reAt
 
 	if (reAttach && envIndex != -1)
 		tracker.moduleEditor->reloadEnvelope(tracker.listBoxInstruments->getSelectedIndex(),
-											 tracker.listBoxSamples->getSelectedIndex(), envIndex);		
-	
+											 tracker.listBoxSamples->getSelectedIndex(), envIndex);
+
 #ifdef __LOWRES__
-	// these buttons are always there 
+	// these buttons are always there
 	static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_UNDO))->setClickable(envelopeEditor->canUndo());
 	static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_REDO))->setClickable(envelopeEditor->canRedo());
 	static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_COPY))->setClickable(envelopeEditor->canCopy());
@@ -1619,7 +1628,7 @@ void SectionInstruments::updateEnvelopeEditor(bool repaint/* = true*/, bool reAt
 		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ENVELOPE_SUSTAINPT))->setIntValue(0, 2);
 		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ENVELOPE_LOOPSTARTPT))->setIntValue(0, 2);
 		static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ENVELOPE_LOOPENDPT))->setIntValue(0, 2);
-	}	
+	}
 
 	PPButton* button = static_cast<PPButton*>(container->getControlByID(BUTTON_ENVELOPE_SCALEX));
 	// button is only present in the hires version, NULL will be returned otherwise
@@ -1630,7 +1639,7 @@ void SectionInstruments::updateEnvelopeEditor(bool repaint/* = true*/, bool reAt
 	if (button)
 		button->setClickable(!envelopeEditor->isEmptyEnvelope());
 
-	screen->paintControl(container, repaint);	
+	screen->paintControl(container, repaint);
 }
 
 void SectionInstruments::resetEnvelopeEditor()
@@ -1648,7 +1657,7 @@ bool SectionInstruments::isEnvelopeVisible()
 {
 	if (containerEnvelopes)
 		return containerEnvelopes->isVisible();
-		
+
 	return false;
 }
 
@@ -1656,7 +1665,7 @@ pp_int32 SectionInstruments::getNumPredefinedEnvelopes()
 {
 	return TrackerConfig::numPredefinedEnvelopes;
 }
-	
+
 PPString SectionInstruments::getEncodedEnvelope(EnvelopeTypes type, pp_int32 index)
 {
 	switch (type)
@@ -1666,14 +1675,14 @@ PPString SectionInstruments::getEncodedEnvelope(EnvelopeTypes type, pp_int32 ind
 		case EnvelopeTypePanning:
 			return EnvelopeContainer::encodeEnvelope(*predefinedPanningEnvelopes->restore(index));
 	}
-	
+
 	ASSERT(false);
 	return "";
 }
-	
+
 void SectionInstruments::setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, const PPString& str)
 {
-	TEnvelope e = EnvelopeContainer::decodeEnvelope(str); 
+	TEnvelope e = EnvelopeContainer::decodeEnvelope(str);
 
 	switch (type)
 	{
@@ -1685,7 +1694,7 @@ void SectionInstruments::setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, 
 			break;
 		default:
 			ASSERT(false);
-	}	
+	}
 }
 
 void SectionInstruments::handleZapInstrument()
@@ -1701,3 +1710,14 @@ void SectionInstruments::zapInstrument()
 	updateAfterLoad();
 }
 
+void SectionInstruments::showMagicDialog()
+{
+	if (dialog)
+	{
+		delete dialog;
+		dialog = NULL;
+	}
+
+	dialog = new DialogSynth(tracker.screen, responder, RESPONDMESSAGEBOX_MAGIC, "Magic!", &tracker, tracker.listBoxInstruments->getSelectedIndex());
+	dialog->show();
+}

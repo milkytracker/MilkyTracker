@@ -60,7 +60,7 @@
 	chnInf->loopstart=chnInf->loopcounter=chnInf->execloop=0; \
 	chnInf->isLooping = false; \
 	chnInf->loopingValidPosition = poscnt; \
-} 	
+}
 
 #define RESET_ALL_LOOPING \
 { \
@@ -69,7 +69,7 @@
 		TModuleChannel *chnInf = &chninfo[c]; \
 		RESETLOOPING \
 	} \
-} 	
+}
 
 const mp_sint32	PlayerSTD::vibtab[32] = {0,24,49,74,97,120,141,161,
 										 180,197,212,224,235,244,250,253,
@@ -152,13 +152,13 @@ mp_sint32	PlayerSTD::getlinfreq(mp_sint32 per)
 {
 	if (per<0) per=0;
 	if (per>7680*256) per=7680*256;
-	
+
 	mp_sint32 t = (7680*256-per)/(768*256);
 	mp_sint32 r = (7680*256-per)%(768*256);
-	
+
 	// Linear interpolation seems to be wrong here
 	/*mp_sint32 frac = r & 255;
-	
+
 	mp_sint32 r1 = ((lintab[r>>8])<<t)>>5;
 	mp_sint32 r2 = ((lintab[(r>>8)+1])<<t)>>5;
 
@@ -168,19 +168,19 @@ mp_sint32	PlayerSTD::getlinfreq(mp_sint32 per)
 }
 
 // This takes the period with 8 bit fractional part
-mp_sint32	PlayerSTD::getlogfreq(mp_sint32 per) 
-{ 
-	return fixeddiv(14317056, per)>>8; 
+mp_sint32	PlayerSTD::getlogfreq(mp_sint32 per)
+{
+	return fixeddiv(14317056, per)>>8;
 }
 
-mp_sint32	PlayerSTD::getlinperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 finetune) 
+mp_sint32	PlayerSTD::getlinperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 finetune)
 {
 	note+=relnote;
-	
+
 	if (note<1) note=1;
 	if (note>XModule::NOTE_LAST) note=XModule::NOTE_LAST;
-	
-	return ((7680-((note-1)<<6)-(finetune/2)));	
+
+	return ((7680-((note-1)<<6)-(finetune/2)));
 }
 
 mp_sint32	PlayerSTD::interpolate(mp_sint32 eax,mp_sint32 ebx,mp_sint32 ecx,mp_sint32 edi,mp_sint32 esi)
@@ -196,7 +196,7 @@ mp_sint32	PlayerSTD::getlogperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 fin
 
 	if (note<1) note=1;
 	if (note>XModule::NOTE_LAST) note=XModule::NOTE_LAST;
-	
+
 	mp_sint32 ft = finetune;
 	ft+=128;
 	mp_sint32 octave = (note-1)/12;
@@ -211,14 +211,14 @@ mp_sint32	PlayerSTD::getlogperiod(mp_sint32 note,mp_sint32 relnote,mp_sint32 fin
 
 
 PlayerSTD::PlayerSTD(mp_uint32 frequency,
-					 StatusEventListener* statusEventListener/* = NULL*/) : 
+					 StatusEventListener* statusEventListener/* = NULL*/) :
 	PlayerBase(frequency),
 	statusEventListener(statusEventListener),
 	chninfo(NULL),
 	lastNumAllocatedChannels(-1)
 {
 	smpoffs = NULL;
-	attick	= NULL;	
+	attick	= NULL;
 
 	// fill in some default values, don't know if this is necessary
 	tickSpeed		= 6;				// our tickspeed
@@ -227,7 +227,7 @@ PlayerSTD::PlayerSTD(mp_uint32 frequency,
 	patternIndex	= 0;				// holds current pattern index
 	numEffects		= 0;				// current number of effects
 	numChannels		= 0;				// current number of channels
-	
+
 	patDelay = false;
 	patDelayCount = 0;
 	haltFlag = false;
@@ -247,16 +247,16 @@ mp_sint32 PlayerSTD::adjustFrequency(mp_uint32 frequency)
 	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
 
 	mp_sint32 res = PlayerBase::adjustFrequency(frequency);
-	
+
 	if (res < 0)
 		return res;
-		
+
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
 		return MP_OK;
 
 	res = allocateStructures();
-	
+
 	return res;
 }
 
@@ -265,16 +265,16 @@ mp_sint32 PlayerSTD::setBufferSize(mp_uint32 bufferSize)
 	mp_uint32 lastNumBeatPackets = getNumBeatPackets()+1;
 
 	mp_sint32 res = PlayerBase::setBufferSize(bufferSize);
-	
+
 	if (res < 0)
 		return res;
-		
+
 	// nothing has changed
 	if (lastNumBeatPackets == getNumBeatPackets()+1)
 		return MP_OK;
 
 	res = allocateStructures();
-	
+
 	return res;
 }
 
@@ -291,9 +291,9 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 	mp_int64 dummy = (mp_int64)BPMCounter;
 	dummy+=(mp_int64)adder;
 	BPMCounter=(mp_sint32)dummy;
-	
-	// check overflow-carry 
-	if ((dummy>>32)) 
+
+	// check overflow-carry
+	if ((dummy>>32))
 	{
 #ifdef MILKYTRACKER
 		setActiveChannels(initialNumChannels);
@@ -309,7 +309,7 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 		if (statusEventListener)
 			statusEventListener->playerTickEnded(*this, *module);
 	}
-	
+
 	if (module->header.flags & XModule::MODULE_AMSENVELOPES)
 		updateBPMIndependent();
 
@@ -318,7 +318,7 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 	for (mp_sint32 i = 0; i < initialNumChannels; i++)
 	{
 		// track envelope position state
-		TPrEnv* env = &chnInf->venv;		
+		TPrEnv* env = &chnInf->venv;
 		if ((env->envstruc && (env->envstruc->type & 1) && env->envstruc->num) &&
 			(env->step < env->envstruc->env[env->envstruc->num-1][0]))
 		{
@@ -330,8 +330,8 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 			env->timeRecord[currentBeatPacket].pos = 0;
 			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
-		
-		env = &chnInf->penv;		
+
+		env = &chnInf->penv;
 		if ((env->envstruc && (env->envstruc->type & 1) && env->envstruc->num) &&
 			(env->step < env->envstruc->env[env->envstruc->num-1][0]))
 		{
@@ -343,7 +343,7 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 			env->timeRecord[currentBeatPacket].pos = 0;
 			env->timeRecord[currentBeatPacket].envstruc = NULL;
 		}
-								
+
 		chnInf++;
 	}
 #endif
@@ -354,7 +354,7 @@ void PlayerSTD::timerHandler(mp_sint32 currentBeatPacket)
 
 void PlayerSTD::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 0*/, bool resetMixer/* = true*/, const mp_ubyte* customPanningTable/* = NULL*/, bool playOneRowOnly/* = false*/)
 {
-	if (chninfo == NULL) 
+	if (chninfo == NULL)
 		return;
 
 	bpm	= module->header.speed;
@@ -378,21 +378,21 @@ void PlayerSTD::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* = 
 	haltFlag		= false;
 
 	startNextRow	= -1;
-	
+
 	reset();
 
 	for (i = 0; i < initialNumChannels; i++)
 		chninfo[i].masterVol = 0xff;
-	
+
 	for (i = 0; i < module->header.channum; i++)
 		chninfo[i].pan = customPanningTable ? customPanningTable[i] : module->header.pan[i];
 
 	memset(rowHits, 0, sizeof(rowHits));
-	
+
 	for (i = 0; i < (signed)startPosition; i++)
 		for (j = 0; j < 256; j++)
 			visitRow(i*256+j);
-	
+
 	for (i = 0; i < (signed)startRow; i++)
 		visitRow(startPosition*256+i);
 }
@@ -411,48 +411,48 @@ void PlayerSTD::resetAllSpeed()
 	tickSpeed = module->header.tempo;
 	ticker = 0;
 
-	this->adder = getbpmrate(this->bpm);	
+	this->adder = getbpmrate(this->bpm);
 }
 
-mp_sint32 PlayerSTD::allocateStructures() 
+mp_sint32 PlayerSTD::allocateStructures()
 {
 	if (lastNumAllocatedChannels != initialNumChannels)
 	{
 		freeMemory();
-		
+
 		chninfo			= new TModuleChannel[initialNumChannels];
-		
+
 		smpoffs			= new mp_uint32[initialNumChannels];
 		attick			= new mp_ubyte[initialNumChannels];
-		
+
 		lastNumAllocatedChannels = initialNumChannels;
 	}
-	
+
 #ifdef MILKYTRACKER
 	for (mp_sint32 i = 0; i < initialNumChannels; i++)
 		chninfo[i].reallocTimeRecord(getNumBeatPackets()+1);
-#endif	
-	
+#endif
+
 	return MP_OK;
 }
 
-void PlayerSTD::freeMemory() 
+void PlayerSTD::freeMemory()
 {
-	if (chninfo) 
-	{ 
-		delete[] chninfo; 
-		chninfo = NULL; 
-		lastNumAllocatedChannels = -1; 
-	} 
-	if (smpoffs) 
-	{ 
-		delete[] smpoffs; 
-		smpoffs = NULL; 
-	} 
-	if (attick) 
-	{ 
-		delete[] attick; 
-		attick = NULL; 
+	if (chninfo)
+	{
+		delete[] chninfo;
+		chninfo = NULL;
+		lastNumAllocatedChannels = -1;
+	}
+	if (smpoffs)
+	{
+		delete[] smpoffs;
+		smpoffs = NULL;
+	}
+	if (attick)
+	{
+		delete[] attick;
+		attick = NULL;
 	}
 }
 
@@ -461,19 +461,19 @@ void PlayerSTD::freeMemory()
 ///////////////////////////////////////////////////////////////////////////////////
 void PlayerSTD::clearEffectMemory()
 {
-	if (!module || !chninfo) 
+	if (!module || !chninfo)
 		return;
-	
+
 	ticker = 0;
-	
+
 	//loopstart = execloop = loopcounter=0;
 	mp_sint32 i;
 	for (i = 0; i < module->header.channum; i++)
 	{
-		TModuleChannel *chnInf = &chninfo[i]; 
-		RESETLOOPING 
+		TModuleChannel *chnInf = &chninfo[i];
+		RESETLOOPING
 	}
-	
+
 	patDelay = false;
 	patDelayCount = 0;
 	haltFlag = false;
@@ -485,7 +485,7 @@ void PlayerSTD::clearEffectMemory()
 	for (i = 0; i < poscnt; i++)
 		for (mp_sint32 j = 0; j < 256; j++)
 			visitRow(i*256+j);
-	
+
 	for (i = 0; i < (signed)rowcnt; i++)
 		visitRow(poscnt*256+i);
 }
@@ -494,15 +494,15 @@ void PlayerSTD::prenvelope(mp_sint32 c,TPrEnv *env,mp_sint32 keyon)
 {
 	if (env->envstruc!=NULL && (env->envstruc->type&1)) {
 		// if we're sitting on a sustain point and key is on, we don't advance further
-		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) && 
-			(env->step == env->envstruc->env[env->a][0]) && keyon) 
+		if ((env->envstruc->type&2) && (env->a==env->envstruc->sustain) &&
+			(env->step == env->envstruc->env[env->a][0]) && keyon)
 			return;
-		
-		if ((env->step != env->envstruc->env[env->b][0]) && (env->b < env->envstruc->num)) 
+
+		if ((env->step != env->envstruc->env[env->b][0]) && (env->b < env->envstruc->num))
 			env->step++;
 
 		if (env->step == env->envstruc->env[env->b][0]) {
-			
+
 			if ((env->envstruc->type&4))
 			{
 				if ((!(env->envstruc->type&8) || keyon) &&
@@ -515,15 +515,15 @@ void PlayerSTD::prenvelope(mp_sint32 c,TPrEnv *env,mp_sint32 keyon)
 						return;
 					}
 				}
-			}	
-			
+			}
+
 			// Increase envelope position if there are more points to come
 			if (env->b < env->envstruc->num - 1) {
 				env->a++;
 				env->b++;
 			}
 		}
-		
+
 	}
 
 }
@@ -531,26 +531,26 @@ void PlayerSTD::prenvelope(mp_sint32 c,TPrEnv *env,mp_sint32 keyon)
 mp_sint32 PlayerSTD::getenvval(mp_sint32 c,TPrEnv *env,mp_sint32 n)
 {
 	if (env->envstruc==NULL) return n;
-	
-	if ((env->envstruc->type&1)) 
+
+	if ((env->envstruc->type&1))
 	{
-		
+
 		mp_sint32 dx = (env->envstruc->env[env->b][0]-env->envstruc->env[env->a][0]);
 		if (dx==0) dx=1;
 		mp_sint32 t = (env->envstruc->env[env->b][0]-env->step)*65536/dx;
 		mp_sint32 y0 = env->envstruc->env[env->a][1];
 		mp_sint32 y1 = env->envstruc->env[env->b][1];
-		
+
 		mp_sint32 y = (y0*t)+(y1*(65536-t));
-		
+
 		return y>>16;
-		
+
 	}
-	
+
 	else return n;
 }
 
-mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p) 
+mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p)
 {
 	mp_sint32 envVib = 0;
 	p<<=8;
@@ -567,9 +567,9 @@ mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p)
 	if (chninfo[c].avibused) {
 		mp_ubyte vp = chninfo[c].avibcnt>>2;
 		mp_ubyte vd = chninfo[c].avibdepth;
-		
+
 		mp_sint32 vm = 0;
-		
+
 		mp_sint32 vl = 0;
 		switch (chninfo[c].avibused) {
 			// sine (we must invert the phase here)
@@ -588,16 +588,16 @@ mp_sint32 PlayerSTD::getfinalperiod(mp_sint32 c,mp_sint32 p)
 						vl=-vl;
 					 }; break;
 		}
-		
+
 		vm = ((vl*vd)>>1);
 		if (chninfo[c].avibsweep) {
 			vm*=(mp_sint32)chninfo[c].avibswcnt * 256;
 			vm/=chninfo[c].avibsweep;
 			vm>>=8;
 		}
-		
+
 		if ((vp&63)>31) vm=-vm;
-		
+
 		return (p+vm+envVib);
 	}
 	else return (p+envVib);
@@ -609,36 +609,36 @@ void PlayerSTD::playInstrument(mp_sint32 chn, TModuleChannel* chnInf, bool bNoRe
 		if (module->instr[chnInf->ins-1].samp && chnInf->smp != -1)
 		{
 			chnInf->flags &= ~CHANNEL_FLAGS_UPDATE_IGNORE;
-			
+
 			mp_sint32 i = chnInf->smp;
-			
+
 			// start out with the flags for 16bit sample
 			mp_sint32 flags = ((module->smp[i].type&16)>>4)<<2;
 			// add looping + backward flags
 			flags |= module->smp[i].type&(3+128);
 			// one shot forward looping?
 			flags |= module->smp[i].type & 32;
-			
+
 			// force forward playing
 			if (chnInf->flags & CHANNEL_FLAGS_FORCE_FORWARD)
 				flags &= ~128;
-			
+
 			// force backward playing
 			if (chnInf->flags & CHANNEL_FLAGS_FORCE_BACKWARD)
 				flags |= 128;
-			
-			if (flags&3) 
+
+			if (flags&3)
 			{
-				
+
 				if (chnInf->flags & CHANNEL_FLAGS_FORCE_BILOOP)
 					flags = (flags & ~3) | 2;
-				
+
 				// bNoRestart = false means play new sample from beginning or sample offset
 				if (!bNoRestart)
 				{
 					playSample(chn,
 							   (mp_sbyte*)module->smp[i].sample,
-							   module->smp[i].samplen,											   
+							   module->smp[i].samplen,
 							   smpoffs[chn],
 							   0, // sample offset fraction
 							   !playModeChopSampleOffset,
@@ -651,10 +651,10 @@ void PlayerSTD::playInstrument(mp_sint32 chn, TModuleChannel* chnInf, bool bNoRe
 				{
 					mp_sint32 smpoffset = smpoffs[chn] ? smpoffs[chn] : getSamplePos(chn);
 					mp_sint32 smpoffsetfrac = smpoffs[chn] ? 0 : getSamplePosFrac(chn);
-				
+
 					playSample(chn,
 							   (mp_sbyte*)module->smp[i].sample,
-							   module->smp[i].samplen,											   
+							   module->smp[i].samplen,
 							   smpoffset,
 							   smpoffsetfrac, // sample offset fraction
 							   true,
@@ -665,7 +665,7 @@ void PlayerSTD::playInstrument(mp_sint32 chn, TModuleChannel* chnInf, bool bNoRe
 			}
 			else
 			{
-				
+
 				// bNoRestart = false means play new sample from beginning or sample offset
 				if (!bNoRestart)
 				{
@@ -694,7 +694,7 @@ void PlayerSTD::playInstrument(mp_sint32 chn, TModuleChannel* chnInf, bool bNoRe
 							   flags);
 				}
 			}
-			
+
 		}
 		else
 		{
@@ -763,7 +763,7 @@ mp_sint32 PlayerSTD::calcVibrato(TModuleChannel* chnInf, mp_sint32 effcnt)
 {
 	mp_sint32 vp = chnInf->vibpos[effcnt];
 	mp_sint32 vd = chnInf->vibdepth[effcnt];
-	
+
 	mp_sint32 vm = ((vibtab[vp&31]*vd)>>(7-2));
 	if ((vp&63)>31) vm=-vm;
 	return vm;
@@ -775,7 +775,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 	mp_ubyte vp,vd;
 	mp_sint32 vm;
 
-	// IN PTK playmode, we've got a bunch of tick 0 effects 
+	// IN PTK playmode, we've got a bunch of tick 0 effects
 	// which are repeated as long as the pattern delay applies
 	// ONLY valid for PTK playmode & effects, for other effects this leads to undefined results
 	if (playModePT)
@@ -784,7 +784,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			// Those effects are NOT executed
 			chnInf->eff[effcnt] > 0x09 &&
 			chnInf->eff[effcnt] != 0x33 &&
-			chnInf->eff[effcnt] != 0x34 && 
+			chnInf->eff[effcnt] != 0x34 &&
 			chnInf->eff[effcnt] != 0x35 &&
 			chnInf->eff[effcnt] != 0x36 &&
 			chnInf->eff[effcnt] != 0x37 &&
@@ -833,10 +833,10 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			}
 			break;
 		}
-			
+
 		// vibrato (applying extra hacks for XM compatibility)
 		// In FT2 the vibrato contained in the volume column works a bit different
-		// than the vibrato in the effect column: 
+		// than the vibrato in the effect column:
 		// After the vibrato has occured in the volumn column the pitch of the last
 		// vibrato calculation stays on until the next pitch effect occurs
 		case 0x04:
@@ -847,26 +847,26 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			mp_sint32 effNum = effcnt;
 			// in FT2 play mode the last vibrato
 			// value comes always from the effect column (index 1)
-			if ((module->header.flags & XModule::MODULE_XMPORTANOTEBUFFER)  && numEffects == 2) 
+			if ((module->header.flags & XModule::MODULE_XMPORTANOTEBUFFER)  && numEffects == 2)
 			{
 				effNum = 1;
 			}
-		
+
 			if (x) chnInf->vibspeed[effNum]=x;
 			if (y) chnInf->vibdepth[effNum]=y;
-		
+
 			mp_sint32 vmp = chnInf->per;
-					
+
 			vm = calcVibrato(chnInf, effNum);
-			
-			if (ticker) 
+
+			if (ticker)
 				chnInf->vibpos[effNum]+=chnInf->vibspeed[effNum];
 
 			vmp+=vm;
 
 			mp_sint32 maxTicks = patDelay ? patDelayCount : tickSpeed;
 
-			// the vibrato in the volumn volumn (index 0) works differently 
+			// the vibrato in the volumn volumn (index 0) works differently
 			// before applying that, we assure that this is an XM module by checking
 			// the module header (checking for FT2 replay mode is not enough,
 			// since it won't guarantee that there is volume and effect column)
@@ -889,10 +889,10 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 
 			setFreq(chn,getfreq(chn,getfinalperiod(chn,vmp),chnInf->freqadjust));
 			break;
-		} 
-			
+		}
+
 		// note porta + volume slide
-		case 0x05: 
+		case 0x05:
 		{
 			if (ticker&&chnInf->destnote) {
 				// If this is an XM module we need to store the last portamento operand always in the buffer for the second effect
@@ -907,18 +907,18 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				}
 				chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 			}
-			
+
 			x = chnInf->old[effcnt].volslide>>4;
 			y = chnInf->old[effcnt].volslide&0xf;
-			
+
 			if (x&&y) y = 0;
-			
+
 			// i'm not completely sure about this
 			// that case isn't mentioned mp_sint32 the S3M docs
-			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) && 
+			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) &&
 				ticker == 0)
 				break;
-			
+
 			if (x) {
 				chnInf->vol+=x*4;
 				if (chnInf->vol>255) chnInf->vol=255;
@@ -926,33 +926,33 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			if (y) {
 				chnInf->vol-=y*4;
 				if (chnInf->vol<0) chnInf->vol=0;
-			}					
+			}
 			chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 			chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			break;
 		}
-		
+
 		// vibrato + volume slide
-		case 0x06:	
+		case 0x06:
 		{
 			vm = calcVibrato(chnInf, effcnt);
-			
-			if (ticker) 
+
+			if (ticker)
 				chnInf->vibpos[effcnt]+=chnInf->vibspeed[effcnt];
 
 			setFreq(chn,getfreq(chn,getfinalperiod(chn,chnInf->per+vm),chnInf->freqadjust));
-			
+
 			x = chnInf->old[effcnt].volslide>>4;
 			y = chnInf->old[effcnt].volslide&0xf;
-			
+
 			if (x&&y) y = 0;
-			
+
 			// i'm not completely sure about this
 			// that case isn't mentioned in the S3M docs
-			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) && 
+			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) &&
 				ticker == 0)
 				break;
-			
+
 			if (x) {
 				chnInf->vol+=x*4;
 				if (chnInf->vol>255) chnInf->vol=255;
@@ -961,25 +961,25 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				chnInf->vol-=y*4;
 				if (chnInf->vol<0) chnInf->vol=0;
 			}
-			chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+			chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 			chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			break;
-		} 
+		}
 
 		// tremolo, this is not the exact FT2 way. FT2 way doesn't make sense at all, fuck it
 		// (applying extra hacks for XM compatibility)
-		case 0x07: 
+		case 0x07:
 		{
 			x = chnInf->eop[effcnt]>>4;
 			y = chnInf->eop[effcnt]&0xf;
 			if (x) chnInf->trmspeed[effcnt]=x;
 			if (y) chnInf->trmdepth[effcnt]=y;
-			
+
 			vp = chnInf->trmpos[effcnt];
 			vd = chnInf->trmdepth[effcnt];
-			
+
 			mp_sint32 vmp = (ticker == 0 ? (chnInf->hasTremolo ? chnInf->finalTremoloVol : chnInf->vol) : chnInf->tremoloVol);
-			
+
 			if (ticker) {
 				vm = ((vibtab[vp&31]*vd)>>(6-2));
 				if ((vp&63)>31) vm=-vm;
@@ -988,7 +988,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				if (vmp>255) vmp=255;
 				chnInf->trmpos[effcnt]+=chnInf->trmspeed[effcnt];
 			}
-			
+
 			if (ticker == tickSpeed - 1)
 			{
 				chnInf->finalTremoloVol = vmp;
@@ -998,48 +998,48 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			setVol(chn,getvolume(chn,vmp));
 			break;
 		}
-		
+
 		// volume slide
-		case 0x0A: 
+		case 0x0A:
 		{
 			x = chnInf->old[effcnt].volslide>>4;
 			y = chnInf->old[effcnt].volslide&0xf;
-			
+
 			// 08/31/04: fixed...
 			// don't reject volume slide if both operands are set
 			// instead, slide up
 			// see other volume slides as well
 			if (x&&y) y = 0;
-			
+
 			if (ticker) {
 				if (x) {
 					chnInf->vol+=x*4;
-					
+
 					if (chnInf->vol>255) chnInf->vol=255;
 				}
 				if (y) {
 					chnInf->vol-=y*4;
 					if (chnInf->vol<0) chnInf->vol=0;
 				}
-				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 				chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			}
-			
+
 			break;
-		} 
-		
+		}
+
 		// global volume slide
-		case 0x11: 
+		case 0x11:
 		{
 			x = chnInf->old[effcnt].gvolslide>>4;
 			y = chnInf->old[effcnt].gvolslide&0xf;
-			
+
 			if (x&&y) y = 0;
-			
+
 			if (ticker) {
 				if (x) {
 					mainVolume+=x*4;
-					
+
 					if (mainVolume>255) mainVolume=255;
 				}
 				if (y) {
@@ -1047,18 +1047,18 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 					if (mainVolume<0) mainVolume=0;
 				}
 			}
-			
+
 			break;
 		}
-			
+
 		// panning slide
-		case 0x19: 
+		case 0x19:
 		{
 			x = chnInf->old[effcnt].panslide>>4;
 			y = chnInf->old[effcnt].panslide&0xf;
-			
+
 			if (x&&y) y = 0;
-			
+
 			if (ticker) {
 				if (x) {
 					chnInf->pan+=x;
@@ -1069,86 +1069,86 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 					if (chnInf->pan<0) chnInf->pan=0;
 				}
 			}
-			
+
 			break;
 		}
-			
+
 		// retrig + volslide (I worked my ass OFF on this fucking shit)
 		// A few notes about FT2 playback:
 		// Rxx Retrig doesn't restart envelopes, even with instrument set
 		// It only retrigs if the last note has been been within valid range: 1 <= note <= XModule::NOTE_LAST
-		case 0x1B: 
+		case 0x1B:
 		{
 			if ((chnInf->old[effcnt].retrig&0xf)) {
 				if (chnInf->retrigcounterRxx[effcnt] >= chnInf->retrigmaxRxx[effcnt])
 				{
 					chnInf->retrigcounterRxx[effcnt] = 0;
 					chnInf->retrigmaxRxx[effcnt] = chnInf->old[effcnt].retrig&0xf;
-					
+
 					switch (chnInf->old[effcnt].retrig>>4) {
-						case 0x1 : 
+						case 0x1 :
 							chnInf->vol-=4;
 							if (chnInf->vol<0) chnInf->vol=0;
 							break;
-						case 0x2 : 
+						case 0x2 :
 							chnInf->vol-=8;
 							if (chnInf->vol<0) chnInf->vol=0;
 							break;
-						case 0x3 : 
+						case 0x3 :
 							chnInf->vol-=16;
 							if (chnInf->vol<0) chnInf->vol=0;
 							break;
-						case 0x4 : 
+						case 0x4 :
 							chnInf->vol-=32;
 							if (chnInf->vol<0) chnInf->vol=0;
 							break;
-						case 0x5 : 
+						case 0x5 :
 							chnInf->vol-=64;
 							if (chnInf->vol<0) chnInf->vol=0;
 							break;
-						case 0x6 : 
-							chnInf->vol=(chnInf->vol*2)/3; 
+						case 0x6 :
+							chnInf->vol=(chnInf->vol*2)/3;
 							break;
-						case 0x7 : 
-							chnInf->vol>>=1; 
+						case 0x7 :
+							chnInf->vol>>=1;
 							break;
-						case 0x9 : 
+						case 0x9 :
 							chnInf->vol+=4;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xA : 
+						case 0xA :
 							chnInf->vol+=8;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xB : 
+						case 0xB :
 							chnInf->vol+=16;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xC : 
+						case 0xC :
 							chnInf->vol+=32;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xD : 
+						case 0xD :
 							chnInf->vol+=64;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xE : 
+						case 0xE :
 							chnInf->vol=(chnInf->vol*3)>>1;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
-						case 0xF : 
+						case 0xF :
 							chnInf->vol<<=1;
 							if (chnInf->vol>255) chnInf->vol=255;
 							break;
 					}
-					
-					chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+
+					chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 
 					if (chnInf->validnote)
 						playInstrument(chn, chnInf);
 				}
-				
+
 				chnInf->retrigcounterRxx[effcnt]++;
 			}
 			break;
@@ -1161,49 +1161,49 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			y = (chnInf->old[effcnt].tremor&0xf) + 1;
 
 			mp_sint32 v = (ticker == 0 ? chnInf->vol : chnInf->tremorVol);
-			
+
 			if (ticker && chnInf->tremorcnt[effcnt] % (x+y) >= x)
 				v = 0;
-			
-			if (ticker) 
+
+			if (ticker)
 				chnInf->tremorcnt[effcnt]++;
-			
+
 			if (ticker == tickSpeed - 1)
 			{
 				chnInf->vol = v;
 				chnInf->tremoloVol = v;
 				chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			}
-			
+
 			setVol(chn,getvolume(chn,v));
 			break;
 		}
-								
+
 		// MDL Subcommands
-		case 0x1E: 
+		case 0x1E:
 		{
 			mp_ubyte eff = chnInf->eop[effcnt]>>4;
 			mp_ubyte eop = chnInf->eop[effcnt]&0xf;
 			switch (eff) {
-				case 0x1 : 
+				case 0x1 :
 					if (ticker) {
 						chnInf->pan-=eop;
 						if (chnInf->pan<0) chnInf->pan=0;
 					}
 					break;
-				case 0x2 : 
+				case 0x2 :
 					if (ticker) {
 						chnInf->pan+=eop;
 						if (chnInf->pan>255) chnInf->pan=255;
 					}
 					break;
-				case 0xA : 
+				case 0xA :
 					if (ticker) {
 						mainVolume+=eop;
 						if (mainVolume>255) mainVolume=255;
 					}
 					break;
-				case 0xB : 
+				case 0xB :
 					if (ticker) {
 						mainVolume-=eop;
 						if (mainVolume<0) mainVolume=0;
@@ -1211,10 +1211,10 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 					break;
 			}
 			break;
-		} 
-			
+		}
+
 		// arpeggio
-		case 0x20: 
+		case 0x20:
 		{
 			if (chnInf->note)
 			{
@@ -1224,12 +1224,12 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				mp_sint32 relnote = chnInf->relnote;
 				mp_sint32 finetune = chnInf->finetune;
 				mp_sint32 per,nper;
-				
+
 				mp_ubyte eop = chnInf->old[effcnt].arpeg;
-				
+
 				mp_sint32 x = eop>>4;
 				mp_sint32 y = eop&0xf;
-				
+
 				if (playModeFT2)
 				{
 					// Comment from Saga Musix/OpenMPT:
@@ -1257,21 +1257,21 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				{
 					r = (ticker)%3;
 				}
-				
+
 				if (r == 0)
 				{
-					note=chnInf->note; 
+					note=chnInf->note;
 				}
 				else if (r == 1)
 				{
-					note=chnInf->note+x; 
+					note=chnInf->note+x;
 				}
 				else if (r == 2)
 				{
-					note=chnInf->note+y; 
+					note=chnInf->note+y;
 				}
-				
-				
+
+
 				// Perform note clipping for XM note range if necessary
 				if ((r != 0) && // Only done for arpeggio tick 1 & 2
 					(module->header.flags & XModule::MODULE_XMNOTECLIPPING) && // Only when enabled
@@ -1279,41 +1279,41 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				{
 					note-=((note+relnote) - 97);
 				}
-										
+
 				// special case for STM arpeggio (thanks to Skaven/FC)
 				// Will not work in combination with other period
-				// related effects 
+				// related effects
 				if (module->header.flags & XModule::MODULE_STMARPEGGIO)
 				{
 					chnInf->per = getperiod(note,relnote,finetune);
 					setFreq(chn,getfreq(chn,getfinalperiod(chn,chnInf->per),chnInf->freqadjust));
 				}
 				else
-				{						
+				{
 					nper=getperiod(note,relnote,finetune);
 					per=getperiod(onote,relnote,finetune);
-					
+
 					//nper = (8363*periods[(note-1)%12]*16>>(((note-1)/12)))/c4spd;
 					//per = (8363*periods[(onote-1)%12]*16>>(((onote-1)/12)))/c4spd;
-					
+
 					nper-=per;
 					nper+=chnInf->per;
-					
+
 					setFreq(chn,getfreq(chn,getfinalperiod(chn,nper),chnInf->freqadjust));
 				}
 			}
 			break;
 		}
-			
+
 		// normal retrig
 		// A few notes about FT2 playback:
 		// E9x Retrig does!!! (while Rxx doesn't) restart envelopes, even without instrument set
 		// It only retrigs if the last note has been been within valid range: 1 <= note <= XModule::NOTE_LAST
-		case 0x39: 
+		case 0x39:
 		{
 			if ((chnInf->eop[effcnt]&0xf) && ticker) {
 				if (chnInf->retrigcounterE9x[effcnt] >= chnInf->retrigmaxE9x[effcnt])
-				{							
+				{
 					chnInf->retrigcounterE9x[effcnt] = 0;
 					chnInf->retrigmaxE9x[effcnt] = chnInf->eop[effcnt]&0xf;
 					// trigger envelopes ALWAYS
@@ -1327,27 +1327,27 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			}
 			break;
 		}
-				
+
 		// note cut
-		case 0x3C: 
+		case 0x3C:
 			// S3M ignores tick 0 note cut
 			if ((module->header.flags & XModule::MODULE_ST3NOTECUT) &&
 				!chnInf->eop[effcnt])
 				break;
-			
+
 			// Fasttracker cuts note at tick 0
 			//if (chnInf->eop[effcnt]) {
-				if (ticker == chnInf->eop[effcnt]) 
+				if (ticker == chnInf->eop[effcnt])
 				{
 					chnInf->vol=0;
-					chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+					chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 				}
 			//}
 			break;
-			
+
 		// MDL porta up
-		case 0x43: 
+		case 0x43:
 			if (ticker) {
 				if (chnInf->old[effcnt].portaup<=0xDF) {
 					chnInf->per-=chnInf->old[effcnt].portaup*4;
@@ -1356,9 +1356,9 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				}
 			}
 			break;
-			
+
 		// MDL porta down
-		case 0x44: 
+		case 0x44:
 			if (ticker) {
 				if (chnInf->old[effcnt].portaup<=0xDF) {
 					chnInf->per+=chnInf->old[effcnt].portaup*4;
@@ -1367,46 +1367,46 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				}
 			}
 			break;
-				
+
 		// MDL volslide up
-		case 0x45: 
+		case 0x45:
 			if (ticker) {
 				if (chnInf->old[effcnt].volslide<=0xDF) {
 					chnInf->vol+=chnInf->old[effcnt].volslide;
 					if (chnInf->vol>255) chnInf->vol=255;
 				}
-				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 				chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			}
 			break;
-				
+
 		// MDL volslide down
-		case 0x46: 
+		case 0x46:
 			if (ticker) {
 				if (chnInf->old[effcnt].volslide<=0xDF) {
 					chnInf->vol-=chnInf->old[effcnt].volslide;
 					if (chnInf->vol<0) chnInf->vol=0;
 				}
-				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 				chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			}
 			break;
-				
+
 		// S3M porta up
-		case 0x47: 
+		case 0x47:
 			if (ticker) {
 				if (chnInf->old[effcnt].portaup<=0xDF) {
 					chnInf->per-=chnInf->old[effcnt].portaup*4;
 					// Special for ST3
-					if (chnInf->per <= 0) 
+					if (chnInf->per <= 0)
 						stopSample(chn);
 					chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 				}
 			}
 			break;
-				
+
 		// S3M porta down
-		case 0x48: 
+		case 0x48:
 			if (ticker) {
 				if (chnInf->old[effcnt].portaup<=0xDF) {
 					chnInf->per+=chnInf->old[effcnt].portaup*4;
@@ -1414,36 +1414,36 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				}
 			}
 			break;
-				
+
 		// S3M volslide
-		case 0x49: 
+		case 0x49:
 		{
-			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) && 
+			if (!(module->header.flags & XModule::MODULE_OLDS3MVOLSLIDES) &&
 				ticker == 0)
 				break;
-			
+
 			x = chnInf->old[effcnt].volslide>>4;
 			y = chnInf->old[effcnt].volslide&0xf;
-			
+
 			if (x == 0xF && y) break;
 			if (y == 0xF && x) break;
-			
+
 			if (x && y) y = 0;
-			
+
 			if (x) {
 				chnInf->vol+=x*4;
-				
+
 				if (chnInf->vol>255) chnInf->vol=255;
 			}
 			if (y) {
 				chnInf->vol-=y*4;
 				if (chnInf->vol<0) chnInf->vol=0;
 			}
-			chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;					
+			chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 			chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 			break;
-		} 
-			
+		}
+
 		// fine vibrato
 		case 0x4A:
 		{
@@ -1452,23 +1452,23 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 
 			if (x) chnInf->vibspeed[effcnt]=x;
 			if (y) chnInf->vibdepth[effcnt]=y;
-		
+
 			mp_sint32 vmp = chnInf->per;
-					
+
 			vp = chnInf->vibpos[effcnt];
 			vd = chnInf->vibdepth[effcnt];
-			
+
 			vm = ((vibtab[vp&31]*vd)>>7);
 			if ((vp&63)>31) vm=-vm;
 			vmp+=vm;
-			
-			if (ticker) 
+
+			if (ticker)
 				chnInf->vibpos[effcnt]+=chnInf->vibspeed[effcnt];
 
 			setFreq(chn,getfreq(chn,getfinalperiod(chn,vmp),chnInf->freqadjust));
 			break;
-		} 
-			
+		}
+
 		// high precision portamento up
 		case 0x4D:
 			if (ticker) {
@@ -1477,7 +1477,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 			}
 			break;
-			
+
 		// high precision portamento down
 		case 0x4E:
 			if (ticker) {
@@ -1486,7 +1486,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 			}
 			break;
-				
+
 		// XM: Key off at tick
 		case 0x14:
 			// not at tick 0
@@ -1497,18 +1497,18 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			if (ticker == chnInf->eop[effcnt])
 			{
 				if (chnInf->venv.envstruc!=NULL) {
-					if (!(chnInf->venv.envstruc->type&1)) 
+					if (!(chnInf->venv.envstruc->type&1))
 						chnInf->vol = 0;
 				}
-				else 
+				else
 					chnInf->vol=0;
 
-				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;												
+				chnInf->tremorVol = chnInf->tremoloVol = chnInf->vol;
 				chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 				chnInf->keyon = false;
 			}
 			break;
-				
+
 		// Oktalyzer: Note slide down
 		/*case 0x52:
 			if (ticker && chnInf->note) {
@@ -1519,9 +1519,9 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 						chnInf->note = 3*12;
 					chnInf->per = getperiod(chnInf->note,chnInf->relnote,chnInf->finetune);
 				}
-			} 
+			}
 			break;
-				
+
 		// Oktalyzer: Note slide up
 		case 0x53:
 			if (ticker && chnInf->note) {
@@ -1532,34 +1532,34 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 						chnInf->note = 6*12;
 					chnInf->per = getperiod(chnInf->note,chnInf->relnote,chnInf->finetune);
 				}
-			} 
+			}
 			break;*/
-			
+
 		// Oktalyzer arpeggio I, II, III
-		case 0x56: 
-		case 0x57: 
-		case 0x58: 
+		case 0x56:
+		case 0x57:
+		case 0x58:
 		{
 			if (chnInf->note)
 			{
 				mp_sint32 eff = chnInf->eff[effcnt]-0x56;
 				mp_sint32 r;
-				
+
 				if (eff == 1)
 					r = (ticker)&3;
-				else 
+				else
 					r = (ticker)%3;
-					
+
 				mp_sint32 note = 0,onote = chnInf->note;
 				mp_sint32 relnote = chnInf->relnote;
 				mp_sint32 finetune = chnInf->finetune;
 				mp_sint32 per,nper;
-				
+
 				mp_ubyte eop = chnInf->eop[effcnt];
-				
+
 				mp_sint32 x = eop>>4;
 				mp_sint32 y = eop&0xf;
-				
+
 				switch (eff)
 				{
 					case 0x00:
@@ -1571,7 +1571,7 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 						}
 						break;
 					}
-					
+
 					case 0x01:
 					{
 						switch (r) {
@@ -1593,35 +1593,35 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 						break;
 					}
 				}
-				
+
 				nper=getperiod(note,relnote,finetune);
 				per=getperiod(onote,relnote,finetune);
-				
+
 				nper-=per;
 				nper+=chnInf->per;
-				
+
 				setFreq(chn,getfreq(chn,getfinalperiod(chn,nper),chnInf->freqadjust));
 			}
 			break;
 		}
-		
+
 		// Global volslide
-		case 0x59: 
+		case 0x59:
 		{
 			if (ticker == 0)
 				break;
-			
+
 			x = chnInf->old[effcnt].gvolslide>>4;
 			y = chnInf->old[effcnt].gvolslide&0xf;
-			
+
 			if (x == 0xF && y) break;
 			if (y == 0xF && x) break;
-			
+
 			if (x && y) y = 0;
-			
+
 			if (x) {
 				mainVolume+=x*4;
-				
+
 				if (mainVolume>255) mainVolume=255;
 			}
 			if (y) {
@@ -1629,8 +1629,8 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 				if (mainVolume<0) mainVolume=0;
 			}
 			break;
-		} 
-			
+		}
+
 	}
 }
 
@@ -1641,10 +1641,10 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 	switch (chnInf->eff[effcnt]) {
 		case 0x01 : if (eop) chnInf->old[effcnt].portaup=eop; break;
 		case 0x02 : if (eop) chnInf->old[effcnt].portadown=eop; break;
-		case 0x03 : if (module->header.flags & XModule::MODULE_XMPORTANOTEBUFFER) 
+		case 0x03 : if (module->header.flags & XModule::MODULE_XMPORTANOTEBUFFER)
 					{
 						// XM compatible playing?
-						/*if (!newInsPTFlag && 
+						/*if (!newInsPTFlag &&
 							!newInsST3Flag &&
 							!oldPTInsChangeFlag &&
 							!note &&
@@ -1654,20 +1654,20 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						}*/
 
 						ASSERT(numEffects >= 2);
-						if (eop) chnInf->old[1].portanote=eop; 
+						if (eop) chnInf->old[1].portanote=eop;
 					}
 					else
 					{
-						if (eop) chnInf->old[effcnt].portanote=eop; 
+						if (eop) chnInf->old[effcnt].portanote=eop;
 					}
 					break;
 		case 0x05 : if (eop) chnInf->old[effcnt].volslide=eop; break;
 		case 0x06 : if (eop) chnInf->old[effcnt].volslide=eop; break;
 		case 0x08 : if (options[PlayModeOptionPanning8xx]) chnInf->pan=eop; break;
 		case 0x09 : {
-						if (eop) chnInf->old[effcnt].smpoffset = eop; 
-						smpoffs[chn] = chnInf->old[effcnt].smpoffset<<8;					
-					}; 
+						if (eop) chnInf->old[effcnt].smpoffset = eop;
+						smpoffs[chn] = chnInf->old[effcnt].smpoffset<<8;
+					};
 					break;
 		case 0x0A : if (eop) chnInf->old[effcnt].volslide=eop; break;
 		case 0x0B : {
@@ -1675,11 +1675,11 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						pjumppos = eop;
 						pjumprow = 0;
 						pjumpPriority = MP_NUMEFFECTS*chn + effcnt;
-					}; 
+					};
 					break;
-		case 0x0C : chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = eop; 
-					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;					
-					chnInf->hasSetVolume = true;					
+		case 0x0C : chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = eop;
+					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
+					chnInf->hasSetVolume = true;
 					break;
 		case 0x0D : {
 						pbreak=1;
@@ -1689,7 +1689,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						pbreakPriority = MP_NUMEFFECTS*chn + effcnt;
 					}; break;
 		case 0x0F : {
-						if (eop) 
+						if (eop)
 						{
 							if (eop>=32) {
 								bpm=eop;
@@ -1720,21 +1720,21 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							this->adder = getbpmrate(eop);
 						}
 					}; break;
-		
+
 		case 0x19 : if (eop) chnInf->old[effcnt].panslide=eop; break;
 		case 0x1B : {
 						x = eop & 0xf;
 						y = eop & 0xF0;
-						
-						if (x) 
+
+						if (x)
 							chnInf->old[effcnt].retrig = (chnInf->old[effcnt].retrig & 0xF0) | x;
-						if (y) 
+						if (y)
 							chnInf->old[effcnt].retrig = (chnInf->old[effcnt].retrig & 0x0F) | y;
-						
+
 						eop = chnInf->old[effcnt].retrig;
-									
-						chnInf->retrigmaxRxx[effcnt] = eop & 0xF;		
-						
+
+						chnInf->retrigmaxRxx[effcnt] = eop & 0xF;
+
 						// Simulate really nasty FT2 bug:
 						// When a volume is set in the volume column
 						// the interval for the first retrig is lengthen by one tick
@@ -1743,14 +1743,14 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							chnInf->retrigcounterRxx[effcnt] = -1;
 							chnInf->hasSetVolume = false;
 						}
-						
+
 						// If a note is playing on tick 0, increase counter
 						if (chnInf->currentnote && chnInf->validnote)
 							chnInf->retrigcounterRxx[effcnt]++;
 						break;
 					}
 		// Tremor
-		case 0x1D : if (eop) chnInf->old[effcnt].tremor=eop; break;						
+		case 0x1D : if (eop) chnInf->old[effcnt].tremor=eop; break;
 		// MDL set sample offset
 		case 0x1F : {
 						smpoffs[chn]=((mp_sint32)eop<<8)+((mp_sint32)chnInf->eop[(effcnt+1)%numEffects]<<16);
@@ -1764,7 +1764,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 		case 0x22 : {
 						mp_sint32 op = (((mp_sint32)eop)<<8) + ((mp_sint32)chnInf->eop[(effcnt+1)%numEffects]);
 						smpoffs[chn]=op<<2;
-					}; break;					
+					}; break;
 		// ULT special commands
 		case 0x23 : {
 						if (((eop >> 4) == 1 || (eop&0xF) == 1) ||
@@ -1776,10 +1776,10 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						{
 							chnInf->flags &= ~CHANNEL_FLAGS_FORCE_FORWARD;
 							chnInf->flags |= CHANNEL_FLAGS_FORCE_BACKWARD;
-							
+
 							setBackward(chn);
 						}
-					}; break;					
+					}; break;
 		// Far position jump (PLM support)
 		case 0x2B : {
 						pjump = 1;
@@ -1787,6 +1787,28 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						pjumprow = chnInf->eop[(effcnt+1)%numEffects];
 						pjumpPriority = MP_NUMEFFECTS*chn + effcnt;
 					}; break;
+
+		// MAGIC Filter control
+		case 0x30 : {
+						char test[255];
+						sprintf(test, "filter control: %02x\n", eop);
+						OutputDebugString(test);
+					}; break;
+
+		// MAGIC cutoff
+		case 0x12: {
+						char test[255];
+						sprintf(test, "cutoff: %d\n", eop);
+						OutputDebugString(test);
+				   }; break;
+
+		// MAGIC resonance
+		case 0x13: {
+						char test[255];
+						sprintf(test, "resonance: %d\n", eop);
+						OutputDebugString(test);
+				   }; break;
+
 		// Fine porta up
 		case 0x31 : {
 						if (eop) chnInf->old[effcnt].fineportaup=eop;
@@ -1808,14 +1830,14 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							chnInf->loopingValidPosition = poscnt;
 						}
 						else {
-							if (chnInf->loopcounter==eop) 
+							if (chnInf->loopcounter==eop)
 							{
 								// Imitate nasty XM bug here:
 								if (playModeFT2)
 								{
 									startNextRow = chnInf->loopstart;
 								}
-							
+
 								RESETLOOPING
 							}
 							else {
@@ -1826,10 +1848,10 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}; break;
 		case 0x38 : if (options[PlayModeOptionPanningE8x]) chnInf->pan=(mp_ubyte)XModule::pan15to255(eop); break;
 		case 0x39 : {
-						chnInf->retrigcounterE9x[effcnt] = 0;							
+						chnInf->retrigcounterE9x[effcnt] = 0;
 						if (eop)
 						{
-							chnInf->retrigmaxE9x[effcnt] = eop & 0xF;		
+							chnInf->retrigmaxE9x[effcnt] = eop & 0xF;
 
 							// If a note is playing on tick 0, increase counter
 							if (chnInf->currentnote && chnInf->validnote)
@@ -1843,7 +1865,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							// trigger replay only when last note has been valid
 							if (chnInf->validnote)
 								playInstrument(chn, chnInf);
-						}						
+						}
 					}; break;
 		case 0x3A : {
 						if (eop) chnInf->old[effcnt].finevolslide=eop;
@@ -1862,7 +1884,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 		// Note delay triggers envelopes/autovibrato/fade out again
 		case 0x3D : {
 						triggerInstrumentFX(chnInf);
-						chnInf->keyon = true;						
+						chnInf->keyon = true;
 					}; break;
 		case 0x3E : {
 						patDelay = true;
@@ -1883,7 +1905,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}; break;
 		// MDL fine portas up
 		case 0x43 : {
-						if (eop) chnInf->old[effcnt].portaup=eop; 
+						if (eop) chnInf->old[effcnt].portaup=eop;
 						if (chnInf->old[effcnt].portaup>=0xE0) {
 							y=chnInf->old[effcnt].portaup>>4;
 							x=chnInf->old[effcnt].portaup&0xf;
@@ -1893,7 +1915,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 									handlePeriodUnderflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
-								case 0xE: 
+								case 0xE:
 									chnInf->per-=(x>>1);
 									handlePeriodUnderflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
@@ -1902,18 +1924,18 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						}
 					}; break;
 		case 0x44 : {
-						if (eop) chnInf->old[effcnt].portaup=eop; 
+						if (eop) chnInf->old[effcnt].portaup=eop;
 						if (chnInf->old[effcnt].portaup>=0xE0) {
 							y=chnInf->old[effcnt].portaup>>4;
 							x=chnInf->old[effcnt].portaup&0xf;
 							switch (y) {
-								case 0xF : 
-									chnInf->per+=x*4; 
+								case 0xF :
+									chnInf->per+=x*4;
 									handlePeriodOverflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
-								case 0xE : 
-									chnInf->per+=(x>>1); 
+								case 0xE :
+									chnInf->per+=(x>>1);
 									handlePeriodOverflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
@@ -1921,17 +1943,17 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 						}
 					}; break;
 		case 0x45 : {
-						if (eop) chnInf->old[effcnt].volslide=eop; 
+						if (eop) chnInf->old[effcnt].volslide=eop;
 						if (chnInf->old[effcnt].volslide>=0xE0) {
 							y=chnInf->old[effcnt].volslide>>4;
 							x=chnInf->old[effcnt].volslide&0xf;
 							switch (y) {
-								case 0xF : 
+								case 0xF :
 									chnInf->vol+=x*4;
 									if (chnInf->vol>255) chnInf->vol=255;
 									break;
-								case 0xE : 
-									chnInf->vol+=x; 
+								case 0xE :
+									chnInf->vol+=x;
 									if (chnInf->vol>255) chnInf->vol=255;
 									break;
 							}
@@ -1941,17 +1963,17 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}
 					break;
 		case 0x46 : {
-						if (eop) chnInf->old[effcnt].volslide=eop; 
+						if (eop) chnInf->old[effcnt].volslide=eop;
 						if (chnInf->old[effcnt].volslide>=0xE0) {
 							y=chnInf->old[effcnt].volslide>>4;
 							x=chnInf->old[effcnt].volslide&0xf;
 							switch (y) {
-								case 0xF : 
+								case 0xF :
 									chnInf->vol-=x*4;
 									if (chnInf->vol<0) chnInf->vol=0;
 									break;
-								case 0xE : 
-									chnInf->vol-=x; 
+								case 0xE :
+									chnInf->vol-=x;
 									if (chnInf->vol<0) chnInf->vol=0;
 									break;
 							}
@@ -1961,7 +1983,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}; break;
 		// S3M porta up
 		case 0x47 : {
-						if (eop) chnInf->old[effcnt].portaup=eop; 
+						if (eop) chnInf->old[effcnt].portaup=eop;
 						if (chnInf->old[effcnt].portaup>=0xE0) {
 							y=chnInf->old[effcnt].portaup>>4;
 							x=chnInf->old[effcnt].portaup&0xf;
@@ -1972,7 +1994,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 									if (chnInf->per <= 0) stopSample(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
-								case 0xE: 
+								case 0xE:
 									chnInf->per-=x;
 									// Special for ST3
 									if (chnInf->per <= 0) stopSample(chn);
@@ -1983,18 +2005,18 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}; break;
 		// S3M porta down
 		case 0x48 : {
-						if (eop) chnInf->old[effcnt].portaup=eop; 
+						if (eop) chnInf->old[effcnt].portaup=eop;
 						if (chnInf->old[effcnt].portaup>=0xE0) {
 							y=chnInf->old[effcnt].portaup>>4;
 							x=chnInf->old[effcnt].portaup&0xf;
 							switch (y) {
-								case 0xF : 
-									chnInf->per+=x*4; 
+								case 0xF :
+									chnInf->per+=x*4;
 									handlePeriodOverflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
-								case 0xE : 
-									chnInf->per+=x; 
+								case 0xE :
+									chnInf->per+=x;
 									handlePeriodOverflow(chn);
 									chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 									break;
@@ -2003,16 +2025,16 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					}; break;
 		// S3M volslide
 		case 0x49 : {
-						if (eop) chnInf->old[effcnt].volslide=eop; 
-						
+						if (eop) chnInf->old[effcnt].volslide=eop;
+
 						if (chnInf->old[effcnt].volslide) {
 							y=chnInf->old[effcnt].volslide>>4;
 							x=chnInf->old[effcnt].volslide&0xf;
-							
+
 							if ((x!=0x0F)&&(y!=0x0F)) break;
 							if (x==0x0F && !y) break;
 							if (y==0x0F && !x) break;
-							
+
 							if (x==0x0F)
 							{
 								chnInf->vol+=y*4;
@@ -2056,7 +2078,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 					{
 						chnInf->flags &= ~CHANNEL_FLAGS_FORCE_BACKWARD;
 						chnInf->flags |= CHANNEL_FLAGS_FORCE_FORWARD;
-						
+
 						setForward(chn);
 					}
 					else if (eop == 1)
@@ -2079,7 +2101,7 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 		case 0x50 : chnInf->masterVol=eop; break;
 		// Digibooster set real BPM
 		case 0x52 : {
-						if (eop) 
+						if (eop)
 						{
 							baseBpm = eop >= 32 ? eop : 32;
 							// Simply recalculate
@@ -2109,20 +2131,20 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							chnInf->per = getperiod(chnInf->note,chnInf->relnote,chnInf->finetune);
 							chnInf->hasVibrato = false; chnInf->finalVibratoPer = 0;
 						}
-					}		
+					}
 					break;
 		// S3M global volslide
 		case 0x59 : {
-						if (eop) chnInf->old[effcnt].gvolslide=eop; 
-						
+						if (eop) chnInf->old[effcnt].gvolslide=eop;
+
 						if (chnInf->old[effcnt].gvolslide) {
 							y=chnInf->old[effcnt].gvolslide>>4;
 							x=chnInf->old[effcnt].gvolslide&0xf;
-							
+
 							if ((x!=0x0F)&&(y!=0x0F)) break;
 							if (x==0x0F && !y) break;
 							if (y==0x0F && !x) break;
-							
+
 							if (x==0x0F)
 							{
 								mainVolume+=y*4;
@@ -2137,15 +2159,15 @@ void PlayerSTD::doEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 effcnt
 							}
 						}
 						break;
-					}					
-			
+					}
+
 	} // switch
 }
 
 void PlayerSTD::doTickeffects()
 {
 	for (mp_sint32 chn=0;chn<numChannels;chn++) {
-	
+
 		TModuleChannel *chnInf = &chninfo[chn];
 
 		for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++) {
@@ -2174,24 +2196,24 @@ void PlayerSTD::triggerEnvelopes(TModuleChannel* chnInf)
 		triggerEnvelope(chnInf->venv, module->venvs[e-1]);
 	}
 	else chnInf->venv.envstruc=NULL;
-	
+
 	e = module->smp[chnInf->smp].penvnum;
 	if (e) {
 		triggerEnvelope(chnInf->penv, module->penvs[e-1]);
 	}
 	else chnInf->penv.envstruc=NULL;
-	
+
 	e = module->smp[chnInf->smp].fenvnum;
 	if (e) {
 		triggerEnvelope(chnInf->fenv, module->fenvs[e-1]);
 	}
 	else chnInf->fenv.envstruc=NULL;
-	
+
 	e = module->smp[chnInf->smp].vibenvnum;
 	if (e) {
 		triggerEnvelope(chnInf->vibenv, module->vibenvs[e-1]);
 	}
-	else chnInf->vibenv.envstruc=NULL;				
+	else chnInf->vibenv.envstruc=NULL;
 }
 
 void PlayerSTD::triggerAutovibrato(TModuleChannel* chnInf)
@@ -2212,11 +2234,11 @@ void PlayerSTD::triggerInstrumentFX(TModuleChannel* chnInf)
 {
 	if (chnInf->smp != -1)
 	{
-		triggerEnvelopes(chnInf);				
+		triggerEnvelopes(chnInf);
 		triggerAutovibrato(chnInf);
-		
-		chnInf->fadevolstart = 65536;				
-		chnInf->fadevolstep = module->smp[chnInf->smp].volfade;		
+
+		chnInf->fadevolstart = 65536;
+		chnInf->fadevolstep = module->smp[chnInf->smp].volfade;
 	}
 }
 
@@ -2232,21 +2254,21 @@ void PlayerSTD::progressRow()
 
 	//for (mp_sint32 chn=0;chn<1;chn++) {
 	for (mp_sint32 chn=0;chn<numChannels;chn++) {
-		
+
 		if ((mp_sint32)attick[chn]==ticker && ticker < tickSpeed) {
 			TModuleChannel *chnInf = &chninfo[chn];
 
 			mp_sint32 pp = slotsize*chn;
 			mp_sint32 note = chnInf->currentnote = row[pp];
-			
+
 			mp_sint32 i    = row[pp+1];
 
 			bool noteporta = false;
 			bool notedelay = false;
-			
+
 			mp_sint32 oldIns = chnInf->ins;
 			mp_sint32 oldSmp = chnInf->smp;
-			
+
 			// Effect preprocessor & get effect + operand from interleaved pattern data
 			mp_sint32 effcnt, finetune = 0x7FFFFFFF;
 			for (effcnt = 0; effcnt < numEffects; effcnt++) {
@@ -2277,9 +2299,9 @@ void PlayerSTD::progressRow()
 								note = chnInf->lastnoportanote;
 						}
 						break;
-				}				
+				}
 			}
-			
+
 			// Check new instrument settings only if valid note or no note at all
 			if (i && note <= XModule::NOTE_LAST) {
 				// valid sample?
@@ -2287,7 +2309,7 @@ void PlayerSTD::progressRow()
 				bool invalidSmp = true;
 #ifdef MILKYTRACKER
 				// ----------------------------------------------------------------
-				// When editing in MilkyTracker all instruments have 16 samples 
+				// When editing in MilkyTracker all instruments have 16 samples
 				// So I need another way of finding out which instruments are
 				// invalid ones
 				// ----------------------------------------------------------------
@@ -2295,7 +2317,7 @@ void PlayerSTD::progressRow()
 				if (!note) n = chnInf->note;
 				// here we have a little problem
 				if (!n)
-				{ 
+				{
 					for (mp_sint32 j = 0; j < 120; j++)
 					{
 						if (module->instr[i-1].snum[j] != -1)
@@ -2340,7 +2362,7 @@ void PlayerSTD::progressRow()
 						stopSample(chn);
 					}
 				}
-				
+
 				// protracker sample cut when invalid instrument is triggered
 				if (newInsPTFlag)
 				{
@@ -2383,17 +2405,17 @@ void PlayerSTD::progressRow()
 							chnInf->smp = module->instr[i-1].snum[0];
 						}
 						// completely invalid instrument without note, does nothing at all
-						else 
+						else
 						{
 							i = 0;
 						}
 					}
 				}
 			}
-			
+
 			chnInf->validnote = true;
-			if (note && note < XModule::NOTE_OFF) {			
-			
+			if (note && note < XModule::NOTE_OFF) {
+
 				if (chnInf->ins) {
 					chnInf->smp = module->instr[chnInf->ins-1].snum[note-1];
 					if ((module->instr[chnInf->ins-1].flags & 1) &&
@@ -2401,12 +2423,12 @@ void PlayerSTD::progressRow()
 					{
 						chnInf->currentnote = note = module->instr[chnInf->ins-1].notemap[note-1] + 1;
 					}
-					
+
 					// invalid sample entry?
 					// Only apply new fintune / relative note number when not doing portamento
 					if (chnInf->smp != -1 && !noteporta) {
 						mp_sint32 finalNote = note + (mp_sint32)module->smp[chnInf->smp].relnote;
-					
+
 						// Within current note range?
 						if (finalNote >= 1 && finalNote <= 119)
 						{
@@ -2415,17 +2437,17 @@ void PlayerSTD::progressRow()
 							chnInf->freqadjust = module->smp[chnInf->smp].freqadjust;
 						}
 						// This is not a valid note
-						else 
-						{							
+						else
+						{
 							chnInf->validnote = false;
 							note = chnInf->note;
 						}
 					}
 				}
-				
+
 				mp_sint32 relnote = chnInf->relnote;
 				mp_sint32 finetune = chnInf->finetune;
-				
+
 				// If this is not a note portamento
 				// and a valid note => keep that note and calculate new period
 				if (!noteporta) {
@@ -2462,7 +2484,7 @@ void PlayerSTD::progressRow()
 				if (!chnInf->validnote)
 					note = 0;
 			}
-			
+
 			// man this FT2 bug emulation starts getting on my nerves:
 			// only take new instrument of there is no note porta
 			if (playModeFT2 && i &&
@@ -2471,35 +2493,35 @@ void PlayerSTD::progressRow()
 				i = chnInf->ins = oldIns;
 				chnInf->smp = oldSmp;
 			}
-			
+
 			// when we have a new instrument we apply the settings
 			// for this instrument, but in FT2 mode we only do it, when we're not
 			// having a note portamento at the same time
-			if (i && chnInf->smp != -1 && note < XModule::NOTE_OFF) 
-			{				
-				if ((module->smp[chnInf->smp].flags&1)) 
+			if (i && chnInf->smp != -1 && note < XModule::NOTE_OFF)
+			{
+				if ((module->smp[chnInf->smp].flags&1))
 				{
 					chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = module->smp[chnInf->smp].vol;
 					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 				}
 				if (playModeFT2 &&
-					(module->smp[chnInf->smp].flags&2)) 
-					chnInf->pan = module->smp[chnInf->smp].pan;	
-				if ((module->smp[chnInf->smp].flags&4)) 
+					(module->smp[chnInf->smp].flags&2))
+					chnInf->pan = module->smp[chnInf->smp].pan;
+				if ((module->smp[chnInf->smp].flags&4))
 					chnInf->masterVol = module->smp[chnInf->smp].vol;
-				
+
 				triggerInstrumentFX(chnInf);
-					
+
 				// reset vibrato/tremolo/tremor/retrig counters
-				for (effcnt=0;effcnt<numEffects;effcnt++) 
+				for (effcnt=0;effcnt<numEffects;effcnt++)
 					chnInf->vibpos[effcnt] = chnInf->tremorcnt[effcnt] = chnInf->trmpos[effcnt] = chnInf->retrigcounterRxx[effcnt] = 0;
-					
+
 				if (playModePT)
 					smpoffs[chn] = 0;
-					
-				chnInf->keyon = true;	
+
+				chnInf->keyon = true;
 			}
-			
+
 			// ------ 11/05/05: it seems that note off commands are processed BEFORE effect commands
 			// S3M style keyoff:
 			// sample is stopped
@@ -2525,23 +2547,23 @@ void PlayerSTD::progressRow()
 				note=0;
 				// no envelope or no volume envelope
 				if (chnInf->venv.envstruc!=NULL) {
-					if (!(chnInf->venv.envstruc->type&1)) 
+					if (!(chnInf->venv.envstruc->type&1))
 					{
 						chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = 0;
 						chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 					}
 				}
-				else 
+				else
 				{
 					chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = 0;
 					chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 				}
-			
+
 				chnInf->keyon = false;
 			}
-			
+
 			chnInf->hasSetVolume = false;
-			for (effcnt=0;effcnt<numEffects;effcnt++) {	
+			for (effcnt=0;effcnt<numEffects;effcnt++) {
 				// MTM hack
 				// sample offset without note seems to trigger last note
 				if (chnInf->eff[effcnt] == 0x09 && !note && module->getType() == XModule::ModuleType_MTM)
@@ -2556,29 +2578,29 @@ void PlayerSTD::progressRow()
 				}
 				doEffect(chn, chnInf, effcnt);
 			} // for
-	
-			if (note) 
+
+			if (note)
 			{
 				if (note <= XModule::NOTE_OFF)
 				{
-					if (!noteporta) {					
-						playInstrument(chn, chnInf);										
+					if (!noteporta) {
+						playInstrument(chn, chnInf);
 					}
-					else if (oldPTInsChangeFlag && newInsPTFlag && noteporta && i && chnInf->smp != -1 && chnInf->note) {						
-						playInstrument(chn, chnInf, true);																	
+					else if (oldPTInsChangeFlag && newInsPTFlag && noteporta && i && chnInf->smp != -1 && chnInf->note) {
+						playInstrument(chn, chnInf, true);
 					}
-					
+
 				}
-				
+
 			} // note
 			else if (oldPTInsChangeFlag && newInsPTFlag && i && chnInf->note && chnInf->per) {
-				playInstrument(chn, chnInf, true);					
+				playInstrument(chn, chnInf, true);
 			}
-			
+
 		}
-	
+
 	}
- 
+
 }
 
 void PlayerSTD::update()
@@ -2586,9 +2608,9 @@ void PlayerSTD::update()
 	mp_sint32 c;
 	//for (c=10;c<11;c++) {
 #ifdef MILKYTRACKER
-	for (c=0;c<initialNumChannels;c++) 
+	for (c=0;c<initialNumChannels;c++)
 #else
-	for (c=0;c<numChannels;c++) 
+	for (c=0;c<numChannels;c++)
 #endif
 	{
 		TModuleChannel *chnInf = &chninfo[c];
@@ -2598,10 +2620,10 @@ void PlayerSTD::update()
 
 		mp_sint32 dfs = chnInf->flags & CHANNEL_FLAGS_DFS, dvs = chnInf->flags & CHANNEL_FLAGS_DVS;
 
-		if ((chnInf->per)&&(!dfs)) 
+		if ((chnInf->per)&&(!dfs))
 			setFreq(c,getfreq(c,getfinalperiod(c,chnInf->hasVibrato ? chnInf->finalVibratoPer : chnInf->per),chnInf->freqadjust));
-		
-		if (!dvs) 
+
+		if (!dvs)
 			setVol(c,getvolume(c,chnInf-> hasTremolo ? chnInf->finalTremoloVol : chnInf->vol));
 
 		setPan(c,getpanning(c,chnInf->pan));
@@ -2611,7 +2633,7 @@ void PlayerSTD::update()
 		{
 			prenvelope(c,&chnInf->venv,chnInf->keyon);
 		}
-		
+
 		if (chnInf->penv.envstruc != NULL &&
 			!chnInf->penv.envstruc->speed)
 		{
@@ -2623,7 +2645,7 @@ void PlayerSTD::update()
 		{
 			prenvelope(c,&chnInf->fenv,chnInf->keyon);
 		}
-		
+
 		if (chnInf->vibenv.envstruc != NULL &&
 			!chnInf->vibenv.envstruc->speed)
 		{
@@ -2636,7 +2658,7 @@ void PlayerSTD::update()
 			if (chnInf->fadevolstart<0) chnInf->fadevolstart=0;
 		}
 
-		if (chnInf->avibused) 
+		if (chnInf->avibused)
 		{
 			chnInf->avibcnt+=chnInf->avibspd;
 			if (chnInf->avibswcnt<chnInf->avibsweep)
@@ -2653,13 +2675,13 @@ void PlayerSTD::updateBPMIndependent()
 	mp_int64 dummy;
 	mp_sint32 c;
 #ifdef MILKYTRACKER
-	for (c=0;c<initialNumChannels;c++) 
+	for (c=0;c<initialNumChannels;c++)
 #else
-	for (c=0;c<numChannels;c++) 
+	for (c=0;c<numChannels;c++)
 #endif
 	{
 		TModuleChannel *chnInf = &chninfo[c];
-		
+
 		if (chnInf->flags & CHANNEL_FLAGS_UPDATE_IGNORE)
 			continue;
 
@@ -2672,15 +2694,15 @@ void PlayerSTD::updateBPMIndependent()
 			dummy = (mp_int64)chnInf->venv.bpmCounter;
 			dummy+=(mp_int64)chnInf->venv.bpmAdder;
 			chnInf->venv.bpmCounter = (mp_sint32)dummy;
-			// check overflow-carry 
-			if (dummy>>32) 
+			// check overflow-carry
+			if (dummy>>32)
 			{
 				prenvelope(c,&chnInf->venv,chnInf->keyon);
-				if (!dvs) 
+				if (!dvs)
 					setVol(c,getvolume(c,chnInf-> hasTremolo ? chnInf->finalTremoloVol : chnInf->vol));
 			}
 		}
-		
+
 		// Panning envelope
 		if (chnInf->penv.envstruc != NULL &&
 			chnInf->penv.envstruc->speed)
@@ -2688,8 +2710,8 @@ void PlayerSTD::updateBPMIndependent()
 			dummy = (mp_int64)chnInf->penv.bpmCounter;
 			dummy+=(mp_int64)chnInf->penv.bpmAdder;
 			chnInf->penv.bpmCounter = (mp_sint32)dummy;
-			// check overflow-carry 
-			if (dummy>>32) 
+			// check overflow-carry
+			if (dummy>>32)
 			{
 				prenvelope(c,&chnInf->penv,chnInf->keyon);
 				setPan(c,getpanning(c,chnInf->pan));
@@ -2703,11 +2725,11 @@ void PlayerSTD::updateBPMIndependent()
 			dummy = (mp_int64)chnInf->fenv.bpmCounter;
 			dummy+=(mp_int64)chnInf->fenv.bpmAdder;
 			chnInf->fenv.bpmCounter = (mp_sint32)dummy;
-			// check overflow-carry 
-			if (dummy>>32) 
+			// check overflow-carry
+			if (dummy>>32)
 			{
 				prenvelope(c,&chnInf->fenv,chnInf->keyon);
-				if ((chnInf->per)&&(!dfs)) 
+				if ((chnInf->per)&&(!dfs))
 					setFreq(c,getfreq(c,getfinalperiod(c,chnInf->per),chnInf->freqadjust));
 			}
 		}
@@ -2719,11 +2741,11 @@ void PlayerSTD::updateBPMIndependent()
 			dummy = (mp_int64)chnInf->vibenv.bpmCounter;
 			dummy+=(mp_int64)chnInf->vibenv.bpmAdder;
 			chnInf->vibenv.bpmCounter = (mp_sint32)dummy;
-			// check overflow-carry 
-			if (dummy>>32) 
+			// check overflow-carry
+			if (dummy>>32)
 			{
 				prenvelope(c,&chnInf->vibenv,chnInf->keyon);
-				if ((chnInf->per)&&(!dfs)) 
+				if ((chnInf->per)&&(!dfs))
 					setFreq(c,getfreq(c,getfinalperiod(c,chnInf->per),chnInf->freqadjust));
 			}
 		}
@@ -2740,14 +2762,14 @@ void inline PlayerSTD::setNewPosition(mp_sint32 poscnt)
 	if (poscnt == this->poscnt)
 		return;
 
-	if (poscnt>=module->header.ordnum) 
-		poscnt=module->header.restart;						
-	
+	if (poscnt>=module->header.ordnum)
+		poscnt=module->header.restart;
+
 	// reset looping flags
-	RESET_ALL_LOOPING	
+	RESET_ALL_LOOPING
 
 	lastUnvisitedPos = this->poscnt;
-	
+
 	this->poscnt = poscnt;
 }
 
@@ -2766,7 +2788,7 @@ void PlayerSTD::tickhandler()
 			halt();
 			return;
 		}
-		
+
 		// Play special pattern?
 		if (patternIndexToPlay == -1)
 			patternIndex = module->header.ord[poscnt];
@@ -2774,13 +2796,13 @@ void PlayerSTD::tickhandler()
 			patternIndex = patternIndexToPlay;
 
 		TXMPattern* pattern = &module->phead[patternIndex];
-		
+
 		if (pattern->patternData == NULL)
 		{
 			halt();
 			return;
 		}
-		
+
 		// sanity check 2 :)
 		if (rowcnt >= pattern->rows)
 		{
@@ -2803,17 +2825,17 @@ void PlayerSTD::tickhandler()
 		numChannels = pattern->channum <= module->header.channum ? pattern->channum : module->header.channum;
 
 		mp_sint32 c;
-		
-		if (ticker == 0) 
+
+		if (ticker == 0)
 		{
-		
+
 			// Keep track of visited rows
 			mp_sint32 absolutePos = poscnt*256+rowcnt;
 			if (isRowVisited(absolutePos) && !repeat)
 			{
 				// pattern loop active?
 				bool b = false;
-				for (c=0;c<numChannels;c++) 
+				for (c=0;c<numChannels;c++)
 				{
 					if (chninfo[c].isLooping && chninfo[c].loopingValidPosition == poscnt)
 					{
@@ -2832,28 +2854,28 @@ void PlayerSTD::tickhandler()
 			{
 				visitRow(absolutePos);
 			}
-		
+
 			pbreak = pbreakpos = pbreakPriority = pjump = pjumppos = pjumprow = pjumpPriority = 0;
 			// sample offset 0
 			if (!playModePT)
 				memset(smpoffs,0,sizeof(mp_uint32)*numChannels);
-			// noteslot will be processed at tick 0   
+			// noteslot will be processed at tick 0
 			memset(attick,0,sizeof(mp_ubyte)*numChannels);
-			
+
 			// search for note delays
 			mp_sint32 slotsize = (numEffects*2)+2;
-			
+
 			mp_ubyte *row = pattern->patternData+(pattern->channum*slotsize*rowcnt);
-			
+
 			// process high priority effects in advance to other effects
 			mp_ubyte* slot = row;
-			
-			for (c=0;c<numChannels;c++) 
-			{				
-				chninfo[c].flags = 0;	
-				
-				for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++) 
-				{										
+
+			for (c=0;c<numChannels;c++)
+			{
+				chninfo[c].flags = 0;
+
+				for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++)
+				{
 					chninfo[c].eff[effcnt] = 0;
 					chninfo[c].eop[effcnt] = 0;
 
@@ -2866,16 +2888,16 @@ void PlayerSTD::tickhandler()
 					else if (slot[2+(effcnt*2)] == 0x58) chninfo[c].flags |= CHANNEL_FLAGS_DFS; // oktalyzer arpeggio III
 					else if (slot[2+(effcnt*2)] == 0x07) chninfo[c].flags |= CHANNEL_FLAGS_DVS; // Tremolo
 					else if (slot[2+(effcnt*2)] == 0x1D) chninfo[c].flags |= CHANNEL_FLAGS_DVS; // Tremor
-					
-					else if (slot[2+(effcnt*2)] == 0x3D) 
+
+					else if (slot[2+(effcnt*2)] == 0x3D)
 					{
 						// found note delay: noteslot will be processed at a later tick
 						attick[c] = slot[2+(effcnt*2)+1];
 					}
-					// set speed in advance also, 
-					// in order to correctly implement note delay 
+					// set speed in advance also,
+					// in order to correctly implement note delay
 					else if (slot[2+(effcnt*2)] == 0xf &&		// protracker set speed/bpm
-						slot[2+(effcnt*2)+1] &&		
+						slot[2+(effcnt*2)+1] &&
 						slot[2+(effcnt*2)+1] < 32)		// set tickspeed not BPM
 					{
 						tickSpeed = slot[2+(effcnt*2)+1];
@@ -2884,50 +2906,50 @@ void PlayerSTD::tickhandler()
 						slot[2+(effcnt*2)+1])			// valid set speed?
 						tickSpeed = slot[2+(effcnt*2)+1];
 				}
-				
+
 				slot+=slotsize;
 			}
-			
+
 		}
-		
+
 		progressRow();
-		
-		doTickeffects();	
-		
+
+		doTickeffects();
+
 		ticker++;
-		
+
 		maxTicks = tickSpeed;
 		if (patDelay)
 			maxTicks = patDelayCount;
-		
-		if (ticker>=maxTicks) 
+
+		if (ticker>=maxTicks)
 		{
 			if (patDelay)
 				patDelay = false;
-			
+
 			// reset ticker
 			ticker=0;
-			
-			// if we're told to play this row only, we will stop now 
+
+			// if we're told to play this row only, we will stop now
 			// and neither process any of those pattern jump/repeat stuff
 			if (playOneRowOnly)
 			{
 				BPMCounter = adder = 0;
 				return;
 			}
-			
+
 			if (patternIndexToPlay == -1)
 			{
-				
+
 				// break pattern?
-				if (pbreak&&(poscnt<(module->header.ordnum-1))) 
+				if (pbreak&&(poscnt<(module->header.ordnum-1)))
 				{
 					if (!pjump || (pjump && pjumpPriority > pbreakPriority))
 						setNewPosition(poscnt+1);
 					rowcnt=pbreakpos-1;
 					startNextRow = -1;
 				}
-				else if (pbreak&&(poscnt==(module->header.ordnum-1))) 
+				else if (pbreak&&(poscnt==(module->header.ordnum-1)))
 				{
 					// Pattern break on the last order? Break to restart position
 					if (!pjump || (pjump && pjumpPriority > pbreakPriority))
@@ -2935,16 +2957,16 @@ void PlayerSTD::tickhandler()
 					rowcnt=pbreakpos-1;
 					startNextRow = -1;
 				}
-				
+
 				// pattern jump?
-				if (pjump) 
+				if (pjump)
 				{
 					if (!pbreak || (pbreak && pjumpPriority > pbreakPriority))
-						rowcnt = pjumprow-1;					
-					setNewPosition(pjumppos);					
+						rowcnt = pjumprow-1;
+					setNewPosition(pjumppos);
 					startNextRow = -1;
 				}
-				
+
 				// it could be that our position has changed because
 				// of position jumps, so make sure we're getting the real position here
 				patternIndex = module->header.ord[poscnt];
@@ -2957,7 +2979,7 @@ void PlayerSTD::tickhandler()
 				{
 					rowcnt = -1;
 					startNextRow = -1;
-					
+
 					if (statusEventListener)
 						statusEventListener->patternEndReached(*this, *module, poscnt);
 				}
@@ -2965,24 +2987,24 @@ void PlayerSTD::tickhandler()
 			}
 
 			// handle loop
-			for (c=0;c<numChannels;c++) 
-			{			
+			for (c=0;c<numChannels;c++)
+			{
 				// pattern loop? nesting doesn't work yet
-				if (chninfo[c].execloop) 
+				if (chninfo[c].execloop)
 				{
 					rowcnt = chninfo[c].loopstart-1;
 					chninfo[c].execloop = 0;
 					chninfo[c].isLooping = true;
 				}
 			}
-			
+
 			// next row
 			rowcnt++;
 nextrow:
 			synccnt++;
 
-			// reached end of pattern? 
-			if (rowcnt>=module->phead[patternIndex].rows) 
+			// reached end of pattern?
+			if (rowcnt>=module->phead[patternIndex].rows)
 			{
 				// start at row 0?
 				if (startNextRow != -1)
@@ -2994,7 +3016,7 @@ nextrow:
 				{
 					rowcnt = 0;
 				}
-				
+
 				if (patternIndexToPlay == -1)
 				{
 					// play next order
@@ -3009,14 +3031,14 @@ nextrow:
 				// We have one pattern to play and repeating is allowed so start again
 				else
 				{
-					rowcnt = 0; 
+					rowcnt = 0;
 					// reset looping flags
 					RESET_ALL_LOOPING
-					
+
 					if (statusEventListener)
 						statusEventListener->patternEndReached(*this, *module, poscnt);
 				}
-				
+
 			}
 
 			// halting has been requested
@@ -3024,15 +3046,15 @@ nextrow:
 			{
 				halt();
 			}
-			
+
 		}
-	
+
 	}
 	else
 	{
 		numChannels = module->header.channum;
 	}
-	
+
 	update();
 
 }
@@ -3068,9 +3090,9 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 	//stopSample(chn);
 
 	smpoffs[chn] = 0;
-	
+
 	TModuleChannel *chnInf = &chninfo[chn];
-	
+
 	bool invalidSample = false;
 #ifdef MILKYTRACKER
 	for (mp_uint32 j = 0; j < 96; j++)
@@ -3083,23 +3105,23 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 		{
 			invalidSample = true;
 			break;
-		}	
+		}
 	}
-	
+
 	if (!invalidSample)
 		return;
-	
+
 	chnInf->ins = i;
 
-	if (note && note < XModule::NOTE_OFF) 
+	if (note && note < XModule::NOTE_OFF)
 	{
 		if (chn >= module->header.channum)
-			chnInf->pan = 0x80;	
-	
-		if (chnInf->ins) 
+			chnInf->pan = 0x80;
+
+		if (chnInf->ins)
 		{
 			chnInf->smp = module->instr[chnInf->ins-1].snum[note-1];
-			
+
 			// invalid sample entry
 			if (chnInf->smp != -1) {
 				if (module->smp[chnInf->smp].sample == NULL)
@@ -3107,48 +3129,48 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 					chnInf->ins = 0;
 					return;
 				}
-				
+
 				mp_sint32 finalNote = note + (mp_sint32)module->smp[chnInf->smp].relnote;
-					
+
 				// Within current note range?
 				if (!(finalNote >= 1 && finalNote <= 119))
 					return;
-			
+
 				chnInf->finetune=module->smp[chnInf->smp].finetune;
 				chnInf->relnote=module->smp[chnInf->smp].relnote;
 			}
 		}
-		
+
 		mp_sint32 relnote = chnInf->relnote;
 		mp_sint32 finetune = chnInf->finetune;
-		
+
 		chnInf->note=note;
 		chnInf->per=getperiod(note,relnote,finetune);
 	}
-	
-	if (i && chnInf->smp != -1 && note < XModule::NOTE_OFF) 
+
+	if (i && chnInf->smp != -1 && note < XModule::NOTE_OFF)
 	{
-		if ((module->smp[chnInf->smp].flags&1)) 
+		if ((module->smp[chnInf->smp].flags&1))
 		{
 			chnInf->vol = chnInf->tremorVol = chnInf->tremoloVol = (vol == -1 ? module->smp[chnInf->smp].vol : vol);
 			chnInf->hasTremolo = false; chnInf->finalTremoloVol = 0;
 		}
 		if ((playMode == PlayMode_FastTracker2) &&
-			(module->smp[chnInf->smp].flags&2)) 
-			chnInf->pan=module->smp[chnInf->smp].pan;	
-		if ((module->smp[chnInf->smp].flags&4)) 
+			(module->smp[chnInf->smp].flags&2))
+			chnInf->pan=module->smp[chnInf->smp].pan;
+		if ((module->smp[chnInf->smp].flags&4))
 			chnInf->masterVol=module->smp[chnInf->smp].vol;
-		
+
 		triggerInstrumentFX(chnInf);
-		
+
 		// reset vibrato/tremolo/tremor counter
-		for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++) 
+		for (mp_sint32 effcnt=0;effcnt<numEffects;effcnt++)
 			chnInf->vibpos[effcnt] = chnInf->tremorcnt[effcnt] = chnInf->trmpos[effcnt] = 0;
-		
-		chnInf->keyon = true;	
+
+		chnInf->keyon = true;
 	}
-	
-	if (note) 
+
+	if (note)
 	{
 		// S3M style key-off
 		// sample is stopped
@@ -3171,21 +3193,21 @@ void PlayerSTD::playNote(mp_ubyte chn, mp_sint32 note, mp_sint32 i, mp_sint32 vo
 		else if (note == XModule::NOTE_OFF) {
 			note=0;
 			if (chnInf->venv.envstruc!=NULL) {
-				if (!(chnInf->venv.envstruc->type&1)) 
+				if (!(chnInf->venv.envstruc->type&1))
 					chnInf->vol = 0;
 			}
-			else 
+			else
 				chnInf->vol=0;
-			
+
 			chnInf->keyon = false;
 		}
 		else
-		{			
-			playInstrument(chn, chnInf);								
+		{
+			playInstrument(chn, chnInf);
 		}
-		
+
 	}
-			
+
 }
 
 
@@ -3193,7 +3215,7 @@ void PlayerSTD::TPrEnv::setToTick(mp_uint32 tick)
 {
 	if (envstruc == NULL)
 		return;
-		
+
 	bool bSet = false;
 	for (mp_sint32 i = 0; i < envstruc->num-1; i++)
 	{
@@ -3207,7 +3229,7 @@ void PlayerSTD::TPrEnv::setToTick(mp_uint32 tick)
 			break;
 		}
 	}
-	
+
 	if (!bSet)
 	{
 		// if position is beyond the last envelope point
@@ -3222,9 +3244,9 @@ void PlayerSTD::TPrEnv::setToTick(mp_uint32 tick)
 
 	// check if we set envelope position to a loop end point
 	// in that case wrap to the loop start, otherwise the loop
-	// end is skipped and the envelope will roll out without 
+	// end is skipped and the envelope will roll out without
 	// looping
-	if ((envstruc->type & 4) && 
+	if ((envstruc->type & 4) &&
 		step == envstruc->env[envstruc->loope][0])
 	{
 		a=envstruc->loops;

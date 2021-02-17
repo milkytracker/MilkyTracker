@@ -61,7 +61,7 @@ private:
 	bool storeEnvelope;
 
 	EnvelopeEditor* getEnvelopeEditor();
-	
+
 protected:
 	virtual void showSection(bool bShow);
 
@@ -71,7 +71,7 @@ public:
 
 	// PPEvent listener
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);
-	
+
 	virtual void init();
 
 	virtual void init(pp_int32 x, pp_int32 y);
@@ -79,10 +79,10 @@ public:
 	void realign();
 
 	virtual void show(bool bShow);
-	
+
 	void updateSampleSliders(bool repaint = true);
 	void updateInstrumentSliders(bool repaint = true);
-	
+
 	virtual void update(bool repaint = true);
 
 	virtual void notifyTabSwitch();
@@ -91,7 +91,7 @@ public:
 
 	void updateAfterLoad();
 
-	void updateEnvelopeWindow(bool repaint = true); 
+	void updateEnvelopeWindow(bool repaint = true);
 
 	void updateEnvelopeEditor(bool repaint = true, bool reAttach = false);
 
@@ -101,31 +101,32 @@ public:
 	PianoControl* getPianoControl() { return pianoControl; }
 
 	pp_int32 getVisibleEnvelopeType() { return currentEnvelopeType; }
-	
+
 	bool isEnvelopeVisible();
-	
+
 	EnvelopeEditorControl* getEnvelopeEditorControl() { return envelopeEditorControl; }
 
 	bool isVisible() const { return visible; }
-	
+
 	// Get predefined envelopes for storage purpose
 	pp_int32 getNumPredefinedEnvelopes();
-	
+
 	enum EnvelopeTypes
 	{
 		EnvelopeTypeVolume,
 		EnvelopeTypePanning
 	};
-	
+
 	PPString getEncodedEnvelope(EnvelopeTypes type, pp_int32 index);
 	void setEncodedEnvelope(EnvelopeTypes type, pp_int32 index, const PPString& str);
-	
+
+	void showMagicDialog();
 private:
 	void handleZapInstrument();
 	void zapInstrument();
 
 	// Responder should be friend
-	friend class DialogResponderInstruments;	
+	friend class DialogResponderInstruments;
 
 	friend class Tracker;
 };

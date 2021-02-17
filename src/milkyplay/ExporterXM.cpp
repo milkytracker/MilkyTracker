@@ -61,7 +61,7 @@ struct TWorkBuffers
 	mp_ubyte lastTempoSlide[256];
 	mp_sint32 globalVolume;
 	mp_sint32 bpm, baseBpm, speed;
-	
+
 	mp_ubyte lastIns[256];
 	mp_ubyte lastNote[256];
 
@@ -83,7 +83,7 @@ struct TWorkBuffers
 	TWorkBuffers()
 	{
 		clearBuffers();
-	
+
 		memset(noteRangeRemapper, 0, sizeof(noteRangeRemapper));
 	}
 };
@@ -103,13 +103,13 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	{
 		effOut = effIn;
 		opOut = opIn;
-	
+
 		if (effIn == 0x0C || effIn == 0x10)
 			opOut = (mp_ubyte)(((mp_sint32)opOut*64)/255);
-			
+
 		if (effIn == 0x10)
 			workBuffers.globalVolume = (mp_ubyte)(((mp_sint32)opOut*64)/255);
-		
+
 		// Cope with set BPM in case we're having a DBM "set real BPM command"
 		if (effIn == 0x0f && opIn >= 32)
 		{
@@ -129,7 +129,13 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 				opOut = realCiaTempo;
 			}
 		}
-		
+
+	}
+	// MAGIC
+	else if (effIn == 0x12 || effIn == 0x13)
+	{
+		effOut = effIn;
+		opOut = opIn;
 	}
 	// set envelope position
 	else if (effIn == 0x14 || effIn == 0x51)
@@ -174,19 +180,19 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 		else if (convertITTempoSlides)
 		{
 			if (opIn) lastTempoSlide[curChan] = opIn;
-			
-			if (lastTempoSlide[curChan]) 
+
+			if (lastTempoSlide[curChan])
 			{
 				mp_ubyte y = lastTempoSlide[curChan]>>4;
 				mp_ubyte x = lastTempoSlide[curChan]&0xf;
-				
+
 				// tempo slide up
-				if (y) 
-				{					
+				if (y)
+				{
 					effOut = 0x0F;
 					workBuffers.bpm+=x*(workBuffers.speed-1);
 					if (workBuffers.bpm > 255)
-						workBuffers.bpm = 255;					
+						workBuffers.bpm = 255;
 					opOut = workBuffers.bpm;
 				}
 				// tempo slide down
@@ -195,10 +201,10 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xF;
 					workBuffers.bpm-=x*(workBuffers.speed-1);
 					if (workBuffers.bpm < 32)
-						workBuffers.bpm = 32;					
+						workBuffers.bpm = 32;
 					opOut = workBuffers.bpm;
 				}
-			}		
+			}
 		}
 	}
 	// Panning slide / Multi retrig / tremor
@@ -222,13 +228,13 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	{
 		effOut = 0x09;
 		opOut = opIn;
-	}	
+	}
 	// PLM position jump
 	else if (effIn == 0x2B)
 	{
 		effOut = 0x0B;
 		opOut = opIn;
-	}	
+	}
 	// Protracker subcommands (most likely)
 	else if (effIn >= 0x30 && effIn <= 0x3F)
 	{
@@ -239,14 +245,14 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	else if (effIn == 0x20)
 	{
 		if (!opIn) opIn = lastArpeggio[curChan];
-	
+
 		if (opIn)
 		{
 			effOut = 0;
 			opOut = opIn;
 			lastArpeggio[curChan] = opIn;
 		}
-			
+
 	}
 	// extra fine porta commands
 	else if (effIn == 0x41)
@@ -263,7 +269,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	else if (effIn == 0x43)
 	{
 		if (opIn) lastPorta[curChan] = opIn;
-		 
+
 		if (lastPorta[curChan] >= 0xE0) {
 			mp_ubyte y = lastPorta[curChan]>>4;
 			mp_ubyte x = lastPorta[curChan]&0xf;
@@ -272,7 +278,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0x10 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0x21;
 					opOut = 0x10 + (x>>1);
 					break;
@@ -288,7 +294,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	else if (effIn == 0x44)
 	{
 		if (opIn) lastPorta[curChan] = opIn;
-		 
+
 		if (lastPorta[curChan] >= 0xE0) {
 			mp_ubyte y = lastPorta[curChan] >> 4;
 			mp_ubyte x = lastPorta[curChan] & 0xf;
@@ -297,7 +303,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0x20 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0x21;
 					opOut = 0x20 + (x>>1);
 					break;
@@ -313,7 +319,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	else if (effIn == 0x45)
 	{
 		if (opIn) lastVolSlide[curChan] = opIn;
-		 
+
 		if (lastVolSlide[curChan] >= 0xE0) {
 			mp_ubyte y = lastVolSlide[curChan]>>4;
 			mp_ubyte x = lastVolSlide[curChan]&0xf;
@@ -322,7 +328,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0xA0 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0xE;
 					opOut = 0xA0 + (x>>2);
 					break;
@@ -338,7 +344,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	else if (effIn == 0x46)
 	{
 		if (opIn) lastVolSlide[curChan] = opIn;
-		 
+
 		if (lastVolSlide[curChan] >= 0xE0) {
 			mp_ubyte y = lastVolSlide[curChan] >> 4;
 			mp_ubyte x = lastVolSlide[curChan] & 0xf;
@@ -347,7 +353,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0xB0 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0xE;
 					opOut = 0xB0 + (x>>2);
 					break;
@@ -360,7 +366,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 		}
 	}
 	// S3M porta up
-	else if (effIn == 0x47) 
+	else if (effIn == 0x47)
 	{
 		if (opIn) lastPorta[curChan] = opIn;
 		if (lastPorta[curChan] >= 0xE0) {
@@ -371,7 +377,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0x10 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0x21;
 					opOut = 0x10 + x;
 					break;
@@ -384,7 +390,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 		}
 	}
 	// S3M porta down
-	else if (effIn == 0x48) 
+	else if (effIn == 0x48)
 	{
 		if (opIn) lastPorta[curChan] = opIn;
 		if (lastPorta[curChan] >= 0xE0) {
@@ -395,7 +401,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 					effOut = 0xE;
 					opOut = 0x20 + x;
 					break;
-				case 0xE: 
+				case 0xE:
 					effOut = 0x21;
 					opOut = 0x20 + x;
 					break;
@@ -408,34 +414,34 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 		}
 	}
 	// S3M volslide
-	else if (effIn == 0x49) 
+	else if (effIn == 0x49)
 	{
 		if (opIn) lastVolSlide[curChan] = opIn;
-		
-		if (lastVolSlide[curChan]) 
+
+		if (lastVolSlide[curChan])
 		{
 			mp_ubyte y = lastVolSlide[curChan]>>4;
 			mp_ubyte x = lastVolSlide[curChan]&0xf;
-			
-			if (!(x == 0xF && y)&&!(y == 0xF && x)) 
+
+			if (!(x == 0xF && y)&&!(y == 0xF && x))
 			{
 				if (x && y) x = 0;
-				
-				if (y) 
-				{					
+
+				if (y)
+				{
 					effOut = 0xA;
 					opOut = y<<4;
 				}
-				else if (x) 
+				else if (x)
 				{
 					effOut = 0xA;
 					opOut = x;
 				}
-			
+
 			}
 			else
 			{
-				if (!(x==0x0F && !y) && !(y==0x0F && !x)) 
+				if (!(x==0x0F && !y) && !(y==0x0F && !x))
 				{
 					if (x==0x0F)
 					{
@@ -480,41 +486,41 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 		opOut = opIn>>2;
 	}
 	// "S3M" global volslide, this is an IT/MODPLUG feature
-	else if (effIn == 0x59) 
+	else if (effIn == 0x59)
 	{
 		if (opIn) lastGVolSlide[curChan] = opIn;
-		
-		if (lastGVolSlide[curChan]) 
+
+		if (lastGVolSlide[curChan])
 		{
 			mp_ubyte y = lastGVolSlide[curChan]>>4;
 			mp_ubyte x = lastGVolSlide[curChan]&0xf;
-			
-			if (!(x == 0xF && y)&&!(y == 0xF && x)) 
+
+			if (!(x == 0xF && y)&&!(y == 0xF && x))
 			{
 				if (x && y) x = 0;
-				
-				if (y) 
-				{					
+
+				if (y)
+				{
 					effOut = 0x11;
 					opOut = y<<4;
 					workBuffers.globalVolume+=y*(workBuffers.speed-1);
 					if (workBuffers.globalVolume > 64)
-						workBuffers.globalVolume = 64;					
+						workBuffers.globalVolume = 64;
 				}
-				else if (x) 
+				else if (x)
 				{
 					effOut = 0x11;
 					opOut = x;
 					workBuffers.globalVolume-=x*(workBuffers.speed-1);
 					if (workBuffers.globalVolume < 0)
-						workBuffers.globalVolume = 0;					
+						workBuffers.globalVolume = 0;
 				}
-			
+
 			}
 			else
 			{
 				// SUCKS
-				if (!(x==0x0F && !y) && !(y==0x0F && !x)) 
+				if (!(x==0x0F && !y) && !(y==0x0F && !x))
 				{
 					if (x==0x0F)
 					{
@@ -538,7 +544,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 	}
 	// set digibooster real BPM
 	else if (effIn == 0x52)
-	{	
+	{
 		// store new BPM base
 		workBuffers.baseBpm = opIn;
 		// if it's not the default value recalculate BPM
@@ -578,7 +584,7 @@ static void convertEffect(mp_ubyte effIn, mp_ubyte opIn, mp_ubyte& effOut, mp_ub
 // convert FT2 compatible effect to volumn column effect if possible
 static mp_ubyte convertToVolume(mp_ubyte eff, mp_ubyte op)
 {
-	
+
 	mp_ubyte vol = 0;
 
 	/*if (eff && eff != 0x0C)
@@ -594,7 +600,7 @@ static mp_ubyte convertToVolume(mp_ubyte eff, mp_ubyte op)
 	// volslide
 	else if (eff == 0x0A)
 	{
-		
+
 		// use last operand?
 		if (!op)
 		{
@@ -610,7 +616,7 @@ static mp_ubyte convertToVolume(mp_ubyte eff, mp_ubyte op)
 		{
 			vol = 0x70 + (op>>4);
 		}
-		
+
 	}
 	// extra fine volslide up
 	else if (eff == 0xE && ((op>>4)==0xA))
@@ -663,7 +669,7 @@ static mp_ubyte convertToVolume(mp_ubyte eff, mp_ubyte op)
 	{
 		vol = 0xF0 + (op>>4);
 	}
-	
+
 	return vol;
 }
 
@@ -671,18 +677,18 @@ static mp_ubyte convertToVolume(mp_ubyte eff, mp_ubyte op)
 // into volume, eff and op (XM operands)
 // curChan is the current channel
 // workBuffers holds the last effect operands while processing
-// effectBuffer holds a bunch (numEffectsInBuffer) of remaining 
-// effects from the  last columns which might be allowed to go 
+// effectBuffer holds a bunch (numEffectsInBuffer) of remaining
+// effects from the  last columns which might be allowed to go
 // into another channel
 // swapBuffer must be at least of effectBuffer size
-static void convertEffects(mp_ubyte* srcSlot, 
-						   mp_sint32 numEffects, 
-						   mp_ubyte& volume, 
-						   mp_ubyte& eff, 
-						   mp_ubyte& op, 
-						   mp_sint32 curChan, 
-						   TWorkBuffers& workBuffers, 
-						   mp_ubyte* effectBuffer, 
+static void convertEffects(mp_ubyte* srcSlot,
+						   mp_sint32 numEffects,
+						   mp_ubyte& volume,
+						   mp_ubyte& eff,
+						   mp_ubyte& op,
+						   mp_sint32 curChan,
+						   TWorkBuffers& workBuffers,
+						   mp_ubyte* effectBuffer,
 						   mp_sint32& numEffectsInBuffer,
 						   mp_ubyte* swapBuffer,
 						   bool convertITTempoSlides)
@@ -693,7 +699,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 	if (numEffects == 1)
 	{
 		volume = 0;
-		
+
 		convertEffect(srcSlot[2], srcSlot[3], eff, op, curChan, workBuffers, convertITTempoSlides);
 	}
 	else if (numEffects >= 2)
@@ -701,7 +707,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 		mp_sint32 oldNum = numEffects;
 		numEffects+=numEffectsInBuffer;
 		mp_ubyte* effects = swapBuffer;
-	
+
 		// Convert effects to be FT2 compatible
 		// Result will be written in effects
 		for (i = 0; i < oldNum; i++)
@@ -716,13 +722,13 @@ static void convertEffects(mp_ubyte* srcSlot,
 			effects[j*2] = effectBuffer[i*2];
 			effects[j*2+1] = effectBuffer[i*2+1];
 		}
-		
+
 		// Now "effects" contains all effects+operands
 		// We try to find a home for them
 		for (i = 0; i < numEffects; i++)
 		{
 			// could be MDL portamento + volslide
-			if (numEffects >= 3 && 
+			if (numEffects >= 3 &&
 				effects[i*2] == 0x3 &&
 				effects[i*2+1] == 0)
 			{
@@ -733,7 +739,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 					{
 						effects[i*2] = 0x5;
 						effects[i*2+1] = effects[j*2+1];
-						
+
 						// clear out
 						effects[j*2] = 0;
 						effects[j*2+1] = 0;
@@ -752,7 +758,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 					{
 						effects[i*2] = 0x6;
 						effects[i*2+1] = effects[j*2+1];
-						
+
 						// clear out
 						effects[j*2] = 0;
 						effects[j*2+1] = 0;
@@ -760,21 +766,21 @@ static void convertEffects(mp_ubyte* srcSlot,
 				}
 			}
 		}
-	
+
 		volume = 0;
 		eff = 0;
 		op = 0;
-		
+
 		for (i = 0; i < numEffects; i++)
 		{
 			// Effect nr. 1 => try to stuff into volume column first
 			if (i == 0)
 			{
-				// If this is a portamento to note command and it's 
+				// If this is a portamento to note command and it's
 				// volume column compatible we'll place it in the
 				// volume column
 				bool notePortaNotVolumeCompatible = ((effects[i*2] == 0x03) && (effects[i*2+1]&0xF));
-				
+
 				if (convertToVolume(effects[i*2], effects[i*2+1]) && !volume && !notePortaNotVolumeCompatible)
 				{
 					volume = convertToVolume(effects[i*2], effects[i*2+1]);
@@ -790,7 +796,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 					effects[i*2] = effects[i*2+1] = 0;
 				}
 			}
-			// for the rest of the effects, try to find 
+			// for the rest of the effects, try to find
 			// free space, take effect column first, volume column secondly
 			else
 			{
@@ -808,9 +814,9 @@ static void convertEffects(mp_ubyte* srcSlot,
 					effects[i*2] = effects[i*2+1] = 0;
 				}
 			}
-			
+
 		}
-		
+
 		mp_uint32 numOutEffs = 0;
 		// Scan what's left and sort out effects which are not allowed to go into another channel
 		for (i = 0; i < numEffects; i++)
@@ -819,7 +825,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 			{
 				case 0x0B:
 				case 0x0D:
-				
+
 				case 0x0E:
 					switch (effects[i*2+1] >> 4)
 					{
@@ -827,7 +833,7 @@ static void convertEffects(mp_ubyte* srcSlot,
 							goto takeEffect;
 					}
 					break;
-				
+
 				case 0x0F:
 takeEffect:
 					effectBuffer[numOutEffs*2] = effects[i*2];
@@ -836,14 +842,14 @@ takeEffect:
 					break;
 			}
 		}
-		
+
 		numEffectsInBuffer = numOutEffs;
-		
+
 		//if (numOutEffs)
 		//	printf("%i\n", numOutEffs);
-		
+
 	}
-		
+
 }
 
 static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWorkBuffers& workBuffers)
@@ -861,9 +867,9 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 	for (mp_uint32 orderIndex = 0; orderIndex < orderListIndex; orderIndex++)
 	{
 		mp_uint32 patIndex = module->header.ord[orderIndex];
-		
+
 		TXMPattern* pattern = &module->phead[patIndex];
-		
+
 		mp_sint32 slotSize = pattern->effnum*2+2;
 		mp_sint32 channum = pattern->channum, effnum = pattern->effnum;
 
@@ -875,7 +881,7 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 			{
 				if (srcSlot[0])
 					lastNote[c] = srcSlot[0];
-				
+
 				if (srcSlot[1])
 					lastIns[c] = srcSlot[1];
 
@@ -885,12 +891,12 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 				{
 					mp_ubyte effIn = *effSlot;
 					mp_ubyte opIn = *(effSlot+1);
-					
+
 					effSlot+=2;
-	
+
 					if (effIn < 0x0f || effIn > 0x5a)
 						continue;
-					
+
 					switch (effIn)
 					{
 						case 0x0f:
@@ -908,27 +914,27 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 							else
 							{
 								if (opIn) lastTempoSlide[c] = opIn;
-								
-								if (lastTempoSlide[c]) 
+
+								if (lastTempoSlide[c])
 								{
 									mp_ubyte y = lastTempoSlide[c]>>4;
 									mp_ubyte x = lastTempoSlide[c]&0xf;
-									
+
 									// tempo slide up
-									if (y) 
-									{					
+									if (y)
+									{
 										workBuffers.bpm+=x*(workBuffers.speed-1);
 										if (workBuffers.bpm > 255)
-											workBuffers.bpm = 255;					
+											workBuffers.bpm = 255;
 									}
 									// tempo slide down
 									else
 									{
 										workBuffers.bpm-=x*(workBuffers.speed-1);
 										if (workBuffers.bpm < 32)
-											workBuffers.bpm = 32;					
-									}									
-								}								
+											workBuffers.bpm = 32;
+									}
+								}
 							}
 							break;
 						case 0x1C:
@@ -970,39 +976,39 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 						case 0x52:
 							workBuffers.baseBpm = opIn;
 							break;
-							
+
 						case 0x59:
 						{
 							if (opIn)
 								lastGVolSlide[c] = opIn;
-							
-							if (lastGVolSlide[c]) 
+
+							if (lastGVolSlide[c])
 							{
 								mp_ubyte y = lastGVolSlide[c]>>4;
 								mp_ubyte x = lastGVolSlide[c]&0xf;
-															
-								if (!(x == 0xF && y)&&!(y == 0xF && x)) 
+
+								if (!(x == 0xF && y)&&!(y == 0xF && x))
 								{
 									if (x && y) x = 0;
-									
-									if (y) 
-									{					
+
+									if (y)
+									{
 										workBuffers.globalVolume+=y*(workBuffers.speed-1);
 										if (workBuffers.globalVolume > 64)
-											workBuffers.globalVolume = 64;					
+											workBuffers.globalVolume = 64;
 									}
-									else if (x) 
+									else if (x)
 									{
 										workBuffers.globalVolume-=x*(workBuffers.speed-1);
 										if (workBuffers.globalVolume < 0)
-											workBuffers.globalVolume = 0;					
+											workBuffers.globalVolume = 0;
 									}
-									
+
 								}
 								else
 								{
 									// SUCKS
-									if (!(x==0x0F && !y) && !(y==0x0F && !x)) 
+									if (!(x==0x0F && !y) && !(y==0x0F && !x))
 									{
 										if (x==0x0F)
 										{
@@ -1017,15 +1023,15 @@ static void fillWorkBuffers(const XModule* module, mp_uint32 orderListIndex, TWo
 												workBuffers.globalVolume = 0;
 										}
 									}
-								}																
-							}							
+								}
+							}
 							break;
 						}
 					}
 				}
-				
+
 				srcSlot+=slotSize;
-				
+
 			}
 		}
 	}
@@ -1049,7 +1055,7 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 				break;
 			}
 		}
-		
+
 		if (patNum != -1)
 		{
 			mp_sint32 orderListPos = -1;
@@ -1061,7 +1067,7 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 					break;
 				}
 			}
-			
+
 			if (orderListPos != -1)
 			{
 				fillWorkBuffers(module, orderListPos, workBuffers);
@@ -1086,29 +1092,29 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 		mp_uint32 correctPLMFarJumpChannel	= 0;
 		mp_sint32 PLMFarJumpPos				= 0;
 		mp_sint32 PLMFarJumpRow				= 0;
-	
+
 		mp_sint32 c;
-	
+
 		for (c = 0;  c < srcPattern->channum; c++)
 		{
 			if (c < numChannels)
-			{				
+			{
 				mp_ubyte* dstSlot = dstPattern+(rows*(numChannels*5) + (c*5));
 				mp_ubyte* srcSlot = srcPattern->patternData+(rows*(srcPattern->channum*(srcPattern->effnum*2+2)) + c*(srcPattern->effnum*2+2));
-				
+
 				if (srcSlot[0])
 					lastNote[c] = srcSlot[0];
-				
+
 				if (srcSlot[1])
 				{
 					lastIns[c] = srcSlot[1];
 					//if (srcSlot[0])
 					//	lastIns2[c] = srcSlot[1];
 				}
-				
+
 				mp_sint32 srcNote = (mp_sint32)srcSlot[0];
 
-				if (lastIns[c] && srcNote > 0 && srcNote <= XModule::NOTE_LAST) 
+				if (lastIns[c] && srcNote > 0 && srcNote <= XModule::NOTE_LAST)
 				{
 					srcNote+=workBuffers.noteRangeRemapper[lastIns[c]-1];
 					if (srcNote > XModule::NOTE_LAST || srcNote < 0)
@@ -1116,24 +1122,24 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 				}
 				if (srcNote == XModule::NOTE_OFF || srcNote == XModule::NOTE_CUT) srcNote = 97;
 				else if (srcNote > 96) srcNote = 0;
-				
+
 				dstSlot[0] = srcNote;
-				
+
 				// instrument
 				dstSlot[1] = srcSlot[1];
-				
-				convertEffects(srcSlot, 
-							   srcPattern->effnum, 
-							   dstSlot[2], 
-							   dstSlot[3], 
-							   dstSlot[4], 
-							   c, 
-							   workBuffers, 
-							   effectBuffer, 
-							   numEffectsInBuffer, 
-							   swapBuffer, 
+
+				convertEffects(srcSlot,
+							   srcPattern->effnum,
+							   dstSlot[2],
+							   dstSlot[3],
+							   dstSlot[4],
+							   c,
+							   workBuffers,
+							   effectBuffer,
+							   numEffectsInBuffer,
+							   swapBuffer,
 							   convertITTempoSlides);
-				
+
 				// try to find workaround for PLM far-jump
 				if (module && module->getType() == XModule::ModuleType_PLM && dstSlot[3] == 0x0B)
 				{
@@ -1150,7 +1156,7 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 						}
 					}
 				}
-				
+
 				// * some nasty protracker style fixes
 				// * trying to emulate protracker 3.15 behaviour with FT2 methods
 				mp_sint32 i = srcSlot[1];
@@ -1178,7 +1184,7 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 							dstSlot[0] = 97;
 						}
 					}
-					
+
 				}
 				else if (module && i && newInsST3Flag)
 				{
@@ -1197,20 +1203,20 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 						}
 					}
 				}
-				
+
 				// * trying to emulate MTM behaviour
 				// * Sample offset command triggers last note again
 				if (module && module->getType() == XModule::ModuleType_MTM && !dstSlot[0] && dstSlot[3] == 0x9)
 					dstSlot[0] = lastNote[c];
-				
+
 			}
-			
+
 			if (correctPLMFarJump)
 			{
 				for (c = 0;  c < srcPattern->channum; c++)
 				{
 					mp_ubyte* dstSlot = dstPattern+(rows*(numChannels*5) + (c*5));
-					
+
 					if (dstSlot[3] == 0)
 					{
 						if (c > (signed)correctPLMFarJumpChannel)
@@ -1221,10 +1227,10 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 						else
 						{
 							mp_ubyte* srcSlot = dstPattern+(rows*(numChannels*5) + (correctPLMFarJumpChannel*5));
-							
+
 							dstSlot[3] = srcSlot[3];
 							dstSlot[4] = srcSlot[4];
-							
+
 							srcSlot[3] = 0x0D;
 							srcSlot[4] = (PLMFarJumpRow/10)*16+(PLMFarJumpRow%10);
 						}
@@ -1232,11 +1238,11 @@ static mp_sint32 convertPattern(const XModule* module, const TXMPattern* srcPatt
 					}
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	delete[] swapBuffer;
 	delete[] effectBuffer;
 
@@ -1247,68 +1253,68 @@ mp_sint32 packPattern(const mp_ubyte* pattern, mp_ubyte* outputPattern, mp_sint3
 {
 	mp_sint32 i,j,z,b1,x,y;
 	mp_ubyte pack[6];
-	
+
 	/*i = numRows*numChannels*5 - 1;
 	while (i > 0 && !pattern[i])
 		i--;
 	mp_sint32 max = i;
 
 	printf("%i, %i\n", numRows*numChannels*5, max);	*/
-	
+
 	// -------------------------
 	// pack pattern (xm packing)
 	// -------------------------
 	j = z = b1 = 0;
 	for (x=0; x < numRows; x++)
-		for (y=0; y < numChannels; y++) 
+		for (y=0; y < numChannels; y++)
 		{
 			//if (z > max)
 			//	goto finishedPacking;
-		
+
             memset(&pack,0,6);
             i=0;
-            if (pattern[z]) 
+            if (pattern[z])
 			{
 				b1=1;
 				pack[0]|=1;
 				pack[i+1]=pattern[z];
 				i++;
             }
-            if (pattern[z+1]) 
+            if (pattern[z+1])
 			{
 				b1=1;
 				pack[0]|=2;
 				pack[i+1]=pattern[z+1];
 				i++;
             }
-            if (pattern[z+2]) 
+            if (pattern[z+2])
 			{
 				b1=1;
 				pack[0]|=4;
 				pack[i+1]=pattern[z+2];
 				i++;
             }
-            if (pattern[z+3]) 
+            if (pattern[z+3])
 			{
 				b1=1;
 				pack[0]|=8;
 				pack[i+1]=pattern[z+3];
 				i++;
             }
-            if (pattern[z+4]) 
+            if (pattern[z+4])
 			{
 				b1=1;
 				pack[0]|=16;
 				pack[i+1]=pattern[z+4];
 				i++;
             }
-            if (i<5) 
+            if (i<5)
 			{
 				pack[0]|=128;
 				memcpy(outputPattern+j,&pack,i+1);
 				j+=i+1;
             }
-            else 
+            else
 			{
 				memcpy(outputPattern+j,pattern+z,5);
 				j+=5;
@@ -1318,7 +1324,7 @@ mp_sint32 packPattern(const mp_ubyte* pattern, mp_ubyte* outputPattern, mp_sint3
 
 		}
 
-//finishedPacking:	
+//finishedPacking:
 	return j;
 }
 
@@ -1327,11 +1333,11 @@ static void sort(mp_sword* array,mp_sint32 l, mp_sint32 r)
 	mp_sint32 i,j;
 	mp_sword x,y;
 	i=l; j=r; x=array[(l+r)/2];
-	do 
+	do
 	{
 		while (array[i]<x) i++;
 		while (x<array[j]) j--;
-		if (i<=j) 
+		if (i<=j)
 		{
 			y=array[i]; array[i]=array[j]; array[j]=y;
 			i++; j--;
@@ -1341,16 +1347,16 @@ static void sort(mp_sword* array,mp_sint32 l, mp_sint32 r)
 	if (i<r) sort(array,i,r);
 }
 
-mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
+mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
 {
 	mp_sint32 i,j,k,l;
-	
+
 	TWorkBuffers workBuffers;
 	workBuffers.bpm = header.speed;
 	workBuffers.speed = header.tempo;
-	
+
 	// ------ prerequisites ---------------------------------
-	
+
 	// step one, find last used pattern
 	mp_sint32 patNum = getNumUsedPatterns();
 	if (!patNum)
@@ -1360,15 +1366,19 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	mp_sint32 insNum = getNumUsedInstruments();
 	if (!insNum)
 		insNum++;
-	
+
 	// ------ start ---------------------------------
 	XMFile f(fileName, true);
-	
+
 	if (!f.isOpenForWriting())
 		return MP_DEVICE_ERROR;
 
-	f.write("Extended Module: ",1,17);
-	
+	if(tmm) {
+		f.write("Magic: ",1,7);
+	} else {
+		f.write("Extended Module: ",1,17);
+	}
+
 	char titleBuffer[MP_MAXTEXT+1], titleBufferTemp[MP_MAXTEXT+1];
 	memset(titleBuffer, 0, sizeof(titleBuffer));
 	memset(titleBufferTemp, 0, sizeof(titleBufferTemp));
@@ -1379,7 +1389,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 		mp_sint32 len = (mp_sint32)strlen(titleBuffer);
 		while (titleBuffer[i] <= ' ' && i < len)
 			i++;
-			
+
 		memcpy(titleBufferTemp, titleBuffer+i, strlen(titleBuffer) - i);
 		f.write(titleBufferTemp, 1, 20);
 	}
@@ -1399,9 +1409,9 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	f.writeDword(header.hdrsize);
 	f.writeWord(header.ordnum);
 	f.writeWord(header.restart);
-	
+
 	mp_uword numChannels = header.channum&1 ? header.channum+1 : header.channum;
-	
+
 	f.writeWord(numChannels);
 	f.writeWord(patNum);
 	f.writeWord(insNum);
@@ -1425,35 +1435,35 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	for (i = 0; i < patNum; i++)
 	{
 		TXMPattern* srcPattern = &phead[i];
-		
+
 		mp_sint32 channum = srcPattern->channum >= header.channum ? header.channum : srcPattern->channum;
-		
+
 		for (mp_sint32 rows = 0; rows < srcPattern->rows; rows++)
 			for (mp_sint32 c = 0;  c < channum; c++)
 			{
-				
+
 				mp_ubyte* srcSlot = srcPattern->patternData+(rows*(srcPattern->channum*(srcPattern->effnum*2+2)) + c*(srcPattern->effnum*2+2));
-			
+
 				if (srcSlot[1])
 					lastIns[c] = srcSlot[1];
-			
+
 				if (lastIns[c] && srcSlot[0] && srcSlot[0] < XModule::NOTE_OFF)
 				{
 					if (srcSlot[0] > upperNoteBound[lastIns[c]-1]) upperNoteBound[lastIns[c]-1] = srcSlot[0];
-					if (srcSlot[0] < lowerNoteBound[lastIns[c]-1]) lowerNoteBound[lastIns[c]-1] = srcSlot[0];						
+					if (srcSlot[0] < lowerNoteBound[lastIns[c]-1]) lowerNoteBound[lastIns[c]-1] = srcSlot[0];
 				}
 			}
-				
+
 	}
-	
+
 	delete[] lastIns;
-	
+
 	for (i = 0; i < insNum; i++)
 	{
 		mp_sint32 remapper = 0;
 		if (upperNoteBound[i] > 96)
 			remapper = upperNoteBound[i] - 96;
-		
+
 		if (remapper < lowerNoteBound[i])
 			workBuffers.noteRangeRemapper[i] = -remapper;
 
@@ -1465,12 +1475,12 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 	for (i = 0; i < patNum; i++)
 	{
 		mp_sint32 numRows = phead[i].rows;
-		
+
 		if (numRows == 0)
 			numRows = 1;
-	
+
 		mp_sint32 patChNum = (phead[i].channum+(phead[i].channum&1));
-		
+
 		if (patChNum < numChannels)
 			patChNum = numChannels;
 
@@ -1482,46 +1492,46 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 		memset(srcPattern, 0, len);
 		memset(dstPattern, 0, len);
 
-		convertPattern(this, &phead[i], srcPattern, numChannels, workBuffers, false);		
-	
+		convertPattern(this, &phead[i], srcPattern, numChannels, workBuffers, false);
+
 		len = packPattern(srcPattern, dstPattern, numRows, numChannels);
-	
+
 #ifdef VERBOSE
 		printf("Uncompressed pattern size: %i, compressed: %i\n", numRows * numChannels * 5, len);
 #endif
-	
+
 		f.writeDword(9);
 		f.writeByte(0);
 		f.writeWord(numRows);
 		f.writeWord(len);
-		
+
 		f.write(dstPattern, 1, len);
-		
+
 		//printf("Packed Size: %i\n", len);
-		
+
 		delete[] srcPattern;
 		delete[] dstPattern;
 	}
-	
+
 	for (i = 0; i < insNum; i++)
 	{
 			//mp_sint32 maxSample = instr[i].samp - 1;
 			if (instr[i].samp > 0)
-			{	
+			{
 				mp_sword usedSamples[256];
 				memset(usedSamples, 0, sizeof(usedSamples));
 				mp_sint32 numUsedSamples = 0;
 
-#ifdef MILKYTRACKER	
-				if (type == ModuleType_XM && header.smpnum == header.insnum*16)
+#ifdef MILKYTRACKER
+				if ((type == ModuleType_XM || type == ModuleType_TMM) && header.smpnum == header.insnum*16)
 				{
 					// save all samples within an instrument rather than the
 					// used ones (referenced by note mapping)
 					for (j = 0; j < 16; j++)
 						usedSamples[j] = i*16+j;
-					
+
 					numUsedSamples = 0;
-					
+
 					// find last used sample in instrument
 					for (j = 15; j >= 0; j--)
 					{
@@ -1542,10 +1552,10 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 					for (j = 0; j < 96; j++)
 					{
 						mp_sword s = instr[i].snum[j];
-						
+
 						if (s == -1)
 							continue;
-						
+
 						bool used = false;
 						for (k = 0; k < numUsedSamples; k++)
 						{
@@ -1558,18 +1568,37 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 						if (!used && smp[s].sample && smp[s].samplen)
 							usedSamples[numUsedSamples++] = s;
 					}
-					
+
 					sort(usedSamples, 0, numUsedSamples-1);
 				}
-				
+
 				f.writeDword(numUsedSamples > 0 ? 263 : 29);
-				f.write(&instr[i].name,1,22);		
-				f.writeByte(0);
+				f.write(&instr[i].name,1,22);
+				if(!tmm || !instr[i].tmm.type) {
+					f.writeByte(0);
+				} else {
+					// Save Magic! :-D
+					f.writeByte(instr[i].tmm.type);
+					switch(instr[i].tmm.type) {
+					case TMM_TYPE_NOISE:
+						f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
+						break;
+					case TMM_TYPE_SINE:
+						f.write(&instr[i].tmm.sine, sizeof(TTMMSine), 1);
+						break;
+					case TMM_TYPE_PULSE:
+						f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
+						break;
+					case TMM_TYPE_ADDITIVE:
+						f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+						break;
+					}
+				}
 				f.writeWord(numUsedSamples);
-				
+
 				if (!numUsedSamples)
 					continue;
-				
+
 				f.writeDword(40);
 
 				mp_ubyte nbu[96];
@@ -1577,7 +1606,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 				for (j = 0; j < 96; j++)
 				{
 					mp_sword s = instr[i].snum[j];
-					
+
 					for (k = 0; k < numUsedSamples; k++)
 						if (usedSamples[k] == s)
 						{
@@ -1585,9 +1614,9 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 							break;
 						}
 				}
-				
+
 				f.write(nbu, 1, 96);
-				
+
 				mp_sint32 venvIndex = -1;
 				mp_sint32 penvIndex = -1;
 
@@ -1600,7 +1629,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 						penvIndex = smp[usedSamples[j]].penvnum - 1;
 
 				}
-				
+
 #ifdef VERBOSE
 				printf("%i, %i\n", venvIndex, penvIndex);
 #endif
@@ -1646,7 +1675,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 						f.writeWord(0);
 					}
 				}
-				
+
 				if (venvIndex >= 0 && venvIndex < header.volenvnum)
 					f.writeByte(venvs[venvIndex].num > 12 ? 12 : venvs[venvIndex].num);	// number of volume points
 				else
@@ -1669,7 +1698,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 					f.writeByte(0);
 					f.writeByte(0);
 				}
-				
+
 				if (penvIndex >= 0 && penvIndex < header.panenvnum)
 				{
 					f.writeByte(penvs[penvIndex].sustain); // panning sustain point
@@ -1682,12 +1711,12 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 					f.writeByte(0);
 					f.writeByte(0);
 				}
-				
+
 				if (venvIndex >= 0 && venvIndex < header.volenvnum)
 					f.writeByte(venvs[venvIndex].type); // volume type
 				else
 					f.writeByte(0);
-					
+
 				if (penvIndex >= 0 && penvIndex < header.panenvnum)
 					f.writeByte(penvs[penvIndex].type); // panning type
 				else
@@ -1703,22 +1732,23 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 				f.writeByte(smp[l].vibsweep); // vibrato sweep
 				f.writeByte(smp[l].vibdepth>>1); // vibrato depth
 				f.writeByte(smp[l].vibrate); // vibrato rate
-				
+
 				if (instr[i].flags & TXMInstrument::IF_ITFADEOUT)
 					f.writeWord(instr[i].volfade>>1); // volume fadeout
 				else
 					f.writeWord(smp[l].volfade>>1); // volume fadeout
 
 				f.writeWord(0); // reserved
-				
+
 				mp_ubyte extra[20];
 				memset(extra, 0, sizeof(extra));
 				f.write(extra, 1, 20);
-				
+
+				// write sample data
 				for (j = 0; j < numUsedSamples; j++)
 				{
 					k = usedSamples[j];
-				
+
 					f.writeDword((smp[k].type&16) ? smp[k].samplen <<1 : smp[k].samplen);
 					f.writeDword((smp[k].type&16) ? smp[k].loopstart << 1 : smp[k].loopstart);
 					f.writeDword((smp[k].type&16) ? smp[k].looplen << 1 : smp[k].looplen);
@@ -1728,97 +1758,104 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 					if (relnote>95) relnote = 95;
 
 					mp_sint32 finetune = smp[k].finetune;
-					
+
 					// make some ULT linear finetune to finetune & relative note num approximation
 					if (smp[k].freqadjust != 0)
 					{
 						mp_sint32 c4spd = getc4spd(relnote,finetune);
 						c4spd+=((c4spd*smp[k].freqadjust)/32768);
-						
+
 						mp_sbyte rn,ft;
 						convertc4spd(c4spd, &ft, &rn);
 						finetune = ft;
 						relnote = rn;
 					}
-					
-					f.writeByte(smp[k].vol*64/255);  
+
+					f.writeByte(smp[k].vol*64/255);
 					f.writeByte((mp_sbyte)finetune);
-					
+
 					mp_ubyte type = smp[k].type;
 					// Only alowed bits 0,1 and 3
 					type &= 3+16;
 					// Bits 0 and 1 are not allowed to be set at the same time
 					if ((type & 3) == 3) type &= ~1;
-					
+
 					f.writeByte(type);
 					f.writeByte((smp[k].flags & 2) ? smp[k].pan : 0x80);
-										
+
 					f.writeByte((mp_sbyte)relnote);
 					f.writeByte(0);
-					
+
 					f.write(smp[k].name, 1, 22);
 				}
-				
-				for (j = 0; j < numUsedSamples; j++)
-				{
-					k = usedSamples[j];
-					
-					if (!smp[k].sample)
-						continue;
-					
-					if (smp[k].type & 16)
+
+				if(!tmm || !instr[i].tmm.type) { // @ADPCM!
+					for (j = 0; j < numUsedSamples; j++)
 					{
-						mp_sword* packedSampleData = new mp_sword[smp[k].samplen];
-						
-						mp_sword b1,b2,b3;
-						
-						b1=0;
-						for (mp_uint32 j = 0; j < smp[k].samplen; j++) 
+						k = usedSamples[j];
+
+						if (!smp[k].sample)
+							continue;
+
+						if (smp[k].type & 16)
 						{
-							b3 = smp[k].getSampleValue(j);
-							b2 = b3-b1;
-							packedSampleData[j] = b2;
-							b1 = b3;
+							mp_sword* packedSampleData = new mp_sword[smp[k].samplen];
+
+							mp_sword b1,b2,b3;
+
+							b1=0;
+							for (mp_uint32 j = 0; j < smp[k].samplen; j++)
+							{
+								b3 = smp[k].getSampleValue(j);
+								b2 = b3-b1;
+								packedSampleData[j] = b2;
+								b1 = b3;
+							}
+
+							f.writeWords((mp_uword*)packedSampleData, smp[k].samplen);
+
+							delete[] packedSampleData;
+
 						}
-						
-						f.writeWords((mp_uword*)packedSampleData, smp[k].samplen);
-						
-						delete[] packedSampleData;
-						
-					}
-					else
-					{
-						mp_sbyte* packedSampleData = new mp_sbyte[smp[k].samplen];
-						
-						mp_sbyte b1,b2,b3;
-						
-						b1=0;
-						for (mp_uint32 j = 0; j < smp[k].samplen; j++) 
+						else
 						{
-							b3 = smp[k].getSampleValue(j);
-							b2 = b3-b1;
-							packedSampleData[j] = b2;
-							b1 = b3;
+							mp_sbyte* packedSampleData = new mp_sbyte[smp[k].samplen];
+
+							mp_sbyte b1,b2,b3;
+
+							b1=0;
+							for (mp_uint32 j = 0; j < smp[k].samplen; j++)
+							{
+								b3 = smp[k].getSampleValue(j);
+								b2 = b3-b1;
+								packedSampleData[j] = b2;
+								b1 = b3;
+							}
+
+							f.write(packedSampleData, 1, smp[k].samplen);
+
+							delete[] packedSampleData;
 						}
-						
-						f.write(packedSampleData, 1, smp[k].samplen);
-						
-						delete[] packedSampleData;
 					}
 				}
 			}
 			else
 			{
 				f.writeDword(instr[i].samp > 0 ? 263 : 29);
-				f.write(&instr[i].name,1,22);		
+				f.write(&instr[i].name,1,22);
 				f.writeByte(0);
 				f.writeWord(instr[i].samp);
 			}
-	
+
 	}
-	
+
 
 	return MP_OK;
+}
+
+mp_sint32 XModule::saveMagicalModule(const SYSCHAR* fileName)
+{
+	return saveExtendedModule(fileName, 1);
 }
 
 static mp_uword swap(mp_uword x)
@@ -1854,11 +1891,11 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 		return MP_DEVICE_ERROR;
 
 	f.write(header.name,1,20);
-	
+
 	mp_sint32 i,j,k;
-	
+
 // - instruments -------------------------------------------
-	for (i = 0; i < 31; i++) 
+	for (i = 0; i < 31; i++)
 	{
 		f.write(instr[i].name, 1, 22);
 
@@ -1872,10 +1909,10 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 					s = instr[i].snum[j];
 					break;
 				}
-				
+
 			if (s == -1)
 				goto unused;
-				
+
 			mp_sint32 fti = (mp_sint32)smp[s].finetune + 128;
 			if (!(fti & 0xF) && !smp[s].relnote)
 			{
@@ -1884,9 +1921,9 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 			else
 			{
 				mp_sint32 c4spd = getc4spd(smp[s].relnote, smp[s].finetune);
-				
+
 				mp_sint32 dc4 = abs(sfinetunes[0]-c4spd);
-				
+
 				k = 0;
 				for (j = 1; j < 16; j++)
 					if (abs(sfinetunes[j]-c4spd) < dc4)
@@ -1895,16 +1932,16 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 						k = j;
 					}
 			}
-				
+
 			f.writeWord(swap(prep(smp[s].samplen)));
 
 			f.writeByte(k);
 			f.writeByte((mp_ubyte)(((mp_sint32)smp[s].vol*64)/255));
-							
+
 			if (smp[s].type & 3)
 			{
 				mp_sint32 loopend = /*smp[s].loopstart + */smp[s].looplen;
-				
+
 				if (smp[s].type & 32)
 				{
 					f.writeWord(0);
@@ -1922,7 +1959,7 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 					else
 						f.writeWord(swap(prep(smp[s].loopstart)));
 				}
-				
+
 				f.writeWord(swap(prep(loopend)));
 			}
 			else
@@ -1930,7 +1967,7 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 				f.writeWord(swap(0));
 				f.writeWord(swap(1));
 			}
-			
+
 		}
 		else
 		{
@@ -1941,18 +1978,18 @@ unused:
 			f.writeWord(swap(0));
 			f.writeWord(swap(1));
 		}
-				
+
 	}
-	
+
 // - orderlist -------------------------------------------
 	f.writeByte((mp_ubyte)header.ordnum);
-	
+
 	f.writeByte(127);
-	
+
 	mp_ubyte ord[128];
-	
+
 	memset(ord, 0, sizeof(ord));
-	
+
 	j = 0;
 	for (i = 0; i < 128; i++)
 	{
@@ -1961,14 +1998,14 @@ unused:
 		else if (header.ord[i] == 255)
 			break;
 	}
-			
+
 	f.write(ord, 1, 128);
-	
-	mp_uword numChannels = header.channum&1 ? header.channum+1 : header.channum;	
+
+	mp_uword numChannels = header.channum&1 ? header.channum+1 : header.channum;
 
 	if (numChannels < 1 || numChannels > 99)
 		return MP_UNSUPPORTED;
-	
+
 // - patterns -------------------------------------------
 	mp_sint32 numPatterns = 0;
 	for (i = 0; i < 128; i++)
@@ -1996,16 +2033,16 @@ unused:
 		modMagic[1] += static_cast<char>(numChannels % 10u);
 	}
 	f.write(modMagic, 1, 4);
-	
+
 	for (i = 0; i < numPatterns+1; i++)
 	{
 		mp_sint32 numRows = phead[i].rows;
-		
+
 		if (numRows == 0)
 			numRows = 1;
 
 		mp_sint32 patChNum = (phead[i].channum+(phead[i].channum&1));
-		
+
 		if (patChNum < numChannels)
 			patChNum = numChannels;
 
@@ -2014,28 +2051,28 @@ unused:
 
 		mp_ubyte* srcPattern = new mp_ubyte[len];
 		mp_ubyte* dstPattern = new mp_ubyte[lenDst];
-	
+
 		memset(srcPattern, 0, len);
 		memset(dstPattern, 0, lenDst);
 
-		convertPattern(this, &phead[i], srcPattern, numChannels, workBuffers, false);		
-	
+		convertPattern(this, &phead[i], srcPattern, numChannels, workBuffers, false);
+
 		for (mp_sint32 r = 0; r < 64; r++)
 			for (mp_sint32 c = 0; c < numChannels; c++)
 			{
-			
+
 				if (r < numRows)
 				{
-				
+
 					mp_sint32 srcIndex = (r*numChannels*5)+(c*5);
 					mp_sint32 dstIndex = (r*numChannels*4)+(c*4);
-					
+
 					mp_sint32 period = 0;
-					
+
 					mp_ubyte note = srcPattern[srcIndex];
-					
+
 					//note = r+24+1;
-					
+
 					if (note)
 					{
 						note--;
@@ -2044,12 +2081,12 @@ unused:
 						else
 							period = (periods[note%12]*16>>((note/12)))>>2;
 					}
-				
+
 					mp_ubyte ins = srcPattern[srcIndex+1];
-				
+
 					if (ins > 31)
 						ins = 0;
-				
+
 					mp_ubyte eff = 0;
 					mp_ubyte op = 0;
 
@@ -2069,30 +2106,30 @@ unused:
 					{
 						eff = op = 0;
 					}
-				
+
 					/*if (srcPattern[srcIndex+2] >= 0x10 && srcPattern[srcIndex+2] <= 0x50 &&
 						eff == 0 && op == 0)
 					{
 						eff = 0x0C;
 						op = srcPattern[srcIndex+2] - 0x10;
 					}*/
-				
+
 					dstPattern[dstIndex] = (ins & 0xF0) + ((period>>8)&0x0F);
 					dstPattern[dstIndex+1] = (mp_ubyte)(period&0xFF);
 					dstPattern[dstIndex+2] = ((ins & 0x0F) << 4) + (eff);
 					dstPattern[dstIndex+3] = op;
-					
+
 				}
-			
+
 			}
-			
+
 		f.write(dstPattern, 4, numChannels*64);
 
 		delete[] srcPattern;
-		delete[] dstPattern;	
+		delete[] dstPattern;
 	}
 
-	for (i = 0; i < header.smpnum; i++) 
+	for (i = 0; i < header.smpnum; i++)
 	{
 		mp_uint32 smplen = prep(smp[i].samplen) << 1;
 		mp_uint32 j = 0;
@@ -2116,7 +2153,7 @@ unused:
 				f.writeByte(smp[i].getSampleValue(j));
 		}
 	}
-	
+
 	return MP_OK;
 }
 
@@ -2135,19 +2172,19 @@ bool TXMPattern::saveExtendedPattern(const SYSCHAR* fileName) const
 
 	f.writeWord(0x1);
 	f.writeWord(rows);
-	
+
 	mp_sint32 len = rows * 32 * 5;
-	
+
 	mp_ubyte* srcPattern = new mp_ubyte[len];
-	
+
 	memset(srcPattern, 0, len);
-	
+
 	convertPattern(NULL, this, srcPattern, 32, workBuffers, false);
-	
+
 	f.write(srcPattern, 1, len);
-	
-	delete[] srcPattern;	
-	
+
+	delete[] srcPattern;
+
 	return true;
 }
 
@@ -2160,20 +2197,20 @@ bool TXMPattern::saveExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel) c
 
 	// ------ start ---------------------------------
 	XMFile f(fileName, true);
-	
+
 	if (!f.isOpenForWriting())
 		return false;
-	
+
 	f.writeWord(0x1);
 	f.writeWord(rows);
-	
+
 	mp_sint32 len = rows * 5;
-	
+
 	mp_ubyte* srcPattern = new mp_ubyte[rows * channum * 5];
 	mp_ubyte* dstPattern = new mp_ubyte[len];
-	
+
 	convertPattern(NULL, this, srcPattern, channum, workBuffers, false);
-	
+
 	for (mp_sint32 r = 0; r < rows; r++)
 	{
 		mp_sint32 srcIndex = r*this->channum*5 + channel*5;
@@ -2183,10 +2220,10 @@ bool TXMPattern::saveExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel) c
 		dstPattern[r*5+3] = srcPattern[srcIndex+3];
 		dstPattern[r*5+4] = srcPattern[srcIndex+4];
 	}
-	
+
 	f.write(dstPattern, 1, len);
-	
-	delete[] srcPattern;	
+
+	delete[] srcPattern;
 	delete[] dstPattern;
 
 	return true;
@@ -2195,151 +2232,151 @@ bool TXMPattern::saveExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel) c
 bool TXMPattern::loadExtendedPattern(const SYSCHAR* fileName)
 {
 	XMFile f(fileName);
-	
+
 	if (f.readWord() != 0x01)
 		return false;
-		
+
 	mp_uword rows = f.readWord();
-	
+
 	if (rows == 0 || rows > 256)
 		return false;
-		
+
 	mp_sint32 len = rows * 32 * 5;
-	
+
 	mp_ubyte* srcPattern = new mp_ubyte[len];
-	
+
 	f.read(srcPattern, 1, len);
-	
+
 	// throw away old pattern
 	delete[] patternData;
 	this->rows = rows;
 	this->channum = 32;
 	this->effnum = 2;
-	
+
 	patternData = new mp_ubyte[rows*channum*(effnum*2+2)];
-	
+
 	mp_ubyte* slot = srcPattern;
-	
+
 	mp_sint32 bc = 0;
 	for (mp_sint32 r=0;r<rows;r++) {
 		for (mp_sint32 c=0;c<channum;c++) {
-			
+
 			char gl=0;
 			for (mp_sint32 i=0;i<XModule::numValidXMEffects;i++)
 				if (slot[3]==XModule::validXMEffects[i]) gl=1;
-			
+
 			if (!gl) slot[3]=slot[4]=0;
-			
+
 			if ((slot[3]==0xC)||(slot[3]==0x10)) {
 				slot[4] = XModule::vol64to255(slot[4]);
 			}
-			
+
 			if ((!slot[3])&&(slot[4])) slot[3]=0x20;
-			
+
 			if (slot[3]==0xE) {
 				slot[3]=(slot[4]>>4)+0x30;
 				slot[4]=slot[4]&0xf;
 			}
-			
+
 			if (slot[3]==0x21) {
 				slot[3]=(slot[4]>>4)+0x40;
 				slot[4]=slot[4]&0xf;
 			}
-			
+
 			if (slot[0]==97) slot[0]=XModule::NOTE_OFF;
-			
+
 			patternData[bc]=slot[0];
 			patternData[bc+1]=slot[1];
-			
+
 			XModule::convertXMVolumeEffects(slot[2], patternData[bc+2], patternData[bc+3]);
-			
+
 			patternData[bc+4]=slot[3];
 			patternData[bc+5]=slot[4];
-			
+
 			bc+=6;
 			slot+=5;
 		} // for c
-		
+
 	} // for r
-	
-	
-	delete[] srcPattern;	
-		
+
+
+	delete[] srcPattern;
+
 	return true;
 }
 
 bool TXMPattern::loadExtendedTrack(const SYSCHAR* fileName, mp_uint32 channel)
 {
 	XMFile f(fileName);
-	
+
 	if (f.readWord() != 0x01)
 		return false;
-		
+
 	mp_uword rows = f.readWord();
-	
+
 	if (rows == 0 || rows > 256)
 		return false;
 
 	if (rows > this->rows)
 		rows = this->rows;
-		
+
 	mp_sint32 len = rows * 32 * 5;
-	
+
 	mp_ubyte* srcPattern = new mp_ubyte[len];
-	
+
 	f.read(srcPattern, 1, len);
-	
+
 	// throw away old pattern
 	mp_ubyte* slot = srcPattern;
-	
+
 	mp_sint32 bc = 0, r;
-	for (r=0;r<rows;r++) 
+	for (r=0;r<rows;r++)
 	{
 		bc = r*this->channum*(this->effnum*2+2) + channel*(this->effnum*2+2);
-	
+
 		char gl=0;
 		for (mp_sint32 i=0;i<XModule::numValidXMEffects;i++)
 			if (slot[3]==XModule::validXMEffects[i]) gl=1;
-		
+
 		if (!gl) slot[3]=slot[4]=0;
-		
+
 		if ((slot[3]==0xC)||(slot[3]==0x10)) {
 			slot[4] = XModule::vol64to255(slot[4]);
 		}
-		
+
 		if ((!slot[3])&&(slot[4])) slot[3]=0x20;
-		
+
 		if (slot[3]==0xE) {
 			slot[3]=(slot[4]>>4)+0x30;
 			slot[4]=slot[4]&0xf;
 		}
-		
+
 		if (slot[3]==0x21) {
 			slot[3]=(slot[4]>>4)+0x40;
 			slot[4]=slot[4]&0xf;
 		}
-		
+
 		if (slot[0]==97) slot[0]=XModule::NOTE_OFF;
-		
+
 		patternData[bc]=slot[0];
 		patternData[bc+1]=slot[1];
-		
+
 		XModule::convertXMVolumeEffects(slot[2], patternData[bc+2], patternData[bc+3]);
-		
+
 		patternData[bc+4]=slot[3];
 		patternData[bc+5]=slot[4];
-		
+
 		slot+=5;
 	} // for r
-	
+
 	for (r = rows; r < this->rows; r++)
 	{
 		bc = r*this->channum*(this->effnum*2+2) + channel*(this->effnum*2+2);
 		memset(patternData + bc, 0, (this->effnum*2+2));
 	}
-	
-	delete[] srcPattern;	
-		
+
+	delete[] srcPattern;
+
 	return true;
 }
 
@@ -2356,11 +2393,11 @@ mp_sint32 XModule::getNumUsedPatterns()
 
 		if (pattern->patternData == NULL)
 			continue;
-			
+
 		mp_sint32 slotSize = pattern->effnum * 2 + 2;
-		
+
 		mp_sint32 patternSize = slotSize * pattern->channum * pattern->rows;
-		
+
 		bool empty = true;
 		for (mp_sint32 j = 0; j < patternSize; j++)
 			if (pattern->patternData[j])
@@ -2369,7 +2406,7 @@ mp_sint32 XModule::getNumUsedPatterns()
 				patNum = i+1;
 				break;
 			}
-		
+
 		if (empty)
 		{
 			bool found = false;
@@ -2379,23 +2416,23 @@ mp_sint32 XModule::getNumUsedPatterns()
 					found = true;
 					break;
 				}
-			
+
 			if (found)
 			{
 				patNum = i+1;
 				break;
-			}			
+			}
 		}
 		else
 		{
 			patNum = i+1;
 			break;
 		}
-	} 
-	
+	}
+
 	if (i == 0)
 		return 0;
-			
+
 	return patNum;
 }
 
@@ -2407,18 +2444,18 @@ mp_sint32 XModule::getNumUsedInstruments()
 	for (i = header.insnum - 1; i > 0; i--)
 	{
 		mp_ubyte buffer[MP_MAXTEXT+1];
-		
+
 		convertStr(reinterpret_cast<char*>(buffer), reinterpret_cast<char*>(instr[i].name), MP_MAXTEXT, false);
-		
+
 		if (strlen((char*)buffer))
 		{
 			insNum = i+1;
 			break;
 		}
-		
+
 		if (instr[i].samp)
 		{
-		
+
 			for (mp_sint32 j = 0; j < 120; j++)
 			{
 				mp_sint32 s = instr[i].snum[j];
@@ -2429,15 +2466,15 @@ mp_sint32 XModule::getNumUsedInstruments()
 					{
 						insNum = i+1;
 						goto insFound;
-					}					
+					}
 				}
-			}		
+			}
 		}
 	}
-	
+
 insFound:
 	if (i == 0)
 		return 0;
-		
+
 	return insNum;
 }
