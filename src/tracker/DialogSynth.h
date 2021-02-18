@@ -68,8 +68,6 @@ private:
 	class Tracker *tracker;
 	class XModule *mod;
 
-	class TMM* tmm;
-
 	pp_uint32 idx;
 public:
 	DialogSynth(
@@ -80,7 +78,7 @@ public:
 		Tracker* t,
 		pp_uint32 index
 	);
-	virtual ~DialogSynth();
+	virtual ~DialogSynth() {}
 
 	pp_int32 loadSettings(void);
 	void enableContainer(pp_uint32 choice);

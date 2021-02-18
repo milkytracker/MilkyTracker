@@ -38,6 +38,7 @@
 #include "Tracker.h"
 #include "ModuleEditor.h"
 #include "SectionSamples.h"
+#include "PlayerController.h"
 #include "tmm.h"
 #include <math.h>
 #include <time.h>
@@ -149,7 +150,6 @@ DialogSynth::DialogSynth(
 
 	mod = tracker->getModuleEditor()->getModule();
 	idx = index;
-	tmm = new TMM(44100, 16);
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x, y = getMessageBoxContainer()->getLocation().y;
 
@@ -459,12 +459,6 @@ DialogSynth::DialogSynth(
 
 	loadSettings();
 }
-
-DialogSynth::~DialogSynth()
-{
-	delete tmm;
-}
-
 
 pp_int32 DialogSynth::loadSettings()
 {
@@ -983,48 +977,61 @@ void DialogSynth::generateSample()
 {
 	ModuleEditor* editor = tracker->getModuleEditor();
 
+	// Lock tracker
 	editor->enterCriticalSection();
+	{
+		// Clear old sample
+		mp_sint32 smpidx = editor->instruments[idx].usedSamples[0];
+		TXMSample* dst = &mod->smp[smpidx];
+		if(dst->sample) {
+			editor->clearSample(smpidx);
+		}
 
-	mp_sint32 smpidx = editor->instruments[idx].usedSamples[0];
-	TXMSample* dst = &mod->smp[smpidx];
-	if(dst->sample) {
-		editor->clearSample(smpidx);
+		// Set misc attributes
+		dst->venvnum   = editor->instruments[idx].volumeEnvelope+1;
+		dst->penvnum   = editor->instruments[idx].panningEnvelope+1;
+		dst->fenvnum   = 0;
+		dst->vibenvnum = 0;
+		dst->vibtype   = editor->instruments[idx].vibtype;
+		dst->vibsweep  = editor->instruments[idx].vibsweep;
+		dst->vibdepth  = editor->instruments[idx].vibdepth << 1;
+		dst->vibrate   = editor->instruments[idx].vibrate;
+		dst->volfade   = editor->instruments[idx].volfade << 1;
+
+		// Find out sample resolution
+		int res = 8;
+#ifdef __AMIGA__
+		res = GetAudioDriverResolution();
+#endif
+		// Let playmode enforce a resolution to make it sound "original"
+		if(tracker->playerController->getPlayMode() == PlayerController::PlayMode_ProTracker2 || tracker->playerController->getPlayMode() == PlayerController::PlayMode_ProTracker3) {
+			res = 8;
+		}
+
+		// Generate sample
+		TMM* tmm;
+		if(res == 16) {
+			tmm = new TMM(44100, 16);
+			dst->type = 16;
+			dst->sample = (mp_sbyte *) mod->allocSampleMem(32768 * 2);
+		} else {
+			tmm = new TMM(44100, 8);
+			dst->type = 0;
+			dst->sample = (mp_sbyte *) mod->allocSampleMem(32768);
+		}
+		dst->samplen = tmm->GenerateSamples(&mod->instr[idx].tmm, (void *) dst->sample, XModule::getc4spd(0, 0));
+		dst->loopstart = 0;
+		dst->looplen = dst->samplen;
+		delete tmm;
+
+		// Flag forward loop
+		if(mod->instr[idx].tmm.extensions.flags & TMM_FLAG_LOOP_FWD) {
+			dst->type |= 1;
+		}
+
+		editor->finishSamples();
+		editor->validateInstruments();
 	}
-
-	int freq = XModule::getc4spd(0, 0);
-
-	// @todo support protracker playmode = 8-bit
-	dst->type      = 16; // 16-bit
-	dst->loopstart = 0;
-	dst->venvnum   = editor->instruments[idx].volumeEnvelope+1;
-	dst->penvnum   = editor->instruments[idx].panningEnvelope+1;
-	dst->fenvnum   = 0;
-	dst->vibenvnum = 0;
-	dst->vibtype   = editor->instruments[idx].vibtype;
-	dst->vibsweep  = editor->instruments[idx].vibsweep;
-	dst->vibdepth  = editor->instruments[idx].vibdepth << 1;
-	dst->vibrate   = editor->instruments[idx].vibrate;
-	dst->volfade   = editor->instruments[idx].volfade << 1;
-
-	dst->sample  = (mp_sbyte *) mod->allocSampleMem(262144 * 2); // @todo depending from synth type
-	dst->samplen = this->tmm->GenerateSamples(&mod->instr[idx].tmm, (void *) dst->sample, freq);
-	dst->looplen = dst->samplen;
-
-	// Loop?
-	if(mod->instr[idx].tmm.extensions.flags & TMM_FLAG_LOOP_FWD) {
-		dst->type |= 1;
-	}
-
-	switch(mod->instr[idx].tmm.type) {
-	case TMM_TYPE_NONE:     strcpy(mod->instr[idx].name, "");                 break;
-	case TMM_TYPE_SINE:     strcpy(mod->instr[idx].name, "(magic) sine");     break;
-	case TMM_TYPE_NOISE:    strcpy(mod->instr[idx].name, "(magic) noise");    break;
-	case TMM_TYPE_PULSE:    strcpy(mod->instr[idx].name, "(magic) pulse");    break;
-	case TMM_TYPE_ADDITIVE: strcpy(mod->instr[idx].name, "(magic) additive"); break;
-	}
-
-	editor->finishSamples();
-	editor->validateInstruments();
 	editor->leaveCriticalSection();
 
 	tracker->sectionSamples->updateAfterLoad();
