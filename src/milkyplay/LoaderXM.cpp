@@ -563,6 +563,11 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 			memset(smpReloc, 0, sizeof(smpReloc));
 
+			// MAGIC: Our synth instruments always have exactly one sample
+			if(module->type == XModule::ModuleType_TMM && instr[y].tmm.type > 0) {
+				instr[y].samp = 1;
+			}
+
 			if (instr[y].samp) {
 				mp_ubyte* insDataPtr = insData;
 
