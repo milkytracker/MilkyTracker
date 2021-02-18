@@ -1854,7 +1854,7 @@ bool XModule::cleanUp()
 	if (instr) {
 		memset(instr,0,sizeof(TXMInstrument)*256);
 
-		// MAGIC :-D Apply standard settings
+		// MAGIC
 		for(int i = 0; i < 256; i++) {
 			instr[i].tmm.type                    = 0;
 			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
@@ -1909,7 +1909,7 @@ XModule::XModule()
 	if (instr) {
 		memset(instr,0,sizeof(TXMInstrument)*256);
 
-		// MAGIC :-D Apply standard settings
+		// MAGIC
 		for(int i = 0; i < 256; i++) {
 			instr[i].tmm.type                    = 0;
 			instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;
@@ -2723,7 +2723,7 @@ void XModule::createEmptySong(bool clearPatterns/* = true*/, bool clearInstrumen
 		{
 			memset(instr,0,sizeof(TXMInstrument)*256);
 
-			// MAGIC :-D Apply standard settings
+			// MAGIC
 			for(int i = 0; i < 256; i++) {
 				instr[i].tmm.type                    = 0;
 				instr[i].tmm.noise.type              = TMM_NOISETYPE_WHITE;

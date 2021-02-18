@@ -51,7 +51,7 @@ struct TPlayerChannelInfo
 	mp_ubyte numeffects;
 	mp_ubyte effects[MP_NUMEFFECTS];
 	mp_ubyte operands[MP_NUMEFFECTS];
-	
+
 	void clear()
 	{
 		memset(this, 0, sizeof(TPlayerChannelInfo));
@@ -98,20 +98,20 @@ private:
 			BITPOS_ROW = 8,
 			BITPOS_TEMPO = 16,
 			BITPOS_SPEED = 24,
-			
+
 			BITPOS_MAINVOL = 0,
 			BITPOS_TICKER = 8
 		};
-		
+
 		mp_uint32 posRowTempoSpeed;
 		mp_sint32 mainVolumeTicker;
-		
+
 		TimeRecord()
 		{
 		}
-		
+
 		TimeRecord(mp_uint32 pos, mp_uint32 row, mp_uint32 tempo, mp_uint32 speed, mp_sint32 mainVol, mp_sint32 ticker) :
-			posRowTempoSpeed((pos << BITPOS_POS) + 
+			posRowTempoSpeed((pos << BITPOS_POS) +
 							 (row << BITPOS_ROW) +
 							 (tempo << BITPOS_TEMPO) +
 							 (speed << BITPOS_SPEED)),
@@ -127,7 +127,7 @@ private:
 	{
 		delete[] timeRecord;
 		timeRecord = new TimeRecord[getNumBeatPackets()+1];
-		
+
 		updateTimeRecord();
 	}
 
@@ -135,24 +135,24 @@ private:
 	{
 		for (mp_uint32 i = 0; i < getNumBeatPackets()+1; i++)
 		{
-			timeRecord[i] = TimeRecord(poscnt, 
-									   rowcnt, 
-									   bpm, 
-									   tickSpeed, 
-									   mainVolume, 
+			timeRecord[i] = TimeRecord(poscnt,
+									   rowcnt,
+									   bpm,
+									   tickSpeed,
+									   mainVolume,
 									   ticker);
 		}
-	}	
-	
+	}
+
 public:
 	enum PlayerTypes
 	{
 		PlayerType_Generic,		// generic module player, can play most of the Protracker style formats
 		PlayerType_FAR,			// Farandole composer player
-		PlayerType_IT,			// Supposed to be a compatible IT replayer 
+		PlayerType_IT,			// Supposed to be a compatible IT replayer
 		PlayerType_INVALID = -1	// NULL player :D
 	};
-	
+
 protected:
 	XModule*		module;
 
@@ -167,7 +167,7 @@ protected:
 	mp_sint32		initialNumChannels;		// Fixed number of channels, can be set manually in StartPlaying
 											// otherwise it will be module->header.channum
 
-	mp_sint32		mainVolume;				// current song's main volume 
+	mp_sint32		mainVolume;				// current song's main volume
 
 	mp_sint32		tickSpeed;				// our tickspeed
 	mp_sint32		baseBpm;				// Support digibooster REAL BPM value
@@ -179,7 +179,7 @@ protected:
 	mp_int64		synccnt;				// will increment 250 times per mixed second
 	mp_sint32		lastUnvisitedPos;		// the last order we visited before a new order has been set
 
-	mp_uint32		adder, BPMCounter;		
+	mp_uint32		adder, BPMCounter;
 
 	mp_sint32		patternIndexToPlay;		// Play special pattern, -1 = Play entire song
 
@@ -187,16 +187,16 @@ protected:
 
 	virtual mp_sint32 allocateStructures() { return 0; }
 
-	virtual void clearEffectMemory() { }	
+	virtual void clearEffectMemory() { }
 
 public:
 	PlayerBase(mp_uint32 frequency);
 
 	virtual ~PlayerBase();
-	
+
 	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
-	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);	
-	
+	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);
+
 	void setPlayMode(PlayModes mode) { playMode = mode; }
 
 	PlayModes getPlayMode() const { return playMode; }
@@ -212,38 +212,38 @@ public:
 		ASSERT(option>=PlayModeOptionFirst && option<PlayModeOptionLast);
 		return options[option];
 	}
-	
+
 	// runtime type identification
 	virtual PlayerTypes getType() const = 0;
 
 	// virtual from mixer class, perform playing here
 	virtual void timerHandler(mp_sint32 currentBeatPacket);
 
-	virtual void restart(mp_uint32 startPosition = 0, 
-						 mp_uint32 startRow = 0, 
-						 bool resetMixer = true, 
-						 const mp_ubyte* customPanningTable = NULL, 
+	virtual void restart(mp_uint32 startPosition = 0,
+						 mp_uint32 startRow = 0,
+						 bool resetMixer = true,
+						 const mp_ubyte* customPanningTable = NULL,
 						 bool playOneRowOnly = false);
-	
+
 	virtual void reset() {}
 
-	virtual void resetAllSpeed() {}	
-	
-	virtual mp_sint32   startPlaying(XModule* module, 
-									 bool repeat = false, 
-									 mp_uint32 startPosition = 0, 
+	virtual void resetAllSpeed() {}
+
+	virtual mp_sint32   startPlaying(XModule* module,
+									 bool repeat = false,
+									 mp_uint32 startPosition = 0,
 									 mp_uint32 startRow = 0,
-									 mp_sint32 numChannels = -1, 
+									 mp_sint32 numChannels = -1,
 									 const mp_ubyte* customPanningTable = NULL,
 									 bool idle = false,
 									 mp_sint32 patternIndex = -1,
 									 bool playOneRowOnly = false);
-	
+
 	void			setPatternToPlay(mp_sint32 patternIndex) { patternIndexToPlay = patternIndex; }
 	mp_sint32       getPatternToPlay() const { return patternIndexToPlay; }
-	
+
 	mp_sint32		stopPlaying();
-	
+
 	bool			hasSongHalted() const { return halted; }
 
 	void			setIdle(bool idle) { this->idle = idle; }
@@ -251,36 +251,36 @@ public:
 
 	virtual void	setRepeat(bool repeat) { this->repeat = repeat; }
 	bool			isRepeating() const { return repeat; }
-		
+
 	mp_sint32		pausePlaying();
 	mp_sint32		resumePlaying(bool unpause = true);
 
-	bool			isPaused() const { return paused; }	
-	
+	bool			isPaused() const { return paused; }
+
 	// Set song main volume
 	void			setSongMainVolume(mp_ubyte volume) { mainVolume = volume; }
 	mp_sint32		getSongMainVolume(mp_uint32 i = 0) const
 	{
 		return (timeRecord[i].mainVolumeTicker >> TimeRecord::BITPOS_MAINVOL) & 255;
 	}
-	
+
 	// Reset sound mixer on song stop
 	void			resetOnStop(bool b) { resetOnStopFlag = b; }
 	// Reset main volume when song is started
 	void			resetMainVolumeOnStartPlay(bool b) { resetMainVolumeOnStartPlayFlag = b; }
-	
+
 	virtual mp_sint32		getOrder(mp_uint32 i = 0) const
-	{ 
+	{
 		return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
 	}
-	
+
 	virtual mp_sint32		getRow(mp_uint32 i = 0) const
-	{ 
+	{
 		return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
 	}
 
 	virtual void		getPosition(mp_sint32& order, mp_sint32& row, mp_uint32 i = 0) const
-	{ 
+	{
 		order = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
 		row = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
 	}
@@ -288,26 +288,26 @@ public:
 	virtual mp_sint32	getLastUnvisitedPosition() const { return lastUnvisitedPos; }
 
 	virtual void		getPosition(mp_sint32& order, mp_sint32& row, mp_sint32& ticker, mp_uint32 i = 0) const
-	{ 
+	{
 		order = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_POS) & 255;
 		row = (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_ROW) & 255;
 		ticker = (timeRecord[i].mainVolumeTicker >> TimeRecord::BITPOS_TICKER) & 255;
 	}
-	
+
 	virtual mp_int64		getSyncCount() const { return synccnt; }
-	
+
 	virtual void			nextPattern();
 	virtual void			lastPattern();
 	virtual void			setPatternPos(mp_uint32 pos, mp_uint32 row = 0, bool resetChannels = true, bool resetFXMemory = true);
 
-	virtual void			setTempo(mp_sint32 tempo) 
-	{ 
+	virtual void			setTempo(mp_sint32 tempo)
+	{
 		bpm = tempo;
 		updateTimeRecord();
 	}
-	
-	virtual void			setSpeed(mp_sint32 speed) 
-	{ 
+
+	virtual void			setSpeed(mp_sint32 speed)
+	{
 		if (speed != tickSpeed)
 		{
 			tickSpeed = speed;
@@ -318,33 +318,33 @@ public:
 	}
 
 	virtual mp_sint32		getTempo(mp_uint32 i = 0) const
-	{ 
+	{
 		if (isPlaying() && !isIdle())
 		{
 			return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_TEMPO) & 255;
 		}
 		return bpm;
 	}
-	
+
 	virtual mp_sint32		getSpeed(mp_uint32 i = 0) const
-	{ 
+	{
 		if (isPlaying() && !isIdle())
 		{
-			return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_SPEED) & 255;;
+			return (timeRecord[i].posRowTempoSpeed >> TimeRecord::BITPOS_SPEED) & 255;
 		}
 		return tickSpeed;
 	}
-	
+
 	virtual bool			grabChannelInfo(mp_sint32 chn, TPlayerChannelInfo& channelInfo) const
 	{
 		channelInfo.clear();
 		return false;
 	}
-	
+
 	// milkytracker
-	virtual void			playNote(mp_ubyte chn, 
+	virtual void			playNote(mp_ubyte chn,
 									 mp_sint32 note, mp_sint32 ins, mp_sint32 vol = -1) {}
-	
+
 	virtual void			setPanning(mp_ubyte chn, mp_ubyte pan) {}
 };
 

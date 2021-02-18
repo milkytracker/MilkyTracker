@@ -1347,7 +1347,7 @@ static void sort(mp_sword* array,mp_sint32 l, mp_sint32 r)
 	if (i<r) sort(array,i,r);
 }
 
-mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
+mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, bool isMagic)
 {
 	mp_sint32 i,j,k,l;
 
@@ -1373,7 +1373,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
 	if (!f.isOpenForWriting())
 		return MP_DEVICE_ERROR;
 
-	if(tmm) {
+	if(isMagic) {
 		f.write("Magic: ",1,7);
 	} else {
 		f.write("Extended Module: ",1,17);
@@ -1574,26 +1574,32 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
 
 				f.writeDword(numUsedSamples > 0 ? 263 : 29);
 				f.write(&instr[i].name,1,22);
-				if(!tmm || !instr[i].tmm.type) {
-					f.writeByte(0);
-				} else {
-					// Save Magic! :-D
-					f.writeByte(instr[i].tmm.type);
-					switch(instr[i].tmm.type) {
-					case TMM_TYPE_NOISE:
-						f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
-						break;
-					case TMM_TYPE_SINE:
-						f.write(&instr[i].tmm.sine, sizeof(TTMMSine), 1);
-						break;
-					case TMM_TYPE_PULSE:
-						f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
-						break;
-					case TMM_TYPE_ADDITIVE:
-						f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
-						break;
+
+				// MAGIC
+				if(isMagic) {
+					if(!instr[i].tmm.type) {
+						f.writeByte(0);
+					} else {
+						f.writeByte(instr[i].tmm.type);
+						switch(instr[i].tmm.type) {
+						case TMM_TYPE_NOISE:
+							f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
+							break;
+						case TMM_TYPE_SINE:
+							f.write(&instr[i].tmm.sine, sizeof(TTMMSine), 1);
+							break;
+						case TMM_TYPE_PULSE:
+							f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
+							break;
+						case TMM_TYPE_ADDITIVE:
+							f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+							break;
+						}
 					}
+				} else {
+					f.writeByte(0);
 				}
+
 				f.writeWord(numUsedSamples);
 
 				if (!numUsedSamples)
@@ -1789,7 +1795,7 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, mp_uint32 tmm)
 					f.write(smp[k].name, 1, 22);
 				}
 
-				if(!tmm || !instr[i].tmm.type) { // @ADPCM!
+				if(!isMagic || !instr[i].tmm.type) { // @ADPCM!
 					for (j = 0; j < numUsedSamples; j++)
 					{
 						k = usedSamples[j];
@@ -1858,9 +1864,9 @@ mp_sint32 XModule::saveMagicalModule(const SYSCHAR* fileName, bool isExtended)
 	mp_sint32 res;
 
 	if(isExtended) {
-		res = saveExtendedModule(fileName, 1);
+		res = saveExtendedModule(fileName, true);
 	} else {
-		//res = saveProtrackerModule(fileName, 1);
+		res = saveProtrackerModule(fileName, true);
 	}
 
 	return res;
@@ -1881,7 +1887,7 @@ static mp_uword prep(mp_sint32 v)
 	return (mp_uword)(v >> 1);
 }
 
-mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
+mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName, bool isMagic)
 {
 	static const mp_sint32 periods[12] = {1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,907};
 
@@ -1898,7 +1904,11 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 	if (!f.isOpenForWriting())
 		return MP_DEVICE_ERROR;
 
-	f.write(header.name,1,20);
+	if(isMagic) {
+		f.writeByte(232);
+	} else {
+		f.write(header.name,1,20);
+	}
 
 	mp_sint32 i,j,k;
 
@@ -1975,7 +1985,6 @@ mp_sint32 XModule::saveProtrackerModule(const SYSCHAR* fileName)
 				f.writeWord(swap(0));
 				f.writeWord(swap(1));
 			}
-
 		}
 		else
 		{
@@ -1987,6 +1996,28 @@ unused:
 			f.writeWord(swap(1));
 		}
 
+		// MAGIC
+		if(isMagic) {
+			if(!instr[i].tmm.type) {
+				f.writeByte(0);
+			} else {
+				f.writeByte(instr[i].tmm.type);
+				switch(instr[i].tmm.type) {
+				case TMM_TYPE_NOISE:
+					f.write(&instr[i].tmm.noise, sizeof(TTMMNoise), 1);
+					break;
+				case TMM_TYPE_SINE:
+					f.write(&instr[i].tmm.sine, sizeof(TTMMSine), 1);
+					break;
+				case TMM_TYPE_PULSE:
+					f.write(&instr[i].tmm.pulse, sizeof(TTMMPulse), 1);
+					break;
+				case TMM_TYPE_ADDITIVE:
+					f.write(&instr[i].tmm.additive, sizeof(TTMMAdditive), 1);
+					break;
+				}
+			}
+		}
 	}
 
 // - orderlist -------------------------------------------
@@ -2022,25 +2053,28 @@ unused:
 			numPatterns = ord[i];
 	}
 
-	char modMagic[4];
-	if(numChannels == 4)
-	{
-		// ProTracker may not load files with more than 64 patterns correctly if we do not specify the M!K! magic.
-		if(numPatterns <= 63)
-			memcpy(modMagic, "M.K.", 4);
-		else
-			memcpy(modMagic, "M!K!", 4);
-	} else if(numChannels < 10)
-	{
-		memcpy(modMagic, "0CHN", 4);
-		modMagic[0] += static_cast<char>(numChannels);
-	} else
-	{
-		memcpy(modMagic, "00CH", 4);
-		modMagic[0] += static_cast<char>(numChannels / 10u);
-		modMagic[1] += static_cast<char>(numChannels % 10u);
+	// MAGIC
+	if(!isMagic) {
+		char modMagic[4];
+		if(numChannels == 4)
+		{
+			// ProTracker may not load files with more than 64 patterns correctly if we do not specify the M!K! magic.
+			if(numPatterns <= 63)
+				memcpy(modMagic, "M.K.", 4);
+			else
+				memcpy(modMagic, "M!K!", 4);
+		} else if(numChannels < 10)
+		{
+			memcpy(modMagic, "0CHN", 4);
+			modMagic[0] += static_cast<char>(numChannels);
+		} else
+		{
+			memcpy(modMagic, "00CH", 4);
+			modMagic[0] += static_cast<char>(numChannels / 10u);
+			modMagic[1] += static_cast<char>(numChannels % 10u);
+		}
+		f.write(modMagic, 1, 4);
 	}
-	f.write(modMagic, 1, 4);
 
 	for (i = 0; i < numPatterns+1; i++)
 	{
@@ -2068,10 +2102,8 @@ unused:
 		for (mp_sint32 r = 0; r < 64; r++)
 			for (mp_sint32 c = 0; c < numChannels; c++)
 			{
-
 				if (r < numRows)
 				{
-
 					mp_sint32 srcIndex = (r*numChannels*5)+(c*5);
 					mp_sint32 dstIndex = (r*numChannels*4)+(c*4);
 
@@ -2126,7 +2158,6 @@ unused:
 					dstPattern[dstIndex+1] = (mp_ubyte)(period&0xFF);
 					dstPattern[dstIndex+2] = ((ins & 0x0F) << 4) + (eff);
 					dstPattern[dstIndex+3] = op;
-
 				}
 
 			}
@@ -2142,12 +2173,40 @@ unused:
 		mp_uint32 smplen = prep(smp[i].samplen) << 1;
 		mp_uint32 j = 0;
 
+		// MAGIC
+		if(isMagic) {
+			mp_uint32 k, l;
+			bool skip = false;
+
+			for(k = 0; k < 31; k++) {
+				bool found = false;
+
+				for (l = 0; l < 120; l++) {
+					if (instr[k].snum[l] == i) {
+						found = true;
+						break;
+					}
+				}
+
+				if(found) {
+					if(instr[k].tmm.type) {
+						skip = true;
+					}
+					break;
+				}
+			}
+
+			if(skip) {
+				continue;
+			}
+		}
+
 		// Ensure first 2 bytes are zero in non-looping
 		// samples (for Protracker/Amiga compatibility)
 		if(!(smp[i].type & 0xef) && smplen >= 2)
 		{
 			f.writeWord(0);
-			j = 2;;
+			j = 2;
 		}
 
 		if (smp[i].type & 16)

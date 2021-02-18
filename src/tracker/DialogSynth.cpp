@@ -587,6 +587,7 @@ void DialogSynth::generateSample()
 
 	int freq = XModule::getc4spd(0, 0);
 
+	// @todo support protracker playmode = 8-bit
 	dst->type      = 1 | 16; // looped, 16-bit
 	dst->loopstart = 0;
 	dst->venvnum   = editor->instruments[idx].volumeEnvelope+1;

@@ -496,7 +496,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				f.read(&instr[y].name,1,22);
 				f.read(&instr[y].type,1,1);
 
-				// load da magic? =d
+				// MAGIC
 				if(module->type == XModule::ModuleType_TMM && instr[y].type > 0) {
 					instr[y].tmm.type = instr[y].type;
 					switch(instr[y].tmm.type) {
@@ -686,9 +686,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				}
 
 				for (sc=0;sc<instr[y].samp;sc++) {
-
-					if (smp[s].samplen)
-					{
+					if (smp[s].samplen) {
 						bool adpcm = (smp[s].res == 0xAD);
 
 						mp_uint32 oldSize = smp[s].samplen;
@@ -699,7 +697,24 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 							smp[s].looplen>>=1;
 						}
 
-						if(!instr[y].tmm.type) {
+						if(module->type == XModule::ModuleType_TMM && instr[y].tmm.type > 0) {
+							TMM* tmm = new TMM(44100);
+							short* data = new short[32768];
+
+							tmm->GenerateSamples(&instr[y].tmm, data, XModule::getc4spd(0, 0));
+
+							if(smp[s].type & 16) {
+								module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768 * sizeof(short));
+								memcpy(module->smp[s].sample, data, 32768 * sizeof(short));
+							} else {
+								module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768);
+								for(int q = 0; q < 32768; q++) {
+									module->smp[s].sample[q] = data[q] / 256.0f;
+								}
+							}
+
+							delete tmm;
+						} else {
 							mp_sint32 result = module->loadModuleSample(
 								f, s,
 								adpcm ? XModule::ST_PACKING_ADPCM : XModule::ST_DELTA,
@@ -708,15 +723,10 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 
 							if (result != MP_OK)
 								return result;
-						} else {
-							TMM* tmm = new TMM(44100);
-							module->smp[s].sample = (mp_sbyte*)module->allocSampleMem(32768 * 2);
-							tmm->GenerateSamples(&instr[y].tmm, (short*)module->smp[s].sample, XModule::getc4spd(0, 0));
-							delete tmm;
-						}
 
-						if (adpcm)
-							smp[s].res = 0;
+							if (adpcm)
+								smp[s].res = 0;
+						}
 					}
 
 					s++;
@@ -727,7 +737,6 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 				}
 
 				e++;
-
 			}
 			else
 			{

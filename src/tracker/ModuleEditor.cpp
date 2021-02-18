@@ -679,9 +679,12 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 
 	bool res = (nRes == MP_OK);
 
+	XMFile f(fileName);
+	bool isMagicMOD = f.readByte() == 232;
+
 	XModule::ModuleTypes type = XModule::ModuleType_NONE;
 
-	if (module->getType() == XModule::ModuleType_TMM) {
+	if (!isMagicMOD && module->getType() == XModule::ModuleType_TMM) {
 		type = module->getType();
 	}
 	else if (module->getType() != XModule::ModuleType_XM)
@@ -691,7 +694,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		mp_ubyte oneShotFlags[MAX_INSTRUMENTS];
 		// save flags for one shot PT style looping, it will be stripped out
 		// when exporting to XM
-		if (type == XModule::ModuleType_MOD)
+		if (isMagicMOD || type == XModule::ModuleType_MOD)
 		{
 			memset(oneShotFlags, 0, sizeof(oneShotFlags));
 			for (mp_sint32 i = 0; i < module->header.insnum; i++)
@@ -708,7 +711,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 
 		try
 		{
-			res = module->saveExtendedModule(tempFile) == MP_OK;
+			res = module->saveExtendedModule(tempFile, isMagicMOD) == MP_OK;
 			if(!res)
 				return res;
 
@@ -718,7 +721,7 @@ bool ModuleEditor::openSong(const SYSCHAR* fileName, const SYSCHAR* preferredFil
 		}
 
 		// restore one shot looping flag
-		if (type == XModule::ModuleType_MOD)
+		if (isMagicMOD || type == XModule::ModuleType_MOD)
 		{
 			for (mp_sint32 i = 0; i < module->header.insnum; i++)
 			{
@@ -1413,6 +1416,21 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 	instruments[index].vibdepth = ins->vibdepth>>1;
 	instruments[index].vibsweep = ins->vibsweep;
 
+	// MAGIC
+	instruments[index].instrument->tmm.type                    = 0;
+	instruments[index].instrument->tmm.noise.type              = TMM_NOISETYPE_WHITE;
+	instruments[index].instrument->tmm.sine.basefreq           = 440;
+	instruments[index].instrument->tmm.pulse.basefreq          = 440;
+	instruments[index].instrument->tmm.additive.basefreq       = 440;
+	instruments[index].instrument->tmm.pulse.width             = 16;
+	instruments[index].instrument->tmm.additive.nharmonics     = 64;
+	instruments[index].instrument->tmm.additive.bandwidth      = 20;
+	instruments[index].instrument->tmm.additive.bwscale        = 1;
+	instruments[index].instrument->tmm.additive.usescale       = 0;
+	instruments[index].instrument->tmm.additive.phasenoisetype = TMM_NOISETYPE_WHITE;
+	instruments[index].instrument->tmm.additive.destroyer      = 0;
+	memset(&instruments[index].instrument->tmm.additive.harmonics, 0, 64 * sizeof(unsigned char));
+
 	// Wipe samples first
 	for (j = 0; j < 16; j++)
 	{
@@ -1434,7 +1452,6 @@ bool ModuleEditor::insertXIInstrument(mp_sint32 index, const XIInstrument* ins)
 		smp->flags = smp->type = 0;
 		memset(smp->name, 0, sizeof(smp->name));
 	}
-
 
 	for (j = 0; j < ins->numsamples; j++)
 	{
