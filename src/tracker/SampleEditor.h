@@ -184,7 +184,8 @@ public:
 	bool hasValidSelection() const { return ((selectionStart >= 0 && selectionEnd >= 0) && (selectionStart != selectionEnd)); }
 	
 	void selectAll();
-	
+	void loopRange();
+
 	bool validate();
 
 	// --- Multilevel UNDO / REDO --------------------------------------------

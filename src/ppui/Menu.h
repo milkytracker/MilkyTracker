@@ -46,6 +46,7 @@ enum MenuCommandIDs
 	MenuCommandIDPaste			= 3,
 	MenuCommandIDSelectAll		= 4,
 	MenuCommandIDSelectNothing	= 5,
+	MenuCommandIDLoopRange		= 6,
 	MenuCommandIDUndo			= 7,
 	MenuCommandIDRedo			= 8,
 	MenuCommandIDHide			= 0x10000
