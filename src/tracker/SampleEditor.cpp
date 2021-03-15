@@ -451,6 +451,26 @@ void SampleEditor::selectAll()
 	selectionEnd = sample->samplen;
 }
 
+void SampleEditor::loopRange()
+{
+	if (!hasValidSelection())
+		return;
+
+	// If a loop type is not enabled, set loop to Forward.
+	// - Changes loop type to Forward when loop type is set to One shot
+	// 	 and the start of the selection is not at the start of the sample, 
+	// 	 but so does dragging the start of the loop. 
+	if (!getLoopType())
+		setLoopType(1);
+
+	// Once loop is enabled, set the loop start/end points to selection start/end points.
+	setRepeatStart(getSelectionStart());
+	setRepeatEnd(getSelectionEnd());
+
+	// Doesn't currently have undo or have the sample do the new loop 
+	// until it retriggers, but neither does dragging the loop points.
+}
+
 bool SampleEditor::validate()
 {
 	if (isEmptySample())

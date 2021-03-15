@@ -168,6 +168,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
+	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
 	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
@@ -1437,6 +1438,14 @@ void SampleEditorControl::rangeAll(bool updateNotify/* = false*/)
 		notifyUpdate();
 }
 
+void SampleEditorControl::loopRange(bool updateNotify/* = false*/)
+{	
+	sampleEditor->loopRange();
+
+	if (updateNotify)
+		notifyUpdate();
+}
+
 void SampleEditorControl::rangeClear(bool updateNotify/* = false*/)
 {
 	sampleEditor->resetSelection();
@@ -1664,6 +1673,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	editMenuControl->setState(MenuCommandIDCut, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDCrop, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDSelectAll, isEmptySample);
+	editMenuControl->setState(MenuCommandIDLoopRange, !hasValidSelection());
 	
 	// update submenu states
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
@@ -1770,6 +1780,11 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			rangeAll(true);
 			break;
 					
+		// set loop to current selection
+		case MenuCommandIDLoopRange:
+			loopRange(true);
+			break;	
+
 		// Invoke tools
 		case MenuCommandIDNew:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeNew);
