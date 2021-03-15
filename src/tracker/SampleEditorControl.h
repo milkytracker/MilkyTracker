@@ -161,6 +161,7 @@ public:
 	void showRange();
 	void rangeAll(bool updateNotify = false);
 	void rangeClear(bool updateNotify = false);
+	void loopRange(bool updateNotify = false); // set loop points to current range
 
 	void increaseRangeStart();
 	void decreaseRangeStart();
