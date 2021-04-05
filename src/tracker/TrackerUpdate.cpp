@@ -295,6 +295,7 @@ void Tracker::updateOrderlist(bool repaint/* = true*/)
 void Tracker::updateSongLength(bool repaint)
 {
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ORDERLIST));
+	PPContainer* container2 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_NEWORDERLIST));
 	
 	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ORDERLIST_SONGLENGTH))->setHexValue(moduleEditor->getNumOrders(), 2);
 
@@ -329,6 +330,7 @@ void Tracker::updateSongLength(bool repaint)
 	}
 
 	screen->paintControl(container, repaint);
+	screen->paintControl(container2, repaint);
 }
 
 ///////////////////////////////////////////
@@ -1131,4 +1133,3 @@ void Tracker::updateAfterTabSwitch()
 	}
 	screen->paint(true);
 }
-

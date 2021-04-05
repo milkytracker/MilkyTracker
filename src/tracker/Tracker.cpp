@@ -364,6 +364,7 @@ void Tracker::showSongSettings(bool show)
 {
 	screen->getControlByID(CONTAINER_ABOUT)->show(show);
 	screen->getControlByID(CONTAINER_ORDERLIST)->show(show);
+	screen->getControlByID(CONTAINER_NEWORDERLIST)->show(show);
 	screen->getControlByID(CONTAINER_SPEED)->show(show);
 	screen->getControlByID(CONTAINER_PATTERN)->show(show);
 }
@@ -2308,10 +2309,6 @@ void Tracker::expandOrderlist(bool b)
 		container->getControlByID(1)->hide(false);
 		container->getControlByID(2)->hide(true);
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ORDERLIST_EXTENT))->setText(TrackerConfig::stringButtonExtended);
-	
-		PPSize size = container->getControlByID(LISTBOX_ORDERLIST)->getSize();
-		size.height = 60;
-		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);
 	}
 	else
 	{
@@ -2326,10 +2323,6 @@ void Tracker::expandOrderlist(bool b)
 		container->getControlByID(1)->hide(true);
 		container->getControlByID(2)->hide(false);
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ORDERLIST_EXTENT))->setText(TrackerConfig::stringButtonCollapsed);
-
-		PPSize size = container->getControlByID(LISTBOX_ORDERLIST)->getSize();
-		size.height = 36;
-		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);
 	}
 	
 }
@@ -3224,4 +3217,3 @@ void Tracker::signalWaitState(bool b)
 {
 	screen->signalWaitState(b, TrackerConfig::colorThemeMain);	
 }
-

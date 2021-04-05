@@ -188,6 +188,7 @@ private:
 
 	// - build UI parts --------------------------------------------------------
 	void initSectionOrderlist(pp_int32 x, pp_int32 y);
+	void initSectionNewOrderlist(pp_int32 x, pp_int32 y);
 	void initSectionSpeed(pp_int32 x, pp_int32 y);
 	void initSectionPattern(pp_int32 x, pp_int32 y);
 	void initSectionMainOptions(pp_int32 x, pp_int32 y);

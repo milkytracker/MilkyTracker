@@ -342,6 +342,7 @@ void Tracker::initUI()
 
 	// small sections
 	initSectionOrderlist(0,0);
+	initSectionNewOrderlist(0, UPPERSECTIONDEFAULTHEIGHTWOINS());
 
 	initSectionSpeed(116-2,24);
 
@@ -355,8 +356,8 @@ void Tracker::initUI()
 	
 #ifndef __LOWRES__
 	scopesControl = new ScopesControl(SCOPES_CONTROL, screen, this, 
-									  PPPoint(0, UPPERSECTIONDEFAULTHEIGHTWOINS()), 
-									  PPSize(screen->getWidth(), SCOPESHEIGHT()));
+									  PPPoint(56, UPPERSECTIONDEFAULTHEIGHTWOINS()),
+									  PPSize(screen->getWidth() - 56, SCOPESHEIGHT()));
 	scopesControl->setBorderColor(TrackerConfig::colorThemeMain);
 	for (c = 0; c < TrackerConfig::MAXCHANNELS; c++)
 		scopesControl->recordChannel(c, playerController->isChannelRecording(c));
@@ -393,8 +394,8 @@ void Tracker::initUI()
 #endif
 
 	patternEditorControl = new PatternEditorControl(PATTERN_EDITOR, screen, this, 
-													PPPoint(0,UPPERSECTIONDEFAULTHEIGHT()), 
-													PPSize(screen->getWidth(),MAXEDITORHEIGHT()-UPPERSECTIONDEFAULTHEIGHT()));
+													PPPoint(56,UPPERSECTIONDEFAULTHEIGHT()),
+													PPSize(screen->getWidth() - 56,MAXEDITORHEIGHT()-UPPERSECTIONDEFAULTHEIGHT()));
 #endif
 	// first thing to do is, attach pattern editor
 	patternEditorControl->attachPatternEditor(moduleEditor->getPatternEditor());
@@ -529,17 +530,35 @@ void Tracker::initSectionOrderlist(pp_int32 x, pp_int32 y)
 	staticText = new PPStaticText(STATICTEXT_ORDERLIST_REPEAT, screen, NULL, PPPoint(x+2 + 8*7, y+2+12+12+12+12+2), "", false);
 	containerOrderlist->addControl(staticText);	
 
-	listBoxOrderList = new PPListBox(LISTBOX_ORDERLIST, screen, this, PPPoint(x+2, y+2), PPSize(51,36), true, false, true, true);
+	screen->addControl(containerOrderlist);
+
+	expandOrderlist(false);
+}
+
+void Tracker::initSectionNewOrderlist(pp_int32 x, pp_int32 y)
+{
+	int width = 56;
+	int height = MAXEDITORHEIGHT() - UPPERSECTIONDEFAULTHEIGHT();// + SCOPESHEIGHT();
+	PPContainer* container = new PPContainer(
+		CONTAINER_NEWORDERLIST,
+		screen,
+		this,
+		PPPoint(x, y),
+		PPSize(width, height),
+		false);
+	container->setColor(TrackerConfig::colorThemeMain);
+
+	listBoxOrderList = new PPListBox(LISTBOX_ORDERLIST, screen, this, PPPoint(x+2, y+2),
+		PPSize(51, height - 4),
+		true, false, true, true);
 	listBoxOrderList->setAutoHideVScroll(false);
 	listBoxOrderList->setBorderColor(TrackerConfig::colorThemeMain);
 	listBoxOrderList->setCenterSelection(true);
 	listBoxOrderList->setSelectOnScroll(true);
 
-	containerOrderlist->addControl(listBoxOrderList);
+	container->addControl(listBoxOrderList);
 
-	screen->addControl(containerOrderlist);	
-	
-	expandOrderlist(false);
+	screen->addControl(container);
 }
 
 ////////////////////////////////////////////////////////////////////
