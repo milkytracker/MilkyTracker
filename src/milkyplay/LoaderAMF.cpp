@@ -225,8 +225,10 @@ const char* LoaderAMF_2::identifyModule(const mp_ubyte* buffer)
 	if (!memcmp(buffer,"AMF", 3)) 
 	{
 		// check for version
-		if (buffer[3] < 0xA ||
-			buffer[3] > 0xE)
+		if (buffer[3] < 0x8 &&
+			buffer[3] != 0x1)
+			return NULL;
+		if (buffer[3] > 0xE)
 			return NULL;
 	
 		return "AMF_2";
@@ -278,7 +280,14 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 	
 	mp_uword numTracks = f.readWord();
 	
-	header->channum = f.readByte();
+	if (ver >= 9)
+	{
+		header->channum = f.readByte();
+	}
+	else
+	{
+		header->channum = 4;
+	}
 	
 	mp_sint32 channelRemap[16];
 	
@@ -287,7 +296,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 		mp_ubyte panpos[32];
 		f.read(panpos, 1, (ver >= 13) ? 32 : 16);
 	}
-	else
+	else if (ver >= 9)
 	{
 		for (mp_sint32 i = 0; i < 16; i++)
 			channelRemap[i] = f.readByte();
@@ -353,7 +362,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 		else
 		{
 			loopstart = f.readWord();
-			loopend = length;
+			loopend = f.readWord();
 		}
 		
 		if (type)
@@ -407,7 +416,12 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 		mp_sbyte arg;
 		
 		tracksize = f.readWord();
-		tracksize+=((mp_sint32)f.readByte()) << 16;
+		f.readByte(); // track type
+
+		if (tracksize && ver == 1)
+		{
+			tracksize++;
+		}
 
 		if (tracksize)
 			while(tracksize--) 
@@ -535,9 +549,9 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 									nEff = 0x1C;
 									nOp = op;
 									break;
-					
+
 								// Volume slide 
-								case 2: 									
+								case 2:
 									nEff = 0x0A;
 									if (op) 
 									{
@@ -547,7 +561,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 											nOp = (-op)&0xf;
 									}
 									break;
-								
+
 								// set volume
 								case 0x03:
 									nEff = 0x0C;
@@ -593,7 +607,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 									break;
 
 								// Porta + Volume slide 
-								case 0xA: 									
+								case 0xA:
 									nEff = 0x05;
 									if (op) 
 									{
@@ -605,7 +619,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 									break;
 
 								// Vibrato + Volume slide 
-								case 0xB: 									
+								case 0xB:
 									nEff = 0x06;
 									if (op) 
 									{
@@ -641,8 +655,8 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 									break;
 									
 								// Fine Volume slide 
-								case 0x11: 									
-									if (op) 
+								case 0x11:
+									if (op)
 									{
 										if (op>=0)
 										{
@@ -658,7 +672,7 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
 									break;
 									
 								// Fine Porta
-								case 0x12: 									
+								case 0x12:
 									if (op) 
 									{
 										if (op>=0)
@@ -1264,10 +1278,16 @@ mp_sint32 LoaderAMF_2::load(XMFileBase& f, XModule* module)
  
 								// Set panning
 								case 0x17:
-									if (op > 64)
+									if (op == 100)
+									{
+										// surround
+										nEff = 0x08;
+										nOp = 0x80;
+									}
+									else
 									{
 										nEff = 0x08;
-										nOp = XModule::vol64to255(op);
+										nOp = XModule::vol128to255(op + 64);
 									}
 									break;
 							}
