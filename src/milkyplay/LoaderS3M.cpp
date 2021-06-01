@@ -488,9 +488,13 @@ mp_sint32 LoaderS3M::load(XMFileBase& f, XModule* module)
 				if (flags & 4)
 				{
 					smp[s].type |= 16;
+
+					// 8bitbubsy: fix for 16-bit S3M samples (Units are in samples, not bytes. Don't divide by two!)
+					/*
 					smp[s].samplen >>= 1;
 					smp[s].loopstart >>= 1;
 					smp[s].looplen >>= 1;
+					*/
 				}
 				
 				mp_uint32 c4spd = f.readDword();
