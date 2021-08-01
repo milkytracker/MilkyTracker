@@ -308,7 +308,8 @@ private:
 		MenuCommandIDGenerateSquare,
 		MenuCommandIDGenerateTriangle,
 		MenuCommandIDGenerateSawtooth,
-		MenuCommandIDGenerateHalfSine
+		MenuCommandIDGenerateHalfSine,
+		MenuCommandIDGenerateAbsoluteSine
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);
@@ -353,7 +354,8 @@ private:
 			SampleToolTypeGenerateSquare,
 			SampleToolTypeGenerateTriangle,
 			SampleToolTypeGenerateSawtooth,
-			SampleToolTypeGenerateHalfSine
+			SampleToolTypeGenerateHalfSine,
+			SampleToolTypeGenerateAbsoluteSine
 		};
 	
 	private:
