@@ -28,6 +28,8 @@
 #include "ContextMenu.h"
 #include "Piano.h"
 #include "Tools.h"
+#include "Tracker.h"
+#include "SampleEditor.h"
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
@@ -64,6 +66,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 										 EventListenerInterface* eventListener, 
 										 const PPPoint& location, 
 										 const PPSize& size, 
+										 Tracker& tracker,
 										 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	border(border),
@@ -119,6 +122,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry("Volume boost" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
 	subMenuAdvanced->addEntry("Volume fade" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuAdvanced->addEntry("Normalize", MenuCommandIDNormalize);
+	subMenuAdvanced->addEntry("Compress", MenuCommandIDCompress);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Backwards", MenuCommandIDReverse);
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
@@ -144,6 +148,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->addEntry("Phase Modulate", MenuCommandIDPHPaste);
 	subMenuXPaste->addEntry("Flanger", MenuCommandIDFLPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
+	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
+
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
@@ -154,6 +160,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Square" PPSTR_PERIODS, MenuCommandIDGenerateSquare);
 	subMenuGenerators->addEntry("Triangle" PPSTR_PERIODS, MenuCommandIDGenerateTriangle);
 	subMenuGenerators->addEntry("Sawtooth" PPSTR_PERIODS, MenuCommandIDGenerateSawtooth);
+	subMenuGenerators->addEntry("Half Sine" PPSTR_PERIODS, MenuCommandIDGenerateHalfSine);
+	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
 	
 	// build context menu
@@ -178,6 +186,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
 	dialog = NULL;	
+	this->tracker = (Tracker *)&tracker;
 	
 	resetLastValues();
 }
@@ -1677,6 +1686,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	
 	// update submenu states
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverse, isEmptySample);
@@ -1705,6 +1715,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateSquare, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateTriangle, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSawtooth, isEmptySample);
+	subMenuGenerators->setState(MenuCommandIDGenerateHalfSine, isEmptySample);
+	subMenuGenerators->setState(MenuCommandIDGenerateAbsoluteSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
 
 	parentScreen->setContextMenuControl(editMenuControl);
@@ -1718,6 +1730,7 @@ void SampleEditorControl::hideContextMenu()
 
 void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 {
+
 	switch (commandId)
 	{
 		// cut
@@ -1790,6 +1803,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeNew);
 			break;
 
+		case MenuCommandIDCapturePattern:
+			tracker->eventKeyDownBinding_InvokePatternCapture();
+			break;
+
 		case MenuCommandIDVolumeBoost:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeVolume);
 			break;
@@ -1808,6 +1825,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDNormalize:
 			sampleEditor->tool_normalizeSample(NULL);
+			break;
+
+		case MenuCommandIDCompress:
+			sampleEditor->tool_compressSample(NULL);
 			break;
 
 		case MenuCommandIDReverse:
@@ -1876,6 +1897,14 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDGenerateSawtooth:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateSawtooth);
+			break;
+
+		case MenuCommandIDGenerateHalfSine:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateHalfSine);
+			break;
+
+		case MenuCommandIDGenerateAbsoluteSine:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateAbsoluteSine);
 			break;
 
 	}

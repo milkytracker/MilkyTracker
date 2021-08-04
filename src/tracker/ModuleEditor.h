@@ -34,6 +34,7 @@ class SampleEditor;
 class EnvelopeEditor;
 class ModuleServices;
 class PlayerCriticalSection;
+class Tracker;
 
 class ModuleEditor
 {
@@ -387,6 +388,7 @@ public:
 	static PPSystemString getTempFilename();
 	
 	friend class ChangesListener;
+	friend class Tracker;
 };
 
 #endif

@@ -1852,6 +1852,77 @@ void SampleEditor::tool_normalizeSample(const FilterParameters* par)
 	postFilter();
 }
 
+void SampleEditor::tool_compressSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_compressSample, par);
+
+	prepareUndo();
+
+	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
+	float peak_pre = 0.0f;
+	float peak_post = 0.0f;
+	float compress = 0.8;
+
+	pp_int32 i;
+
+	// find peak value (pre)
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		if (ppfabs(f) > peak_pre) peak_pre = ppfabs(f);
+	}
+
+	// compress
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		f = compress * tanh(f / compress);       // upward compression
+		setFloatSampleInWaveform(i, f);
+	}
+
+	// find peak value (post)
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		if (ppfabs(f) > peak_post) peak_post = ppfabs(f);
+	}
+
+	float scale = 1.0f + (peak_pre - peak_post);
+
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, f * scale);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+
 void SampleEditor::tool_reverseSample(const FilterParameters* par)
 {
 	if (isEmptySample())
@@ -2922,6 +2993,109 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	}
 
 	finishUndo();	
+
+	postFilter();
+}
+
+void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_generateHalfSine, par);
+
+	mp_sint32 sLen = sEnd - sStart;
+
+	prepareUndo();
+
+	pp_int32 i;
+
+	const float numPeriods = (float)(6.283185307179586476925286766559 * par->getParameter(1).floatPart);
+	const float amplify = par->getParameter(0).floatPart;
+
+	// generate half sine wave here
+	for (i = sStart; i < sEnd / 2; i++)
+	{
+		float per = (i - sStart) / (float)sLen * numPeriods;
+		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+	}
+	for (i = sEnd / 2; i < sEnd; i++)
+	{
+		setFloatSampleInWaveform(i, 0);
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_generateAbsoluteSine, par);
+
+	mp_sint32 sLen = sEnd - sStart;
+
+	prepareUndo();
+
+	pp_int32 i;
+
+	const float numPeriods = (float)(6.283185307179586476925286766559 * par->getParameter(1).floatPart);
+	const float amplify = par->getParameter(0).floatPart;
+
+	// generate half sine wave in first and second halves
+	for (i = sStart; i < sEnd / 2; i++)
+	{
+		float per = (i - sStart) / (float)sLen * numPeriods;
+		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+	}
+	for (i = sEnd / 2; i < sEnd; i++)
+	{
+		float per = (i - sEnd / 2) / (float)sLen * numPeriods;
+		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+	}
+
+	finishUndo();
 
 	postFilter();
 }
