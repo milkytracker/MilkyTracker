@@ -804,6 +804,18 @@ pp_int32 SampleEditor::getPanning() const
 	return sample ? sample->pan : 0;
 }
 
+bool SampleEditor::isLastOperationResampling() const {
+	return lastFilterFunc == &SampleEditor::tool_resampleSample;
+}
+
+const FilterParameters* SampleEditor::getLastParameters() const {
+	return lastParameters;
+}
+
+const SampleUndoStackEntry* SampleEditor::getUndoSample() const {
+	return before;
+}
+
 void SampleEditor::startDrawing()
 {
 	if (sample)

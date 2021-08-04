@@ -94,12 +94,13 @@ DialogResample::DialogResample(PPScreen* screen,
 	count(0),
 	resamplerHelper(new ResamplerHelper()),
 	interpolationType(1),
-	adjustFtAndRelnote(true)
+	adjustFtAndRelnote(true),
+	adjustSampleOffsetCommand(true)
 {
 #ifdef __LOWRES__
-	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+15+20+16, 26+15, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 158+15+20+16, 26+15, "Ok", "Cancel");
 #else
-	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 142+20+16, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 158+20+16, 26, "Ok", "Cancel");
 #endif
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
@@ -206,7 +207,17 @@ DialogResample::DialogResample(PPScreen* screen,
 
 	x2 -= 21 * 8;
 	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust Ft/Rel.Note:", checkBox, true));	
-	
+
+	y2+=16;
+
+	x2 = x + width / 2 - (10 * 8 + 35 + 14 * 8) / 2 + 21 * 8;
+	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER3, screen, this, PPPoint(x2, y2 + 1));
+	checkBox->checkIt(adjustSampleOffsetCommand);
+	messageBoxContainerGeneric->addControl(checkBox);
+
+	x2 -= 21 * 8;
+	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust 9xx commands:", checkBox, true));
+
 	y2+=16;
 
 #ifdef __LOWRES__
@@ -372,6 +383,14 @@ pp_int32 DialogResample::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case MESSAGEBOX_CONTROL_USER3:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				this->adjustSampleOffsetCommand = reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+				break;
+			}
 		}
 	}
 	else if (event->getID() == eValueChanged)

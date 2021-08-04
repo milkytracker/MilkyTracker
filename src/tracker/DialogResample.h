@@ -48,6 +48,7 @@ private:
 	class ResamplerHelper* resamplerHelper;
 	pp_int32 interpolationType;
 	bool adjustFtAndRelnote;
+	bool adjustSampleOffsetCommand;
 
 public:
 	DialogResample(PPScreen* screen, 
@@ -74,7 +75,10 @@ public:
 
 	void setAdjustFtAndRelnote(bool adjustFtAndRelnote) { this->adjustFtAndRelnote = adjustFtAndRelnote; }
 	bool getAdjustFtAndRelnote() const { return adjustFtAndRelnote; }
-	
+
+	void setAdjustSampleOffsetCommand(bool adjustSampleOffsetCommand) { this->adjustSampleOffsetCommand = adjustSampleOffsetCommand; }
+	bool getAdjustSampleOffsetCommand() const { return adjustSampleOffsetCommand; }
+
 private:
 	void listBoxEnterEditState(pp_int32 id);
 	

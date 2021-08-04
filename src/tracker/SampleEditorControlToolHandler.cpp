@@ -233,10 +233,11 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.resampleInterpolationType = static_cast<DialogResample*>(dialog)->getInterpolationType();
 			lastValues.adjustFtAndRelnote = static_cast<DialogResample*>(dialog)->getAdjustFtAndRelnote();
 
-			FilterParameters par(3);
+			FilterParameters par(4);
 			par.setParameter(0, FilterParameters::Parameter(static_cast<DialogResample*>(dialog)->getC4Speed()));
 			par.setParameter(1, FilterParameters::Parameter(static_cast<pp_int32>(lastValues.resampleInterpolationType)));
 			par.setParameter(2, FilterParameters::Parameter(lastValues.adjustFtAndRelnote ? 1 : 0));
+			par.setParameter(3, FilterParameters::Parameter(lastValues.adjustSampleOffsetCommands ? 1 : 0));
 			sampleEditor->tool_resampleSample(&par);
 			break;
 		}

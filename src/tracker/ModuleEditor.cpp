@@ -24,6 +24,7 @@
 #include "ModuleEditor.h"
 #include "PatternEditor.h"
 #include "SampleEditor.h"
+#include "FilterParameters.h"
 #include "EnvelopeEditor.h"
 #include "ModuleServices.h"
 #include "PlayerCriticalSection.h"
@@ -75,7 +76,17 @@ private:
 			case EditorBase::NotificationChanges:
 			{
 				if (sender == moduleEditor.sampleEditor)
+				{
 					moduleEditor.finishSamples();
+					if (moduleEditor.sampleEditor->isLastOperationResampling())
+					{
+						const bool adjustSampleOffsetCommands = moduleEditor.sampleEditor->getLastParameters()->getParameter(3).intPart;
+						if (adjustSampleOffsetCommands)
+						{
+							moduleEditor.adjustSampleOffsetCommandsAfterSampleSizeChange(moduleEditor.sampleEditor->getSample(), moduleEditor.sampleEditor->getUndoSample()->getSampLen());
+						}
+					}
+				}
 				moduleEditor.setChanged();
 				break;
 			}
@@ -2461,6 +2472,66 @@ void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 
 	if (!evaluate && (numMinimizedSamples || numConvertedSamples))
 		changed = true;
+}
+
+pp_int32 ModuleEditor::adjustSampleOffsetCommandsAfterSampleSizeChange(TXMSample *sample, pp_int32 oldSize)
+{
+	mp_sint32 i,j;
+
+	mp_ubyte* lastIns = new mp_ubyte[module->header.channum];
+	memset(lastIns, 0, module->header.channum);
+
+	for (mp_sint32 l = 0; l < module->header.ordnum; l++)
+	{
+		TXMPattern* pattern = &module->phead[module->header.ord[l]];
+
+		if (pattern->patternData == NULL)
+			continue;
+
+		mp_sint32 slotSize = pattern->effnum * 2 + 2;
+		mp_sint32 rowSizeSrc = slotSize*pattern->channum;
+
+		for (i = 0; i < pattern->rows; i++)
+		{
+			for (j = 0; j < pattern->channum; j++)
+			{
+				mp_ubyte* src = pattern->patternData + i*rowSizeSrc+j*slotSize;
+
+				if (src[1])
+				{
+					lastIns[j] = src[1];
+				}
+
+
+				if (src[0] && src[0] < 120)
+				{
+					for (mp_sint32 k = 0; k < pattern->effnum; k++) {
+						if (src[k * 2 + 2] == 0x9) {
+
+							mp_sint32 op = (((mp_sint32)src[k * 2 + 3]) << 8);
+							if (lastIns[j])
+							{
+								mp_sint32 insIndex = lastIns[j] - 1;
+
+								mp_sint32 smpIndex = module->instr[insIndex].snum[src[0]-1];
+
+								if (smpIndex >= 0 && smpIndex < MP_MAXSAMPLES)
+								{
+									if (&module->smp[smpIndex] == sample)
+									{
+										const float factor = (float)sample->samplen / (float)oldSize;
+										op = ((mp_sint32)((float)op * factor)) >> 8;
+										src[k * 2 + 3] = (mp_ubyte)op;
+									}
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void ModuleEditor::insertText(char* dst, const char* src, mp_sint32 max)
