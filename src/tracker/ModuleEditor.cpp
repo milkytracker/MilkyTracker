@@ -2475,7 +2475,7 @@ void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 		changed = true;
 }
 
-pp_int32 ModuleEditor::adjustSampleOffsetCommandAfterSampleSizeChange(TXMSample *sample, pp_int32 oldSize)
+void ModuleEditor::adjustSampleOffsetCommandAfterSampleSizeChange(TXMSample *sample, pp_int32 oldSize)
 {
 	mp_sint32 i,j;
 
