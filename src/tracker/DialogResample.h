@@ -37,7 +37,8 @@ class DialogResample : public PPDialogBase
 {
 private:
 	class PPListBox* listBoxes[3];
-	class PPCheckBox* checkBox;
+	class PPCheckBox* checkBoxAdjustFtAndRelnote;
+	class PPCheckBox* checkBoxAdjustSampleOffsetCommand;
 	pp_int32 currentSelectedListBox;
 	pp_int32 relnote, finetune;
 	pp_uint32 size, finalSize;

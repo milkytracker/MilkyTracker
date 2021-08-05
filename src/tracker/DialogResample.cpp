@@ -95,7 +95,7 @@ DialogResample::DialogResample(PPScreen* screen,
 	resamplerHelper(new ResamplerHelper()),
 	interpolationType(1),
 	adjustFtAndRelnote(true),
-	adjustSampleOffsetCommand(true)
+	adjustSampleOffsetCommand(false)
 {
 #ifdef __LOWRES__
 	initDialog(screen, responder, id, "Resample" PPSTR_PERIODS, 290, 158+15+20+16, 26+15, "Ok", "Cancel");
@@ -201,22 +201,22 @@ DialogResample::DialogResample(PPScreen* screen,
 	y2+=16;
 
 	x2 = x + width / 2 - (10 * 8 + 35 + 14 * 8) / 2 + 21 * 8;
-	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER2, screen, this, PPPoint(x2, y2 + 1));
-	checkBox->checkIt(adjustFtAndRelnote);
-	messageBoxContainerGeneric->addControl(checkBox);
+	checkBoxAdjustFtAndRelnote = new PPCheckBox(MESSAGEBOX_CONTROL_USER2, screen, this, PPPoint(x2, y2 + 1));
+	checkBoxAdjustFtAndRelnote->checkIt(adjustFtAndRelnote);
+	messageBoxContainerGeneric->addControl(checkBoxAdjustFtAndRelnote);
 
 	x2 -= 21 * 8;
-	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust Ft/Rel.Note:", checkBox, true));	
+	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust Ft/Rel.Note:", checkBoxAdjustFtAndRelnote, true));	
 
 	y2+=16;
 
 	x2 = x + width / 2 - (10 * 8 + 35 + 14 * 8) / 2 + 21 * 8;
-	checkBox = new PPCheckBox(MESSAGEBOX_CONTROL_USER3, screen, this, PPPoint(x2, y2 + 1));
-	checkBox->checkIt(adjustSampleOffsetCommand);
-	messageBoxContainerGeneric->addControl(checkBox);
+	checkBoxAdjustSampleOffsetCommand = new PPCheckBox(MESSAGEBOX_CONTROL_USER3, screen, this, PPPoint(x2, y2 + 1));
+	checkBoxAdjustSampleOffsetCommand->checkIt(adjustSampleOffsetCommand);
+	messageBoxContainerGeneric->addControl(checkBoxAdjustSampleOffsetCommand);
 
 	x2 -= 21 * 8;
-	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust 9xx commands:", checkBox, true));
+	messageBoxContainerGeneric->addControl(new PPCheckBoxLabel(0, screen, this, PPPoint(x2, y2 + 2), "Adjust 9xx commands:", checkBoxAdjustSampleOffsetCommand, true));
 
 	y2+=16;
 
@@ -441,7 +441,8 @@ void DialogResample::updateListBoxes()
 	PPStaticText* staticText = static_cast<PPStaticText*>(messageBoxContainerGeneric->getControlByID(MESSAGEBOX_STATICTEXT_USER1));
 	staticText->setHexValue(finalSize, 8);	
 
-	checkBox->checkIt(adjustFtAndRelnote);
+	checkBoxAdjustFtAndRelnote->checkIt(adjustFtAndRelnote);
+	checkBoxAdjustSampleOffsetCommand->checkIt(adjustSampleOffsetCommand);
 }
 
 void DialogResample::updateListBox(pp_int32 id, float val, pp_int32 numDecimals)

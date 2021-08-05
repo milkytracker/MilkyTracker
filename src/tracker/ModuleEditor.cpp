@@ -80,10 +80,10 @@ private:
 					moduleEditor.finishSamples();
 					if (moduleEditor.sampleEditor->isLastOperationResampling())
 					{
-						const bool adjustSampleOffsetCommands = moduleEditor.sampleEditor->getLastParameters()->getParameter(3).intPart;
-						if (adjustSampleOffsetCommands)
+						const bool adjustSampleOffsetCommand = moduleEditor.sampleEditor->getLastParameters()->getParameter(3).intPart;
+						if (adjustSampleOffsetCommand)
 						{
-							moduleEditor.adjustSampleOffsetCommandsAfterSampleSizeChange(moduleEditor.sampleEditor->getSample(), moduleEditor.sampleEditor->getUndoSample()->getSampLen());
+							moduleEditor.adjustSampleOffsetCommandAfterSampleSizeChange(moduleEditor.sampleEditor->getSample(), moduleEditor.sampleEditor->getUndoSample()->getSampLen());
 						}
 					}
 				}
@@ -2474,7 +2474,7 @@ void ModuleEditor::optimizeSamples(bool convertTo8Bit, bool minimize,
 		changed = true;
 }
 
-pp_int32 ModuleEditor::adjustSampleOffsetCommandsAfterSampleSizeChange(TXMSample *sample, pp_int32 oldSize)
+pp_int32 ModuleEditor::adjustSampleOffsetCommandAfterSampleSizeChange(TXMSample *sample, pp_int32 oldSize)
 {
 	mp_sint32 i,j;
 
@@ -2508,7 +2508,7 @@ pp_int32 ModuleEditor::adjustSampleOffsetCommandsAfterSampleSizeChange(TXMSample
 					for (mp_sint32 k = 0; k < pattern->effnum; k++) {
 						if (src[k * 2 + 2] == 0x9) {
 
-							mp_sint32 op = (((mp_sint32)src[k * 2 + 3]) << 8);
+							mp_sint32 op = src[k * 2 + 3];
 							if (lastIns[j])
 							{
 								mp_sint32 insIndex = lastIns[j] - 1;
@@ -2520,7 +2520,10 @@ pp_int32 ModuleEditor::adjustSampleOffsetCommandsAfterSampleSizeChange(TXMSample
 									if (&module->smp[smpIndex] == sample)
 									{
 										const float factor = (float)sample->samplen / (float)oldSize;
-										op = ((mp_sint32)((float)op * factor)) >> 8;
+										op = (mp_sint32)roundf(op * factor);
+										if (op > 255) {
+											op = 255;
+										}
 										src[k * 2 + 3] = (mp_ubyte)op;
 									}
 								}
