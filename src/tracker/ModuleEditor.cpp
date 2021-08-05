@@ -21,6 +21,7 @@
  */
 
 #include <new>
+#include <math.h>
 #include "ModuleEditor.h"
 #include "PatternEditor.h"
 #include "SampleEditor.h"
