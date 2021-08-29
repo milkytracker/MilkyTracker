@@ -47,6 +47,7 @@ struct SampleEditorControlLastValues
 	
 	pp_int32 resampleInterpolationType;
 	bool adjustFtAndRelnote;
+	bool adjustSampleOffsetCommand;
 	
 	static float invalidFloatValue() 
 	{
@@ -72,6 +73,7 @@ struct SampleEditorControlLastValues
 		hasEQ3BandValues = hasEQ10BandValues = false;
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
+		adjustSampleOffsetCommand = false;
 	}
 		
 	PPDictionary convertToDictionary()
@@ -97,6 +99,8 @@ struct SampleEditorControlLastValues
 		result.store("resampleInterpolationType", resampleInterpolationType);
 		
 		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
+
+		result.store("adjustSampleOffsetCommands", adjustSampleOffsetCommand);
 		return result;
 	}
 	
@@ -149,7 +153,11 @@ struct SampleEditorControlLastValues
 			{
 				adjustFtAndRelnote = key->getBoolValue();
 			}
-		
+			else if (key->getKey().compareToNoCase("adjustSampleOffsetCommands") == 0)
+			{
+				adjustSampleOffsetCommand = key->getBoolValue();
+			}
+
 			key = dictionary.getNextKey();
 		}
 	}

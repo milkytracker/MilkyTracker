@@ -239,6 +239,10 @@ public:
 
 	bool isEmpty() const { if (sample && !sample->sample) return true; else return false; } 
 
+	bool isLastOperationResampling() const;
+	const FilterParameters* getLastParameters() const;
+	const SampleUndoStackEntry* getUndoSample() const;
+
 	void startDrawing();
 	bool isDrawing() const { return drawing; }
 	void drawSample(pp_int32 sampleIndex, float s);
