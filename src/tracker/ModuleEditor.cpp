@@ -31,6 +31,7 @@
 #include "PlayerCriticalSection.h"
 #include "TrackerConfig.h"
 #include "PPSystem.h"
+#include "version.h"
 
 static const char validCharacters[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!.";
 
@@ -787,7 +788,7 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 	{
 		case ModSaveTypeDefault:
 		case ModSaveTypeXM:
-			res = module->saveExtendedModule(fileName) == 0;
+			res = module->saveExtendedModule(fileName, MILKYTRACKER_VERSION_STRING) == 0;
 			break;
 			
 		case ModSaveTypeMOD:
@@ -809,9 +810,8 @@ bool ModuleEditor::saveSong(const SYSCHAR* fileName, ModSaveTypes saveType/* = e
 
 mp_sint32 ModuleEditor::saveBackup(const SYSCHAR* fileName)
 {
-	return module->saveExtendedModule(fileName);
+	return module->saveExtendedModule(fileName, MILKYTRACKER_VERSION_STRING);
 }
-
 
 void ModuleEditor::increaseSongLength()
 {
