@@ -1341,7 +1341,7 @@ static void sort(mp_sword* array,mp_sint32 l, mp_sint32 r)
 	if (i<r) sort(array,i,r);
 }
 
-mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
+mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName, const char* trackerString/* = NULL*/)
 {
 	mp_sint32 i,j,k,l;
 	
@@ -1387,12 +1387,19 @@ mp_sint32 XModule::saveExtendedModule(const SYSCHAR* fileName)
 		f.write(header.name, 1, 20);
 	header.whythis1a = 0x1a;
 	f.writeByte(header.whythis1a);
-#ifdef MILKYTRACKER
-#include "../tracker/version.h"
-	f.write(MILKYTRACKER_VERSION_STRING, 1, 20);
-#else
-	f.write(header.tracker, 1, 20);
-#endif
+    
+	if (trackerString != NULL) {
+		char trackerStringBuffer[20];
+		memset(trackerStringBuffer, 0, sizeof(trackerStringBuffer));
+		const mp_sint32 len = (mp_sint32)strlen(trackerString);
+		memcpy(trackerStringBuffer, trackerString, len > 20 ? 20 : len);
+		f.write(trackerStringBuffer, 1, 20);
+	}
+	else
+	{
+		f.write(header.tracker, 1, 20);
+	}
+	
 	header.ver = 0x104;
 	f.writeWord(header.ver);
 	header.hdrsize = 276;

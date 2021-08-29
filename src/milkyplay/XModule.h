@@ -640,7 +640,7 @@ public:
 	///////////////////////////////////////////////////
 	// Module exporters								 //
 	///////////////////////////////////////////////////
-	mp_sint32		saveExtendedModule(const SYSCHAR* fileName);		// FT2 (.XM)
+	mp_sint32		saveExtendedModule(const SYSCHAR* fileName, const char* trackerString = NULL);		// FT2 (.XM)
 	mp_sint32		saveProtrackerModule(const SYSCHAR* fileName);   // Protracker compatible (.MOD)
 
 	///////////////////////////////////////////////////
