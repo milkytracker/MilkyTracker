@@ -888,9 +888,24 @@ void SampleEditor::clearSample()
 	tool_clearSample(&par);
 }
 
+void SampleEditor::mixSpreadPasteSample()
+{
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(0) ); // spreads selection across sample (changes pitch)
+	tool_mixPasteSample(&par);
+}
+
 void SampleEditor::mixPasteSample()
 {
-	FilterParameters par(0);
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(1) ); // paste's selection on top new selection start (preserve pitch)
+	tool_mixPasteSample(&par);
+}
+
+void SampleEditor::mixOverflowPasteSample()
+{
+	FilterParameters par(1);
+	par.setParameter(0, FilterParameters::Parameter(2)); // paste's selection on top new selection start (preserves pitch + overflow) 
 	tool_mixPasteSample(&par);
 }
 
@@ -1398,6 +1413,10 @@ void SampleEditor::tool_convertSampleResolution(const FilterParameters* par)
 
 void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 {
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	bool preservePitch  = par->getParameter(0).intPart > 0;
+	bool overflow       = par->getParameter(0).intPart > 1;
 	if (isEmptySample())
 		return;
 
@@ -1406,6 +1425,7 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
+	
 	
 	if (hasValidSelection())
 	{
@@ -1419,32 +1439,32 @@ void SampleEditor::tool_mixPasteSample(const FilterParameters* par)
 	}
 	else
 	{
-		sStart = 0;
+		sStart = preservePitch ? sStart : 0;
 		sEnd = sample->samplen;
 	}
-	
+	if (preservePitch) sEnd = sStart + clipBoard->getWidth();
+
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
 	
-	ClipBoard* clipBoard = ClipBoard::getInstance();
-	
-	float step = (float)clipBoard->getWidth() / (float)(sEnd-sStart);
+	// preserve pitch (otherwise stretch clipboard to selection)
+	float step = preservePitch ? 1 : (float)clipBoard->getWidth() / (float)(sEnd - sStart);
 	
 	float j = 0.0f;
 	for (pp_int32 i = sStart; i < sEnd; i++)
 	{
 		float frac = j - (float)floor(j);
-	
 		pp_int16 s = clipBoard->getSampleWord((pp_int32)j);
 		float f1 = s < 0 ? (s/32768.0f) : (s/32767.0f);
-		s = clipBoard->getSampleWord((pp_int32)j+1);
+		s = clipBoard->getSampleWord( ((pp_int32)j+ 1) % sample->samplen );
 		float f2 = s < 0 ? (s/32768.0f) : (s/32767.0f);
 
 		float f = (1.0f-frac)*f1 + frac*f2;
 		
-		setFloatSampleInWaveform(i, f + getFloatSampleFromWaveform(i));
+		setFloatSampleInWaveform(i % sample->samplen, f + getFloatSampleFromWaveform(i % sample->samplen));
 		j+=step;
+		if (!overflow && i == sample->samplen) break;
 	}
 				
 	finishUndo();	
@@ -1752,7 +1772,6 @@ void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
 	postFilter();
 
 }
-
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {

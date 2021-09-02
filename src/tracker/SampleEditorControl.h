@@ -280,6 +280,8 @@ private:
 	{
 		MenuCommandIDCrop = 99,
 		MenuCommandIDMixPaste,
+		MenuCommandIDMixOverflowPaste,
+		MenuCommandIDMixSpreadPaste,
 		MenuCommandIDAMPaste,
 		MenuCommandIDFMPaste,
 		MenuCommandIDPHPaste,

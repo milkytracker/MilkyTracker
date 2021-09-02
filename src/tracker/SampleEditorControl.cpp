@@ -143,9 +143,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
-	subMenuXPaste->addEntry("Amp Modulate", MenuCommandIDAMPaste);
-	subMenuXPaste->addEntry("Freq Modulate", MenuCommandIDFMPaste);
-	subMenuXPaste->addEntry("Phase Modulate", MenuCommandIDPHPaste);
+	subMenuXPaste->addEntry("Mix (overflow)", MenuCommandIDMixOverflowPaste);
+	subMenuXPaste->addEntry("Mix (spread)", MenuCommandIDMixSpreadPaste);
+	subMenuXPaste->addEntry("Modulate Amp", MenuCommandIDAMPaste);
+	subMenuXPaste->addEntry("Modulate Freq", MenuCommandIDFMPaste);
+	subMenuXPaste->addEntry("Modulate Phase", MenuCommandIDPHPaste);
 	subMenuXPaste->addEntry("Flanger", MenuCommandIDFLPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
@@ -1703,6 +1705,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
 
 	subMenuXPaste->setState(MenuCommandIDMixPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMixOverflowPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
+	subMenuXPaste->setState(MenuCommandIDMixSpreadPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDAMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDFMPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 	subMenuXPaste->setState(MenuCommandIDPHPaste, sampleEditor->clipBoardIsEmpty() || isEmptySample);
@@ -1750,7 +1754,17 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->paste();
 			break;
 
-		// mix-paste
+		// mix-paste spread
+		case MenuCommandIDMixOverflowPaste:
+			sampleEditor->mixOverflowPasteSample();
+			break;
+
+		// mix-paste spread
+		case MenuCommandIDMixSpreadPaste:
+			sampleEditor->mixSpreadPasteSample();
+			break;
+
+		// mix-paste stencil-like (preserves pitch)
 		case MenuCommandIDMixPaste:
 			sampleEditor->mixPasteSample();
 			break;
