@@ -182,6 +182,11 @@ void PlayerBase::restart(mp_uint32 startPosition/* = 0*/, mp_uint32 startRow/* =
 //////////////////////////////////////////////////////
 // setup mixer and start playing
 //////////////////////////////////////////////////////
+void PlayerBase::setNumChannelMixerChannelsToModuleCount(XModule *module)
+{
+	ChannelMixer::setNumChannels(module->header.channum);
+}
+
 mp_sint32 PlayerBase::startPlaying(XModule *module,
 							   bool repeat /* = false*/,
 							   mp_uint32 startPosition /* = 0*/, 

@@ -973,6 +973,12 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 
 	if (player)
 	{
+		// Resize channel mixer count before muting to make sure muting happens correctly.
+		// If it can be verified that calling the muting code after player->startPlaying but
+		// before mixer.start doesn't cause any issues, this function can be removed
+		// and the muting code moved after player->startPlaying.
+		player->setNumChannelMixerChannelsToModuleCount(module);
+		
 		if (mutingArray && mutingNumChannels > 0 && mutingNumChannels <= module->header.channum)
 		{
 			for (mp_uint32 i = 0; i < mutingNumChannels; i++)

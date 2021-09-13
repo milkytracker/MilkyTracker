@@ -229,6 +229,8 @@ public:
 
 	virtual void resetAllSpeed() {}	
 	
+	virtual void setNumChannelMixerChannelsToModuleCount(XModule *module);
+
 	virtual mp_sint32   startPlaying(XModule* module, 
 									 bool repeat = false, 
 									 mp_uint32 startPosition = 0, 
