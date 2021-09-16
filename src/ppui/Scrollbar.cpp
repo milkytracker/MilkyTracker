@@ -518,7 +518,7 @@ pp_int32 PPScrollbar::handleEvent(PPObject* sender, PPEvent* event)
 		)
 	{
 		// Call parent event listener
-		PPEvent e(eBarScrollUp);
+		PPEvent e(eBarScrollUp, 1); //metaData=1 for scrolling with the scrollbar buttons
 		return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 	}
 	if (
@@ -533,7 +533,7 @@ pp_int32 PPScrollbar::handleEvent(PPObject* sender, PPEvent* event)
 		)
 	{
 		// Call parent event listener
-		PPEvent e(eBarScrollDown);
+		PPEvent e(eBarScrollDown, 1); //metaData=1 for scrolling with the scrollbar buttons
 		return eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 	}
 	else if (/*event->getID() == eLMouseDown &&*/
