@@ -55,7 +55,7 @@ private:
 	pp_int32 fxTicker;
 	
 	class PPFont* font;
-	pp_int32 xPos, currentSpeed;
+	pp_int32 xPos;
 	pp_int32 currentCharIndex;
 	pp_uint32 textBufferMaxChars;
 	pp_uint32 lastTime;

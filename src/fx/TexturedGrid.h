@@ -38,7 +38,6 @@ protected:
 	int				gridWidth, gridHeight;
 
 	unsigned short* texture;
-	unsigned short* buffer;
 
 	int				sintab[1024];
 
