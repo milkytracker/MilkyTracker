@@ -44,15 +44,44 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	borderColor(&TrackerConfig::colorThemeMain),
 	cursorColor(&TrackerConfig::colorPatternEditorCursorLine),
 	selectionColor(&TrackerConfig::colorPatternEditorSelection),
-	menuPosX(0), menuPosY(0),
+	font(NULL),
+	hTopScrollbar(NULL), hBottomScrollbar(NULL), vLeftScrollbar(NULL), vRightScrollbar(NULL),
+	caughtControl(NULL),
+	controlCaughtByLMouseButton(false), controlCaughtByRMouseButton(false),
+	patternEditor(NULL), module(NULL), pattern(NULL),
+	currentOrderlistIndex(0),
+	songPos(),
+	startIndex(0), startPos(0),
+	visibleWidth(0), visibleHeight(0), slotSize(0),
+	muteChannels(),
+	recChannels(),
+	cursorPositions(),
+	cursorSizes(),
+	cursorCopy(), preCursor(), ppreCursor(NULL),
+	startSelection(false),
+	keyboardStartSelection(false),
+	assureUpdate(false), assureCursor(false),
+	selectionTicker(0),
+	hasDragged(false),
+	moveSelection(false),
+	moveSelectionInitialPos(),
+	moveSelectionFinalPos(),
+	menuPosX(0),
+	menuPosY(0),
 	menuInvokeChannel(-1), lastMenuInvokeChannel(-1),
+	editMenuControl(NULL),
 	eventKeyDownBindings(NULL),
 	scanCodeBindings(NULL),
 	eventKeyDownBindingsMilkyTracker(NULL), scanCodeBindingsMilkyTracker(NULL), eventKeyDownBindingsFastTracker(NULL), scanCodeBindingsFastTracker(NULL),
-	patternEditor(NULL), module(NULL), pattern(NULL),
-	ppreCursor(NULL),
-	lastAction(RMouseDownActionInvalid), RMouseDownInChannelHeading(-1)
+	editMode(),
+	selectionKeyModifier(0),
+	lastAction(RMouseDownActionInvalid), RMouseDownInChannelHeading(-1),
+
+	dialog(NULL),
+	transposeHandlerResponder(NULL)
 {
+	fprintf(stderr, "%d %d\n", undoInfo.startIndex, undoInfo.startPos);
+
 	// default color
 	bgColor.r = 0;
 	bgColor.g = 0;
@@ -63,20 +92,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	hTopScrollbar = new PPScrollbar(2, parentScreen, this, PPPoint(location.x + SCROLLBARWIDTH, location.y), size.width - SCROLLBARWIDTH*2, true);		
 	hBottomScrollbar = new PPScrollbar(3, parentScreen, this, PPPoint(location.x + SCROLLBARWIDTH, location.y + size.height - SCROLLBARWIDTH), size.width - SCROLLBARWIDTH*2, true);
 	
-	caughtControl = NULL;
-	controlCaughtByLMouseButton = controlCaughtByRMouseButton = false;
-	pattern = NULL;
-
-	startIndex = 0;	
-	startPos = 0;
-
 	songPos.orderListIndex = songPos.row = -1;
-
-	startSelection = false;
-
-	// assuming false is zero :)
-	memset(muteChannels, 0, sizeof(muteChannels));	
-	memset(recChannels, 0 ,sizeof(recChannels));
 
 	// context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, false, PPFont::getFont(PPFont::FONT_SYSTEM));
@@ -113,7 +129,6 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	setRecordMode(false);
 	
 	transposeHandlerResponder = new TransposeHandlerResponder(*this);
-	dialog = NULL;
 }
 
 PatternEditorControl::~PatternEditorControl()

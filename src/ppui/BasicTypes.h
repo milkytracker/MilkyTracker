@@ -170,7 +170,8 @@ struct PPColor
 		r(red), g(green), b(blue)
 	{}
 
-	PPColor()
+	PPColor() :
+		r(), g(), b()
 	{}
 	
 	void validate()
