@@ -24,6 +24,7 @@
 #include "Math3d.h"
 #include "Filter.h"
 #include "Texture.h"
+#include <stdint.h>
 
 #define PRGB2SHORT(r,g,b) ((((r))<<11)+(((g))<<5)+((b))) 
 #define RGB2SHORT(r,g,b) ((((r>>3))<<11)+(((g>>2))<<5)+((b>>3))) 
@@ -46,10 +47,9 @@ TexturedGrid::TexturedGrid(int width, int height, int gridshift)
 	this->gridHeight = (height>>gridshift)+1;
 
 	grid = new VectorFP[gridWidth*gridHeight];
+	memset(this->grid, 0, (size_t) gridWidth * gridHeight * sizeof(VectorFP));
 
 	this->texture = NULL;	// we're not rendering anything until texture is set
-
-	this->buffer = new unsigned short[width*height];
 
 	// for debugging, load texture
 	int i;
@@ -109,9 +109,6 @@ TexturedGrid::~TexturedGrid()
 {
 	if (grid)
 		delete[] grid;
-
-	if (buffer)
-		delete[] buffer;
 
 	if (texture)
 		delete[] texture;

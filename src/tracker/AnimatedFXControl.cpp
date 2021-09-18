@@ -119,7 +119,7 @@ AnimatedFXControl::AnimatedFXControl(pp_int32 id,
 									 bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&ourOwnBorderColor),
-	fx(NULL), vscreen(NULL)
+	fx(NULL), vscreen(NULL), fxTicker(0)
 {
 	this->border = border;
 
