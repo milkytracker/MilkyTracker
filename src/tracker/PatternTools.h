@@ -34,7 +34,6 @@ private:
 	pp_int32 offset;
 	pp_int32 currentEffectIndex;
 	struct TXMPattern* pattern;
-	pp_int32 lockOffset;
 
 public:
 	PatternTools() :

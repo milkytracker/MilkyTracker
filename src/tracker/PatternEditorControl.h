@@ -66,7 +66,9 @@ private:
 		pp_int32 startIndex;
 		pp_int32 startPos;
 		
-		UndoInfo()
+		UndoInfo() :
+			startIndex(),
+			startPos()
 		{
 		}
 		
@@ -82,8 +84,6 @@ private:
 	const PPColor* cursorColor;
 	const PPColor* selectionColor;
 
-	bool border;
-	
 	struct Properties
 	{
 		bool showFocus;
@@ -177,7 +177,6 @@ private:
 
 	// edit menu
 	pp_int32 menuPosX;
-	pp_int32 menuPosXOffset;
 	pp_int32 menuPosY;
 	pp_int32 menuInvokeChannel;
 	pp_int32 lastMenuInvokeChannel;
