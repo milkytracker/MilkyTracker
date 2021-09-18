@@ -63,12 +63,21 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 					 bool scrollable/* = true*/,
 					 bool showSelectionAlways/*= false*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
+	border(border),
 	borderColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBorder)),
 	backGroundButtonColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground)),
 	// default textcolor 
 	textColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText)),
+
+	editable(editable),
+	scrollable(scrollable),
 	autoHideVScroll(true),
 	autoHideHScroll(true),
+
+	showIndex(false),
+	indexBaseCount(1),
+
+	showSelectionAlways(showSelectionAlways),
 	selectionVisible(true),
 	onlyShowIndexSelection(false),
 	keepsFocus(true),
@@ -78,22 +87,44 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 	singleButtonClickEdit(false),
 	allowDragSelection(true),
 	rightButtonConfirm(false),
+
+	items(NULL),
+	startIndex(0),
+	startPos(0),
+	selectionIndex(showSelectionAlways ? 0 : -1),
+	columnSelectionStart(-1),
+	columnSelectionEnd(-1),
+	// "unlimited" editing
+	maxEditSize(-1),
+	timerTicker(0),
+	lastTimerState(false),
+
+	visibleHeight(0),
+	visibleWidth(0),
+
+	backgroundButton(NULL),
+
 	hScrollbar(NULL),
 	vScrollbar(NULL),
+
+	caughtControl(NULL),
+	controlCaughtByLMouseButton(false), controlCaughtByRMouseButton(false),
+	lMouseDown(false), rMouseDown(false),
+
+	font(NULL),
+
+	editCopy(NULL),
+
+	lastStartIndex(0),
+	lastStartPos(0),
+	lastSelectionIndex(0),
+	hadVScrollbar(false),
+	hadHScrollbar(false),
+
 	colorQueryListener(NULL)
 {
-	this->border = border;
-
-	this->editable = editable;
-	this->scrollable = scrollable;
-
-	this->showSelectionAlways = showSelectionAlways;
-
-	showIndex = false;
 	indexBaseCount = 1;
 
-	// "unlimited" editing
-	maxEditSize = -1;
 
 	//this->clickable = clickable;
 
@@ -103,19 +134,7 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 	// create background button
 	initialize();
 
-	caughtControl = NULL;
-	controlCaughtByLMouseButton = controlCaughtByRMouseButton = false;
-	lMouseDown = rMouseDown = false;
-
 	font = PPFont::getFont(PPFont::FONT_SYSTEM);
-
-	startIndex = 0;	
-	startPos = 0;
-	timerTicker = 0;
-
-	selectionIndex = showSelectionAlways ? 0 : -1;
-	
-	columnSelectionStart = -1;
 
 	adjustScrollbars();
 
