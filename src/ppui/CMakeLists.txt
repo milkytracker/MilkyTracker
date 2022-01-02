@@ -21,8 +21,8 @@
 
 add_subdirectory(osinterface)
 
-set(
-    SOURCES
+add_library(ppui STATIC
+    # Sources
     Button.cpp
     CheckBox.cpp
     CheckBoxLabel.cpp
@@ -57,10 +57,8 @@ set(
     StaticText.cpp
     Tools.cpp
     TransparentContainer.cpp
-)
 
-set(
-    HEADERS
+    # Headers
     BasicTypes.h
     Button.h
     CheckBox.h
@@ -104,43 +102,50 @@ set(
     VirtualKeys.h
 )
 
+target_include_directories(ppui
+    PUBLIC
+        .
+    PRIVATE
+        osinterface
+)
+
+target_link_libraries(ppui PRIVATE osinterface)
+
 # Add platform-specific sources and include paths
 if(APPLE)
-    list(APPEND SOURCES cocoa/DisplayDevice_COCOA.mm)
-    list(APPEND HEADERS cocoa/DisplayDevice_COCOA.h)
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${PROJECT_SOURCE_DIR}/src/tracker/cocoa
+    target_sources(ppui
+        PRIVATE
+            cocoa/DisplayDevice_COCOA.mm
+            cocoa/DisplayDevice_COCOA.h
+    )
+    target_include_directories(ppui
+        PRIVATE
+            ${PROJECT_SOURCE_DIR}/src/tracker/cocoa
+        PUBLIC
+            cocoa
     )
 elseif(WIN32)
-    list(APPEND SOURCES win32/DisplayDevice_WIN32.cpp)
-    list(APPEND HEADERS win32/DisplayDevice_WIN32.h)
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
-        ${PROJECT_SOURCE_DIR}/src/milkyplay
+    target_sources(ppui
+        PRIVATE
+            win32/DisplayDevice_WIN32.cpp
+            win32/DisplayDevice_WIN32.h
     )
-elseif(AROS OR AMIGA)
-    list(APPEND SOURCES
-        sdl/DisplayDeviceFB_SDL.cpp
-        sdl/DisplayDevice_SDL.cpp
-    )
-    list(APPEND HEADERS
-        sdl/DisplayDeviceFB_SDL.h
-        sdl/DisplayDevice_SDL.h
-    )
-    include_directories(
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/amiga
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
-        ${SDL_INCLUDE_DIRS}
+    target_include_directories(ppui
+        PRIVATE
+            ${PROJECT_SOURCE_DIR}/src/milkyplay
+        PUBLIC
+            win32
     )
 else()
-    list(APPEND SOURCES
-        sdl/DisplayDeviceFB_SDL.cpp
-        sdl/DisplayDevice_SDL.cpp
-    )
-    list(APPEND HEADERS
-        sdl/DisplayDeviceFB_SDL.h
-        sdl/DisplayDevice_SDL.h
+    target_sources(ppui
+        PRIVATE
+            # Sources
+            sdl/DisplayDeviceFB_SDL.cpp
+            sdl/DisplayDevice_SDL.cpp
+
+            # Headers
+            sdl/DisplayDeviceFB_SDL.h
+            sdl/DisplayDevice_SDL.h
     )
     if(AROS OR AMIGA)
         target_include_directories(ppui
@@ -155,19 +160,7 @@ else()
     endif()
 endif()
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/src/ppui
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-)
-
-add_library(ppui ${SOURCES} ${HEADERS})
-
 if(APPLE)
     # Enable ARC (automatic reference counting) for OS X build
     target_compile_options(ppui PRIVATE -fobjc-arc)
 endif()
-
-target_link_libraries(
-    ppui
-    osinterface
-)
