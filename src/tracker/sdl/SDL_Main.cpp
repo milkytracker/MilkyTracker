@@ -170,11 +170,7 @@ enum SDLUserEvents
 	SDLUserEventMidiKeyUp,
 };
 
-#ifdef AMIGA
-static SDLCALL Uint32 timerCallback(Uint32 interval)
-#else
-static SDLCALL Uint32 timerCallback(Uint32 interval, void* param)
-#endif
+static Uint32 SDLCALL timerCallback(Uint32 interval, void* param)
 {
 	if (!myTrackerScreen || !myTracker || !ticking)
 	{
@@ -825,12 +821,8 @@ void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 	windowSize.height = DISPLAYDEVICE_HEIGHT;
 #endif
 
-#ifdef __OPENGL__
-	myDisplayDevice = new PPDisplayDeviceOGL(windowSize.width, windowSize.height, scaleFactor, bpp, fullScreen, orientation, swapRedBlue);
-#else
-	myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
-											bpp, fullScreen, orientation, swapRedBlue);
-#endif
+myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, scaleFactor,
+										bpp, fullScreen, orientation, swapRedBlue);
 
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
 	myDisplayDevice->init();

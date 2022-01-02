@@ -296,7 +296,7 @@ public:
 		*(strBuffer+1) = 0;
 	}
 
-#ifdef AMIGA
+#ifdef __AMIGA__
 	PPString(signed char* str) :
 		strBuffer(new char[strlen( (const char*)str) + 1]),
 		allocatedSize((pp_uint32)strlen( (const char*)str) + 1)

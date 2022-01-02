@@ -117,44 +117,6 @@ static PPPoint p;
 // This needs to be visible from outside
 
 pp_uint32 PPGetTickCount() {
-// SDL surface screen
-SDL_Surface*				screen				= NULL;
-SDL_TimerID	timer;
-
-// Tracker globals
-static PPScreen*			myTrackerScreen		= NULL;
-static Tracker*				myTracker			= NULL;
-static PPDisplayDevice*	    myDisplayDevice		= NULL;
-#ifdef HAVE_LIBASOUND
-static MidiReceiver*		myMidiReceiver		= NULL;
-#endif
-
-// Okay what else do we need?
-PPMutex*			globalMutex				= NULL;
-static PPMutex*		timerMutex				= NULL;
-static bool			ticking					= false;
-
-static pp_uint32	lmyTime;
-static PPPoint		llastClickPosition		= PPPoint(0,0);
-static pp_uint16	lClickCount				= 0;
-
-static pp_uint32	rmyTime;
-static PPPoint		rlastClickPosition		= PPPoint(0,0);
-static pp_uint16	rClickCount				= 0;
-
-static bool			lMouseDown				= false;
-static pp_uint32	lButtonDownStartTime;
-
-static bool			rMouseDown				= false;
-static pp_uint32	rButtonDownStartTime;
-
-static pp_uint32	timerTicker				= 0;
-
-static PPPoint		p;
-
-// This needs to be visible from outside 
-pp_uint32 PPGetTickCount()
-{
 	return SDL_GetTicks();
 }
 
@@ -702,11 +664,6 @@ void crashHandler(int signum) {
 
 void initTracker(pp_uint32 bpp, PPDisplayDevice::Orientations orientation,
 		bool swapRedBlue, bool fullScreen, bool noSplash) {
-	/* Initialize SDL */
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
 
 	bpp = 16;
 
@@ -995,4 +952,3 @@ unrecognizedCommandLineSwitch:
 
 	return 0;
 }
-

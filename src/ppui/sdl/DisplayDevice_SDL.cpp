@@ -237,6 +237,9 @@ void PPDisplayDevice::setTitle(const PPSystemString& title)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowTitle(theWindow, title);
+#else
+	SDL_WM_SetCaption(title, "MilkyTracker");
+#endif
 }
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
