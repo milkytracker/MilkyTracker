@@ -1,5 +1,5 @@
 /*
- *  tracker/sdl/SDL_KeyTranslation.h
+ *  ppui/osinterface/sdl/PPQuitSaveAlert_SDL.cpp
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,28 +21,26 @@
  */
 
 /*
- *  KeyTranslation.h
+ *  PPQuitSaveAlert_SDL.cpp
  *  MilkyTracker
  *
- *  Created by Peter Barth on 19.11.05.
- *
- *  12/5/14 - Dale Whinham
- *    - Port to SDL2
+ *  Created by Peter Barth on 28.03.05.
  *
  */
 
-#ifndef KEYTRANSLATION__H
-#define KEYTRANSLATION__H
-
+#include "PPQuitSaveAlert.h"
 #include <SDL.h>
-#include "BasicTypes.h"
+#include "SDL_ModalLoop.h"
+#include "DialogFileSelector.h"
 
-#ifdef AMIGA
-pp_uint16 toVK(const SDL_keysym& keysym);
-pp_uint16 toSC(const SDL_keysym& keysym);
-#else
-pp_uint16 toVK(const SDL_Keysym& keysym);
-pp_uint16 toSC(const SDL_Keysym& keysym);
-#endif
+PPQuitSaveAlert::ReturnCodes PPQuitSaveAlert::runModal()
+{
+	// Create a message box (the message box will invoke the responder)
+	PPDialogBase* dialog = new PPDialogBase(screen, NULL, PP_DEFAULT_ID, "Save current changes?", PPDialogBase::MessageBox_YESNOCANCEL);
 
-#endif
+	ReturnCodes result = SDL_runModalLoop(screen, dialog);
+	
+	delete dialog;
+	
+	return result;
+}

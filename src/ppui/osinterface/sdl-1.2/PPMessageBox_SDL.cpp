@@ -1,5 +1,5 @@
 /*
- *  tracker/sdl/SDL_KeyTranslation.h
+ *  ppui/osinterface/sdl/PPMessageBox_SDL.cpp
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,28 +21,34 @@
  */
 
 /*
- *  KeyTranslation.h
+ *  PPMessageBox_SDL.cpp
  *  MilkyTracker
  *
- *  Created by Peter Barth on 19.11.05.
- *
- *  12/5/14 - Dale Whinham
- *    - Port to SDL2
+ *  Created by Peter Barth on 27.09.05.
  *
  */
 
-#ifndef KEYTRANSLATION__H
-#define KEYTRANSLATION__H
-
+#include "PPMessageBox.h"
 #include <SDL.h>
-#include "BasicTypes.h"
+#include "SDL_ModalLoop.h"
+#include "DialogFileSelector.h"
 
-#ifdef AMIGA
-pp_uint16 toVK(const SDL_keysym& keysym);
-pp_uint16 toSC(const SDL_keysym& keysym);
-#else
-pp_uint16 toVK(const SDL_Keysym& keysym);
-pp_uint16 toSC(const SDL_Keysym& keysym);
-#endif
+PPMessageBox::ReturnCodes PPMessageBox::runModal()
+{
+	// Convert texts
+	char* captionASCIIZ = this->caption.toASCIIZ();
+	char* contentASCIIZ = this->content.toASCIIZ();
+	PPString caption(captionASCIIZ);
+	PPString content(contentASCIIZ);
+	delete[] captionASCIIZ;
+	delete[] contentASCIIZ;
 
-#endif
+	// Create a message box (the message box will invoke the responder)
+	PPDialogBase* dialog = new PPDialogBase(screen, NULL, PP_DEFAULT_ID, caption, content);
+
+	ReturnCodes result = SDL_runModalLoop(screen, dialog);
+	
+	delete dialog;
+	
+	return result;
+}

@@ -1,5 +1,5 @@
 /*
- *  tracker/sdl/SDL_KeyTranslation.h
+ *  ppui/osinterface/sdl/PPMutex.h
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,28 +21,30 @@
  */
 
 /*
- *  KeyTranslation.h
+ *  PPMutex.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on 19.11.05.
- *
- *  12/5/14 - Dale Whinham
- *    - Port to SDL2
+ *  Created by Peter Barth on 18.11.05.
  *
  */
 
-#ifndef KEYTRANSLATION__H
-#define KEYTRANSLATION__H
+#ifndef PPMUTEX__H
+#define PPMUTEX__H
 
 #include <SDL.h>
-#include "BasicTypes.h"
 
-#ifdef AMIGA
-pp_uint16 toVK(const SDL_keysym& keysym);
-pp_uint16 toSC(const SDL_keysym& keysym);
-#else
-pp_uint16 toVK(const SDL_Keysym& keysym);
-pp_uint16 toSC(const SDL_Keysym& keysym);
+class PPMutex
+{
+private:
+	SDL_mutex* mutex;
+	
+public:
+	PPMutex();
+	~PPMutex();
+	
+	void lock();
+	void unlock();
+};
+
 #endif
 
-#endif
