@@ -759,7 +759,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* sampleEditorContainer = new PPContainer(CONTAINER_SAMPLEEDITOR, screen, this, PPPoint(x, y), PPSize(320, 92), false);
 	sampleEditorContainer->setColor(TrackerConfig::colorThemeMain);
 
-	sampleEditorControl = new SampleEditorControl(SAMPLE_EDITOR, screen, this, PPPoint(x+2, y+2), PPSize(316, 92-4));
+	sampleEditorControl = new SampleEditorControl(SAMPLE_EDITOR, screen, this, PPPoint(x+2, y+2), PPSize(316, 92-4), tracker);
 	sampleEditorControl->attachSampleEditor(tracker.moduleEditor->getSampleEditor());
 	sampleEditorControl->setBorderColor(TrackerConfig::colorThemeMain);
 
