@@ -581,6 +581,7 @@ private:
     void eventKeyDownBinding_IncCurOrderPattern();
 
 	void eventKeyDownBinding_InvokePatternCapture();
+	void eventKeyDownBinding_InvokeHelp();
 
 
 private:
