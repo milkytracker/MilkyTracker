@@ -59,6 +59,14 @@ The screen size can be selected in the Config->Layout menu.  Fullscreen mode can
 be toggled using ALT+Return.  Note that these arguments are likely to be removed
 in the future - drop us a note if you actually need to use them.
 
+For very minimal platforms, make sure to run milkytracker in non-opengl mode:
+
+$ NO_OPENGL=1 ./milkytracker
+
+This will disable SDL2 from automatically switching to OpenGL.
+SDL2 is quite liberal in assuming that opengl is great idea.
+This can lead to immediate crashes (for example when only libGL is installed, but not GLX).
+
 
 Crash Handler
 =============

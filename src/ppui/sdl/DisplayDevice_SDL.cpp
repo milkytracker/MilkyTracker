@@ -28,6 +28,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 	size_t namelen = 0;
 	char rendername[256] = { 0 };
 	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
+  bool opengl_disable = getenv("NO_OPENGL") != NULL;
 
 	for (int it = 0; it < SDL_GetNumRenderDrivers(); it++)
 	{
@@ -38,7 +39,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 		strncat(rendername, info.name, sizeof(rendername) - namelen);
 		strncat(rendername, " ", sizeof(rendername) - namelen);
 
-		if (strncmp("opengles2", info.name, 9) == 0)
+		if ( !opengl_disable && strncmp("opengles2", info.name, 9) == 0)
 		{
 			drv_index = it;
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -49,7 +50,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 	}
 
 	// Create SDL window
-	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL | flags);
+	SDL_Window* theWindow = SDL_CreateWindow("MilkyTracker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, opengl_disable ? flags : SDL_WINDOW_OPENGL | flags);
 
 	if (theWindow == NULL)
 	{

@@ -828,9 +828,6 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
 
-	// Kickstart SDL event loop early so that the splash screen is made visible
-	SDL_PumpEvents();
-
 	// Startup procedure
 	myTracker->startUp(noSplash);
 
@@ -843,6 +840,11 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 
 	// Start capturing text input events
 	SDL_StartTextInput();
+
+
+	// Kickstart SDL event loop last to prevent overflowing message-queue on lowmem systems 
+  // splash screen will still be visible
+	SDL_PumpEvents();
 
 	ticking = true;
 }
