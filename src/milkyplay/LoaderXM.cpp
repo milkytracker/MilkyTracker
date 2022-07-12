@@ -478,7 +478,7 @@ mp_sint32 LoaderXM::load(XMFileBase& f, XModule* module)
 		
 			f.readDwords(&instr[y].size,1);
 			
-			if (instr[y].size < 29)
+			if (instr[y].size >= 4 && instr[y].size < 29)
 			{
 				mp_ubyte buffer[29];
 				memset(buffer, 0, sizeof(buffer));

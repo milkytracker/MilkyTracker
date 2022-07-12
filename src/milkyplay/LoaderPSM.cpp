@@ -70,6 +70,7 @@ static bool PATTTest(mp_ubyte* p, mp_sint32& size)
 				patterns[i] = NULL; \
 		} \
 		delete[] patterns; \
+		delete[] patternSizes; \
 } 
 
 const char* LoaderPSMv2::identifyModule(const mp_ubyte* buffer)
@@ -487,29 +488,32 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		
 		mp_sint32 offset = 6+patIDSize;
 		mp_ubyte* packed = patterns[i]+offset;
-		
 		mp_uint32 index = 0;
 		
 		mp_uint32 row = 0;
-		
+		mp_uint32 numRows = LittleEndian::GET_WORD(patterns[i] + offset - 2);
+		if (numRows > 256)
+		{
+			RELEASE_PATTERNS;
+			return MP_OUT_OF_MEMORY;
+		}
+
 		mp_uint32 maxChannels = 0;
 		
-		while (index<(patternSizes[i]-offset))
+		while (index<(patternSizes[i]-offset) && row < numRows)
 		{
 			
-			mp_uint32 size = ((mp_uword)LittleEndian::GET_WORD(packed+index))-2;
-			index+=2;	// advance pointer
-			
+			mp_uint32 size = ((mp_uword)LittleEndian::GET_WORD(packed+index));
 			mp_uint32 dstIndex = index+size;
-			
-			if (size)
+			index += 2;	// advance pointer
+
+			if (size > 2)
 			{
-				
 				do {
 					
 					mp_ubyte pi = packed[index++];
 					
-					mp_uint32 chn = packed[index++];
+					mp_uint32 chn = packed[index++] & 0x1F;
 					
 					if (chn>maxChannels)
 						maxChannels = chn;
@@ -553,7 +557,11 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 						}
 						else if (slot[3] == 0x2D)
 						{
-							slot[4] = packed[index+=3];
+							slot[4] = packed[index+=3]; // ???
+						}
+						else if (slot[3] == 0x33)
+						{
+							index++;
 						}
 						
 					}
@@ -564,12 +572,12 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 				if (index!=dstIndex)
 					printf("nagnag ");
 #endif
-				
+				index = dstIndex;
+
 			}
 			
-			row++;			
+			row++;
 		}
-		delete[] patternSizes;
 
 		maxChannels++;
 		
@@ -577,7 +585,7 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 			maxChannels = header->channum;
 		
 		// convert pattern here:
-		phead[i].rows = (mp_uword)LittleEndian::GET_WORD(patterns[i]+offset-2);
+		phead[i].rows = (mp_uword)numRows;
 		phead[i].effnum = 3;
 		phead[i].channum = maxChannels;
 		
@@ -585,7 +593,6 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 		
 		if (phead[i].patternData == NULL)
 		{
-			delete[] pattern;
 			RELEASE_PATTERNS;
 			return MP_OUT_OF_MEMORY;							
 		}
@@ -839,8 +846,6 @@ mp_sint32 LoaderPSMv2::load(XMFileBase& f, XModule* module)
 			
 	}
 		
-	delete[] pattern;
-	
 	RELEASE_PATTERNS;
 	
 	header->smpnum = smpIndex;
