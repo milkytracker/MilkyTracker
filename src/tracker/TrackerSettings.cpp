@@ -144,6 +144,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("SHOWZEROEFFECT", 0);
 	// Wrap around cursor
 	settingsDatabase->store("WRAPAROUND", 1);
+	// Advanced drag and drop in pattern editor
+	settingsDatabase->store("ADVANCEDDND", 1);
 	// Beeing prospective
 	settingsDatabase->store("PROSPECTIVE", 0);
 	// follow song when playing
