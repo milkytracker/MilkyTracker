@@ -2109,6 +2109,15 @@ void Tracker::setCursorWrapAround(bool b, bool repaint/* = true*/)
 	updateAboutToggleButton(BUTTON_ABOUT_WRAPCURSOR, b, repaint);
 }
 
+bool Tracker::getAdvancedDnd()
+{
+	return getPatternEditorControl()->getAdvancedDnd();
+}
+
+void Tracker::setAdvancedDnd(bool b, bool repaint/* = true*/) {
+	getPatternEditorControl()->setAdvancedDnd(b);
+}
+
 void Tracker::setLiveSwitch(bool b, bool repaint/* = true*/)
 {	
 	playerLogic->setLiveSwitch(b);

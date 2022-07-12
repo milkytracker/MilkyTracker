@@ -451,6 +451,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		setCursorWrapAround(v2 != 0, false);
 	}
+	else if (theKey->getKey().compareTo("ADVANCEDDND") == 0)
+	{
+		setAdvancedDnd(v2 != 0, false);
+	}
 	else if (theKey->getKey().compareTo("PROSPECTIVE") == 0)
 	{
 		setProspectiveMode(v2 != 0, false);

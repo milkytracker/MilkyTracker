@@ -330,6 +330,9 @@ private:
 	bool getCursorWrapAround();
 	void setCursorWrapAround(bool b, bool repaint = true);
 
+	bool getAdvancedDnd();
+	void setAdvancedDnd(bool b, bool repaint = true);
+
 	void setLiveSwitch(bool b, bool repaint = true);
 	
 	void updateSongRow(bool checkFollowSong = true);

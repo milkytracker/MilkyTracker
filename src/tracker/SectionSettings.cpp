@@ -222,6 +222,7 @@ enum ControlIDs
 	// PAGE VI
 	CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE,
 	CHECKBOX_SETTINGS_WRAPCURSOR,
+	CHECKBOX_SETTINGS_ADVANCED_DND,
 	CHECKBOX_SETTINGS_PROSPECTIVE,
 	//CHECKBOX_SETTINGS_FOLLOWSONG,
 	CHECKBOX_SETTINGS_TABTONOTE,
@@ -1469,20 +1470,10 @@ public:
 		container->addControl(checkBox);
 		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Wrap cursor:", checkBox, true));
 
-		y2+=11;
-
-		//container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Follow song:", true));
-		//container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FOLLOWSONG, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-
-		/*// ------------------ other -------------------
-			container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
-		y2+=4+11;
-		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Estimate playtime after load", true);
-		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(statict);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));*/
-
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_ADVANCED_DND, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dnd:", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -1499,14 +1490,11 @@ public:
 		v = settingsDatabase->restore("CLICKTOCURSOR")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CLICKTOCURSOR))->checkIt(v!=0);
 
-		//v = settingsDatabase->restore("WRAPAROUND")->getIntValue();
-		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_WRAPCURSOR))->checkIt(v!=0);
+		v = settingsDatabase->restore("WRAPAROUND")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_WRAPCURSOR))->checkIt(v!=0);
 
-		//v = settingsDatabase->restore("FOLLOWSONG")->getIntValue();
-		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FOLLOWSONG))->checkIt(v!=0);
-
-		/*v = settingsDatabase->restore("AUTOESTPLAYTIME")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOESTPLAYTIME))->checkIt(v!=0);*/
+		v = settingsDatabase->restore("ADVANCEDDND")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_ADVANCED_DND))->checkIt(v!=0);
 	}
 
 };
@@ -2121,6 +2109,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("WRAPAROUND", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+                
+			case CHECKBOX_SETTINGS_ADVANCED_DND:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("ADVANCEDDND", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}

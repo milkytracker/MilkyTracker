@@ -95,6 +95,7 @@ private:
 		bool highLightRowPrimary, highLightRowSecondary;
 		bool hexCount;
 		bool wrapAround;
+		bool advancedDnd;
 		bool prospective;
 		bool tabToNote;
 		bool clickToCursor;
@@ -115,7 +116,8 @@ private:
 			highLightRowPrimary(false), 
 			highLightRowSecondary(false),
 			hexCount(true), 
-			wrapAround(true), 
+			wrapAround(true),
+			advancedDnd(false),
 			prospective(false), 
 			tabToNote(true), 
 			clickToCursor(true), 
@@ -278,6 +280,9 @@ public:
 	// set wraparound mode
 	void setWrapAround(bool b) { properties.wrapAround = b; }
 	bool getWrapAround() const { return properties.wrapAround; }
+	// set advanced drag and drop mode
+	void setAdvancedDnd(bool b) { properties.advancedDnd = b; }
+	bool getAdvancedDnd() const { return properties.advancedDnd; }
 	// set tab to note
 	void setTabToNote(bool b) { properties.tabToNote = b; }
 	bool getTabToNote() const { return properties.tabToNote; }
