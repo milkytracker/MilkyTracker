@@ -141,6 +141,7 @@ AnimatedFXControl::AnimatedFXControl(pp_int32 id,
 	
 	textBufferMaxChars = visibleWidth*2 / font->getCharWidth();
 	textBuffer = new char[textBufferMaxChars + 1];
+	textBuffer[textBufferMaxChars] = '\0';
 
 	currentCharIndex = 0;
 	pp_int32 j = currentCharIndex % strlen(text);
