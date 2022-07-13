@@ -973,7 +973,10 @@ unrecognizedCommandLineSwitch:
 	if (loadFile)
 	{
 		struct stat statBuf;
-		if(stat(loadFile, &statBuf)) fprintf(stderr, "could not open %s: %s\n", loadFile, strerror(errno));
+		if (stat(loadFile, &statBuf) != 0)
+		{
+			fprintf(stderr, "could not open %s: %s\n", loadFile, strerror(errno));
+		}
 		else
 		{
 			PPSystemString newCwd = path.getCurrent();
