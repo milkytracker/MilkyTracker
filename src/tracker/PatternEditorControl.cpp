@@ -817,7 +817,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	
 	// --------------------- draw moved selection ---------------------
 	
-	if (hasValidSelection() && moveSelection)
+	if (hasValidSelection() && moveSelection && properties.advancedDnd)
 	{
 		pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
 		pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
