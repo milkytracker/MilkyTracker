@@ -48,6 +48,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, 0, &PatternEditorControl::eventKeyDownBinding_NextChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_NextChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
 
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
