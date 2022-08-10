@@ -154,7 +154,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F7, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeCurInsBlockDown);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F8, KeyModifierALT, &Tracker::eventKeyDownBinding_TransposeCurInsBlockUp);
 
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD0, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
+	//eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD0, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD1, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD2, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD3, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
@@ -173,6 +173,15 @@ void Tracker::initKeyBindings()
 
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
+	// brujo's secret sauce 
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_6 /*]*/ , KeyModifierCTRL, & Tracker::eventKeyDownBinding_BpmPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_4 /*[*/ , KeyModifierCTRL, & Tracker::eventKeyDownBinding_BpmMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_6 /*]*/ , KeyModifierCTRL|KeyModifierSHIFT, & Tracker::eventKeyDownBinding_CoarseBpmPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_4 /*[*/ , KeyModifierCTRL|KeyModifierSHIFT, & Tracker::eventKeyDownBinding_CoarseBpmMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierALT, &Tracker::eventKeyDownBinding_LoadInstrument);
+	// TODO: sequencer controls
 
 	// Key-down bindings for Fasttracker
 	// tab stuff
@@ -267,6 +276,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
+
 }
 
 void Tracker::eventKeyDownBinding_OpenTab()
@@ -1021,4 +1031,55 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->toOrder = getOrderListBoxIndex();
   sectionHDRecorder->setSettingsAllowMuting(true);
 	sectionHDRecorder->exportWAVAsSample();
+}
+
+// brujo sauce definitions
+void Tracker::eventKeyDownBinding_BpmPlus() {
+	moduleEditor->setChanged();
+	updateWindowTitle();
+	mp_sint32 bpm, speed;
+	playerController->getSpeed(bpm, speed);
+	playerController->setSpeed(bpm + 1, speed);
+	updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_BpmMinus() {
+	moduleEditor->setChanged();
+	updateWindowTitle();
+	mp_sint32 bpm, speed;
+	playerController->getSpeed(bpm, speed);
+	playerController->setSpeed(bpm - 1, speed);
+	updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_CoarseBpmPlus() {
+	moduleEditor->setChanged();
+	updateWindowTitle();
+	mp_sint32 bpm, speed;
+	playerController->getSpeed(bpm, speed);
+	playerController->setSpeed(bpm + 5, speed);
+	updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_CoarseBpmMinus() {
+	moduleEditor->setChanged();
+	updateWindowTitle();
+	mp_sint32 bpm, speed;
+	playerController->getSpeed(bpm, speed);
+	playerController->setSpeed(bpm - 5, speed);
+	updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_AddPlus() {
+	getPatternEditorControl()->increaseRowInsertAdd();
+	updatePatternAddAndOctave();
+}
+
+void Tracker::eventKeyDownBinding_AddMinus() {
+	getPatternEditorControl()->decreaseRowInsertAdd();
+	updatePatternAddAndOctave();
+}
+
+void Tracker::eventKeyDownBinding_LoadInstrument() {
+	loadTypeWithDialog(FileTypes::FileTypeSongAllInstruments);
 }
