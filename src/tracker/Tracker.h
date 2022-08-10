@@ -583,6 +583,14 @@ private:
 	void eventKeyDownBinding_InvokePatternCapture();
 	void eventKeyDownBinding_InvokeHelp();
 
+	// brujo sauce
+	void eventKeyDownBinding_BpmPlus();
+	void eventKeyDownBinding_BpmMinus();
+	void eventKeyDownBinding_CoarseBpmPlus();
+	void eventKeyDownBinding_CoarseBpmMinus();
+	void eventKeyDownBinding_AddPlus();
+	void eventKeyDownBinding_AddMinus(); 
+	void eventKeyDownBinding_LoadInstrument();
 
 private:
 	// - friend classes --------------------------------------------------------
