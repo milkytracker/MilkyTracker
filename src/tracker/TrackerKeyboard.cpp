@@ -174,12 +174,12 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
 	// brujo's secret sauce 
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_6 /*]*/ , KeyModifierCTRL, & Tracker::eventKeyDownBinding_BpmPlus);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_4 /*[*/ , KeyModifierCTRL, & Tracker::eventKeyDownBinding_BpmMinus);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_6 /*]*/ , KeyModifierCTRL|KeyModifierSHIFT, & Tracker::eventKeyDownBinding_CoarseBpmPlus);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_OEM_4 /*[*/ , KeyModifierCTRL|KeyModifierSHIFT, & Tracker::eventKeyDownBinding_CoarseBpmMinus);
-	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddPlus);
-	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding('N', KeyModifierCTRL, &Tracker::eventKeyDownBinding_BpmPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding('B', KeyModifierCTRL, &Tracker::eventKeyDownBinding_BpmMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding('N', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CoarseBpmPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding('B', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_CoarseBpmMinus);
+	eventKeyDownBindingsMilkyTracker->addBinding('K', KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddPlus);
+	eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddMinus);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierALT, &Tracker::eventKeyDownBinding_LoadInstrument);
 	// TODO: sequencer controls
 
