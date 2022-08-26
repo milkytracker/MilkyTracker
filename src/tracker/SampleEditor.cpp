@@ -36,6 +36,7 @@
 #include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
+#include "ControlIDs.h"
 
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
@@ -3132,4 +3133,3 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 	
 	return (pp_uint32)(((double)pos / c4spd) * 1000.0);
 }
-

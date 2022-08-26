@@ -48,6 +48,10 @@ struct SampleEditorControlLastValues
 	pp_int32 resampleInterpolationType;
 	bool adjustFtAndRelnote;
 	bool adjustSampleOffsetCommand;
+
+  PPString csoundFile;
+  PPString csoundIn;
+  PPString csoundOut;
 	
 	static float invalidFloatValue() 
 	{
@@ -74,6 +78,9 @@ struct SampleEditorControlLastValues
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
 		adjustSampleOffsetCommand = false;
+    csoundFile = "";
+    csoundIn = "";
+    csoundOut = "";
 	}
 		
 	PPDictionary convertToDictionary()
