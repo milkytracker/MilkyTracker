@@ -1,7 +1,7 @@
 /*
  *  tracker/DialogHelp.h
  *
- *  Copyright 2009 Peter Barth
+ *  Copyright 2022 coderofsalvation / Leon van Kammen 
  *
  *  This file is part of Milkytracker.
  *
@@ -24,7 +24,7 @@
  *  DialogHelp.h
  *  MilkyTracker
  *
- *  Created by Peter Barth on 25.10.05.
+ *  Created by coderofsalvation / Leon van Kammen on 13-07-2022 
  *
  */
 

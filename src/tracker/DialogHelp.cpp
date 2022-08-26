@@ -1,7 +1,7 @@
 /*
  *  tracker/DialogHelp.cpp
  *
- *  Copyright 2009 Peter Barth
+ *  Copyright 2022 coderofsalvation / Leon van Kammen 
  *
  *  This file is part of Milkytracker.
  *
@@ -24,7 +24,7 @@
  *  DialogHelp.cpp
  *  MilkyTracker
  *
- *  Created by Peter Barth on 25.10.05.
+ *  Created by coderofsalvation / Leon van Kammen on 13-07-2022 
  *
  */
 
@@ -34,43 +34,46 @@
 #include "ListBox.h"
 #include "PPUI.h"
 
-DialogHelp::DialogHelp(PPScreen* screen, 
-							 DialogResponder* responder,
-							 pp_int32 id,
-							 const PPString& caption,
-							 bool okCancel/* = false*/) :
-	PPDialogBase()
+DialogHelp::DialogHelp(PPScreen *screen,
+					   DialogResponder *responder,
+					   pp_int32 id,
+					   const PPString &caption,
+					   bool okCancel /* = false*/) : PPDialogBase()
 {
-  char line[HELP_MAX_LINE];
-  pp_int32 w = 800;
-  pp_int32 h = screen->getHeight()-200;
+	char line[HELP_MAX_LINE];
+	pp_int32 w = 800;
+	pp_int32 h = screen->getHeight() - 200;
 	if (okCancel)
-		initDialog(screen, responder, id, caption, w, h, 26, "Ok", "Cancel");	
+		initDialog(screen, responder, id, caption, w, h, 26, "Ok", "Cancel");
 	else
 		initDialog(screen, responder, id, caption, w, h, 26, "Okay");
 
 	pp_int32 x = getMessageBoxContainer()->getLocation().x;
 	pp_int32 y = getMessageBoxContainer()->getLocation().y;
-	
+
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
 
-	PPButton* button = static_cast<PPButton*>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_YES));	
+	PPButton *button = static_cast<PPButton *>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_YES));
 	pp_int32 y2 = button->getLocation().y;
 	pp_int32 x2 = x + width / 2 - 30;
-	
+
 	y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
 	x2 = x + width / 2 - 120;
 
-	listBox	= new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x+12, y+(3*8)), PPSize(width-(3*8),height-(8*8)), true, false, true, true);
+	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 12, y + (3 * 8)), PPSize(width - (3 * 8), height - (8 * 8)), true, false, true, true);
 	listBox->setShowIndex(true);
-  memset(line,0,HELP_MAX_LINE);
-  for( pp_int32 i = 0; i < milkytracker_help_len; i++ ){
-    char c = milkytracker_help[i];
-    if( c == '\n' ){
-      listBox->addItem( line );
-      memset(line,0,HELP_MAX_LINE);
-    }else sprintf(line,"%s%c",line,c);
-  }
+	memset(line, 0, HELP_MAX_LINE);
+	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
+	{
+		char c = milkytracker_help[i];
+		if (c == '\n')
+		{
+			listBox->addItem(line);
+			memset(line, 0, HELP_MAX_LINE);
+		}
+		else
+			sprintf(line, "%s%c", line, c);
+	}
 	messageBoxContainerGeneric->addControl(listBox);
 }
