@@ -194,10 +194,10 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				}
 				// if there is already a note playing on this channel
 				// we "cut" the note
-				//else if (keys[i].channel == chn)
-				//{
-				//	keys[i].note = keys[i].channel = 0;
-				//}
+				else if (keys[i].channel == chn)
+				{
+					keys[i].note = keys[i].channel = 0;
+				}
 			}
 			
 			// play it
