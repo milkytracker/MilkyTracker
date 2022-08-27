@@ -76,7 +76,9 @@ DialogFileSelector::DialogFileSelector(PPScreen* screen,
 	allowEditFileName(editfileName),
 	sortAscending(true)
 {
-	initDialog(screen, responder, id, caption, 310, 230, 26, "Ok", "Cancel");
+  	pp_int32 w = screen->getWidth() / 2;
+  	pp_int32 h = screen->getHeight() /2;
+	initDialog(screen, responder, id, caption, w < 500 ? w : 500, h < 800 ? h : 800, 26, "Ok", "Cancel");
 
 	PPControl* text = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION);
 	text->setLocation(PPPoint(text->getLocation().x, text->getLocation().y - 4));
