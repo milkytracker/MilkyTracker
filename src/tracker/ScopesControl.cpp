@@ -135,6 +135,8 @@ private:
 	pp_int32 lasty, lastx;
 
 public:
+	float peak;
+	pp_int32 max;
 	ScopePainter(PPGraphicsAbstract* g, pp_uint32 count, pp_uint32 channelHeight,
 				 const PPColor& scopebColor, const PPColor& scopedColor,
 				 pp_int32 locx, pp_int32 locy,
@@ -147,6 +149,8 @@ public:
 		locx(locx), locy(locy),
 		appearance(appearance),
 		flipped(false),
+    	max(0),
+    	peak(0.0),
 		counter(0), flipCounter(0), flipCounterStep(1)
 	{
 		count2 = count - 3;
@@ -167,6 +171,10 @@ public:
 	virtual void fetchSampleData(mp_sint32 sample)
 	{
 		const pp_int32 y = (((-sample >> 10)*(signed)channelHeight)>>6) + locy;
+		if( abs(sample) > max ){
+			max = abs(sample);
+			peak = (float)max;
+		}
 
 		g->setSafeColor(sr>>16, sg>>16, sb>>16);
 		sr+=addr; sg+=addg; sb+=addb;
@@ -359,10 +367,11 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		pp_int32 sy = locy - channelHeight / 2 + 3;
 
 		pp_int32 sy2 = locy + channelHeight / 2 - smallFont->getCharHeight() - 1;
-		
+
+		ScopePainter scopePainter(g, count, channelHeight, scopebColor, scopedColor, locx, locy, appearance);
+
 		if (!muteChannels[c])
 		{
-			ScopePainter scopePainter(g, count, channelHeight, scopebColor, scopedColor, locx, locy, appearance);
 
 			if (enabled)
 				playerController->grabSampleData(c, count, 160, scopePainter);
@@ -389,6 +398,27 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 			g->setColor(col);
 #endif
 			locx = scopePainter.getLocx();
+
+			// draw vu channelmeters *TODO* improve this code (they are wobbly and peak is not optional..perhaps add pan info too?)
+			float vumax = 24000.0;
+			pp_int32 marginx = 1;
+			pp_int32 vu = scopePainter.max * (float)(channelHeight-24)/vumax; 
+			pp_int32 peak = (pp_int32)(scopePainter.peak * (float)channelHeight/vumax);
+			PPRect vuRect;
+			vuRect.x1 = channelRects[c].x1+marginx;
+			vuRect.y1 = channelRects[c].y2; //-2;
+			vuRect.x2 = channelRects[c].x1+marginx+12; 
+			vuRect.y2 = channelRects[c].y2; //-2-vu;
+
+      		// discriminate between high/low-energy channels (peaking vs non-peaking channels) for better mixing-feedback
+			g->setColor( scopePainter.peak > (vumax/2.0) ? TrackerConfig::colorScopes : TrackerConfig::colorSampleEditorWaveform);
+			if( vu > 2 ){
+				for( pp_int32 i = 0; i < vu; i+=2 ){
+					g->drawHLine( vuRect.x1, vuRect.x2, vuRect.y1-i);
+				}
+				g->setColor( TrackerConfig::colorSampleEditorWaveform );
+				g->drawHLine( vuRect.x1, vuRect.x2, vuRect.y1+peak);
+			}
 		}
 		else
 		{
@@ -419,7 +449,7 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		g->setFont((channelWidth < 40 || wrapped) ? smallFont : font);
 		g->setColor(0, 0, 0);
 		g->drawString(buffer, sx+1, sy+1);
-		g->setColor(foregroundColor);
+		g->setColor( foregroundColor );
 		g->drawString(buffer, sx, sy);
 
 		if (cn == 0)
