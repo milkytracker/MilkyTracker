@@ -923,7 +923,8 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 									 const mp_ubyte* mutingArray/* = NULL*/, mp_uint32 mutingNumChannels/* = 0*/,
 									 const mp_ubyte* customPanningTable/* = NULL*/,
 									 AudioDriverBase* preferredDriver/* = NULL*/,
-									 mp_sint32* timingLUT/* = NULL*/)
+									 mp_sint32* timingLUT/* = NULL*/,
+									 mp_uint32 limiterDrive /* = 0 */)
 {
 	PlayerBase* player = NULL;
 	
@@ -978,6 +979,7 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 			for (mp_uint32 i = 0; i < mutingNumChannels; i++)
 				player->muteChannel(i, mutingArray[i] == 1);
 		}
+		mixer.setLimiterDrive(limiterDrive);
 		player->startPlaying(module, false, startOrder, 0, -1, customPanningTable, false, -1);
 		
 		mixer.start();

@@ -64,6 +64,7 @@ public:
 		pp_uint32 toOrder;
 		const pp_uint8* muting;
 		const pp_uint8* panning;
+		pp_uint32 limiterDrive;
 		
 		bool multiTrack;
 		
@@ -77,7 +78,8 @@ public:
 			toOrder(0),
 			muting(NULL),
 			panning(NULL),
-			multiTrack(false)
+			multiTrack(false),
+			limiterDrive(0)
 		{
 		}
 	};

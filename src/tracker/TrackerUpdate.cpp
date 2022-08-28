@@ -45,6 +45,7 @@
 #include "SectionSamples.h"
 #include "SectionHDRecorder.h"
 #include "SectionQuickOptions.h"
+#include "SectionSettings.h"
 #include "TabHeaderControl.h"
 #include "PPOpenPanel.h"
 #include "TitlePageManager.h"
@@ -1077,6 +1078,14 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 	}
 	
 	updateSongInfo(false);
+
+	if( settingsDatabase->restore("LIMITRESET")->getBoolValue() ){ // reset limiter
+		TMixerSettings newMixerSettings;
+		settingsDatabase->store("LIMITDRIVE",0);
+		sectionSettings->saveCurrentMixerSettings(newMixerSettings);
+		bool res = playerMaster->applyNewMixerSettings(newMixerSettings, true);
+		sectionSettings->update(true);
+	}
 }
 
 void Tracker::updateAfterTabSwitch()

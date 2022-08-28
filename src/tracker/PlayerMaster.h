@@ -56,6 +56,8 @@ struct TMixerSettings
     pp_uint32 numPlayerChannels;
 	// 0 means disable virtual channels, negative value means ignore
 	pp_int32 numVirtualChannels;
+	// limiterDrive (negative value means ignore)
+	pp_int32 limiterDrive;
 
 	TMixerSettings() :
 		mixFreq(-1),
@@ -67,6 +69,7 @@ struct TMixerSettings
 		ramping(-1),
 		audioDriverName(NULL),
         numPlayerChannels(TrackerConfig::numPlayerChannels),
+		limiterDrive(-1),
 		numVirtualChannels(-1)
 	{
 	}
@@ -156,6 +159,8 @@ private:
 	
 	void adjustSettings();
 	void applySettingsToPlayerController(PlayerController& playerController, const TMixerSettings& settings);
+
+	pp_int32 limiterDrive;
 	
 public:
 	PlayerMaster(pp_uint32 numDevices = DefaultMaxDevices);

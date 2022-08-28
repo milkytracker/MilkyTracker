@@ -59,7 +59,9 @@ pp_int32 ModuleServices::estimateMixerVolume(WAVWriterParameters& parameters,
 									   parameters.muting, 
 									   module.header.channum, 
 									   parameters.panning, 
-									   audioDriver);
+									   audioDriver,
+									   NULL,
+									   parameters.limiterDrive);
 	
 	if (numSamplesProgressed)
 		*numSamplesProgressed = res;
@@ -136,7 +138,9 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 										  parameters.fromOrder, parameters.toOrder, 
 										  muting, 
 										  module.header.channum, 
-										  parameters.panning);
+										  parameters.panning,
+										  NULL,NULL,
+										  parameters.limiterDrive);
 			}
 		}
 		
@@ -148,7 +152,9 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 								  parameters.fromOrder, parameters.toOrder, 
 								  parameters.muting, 
 								  module.header.channum, 
-								  parameters.panning);
+								  parameters.panning,
+								  NULL,NULL,
+								  parameters.limiterDrive);
 	}
 		
 	delete player;	
@@ -222,7 +228,6 @@ pp_int32 ModuleServices::exportToBuffer16Bit(WAVWriterParameters& parameters, pp
 											 pp_uint32 bufferSize, bool mono)
 {
 	PlayerGeneric* player = new PlayerGeneric(parameters.sampleRate);
-
 	player->setBufferSize(1024);
 	player->setPlayMode((PlayerGeneric::PlayModes)parameters.playMode);
 	player->setResamplerType((ChannelMixer::ResamplerTypes)parameters.resamplerType);
@@ -236,8 +241,9 @@ pp_int32 ModuleServices::exportToBuffer16Bit(WAVWriterParameters& parameters, pp
 									   parameters.muting, 
 									   module.header.channum, 
 									   parameters.panning,
-									   audioDriver);
-	
+									   audioDriver,
+									   NULL,
+									   parameters.limiterDrive);
 	delete player;	
 	return res;
 }
