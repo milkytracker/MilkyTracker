@@ -39,6 +39,7 @@
 #define __MASTERMIXER_H__
 
 #include "Mixable.h"
+#include "Limiter.h"
 
 class MasterMixer
 {
@@ -118,6 +119,8 @@ public:
 	
 	mp_sint32 getCurrentSample(mp_sint32 position, mp_sint32 channel);
 	mp_sint32 getCurrentSamplePeak(mp_sint32 position, mp_sint32 channel);	
+
+	void setLimiterDrive( mp_uint32 drive ){ this->limiterDrive = drive; }
 			
 private:
 	MasterMixerNotificationListener* listener;
@@ -128,6 +131,8 @@ private:
 	bool disableMixing;
 	mp_uint32 numDevices;
 	Mixable* filterHook;
+	mp_uint32 limiterDrive;
+	Limiter masteringLimiter;
 
 	struct DeviceDescriptor
 	{

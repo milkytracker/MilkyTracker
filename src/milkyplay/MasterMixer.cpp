@@ -64,6 +64,7 @@ MasterMixer::MasterMixer(mp_uint32 sampleRate,
 	started(false),
 	paused(false)
 {
+	masteringLimiter.init(sampleRate,bufferSize);
 }
 
 MasterMixer::~MasterMixer()
@@ -208,6 +209,7 @@ mp_sint32 MasterMixer::setBufferSize(mp_uint32 bufferSize)
 		
 		notifyListener(MasterMixerNotificationBufferSizeChanged);
 	}
+	masteringLimiter.init(sampleRate,this->bufferSize);
 	return 0;
 }
 
@@ -223,6 +225,7 @@ mp_sint32 MasterMixer::setSampleRate(mp_uint32 sampleRate)
 
 		notifyListener(MasterMixerNotificationSampleRateChanged);
 	}
+	masteringLimiter.init(sampleRate,this->bufferSize);
 	return 0;
 }
 
@@ -403,6 +406,11 @@ void MasterMixer::mixerHandler(mp_sword* buffer)
 		{
 			device->mixable->mix(mixBuffer, bufferSize);
 		}
+	}
+
+	if( limiterDrive > 0 ){
+		masteringLimiter.ingain = float(30.0/10.0) * (float)limiterDrive;
+		masteringLimiter.mix(mixBuffer, bufferSize );
 	}
 	
 	if (!disableMixing)

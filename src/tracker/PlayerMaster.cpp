@@ -68,7 +68,9 @@ void PlayerMaster::adjustSettings()
 
 		if (!player->isPlaying())
 			player->resumePlaying(false);
+
 	}
+	if( currentSettings.limiterDrive >= 0 ) mixer->setLimiterDrive( currentSettings.limiterDrive );
 }
 
 void PlayerMaster::applySettingsToPlayerController(PlayerController& playerController, const TMixerSettings& settings)
@@ -311,6 +313,9 @@ bool PlayerMaster::applyNewMixerSettings(const TMixerSettings& settings, bool al
 	
 	if (settings.mixerVolume >= 0)
 		currentSettings.mixerVolume = settings.mixerVolume;
+	
+	if (settings.limiterDrive >= 0)
+		currentSettings.limiterDrive = settings.limiterDrive;
 
 	if (settings.ramping >= 0)
 		currentSettings.ramping = settings.ramping;

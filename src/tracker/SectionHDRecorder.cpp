@@ -53,6 +53,7 @@
 #include "PPSavePanel.h"
 
 #include "ControlIDs.h"
+#include "TrackerSettingsDatabase.h"
 
 enum ControlIDs
 {
@@ -766,6 +767,7 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 	parameters.playMode = tracker.playerController->getPlayMode();
 	parameters.mixerShift = getSettingsMixerShift(); 
 	parameters.mixerVolume = mixerVolume;
+	parameters.limiterDrive = tracker.settingsDatabase->restore("LIMITDRIVE")->getIntValue();
 
 	mp_ubyte* muting = new mp_ubyte[moduleEditor->getNumChannels()];
 	memset(muting, 0, moduleEditor->getNumChannels());
@@ -885,6 +887,7 @@ void SectionHDRecorder::exportWAVAsSample()
 	parameters.panning = tracker.playerController->getPanningTable();
 	parameters.fromOrder = fromOrder;
 	parameters.toOrder = toOrder;
+	parameters.limiterDrive = tracker.settingsDatabase->restore("LIMITDRIVE")->getIntValue();
 
 	tracker.signalWaitState(true);
 

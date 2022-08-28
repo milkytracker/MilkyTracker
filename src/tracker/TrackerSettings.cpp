@@ -75,6 +75,8 @@ void Tracker::buildDefaultSettings()
 #endif
 	settingsDatabase->store("MIXERVOLUME", 256);
 	settingsDatabase->store("MIXERSHIFT", 1);
+	settingsDatabase->store("LIMITDRIVE",0);
+	settingsDatabase->store("LIMITRESET",1);
 	settingsDatabase->store("RAMPING", 1);
 	settingsDatabase->store("INTERPOLATION", 1);
 	settingsDatabase->store("MIXERFREQ", PlayerMaster::getPreferredSampleRate());
@@ -287,6 +289,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("MIXERVOLUME") == 0)
 	{
 		settings.mixerVolume = v2;
+	}
+	else if (theKey->getKey().compareTo("LIMITDRIVE") == 0)
+	{
+		settings.limiterDrive = v2;
 	}
 	else if (theKey->getKey().compareTo("MIXERSHIFT") == 0)
 	{
@@ -710,6 +716,7 @@ void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 	mixerSettings.ramping = currentSettings.restore("RAMPING")->getIntValue();
 	mixerSettings.setAudioDriverName(currentSettings.restore("AUDIODRIVER")->getStringValue());
     mixerSettings.numPlayerChannels = currentSettings.restore("XMCHANNELLIMIT")->getIntValue();
+    mixerSettings.limiterDrive = currentSettings.restore("LIMITDRIVE")->getIntValue();
 	mixerSettings.numVirtualChannels = currentSettings.restore("VIRTUALCHANNELS")->getIntValue();
 }
 
