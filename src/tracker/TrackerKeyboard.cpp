@@ -111,6 +111,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F11, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromSECONDQUARTER);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F12, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayRow);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierCTRL, &Tracker::eventKeyDownBinding_RotatePanels);
 	// !! trace uses a hardcoded key-up event processing, check if you ever decide to change this shortcut
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierALT, &Tracker::eventKeyDownBinding_PlayTrace);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_ESCAPE, 0, &Tracker::eventKeyDownBinding_Stop);
@@ -430,6 +431,31 @@ void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
 								  muteChannels);
 
 	recorderLogic->init();
+}
+
+void Tracker::eventKeyDownBinding_RotatePanels()
+{
+	if (screen->getModalControl())
+		return;
+
+	switch( panelrotate ){
+		case PanelRotate::PanelTop:{
+			panelrotate = PanelRotate::PanelTop_Sample;
+			eventKeyDownBinding_InvokeSectionSamples();
+			break;
+		}
+		case PanelRotate::PanelTop_Sample:{
+			panelrotate = PanelRotate::PanelTop_Instrument;
+			eventKeyDownBinding_InvokeSectionInstruments();
+			break;
+		}
+		case PanelRotate::PanelTop_Instrument:{
+			panelrotate = PanelRotate::PanelTop;
+			sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
+			break;
+		}
+	}
+	screen->paint(true, true);
 }
 
 void Tracker::eventKeyDownBinding_PlayRow()

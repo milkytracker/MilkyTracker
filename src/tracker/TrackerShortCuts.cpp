@@ -89,7 +89,32 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 	if (event->getID() == eKeyDown)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
-		pp_uint16 scanCode = *(((pp_uint16*)event->getDataPtr())+1);
+		pp_uint16 scanCode = *(((pp_uint16 *)event->getDataPtr()) + 1);
+
+		if (::getKeyModifier() == (KeyModifierSHIFT))
+		{
+
+			switch (scanCode)
+			{
+				// insert/delete  new order using  + / -
+				case SC_TICK:
+				{
+					moduleEditor->insertNewOrderPosition(listBoxOrderList->getSelectedIndex());
+					updateOrderlist();
+					event->cancel();
+					break;
+				}
+
+				case SC_SS:
+				{
+					moduleEditor->deleteOrderPosition(listBoxOrderList->getSelectedIndex());
+					updateOrderlist();
+					event->cancel();
+					break;
+				}
+			}
+		}
+
 		switch (keyCode)
 		{
 			case VK_F1:
@@ -141,6 +166,88 @@ processBindings:
 
 				recorderLogic->sendNoteDownToPatternEditor(event, note, patternEditorControl);	
 				break;
+			}
+
+			case VK_UP:
+			case VK_DOWN:
+			case VK_LEFT:
+			case VK_RIGHT:
+			case VK_HOME:
+			case VK_END:
+			case VK_PRIOR:
+			case VK_NEXT: {
+				if (screen->getModalControl())
+					break;
+
+				if (!::getKeyModifier() ||
+					::getKeyModifier() == KeyModifierALT ||
+					::getKeyModifier() == (KeyModifierSHIFT | KeyModifierALT))
+				{
+					if (::getKeyModifier() == (KeyModifierALT))
+					{
+						switch (keyCode)
+						{
+							// Select nex/prev pattern in orderlist using Ctrl+Left/Right
+							case VK_UP:
+							{
+								selectPreviousOrder();
+								event->cancel();
+								break;
+							}
+							case VK_DOWN:
+							{
+								selectNextOrder();
+								event->cancel();
+								break;
+							}
+
+							// Select pattern using Ctrl+SHIFT+Left/Right
+							case VK_LEFT:
+								moduleEditor->decreaseOrderPosition(listBoxOrderList->getSelectedIndex());
+								updateOrderlist();
+								event->cancel();
+								break;
+
+							case VK_RIGHT:
+								moduleEditor->increaseOrderPosition(listBoxOrderList->getSelectedIndex());
+								updateOrderlist();
+								event->cancel();
+								break;
+						}
+					}
+					getPatternEditorControl()->dispatchEvent(event);
+					event->cancel();
+				}
+				else if (::getKeyModifier() == KeyModifierCTRL)
+				{
+					switch (keyCode)
+					{
+
+						// Select instrument using Ctrl+Up/Down when listbox unfocused
+						case VK_UP:
+						case VK_DOWN:
+						case VK_NEXT:
+						case VK_PRIOR:
+							listBoxInstruments->dispatchEvent(event);
+							event->cancel();
+							break;
+					}
+				}
+				else if (::getKeyModifier() == (KeyModifierSHIFT | KeyModifierCTRL))
+				{
+					switch (keyCode)
+					{
+						// Select sample using CTRL+Shift+Up/Down
+						case VK_UP:
+						case VK_DOWN:
+						case VK_NEXT:
+						case VK_PRIOR:
+							listBoxSamples->dispatchEvent(event);
+							event->cancel();
+							break;
+
+					}
+				}
 			}
 
 		}

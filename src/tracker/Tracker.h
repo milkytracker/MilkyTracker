@@ -92,6 +92,14 @@ class PPKeyBindings;
 class Tracker : public EventListenerInterface
 {
 private:
+	enum PanelRotate
+	{
+		PanelTop,
+		PanelTop_Sample,
+		PanelTop_Instrument
+	};
+	PanelRotate panelrotate = PanelRotate::PanelTop;
+
 	// I've replaced some constants
 #ifndef __LOWRES__
 	pp_int32 SCOPESHEIGHT();
@@ -512,6 +520,7 @@ private:
 	void eventKeyDownBinding_PlayPatternFromSECONDQUARTER();
 	void eventKeyDownBinding_PlayPatternFromTHIRDQUARTER();
 	void eventKeyDownBinding_PlayRow();
+	void eventKeyDownBinding_RotatePanels();
 	void eventKeyDownBinding_PlayTrace();
 	void eventKeyDownBinding_Stop();
 	void eventKeyDownBinding_Edit();	
