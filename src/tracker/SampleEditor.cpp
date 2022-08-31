@@ -1006,7 +1006,8 @@ void SampleEditor::copy()
 		return;
 
 	ClipBoard::getInstance()->makeCopy(*sample, *module, getSelectionStart(), getSelectionEnd());
-
+	lastRelNote = sample->relnote;
+	lastFineTune = sample->finetune;
 	notifyListener(NotificationUpdateNoChanges);
 }
 
@@ -1032,7 +1033,8 @@ void SampleEditor::paste()
 	ClipBoard::getInstance()->paste(*sample, *module, getSelectionStart());
 
 	setSelectionEnd(getSelectionStart() + ClipBoard::getInstance()->getWidth());
-
+	sample->relnote = lastRelNote;
+	sample->finetune = lastFineTune;
 	validate();	
 	finishUndo();
 
