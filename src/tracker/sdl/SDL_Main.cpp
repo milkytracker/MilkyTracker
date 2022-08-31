@@ -282,7 +282,11 @@ void StartMidiRecording(unsigned int devID)
 
 void InitMidi()
 {
-	StartMidiRecording(0);
+	unsigned int portId = 0;
+	if(const char* port = std::getenv("MIDI_IN")) portId = atoi(port);
+	StartMidiRecording(portId);
+	printf("MIDI: selecting MIDI-in port: %i\n",portId);
+	printf("MIDI: run `MIDI_IN=x ./milkytracker` to select different port)\n", portId);
 }
 #endif
 

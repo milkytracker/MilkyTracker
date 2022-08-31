@@ -42,12 +42,12 @@ MidiReceiver::MidiReceiver(MidiEventHandler& midiEventHandler) :
 	recordVelocity(false),
 	velocityAmplify(100)
 {
+	unsigned int ports = countPorts();
 }
 
 MidiReceiver::~MidiReceiver()
 {
-	if (midiin)
-		delete midiin;
+	if (midiin) delete midiin;
 }
 
 bool MidiReceiver::startRecording(unsigned int deviceID)
@@ -134,3 +134,15 @@ void MidiReceiver::receiverCallback(double deltatime, std::vector<unsigned char>
 	}
 }
 
+unsigned int MidiReceiver::countPorts()
+{
+	midiin = new RtMidiIn();
+	unsigned int nPorts = midiin->getPortCount();
+	std::cout << "MIDI: scanning input ports:\n";
+	for ( unsigned i=0; i<nPorts; i++ ) {
+		std::string portName = midiin->getPortName(i);
+		std::cout << "MIDI:  " << i << ". " << portName << '\n';
+	}
+	delete midiin;
+	midiin = NULL;
+}
