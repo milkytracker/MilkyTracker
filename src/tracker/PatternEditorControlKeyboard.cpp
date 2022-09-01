@@ -663,7 +663,6 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	if (cursor.inner == 0)
 	{
 		handleDeleteKey(keyCode, number);
-
 		if (number == -1 && ::getKeyModifier() == 0)
 			number = ScanCodeToNote(scanCode);
 
@@ -677,17 +676,15 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 
 void PatternEditorControl::handleKeyChar(pp_uint8 character)
 {
-	PatternEditorTools::Position& cursor = patternEditor->getCursor();
-	pp_int32 number = -1;
-
 	// prevent unnecessary screen refreshing through listener callback
 	// remember to reset this when leaving this function
 	patternEditor->setLazyUpdateNotifications(true);
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number   = -1;
 
 	if ((cursor.inner == 1 || cursor.inner == 2))
 	{
 		number = asciiToHex(character);
-
 		if (number == 0xFF)
 			patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, 0, true, this);
 		else if (number >= 0 && number <= 0xF)
@@ -795,7 +792,7 @@ void PatternEditorControl::handleKeyChar(pp_uint8 character)
 				patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, number, true, this);
 			else
 				patternEditor->writeEffectOperand(cursor.inner == 6 ? PatternEditor::NibbleTypeHigh : PatternEditor::NibbleTypeLow,
-												  number, true, this);
+												number, true, this);
 		}
 	}
 
