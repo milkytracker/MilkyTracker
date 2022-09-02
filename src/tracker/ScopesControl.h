@@ -76,6 +76,7 @@ private:
 
 	PlayerController* playerController;
 
+	pp_int32 selectedChannel;
 	pp_int32 numChannels;
 	pp_int32 channelWidthTable[TrackerConfig::MAXCHANNELS];
 	bool onOffState[TrackerConfig::MAXCHANNELS];
@@ -148,6 +149,8 @@ public:
 
 	void setAppearance(AppearanceTypes appearance) { this->appearance = appearance; }
 	AppearanceTypes getAppearance() const { return appearance; }
+
+	void selectChannel(pp_int32 c ){ this->selectedChannel = c; }
 
 private:
 	pp_int32 pointToChannel(const PPPoint& pt);
