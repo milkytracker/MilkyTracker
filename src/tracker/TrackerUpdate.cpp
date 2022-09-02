@@ -939,7 +939,8 @@ void Tracker::doFollowSong()
 	bool updateScopes = false;
 	if (scopesControl && scopesControl->isVisible())
 	{
-		updateScopes = scopesControl->needsUpdate();
+		updateScopes = true;
+		scopesControl->selectChannel( patternEditorControl->isActive() ? patternEditorControl->getCurrentChannel() : -1);
 		if (updateScopes && !updatePiano && !importantRefresh && !updatePlayTime && !updatePeak)
 		{
 			screen->paintControl(scopesControl);

@@ -109,6 +109,7 @@ ScopesControl::ScopesControl(pp_int32 id,
 	backgroundButton = new PPButton(0, parentScreen, NULL, PPPoint(location.x, location.y), PPSize(size.width, size.height), false, false);
 	backgroundButton->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground));
 	backgroundButton->setInvertShading(true);
+	selectedChannel = 0;
 }
 
 ScopesControl::~ScopesControl()
@@ -250,7 +251,12 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 
 	backgroundButton->paint(g);
 
-	g->setRect(location.x, location.y, location.x + size.width+1, location.y + size.height+1);
+	PPRect scopesRect;
+	scopesRect.x1 = location.x;
+	scopesRect.y1 = location.y;
+	scopesRect.x2 = location.x + size.width+1;
+	scopesRect.y2 = location.y + size.height+1;
+	g->setRect(scopesRect);
 
 	if (border)
 	{
@@ -258,9 +264,6 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 	}
 
 	g->setRect(location.x + 2, location.y + 2, location.x + size.width - 2, location.y + size.height - 2);
-
-	//g->setColor(0,0,0);
-	//g->fill();
 
 	if (!playerController || numChannels < 2)
 		return;
@@ -356,6 +359,16 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 		pp_int32 sy = locy - channelHeight / 2 + 3;
 
 		pp_int32 sy2 = locy + channelHeight / 2 - smallFont->getCharHeight() - 1;
+		
+		if( selectedChannel == c ){
+			g->setRect(channelRects[c]);
+			PPColor highlight = g->getColor();
+			highlight.scale(0.4);
+			g->setColor( highlight );
+			g->fill();
+			g->setRect(scopesRect);
+			g->setColor( TrackerConfig::colorScopes );
+		}
 
 		if (!muteChannels[c])
 		{
