@@ -265,23 +265,6 @@ pp_int32 PatternEditor::getCurrentActiveInstrument()
 		
 	if (!instrumentEnabled)
 		return 0;
-		
-	if (instrumentBackTrace)
-	{
-		for (pp_int32 i = cursor.row; i >= 0; i--)
-		{
-			patternTools.setPosition(pattern, cursor.channel, i);
-			
-			pp_int32 ins = patternTools.getInstrument();
-			
-			if (ins != 0)
-			{
-				return ins;
-			}
-		}
-		
-		//return -1;
-	}
 	
 	return currentInstrument;
 }

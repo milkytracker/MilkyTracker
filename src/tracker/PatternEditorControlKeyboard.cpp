@@ -837,6 +837,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 		{
 			cursor.channel--;
 			cursor.inner = 7;
+			notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 		}
 		else
 		{
@@ -865,6 +866,7 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 		{
 			cursor.channel++;
 			cursor.inner = 0;
+			notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 		}
 		else
 		{
@@ -1314,6 +1316,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 				cursor.inner = 0;
 		}
 	}
+	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
 void PatternEditorControl::eventKeyDownBinding_NextChannel()
@@ -1341,6 +1344,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 				cursor.inner = 0;
 		}
 	}
+	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
 void PatternEditorControl::eventKeyDownBinding_InsertNote()

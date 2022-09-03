@@ -511,6 +511,7 @@ public:
 	enum AdvanceCodes
 	{
 		AdvanceCodeJustUpdate,
+		AdvanceCodeColumn,
 		AdvanceCodeCursorUpWrappedStart,
 		AdvanceCodeCursorDownWrappedEnd,
 		AdvanceCodeCursorPageUpWrappedStart,

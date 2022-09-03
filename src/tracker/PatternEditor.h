@@ -277,6 +277,7 @@ public:
 	bool isInstrumentEnabled() { return instrumentEnabled; }	
 	// Intelligent instrument backtrace?
 	void setInstrumentBackTrace(bool instrumentBackTrace) { this->instrumentBackTrace = instrumentBackTrace; }
+	bool getInstrumentBackTrace(){ return this->instrumentBackTrace; }
 
 	void setCurrentOctave(pp_int32 octave) { currentOctave = octave; }
 	pp_int32 getCurrentOctave() const { return currentOctave; }
