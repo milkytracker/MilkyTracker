@@ -139,6 +139,10 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				}
 				break;
 			}
+			case VK_TAB:{
+				backtraceInstrument( ::getKeyModifier() == (KeyModifierCTRL) ? -1 : +1, false);
+				break;
+			}
 
 			default:
 			{
@@ -244,6 +248,7 @@ processBindings:
 			}
 
 		}
+		
 	}
 	else if (event->getID() == eKeyUp)
 	{
@@ -267,7 +272,6 @@ processBindings:
 				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
 			}
 		}
-		
 	}
 }
 
