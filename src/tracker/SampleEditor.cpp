@@ -1755,6 +1755,39 @@ void SampleEditor::tool_FLPasteSample(const FilterParameters* par)
 
 }
 
+void SampleEditor::tool_foldSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = 0;
+	pp_int32 sEnd = sample->samplen/2;
+
+	preFilter(&SampleEditor::tool_foldSample, par);
+	
+	prepareUndo();
+	
+	pp_int32 i;
+	bool is16Bit = (sample->type & 16);
+
+	// mix first half with second half
+	for (i = 0;  i < sEnd; i++){
+		mp_sint32 mix = is16Bit ? sample->getSampleValue(i)*0.5 + sample->getSampleValue(i+sEnd)*0.5
+		                        : sample->getSampleValue(i)*0.5 + sample->getSampleValue(i+sEnd)*0.5;
+		sample->setSampleValue( i, mix);
+	}
+
+	finishUndo();	
+	
+	postFilter();
+	// store 1st half in clipboard
+	setSelectionStart(0);
+	setSelectionEnd(sEnd);
+	cropSample();
+	setRepeatStart(0);
+	setRepeatEnd(sEnd);
+	setLoopType(1);
+}
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)
 {
