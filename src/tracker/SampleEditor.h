@@ -326,6 +326,7 @@ public:
 	void tool_FMPasteSample(const FilterParameters* par);
 	void tool_PHPasteSample(const FilterParameters* par);
 	void tool_FLPasteSample(const FilterParameters* par);
+	void tool_foldSample(const FilterParameters* par);
 	
 	// convert sample resolution
 	void tool_convertSampleResolution(const FilterParameters* par);

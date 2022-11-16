@@ -33,6 +33,7 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
+#include "FilterParameters.h"
 
 #include <algorithm>
 #include <math.h>
@@ -120,10 +121,14 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuAdvanced->setSubMenu(true);
 	subMenuAdvanced->addEntry("Volume boost" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
-	subMenuAdvanced->addEntry("Volume fade" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuAdvanced->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuAdvanced->addEntry("Compress", MenuCommandIDCompress);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
+	subMenuAdvanced->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
+	subMenuAdvanced->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
+	subMenuAdvanced->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
+	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
+	subMenuAdvanced->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
 	subMenuAdvanced->addEntry("Backwards", MenuCommandIDReverse);
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
@@ -1689,6 +1694,9 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDVolumeFadeOut, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDVolumeFold, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverse, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDXFade, !sampleEditor->isValidxFadeSelection() || isEmptySample || !sampleEditor->getLoopType());
@@ -1816,6 +1824,27 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDVolumeFade:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFade);
 			break;
+
+		case MenuCommandIDVolumeFadeOut:{
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(1.0f));
+			par.setParameter(1, FilterParameters::Parameter(0.0f));
+			sampleEditor->tool_scaleSample(&par);
+			break;
+		}
+
+		case MenuCommandIDVolumeFadeIn:{
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(0.0f));
+			par.setParameter(1, FilterParameters::Parameter(1.0f));
+			sampleEditor->tool_scaleSample(&par);
+			break;
+		}
+
+		case MenuCommandIDVolumeFold:{
+			sampleEditor->tool_foldSample(NULL);
+			break;
+		}
 
 		case MenuCommandIDResample:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeResample);
