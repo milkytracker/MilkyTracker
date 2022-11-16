@@ -37,6 +37,8 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 
+#define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
+
 SampleEditor::ClipBoard::ClipBoard() :
 		buffer(NULL)
 {
@@ -1880,37 +1882,51 @@ void SampleEditor::tool_compressSample(const FilterParameters* par)
 
 	prepareUndo();
 
-	float maxLevel = ((par == NULL) ? 1.0f : par->getParameter(0).floatPart);
-	float peak_pre = 0.0f;
-	float peak_post = 0.0f;
-	float compress = 0.8;
-
 	pp_int32 i;
+	float peak = 0.0f;
 
 	// find peak value (pre)
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
-		if (ppfabs(f) > peak_pre) peak_pre = ppfabs(f);
+		if (ppfabs(f) > peak) peak = ppfabs(f);
 	}
 
-	// compress
-	for (i = sStart; i < sEnd; i++)
-	{
+	float max = 0.0f;
+	float compress = peak * 0.66;
+	float last  = 0.0;
+	float wpeak = 0.0;
+	int zerocross[2];
+	zerocross[0] = -1;
+	zerocross[1] = -1;
+	float treshold = 0.8;
+	float peakTreshold = peak * treshold;
+
+	// scaling limiter inspired by awesome 'TAP scaling limiter'
+	for (i = sStart; i < sEnd; i++) {
 		float f = getFloatSampleFromWaveform(i);
-		f = compress * tanh(f / compress);       // upward compression
-		setFloatSampleInWaveform(i, f);
+		if (ZEROCROSS(f, last)) {
+			zerocross[0] = zerocross[1];
+			zerocross[1] = i;
+			if (zerocross[0] >= 0 && zerocross[1] > 0) {                   // detected waveset 
+				wpeak = 0;
+				for (int j = zerocross[0]; j < zerocross[1]; j++) {        // get peak from waveset
+					float w = getFloatSampleFromWaveform(j);
+					if (ppfabs(w) > wpeak) wpeak = ppfabs(w);
+				}
+				if (wpeak > peakTreshold) {                                    // scale down waveset if wpeak exceeds treshold
+					for (int j = zerocross[0]; j < zerocross[1]; j++) {
+						float b = getFloatSampleFromWaveform(j) * (peakTreshold / wpeak);
+						this->setFloatSampleInWaveform(j,b );
+					}
+				}
+			}
+		}
+		last = f;
 	}
 
-	// find peak value (post)
-	for (i = sStart; i < sEnd; i++)
-	{
-		float f = getFloatSampleFromWaveform(i);
-		if (ppfabs(f) > peak_post) peak_post = ppfabs(f);
-	}
-
-	float scale = 1.0f + (peak_pre - peak_post);
-
+	// post-compensate amplitudes 
+	float scale = (peak/peakTreshold);
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
