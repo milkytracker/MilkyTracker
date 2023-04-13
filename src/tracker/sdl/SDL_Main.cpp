@@ -978,15 +978,17 @@ unrecognizedCommandLineSwitch:
 
 	if (loadFile)
 	{
+		PPSystemString newCwd = path.getCurrent();
+		path.change(oldCwd);
+		
 		struct stat statBuf;
-		if (stat(loadFile, &statBuf) != 0)
+
+		if (stat(realpath(loadFile, loadFileAbsPath), &statBuf) != 0)
 		{
 			fprintf(stderr, "could not open %s: %s\n", loadFile, strerror(errno));
 		}
 		else
 		{
-			PPSystemString newCwd = path.getCurrent();
-			path.change(oldCwd);
 			SendFile(realpath(loadFile, loadFileAbsPath));
 			path.change(newCwd);
 			pp_uint16 chr[3] = {VK_RETURN, 0, 0};
