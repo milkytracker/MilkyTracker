@@ -71,6 +71,7 @@ private:
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
+	PPContextMenu* subMenuScripting;
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
@@ -110,6 +111,9 @@ private:
 	pp_int32 relativeNote;
 	OffsetFormats offsetFormat;
 
+	PPString scriptsFile;
+	PPString scriptsFolder;
+
 	mp_sint32 getVisibleLength();
 	
 	float calcScale(mp_sint32 len);
@@ -147,6 +151,9 @@ public:
 
 	virtual void setSize(const PPSize& size);
 	virtual void setLocation(const PPPoint& location);
+
+	void loadScriptsContextMenu();
+	void executeScriptContextMenu(int commandId);
 
 public:
 	// controlling editor from outside

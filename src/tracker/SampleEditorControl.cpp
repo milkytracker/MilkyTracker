@@ -25,6 +25,7 @@
 #include "GraphicsAbstract.h"
 #include "PPUIConfig.h"
 #include "ScrollBar.h"
+#include "PPOpenPanel.h"
 #include "ContextMenu.h"
 #include "Piano.h"
 #include "Tools.h"
@@ -33,6 +34,13 @@
 #include "TrackerConfig.h"
 #include "PlayerController.h"
 #include "DialogBase.h"
+#include "FilterParameters.h"
+#include "ModuleEditor.h"
+#include "Scripting.h"
+#include "PPSystem.h"
+#include "ControlIDs.h"
+#include "SectionSamples.h"
+#include "TrackerSettingsDatabase.h"
 
 #include <algorithm>
 #include <math.h>
@@ -79,7 +87,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	
 	selectionStartNew(-1),
 	selectionEndNew(-1),
-
+	subMenuScripting(NULL),
 	selecting(-1),
 	resizing(0),
 	drawMode(false),
@@ -104,7 +112,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	scrollDist = (3298*visibleWidth) >> 16;
 	
 	adjustScrollbars();
-
+	
 	showMarks = new ShowMark[TrackerConfig::maximumPlayerChannels];
 	for (pp_int32 i = 0; i < TrackerConfig::maximumPlayerChannels; i++)
 	{
@@ -164,7 +172,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
-	
+
+	// scripting menu
+	subMenuScripting = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
+	loadScriptsContextMenu();
+
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
 	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
@@ -179,10 +191,12 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
 	editMenuControl->addEntry(seperatorStringMed, -1);
-	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
-	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
-	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
-	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
+	editMenuControl->addEntry("Scripts      \x10", 0xFFFF, subMenuScripting );
+	editMenuControl->addEntry(seperatorStringMed, -1);
+	editMenuControl->addEntry("Advanced     \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("Ext. Paste   \x10", 0xFFFF, subMenuXPaste);
+	editMenuControl->addEntry("Protracker   \x10", 0xFFFF, subMenuPT);
+	editMenuControl->addEntry("Generators   \x10", 0xFFFF, subMenuGenerators);
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
@@ -210,6 +224,7 @@ SampleEditorControl::~SampleEditorControl()
 	delete subMenuXPaste;
 	delete subMenuPT;
 	delete subMenuGenerators;
+	delete subMenuScripting;
 }
 
 void SampleEditorControl::drawLoopMarker(PPGraphicsAbstract* g, pp_int32 x, pp_int32 y, bool down, const pp_int32 size)
@@ -1210,6 +1225,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuScripting) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
 	{
@@ -1721,6 +1737,14 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateQuarterSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
 
+	// load items from scripts.txt if any
+	PPDictionaryKey *k = tracker->settingsDatabase->restore("SCRIPTSFILE");
+	if( k != NULL ) scriptsFile = PPString( k->getStringValue() );
+	if( scriptsFile.length() > 1 ){
+		Scripting::loadScripts(scriptsFile,&scriptsFolder);
+		loadScriptsContextMenu();
+	}
+
 	parentScreen->setContextMenuControl(editMenuControl);
 }
 
@@ -1914,6 +1938,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 	}
+	if (commandId >= Scripting::MenuID)
+	{
+		executeScriptContextMenu( commandId );
+	}
 }
 
 void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::EditorNotifications notification)
@@ -2037,4 +2065,87 @@ void SampleEditorControl::editorNotification(EditorBase* sender, EditorBase::Edi
 		case EditorBase::NotificationUnprepareCritical:
 			break;
 	}
+}
+
+void SampleEditorControl::loadScriptsContextMenu(){
+	subMenuScripting->empty();
+	subMenuScripting->addEntry("Load" PPSTR_PERIODS, Scripting::MenuIDScriptBrowse);
+	Scripting::loadScripts( scriptsFile.getStrBuffer(), &scriptsFolder );
+	if( Scripting::scripts != NULL ){
+		static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
+		subMenuScripting->addEntry(seperatorStringLarge, -1);
+		Scripting::loadScriptsToMenu(subMenuScripting);
+	}
+}
+
+void SampleEditorControl::executeScriptContextMenu(int commandId){
+	char cmd[255];
+	int selected_instrument;
+	int selected_sample;
+	PPString selected;
+
+	if (commandId == Scripting::MenuIDScriptBrowse)
+	{
+		#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
+		AllocConsole();				   // popup console for errors
+		HWND hwnd = ::GetConsoleWindow();
+		if (hwnd != NULL){ // prevent user from closing console (thus milkytracker)
+			HMENU hMenu = ::GetSystemMenu(hwnd, FALSE);
+			if (hMenu != NULL) DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
+		}
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		#endif
+		if( scriptsFile.length() == 0 ){
+			printf("script: engine started\n");
+			printf("script: to download example scripts see: https://github.com/coderofsalvation/MilkyTrackerX\n");
+		}
+		Scripting::filepicker("Load script (or scripts.txt)",NULL,&scriptsFile, tracker->screen);
+		PPString fileshort = scriptsFile.stripPath();
+		if( fileshort.compareTo( "scripts.txt") == 0 ){
+			Scripting::loadScripts( scriptsFile.getStrBuffer(), &scriptsFolder );
+			loadScriptsContextMenu();
+			tracker->settingsDatabase->store("SCRIPTSFILE",scriptsFile);
+			return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "Scripts contextmenu was updated", Tracker::MessageBox_OK);
+		}else{
+			sprintf(cmd,"%s %%s %%s",scriptsFile.getStrBuffer());	
+			selected = scriptsFile.subString(0,24);
+			commandId = Scripting::MenuIDFile;
+		}
+	}
+
+	PPPath *currentPath = PPPathFactory::createPath();
+	PPString projectPath = currentPath->getCurrent();
+	if( scriptsFolder.length() != 0 ) currentPath->change(scriptsFolder);
+	tracker->getSelectedInstrument(&selected_instrument, &selected_sample);
+	PPString fin = "in.wav";   // ideally std::filesystem::temp_directory_path()) + string("\\in.wav") ?
+	PPString fout = "out.wav"; // TODO: write clipboard.wav
+	// save samples to local disk
+	tracker->getModuleEditor()->saveSample(
+		fin,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->saveSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	sampleEditor->prepareUndo();
+	int ret = Scripting::runScriptMenuItem(scriptsFolder, commandId, cmd, tracker->screen, fin, fout, &selected);
+	if (ret != 0 && ret != -1)
+		return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
+	tracker->getModuleEditor()->loadSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
+	tracker->sectionSamples->updateAfterLoad();
+	rangeAll(true);
+	showAll();
+	sampleEditor->finishUndo();
+	sampleEditor->postFilter();
+	currentPath->change(projectPath); // restore
 }

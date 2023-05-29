@@ -375,4 +375,3 @@ void PPContextMenu::setLocation(const PPPoint& location)
 
 	this->location = loc;
 }
-

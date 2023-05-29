@@ -101,6 +101,9 @@ public:
 	
 	void setNotifyParentOnHide(bool notifyParentOnHide) { this->notifyParentOnHide = notifyParentOnHide; }
 	bool getNotifyParentOnHide() const { return notifyParentOnHide; }
+
+	void empty(){ menu->items.clear(); }
+
 };
 
 #endif

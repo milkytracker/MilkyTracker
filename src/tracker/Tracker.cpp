@@ -3225,3 +3225,7 @@ void Tracker::signalWaitState(bool b)
 	screen->signalWaitState(b, TrackerConfig::colorThemeMain);	
 }
 
+void Tracker::getSelectedInstrument( int *instrument, int *sample ) {
+	*instrument = listBoxInstruments->getSelectedIndex();
+	*sample = listBoxSamples->getSelectedIndex();
+}
