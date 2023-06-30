@@ -5,6 +5,13 @@ platform:
   - Win32
   - x64
 
+image:
+  - Ubuntu1604
+  - Visual Studio 2017
+
+environment:
+  APPVEYOR_YML_DISABLE_PS_LINUX: true
+
 install:
   - git submodule update --init --recursive
   - ps: |
@@ -12,21 +19,65 @@ install:
       Update-AppveyorBuild -Version "$env:GIT_TAG-$env:APPVEYOR_BUILD_NUMBER"
 
 before_build:
-  - md c:\projects\milkytracker\build
-  - cd c:\projects\milkytracker\build
-  - if %platform% == Win32 cmake -G "Visual Studio 14" -T v140_xp ..
-  - if %platform% == x64 cmake -G "Visual Studio 14 Win64" -T v140_xp ..
+  - sh: sudo apt-get update
+  - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
+  - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
+  - sh: mkdir -p build
+  - sh: cd build
+  - sh: 
+  - cmd: pwd
+  - cmd: md build
+  - cmd: cd build
+  - cmd: if %platform% == Win32 cmake -G "Visual Studio 15 2017" -T v140_xp ..
+  - cmd: if %platform% == x64 cmake -G "Visual Studio 15 2017 Win64" -T v140_xp ..
+  - cmd: dir
+
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu1604
+
+  build_script:
+  - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - sh: pwd
+  - sh: make
+  - sh: cpack -C %configuration% -D CPACK_GENERATOR="ZIP"
+  - sh: cd ..
+  - sh: unzip build/milkytracker*.zip 
+  - sh: echo create AppImage
+  - sh: ls -la
+  - sh: cp -r milkytracker-* MilkyTrackerX-x86_64.AppDir
+  - sh: cd MilkyTrackerX-x86_64.AppDir 
+  - sh: echo -e '#!/bin/sh\nHERE="$(dirname "$(readlink -f "${0}")")"\nLD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH" $HERE/bin/milkytracker "$@"' > AppRun && chmod +x AppRun
+  - sh: echo CHECKING LIBS && find . -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - sh: mkdir -p usr/share usr/lib
+  - sh: objdump -p bin/milkytracker | awk '/ NEEDED/ {print $2}' 
+  #- sh: objdump -p bin/milkytracker | awk '/ NEEDED/ {print $2}' | while read lib; do { set +e; test -f /usr/lib/x86_64-linux-gnu/$lib && cp /usr/lib/x86_64-linux-gnu/$lib usr/lib/.; set -e; } done
+  - sh: cp /usr/lib/x86_64-linux-gnu/{librtmidi*,libzzip-0.so.13,libsnd*,libvorb*,libFLAC*,libffi*,libogg*} usr/lib/.
+  - sh: cd usr && ln -s lib x86_64-linux-gnu && cd -
+  - sh: cp ../resources/pictures/carton.png milkytracker.png
+  - sh: cp ../resources/milkytracker.desktop .
+  - sh: sed -i 's|MilkyTracker|MilkyTrackerX|g;s|Comment=.*|Comment=A Portable SampleTracker DAW|g' milkytracker.desktop
+  #- sh: cp ../resources/milkytracker.appdata /usr/share/metainfo
+  - sh: find .
+  - sh: cd .. 
+  - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
+  - sh: chmod +x appimagetool*.AppImage
+  - sh: ./appimagetool-* MilkyTrackerX-x86_64.AppDir 
+  - sh: pwd
 
 build:
-    project: c:\projects\milkytracker\build\MilkyTracker.sln
+    project: build\MilkyTracker.sln
 
 after_build:
   # https://github.com/chocolatey/chocolatey/issues/431
-  - cmake -E remove -f c:\programdata\chocolatey\bin\cpack.exe
-  - cpack -C %configuration%
+  - cmd: cmake -E remove -f c:\programdata\chocolatey\bin\cpack.exe
+  - cmd: cpack -C %configuration%
 
 artifacts:
   - path: build\milkytracker*.zip
+  - path: Milky*.AppImage
 
 deploy:
   description: Release $(appveyor_repo_tag_name)
