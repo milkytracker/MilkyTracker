@@ -103,6 +103,8 @@ public:
 private:
 	TXMSample* sample;
 	TXMSample lastSample;
+	pp_int32 lastRelNote = 0;
+	pp_int32 lastFineTune = 0;
 	
 	// Current selection
 	pp_int32 selectionStart, selectionEnd;
