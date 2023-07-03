@@ -144,6 +144,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("SHOWZEROEFFECT", 0);
 	// Wrap around cursor
 	settingsDatabase->store("WRAPAROUND", 1);
+	// Advanced drag and drop in pattern editor
+	settingsDatabase->store("ADVANCEDDND", 1);
 	// Beeing prospective
 	settingsDatabase->store("PROSPECTIVE", 0);
 	// follow song when playing
@@ -450,6 +452,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("WRAPAROUND") == 0)
 	{
 		setCursorWrapAround(v2 != 0, false);
+	}
+	else if (theKey->getKey().compareTo("ADVANCEDDND") == 0)
+	{
+		setAdvancedDnd(v2 != 0, false);
 	}
 	else if (theKey->getKey().compareTo("PROSPECTIVE") == 0)
 	{

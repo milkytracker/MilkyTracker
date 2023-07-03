@@ -832,7 +832,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	
 	// --------------------- draw moved selection ---------------------
 	
-	if (hasValidSelection() && moveSelection)
+	if (properties.advancedDnd && hasValidSelection() && moveSelection)
 	{
 		pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
 		pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
@@ -849,11 +849,11 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			j1 = PPTools::clamp(j1, 0, numVisibleChannels);
 			j2 = PPTools::clamp(j2, 0, numVisibleChannels);
 			
-			pp_int32 x1 = (location.x + (j1-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
-			pp_int32 y1 = (location.y + (i1-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
+			pp_int32 x1 = (location.x + (j1 - startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionStart.inner] + (getRowCountWidth() + 4);
+			pp_int32 y1 = (location.y + (i1 - startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() + 4);
 			
-			pp_int32 x2 = (location.x + (j2-startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionEnd.inner]+cursorSizes[selectionEnd.inner] + (getRowCountWidth() + 3);
-			pp_int32 y2 = (location.y + (i2-startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight()*2 + 2);
+			pp_int32 x2 = (location.x + (j2 - startPos) * slotSize + SCROLLBARWIDTH) + cursorPositions[selectionEnd.inner]+cursorSizes[selectionEnd.inner] + (getRowCountWidth() + 3);
+			pp_int32 y2 = (location.y + (i2 - startIndex) * font->getCharHeight() + SCROLLBARWIDTH) + (font->getCharHeight() * 2 + 2);
 			
 			// use a different color for cloning the selection instead of moving it
 			if (::getKeyModifier() & selectionKeyModifier)
@@ -865,15 +865,15 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			
 			// inner dashed lines
 			g->drawHLineDashed(x1, x2, y1, dashLen, 3);
-			g->drawHLineDashed(x1, x2, y2, dashLen, 3+y2-y1);
+			g->drawHLineDashed(x1, x2, y2, dashLen, 3 + y2 - y1);
 			g->drawVLineDashed(y1, y2, x1, dashLen, 3);
-			g->drawVLineDashed(y1, y2+2, x2, dashLen, 3+x2-x1);
+			g->drawVLineDashed(y1, y2+2, x2, dashLen, 3 + x2 - x1);
 			
 			// outer dashed lines
 			g->drawHLineDashed(x1-1, x2+1, y1-1, dashLen, 1);
-			g->drawHLineDashed(x1-1, x2, y2+1, dashLen, 3+y2-y1);
+			g->drawHLineDashed(x1-1, x2, y2+1, dashLen, 3 + y2 - y1);
 			g->drawVLineDashed(y1-1, y2+1, x1-1, dashLen, 1);
-			g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3+x2-x1);
+			g->drawVLineDashed(y1-1, y2+2, x2+1, dashLen, 3 + x2 - x1);
 		}
 		
 	}

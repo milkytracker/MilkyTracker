@@ -436,6 +436,7 @@ void Tracker::initUI()
 	setFollowSong(true, false);
 	setProspectiveMode(false, false);
 	setCursorWrapAround(true, false);
+	setAdvancedDnd(true, false);
 
 	for (c = 0; c < TrackerConfig::MAXCHANNELS; c++)
 	{
