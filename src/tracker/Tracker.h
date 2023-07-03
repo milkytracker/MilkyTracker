@@ -92,6 +92,14 @@ class PPKeyBindings;
 class Tracker : public EventListenerInterface
 {
 private:
+	enum PanelRotate
+	{
+		PanelTop,
+		PanelTop_Sample,
+		PanelTop_Instrument
+	};
+	PanelRotate panelrotate = PanelRotate::PanelTop;
+
 	// I've replaced some constants
 #ifndef __LOWRES__
 	pp_int32 SCOPESHEIGHT();
@@ -466,6 +474,8 @@ public:
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);
 
+  ModuleEditor* getModuleEditor(){ return moduleEditor; }
+
 private:
 	void switchEditMode(EditModes mode);
 
@@ -515,6 +525,7 @@ private:
 	void eventKeyDownBinding_PlayPatternFromSECONDQUARTER();
 	void eventKeyDownBinding_PlayPatternFromTHIRDQUARTER();
 	void eventKeyDownBinding_PlayRow();
+	void eventKeyDownBinding_RotatePanels();
 	void eventKeyDownBinding_PlayTrace();
 	void eventKeyDownBinding_Stop();
 	void eventKeyDownBinding_Edit();	
@@ -586,14 +597,14 @@ private:
 	void eventKeyDownBinding_InvokePatternCapture();
 	void eventKeyDownBinding_InvokeHelp();
 
-	// brujo sauce
-	void eventKeyDownBinding_BpmPlus();
-	void eventKeyDownBinding_BpmMinus();
-	void eventKeyDownBinding_CoarseBpmPlus();
-	void eventKeyDownBinding_CoarseBpmMinus();
-	void eventKeyDownBinding_AddPlus();
-	void eventKeyDownBinding_AddMinus(); 
-	void eventKeyDownBinding_LoadInstrument();
+  // brujo sauce
+  void eventKeyDownBinding_BpmPlus();
+  void eventKeyDownBinding_BpmMinus();
+  void eventKeyDownBinding_CoarseBpmPlus();
+  void eventKeyDownBinding_CoarseBpmMinus();
+  void eventKeyDownBinding_AddPlus();
+  void eventKeyDownBinding_AddMinus();
+  void eventKeyDownBinding_LoadInstrument();
 
 private:
 	// - friend classes --------------------------------------------------------
