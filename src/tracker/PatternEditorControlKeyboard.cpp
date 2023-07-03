@@ -77,11 +77,11 @@ void PatternEditorControl::initKeyBindings()
 
 	// Alternate binding for eventKeyDownBinding_SC_IncreaseRowInsertAdd
 	// for modern ANSI keyboards without section symbol key
-	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
-	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 
-	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
-	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
 	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
 	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
 
