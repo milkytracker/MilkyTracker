@@ -67,6 +67,7 @@ private:
 
 	Tracker* tracker;
 	PPContextMenu* editMenuControl;
+	PPContextMenu* subMenuFX;
 	PPContextMenu* subMenuAdvanced;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
