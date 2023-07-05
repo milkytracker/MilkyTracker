@@ -12,7 +12,7 @@ compatibility.
 
 ## [DOWNLOAD](https://milkytracker.org/download)
 
-<img src="res/milkytrackerX.gif" width="100%"/>
+<img src="https://github.com/coderofsalvation/MilkyTrackerX/raw/master/res/milkytrackerX.gif" width="100%"/>
 
 > For experimental beta builds see [MilkytrackerX](https://github.com/coderofsalvation/MilkytrackerX)
 
