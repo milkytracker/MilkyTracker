@@ -219,6 +219,7 @@ SampleEditorControl::~SampleEditorControl()
 	delete editMenuControl;	
 	delete subMenuAdvanced;
 	delete subMenuXPaste;
+  delete subMenuFX;
 	delete subMenuPT;
 	delete subMenuGenerators;
 }
@@ -1221,6 +1222,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuFX) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuGenerators)) &&
 			 event->getID() == eCommand)
 	{
