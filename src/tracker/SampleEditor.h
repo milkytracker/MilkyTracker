@@ -255,6 +255,8 @@ public:
 	void minimizeSample();
 	void cropSample();
 	void clearSample();
+	void mixSpreadPasteSample();
+	void mixOverflowPasteSample();
 	void mixPasteSample();
 	void AMPasteSample();
 	void FMPasteSample();
