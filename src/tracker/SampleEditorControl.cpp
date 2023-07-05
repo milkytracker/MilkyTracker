@@ -118,18 +118,24 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 	static const char* seperatorStringMed = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 
+	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuFX->addEntry("Volume" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
+	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
+	subMenuFX->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
+	subMenuFX->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
+	subMenuFX->addEntry(seperatorStringLarge, -1);
+	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
+	subMenuFX->addEntry(seperatorStringLarge, -1);
+	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
+	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuFX->addEntry("Exciter [protracker boost]", MenuCommandIDPTBoost);
+	subMenuFX->addEntry(seperatorStringLarge, -1);
+	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
+	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
+	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
+
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
 	subMenuAdvanced->setSubMenu(true);
-	subMenuAdvanced->addEntry("Volume boost" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
-	subMenuAdvanced->addEntry("Normalize", MenuCommandIDNormalize);
-	subMenuAdvanced->addEntry("Compress", MenuCommandIDCompress);
-	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
-	subMenuAdvanced->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
-	subMenuAdvanced->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
-	subMenuAdvanced->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
-	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
-	subMenuAdvanced->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
-	subMenuAdvanced->addEntry("Backwards", MenuCommandIDReverse);
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Change sign", MenuCommandIDChangeSign);
@@ -140,8 +146,6 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Smooth (rect.)", MenuCommandIDRectangularSmooth);
 	subMenuAdvanced->addEntry("Smooth (tri.)", MenuCommandIDTriangularSmooth);
-	subMenuAdvanced->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
-	subMenuAdvanced->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
@@ -179,17 +183,17 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
 	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
 	editMenuControl->addEntry(seperatorStringMed, -1);
+	editMenuControl->addEntry("FX           \x10", 0xFFFF, subMenuFX);
+	editMenuControl->addEntry("Generators   \x10", 0xFFFF, subMenuGenerators);
+	editMenuControl->addEntry("Paste        \x10", 0xFFFF, subMenuXPaste);
+	editMenuControl->addEntry("Advanced     \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
 	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
-	editMenuControl->addEntry(seperatorStringMed, -1);
-	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
-	editMenuControl->addEntry("Ext. Paste \x10", 0xFFFF, subMenuXPaste);
-	editMenuControl->addEntry("Protracker \x10", 0xFFFF, subMenuPT);
-	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
