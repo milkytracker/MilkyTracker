@@ -66,6 +66,7 @@ public:
 
 	bool startRecording(unsigned int deviceID);
 	void stopRecording();	
+	unsigned int countPorts();
 };
 
 #endif

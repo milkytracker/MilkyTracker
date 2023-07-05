@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>MilkyTracker Manual v1.03</title>
+		<title>MilkyTracker Manual v1.04</title>
 		<meta charset="UTF-8" />
 		<style type="text/css">
 			html, body {
@@ -153,7 +153,7 @@
 		</style>
 	</head>
 	<body>
-		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.03</span></h1>
+		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.04</span></h1>
 		<p>
 			Hello and welcome to MilkyTracker, an all-in-one Tracker musicstudio.<br>
       It's opensource, multi-platform and inspired (and compatible) with Fasttracker.
@@ -496,10 +496,10 @@
 				<td><em>Ctrl-Shift-Right</em></td><td>Select next tab</td>
 			</tr>
 			<tr >
-				<td><em>Ctrl-=</em></td><td>Increment instrument number of all notes in the current selection</td>
+				<td><em>Alt-=</em></td><td>Increment instrument number of all notes in the current selection</td>
 			</tr>
 			<tr >
-				<td><em>Ctrl--</em></td><td>Decrement instrument number of all notes in the current selection</td>
+				<td><em>Alt--</em></td><td>Decrement instrument number of all notes in the current selection</td>
 			</tr>
 			<tr >
 				<td><em>Ctrl-Shift-=</em></td><td>Increment instrument number of all notes in the current track under the cursor</td>
@@ -514,6 +514,14 @@
 		</p>
 		<h4>Section switching:</h4>
 		<table>
+			<tr >
+				<td colspan="2"><em>Ctrl-Alt-Space</em> (cycles thru pattern/instrument/sampler section)</td>
+			</tr>
+    </table>
+		<table>
+			<tr >
+				<td colspan="2"><em>Ctrl-Alt-</em></td>
+			</tr>
 			<tr >
 				<td colspan="2"><em>Ctrl-Alt-</em></td>
 			</tr>
@@ -628,145 +636,177 @@
 		</table>
 		<h4>Pattern Editor:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Cursor keys</em></td>
 				<td>Move around</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Tab</em></td>
 				<td>Jump to next channel</td>
 			</tr>
-			<tr >
+			<tr>
+				<td><em>Ctrl-Tab</em></td>
+				<td>Jump to previous channel</td>
+			</tr>
+			<tr>
 				<td><em>PageUp</em></td>
 				<td>Jump 16 rows up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>PageDown</em></td>
 				<td>Jump 16 rows down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Home</em></td>
 				<td>Jump to first row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>End</em></td>
 				<td>Jump to last row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F9</em></td>
 				<td>Jump to beginning of the pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F10</em></td>
 				<td>Jump to position &frac14; through the pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F11</em></td>
 				<td>Jump to position halfway through the pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F12</em></td>
 				<td>Jump to position &frac34; through the pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Z</em></td>
 				<td>Undo</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Y</em></td>
 				<td>Redo</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Cursor keys</em></td>
 				<td>Select block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Alt-Cursor keys</em></td>
 				<td>Extend block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-A</em></td>
 				<td>Select entire pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-X</em></td>
 				<td>Cut</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-C</em></td>
 				<td>Copy</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-V</em></td>
 				<td>Paste</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-V</em></td>
 				<td>Convert current pattern to sample</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-I</em></td>
 				<td>Interpolate values</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Delete</em></td>
 				<td>Delete note/instrument/volume/effect/parameter</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Del</em></td>
 				<td>Delete note, volume and effect at cursor</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Del</em></td>
 				<td>Delete volume and effect at cursor</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-Delete</em></td>
 				<td>Delete effect at cursor</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Insert</em></td>
 				<td>Insert space on current track at cursor position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Insert</em></td>
 				<td>Insert row at cursor position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-Backspace</em></td>
 				<td>Insert space on current track at cursor position (alternative for keyboards with no Insert key)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Alt-Backspace</em></td>
 				<td>Insert row at cursor position (alternative for keyboards with no Insert key)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Backspace</em></td>
 				<td>Delete previous note</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Backspace</em></td>
 				<td>Delete previous row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>The key right of LShift</em></td>
 				<td>Enter key-off</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>The key below Esc</em></td>
 				<td>Enter key-off (Windows only)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>1</em></td>
 				<td>Enter key-off (OS X only)</td>
 			</tr>
-			<tr >
-				<td><em>Alt-Minus</em></td>
+			<tr>
+				<td><em>Alt-Plus or Shift-J</em></td>
 				<td>Increase Add value</td>
 			</tr>
-			<tr >
-				<td><em>or Alt-Plus</em></td>
+			<tr>
+				<td><em>Alt-Minus or Shift-H </em></td>
 				<td>Decrease Add value</td>
+			</tr>
+			<tr>
+				<td><em>Ctrl-J</em></td>
+				<td>Increase BPM by 1</td>
+			</tr>
+			<tr>
+				<td><em>Ctrl-H</em></td>
+				<td>Decrease BPM by 1</td>
+			</tr>
+			<tr>
+				<td><em>Ctrl-K</em></td>
+				<td>Increase BPM by 5</td>
+			</tr>
+			<tr>
+				<td><em>Ctrl-G</em></td>
+				<td>Decrease BPM by 5</td>
+			</tr>
+			<tr>
+				<td><em>Alt-I</em></td>
+				<td>Load Instrument (current slot)</td>
+			</tr>
+			<tr>
+				<td><em>Mousedrag selection</em></td>
+				<td>move selection</td> 
+			</tr>
+			<tr>
+				<td><em>Shift+Mousedrag selection</em></td>
+				<td>clones selection (when 'advanced dnd' is enabled in Misc-tab in config)</td> 
 			</tr>
 		</table>
 		<h4>Transpose:</h4>
@@ -810,6 +850,12 @@
 		</table>
 		<h4>Sample Editor:</h4>
 		<table>
+			<tr >
+				<td><em>Ctrl-Shift up/down</em></td><td>Select next/previous sample</td>
+			<tr >
+				<td><em>Shift &amp; drag</em></td><td>Quick draw</td>
+			</tr>
+			</tr>
 			<tr >
 				<td><em>Shift &amp; drag</em></td><td>Quick draw</td>
 			</tr>
@@ -1205,10 +1251,10 @@
 		<h4>Instrument selection:</h4>
 		<table>
 			<tr >
-				<td><em>Shift-Up</em></td><td>Select previous instrument</td>
+				<td><em>Shift-Up or Ctrl-Up</em></td><td>Select previous instrument</td>
 			</tr>
 			<tr >
-				<td><em>Shift-Down</em></td><td>Select next instrument</td>
+				<td><em>Shift-Down or Ctrl-Down</em></td><td>Select next instrument</td>
 			</tr>
 			<tr >
 				<td><em>Ctrl-Shift-Up</em></td><td>Select previous sample</td>
@@ -3141,7 +3187,7 @@
 			</tr>
 			<tr >
 				<td><em>Linux:</em></td>
-				<td>Enabled by default if available on the system. See the Linux readme for details.</td>
+				<td>Enabled by default if available on the system. By default midi-in port 0 will be connected, but the environment variable MIDI_IN=x allows you to change that (see console output for available portnumbers). See the Linux readme for more details.</td>
 			</tr>
 		</table>
 
@@ -3224,7 +3270,7 @@
 
 		<h2><a id="contact">10. Contact</a></h2>
 		<p>
-			You can contact the MilkyTracker team by email (<span class="email">ten.rekcartyklim@troppus</span>), through the forum at <a href="http://milkytracker.titandemo.org/community/">http://milkytracker.titandemo.org/community/</a> or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
+			You can contact the MilkyTracker team at github (<span class="email">https://github.com/milkytracker/Milkytracker</span>) or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
 		</p>
 
 

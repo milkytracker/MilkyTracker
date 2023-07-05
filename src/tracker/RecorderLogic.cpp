@@ -84,28 +84,18 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				event->cancel();
 			return;
 		}
-		
+
 		bool record = (tracker.editMode == EditModeMilkyTracker ? tracker.screen->hasFocus(patternEditorControl) : recordMode);
 		bool releasePlay = false;
 		bool isLiveRecording = playerController->isPlaying() && 
-							   !playerController->isPlayingRowOnly() &&
-							   record && 
-							   tracker.shouldFollowSong();
-		
-		// when we're not live recording, we need to decide if we're editing
-		if (!isLiveRecording)
-		{
-			releasePlay = !record;
-		}
-		// if we're live recording this is a "release" play, it means that the 
-		// note will not be repeated on a key being pressed, it will stay on
-		// 'till the key is released, but only when the current selected column
-		// is the note column
-		else
-		{
-			releasePlay = patternEditorControl->getCursorPosInner() == 0;
-		}
-		
+							!playerController->isPlayingRowOnly() &&
+							record && 
+							tracker.shouldFollowSong();
+		// separated out releaseplay filtering from the currently in use isLiveRecording to break as few things as possible while filtering note key repeats from the OS
+		// 
+		// Key repeat suppression is enabled when we are looking at a note column (wider suppression than previously done with isLiveRecording)
+		releasePlay = patternEditorControl->getCursorPosInner() == 0;
+
 		if (releasePlay)
 		{
 			// Somewhere editing of text in an edit field takes place,
@@ -126,16 +116,17 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 			// this key is already pressed, we won't play that note again
 			if (isPressed)
 			{
-				// If we're live recording, this event should not be routed anywhere else
+				// If we're recording, this event should not be routed anywhere else
 				// it terminates HERE! (event shall not be routed to the pattern editor)
-				if (isLiveRecording && event)
+				if (!playerController->isPlayingRowOnly() && record && event)
 					event->cancel();
 				return;
 			}
 			
 			// if we're not recording, cycle through the channels
-			// use jam-channels for playing if requested
-			if (!isLiveRecording)
+			// use jam-channels for playing if requested, 
+			// use jam channels when recording/demoing notes under playback when not following song. 
+			if (!(playerController->isPlaying() && record) || !tracker.shouldFollowSong())
 			{
 				chn = playerController->getNextPlayingChannel(chn);
 			}
@@ -145,7 +136,6 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				// next channel is the current channel within the pattern editor
 				chn = playerController->getNextRecordingChannel(chn);
 			}
-			
 		}
 		else
 		{

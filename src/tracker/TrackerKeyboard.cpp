@@ -111,6 +111,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F11, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromSECONDQUARTER);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_F12, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierSHIFT, &Tracker::eventKeyDownBinding_PlayRow);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierCTRL, &Tracker::eventKeyDownBinding_RotatePanels);
 	// !! trace uses a hardcoded key-up event processing, check if you ever decide to change this shortcut
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SPACE, KeyModifierALT, &Tracker::eventKeyDownBinding_PlayTrace);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_ESCAPE, 0, &Tracker::eventKeyDownBinding_Stop);
@@ -179,6 +180,17 @@ void Tracker::initKeyBindings()
 
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
+  // brujo's secret sauce 
+  eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL, &Tracker::eventKeyDownBinding_BpmPlus);
+  eventKeyDownBindingsMilkyTracker->addBinding('H', KeyModifierCTRL, &Tracker::eventKeyDownBinding_BpmMinus);
+  eventKeyDownBindingsMilkyTracker->addBinding('K', KeyModifierCTRL, &Tracker::eventKeyDownBinding_CoarseBpmPlus);
+  eventKeyDownBindingsMilkyTracker->addBinding('G', KeyModifierCTRL, &Tracker::eventKeyDownBinding_CoarseBpmMinus);
+  eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddPlus);
+  eventKeyDownBindingsMilkyTracker->addBinding('H', KeyModifierSHIFT, &Tracker::eventKeyDownBinding_AddMinus);
+  eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierALT, &Tracker::eventKeyDownBinding_LoadInstrument);
+
+  eventKeyDownBindingsMilkyTracker->addBinding(VK_ADD, KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddPlus);
+  eventKeyDownBindingsMilkyTracker->addBinding(VK_SUBTRACT, KeyModifierCTRL, &Tracker::eventKeyDownBinding_AddMinus);
 
 	// Key-down bindings for Fasttracker
 	// tab stuff
@@ -275,6 +287,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL|KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
+
 }
 
 void Tracker::eventKeyDownBinding_OpenTab()
@@ -430,6 +443,31 @@ void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
 								  muteChannels);
 
 	recorderLogic->init();
+}
+
+void Tracker::eventKeyDownBinding_RotatePanels()
+{
+	if (screen->getModalControl())
+		return;
+
+	switch( panelrotate ){
+		case PanelRotate::PanelTop:{
+			panelrotate = PanelRotate::PanelTop_Sample;
+			eventKeyDownBinding_InvokeSectionSamples();
+			break;
+		}
+		case PanelRotate::PanelTop_Sample:{
+			panelrotate = PanelRotate::PanelTop_Instrument;
+			eventKeyDownBinding_InvokeSectionInstruments();
+			break;
+		}
+		case PanelRotate::PanelTop_Instrument:{
+			panelrotate = PanelRotate::PanelTop;
+			sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
+			break;
+		}
+	}
+	screen->paint(true, true);
 }
 
 void Tracker::eventKeyDownBinding_PlayRow()
@@ -1035,4 +1073,55 @@ void Tracker::eventKeyDownBinding_InvokeHelp()
 {
   dialog = new DialogHelp(screen, responder,PP_DEFAULT_ID,"Help",true);	
   dialog->show();
+}
+
+// brujo sauce definitions
+void Tracker::eventKeyDownBinding_BpmPlus() {
+  moduleEditor->setChanged();
+  updateWindowTitle();
+  mp_sint32 bpm, speed;
+  playerController->getSpeed(bpm, speed);
+  playerController->setSpeed(bpm + 1, speed);
+  updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_BpmMinus() {
+  moduleEditor->setChanged();
+  updateWindowTitle();
+  mp_sint32 bpm, speed;
+  playerController->getSpeed(bpm, speed);
+  playerController->setSpeed(bpm - 1, speed);
+  updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_CoarseBpmPlus() {
+  moduleEditor->setChanged();
+  updateWindowTitle();
+  mp_sint32 bpm, speed;
+  playerController->getSpeed(bpm, speed);
+  playerController->setSpeed(bpm + 5, speed);
+  updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_CoarseBpmMinus() {
+  moduleEditor->setChanged();
+  updateWindowTitle();
+  mp_sint32 bpm, speed;
+  playerController->getSpeed(bpm, speed);
+  playerController->setSpeed(bpm - 5, speed);
+  updateSpeed();
+}
+
+void Tracker::eventKeyDownBinding_AddPlus() {
+  getPatternEditorControl()->increaseRowInsertAdd();
+  updatePatternAddAndOctave();
+}
+
+void Tracker::eventKeyDownBinding_AddMinus() {
+  getPatternEditorControl()->decreaseRowInsertAdd();
+  updatePatternAddAndOctave();
+}
+
+void Tracker::eventKeyDownBinding_LoadInstrument() {
+  loadTypeWithDialog(FileTypes::FileTypeSongAllInstruments);
 }

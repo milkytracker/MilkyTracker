@@ -10,7 +10,9 @@ user experience of the popular DOS program Fasttracker II, with
 special playback modes available for improved Amiga ProTracker 2/3
 compatibility.
 
-Refer to http://milkytracker.titandemo.org/?about for further details.
+Refer to http://milkytracker.org/?about for further details.
+
+> For experimental beta builds see [MilkytrackerX](https://github.com/coderofsalvation/MilkytrackerX)
 
 Please read the file [INSTALL.md][] for installation instructions.
 

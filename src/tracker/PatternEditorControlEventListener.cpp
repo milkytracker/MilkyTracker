@@ -361,18 +361,34 @@ unmuteAll:
 				// backup selection, so that it may be restored when context menu is activated by long-press
 				patternEditor->getSelection().backup();
 				
+				if (!properties.advancedDnd) {
+					// If we're pressing the shift key start selection
+					// at current cursor position
+					if (::getKeyModifier() & selectionKeyModifier)
+					{
+						if (patternEditor->getSelection().start.isValid())
+							patternEditor->getSelection().end = patternEditor->getCursor();
+						else
+							patternEditor->getSelection().start = patternEditor->getCursor();
+					}
+				}
+				
 				preCursor = patternEditor->getCursor();
 
 				if (newStartIndex < visibleRows && newStartIndex >= 0)
 				{
 					if (newStartIndex + startIndex < 0)
 					{
-						patternEditor->resetSelection();
-						preCursor.row = 0;
+						if (properties.advancedDnd) {
+							patternEditor->resetSelection();
+							preCursor.row = 0;
+						} else {
+							break;
+						}
 					}
-					else if (newStartIndex + startIndex >= patternEditor->getNumRows())
+					else if (properties.advancedDnd && newStartIndex + startIndex >= patternEditor->getNumRows())
 					{
-						preCursor.row = patternEditor->getNumRows()-1;
+						preCursor.row = patternEditor->getNumRows() - 1;
 					}
 					else
 					{
@@ -389,16 +405,22 @@ unmuteAll:
 						break;
 
 					preCursor.channel = newStartPos + startPos;
-					preCursor.inner = 0;
+					if (properties.advancedDnd) {
+						preCursor.inner = 0;
+					}
 				
 					if (preCursor.channel >= patternEditor->getNumChannels())
 					{
-						// clicked beyond rightmost channel, start selection from the edge
-						patternEditor->resetSelection();
-						preCursor.channel = patternEditor->getNumChannels() - 1;
-						preCursor.inner = 7;
+						if (properties.advancedDnd) {
+							// clicked beyond rightmost channel, start selection from the edge
+							patternEditor->resetSelection();
+							preCursor.channel = patternEditor->getNumChannels() - 1;
+							preCursor.inner = 7;
+						} else {
+							break;
+						}
 					}
-					else
+					else if (properties.advancedDnd)
 					{
 						// find which column in the channel was clicked
 						pp_int32 innerPos = cp.x % slotSize;
@@ -413,27 +435,60 @@ unmuteAll:
 						}
 					}
 					
-					if (patternEditor->selectionContains(preCursor))
-					{
-						startSelection = false;
-						moveSelection = true;
-						moveSelectionInitialPos = preCursor;
-						moveSelectionFinalPos = preCursor;
-					}
-					else
-					{
-						if (!(::getKeyModifier() & selectionKeyModifier))
+					if (properties.advancedDnd) {
+						if (patternEditor->selectionContains(preCursor))
 						{
-							// start selection from mouse cursor position
-							patternEditor->getSelection().start = preCursor;
-							patternEditor->getSelection().end = preCursor;
+							startSelection = false;
+							moveSelection = true;
+							moveSelectionInitialPos = preCursor;
+							moveSelectionFinalPos = preCursor;
 						}
 						else
 						{
-							// resume selection from mouse cursor position
-							if (!patternEditor->getSelection().start.isValid())
-								patternEditor->getSelection().start = patternEditor->getCursor();
-							patternEditor->getSelection().end = preCursor;
+							if (!(::getKeyModifier() & selectionKeyModifier))
+							{
+								// start selection from mouse cursor position
+								patternEditor->getSelection().start = preCursor;
+								patternEditor->getSelection().end = preCursor;
+							}
+							else
+							{
+								// resume selection from mouse cursor position
+								if (!patternEditor->getSelection().start.isValid())
+									patternEditor->getSelection().start = patternEditor->getCursor();
+								patternEditor->getSelection().end = preCursor;
+							}
+						}
+					} else {
+						// start selecting row
+						if (!(::getKeyModifier() & selectionKeyModifier))
+						{
+							patternEditor->getSelection().start.channel = patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().start.row = patternEditor->getSelection().end.row = preCursor.row;
+						}
+						else
+						{
+							patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().end.row = preCursor.row;
+						}
+						
+						pp_int32 innerPos = cp.x % slotSize;
+						
+						preCursor.inner = 0;
+						if (!(::getKeyModifier() & selectionKeyModifier))
+							patternEditor->getSelection().start.inner = 0;
+						patternEditor->getSelection().end.inner = 0;
+						for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
+						{
+							if (innerPos >= cursorPositions[i] &&
+								innerPos < cursorPositions[i+1])
+							{
+								preCursor.inner = i;
+								if (!(::getKeyModifier() & selectionKeyModifier))
+									patternEditor->getSelection().start.inner = i;
+								patternEditor->getSelection().end.inner = i;
+								break;
+							}
 						}
 					}
 
@@ -458,7 +513,7 @@ unmuteAll:
 			
 			menuInvokeChannel = -1;
 			
-			if (moveSelection && moveSelectionFinalPos != moveSelectionInitialPos)
+			if (properties.advancedDnd && moveSelection && moveSelectionFinalPos != moveSelectionInitialPos)
 			{
 				pp_int32 moveSelectionRows = moveSelectionFinalPos.row - moveSelectionInitialPos.row;
 				pp_int32 moveSelectionChannels = moveSelectionFinalPos.channel - moveSelectionInitialPos.channel;
@@ -662,37 +717,75 @@ markOrMoveSelection:
 			
 			pp_int32 newStartPos = cp.x / slotSize;
 			
-			pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
-			pp_int32 visibleChannels = (visibleWidth) / slotSize;
-			
-			mp_sint32 cursorPositionRow = newStartIndex + startIndex;
-			mp_sint32 cursorPositionChannel = newStartPos + startPos;
-			mp_sint32 cursorPositionInner;
-			
-			if (moveSelection)
-			{
-				moveSelectionFinalPos.channel = cursorPositionChannel;
-				moveSelectionFinalPos.row = cursorPositionRow;	
-			}
-			else
-			{
-				if (cursorPositionRow < 0)
-					cursorPositionRow = 0;
-				else if (cursorPositionRow >= patternEditor->getNumRows())
-					cursorPositionRow = patternEditor->getNumRows()-1;
+			if (properties.advancedDnd) {
+				pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
+				pp_int32 visibleChannels = (visibleWidth) / slotSize;
 				
-				if (cursorPositionChannel < 0)
+				mp_sint32 cursorPositionRow = newStartIndex + startIndex;
+				mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				mp_sint32 cursorPositionInner;
+				
+				if (moveSelection)
 				{
-					cursorPositionChannel = 0;
-					cursorPositionInner = 0;
-				}
-				else if (cursorPositionChannel >= patternEditor->getNumChannels())
-				{
-					cursorPositionChannel = patternEditor->getNumChannels()-1;
-					cursorPositionInner = 7;
+					moveSelectionFinalPos.channel = cursorPositionChannel;
+					moveSelectionFinalPos.row = cursorPositionRow;
 				}
 				else
 				{
+					if (cursorPositionRow < 0)
+						cursorPositionRow = 0;
+					else if (cursorPositionRow >= patternEditor->getNumRows())
+						cursorPositionRow = patternEditor->getNumRows()-1;
+					
+					if (cursorPositionChannel < 0)
+					{
+						cursorPositionChannel = 0;
+						cursorPositionInner = 0;
+					}
+					else if (cursorPositionChannel >= patternEditor->getNumChannels())
+					{
+						cursorPositionChannel = patternEditor->getNumChannels()-1;
+						cursorPositionInner = 7;
+					}
+					else
+					{
+						pp_int32 innerPos = cp.x % slotSize;
+						
+						for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
+						{
+							if (innerPos >= cursorPositions[i] &&
+								innerPos < cursorPositions[i+1])
+							{
+								cursorPositionInner = i;
+								break;
+							}
+						}
+					}
+					
+					patternEditor->getSelection().end.row = cursorPositionRow;
+					patternEditor->getSelection().end.channel = cursorPositionChannel;
+					patternEditor->getSelection().end.inner = cursorPositionInner;
+					
+					setScrollbarPositions(startIndex, startPos);
+				}
+			} else {
+				mp_sint32 cursorPositionRow = newStartIndex + startIndex;
+				mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				
+				if (cursorPositionRow < 0) cursorPositionRow = 0;
+				if (cursorPositionChannel < 0) cursorPositionChannel = 0;
+				
+				if (cursorPositionChannel >= patternEditor->getNumChannels())
+				{
+					patternEditor->getSelection().end.channel = patternEditor->getNumChannels()-1;
+					patternEditor->getSelection().end.inner = 7;
+				}
+				else
+				{
+					// start selecting row
+					patternEditor->getSelection().end.channel = cursorPositionChannel;
+					patternEditor->getSelection().end.row = cursorPositionRow;
+					
 					pp_int32 innerPos = cp.x % slotSize;
 					
 					for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
@@ -700,15 +793,11 @@ markOrMoveSelection:
 						if (innerPos >= cursorPositions[i] &&
 							innerPos < cursorPositions[i+1])
 						{
-							cursorPositionInner = i;
+							patternEditor->getSelection().end.inner = i;
 							break;
 						}
 					}
 				}
-				
-				patternEditor->getSelection().end.row = cursorPositionRow;
-				patternEditor->getSelection().end.channel = cursorPositionChannel;
-				patternEditor->getSelection().end.inner = cursorPositionInner;
 				
 				setScrollbarPositions(startIndex, startPos);
 				

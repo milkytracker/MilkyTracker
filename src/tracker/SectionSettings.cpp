@@ -222,6 +222,7 @@ enum ControlIDs
 	// PAGE VI
 	CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE,
 	CHECKBOX_SETTINGS_WRAPCURSOR,
+	CHECKBOX_SETTINGS_ADVANCED_DND,
 	CHECKBOX_SETTINGS_PROSPECTIVE,
 	//CHECKBOX_SETTINGS_FOLLOWSONG,
 	CHECKBOX_SETTINGS_TABTONOTE,
@@ -1469,41 +1470,10 @@ public:
 		container->addControl(checkBox);
 		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Wrap cursor:", checkBox, true));
 
-		y2+=11;
-
-		//container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Follow song:", true));
-		//container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_FOLLOWSONG, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-1)));
-
-		// ------------------ sample editor -------------------
-		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
-
-		y2+=3;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Sample Editor", true, true));
-		y2+=4+11;
-		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_ADVANCED_DND, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Enable undo buff:", checkBox, true));
-
-		y2+=14;
-		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 3));
-		container->addControl(checkBox);
-		PPCheckBoxLabel* cbLabel = new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", checkBox, true);
-		cbLabel->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(cbLabel);
-		
-
-		y2+=10;
-
-		/*// ------------------ other -------------------
-			container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
-		y2+=4+11;
-		PPStaticText* statict = new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Estimate playtime after load", true);
-		statict->setFont(PPFont::getFont(PPFont::FONT_TINY));
-		container->addControl(statict);
-		container->addControl(new PPCheckBox(CHECKBOX_SETTINGS_AUTOESTPLAYTIME, screen, this, PPPoint(x2 + 4 + 17*8 + 4, y2-3)));*/
-
-		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dnd:", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -1520,20 +1490,11 @@ public:
 		v = settingsDatabase->restore("CLICKTOCURSOR")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CLICKTOCURSOR))->checkIt(v!=0);
 
-		//v = settingsDatabase->restore("WRAPAROUND")->getIntValue();
-		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_WRAPCURSOR))->checkIt(v!=0);
+		v = settingsDatabase->restore("WRAPAROUND")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_WRAPCURSOR))->checkIt(v!=0);
 
-		//v = settingsDatabase->restore("FOLLOWSONG")->getIntValue();
-		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FOLLOWSONG))->checkIt(v!=0);
-
-		/*v = settingsDatabase->restore("AUTOESTPLAYTIME")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOESTPLAYTIME))->checkIt(v!=0);*/
-
-		v = settingsDatabase->restore("SAMPLEEDITORUNDOBUFFER")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO))->checkIt(v!=0);
-
-		v = settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES))->checkIt(v!=0);
+		v = settingsDatabase->restore("ADVANCEDDND")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_ADVANCED_DND))->checkIt(v!=0);
 	}
 
 };
@@ -1541,7 +1502,74 @@ public:
 class TabPageMisc_3 : public TabPage
 {
 public:
-	TabPageMisc_3(pp_uint32 id, SectionSettings& sectionSettings) :
+    TabPageMisc_3(pp_uint32 id, SectionSettings& sectionSettings) :
+        TabPage(id, sectionSettings)
+    {
+    }
+
+    virtual void init(PPScreen* screen)
+    {
+        pp_int32 x = 0;
+        pp_int32 y = 0;
+
+        container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+
+        pp_int32 x2 = x;
+        pp_int32 y2 = y;
+        
+        // ------------------ sample editor -------------------
+        container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
+
+        y2+=3;
+
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Sample Editor", true, true));
+        y2+=4+11;
+        PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(checkBox);
+        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Enable undo buff:", checkBox, true));
+
+        y2+=14;
+        checkBox = new PPCheckBox(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 3));
+        container->addControl(checkBox);
+        PPCheckBoxLabel* cbLabel = new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Auto-mixdown stereo samples:", checkBox, true);
+        cbLabel->setFont(PPFont::getFont(PPFont::FONT_TINY));
+        container->addControl(cbLabel);
+        
+        y2+=10;
+
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Mouse Wheel", true, true));
+        y2+=4+11;
+        checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEEL, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(checkBox);
+        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Inv PatEd scroll:", checkBox, true));
+
+        y2+=12;
+
+        checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(checkBox);
+        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Invert zoom:", checkBox, true));
+
+        y2+=12;
+    }
+
+    virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+    {
+        pp_int32 v = settingsDatabase->restore("SAMPLEEDITORUNDOBUFFER")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_SAMPLEEDITORUNDO))->checkIt(v!=0);
+        v = settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_AUTOMIXDOWNSAMPLES))->checkIt(v!=0);
+
+        v = settingsDatabase->restore("INVERTMWHEELZOOM")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEELZOOM))->checkIt(v!=0);
+        v = settingsDatabase->restore("INVERTMWHEEL")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEEL))->checkIt(v!=0);
+    }
+};
+
+class TabPageMisc_4 : public TabPage
+{
+public:
+	TabPageMisc_4(pp_uint32 id, SectionSettings& sectionSettings) :
 		TabPage(id, sectionSettings)
 	{
 	}
@@ -1556,7 +1584,7 @@ public:
 		pp_int32 x2 = x;
 		pp_int32 y2 = y;
 
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Other", true, true));
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Other", true, true));
 		y2+=4+11;		
 		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INTERNALDISKBROWSER, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
@@ -1618,48 +1646,6 @@ public:
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_SCOPESAPPEARANCE))->setChoice(v >> 1);
 	}
 
-};
-
-class TabPageMisc_4 : public TabPage
-{
-public:
-	TabPageMisc_4(pp_uint32 id, SectionSettings& sectionSettings) :
-		TabPage(id, sectionSettings)
-	{
-	}
-
-	virtual void init(PPScreen* screen)
-	{
-		pp_int32 x = 0;
-		pp_int32 y = 0;
-
-		container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
-
-		pp_int32 x2 = x;
-		pp_int32 y2 = y;
-
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2), "Mouse Wheel", true, true));
-		y2+=4+11;
-		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEEL, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
-		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Inv PatEd scroll:", checkBox, true));
-
-		y2+=12;
-
-		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_INVERTMWHEELZOOM, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
-		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Invert zoom:", checkBox, true));
-
-		y2+=12;
-	}
-
-	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
-	{
-		pp_int32 v = settingsDatabase->restore("INVERTMWHEELZOOM")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEELZOOM))->checkIt(v!=0);
-		v = settingsDatabase->restore("INVERTMWHEEL")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_INVERTMWHEEL))->checkIt(v!=0);
-	}
 };
 
 class TabPageTabs_1 : public TabPage
@@ -2123,6 +2109,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("WRAPAROUND", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+                
+			case CHECKBOX_SETTINGS_ADVANCED_DND:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("ADVANCEDDND", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}
