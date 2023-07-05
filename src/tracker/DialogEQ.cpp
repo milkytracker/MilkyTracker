@@ -36,6 +36,7 @@
 #include "Slider.h"
 #include "Seperator.h"
 #include "EQConstants.h"
+#include "FilterParameters.h"
 
 DialogEQ::DialogEQ(PPScreen* screen, 
 				   DialogResponder* responder,
@@ -44,6 +45,9 @@ DialogEQ::DialogEQ(PPScreen* screen,
 	PPDialogBase(),
 	numBands(numBands)
 {
+  preview      = false;
+  needUpdate   = false;
+	sampleEditor = NULL;
 	switch (numBands)
 	{
 		case EQ10Bands:
@@ -154,13 +158,21 @@ void DialogEQ::resetSliders()
 void DialogEQ::update()
 {
 	parentScreen->paintControl(messageBoxContainerGeneric);
+  needUpdate = false;
 }
 
 pp_int32 DialogEQ::handleEvent(PPObject* sender, PPEvent* event)
 {
+	char s[255];
+	pp_uint32 id = reinterpret_cast<PPControl*>(sender)->getID();
+	if( id >= MESSAGEBOX_CONTROL_USER1 && id <= MESSAGEBOX_CONTROL_USER1+numSliders ){
+		needUpdate = true;
+	}
+
+  // undo preview render on cancel, or reset sliders
 	if (event->getID() == eCommand)
 	{
-		switch (reinterpret_cast<PPControl*>(sender)->getID())
+		switch (id)
 		{
 			// reset sliders
 			case MESSAGEBOX_LISTBOX_VALUE_ONE:
@@ -169,7 +181,27 @@ pp_int32 DialogEQ::handleEvent(PPObject* sender, PPEvent* event)
 				update();
 				break;
 			}
+      default: {
+        if( preview && sampleEditor != NULL ) sampleEditor->undo();
+      }
 		}
+	}
+
+  // realtime preview of current settings (when pattern is playing)
+	if( event->getID() == eLMouseUp && needUpdate ){
+		if( sampleEditor != NULL ){
+			pp_uint32 numBands = getNumBandsAsInt();
+			FilterParameters par(numBands);
+			for (pp_uint32 i = 0; i < numBands; i++)
+			{
+        float val = getBandParam(i);
+				par.setParameter(i, FilterParameters::Parameter( val ) );
+			}
+			if( preview ) sampleEditor->undo();
+			sampleEditor->tool_eqSample(&par);
+			preview = true;
+		}
+		update();
 	}
 
 	return PPDialogBase::handleEvent(sender, event);

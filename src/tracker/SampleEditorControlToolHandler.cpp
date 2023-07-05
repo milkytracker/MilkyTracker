@@ -104,24 +104,30 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			}
 			break;
 
-		case ToolHandlerResponder::SampleToolTypeEQ3Band:
+		case ToolHandlerResponder::SampleToolTypeEQ3Band:{
 			dialog = new DialogEQ(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, DialogEQ::EQ3Bands);
+      DialogEQ *eq = static_cast<DialogEQ*>(dialog);
 			if (lastValues.hasEQ3BandValues)
 			{
 				for (pp_int32 i = 0; i < 3; i++)
-					static_cast<DialogEQ*>(dialog)->setBandParam(i, lastValues.EQ3BandValues[i]);
+					eq->setBandParam(i, lastValues.EQ3BandValues[i]);
 			}
+      eq->setSampleEditor(sampleEditor);
 			break;
+    }
 
 		case ToolHandlerResponder::SampleToolTypeEQ10Band:
-		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:
+		case ToolHandlerResponder::SampleToolTypeSelectiveEQ10Band:{
 			dialog = new DialogEQ(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, DialogEQ::EQ10Bands);
+      DialogEQ *eq = static_cast<DialogEQ*>(dialog);
 			if (lastValues.hasEQ10BandValues)
 			{
 				for (pp_int32 i = 0; i < 10; i++)
-					static_cast<DialogEQ*>(dialog)->setBandParam(i, lastValues.EQ10BandValues[i]);
+					eq->setBandParam(i, lastValues.EQ10BandValues[i]);
 			}
+      eq->setSampleEditor(sampleEditor);
 			break;
+    }
 
 		case ToolHandlerResponder::SampleToolTypeGenerateSilence:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Insert silence" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
@@ -265,10 +271,11 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 				last = lastValues.EQ10BandValues;
 			}
 			
+			DialogEQ *dialogEQ = static_cast<DialogEQ*>(dialog);
 			FilterParameters par(numBands);
 			for (pp_uint32 i = 0; i < numBands; i++)
 			{
-				float val = static_cast<DialogEQ*>(dialog)->getBandParam(i);
+				float val = dialogEQ->getBandParam(i);
 				if (last)
 					last[i] = val;
 				par.setParameter(i, FilterParameters::Parameter(val));
