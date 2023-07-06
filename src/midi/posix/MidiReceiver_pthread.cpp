@@ -145,4 +145,5 @@ unsigned int MidiReceiver::countPorts()
 	}
 	delete midiin;
 	midiin = NULL;
+  return nPorts;
 }
