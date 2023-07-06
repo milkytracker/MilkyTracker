@@ -3259,3 +3259,88 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 	return (pp_uint32)(((double)pos / c4spd) * 1000.0);
 }
 
+void SampleEditor::tool_bitcrush(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_bitcrush, par);
+
+	prepareUndo();
+
+	float peak = 0.0f;
+
+	// find peak value (pre)
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		if (ppfabs(f) > peak) peak = ppfabs(f);
+	}
+
+	float treshold = 0.8;
+	float peakTreshold = peak * treshold;
+
+  pp_int32 ignorebits = 5;  
+	pp_uint32 mask;
+	if (sample->type & 16)
+	{
+		mask = 0xffff >> ignorebits;
+	}
+	else
+	{
+		mask = 0xff >> ignorebits;
+	}
+	// lazyness follows
+	for (pp_int32 i = sStart; i < sEnd; i++)
+	{
+		if (sample->type & 16)
+		{
+			mp_uword* smp = (mp_uword*)sample->sample;
+			mp_uword smpA = smp[i];
+      if( smpA != 0 ){
+        smpA   = smpA / 2;   // halve volume
+        smp[i] ^= mask;      // bitcrush
+        smp[i] = smp[i] /2; // halve volume
+        smp[i] += smpA;      // mix dry back in
+      }            
+		}
+		else
+		{
+			mp_ubyte* smp = (mp_ubyte*)sample->sample;
+			smp[i] ^= mask;
+		}
+	}
+//
+//	// post-compensate amplitudes 
+//	float scale = (peak/peakTreshold);
+//	for (i = sStart; i < sEnd; i++)
+//	{
+//		float f = getFloatSampleFromWaveform(i);
+//		setFloatSampleInWaveform(i, f * scale);
+//	}
+//
+	finishUndo();
+
+	postFilter();
+}
+
