@@ -289,7 +289,7 @@ private:
 		MenuCommandIDFLPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDCompress,
-		MenuCommandIDBitcrush,
+		MenuCommandIDReverb,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
 		MenuCommandIDVolumeFadeIn,

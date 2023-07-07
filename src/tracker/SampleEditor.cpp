@@ -36,6 +36,7 @@
 #include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
+#include "Reverb.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -3259,11 +3260,10 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 	return (pp_uint32)(((double)pos / c4spd) * 1000.0);
 }
 
-void SampleEditor::tool_bitcrush(const FilterParameters* par)
+void SampleEditor::tool_reverb(const FilterParameters* par)
 {
 	if (isEmptySample())
 		return;
-
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3284,61 +3284,26 @@ void SampleEditor::tool_bitcrush(const FilterParameters* par)
 		sEnd = sample->samplen;
 	}
 
-	preFilter(&SampleEditor::tool_bitcrush, par);
+	preFilter(&SampleEditor::tool_reverb, par);
 
 	prepareUndo();
 
-	float peak = 0.0f;
+	pp_int32 i;
+  int one_tick_size = 6000;
+  int echo_size = one_tick_size * 3;
+  float echo_buf[ echo_size * 2 ];
+  int echo_ptr = 0;
+  int reverb = 16;
+  int slow_reverb[ reverb ];
 
 	// find peak value (pre)
-	for (pp_int32 i = sStart; i < sEnd; i++)
+	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
-		if (ppfabs(f) > peak) peak = ppfabs(f);
+		this->setFloatSampleInWaveform(i, f);
+           
 	}
 
-	float treshold = 0.8;
-	float peakTreshold = peak * treshold;
-
-  pp_int32 ignorebits = 5;  
-	pp_uint32 mask;
-	if (sample->type & 16)
-	{
-		mask = 0xffff >> ignorebits;
-	}
-	else
-	{
-		mask = 0xff >> ignorebits;
-	}
-	// lazyness follows
-	for (pp_int32 i = sStart; i < sEnd; i++)
-	{
-		if (sample->type & 16)
-		{
-			mp_uword* smp = (mp_uword*)sample->sample;
-			mp_uword smpA = smp[i];
-      if( smpA != 0 ){
-        smpA   = smpA / 2;   // halve volume
-        smp[i] ^= mask;      // bitcrush
-        smp[i] = smp[i] /2; // halve volume
-        smp[i] += smpA;      // mix dry back in
-      }            
-		}
-		else
-		{
-			mp_ubyte* smp = (mp_ubyte*)sample->sample;
-			smp[i] ^= mask;
-		}
-	}
-//
-//	// post-compensate amplitudes 
-//	float scale = (peak/peakTreshold);
-//	for (i = sStart; i < sEnd; i++)
-//	{
-//		float f = getFloatSampleFromWaveform(i);
-//		setFloatSampleInWaveform(i, f * scale);
-//	}
-//
 	finishUndo();
 
 	postFilter();

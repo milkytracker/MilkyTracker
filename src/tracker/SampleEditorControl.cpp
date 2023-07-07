@@ -125,7 +125,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
-	subMenuFX->addEntry("Crush", MenuCommandIDBitcrush);
+	subMenuFX->addEntry("Reverb", MenuCommandIDReverb);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
@@ -1702,7 +1702,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	// update submenu states
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDBitcrush, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDReverb, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeOut, isEmptySample);
@@ -1884,8 +1884,8 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->tool_compressSample(NULL);
 			break;
 
-		case MenuCommandIDBitcrush:
-			sampleEditor->tool_bitcrush(NULL);
+		case MenuCommandIDReverb:
+			sampleEditor->tool_reverb(NULL);
 			break;
 
 		case MenuCommandIDReverse:

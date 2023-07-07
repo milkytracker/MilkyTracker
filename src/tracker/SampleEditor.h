@@ -352,7 +352,7 @@ public:
 	void tool_triangularSmoothSample(const FilterParameters* par);
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
-	void tool_bitcrush(const FilterParameters* par);
+	void tool_reverb(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);
