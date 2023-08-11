@@ -3312,7 +3312,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	postFilter();
 }
 
-void SampleEditor::tool_addTapeSaturate(const FilterParameters* par)
+void SampleEditor::tool_saturate(const FilterParameters* par)
 {
 	if (isEmptySample())
 		return;
@@ -3336,7 +3336,7 @@ void SampleEditor::tool_addTapeSaturate(const FilterParameters* par)
 		sEnd = sample->samplen;
 	}
 
-	preFilter(&SampleEditor::tool_addTapeSaturate, par);
+	preFilter(&SampleEditor::tool_saturate, par);
 
 	prepareUndo();
 
