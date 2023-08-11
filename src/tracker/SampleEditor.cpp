@@ -3289,19 +3289,79 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	prepareUndo();
 
 	pp_int32 i;
-  int one_tick_size = 6000;
-  int echo_size = one_tick_size * 3;
-  float echo_buf[ echo_size * 2 ];
-  int echo_ptr = 0;
-  int reverb = 16;
-  int slow_reverb[ reverb ];
 
-	// find peak value (pre)
+  reverb_t r;
+  r.decay  = 0.9;                                            // 0 .. 1.0
+  r.size   = par->getParameter(0).floatPart * (1.0f/100.0f); // 0 .. 1.0
+  r.colour = 0;                                              // -6.0 .. 6.0
+  Reverb::reset( (reverb_t *)&r );                                                             
+
+  float dry = fmin( 1.0f - (par->getParameter(1).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+  float wet = ( par->getParameter(1).floatPart / 100.0f) * 2.0f;
+  float in  = 0.0;
+  float out = 0.0;
+	for (i = sStart; i < sEnd; i++)
+	{
+		in = getFloatSampleFromWaveform(i);
+    Reverb::process( &in, &out, 1, (reverb_t *)&r);
+		setFloatSampleInWaveform(i, (dry*in) + (wet*out) );
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_addTapeSaturate(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_addTapeSaturate, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+  float in;
+  float out;
+	float peak = 0.0f;
+  float foldback = 3.1459f;
+  float scale;
+  float diff;
+
+	// find peak value 
 	for (i = sStart; i < sEnd; i++)
 	{
 		float f = getFloatSampleFromWaveform(i);
-		this->setFloatSampleInWaveform(i, f);
-           
+		if (ppfabs(f) > peak) peak = ppfabs(f);
+	}
+  scale = 1.0f/peak;
+
+  // process 
+	for (i = sStart; i < sEnd; i++)
+	{
+		in  = getFloatSampleFromWaveform(i) * scale;   // normalized amp input
+		out = sin( in * foldback ) / foldback;         // sinusoid foldback & denormalize 
+		setFloatSampleInWaveform(i, out );             // full harmonic fold complete
 	}
 
 	finishUndo();

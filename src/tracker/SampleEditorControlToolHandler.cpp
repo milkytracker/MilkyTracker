@@ -154,6 +154,16 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 											  noiseFilterTypes);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeReverb:
+			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
+			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Size       1-100%");
+			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Dry/Wet    1-100%");
+			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1.0f, 100.0f, 0); 
+			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1.0f, 100.0f, 0); 
+			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 50.0f);
+			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbDryWet != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 50.0f);
+			break;
 		
 		case ToolHandlerResponder::SampleToolTypeGenerateSine:
 		case ToolHandlerResponder::SampleToolTypeGenerateSquare:
@@ -205,6 +215,17 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
 			sampleEditor->tool_scaleSample(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeReverb:
+		{
+			lastValues.reverbSize = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.reverbDryWet = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbSize));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbDryWet));
+			sampleEditor->tool_reverb(&par);
 			break;
 		}
 

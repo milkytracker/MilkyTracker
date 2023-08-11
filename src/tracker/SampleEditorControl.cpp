@@ -130,6 +130,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
 	subMenuFX->addEntry("Exciter [protracker boost]", MenuCommandIDPTBoost);
+	subMenuFX->addEntry("Tape saturate", MenuCommandIDTapeSaturate);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
@@ -1730,6 +1731,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
+	subMenuPT->setState(MenuCommandIDTapeSaturate, isEmptySample);
 
 	subMenuGenerators->setState(MenuCommandIDGenerateNoise, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSine, isEmptySample);
@@ -1885,7 +1887,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDReverb:
-			sampleEditor->tool_reverb(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeReverb);
 			break;
 
 		case MenuCommandIDReverse:
@@ -1894,6 +1896,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDPTBoost:
 			sampleEditor->tool_PTboostSample(NULL);
+			break;
+
+		case MenuCommandIDTapeSaturate:
+			sampleEditor->tool_addTapeSaturate(NULL);
 			break;
 
 		case MenuCommandIDXFade:

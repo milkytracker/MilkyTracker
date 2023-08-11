@@ -297,6 +297,7 @@ private:
 		MenuCommandIDVolumeFold,
 		MenuCommandIDReverse,
 		MenuCommandIDPTBoost,
+		MenuCommandIDTapeSaturate,
 		MenuCommandIDXFade,
 		MenuCommandIDChangeSign,
 		MenuCommandIDSwapByteOrder,
@@ -345,6 +346,7 @@ private:
 			SampleToolTypeNormalize,
 			SampleToolTypeReverse,
 			SampleToolTypePTBoost,
+			SampleToolTypeTapeSaturate,
 			SampleToolTypeXFade,
 			SampleToolTypeChangeSign,
 			SampleToolTypeSwapByteOrder,
@@ -364,7 +366,8 @@ private:
 			SampleToolTypeGenerateSawtooth,
 			SampleToolTypeGenerateHalfSine,
 			SampleToolTypeGenerateAbsoluteSine,
-			SampleToolTypeGenerateQuarterSine
+			SampleToolTypeGenerateQuarterSine,
+			SampleToolTypeReverb
 		};
 	
 	private:

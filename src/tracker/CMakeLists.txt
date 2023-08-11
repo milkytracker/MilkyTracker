@@ -87,6 +87,7 @@ add_executable(tracker
     SectionUpperLeft.cpp
     SongLengthEstimator.cpp
     SystemMessage.cpp
+    Reverb.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -153,6 +154,7 @@ add_executable(tracker
     RecPosProvider.h
     RecorderLogic.h
     ResamplerHelper.h
+    Reverb.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h

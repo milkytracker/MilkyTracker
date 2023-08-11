@@ -48,6 +48,9 @@ struct SampleEditorControlLastValues
 	pp_int32 resampleInterpolationType;
 	bool adjustFtAndRelnote;
 	bool adjustSampleOffsetCommand;
+
+	float reverbSize; 
+	float reverbDryWet;
 	
 	static float invalidFloatValue() 
 	{
@@ -74,6 +77,8 @@ struct SampleEditorControlLastValues
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
 		adjustSampleOffsetCommand = false;
+		reverbSize = invalidFloatValue();
+		reverbDryWet = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -101,6 +106,8 @@ struct SampleEditorControlLastValues
 		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
 
 		result.store("adjustSampleOffsetCommands", adjustSampleOffsetCommand);
+		result.store("reverbSize", PPDictionary::convertFloatToIntNonLossy(reverbSize));
+		result.store("reverbDryWet", PPDictionary::convertFloatToIntNonLossy(reverbDryWet));
 		return result;
 	}
 	
@@ -156,6 +163,14 @@ struct SampleEditorControlLastValues
 			else if (key->getKey().compareToNoCase("adjustSampleOffsetCommands") == 0)
 			{
 				adjustSampleOffsetCommand = key->getBoolValue();
+			}
+			else if (key->getKey().compareToNoCase("reverbSize") == 0)
+			{
+				reverbSize = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("reverbDryWet") == 0)
+			{
+				reverbDryWet = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
 			}
 
 			key = dictionary.getNextKey();

@@ -29,15 +29,13 @@
 #define NUM_COMBS 4
 #define NUM_APS 3
 
-typedef struct {
+struct reverb_t{
   /* structure for reverb parameters */
   /* controls */
   float decay;
   float size;
   float colour;
-
   float lpo;
-
 
   /* internal plugin variables */
   float comb[NUM_COMBS][COMB_SIZE];   /* buffers for comb filters */
@@ -46,11 +44,14 @@ typedef struct {
   float ap[NUM_APS][COMB_SIZE];        /* lazy, reuse comb size */
   unsigned long ap_pos;               /* position within allpass filter */
 
-} reverb_t;
+};
 
 class Reverb
 {
-  static void process(float *in, float *out, unsigned long sample_count, reverb_t *params);
+
+  public:
+    static void process(float *in, float *out, unsigned long sample_count, reverb_t *params);
+    static void reset( reverb_t *params);
 };
 
 #endif
