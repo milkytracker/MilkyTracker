@@ -1900,7 +1900,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 
 		case MenuCommandIDSaturate:
-			sampleEditor->tool_saturate(NULL);
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSaturate);
 			break;
 
 		case MenuCommandIDXFade:

@@ -1839,9 +1839,10 @@ void SampleEditor::tool_scaleSample(const FilterParameters* par)
 	preFilter(&SampleEditor::tool_scaleSample, par);
 	
 	prepareUndo();
+
 	
-	float startScale = par->getParameter(0).floatPart;
-	float endScale = par->getParameter(1).floatPart;
+	float startScale = par->getParameter(0).floatPart / 100.0f;
+	float endScale = par->getNumParameters() == 1 ? startScale : par->getParameter(1).floatPart / 100.0f;
 	
 	float step = (endScale - startScale) / (float)(sEnd - sStart);
 	
@@ -3291,12 +3292,13 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	pp_int32 i;
 
   reverb_t r;
-  r.decay  = 0.9;                                            // 0 .. 1.0
-  r.size   = par->getParameter(0).floatPart * (1.0f/100.0f); // 0 .. 1.0
-  r.colour = 0;                                              // -6.0 .. 6.0
+  r.size   = par->getParameter(1).floatPart * (1.0f/100.0f); // 0 .. 1.0
+  r.decay  = par->getParameter(2).floatPart / 100.0f;        // 0 .. 1.0
+  r.colour  = par->getParameter(3).floatPart / 10.0f;        // 0 .. 12
+  r.colour -= 6.0f;                                          //-6.0 .. 6.0                       
   Reverb::reset( (reverb_t *)&r );                                                             
 
-  float dry = fmin( 1.0f - (par->getParameter(1).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+  float dry = fmin( 1.0f - (par->getParameter(0).floatPart / 100.0f  ), 0.5 ) * 2.0f;
   float wet = ( par->getParameter(1).floatPart / 100.0f) * 2.0f;
   float in  = 0.0;
   float out = 0.0;
@@ -3344,7 +3346,7 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
   float in;
   float out;
 	float peak = 0.0f;
-  float foldback = 3.1459f;
+  float foldback = par->getParameter(0).floatPart / 100.0f; // 2.0f 
   float scale;
   float diff;
 

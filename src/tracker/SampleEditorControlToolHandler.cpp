@@ -33,6 +33,7 @@
 #include "DialogResample.h"
 #include "DialogGroupSelection.h"
 #include "DialogEQ.h"
+#include "DialogSliders.h"
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 
@@ -58,22 +59,23 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 				static_cast<DialogWithValues*>(dialog)->setValueOne(100.0f);
 			break;
 			
-		case ToolHandlerResponder::SampleToolTypeVolume:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Boost sample volume" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter new volume in percent:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f);
+		case ToolHandlerResponder::SampleToolTypeVolume:{
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Sample Volume", 1, sampleEditor, &SampleEditor::tool_scaleSample );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      float value = lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f;
+			sliders->initSlider(0,0.0f, 300.0f, value,"Volume");
 			break;
+    }
 
-		case ToolHandlerResponder::SampleToolTypeFade:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Fade sample" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Enter start volume in percent:");
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Enter end volume in percent:");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(-10000.0f, 10000.0f, 2); 
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(-10000.0f, 10000.0f, 2); 
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.fadeSampleVolumeEnd != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeEnd : 100.0f);
+		case ToolHandlerResponder::SampleToolTypeFade:{
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Custom Fade", 2, sampleEditor, &SampleEditor::tool_scaleSample );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      float value = lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f;
+			sliders->initSlider(0,0.0f, 300.0f, value,"Start");
+      value = lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f;
+			sliders->initSlider(1,0.0f, 300.0f, value,"End");
 			break;
+    }
 			
 		case ToolHandlerResponder::SampleToolTypeChangeSign:
 			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Change sign" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterOneValue);
@@ -155,15 +157,29 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			break;
 		}
 
-		case ToolHandlerResponder::SampleToolTypeReverb:
-			dialog = new DialogWithValues(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb" PPSTR_PERIODS, DialogWithValues::ValueStyleEnterTwoValues);
-			static_cast<DialogWithValues*>(dialog)->setValueOneCaption("Size       1-100%");
-			static_cast<DialogWithValues*>(dialog)->setValueTwoCaption("Dry/Wet    1-100%");
-			static_cast<DialogWithValues*>(dialog)->setValueOneRange(1.0f, 100.0f, 0); 
-			static_cast<DialogWithValues*>(dialog)->setValueTwoRange(1.0f, 100.0f, 0); 
-			static_cast<DialogWithValues*>(dialog)->setValueOne(lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 50.0f);
-			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.reverbDryWet != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 50.0f);
+		case ToolHandlerResponder::SampleToolTypeReverb:{
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb", 4, sampleEditor, &SampleEditor::tool_reverb );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+
+      float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 50.0f;
+			sliders->initSlider(0,0,100,value,"Dry..Wet");
+      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 50.0f;
+			sliders->initSlider(1,0,100,value,"Size");
+      value = lastValues.reverbDecay  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDecay : 90.0f;
+			sliders->initSlider(2,0,99,value,"Decay");
+      value = lastValues.reverbColour  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbColour : 60.0f;
+			sliders->initSlider(3,0,120,value,"Colour");
 			break;
+    }
+
+		case ToolHandlerResponder::SampleToolTypeSaturate:{
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 1, sampleEditor, &SampleEditor::tool_saturate );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+
+      float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 200.0f;
+			sliders->initSlider(0,1,4000,value,"Harmonics");
+			break;
+    }
 		
 		case ToolHandlerResponder::SampleToolTypeGenerateSine:
 		case ToolHandlerResponder::SampleToolTypeGenerateSquare:
@@ -210,22 +226,37 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeVolume:
 		{
-			lastValues.boostSampleVolume = static_cast<DialogWithValues*>(dialog)->getValueOne();
+			lastValues.boostSampleVolume = static_cast<DialogSliders*>(dialog)->getSlider(0);
 			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.boostSampleVolume / 100.0f));
+			par.setParameter(0, FilterParameters::Parameter(lastValues.boostSampleVolume));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.boostSampleVolume));
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
 
 		case ToolHandlerResponder::SampleToolTypeReverb:
 		{
-			lastValues.reverbSize = static_cast<DialogWithValues*>(dialog)->getValueOne();
-			lastValues.reverbDryWet = static_cast<DialogWithValues*>(dialog)->getValueTwo();
-			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbSize));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbDryWet));
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+			lastValues.reverbDryWet  = sliders->getSlider(0);
+      lastValues.reverbSize    = sliders->getSlider(1);
+      lastValues.reverbDecay   = sliders->getSlider(2);
+      lastValues.reverbColour  = sliders->getSlider(3);
+			FilterParameters par(4);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbDryWet));
+			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbSize));
+			par.setParameter(2, FilterParameters::Parameter(lastValues.reverbDecay));
+			par.setParameter(3, FilterParameters::Parameter(lastValues.reverbColour));
 			sampleEditor->tool_reverb(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeSaturate:
+		{
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      lastValues.saturate   = sliders->getSlider(0);
+			FilterParameters par(1);
+			par.setParameter(0, FilterParameters::Parameter(lastValues.saturate));
+			sampleEditor->tool_saturate(&par);
 			break;
 		}
 
