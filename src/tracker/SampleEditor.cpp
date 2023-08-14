@@ -3300,7 +3300,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   Reverb::reset( (reverb_t *)&r );                                                             
 
   float dry = fmin( 1.0f - (par->getParameter(0).floatPart / 100.0f  ), 0.5 ) * 2.0f;
-  float wet = ( par->getParameter(1).floatPart / 100.0f) * 2.0f;
+  float wet = ( par->getParameter(0).floatPart / 100.0f) * 2.0f;
   float in  = 0.0;
   float out = 0.0;
 	for (i = sStart; i < sEnd; i++)
