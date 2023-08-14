@@ -1857,7 +1857,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDVolumeFadeOut:{
 			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(1.0f));
+			par.setParameter(0, FilterParameters::Parameter(100.0f));
 			par.setParameter(1, FilterParameters::Parameter(0.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
@@ -1866,7 +1866,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDVolumeFadeIn:{
 			FilterParameters par(2);
 			par.setParameter(0, FilterParameters::Parameter(0.0f));
-			par.setParameter(1, FilterParameters::Parameter(1.0f));
+			par.setParameter(1, FilterParameters::Parameter(100.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
