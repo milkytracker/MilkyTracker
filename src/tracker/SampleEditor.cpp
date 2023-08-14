@@ -3455,7 +3455,7 @@ void SampleEditor::tool_timestretch(const FilterParameters* par)
   buf = (float*)malloc( sLength2 * sizeof(float));
   for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
 
-	// 90s akai-style zerocrossing timestretch algo 
+	// 90s akai-style timestretch algo
 	for (i = 0; i < sample->samplen; i++) {
     if( gi == 0 ){
       for( pp_int32 s = 0; s < stretch; s++ ){
