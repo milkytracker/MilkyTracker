@@ -60,9 +60,9 @@ private:
 
 	pp_int32 currentBarSize, currentBarPosition;
 
-	pp_uint32 minValue;
-	pp_uint32 maxValue;
-	pp_uint32 currentValue;
+	pp_int32 minValue;
+	pp_int32 maxValue;
+	pp_int32 currentValue;
 
 	//bool pressed;
 
@@ -85,16 +85,16 @@ public:
 	
 	virtual void setSize(pp_uint32 size);
 
-	void setMinValue(pp_uint32 min) { minValue = min; }
-	void setMaxValue(pp_uint32 max) { maxValue = max; }
-	void setCurrentValue(pp_uint32 newValue)
+	void setMinValue(pp_int32 min) { minValue = min; }
+	void setMaxValue(pp_int32 max) { maxValue = max; }
+	void setCurrentValue(pp_int32 newValue)
 	{
 		currentValue = newValue;
 		float f = (float)(currentValue - minValue)/(maxValue - minValue);
 
 		setBarPosition((pp_int32)(f*65536.0f));
 	}
-	pp_uint32 getCurrentValue() { return currentValue; }
+	pp_int32 getCurrentValue() { return currentValue; }
 
 	void setBackgroundColor(const PPColor& color) { backgroundColor = color; }
 

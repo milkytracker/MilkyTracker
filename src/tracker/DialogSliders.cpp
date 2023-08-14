@@ -68,8 +68,8 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	// create slider
   PPSlider* slider = new PPSlider(MESSAGEBOX_CONTROL_USER1+i, screen, this, PPPoint(x2+scalaSpace, y2), size, true, false);
   slider->setBarSize(8192);
-  slider->setMinValue(min);
-  slider->setMaxValue(max);
+  slider->setMinValue((int)min);
+  slider->setMaxValue((int)max);
   slider->setCurrentValue(value);
   getMessageBoxContainer()->addControl(slider);
   PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);

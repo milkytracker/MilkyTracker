@@ -353,7 +353,9 @@ public:
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	void tool_reverb(const FilterParameters* par);
+	void tool_filter(const FilterParameters* par);
 	void tool_saturate(const FilterParameters* par);
+	void tool_timestretch(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);

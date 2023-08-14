@@ -37,6 +37,7 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 #include "Reverb.h"
+#include "Filter.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -3371,3 +3372,125 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	postFilter();
 }
 
+void SampleEditor::tool_filter(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_filter, par);
+
+	prepareUndo();
+ 
+  pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+  filter_t lp;
+  filter_t hp;
+  Filter::init( (filter_t *)&lp, samplerate ); 
+  Filter::init( (filter_t *)&hp, samplerate );
+  hp.cutoff  = par->getParameter(0).floatPart;
+  hp.q       = par->getParameter(2).floatPart / 10.0;
+  lp.cutoff  = par->getParameter(1).floatPart;
+  lp.q       = hp.q;
+                                                              
+	pp_int32 i;
+  float in;
+  float out;
+  float drive  = (par->getParameter(3).floatPart ) / 100.0f;
+  float scale  = par->getParameter(4).floatPart / 100.0f;
+
+  // process 
+	for (i = sStart; i < sEnd; i++)
+	{
+		in  = sin( getFloatSampleFromWaveform(i) * (1.0f+drive) );  
+    Filter::process( in, (filter_t *)&lp );  // apply LP
+    out = lp.out_lp;                         //
+    Filter::process( out, (filter_t *)&hp ); // apply HP
+		setFloatSampleInWaveform(i, hp.out_hp * scale );       // update 
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_timestretch(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	preFilter(&SampleEditor::tool_timestretch, par);
+
+	prepareUndo();
+
+	pp_uint32 i;
+  pp_uint32 gi      = 0; // index of grain-window (samples)
+  pp_uint32 overlap = 0;
+  pp_uint32 end  = 0;
+  float    gin   = 0.0f; // index of grain-window (normalized between 0..1)
+  float *buf;
+  float scale;
+  pp_int32 grain    = (int)par->getParameter(0).floatPart;    // grain size
+  pp_int32 stretch  = 1+(int)par->getParameter(1).floatPart;  // stretch factor
+  pp_int32 sLength2 = sample->samplen * (2+stretch);
+
+  pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+  buf = (float*)malloc( sLength2 * sizeof(float));
+  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
+
+	// 90s akai-style zerocrossing timestretch algo 
+	for (i = 0; i < sample->samplen; i++) {
+    if( gi == 0 ){
+      for( pp_int32 s = 0; s < stretch; s++ ){
+        overlap += (grain/2);
+        for( pp_int32 j = 0; j < grain; j++ ){
+          gin   = (1.0f/(float)grain) * (float)j;   // normalize grainposition
+          scale = sin(gin/M_PI*9.8664);             // apply fade-in fade-out curve
+          float f = getFloatSampleFromWaveform(i+j);
+          end = j + overlap;
+          buf[ end ] = buf[ end ] + (f*scale);
+        } 
+      }
+    }
+    gi = (gi+1) % grain;
+	}
+
+  // write sample
+  module->freeSampleMem((mp_ubyte*)sample->sample);
+  sample->samplen = end;
+  if( sample->type & 8 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
+  }
+  if( sample->type & 16 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
+    memset(sample->sample, 0, sample->samplen*2);
+  }
+
+  for( i = 0; i < end; i++ ){
+    this->setFloatSampleInWaveform(i, buf[i] );
+  }
+
+  free(buf);
+
+	finishUndo();
+
+	postFilter();
+}

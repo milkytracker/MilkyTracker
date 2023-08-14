@@ -35,6 +35,7 @@ add_executable(tracker
     DialogResample.cpp
     DialogWithValues.cpp
     DialogZap.cpp
+    DialogSliders.cpp
     EQConstants.cpp
     EditorBase.cpp
     EnvelopeContainer.cpp
@@ -88,6 +89,7 @@ add_executable(tracker
     SongLengthEstimator.cpp
     SystemMessage.cpp
     Reverb.cpp
+    Filter.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -123,6 +125,7 @@ add_executable(tracker
     DialogResample.h
     DialogWithValues.h
     DialogZap.h
+    DialogSliders.h
     EQConstants.h
     EditModes.h
     EditorBase.h
@@ -155,6 +158,7 @@ add_executable(tracker
     RecorderLogic.h
     ResamplerHelper.h
     Reverb.h
+    Filter.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h

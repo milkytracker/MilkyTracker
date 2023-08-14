@@ -53,7 +53,10 @@ struct SampleEditorControlLastValues
 	float reverbDryWet;
 	float reverbDecay; 
 	float reverbColour;
-	float saturate;;
+	float saturate;
+  float filterCutoffL;
+  float filterCutoffH;
+  float filterRes;
 	
 	static float invalidFloatValue() 
 	{
@@ -85,6 +88,9 @@ struct SampleEditorControlLastValues
 		reverbDecay = invalidFloatValue();
 		reverbColour = invalidFloatValue();
 		saturate = invalidFloatValue();
+		filterCutoffL = invalidFloatValue();
+		filterCutoffH = invalidFloatValue();
+		filterRes = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -117,6 +123,9 @@ struct SampleEditorControlLastValues
 		result.store("reverbDryWet", PPDictionary::convertFloatToIntNonLossy(reverbDryWet));
 		result.store("reverbDecay", PPDictionary::convertFloatToIntNonLossy(reverbDecay));
 		result.store("reverbColour", PPDictionary::convertFloatToIntNonLossy(reverbColour));
+		result.store("filterCutoffL", PPDictionary::convertFloatToIntNonLossy(filterCutoffL));
+		result.store("filterCutoffH", PPDictionary::convertFloatToIntNonLossy(filterCutoffH));
+		result.store("filterRes", PPDictionary::convertFloatToIntNonLossy(filterRes));
 		return result;
 	}
 	
@@ -192,6 +201,18 @@ struct SampleEditorControlLastValues
 			else if (key->getKey().compareToNoCase("saturate") == 0)
 			{
 				saturate = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterCutoffL") == 0)
+			{
+				filterCutoffL = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterCutoffH") == 0)
+			{
+				filterCutoffH = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterRes") == 0)
+			{
+				filterRes = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
 			}
 
 			key = dictionary.getNextKey();

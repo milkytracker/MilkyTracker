@@ -19,6 +19,12 @@
  *
  * */
 
+/*
+ * This is a simple schrodinger reverb 
+ * which is cheap for the CPU and its artifacts 
+ * can also be used for 'blooming' / smearing sounddesign-purposes.
+ */
+
 #ifndef __REVERB_H
 #define __REVERB_H
 
