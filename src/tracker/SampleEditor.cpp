@@ -3295,8 +3295,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   reverb_t r;
   r.size   = par->getParameter(1).floatPart * (1.0f/100.0f); // 0 .. 1.0
   r.decay  = par->getParameter(2).floatPart / 100.0f;        // 0 .. 1.0
-  r.colour  = par->getParameter(3).floatPart / 10.0f;        // 0 .. 12
-  r.colour -= 6.0f;                                          //-6.0 .. 6.0                       
+  r.colour  = par->getParameter(3).floatPart;                //-6.0 .. 6.0
   Reverb::reset( (reverb_t *)&r );                                                             
 
   float dry = fmin( 1.0f - (par->getParameter(0).floatPart / 100.0f  ), 0.5 ) * 2.0f;
@@ -3443,6 +3442,7 @@ void SampleEditor::tool_timestretch(const FilterParameters* par)
 	pp_uint32 i;
   pp_uint32 gi      = 0; // index of grain-window (samples)
   pp_uint32 overlap = 0;
+  pp_uint32 pos  = 0;
   pp_uint32 end  = 0;
   float    gin   = 0.0f; // index of grain-window (normalized between 0..1)
   float *buf;
@@ -3463,8 +3463,9 @@ void SampleEditor::tool_timestretch(const FilterParameters* par)
         for( pp_int32 j = 0; j < grain; j++ ){
           gin   = (1.0f/(float)grain) * (float)j;   // normalize grainposition
           scale = sin(gin/M_PI*9.8664);             // apply fade-in fade-out curve
-          float f = getFloatSampleFromWaveform(i+j);
-          end = j + overlap;
+          pos   = i+j < sample->samplen-1 ? i+j : sample->samplen-1;
+          float f = getFloatSampleFromWaveform(pos);
+          end = j + overlap < sLength2-1 ? j + overlap : sLength2-1;;
           buf[ end ] = buf[ end ] + (f*scale);
         } 
       }
@@ -3473,22 +3474,23 @@ void SampleEditor::tool_timestretch(const FilterParameters* par)
 	}
 
   // write sample
-  module->freeSampleMem((mp_ubyte*)sample->sample);
+  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
   sample->samplen = end;
-  if( sample->type & 8 ){
-    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
-    memset(sample->sample, 0, sample->samplen);
-  }
   if( sample->type & 16 ){
     sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
     memset(sample->sample, 0, sample->samplen*2);
+  }else{
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
   }
 
   for( i = 0; i < end; i++ ){
     this->setFloatSampleInWaveform(i, buf[i] );
   }
 
+  // free mem
   free(buf);
+  module->freeSampleMem(oldsample);
 
 	finishUndo();
 
