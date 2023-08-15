@@ -152,13 +152,6 @@ processBindings:
 				if (res || keyModifier)
 					break;
 			
-				if (editMode == EditModeMilkyTracker)
-				{
-					if (sectionDiskMenu->isFileBrowserVisible() &&
-						sectionDiskMenu->fileBrowserHasFocus())
-						break;
-				}
-			
 				PatternEditorControl* patternEditorControl = getPatternEditorControl();
 
 				// translate key to note

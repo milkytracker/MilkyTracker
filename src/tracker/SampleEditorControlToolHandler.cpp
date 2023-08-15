@@ -175,10 +175,9 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		case ToolHandlerResponder::SampleToolTypeSaturate:{
 			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 1, sampleEditor, &SampleEditor::tool_saturate );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-
       float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 200.0f;
 			sliders->initSlider(0,1,4000,value,"Harmonics");
-			break;
+      break;
     }
 
 		case ToolHandlerResponder::SampleToolTypeFilter:{
@@ -191,8 +190,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			sliders->initSlider(1,1,sampleRate,value,"Lowpass");
       value = lastValues.filterRes   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterRes : 0.0f;
 			sliders->initSlider(2,0,9,value,"Resonance");
-      value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 0.0f;
-			sliders->initSlider(3,1,500,value,"Drive");
+			sliders->initSlider(3,1,500,0,"Saturate");
       value = lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f;
 			sliders->initSlider(4,0.0f, 300.0f, value,"Volume");
 			break;
@@ -278,7 +276,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeSaturate:
 		{
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      lastValues.saturate   = sliders->getSlider(0);
+      lastValues.saturate     = sliders->getSlider(0);
 			FilterParameters par(1);
 			par.setParameter(0, FilterParameters::Parameter(lastValues.saturate));
 			sampleEditor->tool_saturate(&par);
