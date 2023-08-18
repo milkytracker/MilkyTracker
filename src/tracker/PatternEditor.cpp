@@ -1883,3 +1883,10 @@ void PatternEditor::cloneSelection(pp_int32 channels, pp_int32 rows)
 	
 	finishUndo(LastChangeCloneSelection);
 }
+
+void PatternEditor::triggerButton( pp_uint32 id, PPScreen *s, EventListenerInterface *e ){
+  PPEvent event(eCommand);
+  PPButton *fakebutton = new PPButton(id, s, e, PPPoint(0,0), PPSize(10, 10));
+  e->handleEvent(reinterpret_cast<PPObject*>(fakebutton), &event);
+  delete fakebutton;
+}

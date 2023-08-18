@@ -26,6 +26,7 @@
 #include "Screen.h"
 #include "Font.h"
 #include "PPUIConfig.h"
+#include "CheckBox.h"
 
 PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
 				   const PPPoint& location, const PPSize& size, 
@@ -48,7 +49,7 @@ PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* 
 	// default colors
 	pressed = false;
 	
-	font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	font = PPFont::getFont( PPFont::FONT_SYSTEM );
 }
 
 PPButton::~PPButton()
@@ -59,6 +60,8 @@ void PPButton::paint(PPGraphicsAbstract* g)
 {
 	if (!isVisible())
 		return;
+
+	if( parentScreen != NULL && parentScreen->getFlat()  ) setFlat( true );
 
 	PPPoint location = this->location;
 
@@ -255,6 +258,7 @@ void PPButton::setText(const PPString& text)
 	bool lastCharIsPeriod = text.length() ? (text[text.length()-1] == '.') : false;
 	
 	this->text = text; 
+	this->text.toLower();
 	
 	// Fall back to tiny font if string doesn't fit with current font
 	if (autoSizeFont &&

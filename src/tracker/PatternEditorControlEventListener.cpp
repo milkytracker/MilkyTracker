@@ -1114,7 +1114,10 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		hTopScrollbar->setBarPosition((pp_int32)(pos*65536.0f));
 		hBottomScrollbar->setBarPosition((pp_int32)(pos*65536.0f));
 	}
-	else if (sender == reinterpret_cast<PPObject*>(editMenuControl))
+	else if (sender == reinterpret_cast<PPObject*>(editMenuControl) ||
+	         sender == reinterpret_cast<PPObject*>(moduleMenuControl) ||
+	         sender == reinterpret_cast<PPObject*>(instrumentMenuControl) ||
+	         sender == reinterpret_cast<PPObject*>(channelMenuControl) )
 	{
 		switch (event->getID())
 		{

@@ -34,6 +34,7 @@
 #include "EditorBase.h"
 #include "PatternEditorTools.h"
 #include "Undo.h"
+#include "Button.h"
 
 struct TXMPattern;
 class XModule;
@@ -421,6 +422,9 @@ public:
 	// --- moving entire selection -------------------------------------------
 	void moveSelection(pp_int32 channels, pp_int32 rows);
 	void cloneSelection(pp_int32 channels, pp_int32 rows);
+
+  //  -- improved UX by linking context-menu items to button-clicks
+  void triggerButton( pp_uint32 id, PPScreen *s, EventListenerInterface *e );
 
 };
 

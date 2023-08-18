@@ -761,6 +761,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				playerLogic->stopSong();
 				break;
 
+			case MAINMENU_HELP:
+				eventKeyDownBinding_InvokeHelp();
+				break;
+
 			// -------- ZAP message box ---------------------
 			case MAINMENU_ZAP:
 				if (event->getID() != eCommand)

@@ -56,7 +56,8 @@ PPScreen::PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* e
 	modalControl(NULL),
 	showDragHilite(false),
 	rootContainer(NULL),
-	lastMouseOverControl(NULL)
+	lastMouseOverControl(NULL),
+	flat(false)
 {
 	contextMenuControls = new PPSimpleVector<PPControl>(16, false);
 	timerEventControls = new PPSimpleVector<PPControl>(16, false);

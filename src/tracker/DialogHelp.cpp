@@ -41,7 +41,7 @@ DialogHelp::DialogHelp(PPScreen *screen,
 					   bool okCancel /* = false*/) : PPDialogBase()
 {
 	char line[HELP_MAX_LINE];
-	pp_int32 w = 800;
+	pp_int32 w = screen->getWidth() - 50;
 	pp_int32 h = screen->getHeight() - 200;
 	if (okCancel)
 		initDialog(screen, responder, id, caption, w, h, 26, "Ok", "Cancel");
@@ -64,11 +64,13 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 12, y + (3 * 8)), PPSize(width - (3 * 8), height - (8 * 8)), true, false, true, true);
 	listBox->setShowIndex(true);
 	memset(line, 0, HELP_MAX_LINE);
+	unsigned char c;
 	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
 	{
-		char c = milkytracker_help[i];
+		c = milkytracker_help[i];
 		if (c == '\n')
 		{
+			printf("%s\n",line);
 			listBox->addItem(line);
 			memset(line, 0, HELP_MAX_LINE);
 		}
