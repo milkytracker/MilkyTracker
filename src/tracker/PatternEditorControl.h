@@ -185,7 +185,8 @@ private:
 
 	PPContextMenu* editMenuControl;
 	PPContextMenu* moduleMenuControl;
-	PPContextMenu* instrumentMenuControl;
+	PPContextMenu* patternMenuControl;
+	PPContextMenu* keyboardMenuControl;
 	PPContextMenu* channelMenuControl;
 
 	// Keyboard shortcuts

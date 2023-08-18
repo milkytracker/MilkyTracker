@@ -841,9 +841,10 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("\x10");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("\x10|");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("\xa7");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "files            ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instrument       ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample           ");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "files              ");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config  ");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instrument         ");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample             ");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setColor(TrackerConfig::colorHighLight_1);
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setColor(TrackerConfig::colorHighLight_1);
 
@@ -895,12 +896,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		button->setSize( btn->getSize() );
 		button->setLocation( PPPoint( btn->getLocation().x + btn->getSize().width, btn->getLocation().y ) );
 		button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
-		button->setTextColor(TrackerConfig::colorHighLight_2);
 		container->addControl(button);
-	
-	//	btn = static_cast<PPButton*>(container->getControlByID( BUTTON_ABOUT_FOLLOWSONG ));
-	//	btn->setLocation( PPPoint(3,78) );
-//		container->addControl(btn);
 
 	}
 

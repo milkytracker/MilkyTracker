@@ -338,7 +338,8 @@ void EnvelopeEditorControl::paint(PPGraphicsAbstract* g)
 		}
 	}
 
-	g->setColor(255, 255, 128);
+	g->setColor( TrackerConfig::colorSampleEditorWaveform );
+
 	if (!envelope->num)
 	{
 		PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);

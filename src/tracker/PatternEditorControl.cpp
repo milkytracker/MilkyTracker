@@ -102,48 +102,46 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 
     moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
     moduleMenuControl->setSubMenu(true);
+    moduleMenuControl->addEntry("New", MAINMENU_ZAP);
     moduleMenuControl->addEntry("Load", MAINMENU_LOAD);
     moduleMenuControl->addEntry("Save", MAINMENU_SAVE);
     moduleMenuControl->addEntry("Save as", MAINMENU_SAVEAS);
+    moduleMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    moduleMenuControl->addEntry("Optimize", MAINMENU_OPTIMIZE);
+    moduleMenuControl->addEntry("Playback mode", MAINMENU_QUICKOPTIONS);
+
+    patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+    patternMenuControl->setSubMenu(true);
+    patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
+    patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
+    patternMenuControl->addEntry("Render to sampler", BUTTON_PATTERN_CAPTURE);
 
     
-	instrumentMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
-    instrumentMenuControl->setSubMenu(true);
+	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+    keyboardMenuControl->setSubMenu(true);
+    keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
+    keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
+    keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
+    keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-    /*
-     * todo: 
-     * 
-     * Module      > 
-     *               Save
-     *               Optimize
-     * Instruments > Editor 
-     *             > Copy between modules
-     * Samples     > Editor 
-     *             > Copy between modules
-     * Pattern     > Transpose
-     * Config 
-     */
-
-    editMenuControl->addEntry("Song       >", 0xFFFF, moduleMenuControl);
-    editMenuControl->addEntry("Instrument >", 0xFFFF, instrumentMenuControl);
+    editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
+    editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
+    editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
 
     channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
     channelMenuControl->setSubMenu(true);
-    channelMenuControl->addEntry("Mute Channel", MenuCommandIDMuteChannel);
-    channelMenuControl->addEntry("Solo Channel", MenuCommandIDSoloChannel);
+    channelMenuControl->addEntry("Mute", MenuCommandIDMuteChannel);
+    channelMenuControl->addEntry("Solo", MenuCommandIDSoloChannel);
     channelMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
     channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    channelMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
-    channelMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
-    channelMenuControl->addEntry("Swap channels", MenuCommandIDSwapChannels);
+    channelMenuControl->addEntry("Select", MenuCommandIDSelectChannel);
+    channelMenuControl->addEntry("Select all", MenuCommandIDSelectAll);
+    channelMenuControl->addEntry("Swap", MenuCommandIDSwapChannels);
     channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
     channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
-    editMenuControl->addEntry("Channel    >", 0xFFFF, channelMenuControl);
+    editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
     
-	editMenuControl->addEntry("Files", MenuCommandIDModuleLoad);
-    editMenuControl->addEntry("Config", MAINMENU_CONFIG);
-
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Undo", MenuCommandIDUndo);
     editMenuControl->addEntry("Redo", MenuCommandIDRedo);
@@ -152,6 +150,8 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     editMenuControl->addEntry("Copy", MenuCommandIDCopy);
     editMenuControl->addEntry("Paste", MenuCommandIDPaste);
     editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
 
   }else{
     editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
@@ -217,7 +217,8 @@ void PatternEditorControl::setFont(PPFont* font)
 	if( !parentScreen->getClassic() ){
 		editMenuControl->setFont(font);
 		moduleMenuControl->setFont(font);
-		instrumentMenuControl->setFont(font);
+		patternMenuControl->setFont(font);
+		keyboardMenuControl->setFont(font);
 		channelMenuControl->setFont(font);
 	}
 
@@ -1506,9 +1507,20 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		}
 		
 		case MAINMENU_LOAD:
+		case MAINMENU_ZAP:
 		case MAINMENU_SAVE:
 		case MAINMENU_SAVEAS:
 		case MAINMENU_CONFIG:
+		case MAINMENU_TRANSPOSE:
+		case MAINMENU_ADVEDIT:
+		case MAINMENU_QUICKOPTIONS:
+		case MAINMENU_OPTIMIZE:
+		case BUTTON_ABOUT_FOLLOWSONG:
+		case BUTTON_OCTAVE_PLUS:
+		case BUTTON_OCTAVE_MINUS:
+		case BUTTON_ADD_PLUS:
+		case BUTTON_ADD_MINUS:
+		case BUTTON_PATTERN_CAPTURE:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;

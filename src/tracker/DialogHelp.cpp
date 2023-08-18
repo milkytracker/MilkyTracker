@@ -68,7 +68,7 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
 	{
 		c = milkytracker_help[i];
-		if (c == '\n')
+		if (c == 0x0a ) // \n
 		{
 			printf("%s\n",line);
 			listBox->addItem(line);

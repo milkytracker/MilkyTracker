@@ -1123,6 +1123,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				screen->update();
 				break;
 
+			case BUTTON_PATTERN_CAPTURE:
+				eventKeyDownBinding_InvokePatternCapture();
+				eventKeyDownBinding_InvokeSectionSamples();
+				break;
+
+
 #ifdef __LOWRES__
 			// go to next order
 			case BUTTON_JAMMENU_NEXTORDERLIST:
