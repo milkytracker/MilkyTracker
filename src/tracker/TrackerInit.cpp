@@ -559,7 +559,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	PPContainer* containerSpeed = new PPContainer(CONTAINER_SPEED, screen, this, PPPoint(x, y), PPSize(99-2,40), false);
 	containerSpeed->setColor(TrackerConfig::colorThemeMain);
 
-	PPStaticText* staticText = new PPStaticText(STATICTEXT_SPEED_BPM_DESC, NULL, NULL, PPPoint(x+2, y+2+2+offset), "BPM", true);
+	PPStaticText* staticText = new PPStaticText(STATICTEXT_SPEED_BPM_DESC, NULL, NULL, PPPoint(x+2, y+2+2+offset), screen->getClassic() ? "BPM" : " BPM", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerSpeed->addControl(staticText);	
 
@@ -568,7 +568,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	containerSpeed->addControl(staticText);	
 
 	// Octave text field goes at the same place but hidden by default
-	staticText = new PPStaticText(STATICTEXT_SPEED_OCTAVE_DESC, NULL, NULL, PPPoint(x+2, y+2+2+offset), "Oct", true);
+	staticText = new PPStaticText(STATICTEXT_SPEED_OCTAVE_DESC, NULL, NULL, PPPoint(x+2, y+2+2+offset), screen->getClassic() ? "Oct" : " Oct", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	staticText->hide(true);
 	containerSpeed->addControl(staticText);	
@@ -578,7 +578,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	staticText->hide(true);
 	containerSpeed->addControl(staticText);	
 
-	staticText = new PPStaticText(STATICTEXT_SPEED_SPEED_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12+offset), screen->getClassic() ? "Spd" : "TPB", true);
+	staticText = new PPStaticText(STATICTEXT_SPEED_SPEED_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12+offset), screen->getClassic() ? "Spd" : " TPB", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerSpeed->addControl(staticText);	
 
@@ -586,7 +586,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	staticText = new PPStaticText(STATICTEXT_SPEED_SPEED, screen, NULL, PPPoint(x+2 + 5*8 - 5, y+2 + 2 + 12), "", false);
 	containerSpeed->addControl(staticText);	
 
-	staticText = new PPStaticText(STATICTEXT_SPEED_PATTERNADD_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12 + 12+offset), screen->getClassic() ? "Add" : "Step", true);
+	staticText = new PPStaticText(STATICTEXT_SPEED_PATTERNADD_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12 + 12+offset), screen->getClassic() ? "Add" : " Step", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerSpeed->addControl(staticText);	
 
@@ -594,7 +594,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	staticText = new PPStaticText(STATICTEXT_SPEED_PATTERNADD, screen, NULL, PPPoint(x+2 + 5*8 - 5, y+2 + 2 + 12 + 12), "", false);
 	containerSpeed->addControl(staticText);	
 
-	staticText = new PPStaticText(STATICTEXT_SPEED_MAINVOL_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12 + 12 + offset), "Mainvol", true);
+	staticText = new PPStaticText(STATICTEXT_SPEED_MAINVOL_DESC, NULL, NULL, PPPoint(x+2, y+2 + 2 + 12 + 12 + offset), screen->getClassic() ? "Mainvol" : " Mainvolume", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	staticText->hide(true);
 	containerSpeed->addControl(staticText);	
@@ -662,7 +662,7 @@ void Tracker::initSectionPattern(pp_int32 x, pp_int32 y)
 	PPContainer* containerPattern = new PPContainer(CONTAINER_PATTERN, screen, this, PPPoint(x, y), PPSize(91+14+4,40), false);
 	containerPattern->setColor(TrackerConfig::colorThemeMain);
 
-	PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + offset), screen->getClassic() ? "Patn." : "Pattern", true);
+	PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + offset), screen->getClassic() ? "Patn." : " Pattern", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerPattern->addControl(staticText);	
 
@@ -670,7 +670,7 @@ void Tracker::initSectionPattern(pp_int32 x, pp_int32 y)
 	staticText = new PPStaticText(STATICTEXT_PATTERN_INDEX, screen, NULL, PPPoint(x + 2 + 4 * 8 + 18, y+2 + 2), "", false);
 	containerPattern->addControl(staticText);	
 
-	staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + 12 + offset), screen->getClassic() ? "Len." : "Rows", true);
+	staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + 12 + offset), screen->getClassic() ? "Len." : " Rows", true);
 	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerPattern->addControl(staticText);	
 
@@ -841,13 +841,24 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("\x10");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("\x10|");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("\xa7");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "files              ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config  ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instrument         ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample             ");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setColor(TrackerConfig::colorHighLight_1);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setColor(TrackerConfig::colorHighLight_1);
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "files");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instrument");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample");
+//		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setColor(TrackerConfig::colorHighLight_1);
+//		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setColor(TrackerConfig::colorHighLight_1);
 
+		button = new PPButton(MAINMENU_HELP, screen, this, p, PPSize((77>>1)+1, bHeight-1));
+		button->setText("Help");
+//		button->setSize( btn->getSize() );
+//		button->setLocation( PPPoint( btn->getLocation().x + btn->getSize().width, btn->getLocation().y ) );
+		button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
+		container->addControl(button);
+
+		pp_int32 i = 0;
+		PPButton *btn;
+
+		/*/
 		pp_uint32 btns_transport[4] = { 
 			MAINMENU_PLAY_SONG,
 			MAINMENU_PLAY_PATTERN,
@@ -862,8 +873,6 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		};
 
 
-		pp_int32 i = 0;
-		PPButton *btn;
 		for( i = 0; i < 4; i++ ){
 			btn = static_cast<PPButton*>(container->getControlByID( btns_transport[i] ));
 			PPSize size    = btn->getSize();
@@ -871,7 +880,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 			size.width  = 30;
 			size.height = 24;
 			loc.y = 78;
-			loc.x = (i * (size.width+1)) + 13;
+			loc.x = (i * (size.width+1)) + 1;
 			btn->setSize( size );
 			btn->setLocation( loc );
 			btn->setColor(TrackerConfig::colorHighLight_1);
@@ -882,21 +891,64 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 			PPSize size    = btn->getSize();
 			PPPoint loc = btn->getLocation();
 			size.width  = 108;
-			if( i == 3 ) size.width  = size.width/2;
 			size.height = 14;
-			loc.y = 64 + (i*13);
+			if( i > 0 ) size.width  = size.width/2;
+			if( i == 1 || i == 2 ){
+				size.height *= 2;
+			}
+			loc.y = 64 + ( i == 2 ? 1*13 : i*13);
 			loc.x = 211;
+			if( i == 2 ){
+				loc.x += size.width-2;
+				size.width += 2;
+			}
 			btn->setSize( size );
 			btn->setLocation( loc );
 			btn->setFont( PPFont::getFont(PPFont::FONT_TINY) );
 		}
+		/*/ 
+		 
+		pp_uint32 btns_transport[9] = { 
+			MAINMENU_PLAY_SONG,
+			MAINMENU_PLAY_PATTERN,
+			MAINMENU_STOP,
+			MAINMENU_EDIT,
+			MAINMENU_LOAD,
+			MAINMENU_INSEDIT,
+			MAINMENU_SMPEDIT,
+			MAINMENU_CONFIG,
+			MAINMENU_HELP
+		};
 
-		button = new PPButton(MAINMENU_HELP, screen, this, p, PPSize((77>>1)+1, bHeight-1));
-		button->setText("Help");
-		button->setSize( btn->getSize() );
-		button->setLocation( PPPoint( btn->getLocation().x + btn->getSize().width, btn->getLocation().y ) );
-		button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
-		container->addControl(button);
+
+		pp_int32 btnID = 0;
+		pp_int32 x = 14;
+		for( i = 0; i < 9; i++ ){
+			btnID = btns_transport[i];
+			btn = static_cast<PPButton*>(container->getControlByID(  btnID ));
+			PPSize size    = btn->getSize();
+			PPPoint loc = btn->getLocation();
+			size.width  = 29;
+			size.height = i < 7 ? 24 : 12;
+			loc.y = 80;
+			loc.x = x;
+			if( btnID == MAINMENU_INSEDIT ) size.width += 33;
+			if( btnID == MAINMENU_SMPEDIT ) size.width += 13;
+			if( btnID == MAINMENU_LOAD    ) size.width += 8;
+			if( btnID == MAINMENU_CONFIG  ) size.width += 10;
+			if( btnID == MAINMENU_HELP    ){
+				size.width += 10;
+				loc.x -= size.width+1;
+				loc.y += size.height;
+			}
+			btn->setSize( size );
+			btn->setLocation( loc );
+			if( i < 3 ) btn->setColor(TrackerConfig::colorHighLight_1);
+			if( i > 2 ) btn->setFont( PPFont::getFont(PPFont::FONT_TINY) );
+			x += (size.width+1);
+		}
+		 
+		/**/
 
 	}
 

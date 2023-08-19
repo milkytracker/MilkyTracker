@@ -69,9 +69,9 @@ void PPButton::paint(PPGraphicsAbstract* g)
 
 	g->setColor(*color);
 
+	PPColor nsdColor = *color, nsbColor = *color;
 	//g->fill();
 	{
-		PPColor nsdColor = *color, nsbColor = *color;
 
 		if (!pressed)
 		{
@@ -113,7 +113,7 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		bColor.scaleFixed(20000);
 
 		g->setColor(bColor);
-		
+	
 		g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
 		g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
 		
@@ -157,9 +157,11 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		g->setColor(bColor.r>>1,bColor.g>>1,bColor.b>>1);
 		g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
 		g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
-		
-		//g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
-		//g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
+	
+		if( !flat ){
+			g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
+			g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
+		}
 		
 		if (text)
 		{
