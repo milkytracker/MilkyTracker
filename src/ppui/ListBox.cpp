@@ -68,6 +68,7 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 	backGroundButtonColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorListBoxBackground)),
 	// default textcolor 
 	textColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText)),
+	indexColor(&PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText)),
 
 	editable(editable),
 	scrollable(scrollable),
@@ -240,11 +241,15 @@ void PPListBox::paint(PPGraphicsAbstract* g)
 
 		if (showIndex)
 		{
-			char hexIndex[10];
+			char strIndex[10];
 		
-			PPTools::convertToHex(hexIndex, i + indexBaseCount, maxDigits);
-			
-			g->drawString(hexIndex, location.x + 2, pos);
+      if( hexIndex ){
+        PPTools::convertToHex(strIndex, i + indexBaseCount, maxDigits);
+      }else{
+        PPTools::convertToDec(strIndex, i + indexBaseCount, maxDigits);
+      }
+		  g->setColor(*indexColor);	
+			g->drawString(strIndex, location.x + 2, pos);
 		}
 		
 		PPRect currentRect = g->getRect();

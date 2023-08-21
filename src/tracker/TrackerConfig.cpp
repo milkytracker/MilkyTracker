@@ -87,21 +87,21 @@ const PPString TrackerConfig::defaultProTrackerPanning("0000002000FFFF0000FFFF00
 
 const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys 
 												  "FFFFFF" // ColorPatternNote // ColorPatternNote
-												  "807F8C" // ColorPatternInstrument // ColorPatternInstrument
+												  "erd7a1" // ColorPatternInstrument // ColorPatternInstrument
 												  "A7C9F1" // ColorPatternVolume // ColorPatternVolume
-												  "00A1FF" // ColorPatternEffect // ColorPatternEffect
+												  "ffffff" // ColorPatternEffect // ColorPatternEffect
 												  "7F7F80" // ColorPatternOperand // ColorPatternOperand
 												  "647278" // ColorCursor // ColorCursor
 												  "2E353C" // ColorCursorLine // ColorCursorLine
 												  "A01830" // ColorCursorLineHighlighted // ColorCursorLineHighlighted
-												  "1e2020" // ColorTheme // ColorTheme
-												  "AAAAAA" // ColorForegroundText // ColorForegroundText
+												  "202829" // ColorTheme // ColorTheme
+												  "888888" // ColorForegroundText // ColorForegroundText
 												  "282c2c" // ColorButtons // ColorButtons
 												  "CCCCCC" // ColorButtonText // ColorButtonText
 												  "49576B" // ColorSelection // ColorSelection
 												  "161B1D" // ColorListBoxBackground // ColorListBoxBackground
 												  "103060" // ColorPatternSelection // ColorPatternSelection
-												  "3c7283" // Hilighted text // Hilighted text
+												  "5d646b" // Hilighted text // Hilighted text
 												  "B5A7AE" // Scopes // Scopes
 												  "FFFFFF" // Hilighted rows (secondary) // Hilighted rows (secondary)
 												  "202120" // Row highlight background (primary) // Row highlight background (primary)
@@ -110,7 +110,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 												  "FF0000" // ColorRecordModeButtonText // ColorRecordModeButtonText
 												  "FF0000" // Scopes record indicator // Scopes record indicator
 												  "FF0000" // Peak clip indicator // Peak clip indicator
-												  "00A1FF" // Sample Editor Waveform
+												  "ffffff" // Sample Editor Waveform
 												  "DB00A0"
 												  "DB00A0"
 												  "DB00A0"
@@ -134,7 +134,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 const char* TrackerConfig::predefinedColorPalettes[TrackerConfig::numPredefinedColorPalettes] =                // Current last color start in the line of this comment marker
 {
 // default
-"28FFFFFF807F8CA7C9F100A1FF7F7F806472782E353CA018301e2020AAAAAA282c2cCCCCCC49576B161B1D1030603c7283B5A7AEFFFFFF202120101000000000FF0000FF0000FF000000A1FF3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
+"28FFFFFFerd7a1A7C9F1ffffff7F7F806472782E353CA01830202829888888282c2cCCCCCC49576B161B1D1030605d646bB5A7AEFFFFFF202120101000000000FF0000FF0000FF0000ffffff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // classic
 "2BFFFFFF80E0FF80FF80FF80E0FFE0808080FF602040A01830406080FFFFFFC0C0C00000008080FF282849103060FFFF00FFFFFFFFFF80202020101010203040FF0000FF0000FF0000FFFF803B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // bluish

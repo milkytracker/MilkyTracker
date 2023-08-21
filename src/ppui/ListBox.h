@@ -46,6 +46,7 @@ private:
 	const PPColor* borderColor;
 	const PPColor* backGroundButtonColor;
 	const PPColor* textColor;
+	const PPColor* indexColor;
 
 	bool editable;
 	bool scrollable;
@@ -53,6 +54,7 @@ private:
 	bool autoHideHScroll;
 
 	bool showIndex;
+  bool hexIndex;
 	pp_int32 indexBaseCount;
 
 	bool showSelectionAlways;
@@ -124,11 +126,14 @@ public:
 	PPFont* getFont() const { return font; }
 
 	void setBorderColor(const PPColor& color) { this->borderColor = &color; }
+	void setIndexColor(const PPColor& color) { this->indexColor = &color; }
+	void setTextColor(const PPColor& color) { this->textColor = &color; }
 
 	void setAutoHideVScroll(bool b) { autoHideVScroll = b; }
 	void setAutoHideHScroll(bool b) { autoHideHScroll = b; }
 
 	void setShowIndex(bool showIndex);
+	void setHexIndex(bool hexIndex){ this->hexIndex = hexIndex; }
 
 	void showSelection(bool b) { selectionVisible = b; }
 	

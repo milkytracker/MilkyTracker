@@ -40,6 +40,7 @@
 #include "ScopesControl.h"
 #include "TabHeaderControl.h"
 #include "TitlePageManager.h"
+#include "TrackerSettingsDatabase.h"
 
 // Sections
 #include "SectionSwitcher.h"
@@ -541,11 +542,13 @@ void Tracker::initSectionOrderlist(pp_int32 x, pp_int32 y)
 	listBoxOrderList->setBorderColor(TrackerConfig::colorThemeMain);
 	listBoxOrderList->setCenterSelection(true);
 	listBoxOrderList->setSelectOnScroll(true);
+  listBoxOrderList->setHexIndex( settingsDatabase->restore("HEXCOUNT")->getIntValue() == 1 );
+  if( !screen->getClassic() ) listBoxOrderList->setTextColor( TrackerConfig::colorPatternEditorEffect );
 
 	containerOrderlist->addControl(listBoxOrderList);
 
   if( !screen->getClassic() ){
-    staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 12), "patterns", true);
+    staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 14), "patterns", true);
     staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
     containerOrderlist->addControl(staticText);
   }
@@ -674,15 +677,16 @@ void Tracker::initSectionPattern(pp_int32 x, pp_int32 y)
 	containerPattern->setColor(TrackerConfig::colorThemeMain);
 
 	PPStaticText* staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + offset), screen->getClassic() ? "Patn." : " Pattern", true);
-	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
+	if( !isClassic ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerPattern->addControl(staticText);	
 
 	// actual pattern index field
 	staticText = new PPStaticText(STATICTEXT_PATTERN_INDEX, screen, NULL, PPPoint(x + 2 + 4 * 8 + 18, y+2 + 2), "", false);
+  if( !isClassic ) staticText->setColor( TrackerConfig::colorPatternEditorEffect );
 	containerPattern->addControl(staticText);	
 
 	staticText = new PPStaticText(0, NULL, NULL, PPPoint(x + 2, y+2 + 2 + 12 + offset), screen->getClassic() ? "Len." : " Rows", true);
-	if( !screen->getClassic() ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
+	if( !isClassic ) staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
 	containerPattern->addControl(staticText);	
 
 	// actual pattern length field
@@ -922,6 +926,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 {
 	pp_int32 size = (screen->getWidth()-x) / 2 - 4;
+  bool hexCount = settingsDatabase->restore("HEXCOUNT")->getIntValue() == 1;
 
 	if (size > 236)
 		size = 236;
@@ -1231,6 +1236,7 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 	listBoxInstruments->setBorderColor(TrackerConfig::colorThemeMain);
 	listBoxInstruments->setShowIndex(true);
 	listBoxInstruments->setMaxEditSize(ModuleEditor::MAX_INSTEXT);
+	if( !screen->getClassic() ) listBoxInstruments->setIndexColor(TrackerConfig::colorPatternEditorInstrument);
 	//listBoxInstruments->setSelectOnScroll(true);
 	
 	fillInstrumentListBox(listBoxInstruments);
