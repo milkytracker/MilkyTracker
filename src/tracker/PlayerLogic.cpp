@@ -106,7 +106,7 @@ void PlayerLogic::playPosition(bool rowOnly/* = false*/)
 										  tracker.getPatternEditorControl()->getCurrentRow(),
 										  tracker.muteChannels,
 										  rowOnly);
-  tracker.updatePlayButtons(MAINMENU_PLAY_POSITION, true, true);
+  tracker.updatePlayButtons(MAINMENU_PLAY_PATTERN, true, true);
 }
 
 void PlayerLogic::stopPlayer(PlayerController& playerController)
@@ -137,6 +137,7 @@ void PlayerLogic::stopAll()
 			tracker.playerMaster->getPlayerController(i)->pause();
 	}
 		//stopPlayer(*tracker.playerMaster->getPlayerController(i));
+  tracker.updatePlayButtons(MAINMENU_STOP, true, true);
 }
 
 void PlayerLogic::storePosition()
