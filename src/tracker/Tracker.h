@@ -242,6 +242,7 @@ private:
 
 	// - GUI refreshing --------------------------------------------------------
 	void updateAboutToggleButton(pp_int32 id, bool b, bool repaint = true);
+	void updatePlayButtons(pp_int32 id, bool b, bool repaint = true);
 
 	void updateSongTitle(bool repaint = true);
 

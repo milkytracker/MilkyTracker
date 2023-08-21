@@ -2355,6 +2355,7 @@ void Tracker::expandOrderlist(bool b)
 
 void Tracker::flipSpeedSection()
 {
+  if( !screen->getClassic() ) return;
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SPEED));
 	ASSERT(container);
 
