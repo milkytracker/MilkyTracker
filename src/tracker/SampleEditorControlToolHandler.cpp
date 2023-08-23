@@ -181,18 +181,20 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
     }
 
 		case ToolHandlerResponder::SampleToolTypeFilter:{
-			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Filter", 5, sampleEditor, &SampleEditor::tool_filter );
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "90s Filter", 4, sampleEditor, &SampleEditor::tool_filter );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      int sampleRate = 44100/2;
+      TXMSample *sample = sampleEditor->getSample();
+      pp_int32 sampleRate = 48000 + 12000; // add +12000 to allow high-end 90s 'grit' 
       float value = lastValues.filterCutoffH  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoffH : 45.0f;
 			sliders->initSlider(0,1,sampleRate/2,value,"Highpass");
       value = lastValues.filterCutoffL   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoffL : ((float)sampleRate)-1.0f;
-			sliders->initSlider(1,1,sampleRate,value,"Lowpass");
+      PPString str = "Lowpass";
+      str.append("\x1d");
+      str.append("grit");
+			sliders->initSlider(1,1,sampleRate/2,value,str);
       value = lastValues.filterRes   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterRes : 0.0f;
 			sliders->initSlider(2,0,9,value,"Resonance");
-			sliders->initSlider(3,1,500,0,"Saturate");
-      value = lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f;
-			sliders->initSlider(4,0.0f, 300.0f, value,"Volume");
+			sliders->initSlider(3,0.0f, 1000.0f, 100.0f,"Volume");
 			break;
     }
 
@@ -201,6 +203,25 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			sliders->initSlider(0,1,10000,3900,"Grainsize");
 			sliders->initSlider(1,0,8,3,"Stretch");
+			break;
+    }
+
+		case ToolHandlerResponder::SampleToolTypeDelay:{
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Delay Toolkit", 6, sampleEditor, &SampleEditor::tool_delay );
+      int sampleRate = 48000;
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      PPString str = "Flange";
+      str.append("\x1d");
+      str.append("Delay");
+			sliders->initSlider(0,1,10000,3900,str);
+      str = "Flange";
+      str.append("\x1d");
+      str.append("Echos");
+			sliders->initSlider(1,1,8,3,str);
+			sliders->initSlider(2,0,100,0,"Chorus detune");
+			sliders->initSlider(3,0,sampleRate/2,0,"Bandpass");
+			sliders->initSlider(4,1,100,0,"Saturate");
+			sliders->initSlider(5,0,100,50,"Dry / Wet");
 			break;
     }
 		
@@ -293,20 +314,29 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			break;
 		}
 
+		case ToolHandlerResponder::SampleToolTypeDelay:
+		{
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+			FilterParameters par(6);
+      for( pp_uint32 i =0; i < 6; i++ ){
+        par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
+      }
+			sampleEditor->tool_delay(&par);
+			break;
+		}
+
 		case ToolHandlerResponder::SampleToolTypeFilter:
 		{
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
       lastValues.filterCutoffH     = sliders->getSlider(0);
       lastValues.filterCutoffL     = sliders->getSlider(1);
       lastValues.filterRes         = sliders->getSlider(2);
-      lastValues.saturate          = sliders->getSlider(3);
-      lastValues.boostSampleVolume = sliders->getSlider(4);
-			FilterParameters par(5);
+      lastValues.boostSampleVolume = sliders->getSlider(3);
+			FilterParameters par(4);
 			par.setParameter(0, FilterParameters::Parameter(lastValues.filterCutoffH));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.filterCutoffL));
 			par.setParameter(2, FilterParameters::Parameter(lastValues.filterRes));
-			par.setParameter(3, FilterParameters::Parameter(lastValues.saturate));
-			par.setParameter(4, FilterParameters::Parameter(lastValues.boostSampleVolume));
+			par.setParameter(3, FilterParameters::Parameter(lastValues.boostSampleVolume));
 			sampleEditor->tool_filter(&par);
 			break;
 		}

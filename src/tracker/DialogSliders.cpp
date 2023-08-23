@@ -50,7 +50,7 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
   this->sampleEditor = sampleEditor;
   this->id      = id;
 	float dheight   = (sliders+5) * (SCROLLBUTTONSIZE+6);
-	initDialog(screen, responder, id, title.getStrBuffer(), 330, dheight, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, title.getStrBuffer(), screen->getWidth() > 320 ? 400 : 330, dheight, 26, "Ok", "Cancel");
 }
 
 void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption)
@@ -60,10 +60,10 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	pp_int32 width  = getMessageBoxContainer()->getSize().width;
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	pp_uint32 borderSpace = 12;
-	pp_uint32 scalaSpace = 16*5+8;
+	pp_uint32 scalaSpace = 16*7+8;
 	pp_int32 y2 = ((SCROLLBUTTONSIZE+6) * i+1 ) +  getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 20;
 	pp_int32 x2 = x + borderSpace;
-	pp_int32 size = width-160;
+	pp_int32 size = width-192;
 	
 	// create slider
   PPSlider* slider = new PPSlider(MESSAGEBOX_CONTROL_USER1+i, screen, this, PPPoint(x2+scalaSpace, y2), size, true, false);
@@ -72,6 +72,7 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
   slider->setMaxValue((int)max);
   slider->setCurrentValue(value);
   getMessageBoxContainer()->addControl(slider);
+  if( screen->getWidth() < 320 ) caption = caption.subString(0,10);
   PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
   PPStaticText* staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXT_OFFSET+i, screen, this, PPPoint(x2+(SCROLLBUTTONSIZE/2), y2), caption.getStrBuffer(), true);
   staticText->setFont(font);

@@ -3296,18 +3296,48 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   r.size   = par->getParameter(1).floatPart * (1.0f/100.0f); // 0 .. 1.0
   r.decay  = par->getParameter(2).floatPart / 100.0f;        // 0 .. 1.0
   r.colour  = par->getParameter(3).floatPart;                //-6.0 .. 6.0
+                                                             //
+  pp_uint32 looptype = getLoopType();
+  pp_int32 sLength2 = sample->samplen *2; 
+  bool overflow     = looptype == 1;
   Reverb::reset( (reverb_t *)&r );                                                             
+
+  // create temporary buffer
+  float *buf;
+  buf = (float*)malloc( sLength2 * sizeof(float));
+  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
 
   float dry = fmin( 1.0f - (par->getParameter(0).floatPart / 100.0f  ), 0.5 ) * 2.0f;
   float wet = ( par->getParameter(0).floatPart / 100.0f) * 2.0f;
   float in  = 0.0;
   float out = 0.0;
-	for (i = sStart; i < sEnd; i++)
+  pp_int32 pos = 0;
+
+	for (i = 0; i < sLength2; i++)
 	{
-		in = getFloatSampleFromWaveform(i);
+    pos = overflow ? i % sample->samplen : i;
+    in = i < sample->samplen ? getFloatSampleFromWaveform(i) : 0.0f;
     Reverb::process( &in, &out, 1, (reverb_t *)&r);
-		setFloatSampleInWaveform(i, (dry*in) + (wet*out) );
+    buf[pos] += (dry*in) + (wet*out);
 	}
+
+  // write sample
+  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
+  sample->samplen = overflow || looptype == 2 ? sample->samplen : sLength2; 
+  if( sample->type & 16 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
+    memset(sample->sample, 0, sample->samplen*2);
+  }else{
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
+  }
+  for( i = 0; i < sLength2; i++ ){
+    this->setFloatSampleInWaveform(i, buf[i] );
+  }
+
+  // free mem
+  free(buf);
+  module->freeSampleMem(oldsample);
 
 	finishUndo();
 
@@ -3399,7 +3429,7 @@ void SampleEditor::tool_filter(const FilterParameters* par)
 
 	prepareUndo();
  
-  pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+  pp_int32 samplerate = 48000;
   filter_t lp;
   filter_t hp;
   Filter::init( (filter_t *)&lp, samplerate ); 
@@ -3412,17 +3442,16 @@ void SampleEditor::tool_filter(const FilterParameters* par)
 	pp_int32 i;
   float in;
   float out;
-  float drive  = (par->getParameter(3).floatPart ) / 100.0f;
-  float scale  = par->getParameter(4).floatPart / 100.0f;
+  float scale  = par->getParameter(3).floatPart / 100.0f;
 
   // process 
 	for (i = sStart; i < sEnd; i++)
 	{
-		in  = sin( getFloatSampleFromWaveform(i) * (1.0f+drive) );  
+		in  = getFloatSampleFromWaveform(i);
     Filter::process( in, (filter_t *)&lp );  // apply LP
     out = lp.out_lp;                         //
     Filter::process( out, (filter_t *)&hp ); // apply HP
-		setFloatSampleInWaveform(i, hp.out_hp * scale );       // update 
+		setFloatSampleInWaveform(i, sin(hp.out_hp * scale) );       // update 
 	}
 
 	finishUndo();
@@ -3485,6 +3514,93 @@ void SampleEditor::tool_timestretch(const FilterParameters* par)
   }
 
   for( i = 0; i < end; i++ ){
+    this->setFloatSampleInWaveform(i, buf[i] );
+  }
+
+  // free mem
+  free(buf);
+  module->freeSampleMem(oldsample);
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_delay(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	preFilter(&SampleEditor::tool_delay, par);
+
+	prepareUndo();
+
+  // setup params and vars
+	pp_uint32 i;
+  pp_uint32 looptype = getLoopType();
+  pp_uint32 iecho = 0;                                    // current echo
+  pp_uint32 pos   = 0;                                    // sample position
+  pp_int32 delay  = (int)par->getParameter(0).floatPart;  // delay size in samples
+  pp_int32 echos  = (int)par->getParameter(1).floatPart;  // number of echo's 
+  float dry       = fmin( 1.0f - (par->getParameter(5).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+  float wet       = ( par->getParameter(5).floatPart / 100.0f);
+  float detune    = (1.0f + (float)par->getParameter(2).floatPart) / 500.0f;
+  float bandpass  = (float)par->getParameter(3).floatPart;
+  float saturate  = (float)par->getParameter(4).floatPart / 10.0f;
+
+  // only pad sample when not looped, otherwise overflow in case of forward loop
+  pp_int32 sLength2 = looptype == 0 || looptype == 3? sample->samplen + (echos*delay) : sample->samplen;
+  bool overflow     = looptype == 1;
+
+  // setup bandpass filter (actually this is an brickwall filter [lp+hp]) 
+  filter_t lp; 
+  filter_t hp;
+  Filter::init( (filter_t *)&lp, 48000 ); 
+  Filter::init( (filter_t *)&hp, 48000 );
+  hp.cutoff    = bandpass;
+  lp.cutoff    = hp.cutoff + 500;  // 500hz bpf bandwidth
+  lp.q  = hp.q = 0.66;             // with high resonance
+
+  // create temporary sample
+  float *buf;
+  buf = (float*)malloc( sLength2 * sizeof(float));
+  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
+
+	for (i = 0; i < sample->samplen; i++) {
+    buf[i] = getFloatSampleFromWaveform(i) * dry;
+  }
+
+  // lets go
+	for (iecho= 0; iecho < echos; iecho++ ){
+    float fi = 0.0f;
+    for ( i=0;i < sample->samplen; i++ ){
+      fi += 1.0f - detune;
+      pos = ((iecho+1) * delay) + i;
+      if( pos >= sLength2 &&  overflow ) pos = pos % sLength2;
+      if( pos >= sLength2 && !overflow ) break; 
+      float amp = 1.0f - ((float)iecho/(0.8*(float)echos));    // calculate echo fadeout
+      float out = wet * sin( getFloatSampleFromWaveform( (int)fi ) * (1+saturate) )  * amp; // saturate + apply fadeout
+      if( bandpass > 60.0 ){
+        Filter::process( out, (filter_t *)&lp );    // apply LP
+        out = lp.out_lp;                            //
+        Filter::process( out, (filter_t *)&hp );    // apply HP
+        out = hp.out_hp;                            //
+      }                                             //
+      buf[pos] += -out;                             // add phase-inverted so flange effect will be more articulated due to PWM
+    }
+	}
+
+  // write sample
+  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
+  sample->samplen = sLength2; 
+  if( sample->type & 16 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
+    memset(sample->sample, 0, sample->samplen*2);
+  }else{
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
+  }
+  for( i = 0; i < sLength2; i++ ){
     this->setFloatSampleInWaveform(i, buf[i] );
   }
 

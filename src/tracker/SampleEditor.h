@@ -356,6 +356,7 @@ public:
 	void tool_filter(const FilterParameters* par);
 	void tool_saturate(const FilterParameters* par);
 	void tool_timestretch(const FilterParameters* par);
+	void tool_delay(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);
