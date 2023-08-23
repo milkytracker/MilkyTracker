@@ -80,7 +80,8 @@ struct PPMenu
 	
 	const PPColor* textBrightColor;
 	const PPColor* textDarkColor;
-	
+
+  bool striped;
 	bool subMenu;
 	PPContextMenu* parentMenu;
 	
@@ -94,6 +95,9 @@ struct PPMenu
 	
 	void setSubMenu(bool bSubMenu) { subMenu = bSubMenu; }
 	bool isSubMenu() const { return subMenu; }
+
+  void setStriped( bool s ){ striped = s; }
+	void setBorderColor(const PPColor& color) { borderColor = &color; }
 	
 	void setParentMenu(PPContextMenu* parent) { parentMenu = parent; }
 	PPContextMenu* getParentMenu() const { return parentMenu; }

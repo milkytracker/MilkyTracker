@@ -218,10 +218,15 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		// Theme color (= desktop in FT2)
 		case ColorTheme:
 			TrackerConfig::colorThemeMain = color;
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMessageBoxContainer, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuBackground, color);
 			break;
 		// Main text (= white?)
 		case ColorForegroundText:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorStaticText, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextBright, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextDark, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorSelection, color);
 			break;
 		// PPButton colors
 		case ColorButtons:

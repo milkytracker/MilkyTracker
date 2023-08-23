@@ -118,7 +118,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 	static const char* seperatorStringMed = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 
-	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
 	subMenuFX->addEntry("Volume" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
 	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
 	subMenuFX->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
@@ -140,7 +140,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
 	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
 
-	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
 	subMenuAdvanced->setSubMenu(true);
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
@@ -155,7 +155,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
-	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
 	subMenuXPaste->addEntry("Mix (overflow)", MenuCommandIDMixOverflowPaste);
@@ -168,10 +168,10 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
 
 
-	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
 
-	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
 	subMenuGenerators->addEntry("Noise" PPSTR_PERIODS, MenuCommandIDGenerateNoise);
 	subMenuGenerators->addEntry("Sine" PPSTR_PERIODS, MenuCommandIDGenerateSine);
 	subMenuGenerators->addEntry("Square" PPSTR_PERIODS, MenuCommandIDGenerateSquare);
@@ -183,7 +183,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
 	
 	// build context menu
-	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
+	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1, true);
 	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);

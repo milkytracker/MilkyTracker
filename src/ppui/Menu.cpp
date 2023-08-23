@@ -41,7 +41,8 @@ PPMenu::PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgCo
 	textBrightColor(NULL),
 	textDarkColor(NULL),
 	subMenu(bSubMenu),
-	parentMenu(NULL)
+	parentMenu(NULL),
+  striped(false)
 //borderColor(128, 128, 128)
 {
 }
@@ -118,7 +119,7 @@ void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 men
 		for (pp_int32 i = py; i < py + r.y2; i++)
 		{
 			pp_int32 c = (pattern[(i-py)%5]-64);
-			g->setColor(c,c,c);
+			if( striped ) g->setColor(c,c,c);
 			g->drawHLine(px, px + r.x2, i);
 		}
 		

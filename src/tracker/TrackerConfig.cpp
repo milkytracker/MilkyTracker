@@ -95,7 +95,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 												  "2E353C" // ColorCursorLine // ColorCursorLine
 												  "A01830" // ColorCursorLineHighlighted // ColorCursorLineHighlighted
 												  "202829" // ColorTheme // ColorTheme
-												  "888888" // ColorForegroundText // ColorForegroundText
+												  "a7a7a7" // ColorForegroundText // ColorForegroundText
 												  "282c2c" // ColorButtons // ColorButtons
 												  "CCCCCC" // ColorButtonText // ColorButtonText
 												  "49576B" // ColorSelection // ColorSelection
@@ -110,7 +110,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 												  "FF0000" // ColorRecordModeButtonText // ColorRecordModeButtonText
 												  "FF0000" // Scopes record indicator // Scopes record indicator
 												  "FF0000" // Peak clip indicator // Peak clip indicator
-												  "ffffff" // Sample Editor Waveform
+												  "9393ff" // Sample Editor Waveform
 												  "DB00A0"
 												  "DB00A0"
 												  "DB00A0"
@@ -134,7 +134,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 const char* TrackerConfig::predefinedColorPalettes[TrackerConfig::numPredefinedColorPalettes] =                // Current last color start in the line of this comment marker
 {
 // default
-"28FFFFFF9393ffA7C9F1ffffff7F7F806472782E353CA01830202829888888282c2cCCCCCC49576B161B1D1030605d646bB5A7AEFFFFFF202120101000000000FF0000FF0000FF0000ffffff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
+"28FFFFFF9393ffA7C9F1ffffff7F7F806472782E353CA01830202829a7a7a7282c2cCCCCCC49576B161B1D1030605d646bB5A7AEFFFFFF202120101000000000FF0000FF0000FF00009393ff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // classic
 "2BFFFFFF80E0FF80FF80FF80E0FFE0808080FF602040A01830406080FFFFFFC0C0C00000008080FF282849103060FFFF00FFFFFFFFFF80202020101010203040FF0000FF0000FF0000FFFF803B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // bluish
