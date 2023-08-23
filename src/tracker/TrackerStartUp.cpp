@@ -81,7 +81,7 @@ bool Tracker::getFullScreenFlagFromDatabase()
 
 pp_int32 Tracker::getScreenScaleFactorFromDatabase()
 {
-	pp_int32 scaleFactor = 1;
+	pp_int32 scaleFactor = 2;
 	
 	if (XMFile::exists(System::getConfigFileName()))
 	{
@@ -90,6 +90,12 @@ pp_int32 Tracker::getScreenScaleFactorFromDatabase()
 		settingsDatabaseCopy->serialize(f);			
 		scaleFactor = settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue();
 		delete settingsDatabaseCopy;
+	}else{
+		if( std::getenv("NO_SCALE") != NULL ) scaleFactor = 1;
+		else{
+			printf("DISPLAY: assuming screenscalefactor 2\n");
+			printf("DISPLAY: set environmentvar NO_SCALE=1 to disable scaling\n");
+		}
 	}
 
 	return scaleFactor;
@@ -181,8 +187,6 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	else
 		screen->enableDisplay(false);	
 
-	initUI();	
-
 	pp_int32 dTime;
 
 	if (!noSplash)
@@ -209,6 +213,9 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 		settingsDatabase = settingsDatabaseCopy;
 		settingsDatabaseCopy = NULL;
 	}
+
+	screen->setClassic( settingsDatabase->restore("CLASSIC")->getBoolValue() );
+	initUI();	
 
 	// apply ALL settings, not just the different ones
 	applySettings(settingsDatabase, NULL, true, false);

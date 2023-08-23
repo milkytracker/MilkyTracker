@@ -26,6 +26,7 @@
 #include "Screen.h"
 #include "Font.h"
 #include "PPUIConfig.h"
+#include "CheckBox.h"
 
 PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
 				   const PPPoint& location, const PPSize& size, 
@@ -48,7 +49,7 @@ PPButton::PPButton(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* 
 	// default colors
 	pressed = false;
 	
-	font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	font = PPFont::getFont( PPFont::FONT_SYSTEM );
 }
 
 PPButton::~PPButton()
@@ -60,15 +61,17 @@ void PPButton::paint(PPGraphicsAbstract* g)
 	if (!isVisible())
 		return;
 
+	if( parentScreen != NULL && parentScreen->getFlat()  ) setFlat( true );
+
 	PPPoint location = this->location;
 
 	g->setRect(location.x, location.y, location.x + size.width, location.y + size.height);
 
 	g->setColor(*color);
 
+	PPColor nsdColor = *color, nsbColor = *color;
 	//g->fill();
 	{
-		PPColor nsdColor = *color, nsbColor = *color;
 
 		if (!pressed)
 		{
@@ -110,7 +113,7 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		bColor.scaleFixed(20000);
 
 		g->setColor(bColor);
-		
+	
 		g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
 		g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
 		
@@ -154,9 +157,11 @@ void PPButton::paint(PPGraphicsAbstract* g)
 		g->setColor(bColor.r>>1,bColor.g>>1,bColor.b>>1);
 		g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
 		g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
-		
-		//g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
-		//g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
+	
+		if( !flat ){
+			g->drawHLine(location.x, location.x + size.width, location.y + size.height - 1);
+			g->drawVLine(location.y, location.y + size.height, location.x + size.width - 1);
+		}
 		
 		if (text)
 		{
@@ -255,6 +260,7 @@ void PPButton::setText(const PPString& text)
 	bool lastCharIsPeriod = text.length() ? (text[text.length()-1] == '.') : false;
 	
 	this->text = text; 
+	this->text.toLower();
 	
 	// Fall back to tiny font if string doesn't fit with current font
 	if (autoSizeFont &&

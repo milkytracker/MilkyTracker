@@ -762,6 +762,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				playerLogic->stopSong();
 				break;
 
+			case MAINMENU_HELP:
+				eventKeyDownBinding_InvokeHelp();
+				break;
+
 			// -------- ZAP message box ---------------------
 			case MAINMENU_ZAP:
 				if (event->getID() != eCommand)
@@ -1119,6 +1123,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updatePatternLength(false);
 				screen->update();
 				break;
+
+			case BUTTON_PATTERN_CAPTURE:
+				eventKeyDownBinding_InvokePatternCapture();
+				eventKeyDownBinding_InvokeSectionSamples();
+				break;
+
 
 #ifdef __LOWRES__
 			// go to next order
@@ -2346,6 +2356,7 @@ void Tracker::expandOrderlist(bool b)
 
 void Tracker::flipSpeedSection()
 {
+  if( !screen->getClassic() ) return;
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SPEED));
 	ASSERT(container);
 

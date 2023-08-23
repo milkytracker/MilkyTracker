@@ -172,6 +172,8 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_HEXCOUNT,
 	CHECKBOX_SETTINGS_SHOWZEROEFFECT,
 	CHECKBOX_SETTINGS_FULLSCREEN,
+	CHECKBOX_SETTINGS_FLATCONTROLS,
+	CHECKBOX_SETTINGS_CLASSIC,
 	LISTBOX_SETTINGS_RESOLUTIONS,
 	BUTTON_RESOLUTIONS_CUSTOM,
 	BUTTON_RESOLUTIONS_FULL,
@@ -1235,12 +1237,29 @@ public:
 		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
 		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 4, y2), "Fullscreen:", checkBox, true));
+
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FLATCONTROLS, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "flat controls", checkBox, true));
+
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_CLASSIC, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl( new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "classic UX", checkBox, true));
+
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("FLATCONTROLS")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FLATCONTROLS))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("CLASSIC")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CLASSIC))->checkIt(v!=0);
 	}
 
 };
@@ -1290,6 +1309,7 @@ public:
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
 
 		y2+=5;
+
 
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
@@ -1803,9 +1823,11 @@ void SectionSettings::showRestartMessageBox()
 {
 	if (tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue() ||
 		tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue() ||
+		tracker.settingsDatabase->restore("CLASSIC")->getIntValue() != tracker.settingsDatabaseCopy->restore("CLASSIC")->getIntValue() ||
+		tracker.settingsDatabase->restore("FLATCONTROLS")->getIntValue() != tracker.settingsDatabaseCopy->restore("FLATCONTROLS")->getIntValue() ||
 		tracker.settingsDatabase->restore("SCREENSCALEFACTOR")->getIntValue() != tracker.settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue())
 	{
-		SystemMessage message(*tracker.screen, SystemMessage::MessageResChangeRestart);
+		SystemMessage message(*tracker.screen, SystemMessage::MessageChangeRestart);
 		message.show();
 	}
 }
@@ -2059,6 +2081,26 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("FULLSCREEN", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_FLATCONTROLS:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("FLATCONTROLS", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_CLASSIC:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("CLASSIC", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}

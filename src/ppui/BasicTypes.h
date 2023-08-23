@@ -520,6 +520,15 @@ public:
 				strBuffer[i] -= 'a'-'A';
 	}
 
+	void toLower()
+	{
+		for (pp_uint32 i = 0; i < length(); i++)
+			if (strBuffer[i] >= 'A' && 
+				strBuffer[i] <= 'Z')
+				strBuffer[i] += 'a'-'A';
+	}
+	
+
 	PPString stripPath() const
 	{
 		char* ptr = strBuffer+strlen(strBuffer);

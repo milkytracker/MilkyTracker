@@ -514,36 +514,41 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(conSize1,dHeight), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+2), "C-5", false));		
+	if( screen->getClassic() )
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+4), "C-5", false));		
 
 	pp_int32 size = (pp_int32)(conSize1*0.2183908045977f);
 	pp_int32 size2 = (pp_int32)(conSize1*0.4367816091954f);
 	pp_int32 size3 = (pp_int32)(conSize1/*0.2988505747126f*/*0.3218390804598f);
 
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Up");
+	button->setText( screen->getClassic() ? "Up" : "\x18" );
 	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm+1));
-	button->setText("Dn");
+	button->setText( screen->getClassic() ? "Dn" : "\x19" );
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, PPPoint(x2+2, y2+2+bHeight*2), PPSize(size2-3, bHeightm+1));
-	button->setText("Stop");
+	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+2 + size+size2-1, y2+2+bHeight*2);
+	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size3, bHeightm+1);
+	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, locStop, sizeStop);
+	button->setText( screen->getClassic() ? "Stop" : "\xa7" );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
-	button->setText("Wav");
+	button->setText( screen->getClassic() ? "Wav" : "\x10" );
+	if( !screen->getClassic() ) button->setColor(TrackerConfig::colorHighLight_1);
 	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
-	button->setText("Rng");
+	button->setText( screen->getClassic() ? "Wav" : "\x10" );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_DISPLAY, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight*2), PPSize(size3, bHeightm+1));
 	button->setText("Dsp");
 	container->addControl(button);
+	if( !screen->getClassic() ) button->hide(true);
 
 	containerEntire->addControl(container);
 
@@ -554,11 +559,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->setColor(TrackerConfig::colorThemeMain);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOW, screen, this, PPPoint(x2+2, y2+2), PPSize(size, bHeightm));
-	button->setText("Show rng");
+	button->setText( screen->getClassic() ? "Show rng" : "zoom select");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ALL, screen, this, PPPoint(x2+2, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Rng all");
+	button->setText( screen->getClassic() ? "Rng all" : "select all");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 	
 	pp_int32 h = button->getSize().width;
@@ -572,11 +579,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ZOOMOUT, screen, this, PPPoint(x2+2 + size+1, y2+2), PPSize(size, bHeightm));
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	button->setText("Zoom out");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOWALL, screen, this, PPPoint(x2+2 + size+1, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Show all");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
+	button->setText( screen->getClassic() ? "Show all" : "Zoom full");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_APPLY_LASTFILTER, screen, this, PPPoint(x2+2 + size+1, y2+2+bHeight*2), PPSize(size, bHeightm+1));

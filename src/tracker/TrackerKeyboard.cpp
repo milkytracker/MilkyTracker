@@ -497,6 +497,7 @@ void Tracker::eventKeyDownBinding_Stop()
 
 	// stop song and reset main volume
 	ensureSongStopped(true, false);
+  updatePlayButtons(MAINMENU_STOP, true, true);
 }
 
 void Tracker::eventKeyDownBinding_Edit()

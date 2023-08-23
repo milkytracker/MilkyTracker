@@ -53,15 +53,30 @@
 
 void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true*/)
 {
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
-	if (button == NULL)
-		return;
-	button->setPressed(b);	
-	
-	if (repaint)
-		screen->paintControl(button);
+  pp_int32 btns[2] = { CONTAINER_ABOUT, CONTAINER_MENU };
+  for( int i = 0; i < 2; i++ ){
+    PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(btns[i]));
+    ASSERT(container);
+    PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
+    if (button == NULL)
+      return;
+    button->setPressed(b);	
+    
+    if (repaint)
+      screen->paintControl(button);
+  }
+}
+
+void Tracker::updatePlayButtons(pp_int32 id, bool b, bool repaint/* = true*/)
+{
+  pp_int32 btns[3] = { MAINMENU_PLAY_SONG, MAINMENU_PLAY_PATTERN, MAINMENU_PLAY_POSITION };
+  for( int i = 0; i < 3; i++ ){
+    PPButton *btn = static_cast<PPButton*>(screen->getControlByID(btns[i]));
+    btn->setPressed( id == btns[i] && b);	
+    
+    if (repaint)
+      screen->paintControl(btn);
+  }
 }
 
 bool Tracker::updatePianoControl(PianoControl* pianoControl)
