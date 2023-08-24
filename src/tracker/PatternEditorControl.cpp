@@ -96,11 +96,11 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	songPos.orderListIndex = songPos.row = -1;
 
 	// context menu
-	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1, false, PPFont::getFont(PPFont::FONT_SYSTEM));
+	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
 
   if( !parentScreen->getClassic() ){
 
-    moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
+    moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     moduleMenuControl->setSubMenu(true);
     moduleMenuControl->addEntry("New", MAINMENU_ZAP);
     moduleMenuControl->addEntry("Load", MAINMENU_LOAD);
@@ -110,14 +110,14 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     moduleMenuControl->addEntry("Optimize", MAINMENU_OPTIMIZE);
     moduleMenuControl->addEntry("Playback mode", MAINMENU_QUICKOPTIONS);
 
-    patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
+    patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     patternMenuControl->setSubMenu(true);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 
     
-	  keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
+	  keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     keyboardMenuControl->setSubMenu(true);
     keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
     keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
@@ -128,7 +128,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
     editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
 
-    channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorHighLight_1);
+    channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     channelMenuControl->setSubMenu(true);
     channelMenuControl->addEntry("Mute", MenuCommandIDMuteChannel);
     channelMenuControl->addEntry("Solo", MenuCommandIDSoloChannel);

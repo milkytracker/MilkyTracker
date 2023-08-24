@@ -49,7 +49,7 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
   screen        = parentScreen;
   this->sampleEditor = sampleEditor;
   this->id      = id;
-	float dheight   = (sliders+5) * (SCROLLBUTTONSIZE+6);
+	float dheight   = (sliders+4) * (SCROLLBUTTONSIZE+6);
 	initDialog(screen, responder, id, title.getStrBuffer(), screen->getWidth() > 320 ? 400 : 330, dheight, 26, "Ok", "Cancel");
 }
 
@@ -61,7 +61,7 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
 	pp_uint32 borderSpace = 12;
 	pp_uint32 scalaSpace = 16*7+8;
-	pp_int32 y2 = ((SCROLLBUTTONSIZE+6) * i+1 ) +  getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 20;
+	pp_int32 y2 = 16 + ((SCROLLBUTTONSIZE+6) * i+1 ) +  getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
 	pp_int32 x2 = x + borderSpace;
 	pp_int32 size = width-192;
 	

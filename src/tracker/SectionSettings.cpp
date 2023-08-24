@@ -2099,8 +2099,8 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				if (event->getID() != eCommand)
 					break;
-
-				tracker.settingsDatabase->store("CLASSIC", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+        pp_int32 value = (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+				tracker.settingsDatabase->store("CLASSIC", value);
 				update();
 				break;
 			}

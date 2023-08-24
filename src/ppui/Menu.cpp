@@ -36,7 +36,7 @@
 PPMenu::PPMenu(PPFont* aFont, const PPColor& selectionColor, const PPColor& bgColor, bool bSubMenu/* = false*/) :
 	font(aFont),
 	backColor(&bgColor),
-	borderColor(&bgColor),
+	borderColor(&selectionColor),
 	selectionColor(&selectionColor),
 	textBrightColor(NULL),
 	textDarkColor(NULL),
@@ -125,14 +125,14 @@ void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 men
 		
 		// border
 		
-		color = *borderColor;
+		color = *selectionColor;
 		PPColor bColor = color;
 		// adjust bright color
 		bColor.scaleFixed(87163);
 		PPPoint location(px,py);
 		PPSize size(r.x2, r.y2);
 		
-		g->setColor(bColor);
+		g->setColor(color);
 		
 		g->drawHLine(location.x, location.x + size.width, location.y);
 		g->drawVLine(location.y, location.y + size.height, location.x);
@@ -168,7 +168,7 @@ void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 men
 			nsdColor.scaleFixed(45000);
 			
 			// adjust bright color
-			nsbColor.scaleFixed(75000);
+			nsbColor.scaleFixed(100000);
 			
 			pp_int32 y = py + 2 + i*(getEntryHeight())  - 1;
 			pp_int32 h = (getEntryHeight()+1);
@@ -185,7 +185,7 @@ void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 men
 
 		if (items.get(i)->state & 1)
 		{
-			g->setColor(*borderColor);
+			g->setColor(*textDarkColor);
 			g->drawString(items.get(i)->name, px + 2, py + 2 + they+yOffset);
 		}
 		else

@@ -58,17 +58,17 @@ DialogWithValues::DialogWithValues(PPScreen* screen,
 	{
 		case ValueStyleEnterOneValue:
 #ifdef __LOWRES__
-			initDialog(screen, responder, id, caption, 290, 110+15, 26+15, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 105+15, 26+15, "Ok", "Cancel");
 #else
-			initDialog(screen, responder, id, caption, 290, 110, 26, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 105, 26, "Ok", "Cancel");
 #endif
 			break;
 			
 		case ValueStyleEnterTwoValues:
 #ifdef __LOWRES__
-			initDialog(screen, responder, id, caption, 290, 142+15, 26+15, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 125+15, 26+15, "Ok", "Cancel");
 #else
-			initDialog(screen, responder, id, caption, 290, 142, 26, "Ok", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 125, 26, "Ok", "Cancel");
 #endif
 			break;
 	}

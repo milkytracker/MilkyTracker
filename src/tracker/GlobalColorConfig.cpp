@@ -224,8 +224,8 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		// Main text (= white?)
 		case ColorForegroundText:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorStaticText, color);
-			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextBright, color);
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextDark, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextBright, color);
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorSelection, color);
 			break;
 		// PPButton colors

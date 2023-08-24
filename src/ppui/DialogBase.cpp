@@ -90,13 +90,15 @@ void PPDialogBase::initCommon(PPScreen* screen,
 	x = screen->getWidth() / 2 - width/2;
 	y = screen->getHeight() / 2 - height/2;
 
-	messageBoxContainerGeneric = new PPMessageBoxContainer(id, screen, this, PPPoint(x, y), PPSize(width,height), "System request");
+	messageBoxContainerGeneric = new PPMessageBoxContainer(id, screen, this, PPPoint(x, y), PPSize(width,height), caption);
 	messageBoxContainerGeneric->show(false);
 
 	pp_int32 x2 = x + width / 2 - (PPFont::getFont(PPFont::FONT_SYSTEM)->getStrWidth(caption) / 2);
-	pp_int32 y2 = y + 28;
 
-	messageBoxContainerGeneric->addControl(new PPStaticText(MESSAGEBOX_STATICTEXT_MAIN_CAPTION, screen, this, PPPoint(x2, y2), caption, true));	
+  // we hide MESSAGEBOX_STATICTEXT_MAIN_CAPTION as many dialogs use it as a convenient way to get an x,y location 
+	PPStaticText *t = new PPStaticText(MESSAGEBOX_STATICTEXT_MAIN_CAPTION, screen, this, PPPoint(x2, y+12), caption, true);
+  t->hide(true);
+	messageBoxContainerGeneric->addControl(t);
 }	
 
 void PPDialogBase::initDialog(PPScreen* screen, 
@@ -259,10 +261,10 @@ PPDialogBase::PPDialogBase(PPScreen* screen,
 			initDialog(screen, responder, id, "System Request", caption, 26, "Okay");
 			break;
 		case MessageBox_OKCANCEL:
-			initDialog(screen, responder, id, caption, 290, 74, 26, "Yes", "No");
+			initDialog(screen, responder, id, caption, 290, 54, 26, "Yes", "No");
 			break;
 		case MessageBox_YESNOCANCEL:
-			initDialog(screen, responder, id, caption, 290, 74, 26, "Yes", "No", "Cancel");
+			initDialog(screen, responder, id, caption, 290, 54, 26, "Yes", "No", "Cancel");
 			break;
 	}
 }
