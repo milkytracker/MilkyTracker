@@ -180,6 +180,12 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_SAMPLE_SYNTH:
+			{
+				getSampleEditorControl()->invokeSynth();
+				break;
+			}
+
 			case BUTTON_SAMPLE_PLAY_RANGE:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
@@ -514,8 +520,6 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(conSize1,dHeight), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	if( screen->getClassic() )
-		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
 	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+4), "C-5", false));		
 
 	pp_int32 size = (pp_int32)(conSize1*0.2183908045977f);
@@ -539,6 +543,10 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
 	button->setText( screen->getClassic() ? "Wav" : "\x10" );
 	if( !screen->getClassic() ) button->setColor(TrackerConfig::colorHighLight_1);
+	container->addControl(button);
+
+	button = new PPButton(BUTTON_SAMPLE_SYNTH, screen, this, PPPoint(x2+2 , y2+2), PPSize(size3*2, bHeightm));
+	button->setText( "synth" );
 	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
@@ -781,7 +789,6 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(87,12*3+4), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
 	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + 14), "C-5", false));		
 
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+38, y2+2+12), PPSize(18, 11));

@@ -242,6 +242,13 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			static_cast<DialogWithValues*>(dialog)->setValueTwo(lastValues.waveFormNumPeriods != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.waveFormNumPeriods : 1.0f);
 			break;
 		}
+
+		case ToolHandlerResponder::SampleToolTypeSynth:
+		{
+      dialog = synth->create( getSampleEditor(), parentScreen, toolHandlerResponder );
+			break;
+		}
+
 		default:
 			break;
 	}

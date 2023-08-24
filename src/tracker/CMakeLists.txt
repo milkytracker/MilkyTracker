@@ -90,6 +90,7 @@ add_executable(tracker
     SystemMessage.cpp
     Reverb.cpp
     Filter.cpp
+    Synth.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -159,6 +160,7 @@ add_executable(tracker
     ResamplerHelper.h
     Reverb.h
     Filter.h
+    Synth.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h

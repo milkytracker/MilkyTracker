@@ -30,6 +30,7 @@
 #include "SampleEditor.h"
 #include "EditorBase.h"
 #include "SampleEditorControlLastValues.h"
+#include "Synth.h"
 
 // Forwards
 class PPGraphicsAbstract;
@@ -72,6 +73,8 @@ private:
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
+
+  Synth *synth;
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
@@ -321,7 +324,8 @@ private:
 		MenuCommandIDGenerateSawtooth,
 		MenuCommandIDGenerateHalfSine,
 		MenuCommandIDGenerateAbsoluteSine,
-		MenuCommandIDGenerateQuarterSine
+		MenuCommandIDGenerateQuarterSine,
+		MenuCommandIDSynth
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);
@@ -330,6 +334,7 @@ private:
 	
 public:
 	void invokeSetSampleVolume() { executeMenuCommand(MenuCommandIDVolumeBoost); }
+	void invokeSynth() { executeMenuCommand(MenuCommandIDSynth); }
 	
 	bool contextMenuVisible();
 	void invokeContextMenu(const PPPoint& p, bool translatePoint = true);
@@ -373,7 +378,8 @@ private:
 			SampleToolTypeGenerateHalfSine,
 			SampleToolTypeGenerateAbsoluteSine,
 			SampleToolTypeGenerateQuarterSine,
-			SampleToolTypeReverb
+			SampleToolTypeReverb,
+			SampleToolTypeSynth
 		};
 	
 	private:
