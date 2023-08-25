@@ -310,6 +310,8 @@ SampleEditor::SampleEditor() :
 	resetSelection();
 
 	memset(&lastSample, 0, sizeof(lastSample));
+
+  synth = new Synth();
 }
 
 SampleEditor::~SampleEditor()
@@ -318,6 +320,7 @@ SampleEditor::~SampleEditor()
 	delete undoHistory;
 	delete undoStack;
 	delete before;
+  delete synth;
 }
 
 void SampleEditor::attachSample(TXMSample* sample, XModule* module) 
@@ -1213,9 +1216,6 @@ void SampleEditor::postFilter()
 
 void SampleEditor::tool_newSample(const FilterParameters* par)
 {
-	if (!isValidSample())
-		return;
-
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
@@ -2913,8 +2913,9 @@ void SampleEditor::tool_generateSine(const FilterParameters* par)
 	// generate sine wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+		float v = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per)*amplify);	
+		setFloatSampleInWaveform(i, v + (float)sin(per)*amplify);	
 	}
 
 	finishUndo();	
@@ -2924,8 +2925,6 @@ void SampleEditor::tool_generateSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateSquare(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -2960,9 +2959,10 @@ void SampleEditor::tool_generateSquare(const FilterParameters* par)
 	// generate square wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
-		setFloatSampleInWaveform(i, frac < 0.5f ? amplify : -amplify);	
+		setFloatSampleInWaveform(i, v + (frac < 0.5f ? amplify : -amplify) );	
 	}
 
 	finishUndo();	
@@ -2972,8 +2972,6 @@ void SampleEditor::tool_generateSquare(const FilterParameters* par)
 
 void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3008,14 +3006,15 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 	// generate triangle wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
 		if (frac < 0.25f)
-			setFloatSampleInWaveform(i, (frac*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (frac*4.0f)*amplify);	
 		else if (frac < 0.75f)
-			setFloatSampleInWaveform(i, (1.0f-(frac-0.25f)*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (1.0f-(frac-0.25f)*4.0f)*amplify);	
 		else	
-			setFloatSampleInWaveform(i, (-1.0f+(frac-0.75f)*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (-1.0f+(frac-0.75f)*4.0f)*amplify);	
 	}
 
 	finishUndo();	
@@ -3025,8 +3024,6 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 
 void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3063,7 +3060,8 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	{
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
-		setFloatSampleInWaveform(i, frac < 0.5f ? (frac*2.0f)*amplify : (-1.0f+((frac-0.5f)*2.0f))*amplify);	
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v + (frac < 0.5f ? (frac*2.0f)*amplify : (-1.0f+((frac-0.5f)*2.0f))*amplify) );	
 	}
 
 	finishUndo();	
@@ -3073,8 +3071,6 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 
 void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3109,8 +3105,9 @@ void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 	// generate half sine wave here
 	for (i = sStart; i < sStart + sLen / 2; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + (float)sin(per) * amplify);
 	}
 	for (; i < sEnd; i++)
 	{
@@ -3124,8 +3121,6 @@ void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3160,8 +3155,9 @@ void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 	// generate absolute sine wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, fabs((float)sin(per) * amplify));
+		setFloatSampleInWaveform(i, v + (fabs((float)sin(per) * amplify)) );
 	}
 
 	finishUndo();
@@ -3171,8 +3167,6 @@ void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateQuarterSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3207,21 +3201,25 @@ void SampleEditor::tool_generateQuarterSine(const FilterParameters* par)
 	// generate quarter sine wave in first and third quarters
 	for (i = sStart; i < sStart + sLen / 4; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sStart + sLen / 2; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v+0);
 	}
 	for (; i < sStart + sLen * 3 / 4; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - (sStart + sLen / 2)) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sEnd; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v+0);
 	}
 
 	finishUndo();
@@ -3607,6 +3605,39 @@ void SampleEditor::tool_delay(const FilterParameters* par)
   // free mem
   free(buf);
   module->freeSampleMem(oldsample);
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_synth(const FilterParameters* par)
+{
+	preFilter(&SampleEditor::tool_delay, par);
+
+	prepareUndo();
+
+  // update controls
+  for( int i = 0; i < synth->getMaxParam(); i++ ){
+    synth->setParam(i, (float)par->getParameter(i).floatPart );
+  }
+  
+  //float buf = (float*)malloc( sLength2 * sizeof(float));
+  //for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
+
+  // create temporary sample
+  //float *buf = synth->process();
+ // enableUndoStack(false);
+  synth->process( NULL,NULL);
+ // enableUndoStack(true);
+
+  // serialize synth to samplename 
+  PPString preset = synth->toString();
+  memcpy( sample->name, preset.getStrBuffer(), SAMPLE_CHARS );
+  
+  // free mem
+  //free(buf);
+  //module->freeSampleMem(oldsample);
 
 	finishUndo();
 

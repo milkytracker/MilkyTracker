@@ -34,6 +34,7 @@
 #include "EditorBase.h"
 #include "Undo.h"
 #include "Singleton.h"
+#include "Synth.h"
 
 struct TXMSample;
 
@@ -122,6 +123,8 @@ private:
 	bool drawing;
 	pp_int32 lastSamplePos;
 
+  Synth *synth;
+
 	void prepareUndo();
 	void finishUndo();
 	
@@ -146,6 +149,8 @@ public:
 	bool isEmptySample() const;	
 	bool canMinimize() const;
 	bool isEditableSample() const;
+
+  Synth *getSynth(){ return synth; }
 
 	void setSelectionStart(pp_int32 selectionStart) { this->selectionStart = selectionStart; }
 	pp_int32& getSelectionStart() { return selectionStart; }
@@ -357,6 +362,7 @@ public:
 	void tool_saturate(const FilterParameters* par);
 	void tool_timestretch(const FilterParameters* par);
 	void tool_delay(const FilterParameters* par);
+	void tool_synth(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);

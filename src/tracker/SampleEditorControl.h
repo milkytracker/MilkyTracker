@@ -30,7 +30,6 @@
 #include "SampleEditor.h"
 #include "EditorBase.h"
 #include "SampleEditorControlLastValues.h"
-#include "Synth.h"
 
 // Forwards
 class PPGraphicsAbstract;
@@ -74,7 +73,6 @@ private:
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
 
-  Synth *synth;
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;

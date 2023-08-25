@@ -201,8 +201,6 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
 
-  synth = new Synth();
-
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
 	dialog = NULL;	
@@ -230,7 +228,6 @@ SampleEditorControl::~SampleEditorControl()
   delete subMenuFX;
 	delete subMenuPT;
 	delete subMenuGenerators;
-  delete synth;
 }
 
 void SampleEditorControl::drawLoopMarker(PPGraphicsAbstract* g, pp_int32 x, pp_int32 y, bool down, const pp_int32 size)

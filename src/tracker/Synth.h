@@ -2,6 +2,7 @@
  *  tracker/Synth.h 
  *
  *  Copyright 2023 Leon van Kammen (coderofsalvation)
+ * 
  *
  *  This file is part of Milkytracker.
  *
@@ -20,27 +21,27 @@
  *
  */
 
-/*
- * Lightweight synths from the milkyverse.
- * Rules for new synths:
- *   1. don't introduce new classes/FFT libraries e.g., KISS.
- *   2. name your synth as a planet (Jupiter e.g.) in our milkyway
- */
-
-#ifndef __SYNTH_H
-#define __SYNTH_H
+#ifndef __SYN_H
+#define __SYN_H
 
 #include "BasicTypes.h"
 #include "XModule.h"
-#include "SampleEditor.h"
 #include "Screen.h"
-#include "DialogSliders.h"
+#include "Event.h"
 
-#define PREFIX_CHARS 5                        // "milk:"
-#define PARAMS_MAX 22-PREFIX_CHARS            // max samplechars (22) minus "milk:" (5)
-#define OFFSET_CHAR 32                        // printable chars only 32..127 = 0..92
-#define PARAM_TO_FLOAT(x) (1.0f/92)*(float)x  // 0..92      -> 0.0f..1.0f
-#define FLOAT_TO_PARAM(x) (int)(x/(0.99f/92)) // 0.0f..1.0f -> 0..92
+#define SYN_PREFIX_CHARS 5                           // "milk:"
+#define SAMPLE_CHARS 22                              // max samplechars
+#define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "milk:" (5)     
+#define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
+#define SYN_PARAM_TO_FLOAT(x) (100.0f/92)*(float)x   // 0..92      -> 0.0f..1.0f
+#define SYN_FLOAT_TO_PARAM(x) (int)(x/(99.0f/92))    // 0.0f..1.0f -> 0..92
+#define SYN_MAX 5                                    // increase when needed
+                                                    
+
+// synth ID's
+#define SYNTH_TOTAL       2  // update when adding synths 
+#define SYNTH_MILKY_SINE  0
+#define SYNTH_NEBULA_DRUM 1
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -49,26 +50,54 @@
 struct MSynthParam{
   PPString name;
   float value;
+  int min;
+  int max;
 };
 
 struct MSynth{
   PPString name;
-  MSynthParam param[PARAMS_MAX];
+  MSynthParam param[SYN_PARAMS_MAX];
+  int nparams;
+  pp_uint32 ID;
+  bool inited;
 };
 	
+class SampleEditor; // forward
+class DialogSliders;                    
+class DialogResponder;
 
 class Synth
 {
 
   private:
-    MSynth synth;
+    MSynth *synth;
+    MSynth synths[SYN_MAX];
+    DialogSliders *sliders;
+
+    SampleEditor *sampleEditor;
+    PPScreen *screen;
+    DialogResponder *dr;
 
   public:
     Synth();
     ~Synth();
-    DialogSliders * create( SampleEditor *s, PPScreen *screen, DialogResponder *dr);
-    PPString exportPreset( MSynth &m );
-    bool importPreset( MSynth &m, PPString preset );
+    DialogSliders * dialog( SampleEditor *s, PPScreen *screen, DialogResponder *dr);
+
+    void setParam( int i, float v);
+    MSynthParam& getParam( int i ){ return synth->param[i]; }
+    int getMaxParam(){ return synth->nparams; }
+    
+    PPString toString();
+    bool load( PPString preset );
+
+    void reset();
+    void init();
+    void process( MSynth *s, PPString *preset );
+
+    // synths
+    void MilkySine( bool init = false );
+    void NebulaDrum( bool init = false );
+
 };
 
 #endif

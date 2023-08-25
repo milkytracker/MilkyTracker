@@ -546,7 +546,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_SYNTH, screen, this, PPPoint(x2+2 , y2+2), PPSize(size3*2, bHeightm));
-	button->setText( "synth" );
+	button->setText( "synths" );
 	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));

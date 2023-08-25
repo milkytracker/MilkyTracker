@@ -91,6 +91,7 @@ add_executable(tracker
     Reverb.cpp
     Filter.cpp
     Synth.cpp
+    Synths.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp

@@ -36,6 +36,7 @@
 #include "DialogSliders.h"
 #include "SimpleVector.h"
 #include "FilterParameters.h"
+#include "SectionSamples.h"
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
@@ -245,7 +246,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 
 		case ToolHandlerResponder::SampleToolTypeSynth:
 		{
-      dialog = synth->create( getSampleEditor(), parentScreen, toolHandlerResponder );
+      getSampleEditor()->getSynth()->load( PPString( getSampleEditor()->getSample()->name) );
+      dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
 			break;
 		}
 
@@ -514,6 +516,19 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			par.setParameter(0, FilterParameters::Parameter(lastValues.waveFormVolume / 100.0f));
 			par.setParameter(1, FilterParameters::Parameter(lastValues.waveFormNumPeriods));
 			sampleEditor->tool_generateQuarterSine(&par);
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeSynth:
+		{
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      int maxparams = getSampleEditor()->getSynth()->getMaxParam();
+			FilterParameters par(maxparams);
+      for( pp_uint32 i =0; i < maxparams; i++ ){
+        par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
+      }
+      sampleEditor->tool_synth(&par);
+      tracker->sectionSamples->updateAfterLoad(); 
 			break;
 		}
 
