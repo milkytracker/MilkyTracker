@@ -29,18 +29,17 @@
 #include "Screen.h"
 #include "Event.h"
 
+#define SYN_PREFIX "milk:" 
 #define SYN_PREFIX_CHARS 5                           // "milk:"
 #define SAMPLE_CHARS 22                              // max samplechars
 #define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "milk:" (5)     
 #define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
-#define SYN_PARAM_TO_FLOAT(x) (100.0f/92)*(float)x   // 0..92      -> 0.0f..1.0f
-#define SYN_FLOAT_TO_PARAM(x) (int)(x/(99.0f/92))    // 0.0f..1.0f -> 0..92
-#define SYN_MAX 5                                    // increase when needed
+#define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
+#define SYN_PARAM_NORMALIZED(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
                                                     
-
-// synth ID's
 #define SYNTH_TOTAL       2  // update when adding synths 
-#define SYNTH_MILKY_SINE  0
+// synth ID's
+#define SYNTH_MILKY_WAVE  0
 #define SYNTH_NEBULA_DRUM 1
 
 #ifndef M_PI
@@ -71,7 +70,7 @@ class Synth
 
   private:
     MSynth *synth;
-    MSynth synths[SYN_MAX];
+    MSynth synths[SYNTH_TOTAL];
     DialogSliders *sliders;
 
     SampleEditor *sampleEditor;
@@ -95,7 +94,7 @@ class Synth
     void process( MSynth *s, PPString *preset );
 
     // synths
-    void MilkySine( bool init = false );
+    void MilkyWave( bool init = false );
     void NebulaDrum( bool init = false );
 
 };

@@ -65,6 +65,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
       float value = lastValues.boostSampleVolume != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.boostSampleVolume : 100.0f;
 			sliders->initSlider(0,0.0f, 300.0f, value,"Volume");
+      sliders->process();
 			break;
     }
 
@@ -75,6 +76,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			sliders->initSlider(0,0.0f, 300.0f, value,"Start");
       value = lastValues.fadeSampleVolumeStart != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.fadeSampleVolumeStart : 100.0f;
 			sliders->initSlider(1,0.0f, 300.0f, value,"End");
+      sliders->process();
 			break;
     }
 			
@@ -170,6 +172,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			sliders->initSlider(2,0,99,value,"Decay");
       value = lastValues.reverbColour  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbColour : 0.0f;
 			sliders->initSlider(3,-6,6,value,"Colour");
+      sliders->process();
 			break;
     }
 
@@ -178,6 +181,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
       float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 200.0f;
 			sliders->initSlider(0,1,4000,value,"Harmonics");
+      sliders->process();
       break;
     }
 
@@ -196,6 +200,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       value = lastValues.filterRes   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterRes : 0.0f;
 			sliders->initSlider(2,0,9,value,"Resonance");
 			sliders->initSlider(3,0.0f, 1000.0f, 100.0f,"Volume");
+      sliders->process();
 			break;
     }
 
@@ -204,6 +209,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			sliders->initSlider(0,1,10000,3900,"Grainsize");
 			sliders->initSlider(1,0,8,3,"Stretch");
+      sliders->process();
 			break;
     }
 
@@ -223,6 +229,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			sliders->initSlider(3,0,sampleRate/2,0,"Bandpass");
 			sliders->initSlider(4,1,100,0,"Saturate");
 			sliders->initSlider(5,0,100,50,"Dry / Wet");
+      sliders->process();
 			break;
     }
 		
@@ -248,6 +255,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		{
       getSampleEditor()->getSynth()->load( PPString( getSampleEditor()->getSample()->name) );
       dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
+      static_cast<DialogSliders *>(dialog)->process();
 			break;
 		}
 

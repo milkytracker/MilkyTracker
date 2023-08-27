@@ -53,7 +53,7 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
 	initDialog(screen, responder, id, title.getStrBuffer(), screen->getWidth() > 320 ? 400 : 330, dheight, 26, "Ok", "Cancel");
 }
 
-void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption)
+void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption, PPColor *color)
 {
 	pp_int32 x      = getMessageBoxContainer()->getLocation().x;
 	pp_int32 y      = getMessageBoxContainer()->getLocation().y;
@@ -76,6 +76,7 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
   PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
   PPStaticText* staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXT_OFFSET+i, screen, this, PPPoint(x2+(SCROLLBUTTONSIZE/2), y2), caption.getStrBuffer(), true);
   staticText->setFont(font);
+  if( color != NULL ) staticText->setColor( *color);
   getMessageBoxContainer()->addControl(staticText);
   // value
   char v[255];
@@ -116,19 +117,23 @@ pp_int32 DialogSliders::handleEvent(PPObject* sender, PPEvent* event)
 		if( preview && sampleEditor != NULL ) sampleEditor->undo();
 	}
 	if( event->getID() == eLMouseUp && needUpdate ){
-		if( sampleEditor != NULL ){
-			FilterParameters par(numSliders);
-      pp_int32 i;
-      for( i = 0; i < numSliders; i++ ){
-			  par.setParameter(i, FilterParameters::Parameter( getSlider(i) ) );
-      }
-			if( preview ) sampleEditor->undo();
-      (sampleEditor_->*func)(&par);
-			preview = true;
-		}
+    process();
 		update();
 	}
 	return PPDialogBase::handleEvent(sender, event);
+}
+
+void DialogSliders::process(){
+  if( sampleEditor != NULL ){
+    FilterParameters par(numSliders);
+    pp_int32 i;
+    for( i = 0; i < numSliders; i++ ){
+      par.setParameter(i, FilterParameters::Parameter( getSlider(i) ) );
+    }
+    if( preview ) sampleEditor->undo();
+    (sampleEditor_->*func)(&par);
+    preview = true;
+  }
 }
 
 void DialogSliders::setSlider(pp_uint32 index, float param)

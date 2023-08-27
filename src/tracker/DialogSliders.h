@@ -69,10 +69,12 @@ public:
 	float getSlider(pp_uint32 index) const;
   pp_int32 getNumSliders(){ return this->numSliders; }
 
-	void initSlider(int i, float min, float max, float value, PPString caption);
+	void initSlider(int i, float min, float max, float value, PPString caption, PPColor *color = NULL);
 
 	void setSampleEditor(SampleEditor *s){ this->sampleEditor = s; }
 	SampleEditor * getSampleEditor(){ return this->sampleEditor; }
+
+  void process();
 
 };
 

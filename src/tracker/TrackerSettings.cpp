@@ -671,6 +671,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 			pp_int32 i = str.getIntValue();
 			str = theKey->getStringValue();
 			sectionInstruments->setEncodedEnvelope(SectionInstruments::EnvelopeTypeVolume, i, str);
+      printf("env %i %s\n",i,str.getStrBuffer());
 		}
 	}
 	else if (theKey->getKey().startsWith("PREDEFENVELOPEPANNING_"))
