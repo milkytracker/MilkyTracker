@@ -128,7 +128,7 @@ void Synth::NebulaDrum( bool init ){
     return;
   }
 
-  // processing
+  // create new sample 
   FilterParameters par(2);
   pp_int32 segment  = 100;
   pp_int32 attack   = segment * (int)synth->param[1].value;
@@ -140,11 +140,7 @@ void Synth::NebulaDrum( bool init ){
   par.setParameter(1, FilterParameters::Parameter( 16 ) );
   sampleEditor->tool_newSample(&par);
 
-  //if srate == nil then srate=44100 end
-  //if note  == nil then note=-24+(rand%6)*-12 end
-  //x = math.sin( ((2*math.pi)*(i*hz(note))/srate) )
-  //if( i < 50 ) then return 0 end
-  //return mirror( fadeout(x,i,synths.perc.samples,srate) * 1.1)
+  // synthesize! 
   for( pp_int32 i = 0; i < duration; i++ ){
     if( i < 50 ) sampleEditor->setFloatSampleInWaveform( i, 0.0f);
     float x = sin( (2.0f*M_PI)*(float(i) * NOTE2HZ(note)) / 44100.0f );
@@ -155,9 +151,3 @@ void Synth::NebulaDrum( bool init ){
 
 	sampleEditor->notifyListener(SampleEditor::NotificationChanges); // update UI
 }
-
-//function hz(note)
-//    local a = 440  -- frequency of A (note 49=440Hz   note 40=C4)
-//    local n = note + 52
-//    return 440 * (2 / ((n  - 49) / 12));
-//end
