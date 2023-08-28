@@ -2,6 +2,8 @@
 #include "DialogSliders.h"
 #include "FilterParameters.h"
 #include "XModule.h"
+#include "SampleEditor.h"
+#include <math.h>
 
 /*
  * Lightweight synths from the milkyverse.
@@ -43,7 +45,7 @@ void Synth::MilkyWave( bool init ){
   pp_int32 ID = SYNTH_MILKY_WAVE;
 
   if( init ){
-    synths[ID].nparams = 6;
+    synths[ID].nparams = 4;
     synths[ID].ID      = ID;
     synths[ID].param[0].name  = "milky wave";
     synths[ID].param[0].value = 0.0f;
@@ -64,16 +66,6 @@ void Synth::MilkyWave( bool init ){
     synths[ID].param[3].value = 3.0f;
     synths[ID].param[3].min   = 1.0f;
     synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
-
-    synths[ID].param[4].name  = "env vol";
-    synths[ID].param[4].value = 0.0f;
-    synths[ID].param[4].min   = 0.0f;
-    synths[ID].param[4].max   = 5.0f;
-
-    synths[ID].param[5].name  = "env pan";
-    synths[ID].param[5].value = 0.0f;
-    synths[ID].param[5].min   = 0.0f;
-    synths[ID].param[5].max   = 5.0f;
 
     return;
   }
@@ -107,28 +99,65 @@ void Synth::NebulaDrum( bool init ){
   pp_int32 ID = SYNTH_NEBULA_DRUM;
 
   if( init ){
-    synths[ID].nparams = 3;
+    synths[ID].nparams = 4;
     synths[ID].ID      = ID;
-    synths[ID].param[0].name  = "nebula kick";
+    synths[ID].param[0].name  = "nebula drum";
     synths[ID].param[0].value = 0.0f;
     synths[ID].param[0].min   = 0;
     synths[ID].param[0].max   = SYNTH_TOTAL;
 
     synths[ID].param[1].name  = "attack";
-    synths[ID].param[1].value = 0.0f;
+    synths[ID].param[1].value = 2.0f;
     synths[ID].param[1].min   = 0;
     synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
-
-    synths[ID].param[2].name  = "release";
-    synths[ID].param[2].value = 0.0f;
+    
+    synths[ID].param[2].name  = "decay";
+    synths[ID].param[2].value = 5.0f;
     synths[ID].param[2].min   = 0;
     synths[ID].param[2].max   = (float)SYN_PARAM_MAX_VALUE;
+
+    synths[ID].param[3].name  = "release";
+    synths[ID].param[3].value = 10.0f;
+    synths[ID].param[3].min   = 0;
+    synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
+
+    synths[ID].param[4].name  = "note";
+    synths[ID].param[4].value = 40.0f;
+    synths[ID].param[4].min   = 0;
+    synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
     return;
   }
 
   // processing
   FilterParameters par(2);
-  par.setParameter(0, FilterParameters::Parameter( (pp_int32)synth->param[1].value ) );
+  pp_int32 segment  = 100;
+  pp_int32 attack   = segment * (int)synth->param[1].value;
+  pp_int32 decay    = segment * (int)synth->param[2].value;
+  pp_int32 release  = segment * (int)synth->param[3].value;
+  pp_int32 note     = segment * (int)synth->param[4].value;
+  pp_int32 duration = attack + decay + release;
+  par.setParameter(0, FilterParameters::Parameter( duration ) );
   par.setParameter(1, FilterParameters::Parameter( 16 ) );
   sampleEditor->tool_newSample(&par);
+
+  //if srate == nil then srate=44100 end
+  //if note  == nil then note=-24+(rand%6)*-12 end
+  //x = math.sin( ((2*math.pi)*(i*hz(note))/srate) )
+  //if( i < 50 ) then return 0 end
+  //return mirror( fadeout(x,i,synths.perc.samples,srate) * 1.1)
+  for( pp_int32 i = 0; i < duration; i++ ){
+    if( i < 50 ) sampleEditor->setFloatSampleInWaveform( i, 0.0f);
+    float x = sin( (2.0f*M_PI)*(float(i) * NOTE2HZ(note)) / 44100.0f );
+    if( i < attack ) x = x * ((1.0f/attack)*float(i));
+    if( i > attack+decay && i < duration ) x = x * (1.0f-(1.0f/attack)*float(i));
+    sampleEditor->setFloatSampleInWaveform( i, x);
+  }
+
+	sampleEditor->notifyListener(SampleEditor::NotificationChanges); // update UI
 }
+
+//function hz(note)
+//    local a = 440  -- frequency of A (note 49=440Hz   note 40=C4)
+//    local n = note + 52
+//    return 440 * (2 / ((n  - 49) / 12));
+//end

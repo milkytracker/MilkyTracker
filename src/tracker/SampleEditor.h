@@ -131,6 +131,8 @@ private:
 	bool revoke(const SampleUndoStackEntry* stackEntry);
 	
 	void notifyChanges(bool condition, bool lazy = true);
+ 
+  friend class Synth;
 	
 public:
 	SampleEditor();

@@ -36,6 +36,7 @@
 #define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
 #define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
 #define SYN_PARAM_NORMALIZED(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
+#define NOTE2HZ(note) 440.0f * ( 2.0f / (( (note+52.0f) - 49.0f) / 12.0f ))
                                                     
 #define SYNTH_TOTAL       2  // update when adding synths 
 // synth ID's
