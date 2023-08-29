@@ -50,7 +50,7 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
   this->sampleEditor = sampleEditor;
   this->id      = id;
 	float dheight   = (sliders+4) * (SCROLLBUTTONSIZE+6);
-	initDialog(screen, responder, id, title.getStrBuffer(), screen->getWidth() > 320 ? 400 : 330, dheight, 26, "Ok", "Cancel");
+	initDialog(screen, responder, id, title.getStrBuffer(), 320, dheight, 26, "Ok", "Cancel");
 }
 
 void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption, PPColor *color)

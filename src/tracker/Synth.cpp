@@ -3,6 +3,7 @@
 #include "SampleEditor.h"
 #include "DialogSliders.h"
 #include "TrackerConfig.h"
+#include "FilterParameters.h"
 
 Synth::Synth(){
   init();
@@ -20,6 +21,7 @@ PPString Synth::toString(  ) {
     float positiveRange = synth->param[i].max - synth->param[i].min;
     str[ i + SYN_PREFIX_CHARS] = (int)synth->param[i].value + SYN_OFFSET_CHAR;  
   }
+  printf("synth: '%s'\n",str);
   return PPString(str);
 }
 
@@ -62,3 +64,23 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
 void Synth::setParam( int i, float v ){
   synth->param[i].value = v;
 } 
+
+TXMSample * Synth::prepareSample( pp_uint32 duration, bool force){
+  TXMSample *sample = sampleEditor->getSample();
+  if( sampleEditor->isEmptySample() || force){
+    FilterParameters par(2);
+    par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
+    par.setParameter(1, FilterParameters::Parameter( 16 ) );
+    sampleEditor->tool_newSample(&par);
+  }else{
+	if( duration > sample->samplen ){
+		sampleEditor->selectionStart = sample->samplen-1;
+		sampleEditor->selectionEnd   = sample->samplen-1;
+		FilterParameters par(1);
+		par.setParameter(0, FilterParameters::Parameter( (pp_int32)(duration - sample->samplen) ) );
+		sampleEditor->tool_generateSilence(&par);
+	}  
+	// we just leave the sample as-is when it's longer than required  	
+  }
+  return sample;
+}

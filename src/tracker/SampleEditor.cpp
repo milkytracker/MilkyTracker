@@ -2849,7 +2849,9 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	pp_int32 type = par->getParameter(0).intPart;
+	float    amp  = par->getParameter(0).floatPart;
+	pp_int32 type = par->getParameter(1).intPart;
+	printf("amp=%f\n",amp);
 
 	VRand rand;
 	rand.seed();
@@ -2857,16 +2859,22 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	switch (type)
 	{
 		case 0:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.white()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.white()*2.0f)*amp );		
+			}
 			break;
 		case 1:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.pink()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.pink()*2.0f)*amp );		
+			}
 			break;
 		case 2:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.brown()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.brown()*2.0f)*amp );		
+			}
 			break;
 	}
 	
@@ -3105,13 +3113,14 @@ void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 	// generate half sine wave here
 	for (i = sStart; i < sStart + sLen / 2; i++)
 	{
-    float v   = getFloatSampleFromWaveform(i);
+		float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, v + (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sEnd; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+		float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, 0 + v);
 	}
 
 	finishUndo();
@@ -3309,6 +3318,9 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   float wet = ( par->getParameter(0).floatPart / 100.0f) * 2.0f;
   float in  = 0.0;
   float out = 0.0;
+
+printf("0=%f 1=%f 2=%f 3=%f\n", par->getParameter(0).floatPart, par->getParameter(1).floatPart, par->getParameter(2).floatPart, par->getParameter(3).floatPart);
+
   pp_int32 pos = 0;
 
 	for (i = 0; i < sLength2; i++)

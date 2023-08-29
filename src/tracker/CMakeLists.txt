@@ -92,6 +92,7 @@ add_executable(tracker
     Filter.cpp
     Synth.cpp
     Synths.cpp
+	SynthFM.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -162,6 +163,7 @@ add_executable(tracker
     Reverb.h
     Filter.h
     Synth.h
+	SynthFM.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h

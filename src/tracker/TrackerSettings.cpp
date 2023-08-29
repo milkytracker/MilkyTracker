@@ -203,7 +203,7 @@ void Tracker::buildDefaultSettings()
 	// sample editor last settings
 	settingsDatabase->store("SAMPLEEDITORLASTVALUES", "");
 	// no virtual channels for instrument playback
-	settingsDatabase->store("VIRTUALCHANNELS", 1); // be nice to realtime chords
+	settingsDatabase->store("VIRTUALCHANNELS", 5); // be nice to realtime chords
     // default number of XM channel limit
     settingsDatabase->store("XMCHANNELLIMIT", 32);
 	// enable multichn recording by default

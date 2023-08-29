@@ -444,8 +444,9 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeGenerateNoise:
 		{
-			FilterParameters par(1);
-			par.setParameter(0, FilterParameters::Parameter((pp_int32)(static_cast<DialogGroupSelection*>(dialog)->getSelection())));
+			FilterParameters par(2);
+			par.setParameter(0, FilterParameters::Parameter(1.0f) );
+			par.setParameter(1, FilterParameters::Parameter((pp_int32)(static_cast<DialogGroupSelection*>(dialog)->getSelection())));
 			sampleEditor->tool_generateNoise(&par);
 			break;
 		}

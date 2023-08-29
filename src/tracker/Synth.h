@@ -35,13 +35,13 @@
 #define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "milk:" (5)     
 #define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
 #define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
-#define SYN_PARAM_NORMALIZED(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
-#define NOTE2HZ(note) 440.0f * ( 2.0f / (( (note+52.0f) - 49.0f) / 12.0f ))
+#define SYN_PARAM_NORMALIZE(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
+#define NOTE2HZ(m) (440.0 * pow(2, (m - 69) / 12.0)) 
                                                     
-#define SYNTH_TOTAL       2  // update when adding synths 
 // synth ID's
-#define SYNTH_MILKY_WAVE  0
-#define SYNTH_NEBULA_DRUM 1
+#define SYNTH_CYCLE_PAINT 0                // incremental numbers
+#define SYNTH_JAMTOY_FM   1                //
+#define SYNTH_LAST        SYNTH_JAMTOY_FM  // update this when adding a synth
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -71,7 +71,7 @@ class Synth
 
   private:
     MSynth *synth;
-    MSynth synths[SYNTH_TOTAL];
+    MSynth synths[SYNTH_LAST+1];
     DialogSliders *sliders;
 
     SampleEditor *sampleEditor;
@@ -93,10 +93,11 @@ class Synth
     void reset();
     void init();
     void process( MSynth *s, PPString *preset );
+	TXMSample * prepareSample(pp_uint32 duration, bool force = false);
 
     // synths
-    void MilkyWave( bool init = false );
-    void NebulaDrum( bool init = false );
+    void CyclePaint( bool init = false );
+    void JamToyFM( bool init = false );
 
 };
 
