@@ -3319,8 +3319,6 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   float in  = 0.0;
   float out = 0.0;
 
-printf("0=%f 1=%f 2=%f 3=%f\n", par->getParameter(0).floatPart, par->getParameter(1).floatPart, par->getParameter(2).floatPart, par->getParameter(3).floatPart);
-
   pp_int32 pos = 0;
 
 	for (i = 0; i < sLength2; i++)
