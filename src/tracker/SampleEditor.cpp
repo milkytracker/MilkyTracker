@@ -2851,7 +2851,6 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 
 	float    amp  = par->getParameter(0).floatPart;
 	pp_int32 type = par->getParameter(1).intPart;
-	printf("amp=%f\n",amp);
 
 	VRand rand;
 	rand.seed();

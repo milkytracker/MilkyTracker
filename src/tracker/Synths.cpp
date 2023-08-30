@@ -18,8 +18,8 @@
 
 
 void Synth::init(){
-	CyclePaint(true); 
 	JamToyFM(true);
+	CyclePaint(true); 
 }
 
 void Synth::process( MSynth *s, PPString *preset ){
@@ -48,7 +48,7 @@ void Synth::CyclePaint( bool init ){
 	if( init ){
 		synths[ID].nparams = 6;
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = "cycle paint";
+		synths[ID].param[0].name  = PPString("\x11 wavepaint \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -111,8 +111,8 @@ void Synth::CyclePaint( bool init ){
 
 	// force loop 
 	sampleEditor->setLoopType( 1 );
-	sample->loopstart = 0;
-	sample->looplen   = sample->samplen;
+	sampleEditor->setRepeatStart(0);
+	sampleEditor->setRepeatEnd(sample->samplen);
 
 }
 
@@ -120,9 +120,9 @@ void Synth::JamToyFM( bool init ){
 	pp_int32 ID = SYNTH_JAMTOY_FM;
 
 	if( init ){
-		synths[ID].nparams = 17;
+		synths[ID].nparams = 18;
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = "FM JamToy";
+		synths[ID].param[0].name  = PPString("\x11 FM \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -133,9 +133,9 @@ void Synth::JamToyFM( bool init ){
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[2].name  = "size";
-		synths[ID].param[2].value = 1.0f;
+		synths[ID].param[2].value = 3.0f;
 		synths[ID].param[2].min   = 1.0f;
-		synths[ID].param[2].max   = 10.0f;
+		synths[ID].param[2].max   = 12.0f;
 
 		synths[ID].param[3].name  = "attack";
 		synths[ID].param[3].value = 0.0f;
@@ -158,23 +158,23 @@ void Synth::JamToyFM( bool init ){
 		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[7].name  = "carrier freq";
-		synths[ID].param[7].value = 66.0f;
+		synths[ID].param[7].value = 25.0f;
 		synths[ID].param[7].min   = 0;
 		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[8].name  = "carrier wave";
 		synths[ID].param[8].value = 1.0f;
-		synths[ID].param[8].min   = 0;
+		synths[ID].param[8].min   = 1;
 		synths[ID].param[8].max   = 5.0f;
 
 		synths[ID].param[9].name  = "mod freq";
-		synths[ID].param[9].value = 73.0f;
+		synths[ID].param[9].value = 31.0f;
 		synths[ID].param[9].min   = 0;
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[10].name  = "mod wave";
 		synths[ID].param[10].value = 1.0f;
-		synths[ID].param[10].min   = 0;
+		synths[ID].param[10].min   = 1.0;
 		synths[ID].param[10].max   = 5.0f; 
 
 		synths[ID].param[11].name  = "mod amp";
@@ -184,7 +184,7 @@ void Synth::JamToyFM( bool init ){
 
 		synths[ID].param[12].name  = "mod type";
 		synths[ID].param[12].value = 3.0f;
-		synths[ID].param[12].min   = 0.0f;
+		synths[ID].param[12].min   = 1.0f;
 		synths[ID].param[12].max   = 5.0f;
 
 		synths[ID].param[13].name  = "pluck amp";
@@ -198,14 +198,19 @@ void Synth::JamToyFM( bool init ){
 		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[15].name  = "feedback";
-		synths[ID].param[15].value = 5.0f;
+		synths[ID].param[15].value = 9.0f;
 		synths[ID].param[15].min   = 0.0f;
 		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[16].name  = "looptype";
-		synths[ID].param[16].value = 0.0f;
+		synths[ID].param[16].name  = "fx";
+		synths[ID].param[16].value = 2.0f;
 		synths[ID].param[16].min   = 0.0f;
-		synths[ID].param[16].max   = 3.0f;
+		synths[ID].param[16].max   = 4.0f;
+
+		synths[ID].param[17].name  = "looptype";
+		synths[ID].param[17].value = 0.0f;
+		synths[ID].param[17].min   = 0.0f;
+		synths[ID].param[17].max   = 3.0f;
 		return;
 	}
 
@@ -244,7 +249,7 @@ void Synth::JamToyFM( bool init ){
 		case 5: controls.modulator = OSCILLATOR_NOISE;    break;
 	}
 	controls.modulator_amplitude = SYN_PARAM_NORMALIZE( synth->param[11].value );
-	controls.modulator_freq = NOTE2HZ( (int)synth->param[9].value );
+	controls.modulator_freq = NOTE2HZ( 2*(int)synth->param[9].value );
 
 	controls.attack  = SYN_PARAM_NORMALIZE(synth->param[3].value);
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);
@@ -282,7 +287,7 @@ void Synth::JamToyFM( bool init ){
 		float offset   = (1.0f/(float)pluckSamples) * float(i);
 		float pluckAmp = SYN_PARAM_NORMALIZE(synth->param[13].value) * float(srate/4); 
 		float c_pluck  = fmax( 0, pluckAmp * (1.0f+(-offset*offset) ) );
-		instrument.carrier.freq   = NOTE2HZ( (int)synth->param[7].value );
+		instrument.carrier.freq   = NOTE2HZ( 2 * (int)synth->param[7].value );
 		instrument.carrier.freq   += c_pluck;
 		SynthFM::instrument_control( &instrument, &controls, srate );
 
@@ -293,14 +298,53 @@ void Synth::JamToyFM( bool init ){
 		sampleEditor->setFloatSampleInWaveform( i, sin( x * feedback ) * scale );
 	}
 
+	// apply fx if any
+	pp_uint32 fx = (pp_uint32)synth->param[16].value;
+	switch( fx ){
+		case 1:
+		case 2:
+		case 3: {
+			float reverbs[3][4] = {
+			  {33.0f, 93.0f, 31.0f, -6.0f},
+			  {47.0f, 58.0f, 92.0f, -6.0f},
+			  {100.0f, 84.0f, 95.0f, -6.0f}
+			};
+			FilterParameters par(4);
+			par.setParameter(0, FilterParameters::Parameter( reverbs[fx-1][0] ));
+			par.setParameter(1, FilterParameters::Parameter( reverbs[fx-1][1] ));
+			par.setParameter(2, FilterParameters::Parameter( reverbs[fx-1][2] ));
+			par.setParameter(3, FilterParameters::Parameter( reverbs[fx-1][3] ));
+			sampleEditor->tool_reverb(&par);
+			break;
+		}
+
+		case 4:{
+			FilterParameters par(4);
+			par.setParameter(0, FilterParameters::Parameter( 100.0f ));
+			par.setParameter(1, FilterParameters::Parameter( 84.0f ));
+			par.setParameter(2, FilterParameters::Parameter( 95.0f ));
+			par.setParameter(3, FilterParameters::Parameter( -6.0f ));
+			sampleEditor->tool_reverb(&par);
+
+			FilterParameters dpar(5);
+			dpar.setParameter(0, FilterParameters::Parameter( 6593.0f ));
+			dpar.setParameter(1, FilterParameters::Parameter( 8.0f ));
+			dpar.setParameter(2, FilterParameters::Parameter( 1.0f ));
+			dpar.setParameter(3, FilterParameters::Parameter( 0.0f ));
+			dpar.setParameter(3, FilterParameters::Parameter( 0.0f ));
+			dpar.setParameter(3, FilterParameters::Parameter( 81.0f ));
+			sampleEditor->tool_delay(&par);
+	    }
+	}
+
 
 	// force loop 
-	pp_uint32 looptype = (pp_uint32)synth->param[16].value;
-	sampleEditor->setLoopType( looptype );
+	pp_uint32 looptype = (pp_uint32)synth->param[17].value;
 	if( looptype > 0 ){
-		sample->loopstart = 0;
-		sample->looplen   = sample->samplen;
+		sampleEditor->setRepeatStart(0);
+		sampleEditor->setRepeatEnd(sample->samplen);
 	}
+	sampleEditor->setLoopType( looptype < 4 ? looptype : 0 );
 
 	sampleEditor->notifyListener(SampleEditor::NotificationChanges); // update UI
 }
