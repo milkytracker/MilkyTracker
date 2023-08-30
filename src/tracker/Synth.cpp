@@ -1,3 +1,26 @@
+/*
+ *  tracker/Synth.h 
+ *
+ *  Copyright 2023 Leon van Kammen (coderofsalvation)
+ * 
+ *
+ *  This file is part of Milkytracker.
+ *
+ *  Milkytracker is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Milkytracker is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Milkytracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "Synth.h"
 #include <math.h>
 #include "SampleEditor.h"
@@ -15,7 +38,8 @@ Synth::~Synth(){
 }
 
 PPString Synth::toString(  ) {
-  PPString preset = "milk:                 "; // 22 chars (=max samplename)
+  PPString preset = PPString(SYN_PREFIX);
+  preset.append("                   "); // 19 chars ("mt:" max samplename chars (=22) - SYN_PREFIX = 19)
   char * str = (char *)preset.getStrBuffer();
   for( int i = 0; i < SYN_PARAMS_MAX; i++ ){ 
     float positiveRange = synth->param[i].max - synth->param[i].min;

@@ -29,10 +29,10 @@
 #include "Screen.h"
 #include "Event.h"
 
-#define SYN_PREFIX "milk:" 
-#define SYN_PREFIX_CHARS 5                           // "milk:"
-#define SAMPLE_CHARS 23                              // max samplechars (=max parameters per preset)
-#define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "milk:" (5)     
+#define SYN_PREFIX "mt:" 
+#define SYN_PREFIX_CHARS 3                           // "mt:"
+#define SAMPLE_CHARS 22                              // max samplechars (=max parameters per preset)
+#define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "mt:" (3)     
 #define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
 #define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
 #define SYN_PARAM_NORMALIZE(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
