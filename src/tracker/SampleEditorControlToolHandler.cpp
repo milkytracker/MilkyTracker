@@ -253,9 +253,10 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 
 		case ToolHandlerResponder::SampleToolTypeSynth:
 		{
-      getSampleEditor()->getSynth()->load( PPString( getSampleEditor()->getSample()->name) );
-      dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
-      static_cast<DialogSliders *>(dialog)->process();
+			// triggered when user presses 'synth'-button
+			getSampleEditor()->getSynth()->ASCIISynthImport( PPString( getSampleEditor()->getSample()->name) );
+			dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
+			static_cast<DialogSliders *>(dialog)->process();
 			break;
 		}
 
@@ -530,14 +531,15 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeSynth:
 		{
+			// triggered when user presses 'OK' button in milkysynth dialog 
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      int maxparams = getSampleEditor()->getSynth()->getMaxParam();
+			int maxparams = getSampleEditor()->getSynth()->getMaxParam();
 			FilterParameters par(maxparams);
-      for( pp_uint32 i =0; i < maxparams; i++ ){
-        par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
-      }
-      sampleEditor->tool_synth(&par);
-      tracker->sectionSamples->updateAfterLoad(); 
+			for( pp_uint32 i =0; i < maxparams; i++ ){
+				par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
+			}
+			sampleEditor->tool_synth(&par);
+			tracker->sectionSamples->updateAfterLoad(); 
 			break;
 		}
 

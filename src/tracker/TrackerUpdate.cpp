@@ -809,6 +809,7 @@ void Tracker::updateRecordButton(PPContainer* container, const PPColor& pColor)
 		if (button->isVisible() && (&pColor) != button->getTextColor())
 		{
 			button->setTextColor(pColor);
+			button->setPressed( !button->isPressed() );
 			screen->paintControl(button);
 		}
 	}

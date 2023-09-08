@@ -9,6 +9,8 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "Filter.h"
+#include "Reverb.h"
 
 #define ECHO_BUFFER_SIZE 96000 // 2 seconds @ 48 kHz
 
@@ -49,36 +51,6 @@ typedef struct adsr_t
     float envelope;
 } adsr_t;
 
-typedef struct filter_state_t
-{
-    float x1, x2, y1, y2;
-} filter_state_t;
-
-typedef struct filter_t
-{
-    float b0, b1, b2, a0, a1, a2;
-} filter_t;
-
-typedef enum filter_type_t
-{
-    FILTER_NONE = 0,
-    FILTER_LOWPASS,
-    FILTER_HIGHPASS,
-    FILTER_BANDPASS,
-    FILTER_NOTCH,
-    FILTER_PEAKING_EQ,
-    FILTER_LOW_SHELF,
-    FILTER_HIGH_SHELF
-} filter_type_t;
-
-typedef struct echo_t
-{
-    float buffer[ECHO_BUFFER_SIZE];
-    int cursor;
-    int delay_samples;
-    float feedback, level;
-} echo_t;
-
 typedef struct fm_control_t
 {
     modulation_t modulation;
@@ -88,11 +60,10 @@ typedef struct fm_control_t
     float modulator_amplitude, modulator_freq;
 
     float attack, decay, sustain, release;
-
-    filter_type_t filter;
-    float filter_freq, filter_resonance, filter_gain;
-
-    float echo_delay, echo_feedback, echo_level;
+	multifilter_type_t filter;
+	float filter_freq,filter_resonance,filter_gain;
+	float feedback;
+	float spacetime;	
 } fm_control_t;
 
 typedef struct fm_t
@@ -100,11 +71,10 @@ typedef struct fm_t
     modulation_t modulation;
     oscillator_t carrier, modulator;
     adsr_t adsr;
-
-    filter_t filter;
-    filter_state_t filter0, filter1;
-
-    echo_t echo;
+	multifilter_t filter;
+	multifilter_state_t filter0;
+	reverb_t reverb;
+	float feedback;
 } fm_t;
 
 class SynthFM{
@@ -121,10 +91,7 @@ class SynthFM{
 	  static float modulate(modulation_t modulation, int sample_rate, oscillator_t *carrier, oscillator_t *modulator);
 	  static void adsr_set(adsr_t *adsr, int sample_rate, float attack, float decay, float sustain, float release);
 	  static void adsr_trigger(adsr_t *adsr);
-	  static void filter_set(filter_t *filter, int sample_rate, filter_type_t type, float f0, float Q, float dBgain);
-	  static float filter(const filter_t *filter, filter_state_t *state, float sample);
 	  static float adsr_envelope(adsr_t *adsr);
-	  static float echo(echo_t *echo, float sample);
 	  static void instrument_play(fm_t *instrument, int sample_rate, float *out );
 };
 

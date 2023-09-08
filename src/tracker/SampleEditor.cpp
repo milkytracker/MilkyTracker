@@ -38,6 +38,7 @@
 #include "SampleEditorResampler.h"
 #include "Reverb.h"
 #include "Filter.h"
+#include "PlayerMaster.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -311,7 +312,8 @@ SampleEditor::SampleEditor() :
 
 	memset(&lastSample, 0, sizeof(lastSample));
 
-  synth = new Synth();
+	// sampleRate is not perfect (ideally get this from settingsDatabase)
+    synth = new Synth(PlayerMaster::getPreferredSampleRate());
 }
 
 SampleEditor::~SampleEditor()
@@ -3302,7 +3304,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   r.size   = par->getParameter(1).floatPart * (1.0f/100.0f); // 0 .. 1.0
   r.decay  = par->getParameter(2).floatPart / 100.0f;        // 0 .. 1.0
   r.colour  = par->getParameter(3).floatPart;                //-6.0 .. 6.0
-                                                             //
+
   pp_uint32 looptype = getLoopType();
   pp_int32 sLength2 = sample->samplen *2; 
   bool overflow     = looptype == 1;
@@ -3346,9 +3348,9 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   free(buf);
   module->freeSampleMem(oldsample);
 
-	finishUndo();
+  finishUndo();
 
-	postFilter();
+  postFilter();
 }
 
 void SampleEditor::tool_saturate(const FilterParameters* par)
@@ -3626,29 +3628,20 @@ void SampleEditor::tool_synth(const FilterParameters* par)
 
 	prepareUndo();
 
-  // update controls
+  // update controls just to be sure
   for( int i = 0; i < synth->getMaxParam(); i++ ){
     synth->setParam(i, (float)par->getParameter(i).floatPart );
   }
   
-  //float buf = (float*)malloc( sLength2 * sizeof(float));
-  //for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
-
-  // create temporary sample
-  //float *buf = synth->process();
- // enableUndoStack(false);
+  //enableUndoStack(false);
   synth->process( NULL,NULL);
- // enableUndoStack(true);
+  //enableUndoStack(true);
 
   // serialize synth to samplename 
-  PPString preset = synth->toString();
-  memcpy( sample->name, preset.getStrBuffer(), SAMPLE_CHARS );
-  
-  // free mem
-  //free(buf);
-  //module->freeSampleMem(oldsample);
+  PPString preset = synth->ASCIISynthExport();
+  memcpy( sample->name, preset.getStrBuffer(), MP_MAXTEXT );
 
-	finishUndo();
+  finishUndo();
 
-	postFilter();
+  postFilter();
 }

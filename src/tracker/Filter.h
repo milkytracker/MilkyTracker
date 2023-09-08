@@ -45,12 +45,40 @@ struct filter_t{
   float s1;
 };
 
+typedef struct multifilter_state_t
+{
+    float x1, x2, y1, y2;
+} multifilter_state_t;
+
+typedef struct multifilter_t
+{
+    float b0, b1, b2, a0, a1, a2;
+} multifilter_t;
+
+typedef enum multifilter_type_t
+{
+    FILTER_NONE = 0,
+    FILTER_LOWPASS,
+    FILTER_HIGHPASS,
+    FILTER_BANDPASS,
+    FILTER_NOTCH,
+    FILTER_PEAKING_EQ,
+    FILTER_LOW_SHELF,
+    FILTER_HIGH_SHELF
+} multifilter_type_t;
+
 class Filter
 {
 
   public:
+	// simple hp/lp filter
     static void process(float in, filter_t *p);
     static void init( filter_t *p, int samplerate);
+
+	// multifilter
+	static void multifilter_set(multifilter_t *filter, int sample_rate, multifilter_type_t type, float f0, float Q, float dBgain);
+	static float multifilter(const multifilter_t *filter, multifilter_state_t *state, float sample);
+
 };
 
 #endif

@@ -90,121 +90,6 @@ float SynthFM::adsr_envelope(adsr_t *adsr)
     return adsr->envelope;
 }
 
-void SynthFM::filter_set(filter_t *filter, int sample_rate, filter_type_t type, float f0, float Q, float dBgain)
-{
-    double cosw0 = cos(2*M_PI*f0/sample_rate);
-    double sinw0 = sqrt(1.0 - cosw0 * cosw0); //sin(2*M_PI*f0/SAMPLE_RATE);
-    double alpha = sinw0 / (2*Q);
-    double A = pow(10.0, dBgain/40);
-    double A2 = 2*sqrt(A);
-    double a0, a1, a2, b0, b1, b2;
-
-    switch (type)
-    {
-        case FILTER_LOWPASS:
-            b0 = (1 - cosw0)/2;
-            b1 = 1 - cosw0;
-            b2 = (1 - cosw0)/2;
-            a0 = 1 + alpha;
-            a1 = -2.0 * cosw0;
-            a2 = 1 - alpha;
-            break;
-        case FILTER_HIGHPASS:
-            b0 = (1 + cosw0)/2;
-            b1 = -(1 + cosw0);
-            b2 = (1 + cosw0)/2;
-            a0 = 1 + alpha;
-            a1 = -2 * cosw0;
-            a2 = 1 - alpha;
-            break;
-        case FILTER_BANDPASS:
-            b0 = alpha;
-            b1 = 0;
-            b2 = -alpha;
-            a0 = 1 + alpha;
-            a1 = -2 * cosw0;
-            a2 = 1 - alpha;
-            break;
-        case FILTER_NOTCH:
-            b0 = 1;
-            b1 = -2*cosw0;
-            b2 = 1;
-            a0 = 1 + alpha;
-            a1 = -2*cosw0;
-            a2 = 1-alpha;
-            break;
-        case FILTER_PEAKING_EQ:
-            b0 = 1 + alpha*A;
-            b1 = -2*cosw0;
-            b2 = 1 - alpha*A;
-            a0 = 1 + alpha/A;
-            a1 = -2*cosw0;
-            a2 = 1 - alpha/A;
-            break;
-        case FILTER_LOW_SHELF:
-            b0 = A*((A+1) - (A-1)*cosw0 + A2 * alpha);
-            b1 = 2*A*((A-1) - (A+1) * cosw0);
-            b2 = A*((A+1) - (A-1) * cosw0 - A2 * alpha);
-            a0 = (A+1) + (A-1) * cosw0 + A2 * alpha;
-            a1 = -2*((A-1) + (A+1) * cosw0);
-            a2 = (A+1) + (A-1) * cosw0 - A2 * alpha;
-            break;
-        case FILTER_HIGH_SHELF:
-            b0 = A*((A+1) + (A-1) * cosw0 + A2 * alpha);
-            b1 = -2*A*((A-1) + (A+1) * cosw0);
-            b2  = A*((A+1) + (A-1) * cosw0 - A2 * alpha);
-            a0 = (A+1) - (A-1) * cosw0 + A2 * alpha;
-            a1 = 2*((A-1) - (A+1) * cosw0);
-            a2 = (A+1) - (A-1) * cosw0 - A2 * alpha;
-            break;
-        case FILTER_NONE:
-        default:
-            b0 = a0 = 1.0;
-            b1 = b2 = 0.0;
-            a1 = a2 = 0.0;
-            break;
-    }
-
-    filter->a0 = a0 * 64.0;
-    filter->a1 = -a1 * 64.0;
-    filter->a2 = -a2 * 64.0;
-    filter->b0 = b0 * 64.0;
-    filter->b1 = b1 * 64.0;
-    filter->b2 = b2 * 64.0;
-}
-
-float SynthFM::filter(const filter_t *filter, filter_state_t *state, float sample)
-{
-    float out = (
-        filter->b0 * sample +
-        filter->b1 * state->x1 +
-        filter->b2 * state->x2 +
-        filter->a1 * state->y1 +
-        filter->a2 * state->y2) /
-        filter->a0;
-
-    state->x2 = state->x1;
-    state->x1 = sample;
-    state->y2 = state->y1;
-    state->y1 = out;
-
-    return out;
-}
-
-float SynthFM::echo(echo_t *echo, float sample)
-{
-    int read_cursor =
-        echo->cursor >= echo->delay_samples ?
-        echo->cursor - echo->delay_samples :
-        ECHO_BUFFER_SIZE - (echo->delay_samples - echo->cursor) % ECHO_BUFFER_SIZE;
-
-    float delay_sample = echo->buffer[read_cursor];
-    echo->buffer[echo->cursor] = sample + echo->feedback * delay_sample;
-    echo->cursor = (echo->cursor + 1) % ECHO_BUFFER_SIZE;
-
-    return sample + echo->level * delay_sample;
-}
-
 void SynthFM::instrument_control(fm_t *instrument, const fm_control_t *control, int sample_rate)
 {
     instrument->modulation = control->modulation;
@@ -223,28 +108,41 @@ void SynthFM::instrument_control(fm_t *instrument, const fm_control_t *control, 
         control->sustain,
         control->release);
 
-    filter_set(&instrument->filter,
-        sample_rate,
-        control->filter,
-        control->filter_freq,
-        control->filter_resonance,
-        control->filter_gain);
+	instrument->feedback = control->feedback;
 
-    instrument->echo.delay_samples = control->echo_delay * sample_rate;
-    instrument->echo.feedback = control->echo_feedback;
-    instrument->echo.level = control->echo_level;
+	Filter::multifilter_set(&instrument->filter,
+		sample_rate,
+		control->filter,
+		control->filter_freq,
+		control->filter_resonance,
+		control->filter_gain);
+
+	if( instrument->reverb.size != control->spacetime ){
+		instrument->reverb.size   = control->spacetime;
+		instrument->reverb.decay  = 0.97;
+		instrument->reverb.colour = -6.0;
+		Reverb::reset( (reverb_t *)&instrument->reverb );
+	}
+    //size=0.040000 decay=0.970000 colour=-6.000000	
+    //size=1.000000 decay=0.970000 colour=-6.000000
+
 }
 
 void SynthFM::instrument_play(fm_t *instrument, int sample_rate, float *out)
 {
-    float sample =
-//        echo(&instrument->echo,
-            filter(&instrument->filter, &instrument->filter1,
-                filter(&instrument->filter, &instrument->filter0,
-                    adsr_envelope(&instrument->adsr) *
-                    modulate(instrument->modulation, sample_rate, &instrument->carrier, &instrument->modulator))
-		);
-	//);
+    float sample = sin(
+			adsr_envelope(&instrument->adsr) * modulate(instrument->modulation, sample_rate, &instrument->carrier, &instrument->modulator)
+		    * instrument->feedback
+	);
 
-    *out = sample;
+    if( instrument->reverb.size > 0.04 ){    // avoid comb effect
+		float size = instrument->reverb.size;
+		float wet;
+		Reverb::process( &sample, &wet, 1, (reverb_t *)&instrument->reverb);
+		// amplify wet with curve 
+		*out = wet * (size*size*2);
+		// add dry back in using curve
+		*out += sample * ((-size*size*size)+1);
+	}else *out = sample;
+	*out = Filter::multifilter(&instrument->filter, &instrument->filter0, *out );
 }

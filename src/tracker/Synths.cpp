@@ -43,7 +43,7 @@
 
 
 void Synth::init(){
-	JamToyFM(true);
+	FMPaint(true);
 	CyclePaint(true); 
 }
 
@@ -56,6 +56,11 @@ void Synth::process( MSynth *s, PPString *preset ){
 
 	// if slider 0 changed, change synth + relaunch dialog
 	if( s->ID != synth->ID ){     
+		if( !sampleEditor->isEmptySample() ){
+			// FM synth does not fit into a single cycle waveform 
+			sampleEditor->selectAll();
+			sampleEditor->cut();
+		}
 		synth  = s;                 
 		synth->param[0].value = (float)synth->ID;
 		dialog(NULL,NULL,NULL);
@@ -63,7 +68,7 @@ void Synth::process( MSynth *s, PPString *preset ){
 
 	switch( s->ID ){
 		case SYNTH_CYCLE_PAINT:  CyclePaint();   break;
-		case SYNTH_JAMTOY_FM:    JamToyFM();     break;
+		case SYNTH_FM_PAINT:    FMPaint();     break;
 	}
 }
 
@@ -71,19 +76,19 @@ void Synth::CyclePaint( bool init ){
 	pp_int32 ID = SYNTH_CYCLE_PAINT;
 
 	if( init ){
-		synths[ID].nparams = 6;
+		synths[ID].nparams = 6;   // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 wavepaint \x10");
+		synths[ID].param[0].name  = PPString("\x11 WAVE paint \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
 
-		synths[ID].param[1].name  = "cycle amp";
+		synths[ID].param[1].name  = "wave amp";
 		synths[ID].param[1].value = 70.0f;
 		synths[ID].param[1].min   = 0;
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[2].name  = "wave";
+		synths[ID].param[2].name  = "wave type";
 		synths[ID].param[2].value = 1.0f;
 		synths[ID].param[2].min   = 1.0f;
 		synths[ID].param[2].max   = 9.0f;
@@ -141,13 +146,13 @@ void Synth::CyclePaint( bool init ){
 
 }
 
-void Synth::JamToyFM( bool init ){
-	pp_int32 ID = SYNTH_JAMTOY_FM;
+void Synth::FMPaint( bool init ){
+	pp_int32 ID = SYNTH_FM_PAINT;
 
 	if( init ){
-		synths[ID].nparams = 18;
+		synths[ID].nparams = 20;  // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 FM \x10");
+		synths[ID].param[0].name  = PPString("\x11 FM paint \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -182,8 +187,8 @@ void Synth::JamToyFM( bool init ){
 		synths[ID].param[6].min   = 0;
 		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[7].name  = "carrier freq";
-		synths[ID].param[7].value = 25.0f;
+		synths[ID].param[7].name  = "carrier note";
+		synths[ID].param[7].value = 0.0f;
 		synths[ID].param[7].min   = 0;
 		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -191,51 +196,61 @@ void Synth::JamToyFM( bool init ){
 		synths[ID].param[8].value = 1.0f;
 		synths[ID].param[8].min   = 1;
 		synths[ID].param[8].max   = 5.0f;
-
-		synths[ID].param[9].name  = "mod freq";
-		synths[ID].param[9].value = 31.0f;
-		synths[ID].param[9].min   = 0;
+		
+		synths[ID].param[9].name  = "carrier amp";
+		synths[ID].param[9].value = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[9].min   = 0.0;
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[10].name  = "mod wave";
-		synths[ID].param[10].value = 1.0f;
-		synths[ID].param[10].min   = 1.0;
-		synths[ID].param[10].max   = 5.0f; 
+		synths[ID].param[10].name  = "mod freq";
+		synths[ID].param[10].value = 31.0f;
+		synths[ID].param[10].min   = 0;
+		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[11].name  = "mod amp";
-		synths[ID].param[11].value = 79.0f; 
-		synths[ID].param[11].min   = 0;
-		synths[ID].param[11].max   = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[11].name  = "mod wave";
+		synths[ID].param[11].value = 1.0f;
+		synths[ID].param[11].min   = 1.0;
+		synths[ID].param[11].max   = 5.0f; 
 
-		synths[ID].param[12].name  = "mod type";
-		synths[ID].param[12].value = 3.0f;
-		synths[ID].param[12].min   = 1.0f;
-		synths[ID].param[12].max   = 5.0f;
+		synths[ID].param[12].name  = "mod amp";
+		synths[ID].param[12].value = 79.0f; 
+		synths[ID].param[12].min   = 0;
+		synths[ID].param[12].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[13].name  = "pluck amp";
-		synths[ID].param[13].value = 92.0f;
-		synths[ID].param[13].min   = 0;
-		synths[ID].param[13].max   = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[13].name  = "FM type";
+		synths[ID].param[13].value = 3.0f;
+		synths[ID].param[13].min   = 1.0f;
+		synths[ID].param[13].max   = 5.0f;
 
-		synths[ID].param[14].name  = "pluck size";
-		synths[ID].param[14].value = 8.0f;
-		synths[ID].param[14].min   = 1.0f;
+		synths[ID].param[14].name  = "trans amp";
+		synths[ID].param[14].value = 92.0f;
+		synths[ID].param[14].min   = 0;
 		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[15].name  = "feedback";
-		synths[ID].param[15].value = 9.0f;
-		synths[ID].param[15].min   = 0.0f;
+		synths[ID].param[15].name  = "trans size";
+		synths[ID].param[15].value = 8.0f;
+		synths[ID].param[15].min   = 1.0f;
 		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[16].name  = "fx";
-		synths[ID].param[16].value = 2.0f;
+		synths[ID].param[16].name  = "feedback";
+		synths[ID].param[16].value = 9.0f;
 		synths[ID].param[16].min   = 0.0f;
-		synths[ID].param[16].max   = 4.0f;
+		synths[ID].param[16].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[17].name  = "looptype";
-		synths[ID].param[17].value = 0.0f;
+		synths[ID].param[17].name  = "spacetime";
+		synths[ID].param[17].value = 33.0f;
 		synths[ID].param[17].min   = 0.0f;
-		synths[ID].param[17].max   = 3.0f;
+		synths[ID].param[17].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[18].name  = "filter";
+		synths[ID].param[18].value = 0.0f;
+		synths[ID].param[18].min   = 0.0f;
+		synths[ID].param[18].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[19].name  = "loop type";
+		synths[ID].param[19].value = 0.0f;
+		synths[ID].param[19].min   = 0.0f;
+		synths[ID].param[19].max   = 3.0f;
 		return;
 	}
 
@@ -244,7 +259,7 @@ void Synth::JamToyFM( bool init ){
 	fm_t instrument;
 	pp_uint32 srate = 44100;
 
-	switch( (int)synth->param[12].value ){
+	switch( (int)synth->param[13].value ){
 		case 0: controls.modulation = MODULATION_NONE;      break; 
 		case 1: controls.modulation = MODULATION_AMPLITUDE; break;
 		case 2: controls.modulation = MODULATION_FREQUENCY; break;
@@ -262,10 +277,10 @@ void Synth::JamToyFM( bool init ){
 		case 4: controls.carrier = OSCILLATOR_TRIANGLE; break;
 		case 5: controls.carrier = OSCILLATOR_NOISE;    break;
 	}
-	controls.carrier_amplitude = 1.0f;
+	controls.carrier_amplitude = SYN_PARAM_NORMALIZE(synth->param[9].value);
 
 	// init modulator wave
-	switch( (int)synth->param[10].value ){
+	switch( (int)synth->param[11].value ){
 		case 0: controls.modulator = OSCILLATOR_ZERO;     break;
 		case 1: controls.modulator = OSCILLATOR_SINE;     break;
 		case 2: controls.modulator = OSCILLATOR_SQUARE;   break;
@@ -273,98 +288,73 @@ void Synth::JamToyFM( bool init ){
 		case 4: controls.modulator = OSCILLATOR_TRIANGLE; break;
 		case 5: controls.modulator = OSCILLATOR_NOISE;    break;
 	}
-	controls.modulator_amplitude = SYN_PARAM_NORMALIZE( synth->param[11].value );
-	controls.modulator_freq = NOTE2HZ( 2*(int)synth->param[9].value );
+	controls.modulator_amplitude = SYN_PARAM_NORMALIZE( synth->param[12].value );
+    float mf = 0.01f + (SYN_PARAM_NORMALIZE(synth->param[10].value)/2.0f);
+    controls.modulator_freq = (mf*mf*mf) * float(srate/2); // lazy sloop to finetune lowfreqs
 
 	controls.attack  = SYN_PARAM_NORMALIZE(synth->param[3].value);
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);
 	controls.sustain = SYN_PARAM_NORMALIZE(synth->param[5].value);
 	controls.release = SYN_PARAM_NORMALIZE(synth->param[6].value) * 0.5f;
 
-	controls.filter = FILTER_NONE;
-	controls.filter_freq = 500.0;
-	controls.filter_resonance = 0.5;
-	controls.filter_gain = 0.5;
+	float filter     = SYN_PARAM_NORMALIZE(synth->param[18].value);
+    controls.filter = filter > 0.05 ? FILTER_BANDPASS: FILTER_NONE;
+    controls.filter_freq = float(srate/2)*(filter*filter*filter);
+    controls.filter_resonance = 0.5;
+    controls.filter_gain = 0.8;
 
-	controls.echo_delay = 1.0;
-	controls.echo_feedback = 0.4;
-	controls.echo_level = 0.5;
+	controls.spacetime = SYN_PARAM_NORMALIZE(synth->param[17].value);
+	controls.feedback  = 1.0f + (100.0f * SYN_PARAM_NORMALIZE(synth->param[16].value));
 
 	instrument.modulator.phase = 0;
-	instrument.carrier.phase = 0;
+	instrument.carrier.phase   = 0;
 
 	// determine duration
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
-	TXMSample *sample = prepareSample(samples,true);
-
+	// enable overflow rendering when loop is set to forward
+	// to allow seamless loops without clicks
+	pp_uint32 overflow = 1;
+	pp_uint32 looptype = (pp_uint32)synth->param[19].value;
+	pp_uint32 silence  = 0;
+	float     last     = 0.0;
+	if( looptype == 1 ){ // overflow until silence with forward loop
+		overflow = controls.spacetime > 0.1 ? (int)(1.0 + controls.spacetime*10) : 3;
+	}
+	TXMSample *sample = sampleEditor->isEmptySample() ? prepareSample(samples) : sampleEditor->getSample();
 
 	// exponential positive drive into sin() function (produces foldback/freq multiply)
 	// see curve @ https://graphtoy.com/?f1(x,t)=max(0,(x*10*x*x)%20)%20+x&v1=true 
-	float scale    = 2.0f * SYN_PARAM_NORMALIZE(synth->param[1].value);
-	float feedback = 1.0f + (100.0f * SYN_PARAM_NORMALIZE(synth->param[15].value));
+	float scale    = SYN_PARAM_NORMALIZE(synth->param[1].value);
+ 	scale          = fmax(0,(scale*3*scale*scale))+scale; // exponential in positive side
+	float x;
 
 	// synthesize! 
-	float x;
-	for( pp_int32 i = 0; i < (int)samples; i++ ){
+	for( pp_int32 i = 0; i < overflow*(int)samples; i++ ){
 
-		// apply plucks to freq controllers (see pluck @ https://graphtoy.com/?f1(x,t)=-0.5*tanh((x*92)-3)+0.5&v1=true)
-		pp_uint32 pluckSamples = (pp_uint32)( (float(srate)/100) * SYN_PARAM_NORMALIZE(synth->param[14].value ) ); 
-		float offset   = (1.0f/(float)pluckSamples) * float(i);
-		float pluckAmp = SYN_PARAM_NORMALIZE(synth->param[13].value) * float(srate/4); 
-		float c_pluck  = fmax( 0, pluckAmp * (1.0f+(-offset*offset) ) );
-		instrument.carrier.freq   = NOTE2HZ( 2 * (int)synth->param[7].value );
-		instrument.carrier.freq   += c_pluck;
+		// apply transient to freq controllers (see trans @ https://graphtoy.com/?f1(x,t)=-0.5*tanh((x*92)-3)+0.5&v1=true)
+		pp_uint32 transSamples = (pp_uint32)( (float(srate)/100) * SYN_PARAM_NORMALIZE(synth->param[15].value ) ); 
+		float offset   = (1.0f/(float)transSamples) * float(i);
+		float transAmp = SYN_PARAM_NORMALIZE(synth->param[14].value) * float(srate/4); 
+		float c_trans  = fmax( 0, transAmp * (1.0f+(-offset*offset) ) );
+		instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+		instrument.carrier.freq   += c_trans;
 		SynthFM::instrument_control( &instrument, &controls, srate );
 
 		// trigger note
 		if( i == 0 ) SynthFM::adsr_trigger( &(instrument.adsr) );
 
 		SynthFM::instrument_play( &instrument, srate, &x);
-		sampleEditor->setFloatSampleInWaveform( i, sin( x * feedback ) * scale );
+		float old = sampleEditor->getFloatSampleFromWaveform( i % (int)samples);
+	    x  = old + (x * scale);
+		sampleEditor->setFloatSampleInWaveform( i % (int)samples, x );
+
+		// cancel overflow rendering if lots of silence
+		if( last == 0.0 && x == 0.0 ) silence++;
+		if( i > samples && silence > 5) break;
+		last = x;
 	}
-
-	// apply fx if any
-	pp_uint32 fx = (pp_uint32)synth->param[16].value;
-	switch( fx ){
-		case 1:
-		case 2:
-		case 3: {
-			float reverbs[3][4] = {
-			  {33.0f, 93.0f, 31.0f, -6.0f},
-			  {47.0f, 58.0f, 92.0f, -6.0f},
-			  {100.0f, 84.0f, 95.0f, -6.0f}
-			};
-			FilterParameters par(4);
-			par.setParameter(0, FilterParameters::Parameter( reverbs[fx-1][0] ));
-			par.setParameter(1, FilterParameters::Parameter( reverbs[fx-1][1] ));
-			par.setParameter(2, FilterParameters::Parameter( reverbs[fx-1][2] ));
-			par.setParameter(3, FilterParameters::Parameter( reverbs[fx-1][3] ));
-			sampleEditor->tool_reverb(&par);
-			break;
-		}
-
-		case 4:{
-			FilterParameters par(4);
-			par.setParameter(0, FilterParameters::Parameter( 100.0f ));
-			par.setParameter(1, FilterParameters::Parameter( 84.0f ));
-			par.setParameter(2, FilterParameters::Parameter( 95.0f ));
-			par.setParameter(3, FilterParameters::Parameter( -6.0f ));
-			sampleEditor->tool_reverb(&par);
-
-			FilterParameters dpar(5);
-			dpar.setParameter(0, FilterParameters::Parameter( 6593.0f ));
-			dpar.setParameter(1, FilterParameters::Parameter( 8.0f ));
-			dpar.setParameter(2, FilterParameters::Parameter( 1.0f ));
-			dpar.setParameter(3, FilterParameters::Parameter( 0.0f ));
-			dpar.setParameter(3, FilterParameters::Parameter( 0.0f ));
-			dpar.setParameter(3, FilterParameters::Parameter( 81.0f ));
-			sampleEditor->tool_delay(&par);
-	    }
-	}
-
 
 	// force loop 
-	pp_uint32 looptype = (pp_uint32)synth->param[17].value;
 	if( looptype > 0 ){
 		sampleEditor->setRepeatStart(0);
 		sampleEditor->setRepeatEnd(sample->samplen);

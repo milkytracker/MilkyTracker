@@ -28,20 +28,21 @@
 #include "XModule.h"
 #include "Screen.h"
 #include "Event.h"
+#include "XModule.h"
 
-#define SYN_PREFIX "mt:" 
-#define SYN_PREFIX_CHARS 3                           // "mt:"
-#define SAMPLE_CHARS 22                              // max samplechars (=max parameters per preset)
-#define SYN_PARAMS_MAX SAMPLE_CHARS-SYN_PREFIX_CHARS // max samplechars minus "mt:" (3)     
-#define SYN_OFFSET_CHAR 32                           // printable chars only 32..127 = 0..92
+#define SYN_PREFIX_V1 "M1"                           // samplename 'M<version><params>' hints XM editors that sample was created with milkysynth <version> using <params> 
+#define SYN_PREFIX_CHARS 2                           // "M*"
+#define SYN_PARAMS_MAX MP_MAXTEXT-SYN_PREFIX_CHARS   // max samplechars minus "M*" (32-2=30)     
+#define SYN_OFFSET_CHAR 33                           // printable chars only 33..127 = 0..91 (this allows ascii copy/paste of synths in the future)
 #define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
 #define SYN_PARAM_NORMALIZE(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
 #define NOTE2HZ(m) (440.0 * pow(2, (m - 69) / 12.0)) 
+#define NOTE_START 60                                // C3
                                                     
 // synth ID's
-#define SYNTH_CYCLE_PAINT 0                // incremental numbers
-#define SYNTH_JAMTOY_FM   1                //
-#define SYNTH_LAST        SYNTH_JAMTOY_FM  // update this when adding a synth
+#define SYNTH_FM_PAINT    0                  //
+#define SYNTH_CYCLE_PAINT 1                  // incremental numbers
+#define SYNTH_LAST        SYNTH_CYCLE_PAINT  // update this when adding a synth
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -70,6 +71,7 @@ class Synth
 {
 
   private:
+	int samplerate;
     MSynth *synth;
     MSynth synths[SYNTH_LAST+1];
     DialogSliders *sliders;
@@ -79,7 +81,7 @@ class Synth
     DialogResponder *dr;
 
   public:
-    Synth();
+    Synth(int samplerate);
     ~Synth();
     DialogSliders * dialog( SampleEditor *s, PPScreen *screen, DialogResponder *dr);
 
@@ -87,8 +89,9 @@ class Synth
     MSynthParam& getParam( int i ){ return synth->param[i]; }
     int getMaxParam(){ return synth->nparams; }
     
-    PPString toString();
-    bool load( PPString preset );
+	// spec here: https://github.com/coderofsalvation/ASCIISYNTH
+	PPString ASCIISynthExport( );
+    bool ASCIISynthImport( PPString preset );
 
     void reset();
     void init();
@@ -97,7 +100,7 @@ class Synth
 
     // synths
     void CyclePaint( bool init = false );
-    void JamToyFM( bool init = false );
+    void FMPaint( bool init = false );
 
 };
 

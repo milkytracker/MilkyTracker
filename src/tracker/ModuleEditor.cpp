@@ -149,6 +149,7 @@ ModuleEditor::ModuleEditor() :
 	
 	// create sample editor
 	sampleEditor = new SampleEditor();
+	//printf("samplerate=%i\n",PlayerMaster::getPreferredSampleRate());
 	sampleEditor->addNotificationListener(changesListener);
 	reloadSample(0, 0);
 	

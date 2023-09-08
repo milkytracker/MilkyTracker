@@ -28,7 +28,8 @@
 #include "TrackerConfig.h"
 #include "FilterParameters.h"
 
-Synth::Synth(){
+Synth::Synth(int samplerate){
+  this->samplerate = samplerate;
   init();
   // assign default synth 
   synth = &synths[0];
@@ -36,21 +37,20 @@ Synth::Synth(){
 
 Synth::~Synth(){
 }
-
-PPString Synth::toString(  ) {
-  PPString preset = PPString(SYN_PREFIX);
-  preset.append("                   "); // 19 chars ("mt:" max samplename chars (=22) - SYN_PREFIX = 19)
-  char * str = (char *)preset.getStrBuffer();
-  for( int i = 0; i < SYN_PARAMS_MAX; i++ ){ 
-    float positiveRange = synth->param[i].max - synth->param[i].min;
-    str[ i + SYN_PREFIX_CHARS] = (int)synth->param[i].value + SYN_OFFSET_CHAR;  
+	
+PPString Synth::ASCIISynthExport(  ) {       // see 
+  char str[MP_MAXTEXT];
+  sprintf(str,"%s",SYN_PREFIX_V1);           // always bump this to latest version
+  for( int i = 0; i < SYN_PARAMS_MAX ; i++ ){ 
+    str[ i + SYN_PREFIX_CHARS] = i < synth->nparams ? (int)synth->param[i].value + SYN_OFFSET_CHAR : SYN_OFFSET_CHAR; 
   }
-  printf("synth: '%s'\n",str);
-  return PPString(str);
+  PPString ASCIISynth = PPString(str);
+  printf("synth: '%s'\n",ASCIISynth.getStrBuffer());
+  return ASCIISynth;
 }
 
-bool Synth::load( PPString preset ) {
-  if( preset.startsWith(SYN_PREFIX) ){ // set synth + params
+bool Synth::ASCIISynthImport( PPString preset ) {
+  if( preset.startsWith(SYN_PREFIX_V1) ){ // detect synth version(s) 
     const char *str = preset.getStrBuffer();
     int ID = str[ SYN_PREFIX_CHARS ] - SYN_OFFSET_CHAR; 
     synth = &(synths[ID]);
@@ -103,7 +103,7 @@ TXMSample * Synth::prepareSample( pp_uint32 duration, bool force){
 		FilterParameters par(1);
 		par.setParameter(0, FilterParameters::Parameter( (pp_int32)(duration - sample->samplen) ) );
 		sampleEditor->tool_generateSilence(&par);
-	}  
+	}else printf("no new\n");
 	// we just leave the sample as-is when it's longer than required  	
   }
   return sample;

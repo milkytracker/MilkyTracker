@@ -172,7 +172,7 @@ protected:
 	mp_sint32		tickSpeed;				// our tickspeed
 	mp_sint32		baseBpm;				// Support digibooster REAL BPM value
 	mp_sint32		bpm;					// BPM speed
-	mp_sint32		ticker;					// runs from 0 to tickspeed-1
+	mp_sint32		ticker = 0;					// runs from 0 to tickspeed-1
 
 	mp_sint32		rowcnt;					// counts through each row in a pattern
 	mp_sint32		poscnt;					// counts through each index the pattern index table
