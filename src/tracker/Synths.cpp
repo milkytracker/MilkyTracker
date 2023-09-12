@@ -76,37 +76,43 @@ void Synth::CyclePaint( bool init ){
 	pp_int32 ID = SYNTH_CYCLE_PAINT;
 
 	if( init ){
-		synths[ID].nparams = 6;   // < SYN_PARAMS_MAX
+		synths[ID].nparams = 7;   // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
 		synths[ID].param[0].name  = PPString("\x11 WAVE paint \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
 
-		synths[ID].param[1].name  = "wave amp";
-		synths[ID].param[1].value = 70.0f;
+
+		synths[ID].param[1].name  = "volume";
+		synths[ID].param[1].value = ((float)SYN_PARAM_MAX_VALUE)/2.0f;
 		synths[ID].param[1].min   = 0;
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[2].name  = "wave type";
-		synths[ID].param[2].value = 1.0f;
-		synths[ID].param[2].min   = 1.0f;
-		synths[ID].param[2].max   = 9.0f;
+		synths[ID].param[2].name  = "wave amp";
+		synths[ID].param[2].value = 70.0f;
+		synths[ID].param[2].min   = 0;
+		synths[ID].param[2].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[3].name  = "harmonic";
-		synths[ID].param[3].value = 0.0f;
-		synths[ID].param[3].min   = 0;
-		synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[3].name  = "wave type";
+		synths[ID].param[3].value = 1.0f;
+		synths[ID].param[3].min   = 1.0f;
+		synths[ID].param[3].max   = 9.0f;
 
-		synths[ID].param[4].name  = "feedback";
-		synths[ID].param[4].value = 0;
+		synths[ID].param[4].name  = "harmonic";
+		synths[ID].param[4].value = 0.0f;
 		synths[ID].param[4].min   = 0;
 		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[5].name  = "volume";
-		synths[ID].param[5].value = ((float)SYN_PARAM_MAX_VALUE)/2.0f;
+		synths[ID].param[5].name  = "feedback";
+		synths[ID].param[5].value = 0;
 		synths[ID].param[5].min   = 0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[6].name  = "loop type";
+		synths[ID].param[6].value = 1.0f;
+		synths[ID].param[6].min   = 1.0f;
+		synths[ID].param[6].max   = 2.0f;
 		return;
 	}
 
@@ -115,9 +121,9 @@ void Synth::CyclePaint( bool init ){
 
 	// synthesize!
 	FilterParameters parWave(2);
-	parWave.setParameter(0, FilterParameters::Parameter( SYN_PARAM_NORMALIZE(synth->param[1].value) ));
-	parWave.setParameter(1, FilterParameters::Parameter( 1.0f * (1.0f+synth->param[3].value) ) );
-	switch( (int)synth->param[2].value ){
+	parWave.setParameter(0, FilterParameters::Parameter( SYN_PARAM_NORMALIZE(synth->param[2].value) ));
+	parWave.setParameter(1, FilterParameters::Parameter( 1.0f * (1.0f+synth->param[4].value) ) );
+	switch( (int)synth->param[3].value ){
 		case 1: sampleEditor->tool_generateSine(&parWave);         break;
 		case 2: sampleEditor->tool_generateSquare(&parWave);       break;
 		case 3: sampleEditor->tool_generateTriangle(&parWave);     break;
@@ -127,20 +133,20 @@ void Synth::CyclePaint( bool init ){
 		case 7: 
 		case 8:
 		case 9: {
-					parWave.setParameter(1, FilterParameters::Parameter( ((pp_int32)synth->param[2].value)-7 ) );
+					parWave.setParameter(1, FilterParameters::Parameter( ((pp_int32)synth->param[3].value)-7 ) );
 					sampleEditor->tool_generateNoise(&parWave);
 					break;
 				}
 	}
 
 	// scale volume
-	float scale    = 2.0f * SYN_PARAM_NORMALIZE(synth->param[5].value);
-	float foldback = 1.0f + synth->param[4].value*2.0f; 
+	float scale    = 2.0f * SYN_PARAM_NORMALIZE(synth->param[1].value);
+	float foldback = 1.0f + synth->param[5].value*2.0f; 
 	for( int i = 0; i < sample->samplen; i++ )
 		sampleEditor->setFloatSampleInWaveform( i, sin( sampleEditor->getFloatSampleFromWaveform(i) * foldback ) * scale );
 
 	// force loop 
-	sampleEditor->setLoopType( 1 );
+	sampleEditor->setLoopType( synth->param[6].value );
 	sampleEditor->setRepeatStart(0);
 	sampleEditor->setRepeatEnd(sample->samplen);
 

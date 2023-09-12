@@ -856,9 +856,10 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("\x10");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("\x10|");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("\xa7");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "files");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "file");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT))->setText(   "\x03");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instrument");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instr");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample");
     // extra follow button to transportbar
     button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(0,0), PPSize(12, 9));
@@ -902,9 +903,10 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 			loc.y = 88;
 			loc.x = x;
 			if( btnID == BUTTON_ABOUT_FOLLOWSONG ) size.width =  14;
-			if( btnID == MAINMENU_INSEDIT        ) size.width += 33;
-			if( btnID == MAINMENU_SMPEDIT        ) size.width += 13;
-			if( btnID == MAINMENU_LOAD           ) size.width += 8;
+			if( btnID == MAINMENU_INSEDIT        ) size.width += 23;
+			if( btnID == MAINMENU_EDIT           ) size.width =  14;
+			if( btnID == MAINMENU_SMPEDIT        ) size.width += 31;
+			if( btnID == MAINMENU_LOAD           ) size.width += 15;
 			if( btnID == MAINMENU_CONFIG         ) size.width += 10;
 			if( btnID == MAINMENU_HELP           ){
 				size.width += 10;
@@ -914,7 +916,8 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 			btn->setSize( size );
 			btn->setLocation( loc );
 			if( i > 0 && i < 4 ) btn->setColor(TrackerConfig::colorHighLight_1);
-			if( i > 3 ) btn->setFont( PPFont::getFont(PPFont::FONT_TINY) );
+			if( btnID == MAINMENU_CONFIG || btnID == MAINMENU_HELP ) 
+				btn->setFont( PPFont::getFont(PPFont::FONT_TINY) );
 			x += (size.width+1);
 		}
 		 

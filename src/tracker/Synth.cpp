@@ -75,7 +75,6 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
     this->dr = dr;
   }else{
     sliders->show(false);
-    delete sliders;
   }
   sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, "milky synths", synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
   sliders->show();

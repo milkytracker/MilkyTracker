@@ -3382,12 +3382,26 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	prepareUndo();
 
 	pp_int32 i;
-  float in;
-  float out;
+	float in;
+	float out;
 	float peak = 0.0f;
-  float foldback = par->getParameter(0).floatPart / 100.0f; // 2.0f 
-  float scale;
-  float diff;
+	float foldback = 1.0 + (par->getParameter(0).floatPart / 10.0);
+	pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+	float freq = par->getParameter(1).floatPart / 100.0;
+	freq = (freq*freq*freq) * float(samplerate/2); // curve
+	float dry = fmin( 1.0f - (par->getParameter(2).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+	float wet = ( par->getParameter(2).floatPart / 100.0f);
+	float scale;
+	// init filter
+	multifilter_t filter;
+	multifilter_state_t filter0;
+	Filter::multifilter_set(&filter,
+		samplerate,
+	 	freq > 0.05 ? FILTER_BANDPASS: FILTER_NONE,
+		freq, // freq 
+		0.9,  // res 
+		1.5); // gain
+	filter0.x1 = filter0.x2 = filter0.y1 = filter0.y2 = 0.0;
 
 	// find peak value 
 	for (i = sStart; i < sEnd; i++)
@@ -3395,14 +3409,16 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 		float f = getFloatSampleFromWaveform(i);
 		if (ppfabs(f) > peak) peak = ppfabs(f);
 	}
-  scale = 1.0f/peak;
+	scale = 1.0f/peak;
 
-  // process 
+	// process 
 	for (i = sStart; i < sEnd; i++)
 	{
-		in  = getFloatSampleFromWaveform(i) * scale;   // normalized amp input
-		out = sin( in * foldback ) / foldback;         // sinusoid foldback & denormalize 
-		setFloatSampleInWaveform(i, out );             // full harmonic fold complete
+		in  = getFloatSampleFromWaveform(i);                  // normalized amp input
+		out = Filter::multifilter(&filter, &filter0, in );    // bandpass
+		out = sin( (out*scale) * foldback ) / foldback;       // sinusoid foldback & denormalize 
+		out = (out*wet)  + (in*dry);					      //
+		setFloatSampleInWaveform(i, out * peak );   // full harmonic fold complete
 	}
 
 	finishUndo();

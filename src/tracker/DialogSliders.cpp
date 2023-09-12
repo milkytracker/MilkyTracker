@@ -44,17 +44,18 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
 {
 	needUpdate    = false;
 	preview       = false;
-  numSliders    = sliders; 
-  responder     = toolHandlerResponder;
-  screen        = parentScreen;
-  this->sampleEditor = sampleEditor;
-  this->id      = id;
+	numSliders    = sliders; 
+	responder     = toolHandlerResponder;
+	screen        = parentScreen;
+	this->sampleEditor = sampleEditor;
+	this->id      = id;
 	float dheight   = (sliders+4) * (SCROLLBUTTONSIZE+6);
 	initDialog(screen, responder, id, title.getStrBuffer(), 320, dheight, 26, "Ok", "Cancel");
 }
 
 void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption, PPColor *color)
 {
+	if( i >= numSliders ) return;
 	pp_int32 x      = getMessageBoxContainer()->getLocation().x;
 	pp_int32 y      = getMessageBoxContainer()->getLocation().y;
 	pp_int32 width  = getMessageBoxContainer()->getSize().width;
@@ -64,33 +65,35 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	pp_int32 y2 = 16 + ((SCROLLBUTTONSIZE+6) * i+1 ) +  getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y;
 	pp_int32 x2 = x + borderSpace;
 	pp_int32 size = width-192;
-	
+
 	// create slider
-  PPSlider* slider = new PPSlider(MESSAGEBOX_CONTROL_USER1+i, screen, this, PPPoint(x2+scalaSpace, y2), size, true, false);
-  slider->setBarSize(8192);
-  slider->setMinValue((int)min);
-  slider->setMaxValue((int)max);
-  slider->setCurrentValue(value);
-  getMessageBoxContainer()->addControl(slider);
-  if( screen->getWidth() < 320 ) caption = caption.subString(0,10);
-  PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
-  PPStaticText* staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXT_OFFSET+i, screen, this, PPPoint(x2+(SCROLLBUTTONSIZE/2), y2), caption.getStrBuffer(), true);
-  staticText->setFont(font);
-  if( color != NULL ) staticText->setColor( *color);
-  getMessageBoxContainer()->addControl(staticText);
-  // value
-  char v[255];
-  sprintf(v,"%i",(int)value);
-  //staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXTVALUES_OFFSET+i, screen, this, PPPoint(x+width-(4*12), y2), v, true);
-  //staticText->setFont(font);
-  //getMessageBoxContainer()->addControl(staticText);
+	PPSlider* slider = new PPSlider(MESSAGEBOX_CONTROL_USER1+i, screen, this, PPPoint(x2+scalaSpace, y2), size, true, false);
+	slider->setBarSize(8192);
+	slider->setMinValue((int)min);
+	slider->setMaxValue((int)max);
+	slider->setCurrentValue(value);
+	getMessageBoxContainer()->addControl(slider);
+	if( screen->getWidth() < 320 ) caption = caption.subString(0,10);
+	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	PPStaticText* staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXT_OFFSET+i, screen, this, PPPoint(x2+(SCROLLBUTTONSIZE/2), y2), caption.getStrBuffer(), true);
+	staticText->setFont(font);
+	if( color != NULL ) staticText->setColor( *color);
+	getMessageBoxContainer()->addControl(staticText);
+	// value
+	char v[255];
+	sprintf(v,"%i",(int)value);
+	//staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXTVALUES_OFFSET+i, screen, this, PPPoint(x+width-(4*12), y2), v, true);
+	//staticText->setFont(font);
+	//getMessageBoxContainer()->addControl(staticText);
 	listBoxes[i] = new PPListBox(MESSAGEBOX_CONTROL_USER1+TEXTVALUES_OFFSET+i, screen, this, PPPoint(x+width-(5*12)+1, y2), PPSize(10*4,12), true, true, false);
 	listBoxes[i]->showSelection(false);
 	listBoxes[i]->setBorderColor(messageBoxContainerGeneric->getColor());
 	listBoxes[i]->setMaxEditSize(4);
-  listBoxes[i]->addItem( PPString(v) );
-  listBoxes[i]->commitChanges();
+	listBoxes[i]->addItem( PPString(v) );
+	listBoxes[i]->commitChanges();
 	getMessageBoxContainer()->addControl(listBoxes[i]);	
+
+	if( i+1 == numSliders ) process(); // lets go!
 }
 
 void DialogSliders::update()
@@ -107,17 +110,15 @@ pp_int32 DialogSliders::handleEvent(PPObject* sender, PPEvent* event)
 		pp_uint32 slider = id-MESSAGEBOX_CONTROL_USER1;
 		float val = getSlider( slider );
 		sprintf(v,"%i",(int)val);
-    listBoxes[slider]->updateItem( 0, PPString(v) );
-    listBoxes[slider]->commitChanges();
-    update();
+		listBoxes[slider]->updateItem( 0, PPString(v) );
+		listBoxes[slider]->commitChanges();
+		update();
 		needUpdate = true;
-	}
-
-	if( event->getID() == eCommand ){
-		if( preview && sampleEditor != NULL ) sampleEditor->undo();
+	}else if( event->getID() == eCommand ){
+		sampleEditor->undo();
 	}
 	if( event->getID() == eLMouseUp && needUpdate ){
-    process();
+		process();
 		update();
 	}
 	return PPDialogBase::handleEvent(sender, event);
@@ -130,9 +131,9 @@ void DialogSliders::process(){
     for( i = 0; i < numSliders; i++ ){
       par.setParameter(i, FilterParameters::Parameter( getSlider(i) ) );
     }
-    if( preview ) sampleEditor->undo();
+	if( preview ) sampleEditor->undo();
     (sampleEditor_->*func)(&par);
-    preview = true;
+	preview = true;
   }
 }
 

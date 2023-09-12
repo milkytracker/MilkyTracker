@@ -66,14 +66,20 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	
   PPString line = PPString("");
 	unsigned char c;
-	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
-	{
-		c = milkytracker_help[i];
-		if (c == 0x0a ) // '\n'
-		{
-			listBox->addItem( line );
-      line = PPString("");
-		} else line.append( PPString(c) );
-	}
+  for( c = 0; c <128; c++ ){
+	char msg[255];
+	sprintf(msg,"d=%d x=%x %c\n",c,c,c);
+	listBox->addItem( msg );
+	
+  }
+//	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
+//	{
+//		c = milkytracker_help[i];
+//		if (c == 0x0a ) // '\n'
+//		{
+//			listBox->addItem( line );
+//      line = PPString("");
+//		} else line.append( PPString(c) );
+//	}
 	messageBoxContainerGeneric->addControl(listBox);
 }
