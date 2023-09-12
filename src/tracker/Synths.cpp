@@ -209,7 +209,7 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[10].name  = "mod freq";
-		synths[ID].param[10].value = 31.0f;
+		synths[ID].param[10].value = 40.0f;
 		synths[ID].param[10].min   = 0;
 		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -295,8 +295,8 @@ void Synth::FMPaint( bool init ){
 		case 5: controls.modulator = OSCILLATOR_NOISE;    break;
 	}
 	controls.modulator_amplitude = SYN_PARAM_NORMALIZE( synth->param[12].value );
-    float mf = 0.01f + (SYN_PARAM_NORMALIZE(synth->param[10].value)/2.0f);
-    controls.modulator_freq = (mf*mf*mf) * float(srate/2); // lazy sloop to finetune lowfreqs
+    float mf = 0.01f + SYN_PARAM_NORMALIZE(synth->param[10].value);
+    controls.modulator_freq = pow(mf,5) * float(srate/2); // lazy sloop to finetune lowfreqs
 
 	controls.attack  = SYN_PARAM_NORMALIZE(synth->param[3].value);
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);

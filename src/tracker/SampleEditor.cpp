@@ -3385,7 +3385,8 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	float in;
 	float out;
 	float peak = 0.0f;
-	float foldback = 1.0 + (par->getParameter(0).floatPart / 10.0);
+	float foldback = par->getParameter(0).floatPart / 5.0;
+	if( foldback < 1.0 ) foldback = 1.0;
 	pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
 	float freq = par->getParameter(1).floatPart / 100.0;
 	freq = (freq*freq*freq) * float(samplerate/2); // curve

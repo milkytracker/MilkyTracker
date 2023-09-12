@@ -177,8 +177,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			  TXMSample *sample = sampleEditor->getSample();
 			  dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 3, sampleEditor, &SampleEditor::tool_saturate );
 			  DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-			  float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 200.0f;
-			  sliders->initSlider(0,1,10,value,"Harmonics");
+			  float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 10.0f;
+			  sliders->initSlider(0,1,100,value,"Harmonics");
 			  sliders->initSlider(1,0,100,0,"Bandpass");
 			  sliders->initSlider(2,1,100,100,"Dry \x1d Wet");
 			  break;
