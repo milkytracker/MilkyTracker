@@ -224,9 +224,8 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		// Main text (= white?)
 		case ColorForegroundText:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorStaticText, color);
-			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextDark, color);
-			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextBright, color);
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorSelection, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextDark, color);
 			break;
 		// PPButton colors
 		case ColorButtons:
@@ -235,6 +234,7 @@ void GlobalColorConfig::setColor(GlobalColors whichColor, const PPColor& color)
 		// PPButton foreground text
 		case ColorButtonText:
 			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorDefaultButtonText, color);
+			PPUIConfig::getInstance()->setColor(PPUIConfig::ColorMenuTextBright, color);
 			break;
 		// Record mode button foreground text
 		case ColorRecordModeButtonText:

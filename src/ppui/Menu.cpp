@@ -185,7 +185,9 @@ void PPMenu::paint(PPGraphicsAbstract* g, pp_int32 px, pp_int32 py, pp_int32 men
 
 		if (items.get(i)->state & 1)
 		{
-			g->setColor(*textDarkColor);
+			PPColor grayedout = PPColor( textBrightColor->r, textBrightColor->g, textBrightColor->b );
+			grayedout.scaleFixed(30000);
+			g->setColor(grayedout);
 			g->drawString(items.get(i)->name, px + 2, py + 2 + they+yOffset);
 		}
 		else
