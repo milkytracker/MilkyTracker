@@ -227,8 +227,8 @@ Data for ONE envelope point:
 
 Offset|Length| Type   | Description
 ------+------+--------+--------------------------------------------
-   ?  |   1  | (word) | Frame number of the point (X-coordinate)
-   ?  |   1  | (word) | Value of the point (Y-coordinate)
+   ?  |   2  | (word) | Frame number of the point (X-coordinate)
+   ?  |   2  | (word) | Value of the point (Y-coordinate)
 
 Since one envelope point takes 2 words (2*2 bytes), the total
 maximum number of points in envelope is (48/4) = 12 points.
