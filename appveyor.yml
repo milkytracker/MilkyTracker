@@ -59,7 +59,7 @@ for:
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: cp ../resources/milkytracker.desktop .
   - sh: sed -i 's|MilkyTracker|Milkytracker|g;s|Comment=.*|Comment=A Portable SampleTracker DAW|g' milkytracker.desktop
-  #- sh: cp ../resources/milkytracker.appdata /usr/share/metainfo
+  #- sh: cp ../resources/org.milkytracker.MilkyTracker.metainfo.xml /usr/share/metainfo/
   - sh: find .
   - sh: cd .. 
   - sh: wget 'https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage';
