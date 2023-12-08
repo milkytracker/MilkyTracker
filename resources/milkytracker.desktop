@@ -8,4 +8,5 @@ Exec=milkytracker %f
 Icon=milkytracker
 Terminal=false
 StartupNotify=false
+MimeType=audio/x-mod;audio/x-xm;
 Categories=AudioVideo;Audio;AudioVideoEditing;Sequencer;
