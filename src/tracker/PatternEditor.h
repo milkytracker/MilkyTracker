@@ -370,6 +370,12 @@ public:
 	bool writeNote(pp_int32 note, 
 				   bool withUndo = false,
 				   PatternAdvanceInterface* advanceImpl = NULL);
+
+	bool writeStep(pp_uint32 channel,
+				   pp_uint32 stup,
+				   pp_uint32 note,
+				   pp_uint32 barRow,								
+				   bool withUndo/* = false*/);
 				   
 	// --- write through, without undo etc. ----------------------------------
 	void writeDirectNote(pp_int32 note,
