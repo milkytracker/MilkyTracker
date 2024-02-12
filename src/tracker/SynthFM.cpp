@@ -5,12 +5,14 @@
  */
 
 #include "SynthFM.h"
+#include <stdio.h>
+#include <cmath>
 
 float SynthFM::zero(float phase) { (void)phase; return 0; }
 float SynthFM::sine(float phase) { return sinf(phase); }
 float SynthFM::square(float phase) { return phase <= M_PI ? 1.0 : -1.0; }
 float SynthFM::sawtooth(float phase) { return -1.0 + 2.0 * fmod(phase / M_PI, 1.0); }
-float SynthFM::noise(float phase) { (void)phase; return rand() / (float)RAND_MAX; }
+float SynthFM::noise(float phase) { (void)phase; return (rand() / (float)RAND_MAX)-0.5; }
 float SynthFM::triangle(float phase)
 {
     if(phase < M_PI/2.0) return phase / (M_PI/2.0);
@@ -49,6 +51,21 @@ float SynthFM::modulate(modulation_t modulation, int sample_rate, oscillator_t *
     }
 
     return 0;
+}
+
+float SynthFM::echo(fm_t *instrument, float sample)
+{
+	echo_t *echo = &instrument->echo;
+    int read_cursor =
+        echo->cursor >= echo->delay_samples ?
+        echo->cursor - echo->delay_samples :
+        ECHO_BUFFER_SIZE - (echo->delay_samples - echo->cursor) % ECHO_BUFFER_SIZE;
+    float delay_sample = echo->buffer[read_cursor];
+	if( echo->karplustrong ){ // https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis
+		echo->buffer[echo->cursor] = Filter::multifilter( &instrument->filter, &instrument->filter0, sample ) + echo->feedback * delay_sample;
+	}else echo->buffer[echo->cursor] = sample + echo->feedback * delay_sample;
+    echo->cursor = (echo->cursor + 1) % ECHO_BUFFER_SIZE;
+    return sample + echo->level * delay_sample;
 }
 
 void SynthFM::adsr_set(adsr_t *adsr, int sample_rate, float attack, float decay, float sustain, float release)
@@ -123,8 +140,10 @@ void SynthFM::instrument_control(fm_t *instrument, const fm_control_t *control, 
 		instrument->reverb.colour = -6.0;
 		Reverb::reset( (reverb_t *)&instrument->reverb );
 	}
-    //size=0.040000 decay=0.970000 colour=-6.000000	
-    //size=1.000000 decay=0.970000 colour=-6.000000
+	instrument->echo.delay_samples = control->echo_delay_samples;
+	instrument->echo.karplustrong = control->echo_karplustrong;
+    instrument->echo.feedback = control->echo_feedback;
+	instrument->echo.level = control->echo_level;
 
 }
 
@@ -134,15 +153,21 @@ void SynthFM::instrument_play(fm_t *instrument, int sample_rate, float *out)
 			adsr_envelope(&instrument->adsr) * modulate(instrument->modulation, sample_rate, &instrument->carrier, &instrument->modulator)
 		    * instrument->feedback
 	);
-
+	if( !isfinite(sample) ){
+		*out = sample;
+		return;
+	}
+	sample = echo( instrument, sample);
     if( instrument->reverb.size > 0.04 ){    // avoid comb effect
 		float size = instrument->reverb.size;
 		float wet;
 		Reverb::process( &sample, &wet, 1, (reverb_t *)&instrument->reverb);
-		// amplify wet with curve 
+		// one-slider reverb: amplify wet with curve 
 		*out = wet * (size*size*2);
-		// add dry back in using curve
+		// and add dry back in using curve
 		*out += sample * ((-size*size*size)+1);
 	}else *out = sample;
-	*out = Filter::multifilter(&instrument->filter, &instrument->filter0, *out );
+	if( !instrument->echo.karplustrong ){
+		*out = Filter::multifilter(&instrument->filter, &instrument->filter0, *out );
+	}
 }

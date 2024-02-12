@@ -64,6 +64,7 @@ void Synth::process( MSynth *s, PPString *preset ){
 		synth  = s;                 
 		synth->param[0].value = (float)synth->ID;
 		dialog(NULL,NULL,NULL);
+		return;
 	}
 
 	switch( s->ID ){
@@ -78,7 +79,7 @@ void Synth::CyclePaint( bool init ){
 	if( init ){
 		synths[ID].nparams = 7;   // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 WAVE paint \x10");
+		synths[ID].param[0].name  = PPString("\x11 paint wave \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -156,9 +157,9 @@ void Synth::FMPaint( bool init ){
 	pp_int32 ID = SYNTH_FM_PAINT;
 
 	if( init ){
-		synths[ID].nparams = 20;  // < SYN_PARAMS_MAX
+		synths[ID].nparams = 23;  // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 FM paint \x10");
+		synths[ID].param[0].name  = PPString("\x11 paint FM \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -193,17 +194,17 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[6].min   = 0;
 		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[7].name  = "carrier note";
+		synths[ID].param[7].name  = "carrier freq";
 		synths[ID].param[7].value = 0.0f;
 		synths[ID].param[7].min   = 0;
 		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[8].name  = "carrier wave";
+		synths[ID].param[8].name  = "  SIN SQ SAW TRI NOIZ";
 		synths[ID].param[8].value = 1.0f;
 		synths[ID].param[8].min   = 1;
 		synths[ID].param[8].max   = 5.0f;
 		
-		synths[ID].param[9].name  = "carrier amp";
+		synths[ID].param[9].name  = "  AMP              ";
 		synths[ID].param[9].value = (float)SYN_PARAM_MAX_VALUE;
 		synths[ID].param[9].min   = 0.0;
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
@@ -213,27 +214,27 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[10].min   = 0;
 		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[11].name  = "mod wave";
+		synths[ID].param[11].name  = "  SIN SQ SAW TRI NOIZ";
 		synths[ID].param[11].value = 1.0f;
 		synths[ID].param[11].min   = 1.0;
 		synths[ID].param[11].max   = 5.0f; 
 
-		synths[ID].param[12].name  = "mod amp";
+		synths[ID].param[12].name  = "  AMP             ";
 		synths[ID].param[12].value = 79.0f; 
 		synths[ID].param[12].min   = 0;
 		synths[ID].param[12].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[13].name  = "FM type";
+		synths[ID].param[13].name  = "NO AM FM RI TRE VIB KS";
 		synths[ID].param[13].value = 3.0f;
-		synths[ID].param[13].min   = 1.0f;
-		synths[ID].param[13].max   = 5.0f;
+		synths[ID].param[13].min   = 0.0f;
+		synths[ID].param[13].max   = 6.0f;
 
-		synths[ID].param[14].name  = "trans amp";
+		synths[ID].param[14].name  = "transient";
 		synths[ID].param[14].value = 92.0f;
 		synths[ID].param[14].min   = 0;
 		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[15].name  = "trans size";
+		synths[ID].param[15].name  = "  SIZE           ";
 		synths[ID].param[15].value = 8.0f;
 		synths[ID].param[15].min   = 1.0f;
 		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
@@ -243,20 +244,35 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[16].min   = 0.0f;
 		synths[ID].param[16].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[17].name  = "spacetime";
-		synths[ID].param[17].value = 33.0f;
+		synths[ID].param[17].name  = "delay";
+		synths[ID].param[17].value = 0.0f;
 		synths[ID].param[17].min   = 0.0f;
 		synths[ID].param[17].max   = (float)SYN_PARAM_MAX_VALUE;
-
-		synths[ID].param[18].name  = "filter";
-		synths[ID].param[18].value = 0.0f;
+		
+		synths[ID].param[18].name  = "  SIZE          ";
+		synths[ID].param[18].value = 10.0f;
 		synths[ID].param[18].min   = 0.0f;
 		synths[ID].param[18].max   = (float)SYN_PARAM_MAX_VALUE;
+		
+		synths[ID].param[19].name  = "  FEEDBACK      ";
+		synths[ID].param[19].value = 0.1f;
+		synths[ID].param[19].min   = 0.1f;
+		synths[ID].param[19].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[19].name  = "loop type";
-		synths[ID].param[19].value = 0.0f;
-		synths[ID].param[19].min   = 0.0f;
-		synths[ID].param[19].max   = 3.0f;
+		synths[ID].param[20].name  = "spacetime";
+		synths[ID].param[20].value = 33.0f;
+		synths[ID].param[20].min   = 0.0f;
+		synths[ID].param[20].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[21].name  = "filter";
+		synths[ID].param[21].value = 0.0f;
+		synths[ID].param[21].min   = 0.0f;
+		synths[ID].param[21].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[22].name  = "loop type";
+		synths[ID].param[22].value = 0.0f;
+		synths[ID].param[22].min   = 0.0f;
+		synths[ID].param[22].max   = 3.0f;
 		return;
 	}
 
@@ -272,6 +288,7 @@ void Synth::FMPaint( bool init ){
 		case 3: controls.modulation = MODULATION_RING;      break;
 		case 4: controls.modulation = MODULATION_TREMOLO;   break;
 		case 5: controls.modulation = MODULATION_VIBRATO;   break;
+		case 6: controls.modulation = MODULATION_AMPLITUDE; break;
 	}
 
 	// init carrier wave
@@ -302,25 +319,42 @@ void Synth::FMPaint( bool init ){
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);
 	controls.sustain = SYN_PARAM_NORMALIZE(synth->param[5].value);
 	controls.release = SYN_PARAM_NORMALIZE(synth->param[6].value) * 0.5f;
+  
+	// init delay
+	memset( &(instrument.echo.buffer), 0, sizeof(float)*ECHO_BUFFER_SIZE );
+	instrument.echo.cursor = 0;
+	float delay = SYN_PARAM_NORMALIZE(synth->param[18].value);
+	controls.echo_delay_samples = (int)( (delay*delay*delay) * float(srate/2) );
+	controls.echo_karplustrong = synth->param[13].value == 6;
+    controls.echo_feedback = SYN_PARAM_NORMALIZE( synth->param[19].value);
+	controls.echo_level = SYN_PARAM_NORMALIZE(synth->param[17].value);
 
-	float filter     = SYN_PARAM_NORMALIZE(synth->param[18].value);
+	// init filter
+	float filter     = SYN_PARAM_NORMALIZE(synth->param[21].value);
     controls.filter = filter > 0.05 ? FILTER_BANDPASS: FILTER_NONE;
     controls.filter_freq = float(srate/2)*(filter*filter*filter);
     controls.filter_resonance = 0.5;
     controls.filter_gain = 0.8;
+	if( controls.echo_karplustrong ){ // https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis
+		controls.filter = FILTER_LOWPASS;
+		controls.filter_gain = 10.0;
+		controls.filter_freq = controls.filter_freq < 150.0f ? 150.0f : controls.filter_freq;
+		controls.echo_level = 1.0;
+	}
 
-	controls.spacetime = SYN_PARAM_NORMALIZE(synth->param[17].value);
+	controls.spacetime = SYN_PARAM_NORMALIZE(synth->param[20].value);
 	controls.feedback  = 1.0f + (100.0f * SYN_PARAM_NORMALIZE(synth->param[16].value));
 
 	instrument.modulator.phase = 0;
 	instrument.carrier.phase   = 0;
+	Reverb::reset( (reverb_t *)&instrument.reverb );
 
 	// determine duration
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
 	// enable overflow rendering when loop is set to forward
 	// to allow seamless loops without clicks
 	pp_uint32 overflow = 1;
-	pp_uint32 looptype = (pp_uint32)synth->param[19].value;
+	pp_uint32 looptype = (pp_uint32)synth->param[22].value;
 	pp_uint32 silence  = 0;
 	float     last     = 0.0;
 	if( looptype == 1 ){ // overflow until silence with forward loop
@@ -341,7 +375,7 @@ void Synth::FMPaint( bool init ){
 		pp_uint32 transSamples = (pp_uint32)( (float(srate)/100) * SYN_PARAM_NORMALIZE(synth->param[15].value ) ); 
 		float offset   = (1.0f/(float)transSamples) * float(i);
 		float transAmp = SYN_PARAM_NORMALIZE(synth->param[14].value) * float(srate/4); 
-		float c_trans  = fmax( 0, transAmp * (1.0f+(-offset*offset) ) );
+		float c_trans  = fmax( 0.0f, transAmp * (1.0f+(-offset*offset) ) );
 		instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
 		instrument.carrier.freq   += c_trans;
 		SynthFM::instrument_control( &instrument, &controls, srate );

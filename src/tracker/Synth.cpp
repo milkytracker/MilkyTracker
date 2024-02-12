@@ -45,13 +45,14 @@ PPString Synth::ASCIISynthExport(  ) {       // see
     str[ i + SYN_PREFIX_CHARS] = i < synth->nparams ? (int)synth->param[i].value + SYN_OFFSET_CHAR : SYN_OFFSET_CHAR; 
   }
   PPString ASCIISynth = PPString(str);
-  printf("synth: '%s'\n",ASCIISynth.getStrBuffer());
+  printf("synth: '%s'\n",str);
   return ASCIISynth;
 }
 
 bool Synth::ASCIISynthImport( PPString preset ) {
   if( preset.startsWith(SYN_PREFIX_V1) ){ // detect synth version(s) 
     const char *str = preset.getStrBuffer();
+	printf("import '%s'\n",str);
     int ID = str[ SYN_PREFIX_CHARS ] - SYN_OFFSET_CHAR; 
     synth = &(synths[ID]);
     for( int i = 0; i < preset.length() && i < SYN_PARAMS_MAX; i++ ){ 
@@ -76,10 +77,18 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
   }else{
     sliders->show(false);
   }
-  sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, "milky synths", synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
+  sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, "milkysynth", synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
   sliders->show();
   for( int i = 0; i < synth->nparams && i < SYN_PARAMS_MAX; i++){
-    sliders->initSlider(i, (int)synth->param[i].min, (int)synth->param[i].max, synth->param[i].value, synth->param[i].name, i == 0 ? (PPColor *)&TrackerConfig::colorPatternEditorNote: NULL );
+	PPString label = PPString(synth->param[i].name);
+    PPFont *font   = NULL;
+	PPColor *color = NULL; 
+	if( i == 0 ) color = (PPColor *)&TrackerConfig::colorPatternEditorNote;
+	if( label.length() > 14 ){
+		font  = PPFont::getFont( label.length() > 14 ? PPFont::FONT_TINY : PPFont::FONT_SYSTEM );
+		color = (PPColor *)&TrackerConfig::colorPatternEditorEffect;
+	}
+    sliders->initSlider(i, (int)synth->param[i].min, (int)synth->param[i].max, synth->param[i].value, label, color, font );
   }
   return sliders;
 }

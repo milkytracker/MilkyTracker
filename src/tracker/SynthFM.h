@@ -13,7 +13,7 @@
 #include "Reverb.h"
 
 #define ECHO_BUFFER_SIZE 96000 // 2 seconds @ 48 kHz
-
+	
 typedef enum oscillator_waveform_t
 {
     OSCILLATOR_ZERO = 0,
@@ -23,6 +23,15 @@ typedef enum oscillator_waveform_t
     OSCILLATOR_TRIANGLE,
     OSCILLATOR_NOISE,
 } oscillator_waveform_t;
+
+typedef struct echo_t
+{
+    float buffer[ECHO_BUFFER_SIZE];
+    int cursor;
+    int delay_samples;
+	bool karplustrong;
+    float feedback, level;
+} echo_t;
 
 typedef struct oscillator_t
 {
@@ -64,6 +73,11 @@ typedef struct fm_control_t
 	float filter_freq,filter_resonance,filter_gain;
 	float feedback;
 	float spacetime;	
+
+	int echo_delay_samples;
+	bool echo_karplustrong;
+    float echo_feedback;
+	float echo_level;
 } fm_control_t;
 
 typedef struct fm_t
@@ -74,6 +88,7 @@ typedef struct fm_t
 	multifilter_t filter;
 	multifilter_state_t filter0;
 	reverb_t reverb;
+	echo_t echo;
 	float feedback;
 } fm_t;
 
@@ -93,6 +108,7 @@ class SynthFM{
 	  static void adsr_trigger(adsr_t *adsr);
 	  static float adsr_envelope(adsr_t *adsr);
 	  static void instrument_play(fm_t *instrument, int sample_rate, float *out );
+	  static float echo(fm_t *instrument, float sample);
 };
 
 #endif
