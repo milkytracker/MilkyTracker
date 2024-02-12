@@ -53,7 +53,7 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
 	initDialog(screen, responder, id, title.getStrBuffer(), 320, dheight, 26, "Ok", "Cancel");
 }
 
-void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption, PPColor *color)
+void DialogSliders::initSlider(int i, float min, float max, float value, PPString caption, PPColor *color, PPFont *font)
 {
 	if( i >= numSliders ) return;
 	pp_int32 x      = getMessageBoxContainer()->getLocation().x;
@@ -74,7 +74,8 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	slider->setCurrentValue(value);
 	getMessageBoxContainer()->addControl(slider);
 	if( screen->getWidth() < 320 ) caption = caption.subString(0,10);
-	PPFont* font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	if( font == NULL ) font = PPFont::getFont(PPFont::FONT_SYSTEM);
+	else y2+=2; // *TODO* check if font is indeed TINY
 	PPStaticText* staticText = new PPStaticText(MESSAGEBOX_CONTROL_USER1+TEXT_OFFSET+i, screen, this, PPPoint(x2+(SCROLLBUTTONSIZE/2), y2), caption.getStrBuffer(), true);
 	staticText->setFont(font);
 	if( color != NULL ) staticText->setColor( *color);
@@ -114,7 +115,7 @@ pp_int32 DialogSliders::handleEvent(PPObject* sender, PPEvent* event)
 		listBoxes[slider]->commitChanges();
 		update();
 		needUpdate = true;
-	}else if( event->getID() == eCommand ){
+	}else if( event->getID() == eCommand && id == PP_MESSAGEBOX_BUTTON_CANCEL ){
 		sampleEditor->undo();
 	}
 	if( event->getID() == eLMouseUp && needUpdate ){

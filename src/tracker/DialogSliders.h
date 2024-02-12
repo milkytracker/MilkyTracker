@@ -35,7 +35,7 @@
 #include "Slider.h"
 #include "SampleEditor.h"
 
-#define MAX_SLIDERS 20
+#define MAX_SLIDERS 30
 #define TEXTVALUES_OFFSET MAX_SLIDERS
 #define TEXT_OFFSET 2*TEXTVALUES_OFFSET
 
@@ -69,7 +69,7 @@ public:
 	float getSlider(pp_uint32 index) const;
   pp_int32 getNumSliders(){ return this->numSliders; }
 
-	void initSlider(int i, float min, float max, float value, PPString caption, PPColor *color = NULL);
+	void initSlider(int i, float min, float max, float value, PPString caption, PPColor *color = NULL, PPFont *font = NULL);
 
 	void setSampleEditor(SampleEditor *s){ this->sampleEditor = s; }
 	SampleEditor * getSampleEditor(){ return this->sampleEditor; }
