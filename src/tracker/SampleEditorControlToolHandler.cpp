@@ -185,12 +185,12 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
     }
 
 		case ToolHandlerResponder::SampleToolTypeFilter:{
-			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "90s Filter", 4, sampleEditor, &SampleEditor::tool_filter );
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "90s Filter", 5, sampleEditor, &SampleEditor::tool_filter );
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			TXMSample *sample = sampleEditor->getSample();
 			pp_int32 sampleRate = (int)(1.25 * 48000.0); // allow frequency overflow to inject aliasing 90s 'grit' 
 			float value = lastValues.filterCutoffH  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoffH : 45.0f;
-			sliders->initSlider(0,1,sampleRate/2,value,"Highpass");
+			sliders->initSlider(0,1,28000,value,"Highpass");
 			value = lastValues.filterCutoffL   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterCutoffL : ((float)sampleRate/2)-1.0f;
 			PPString str = "Lowpass";
 			str.append("\x1d");
@@ -198,7 +198,9 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			sliders->initSlider(1,1,sampleRate/2,value,str);
 			value = lastValues.filterRes   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterRes : 0.0f;
 			sliders->initSlider(2,0,9,value,"Resonance");
-			sliders->initSlider(3,0.0f, 1000.0f, 100.0f,"Volume");
+			value = lastValues.filterSweep   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.filterSweep : 0.0f;
+			sliders->initSlider(3,0,3,value,"Sweep");
+			sliders->initSlider(4,0.0f, 1000.0f, 100.0f,"Volume");
 			break;
     }
 
@@ -211,21 +213,21 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
     }
 
 		case ToolHandlerResponder::SampleToolTypeDelay:{
-			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Delay Toolkit", 6, sampleEditor, &SampleEditor::tool_delay );
-      int sampleRate = 48000;
-      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      PPString str = "Flange";
-      str.append("\x1d");
-      str.append("Delay");
-			sliders->initSlider(0,1,10000,3900,str);
-      str = "Flange";
-      str.append("\x1d");
-      str.append("Echos");
-			sliders->initSlider(1,1,8,3,str);
-			sliders->initSlider(2,0,100,0,"Chorus detune");
-			sliders->initSlider(3,0,sampleRate/2,0,"Bandpass");
-			sliders->initSlider(4,1,100,0,"Saturate");
-			sliders->initSlider(5,0,100,50,"Dry / Wet");
+		    dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Delay Toolkit", 6, sampleEditor, &SampleEditor::tool_delay );
+		    int sampleRate = 48000;
+		    DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+		    PPString str = "Flange";
+		    str.append("\x1d");
+		    str.append("Delay");
+		    sliders->initSlider(0,1,10000,3900,str);
+		    str = "Flange";
+		    str.append("\x1d");
+		    str.append("Echos");
+		    sliders->initSlider(1,1,8,3,str);
+		    sliders->initSlider(2,0,100,0,"Chorus detune");
+		    sliders->initSlider(3,0,sampleRate/2,0,"Bandpass");
+		    sliders->initSlider(4,1,100,0,"Saturate");
+		    sliders->initSlider(5,0,100,50,"Dry / Wet");
 			break;
     }
 		
@@ -284,10 +286,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		case ToolHandlerResponder::SampleToolTypeVolume:
 		{
 			lastValues.boostSampleVolume = static_cast<DialogSliders*>(dialog)->getSlider(0);
-			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.boostSampleVolume));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.boostSampleVolume));
-			sampleEditor->tool_scaleSample(&par);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
@@ -295,15 +294,10 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		{
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			lastValues.reverbDryWet  = sliders->getSlider(0);
-      lastValues.reverbSize    = sliders->getSlider(1);
-      lastValues.reverbDecay   = sliders->getSlider(2);
-      lastValues.reverbColour  = sliders->getSlider(3);
-			FilterParameters par(4);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.reverbDryWet));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.reverbSize));
-			par.setParameter(2, FilterParameters::Parameter(lastValues.reverbDecay));
-			par.setParameter(3, FilterParameters::Parameter(lastValues.reverbColour));
-			sampleEditor->tool_reverb(&par);
+			lastValues.reverbSize    = sliders->getSlider(1);
+			lastValues.reverbDecay   = sliders->getSlider(2);
+			lastValues.reverbColour  = sliders->getSlider(3);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
@@ -311,48 +305,31 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		{
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			lastValues.saturate     = sliders->getSlider(0);
-			FilterParameters par(3);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.saturate));
-			par.setParameter(1, FilterParameters::Parameter(sliders->getSlider(1)));
-			par.setParameter(2, FilterParameters::Parameter(sliders->getSlider(2)));
-			sampleEditor->tool_saturate(&par);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
 		case ToolHandlerResponder::SampleToolTypeTimeStretch:
 		{
-			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter( (float)sliders->getSlider(0) ));
-			par.setParameter(1, FilterParameters::Parameter( (float)sliders->getSlider(1) ));
-			sampleEditor->tool_timestretch(&par);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
 		case ToolHandlerResponder::SampleToolTypeDelay:
 		{
-			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-			FilterParameters par(6);
-      for( pp_uint32 i =0; i < 6; i++ ){
-        par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
-      }
-			sampleEditor->tool_delay(&par);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
 		case ToolHandlerResponder::SampleToolTypeFilter:
 		{
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      lastValues.filterCutoffH     = sliders->getSlider(0);
-      lastValues.filterCutoffL     = sliders->getSlider(1);
-      lastValues.filterRes         = sliders->getSlider(2);
-      lastValues.boostSampleVolume = sliders->getSlider(3);
-			FilterParameters par(4);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.filterCutoffH));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.filterCutoffL));
-			par.setParameter(2, FilterParameters::Parameter(lastValues.filterRes));
-			par.setParameter(3, FilterParameters::Parameter(lastValues.boostSampleVolume));
-			sampleEditor->tool_filter(&par);
+			lastValues.filterCutoffH     = sliders->getSlider(0);
+			lastValues.filterCutoffL     = sliders->getSlider(1);
+			lastValues.filterRes         = sliders->getSlider(2);
+			lastValues.filterSweep       = sliders->getSlider(3);
+			lastValues.boostSampleVolume = sliders->getSlider(4);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
@@ -360,10 +337,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 		{
 			lastValues.fadeSampleVolumeStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
 			lastValues.fadeSampleVolumeEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
-			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(lastValues.fadeSampleVolumeStart / 100.0f));
-			par.setParameter(1, FilterParameters::Parameter(lastValues.fadeSampleVolumeEnd / 100.0f));
-			sampleEditor->tool_scaleSample(&par);
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 
@@ -528,15 +502,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeSynth:
 		{
-			// triggered when user presses 'OK' button in milkysynth dialog 
-			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-			int maxparams = getSampleEditor()->getSynth()->getMaxParam();
-			FilterParameters par(maxparams);
-			for( pp_uint32 i =0; i < maxparams; i++ ){
-				par.setParameter(i, FilterParameters::Parameter( (float)sliders->getSlider(i) ));
-			}
-			sampleEditor->tool_synth(&par);
-			tracker->sectionSamples->updateAfterLoad(); 
+			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}
 

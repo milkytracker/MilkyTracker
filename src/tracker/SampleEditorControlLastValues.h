@@ -54,9 +54,10 @@ struct SampleEditorControlLastValues
 	float reverbDecay; 
 	float reverbColour;
 	float saturate;
-  float filterCutoffL;
-  float filterCutoffH;
-  float filterRes;
+	float filterCutoffL;
+	float filterCutoffH;
+	float filterRes;
+	float filterSweep;
 	
 	static float invalidFloatValue() 
 	{
@@ -91,6 +92,7 @@ struct SampleEditorControlLastValues
 		filterCutoffL = invalidFloatValue();
 		filterCutoffH = invalidFloatValue();
 		filterRes = invalidFloatValue();
+		filterSweep = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -126,6 +128,7 @@ struct SampleEditorControlLastValues
 		result.store("filterCutoffL", PPDictionary::convertFloatToIntNonLossy(filterCutoffL));
 		result.store("filterCutoffH", PPDictionary::convertFloatToIntNonLossy(filterCutoffH));
 		result.store("filterRes", PPDictionary::convertFloatToIntNonLossy(filterRes));
+		result.store("filterSweep", PPDictionary::convertFloatToIntNonLossy(filterSweep));
 		return result;
 	}
 	
@@ -213,6 +216,10 @@ struct SampleEditorControlLastValues
 			else if (key->getKey().compareToNoCase("filterRes") == 0)
 			{
 				filterRes = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterSweep") == 0)
+			{
+				filterSweep = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
 			}
 
 			key = dictionary.getNextKey();

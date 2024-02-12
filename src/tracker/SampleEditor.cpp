@@ -3454,30 +3454,61 @@ void SampleEditor::tool_filter(const FilterParameters* par)
 	preFilter(&SampleEditor::tool_filter, par);
 
 	prepareUndo();
- 
-  pp_int32 samplerate = 48000;
-  filter_t lp;
-  filter_t hp;
-  Filter::init( (filter_t *)&lp, samplerate ); 
-  Filter::init( (filter_t *)&hp, samplerate );
-  hp.cutoff  = par->getParameter(0).floatPart;
-  hp.q       = par->getParameter(2).floatPart / 10.0;
-  lp.cutoff  = par->getParameter(1).floatPart;
-  lp.q       = hp.q;
-                                                              
-	pp_int32 i;
-  float in;
-  float out;
-  float scale  = par->getParameter(3).floatPart / 100.0f;
 
-  // process 
+	pp_int32 samplerate = 48000;
+	// static filter (for highpass/lowpass)
+	filter_t lp;
+	filter_t hp;
+	Filter::init( (filter_t *)&lp, samplerate ); 
+	Filter::init( (filter_t *)&hp, samplerate );
+	hp.cutoff  = par->getParameter(0).floatPart;
+	hp.q       = par->getParameter(2).floatPart / 10.0;
+	lp.cutoff  = par->getParameter(1).floatPart;
+	lp.q       = hp.q;
+	float scale  = par->getParameter(4).floatPart / 100.0f;
+
+	// sweeping filter
+	int sweep   = (int)par->getParameter(3).floatPart;
+	multifilter_t filter;
+	multifilter_state_t filter0;
+	multifilter_type_t type;
+	filter0.x1 = filter0.x2 = filter0.y1 = filter0.y2 = 0.0;
+
+	float sweepmin = 150.0f;
+	float sweepmax = 21000.0f;
+	switch( sweep ){
+		case 0: type = FILTER_NONE;    break;
+		case 1: { type = FILTER_LOWPASS; sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+		case 2: { type = FILTER_BANDPASS;sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+		case 3: { type = FILTER_NOTCH;   sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+	}  
+	float sweepadd = sweepmax/float(sample->samplen);
+
+	// lets go
+	pp_int32 i;
+	float in;
+	float out;
+
+	// process 
 	for (i = sStart; i < sEnd; i++)
 	{
-		in  = getFloatSampleFromWaveform(i);
-    Filter::process( in, (filter_t *)&lp );  // apply LP
-    out = lp.out_lp;                         //
-    Filter::process( out, (filter_t *)&hp ); // apply HP
-		setFloatSampleInWaveform(i, sin(hp.out_hp * scale) );       // update 
+		in = getFloatSampleFromWaveform(i);
+
+		Filter::process( in, (filter_t *)&lp );               // apply LP (+grit)
+		out = lp.out_lp;                                      
+        if( sweep == 0 ){
+			Filter::process( out, (filter_t *)&hp );          // apply HP
+			out = hp.out_hp;
+        }else{												  
+			Filter::multifilter_set(&filter,
+					samplerate,
+					type,
+					sweepmin + (float(i)*sweepadd),            // freq 
+					0.1+hp.q,                                  // res 
+					1.0);                                      // gain
+			out = Filter::multifilter(&filter, &filter0, out );// sweep it!
+        }													   //
+		setFloatSampleInWaveform(i, sin(out * scale) );        // update 
 	}
 
 	finishUndo();
