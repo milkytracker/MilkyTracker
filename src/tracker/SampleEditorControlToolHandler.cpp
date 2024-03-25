@@ -37,6 +37,7 @@
 #include "SimpleVector.h"
 #include "FilterParameters.h"
 #include "SectionSamples.h"
+#include "PatternEditor.h"
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
@@ -254,6 +255,8 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			// triggered when user presses 'synth'-button
 			getSampleEditor()->getSynth()->ASCIISynthImport( PPString( getSampleEditor()->getSample()->name) );
 			dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
+			PatternEditor *pe = this->tracker->getPatternEditor();
+			pe->getCursor().inner = 0; // force note-column to hear notes playing on keyboard 
 			break;
 		}
 
@@ -502,7 +505,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
 		case ToolHandlerResponder::SampleToolTypeSynth:
 		{
-			// we don't do anything here since dialogsliders processes inplace already
+			this->tracker->updateSamplesListBox();
 			break;
 		}
 

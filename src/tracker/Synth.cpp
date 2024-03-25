@@ -39,13 +39,11 @@ Synth::~Synth(){
 }
 	
 PPString Synth::ASCIISynthExport(  ) {       // see 
-  char str[MP_MAXTEXT];
-  sprintf(str,"%s",SYN_PREFIX_V1);           // always bump this to latest version
+  PPString ASCIISynth = PPString(SYN_PREFIX_V1);
   for( int i = 0; i < SYN_PARAMS_MAX ; i++ ){ 
-    str[ i + SYN_PREFIX_CHARS] = i < synth->nparams ? (int)synth->param[i].value + SYN_OFFSET_CHAR : SYN_OFFSET_CHAR; 
+    ASCIISynth.append( i < synth->nparams ? (int)synth->param[i].value + SYN_OFFSET_CHAR : SYN_OFFSET_CHAR ); 
   }
-  PPString ASCIISynth = PPString(str);
-  printf("synth: '%s'\n",str);
+  printf("ASCIISYNTH PRESET: '%s'\n",ASCIISynth.getStrBuffer());
   return ASCIISynth;
 }
 
