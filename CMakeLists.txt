@@ -198,7 +198,7 @@ if(UNIX)
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
-            find_package(RTMIDI "2.1.0" REQUIRED) # 2.1.0 and above
+            find_package(RTMIDI 2.1)              # 2.1.0 and compatible versions
             if(RTMIDI_FOUND)                      # https://github.com/milkytracker/MilkyTracker/issues/309
                 set(CMAKE_CXX_STANDARD 11)        # https://github.com/milkytracker/MilkyTracker/issues/262  
                 message(STATUS "Enabled MIDI support (ALSA/RtMidi)")
