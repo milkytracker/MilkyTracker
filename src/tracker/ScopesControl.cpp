@@ -360,16 +360,6 @@ void ScopesControl::paint(PPGraphicsAbstract* g)
 
 		pp_int32 sy2 = locy + channelHeight / 2 - smallFont->getCharHeight() - 1;
 		
-		if( selectedChannel == c ){
-			g->setRect(channelRects[c]);
-			PPColor highlight = g->getColor();
-			highlight.scale(0.4);
-			g->setColor( highlight );
-			g->fill();
-			g->setRect(scopesRect);
-			g->setColor( TrackerConfig::colorScopes );
-		}
-
 		if (!muteChannels[c])
 		{
 			ScopePainter scopePainter(g, count, channelHeight, scopebColor, scopedColor, locx, locy, appearance);
