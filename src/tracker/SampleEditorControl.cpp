@@ -134,6 +134,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
 	subMenuFX->addEntry("Saturate", MenuCommandIDSaturate);
+	subMenuFX->addEntry("Excite #Milky", MenuCommandIDMTBoost);
 	subMenuFX->addEntry("Excite #PTboost", MenuCommandIDPTBoost);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
@@ -1707,6 +1708,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	// update submenu states
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDMTBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverb, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
@@ -1891,6 +1893,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDCompress:
 			sampleEditor->tool_compressSample(NULL);
+			break;
+
+		case MenuCommandIDMTBoost:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeMTBoost);
 			break;
 
 		case MenuCommandIDReverb:

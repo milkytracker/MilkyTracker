@@ -183,7 +183,17 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 			  sliders->initSlider(1,0,100,0,"Bandpass");
 			  sliders->initSlider(2,1,100,100,"Dry \x1d Wet");
 			  break;
-    }
+		}
+
+		case ToolHandlerResponder::SampleToolTypeMTBoost:{
+			  TXMSample *sample = sampleEditor->getSample();
+			  dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Milky Exciter", 3, sampleEditor, &SampleEditor::tool_MTboostSample );
+			  DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+			  sliders->initSlider(0,2000,28000,16000,"Freq");
+			  sliders->initSlider(1,1,100,17,"Smear");
+			  sliders->initSlider(2,1,100,30,"Wet");
+			  break;
+		}
 
 		case ToolHandlerResponder::SampleToolTypeFilter:{
 			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "90s Filter", 5, sampleEditor, &SampleEditor::tool_filter );
@@ -300,6 +310,12 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			lastValues.reverbSize    = sliders->getSlider(1);
 			lastValues.reverbDecay   = sliders->getSlider(2);
 			lastValues.reverbColour  = sliders->getSlider(3);
+			// we don't do anything here since dialogsliders processes inplace already
+			break;
+		}
+
+		case ToolHandlerResponder::SampleToolTypeMTBoost:
+		{
 			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}

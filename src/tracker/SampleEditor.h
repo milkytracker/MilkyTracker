@@ -348,6 +348,7 @@ public:
 	void tool_compressSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);
 	void tool_PTboostSample(const FilterParameters* par);
+	void tool_MTboostSample(const FilterParameters* par);
 	bool isValidxFadeSelection();
 	void tool_xFadeSample(const FilterParameters* par);
 	void tool_changeSignSample(const FilterParameters* par);

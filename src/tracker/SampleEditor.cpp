@@ -3353,6 +3353,73 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
   postFilter();
 }
 
+void SampleEditor::tool_MTboostSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_MTboostSample, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+
+	// instead of only distorting highfreqs (PTboost) we 
+	// filter the highfreqs and smear them with a reverb 
+	pp_int32 samplerate = 32000;
+	filter_t hp;
+	Filter::init( (filter_t *)&hp, samplerate );
+    // extract and resonate high end 
+	hp.cutoff = par->getParameter(0).floatPart; //(samplerate/2);
+	hp.q      = 0.66; 
+
+	// smear and smooth with a roomverb
+	reverb_t r;
+	r.size   = 20.0f * (1.0f/100.0f);                   // 0 .. 1.0
+	r.decay  = par->getParameter(1).floatPart / 120.0f; // 17.0f  // 0 .. 1.0
+	r.colour = 6.0;                                     //-6.0 .. 6.0
+	Reverb::reset( (reverb_t *)&r );                                                             
+
+	float wet = ( par->getParameter(2).floatPart / 100.0f) * 5.0f;
+
+	float in  = 0.0;
+	float out = 0.0;
+
+	pp_int32 pos = 0;
+
+	for (i = sStart; i < sEnd; i++)
+	{
+		in = getFloatSampleFromWaveform(i);
+		Filter::process(in, (filter_t *)&hp );            // apply HP
+        out = hp.out_hp;
+	 	Reverb::process( &out, &in, 1, (reverb_t *)&r);   // apply room verb
+		this->setFloatSampleInWaveform(i, this->getFloatSampleFromWaveform(i) + (in*wet) );
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
 void SampleEditor::tool_saturate(const FilterParameters* par)
 {
 	if (isEmptySample())
