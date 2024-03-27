@@ -160,17 +160,13 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 		}
 
 		case ToolHandlerResponder::SampleToolTypeReverb:{
-			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb", 4, sampleEditor, &SampleEditor::tool_reverb );
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb", 2, sampleEditor, &SampleEditor::tool_reverb );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 
       float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 33.0f;
 			sliders->initSlider(0,0,100,value,"Dry..Wet");
-      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 100.0f;
+      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 33.0f;
 			sliders->initSlider(1,0,100,value,"Size");
-      value = lastValues.reverbDecay  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDecay : 90.0f;
-			sliders->initSlider(2,0,99,value,"Decay");
-      value = lastValues.reverbColour  != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbColour : 0.0f;
-			sliders->initSlider(3,-6,6,value,"Colour");
 			break;
     }
 
@@ -308,8 +304,6 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 			lastValues.reverbDryWet  = sliders->getSlider(0);
 			lastValues.reverbSize    = sliders->getSlider(1);
-			lastValues.reverbDecay   = sliders->getSlider(2);
-			lastValues.reverbColour  = sliders->getSlider(3);
 			// we don't do anything here since dialogsliders processes inplace already
 			break;
 		}

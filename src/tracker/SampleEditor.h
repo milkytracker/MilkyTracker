@@ -35,6 +35,7 @@
 #include "Undo.h"
 #include "Singleton.h"
 #include "Synth.h"
+#include "Convolver.h"
 
 struct TXMSample;
 

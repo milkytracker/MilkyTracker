@@ -24,6 +24,7 @@ add_executable(tracker
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
+    Convolver.cpp
     DialogHelp.cpp
     DialogChannelSelector.cpp
     DialogEQ.cpp
@@ -117,6 +118,7 @@ add_executable(tracker
     AnimatedFXControl.h
     ColorExportImport.h
     ColorPaletteContainer.h
+    Convolver.h
     ControlIDs.h
     DialogChannelSelector.h
     DialogEQ.h

@@ -3271,9 +3271,8 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 }
 
 void SampleEditor::tool_reverb(const FilterParameters* par)
-{
-	if (isEmptySample())
-		return;
+{ 
+	if (isEmptySample()) return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3298,59 +3297,34 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 
 	prepareUndo();
 
-	pp_int32 i;
+	pp_int32 sLength = sEnd - sStart;
+	float ratio   = par->getParameter(0).floatPart / 100.0f;
+  int verb_size = 1 + (100 * (int)par->getParameter(1).floatPart);
 
-  reverb_t r;
-  r.size   = par->getParameter(1).floatPart * (1.0f/100.0f); // 0 .. 1.0
-  r.decay  = par->getParameter(2).floatPart / 100.0f;        // 0 .. 1.0
-  r.colour  = par->getParameter(3).floatPart;                //-6.0 .. 6.0
+  pp_int32 newSampleSize = sLength + verb_size;
+	
+	// create sample float array
+	float* smpin;
+	float* smpout;
+	smpin = (float*)malloc(newSampleSize * sizeof(float));
+	smpout = (float*)malloc(newSampleSize * sizeof(float));
+	for (pp_int32 i = sStart; i < newSampleSize; i++) {
+		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i) : 0.0;
+	}
+  
+  reverb( smpin, smpout, newSampleSize, verb_size);
 
-  pp_uint32 looptype = getLoopType();
-  pp_int32 sLength2 = sample->samplen *2; 
-  bool overflow     = looptype == 1;
-  Reverb::reset( (reverb_t *)&r );                                                             
-
-  // create temporary buffer
-  float *buf;
-  buf = (float*)malloc( sLength2 * sizeof(float));
-  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
-
-  float dry = fmin( 1.0f - (par->getParameter(0).floatPart / 100.0f  ), 0.5 ) * 2.0f;
-  float wet = ( par->getParameter(0).floatPart / 100.0f) * 2.0f;
-  float in  = 0.0;
-  float out = 0.0;
-
-  pp_int32 pos = 0;
-
-	for (i = 0; i < sLength2; i++)
-	{
-    pos = overflow ? i % sample->samplen : i;
-    in = i < sample->samplen ? getFloatSampleFromWaveform(i) : 0.0f;
-    Reverb::process( &in, &out, 1, (reverb_t *)&r);
-    buf[pos] += (dry*in) + (wet*out);
+	for (pp_int32 i = sStart; i < newSampleSize; i++) {
+    pp_uint32 pos = i % sLength;     // feed reverb tail
+    if( pos < sStart ) pos = sStart; // back to beginning of sample (seamless loops)
+		this->setFloatSampleInWaveform(pos, ((smpin[i]*(1.0f-ratio)) + (smpout[i]*ratio)) * 1.2 );
 	}
 
-  // write sample
-  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
-  sample->samplen = overflow || looptype == 2 ? sample->samplen : sLength2; 
-  if( sample->type & 16 ){
-    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
-    memset(sample->sample, 0, sample->samplen*2);
-  }else{
-    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
-    memset(sample->sample, 0, sample->samplen);
-  }
-  for( i = 0; i < sLength2; i++ ){
-    this->setFloatSampleInWaveform(i, buf[i] );
-  }
+	free(smpin);
+	free(smpout);
+	finishUndo();
 
-  // free mem
-  free(buf);
-  module->freeSampleMem(oldsample);
-
-  finishUndo();
-
-  postFilter();
+	postFilter();
 }
 
 void SampleEditor::tool_MTboostSample(const FilterParameters* par)
