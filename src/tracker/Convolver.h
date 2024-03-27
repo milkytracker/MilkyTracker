@@ -33,7 +33,7 @@ extern complex complex_mult(complex a, complex b);
 extern void fft(complex* v, int n, complex* tmp);
 extern void ifft(complex* v, int n, complex* tmp);
 extern int convolve(float* x, float* h, int lenX, int lenH, float** output);
-extern void reverb( float *smpin, float *smpout, int frames, int verb_size );
+extern int reverb( float *smpin, float *smpout, int frames, int verb_size );
 extern void envelope_follow(float input, struct EnvelopeFollow* e);
 
 #endif

@@ -3299,7 +3299,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 
 	pp_int32 sLength = sEnd - sStart;
 	float ratio   = par->getParameter(0).floatPart / 100.0f;
-  int verb_size = 1 + (100 * (int)par->getParameter(1).floatPart);
+  pp_uint32 verb_size = 1 + (100 * (int)par->getParameter(1).floatPart);
 
   pp_int32 newSampleSize = sLength + verb_size;
 	
@@ -3308,16 +3308,18 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	float* smpout;
 	smpin = (float*)malloc(newSampleSize * sizeof(float));
 	smpout = (float*)malloc(newSampleSize * sizeof(float));
-	for (pp_int32 i = sStart; i < newSampleSize; i++) {
-		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i) : 0.0;
+	for (pp_int32 i = 0; i < newSampleSize; i++) {
+		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i+sStart) : 0.0;
 	}
   
-  reverb( smpin, smpout, newSampleSize, verb_size);
+  int outlength = reverb( smpin, smpout, newSampleSize, verb_size);
 
-	for (pp_int32 i = sStart; i < newSampleSize; i++) {
-    pp_uint32 pos = i % sLength;     // feed reverb tail
-    if( pos < sStart ) pos = sStart; // back to beginning of sample (seamless loops)
-		this->setFloatSampleInWaveform(pos, ((smpin[i]*(1.0f-ratio)) + (smpout[i]*ratio)) * 1.2 );
+	for (pp_int32 i = 0; i < outlength; i++) {
+    pp_uint32 pos = sStart + (i % sLength);     // feed reverb tail back into beginning
+    float dry = this->getFloatSampleFromWaveform( pos );
+    float wet = 0.0f;//1.2*(smpout[i]*ratio);
+    printf("pos=%i\n",pos);
+		this->setFloatSampleInWaveform(pos, dry + wet );
 	}
 
 	free(smpin);

@@ -251,19 +251,18 @@ void envelope_follow(float input, struct EnvelopeFollow* e) {
 	}
 }
 
-void reverb( float *smpin, float *smpout, int frames, int verb_size ){
+int reverb( float *smpin, float *smpout, int frames, int verb_size ){
 	// create IR float array
 	float* impulseResponse;
-	impulseResponse = (float*)malloc(frames * sizeof(float));
+	impulseResponse = (float*)malloc(verb_size * sizeof(float));
 	float f;
 	VRand rand;
 	rand.seed(1);
-	for (pp_int32 i = 0; i < frames; i++) {
-    if( i < verb_size ){
-      f = rand.white() * (1.0f - ((1.0f / (float)verb_size) * (float)i));
-      impulseResponse[i] = f;
-    }else impulseResponse[i] = 0.0;
+	for (pp_int32 i = 0; i < verb_size; i++) {
+    f = rand.white() * (1.0f - ((1.0f / (float)verb_size) * (float)i));
+    impulseResponse[i] = f;
 	}
-	convolve(smpin, impulseResponse, frames, frames, &smpout);
+	int length = convolve(smpin, impulseResponse, frames, verb_size, &smpout);
   free(impulseResponse);
+  return length;
 }
