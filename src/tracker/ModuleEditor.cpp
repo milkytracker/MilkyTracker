@@ -488,15 +488,16 @@ void ModuleEditor::convertInstrument(mp_sint32 i)
 		//-----------------------------------------------------------
 		// this will only work if there are 16 sample per instrument
 		//-----------------------------------------------------------
+		pp_int32 defaultVolfade = 512; // default fade (better UX when enabling envelope or synth)
 		for (j = 0; j < 16; j++)
 		{
 			module->smp[i*16+j].venvnum = venvIndex + 1;
 			module->smp[i*16+j].penvnum = penvIndex + 1;
 			// default fade out to cut
-			module->smp[i*16+j].volfade = 0xFFFF;
+			module->smp[i*16+j].volfade = defaultVolfade; 
 		}
 
-		instruments[i].volfade = 0xFFFF >> 1;
+		instruments[i].volfade = defaultVolfade; 
 		instruments[i].vibtype = 0;
 		instruments[i].vibrate = 0;
 		instruments[i].vibdepth = 0;
