@@ -35,7 +35,7 @@
 #include "Undo.h"
 #include "Singleton.h"
 #include "Synth.h"
-#include "Convolver.h"
+#include "fx/Convolver.h"
 
 struct TXMSample;
 

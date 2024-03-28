@@ -50,7 +50,7 @@ PPString Synth::ASCIISynthExport(  ) {       // see
 bool Synth::ASCIISynthImport( PPString preset ) {
   if( preset.startsWith(SYN_PREFIX_V1) ){ // detect synth version(s) 
     const char *str = preset.getStrBuffer();
-	printf("import '%s'\n",str);
+    printf("ASCIISYNTH IMPORT: '%s'\n",str);
     int ID = str[ SYN_PREFIX_CHARS ] - SYN_OFFSET_CHAR; 
     synth = &(synths[ID]);
     for( int i = 0; i < preset.length() && i < SYN_PARAMS_MAX; i++ ){ 

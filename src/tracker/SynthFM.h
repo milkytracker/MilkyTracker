@@ -9,8 +9,8 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "Filter.h"
-#include "Reverb.h"
+#include "fx/Filter.h"
+#include "fx/Reverb.h"
 
 #define ECHO_BUFFER_SIZE 96000 // 2 seconds @ 48 kHz
 	

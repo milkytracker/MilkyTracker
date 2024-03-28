@@ -36,8 +36,8 @@
 #include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
-#include "Reverb.h"
-#include "Filter.h"
+#include "fx/Reverb.h"
+#include "fx/Filter.h"
 #include "PlayerMaster.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)

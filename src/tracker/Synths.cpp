@@ -394,18 +394,19 @@ void Synth::FMPaint( bool init ){
 		last = x;
 	}
 	// apply reverb  
-    if( instrument.reverb.size > 0.04 ){    // avoid comb effect
-		float size = (int)instrument.reverb.size*100.0;
+  if( instrument.reverb.size > 0.04 ){    // avoid comb effect
 		float* smpout;
+		int size = (int)(instrument.reverb.size*50000.0);
 		// apply reverb 
-		int outlength = Convolver::reverb( smpin, &smpout, frames, 100 * (int)instrument.reverb.size*100.0 );
+		int outlength = Convolver::reverb( smpin, &smpout, frames, size );
+
 		for( pp_int32 i = 0; i < frames; i++ ){
 			float old = sampleEditor->getFloatSampleFromWaveform( i % (int)samples);
-			sampleEditor->setFloatSampleInWaveform( i % (int)samples, old + ((smpin[i] + smpout[i])*scale) );
 			//// one-slider reverb: amplify wet with curve 
-			//*out = wet * (size*size*2);
-			//// and add dry back in using curve
-			//*out += sample * ((-size*size*size)+1);
+      float   x = controls.spacetime;
+      float wet = smpout[i] * (x*x*2);
+      float dry = smpin[i]  * ((-x*x*x)+1);
+			sampleEditor->setFloatSampleInWaveform( i % (int)samples, old + (( dry + wet ) * scale) );
 		}
 		free(smpin);
 		free(smpout);
@@ -415,8 +416,6 @@ void Synth::FMPaint( bool init ){
 			sampleEditor->setFloatSampleInWaveform( i % (int)samples, old + (smpin[i]*scale) );
 		}
 	}
-
-
 
 	// force loop 
 	if( looptype > 0 ){

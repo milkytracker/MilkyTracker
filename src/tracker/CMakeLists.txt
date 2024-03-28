@@ -24,7 +24,7 @@ add_executable(tracker
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
-    Convolver.cpp
+    fx/Convolver.cpp
     DialogHelp.cpp
     DialogChannelSelector.cpp
     DialogEQ.cpp
@@ -89,8 +89,8 @@ add_executable(tracker
     SectionUpperLeft.cpp
     SongLengthEstimator.cpp
     SystemMessage.cpp
-    Reverb.cpp
-    Filter.cpp
+    fx/Reverb.cpp
+    fx/Filter.cpp
     Synth.cpp
     Synths.cpp
 	SynthFM.cpp
@@ -118,7 +118,7 @@ add_executable(tracker
     AnimatedFXControl.h
     ColorExportImport.h
     ColorPaletteContainer.h
-    Convolver.h
+    fx/Convolver.h
     ControlIDs.h
     DialogChannelSelector.h
     DialogEQ.h
@@ -162,10 +162,10 @@ add_executable(tracker
     RecPosProvider.h
     RecorderLogic.h
     ResamplerHelper.h
-    Reverb.h
-    Filter.h
+    fx/Reverb.h
+    fx/Filter.h
     Synth.h
-	SynthFM.h
+	  SynthFM.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h
