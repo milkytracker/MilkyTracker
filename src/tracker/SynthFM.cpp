@@ -136,9 +136,6 @@ void SynthFM::instrument_control(fm_t *instrument, const fm_control_t *control, 
 
 	if( instrument->reverb.size != control->spacetime ){
 		instrument->reverb.size   = control->spacetime;
-		instrument->reverb.decay  = 0.97;
-		instrument->reverb.colour = -6.0;
-		Reverb::reset( (reverb_t *)&instrument->reverb );
 	}
 	instrument->echo.delay_samples = control->echo_delay_samples;
 	instrument->echo.karplustrong = control->echo_karplustrong;
@@ -158,15 +155,7 @@ void SynthFM::instrument_play(fm_t *instrument, int sample_rate, float *out)
 		return;
 	}
 	sample = echo( instrument, sample);
-    if( instrument->reverb.size > 0.04 ){    // avoid comb effect
-		float size = instrument->reverb.size;
-		float wet;
-		Reverb::process( &sample, &wet, 1, (reverb_t *)&instrument->reverb);
-		// one-slider reverb: amplify wet with curve 
-		*out = wet * (size*size*2);
-		// and add dry back in using curve
-		*out += sample * ((-size*size*size)+1);
-	}else *out = sample;
+	*out = sample;
 	if( !instrument->echo.karplustrong ){
 		*out = Filter::multifilter(&instrument->filter, &instrument->filter0, *out );
 	}

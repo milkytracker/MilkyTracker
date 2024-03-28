@@ -3272,15 +3272,16 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 
 void SampleEditor::tool_reverb(const FilterParameters* par)
 { 
-	if (isEmptySample()) return;
+	if (isEmptySample())
+		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
-
+	
 	if (hasValidSelection())
 	{
 		if (sStart >= 0 && sEnd >= 0)
-		{
+		{		
 			if (sEnd < sStart)
 			{
 				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
@@ -3292,41 +3293,40 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 		sStart = 0;
 		sEnd = sample->samplen;
 	}
-
+	
 	preFilter(&SampleEditor::tool_reverb, par);
-
+	
 	prepareUndo();
 
 	pp_int32 sLength = sEnd - sStart;
 	float ratio   = par->getParameter(0).floatPart / 100.0f;
-  pp_uint32 verb_size = 1 + (100 * (int)par->getParameter(1).floatPart);
+    pp_uint32 verb_size = 700 * (pp_uint32)par->getParameter(1).floatPart;
+    pp_int32 newSampleSize = sLength + verb_size;
 
-  pp_int32 newSampleSize = sLength + verb_size;
-	
-	// create sample float array
+	// create buffers (smpout will be calloc'ed by reverb)
 	float* smpin;
 	float* smpout;
-	smpin = (float*)malloc(newSampleSize * sizeof(float));
-	smpout = (float*)malloc(newSampleSize * sizeof(float));
-	for (pp_int32 i = 0; i < newSampleSize; i++) {
+	smpin = (float*)calloc(newSampleSize,  sizeof(float));
+	for (pp_int32 i = 0; i < newSampleSize; i++) { // copy source (and pad with zeros)
 		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i+sStart) : 0.0;
 	}
-  
-  int outlength = reverb( smpin, smpout, newSampleSize, verb_size);
 
-	for (pp_int32 i = 0; i < outlength; i++) {
-    pp_uint32 pos = sStart + (i % sLength);     // feed reverb tail back into beginning
-    float dry = this->getFloatSampleFromWaveform( pos );
-    float wet = 0.0f;//1.2*(smpout[i]*ratio);
-    printf("pos=%i\n",pos);
-		this->setFloatSampleInWaveform(pos, dry + wet );
+	int outlength = Convolver::reverb( smpin, &smpout, newSampleSize, verb_size);
+
+	for (pp_int32 i = sStart; i < sStart+outlength; i++) {
+		pp_uint32 pos = i % sEnd;
+		if( pos < sStart ) pos += sStart; // fold back reverb tail to beginning (aid seamless looping)
+		float dry      = this->getFloatSampleFromWaveform( pos ) * ( i < sEnd ?  (1.0-ratio) : 1.0 );
+		float wet      = 1.2 * (smpout[i] * ratio);
+		this->setFloatSampleInWaveform(pos, dry+wet );
 	}
+				
+	finishUndo();	
+	
+	postFilter();
 
 	free(smpin);
 	free(smpout);
-	finishUndo();
-
-	postFilter();
 }
 
 void SampleEditor::tool_MTboostSample(const FilterParameters* par)
@@ -3353,6 +3353,8 @@ void SampleEditor::tool_MTboostSample(const FilterParameters* par)
 		sEnd = sample->samplen;
 	}
 
+	pp_int32 sLength = sEnd - sStart;
+
 	preFilter(&SampleEditor::tool_MTboostSample, par);
 
 	prepareUndo();
@@ -3366,29 +3368,29 @@ void SampleEditor::tool_MTboostSample(const FilterParameters* par)
 	Filter::init( (filter_t *)&hp, samplerate );
     // extract and resonate high end 
 	hp.cutoff = par->getParameter(0).floatPart; //(samplerate/2);
-	hp.q      = 0.66; 
+	hp.q      = 0.01; 
 
-	// smear and smooth with a roomverb
-	reverb_t r;
-	r.size   = 20.0f * (1.0f/100.0f);                   // 0 .. 1.0
-	r.decay  = par->getParameter(1).floatPart / 120.0f; // 17.0f  // 0 .. 1.0
-	r.colour = 6.0;                                     //-6.0 .. 6.0
-	Reverb::reset( (reverb_t *)&r );                                                             
-
-	float wet = ( par->getParameter(2).floatPart / 100.0f) * 5.0f;
+	float* smpin;
+	float* smpout;
+	smpin = (float*)calloc(sLength,  sizeof(float));
+	for (pp_int32 i = 0; i < sLength; i++) { // copy source (and pad with zeros)
+		Filter::process( this->getFloatSampleFromWaveform(i+sStart), (filter_t *)&hp );  // apply HP
+		smpin[i] = hp.out_hp;
+	}
+	// smear and smooth with a phasing roomverb
+	int outlength = Convolver::reverb( smpin, &smpout, sLength, 100 * (int)par->getParameter(1).floatPart );
+	int phase     = (int)( float(samplerate/5000) * par->getParameter(2).floatPart );
+	float wet     = ( par->getParameter(3).floatPart / 100.0f) * 5.0f;
 
 	float in  = 0.0;
 	float out = 0.0;
 
 	pp_int32 pos = 0;
 
-	for (i = sStart; i < sEnd; i++)
+	for (i = 0; i < sLength; i++)
 	{
-		in = getFloatSampleFromWaveform(i);
-		Filter::process(in, (filter_t *)&hp );            // apply HP
-        out = hp.out_hp;
-	 	Reverb::process( &out, &in, 1, (reverb_t *)&r);   // apply room verb
-		this->setFloatSampleInWaveform(i, this->getFloatSampleFromWaveform(i) + (in*wet) );
+        out = i >= phase ? smpout[ i-phase ] : 0.0f;
+		this->setFloatSampleInWaveform(i, this->getFloatSampleFromWaveform(i+sStart) + (out*wet) );
 	}
 
 	finishUndo();

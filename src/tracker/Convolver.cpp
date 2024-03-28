@@ -1,23 +1,8 @@
 #include "Convolver.h"
 #include "VRand.h"
 
-/*
-** convolve.c
-**
-** M. Farbood, August 5, 2011
-**
-** Function that convolves two signals.
-** Factored discrete Fourier transform, or FFT, and its inverse iFFT.
-**
-** fft and ifft are taken from code for the book,
-** Mathematics for Multimedia by Mladen Victor Wickerhauser
-** The function convolve is based on Stephen G. McGovern's fconv.m
-** Matlab implementation.
-**
-*/
-
 /* Print a vector of complexes as ordered pairs. */
-void print_vector(const char* title, complex* x, int n)
+void Convolver::print_vector(const char* title, complex* x, int n)
 {
 	int i;
 	printf("%s (dim=%d):", title, n);
@@ -27,7 +12,7 @@ void print_vector(const char* title, complex* x, int n)
 }
 
 /* Multiply two complex numbers */
-complex complex_mult(complex a, complex b)
+complex Convolver::complex_mult(complex a, complex b)
 {
 	complex c;
 	c.Re = (a.Re * b.Re) +(a.Im * b.Im * -1);
@@ -37,12 +22,12 @@ complex complex_mult(complex a, complex b)
 }
 
 /*
-   fft(v,N):
+  Convolver::fft(v,N):
    [0] If N==1 then return.
    [1] For k = 0 to N/2-1, let ve[k] = v[2*k]
-   [2] Compute fft(ve, N/2);
+   [2] ComputeConvolver::fft(ve, N/2);
    [3] For k = 0 to N/2-1, let vo[k] = v[2*k+1]
-   [4] Compute fft(vo, N/2);
+   [4] ComputeConvolver::fft(vo, N/2);
    [5] For m = 0 to N/2-1, do [6] through [9]
    [6]   Let w.re = cos(2*PI*m/N)
    [7]   Let w.im = -sin(2*PI*m/N)
@@ -50,7 +35,7 @@ complex complex_mult(complex a, complex b)
    [9]   Let v[m+N/2] = ve[m] - w*vo[m]
  */
 
-void fft(complex* v, int n, complex* tmp)
+void Convolver::fft(complex* v, int n, complex* tmp)
 {
 	if (n > 1) {			/* otherwise, do nothing and return */
 		int k, m;
@@ -61,8 +46,8 @@ void fft(complex* v, int n, complex* tmp)
 			ve[k] = v[2 * k];
 			vo[k] = v[2 * k + 1];
 		}
-		fft(ve, n / 2, v);		/* FFT on even-indexed elements of v[] */
-		fft(vo, n / 2, v);		/* FFT on odd-indexed elements of v[] */
+	Convolver::fft(ve, n / 2, v);		/* FFT on even-indexed elements of v[] */
+	Convolver::fft(vo, n / 2, v);		/* FFT on odd-indexed elements of v[] */
 		for (m = 0; m < n / 2; m++) {
 			w.Re = cos(2 * PI * m / (double)n);
 			w.Im = -sin(2 * PI * m / (double)n);
@@ -78,19 +63,19 @@ void fft(complex* v, int n, complex* tmp)
 }
 
 /*
-   ifft(v,N):
+   Convolver::ifft(v,N):
    [0] If N == 1 then return.
    [1] For k = 0 to N/2-1, let ve[k] = v[2*k]
-   [2] Compute ifft(ve, N/2);
+   [2] Compute Convolver::ifft(ve, N/2);
    [3] For k = 0 to N/2-1, let vo[k] = v[2*k+1]
-   [4] Compute ifft(vo, N/2);
+   [4] Compute Convolver::ifft(vo, N/2);
    [5] For m = 0 to N/2-1, do [6] through [9]
    [6]   Let w.re = cos(2*PI*m/N)
    [7]   Let w.im = sin(2*PI*m/N)
    [8]   Let v[m] = ve[m] + w*vo[m]
    [9]   Let v[m+N/2] = ve[m] - w*vo[m]
  */
-void ifft(complex* v, int n, complex* tmp)
+void Convolver::ifft(complex* v, int n, complex* tmp)
 {
 	if (n > 1) {			/* otherwise, do nothing and return */
 		int k, m;
@@ -100,8 +85,8 @@ void ifft(complex* v, int n, complex* tmp)
 			ve[k] = v[2 * k];
 			vo[k] = v[2 * k + 1];
 		}
-		ifft(ve, n / 2, v);		/* FFT on even-indexed elements of v[] */
-		ifft(vo, n / 2, v);		/* FFT on odd-indexed elements of v[] */
+		Convolver::ifft(ve, n / 2, v);		/* FFT on even-indexed elements of v[] */
+		Convolver::ifft(vo, n / 2, v);		/* FFT on odd-indexed elements of v[] */
 		for (m = 0; m < n / 2; m++) {
 			w.Re = cos(2 * PI * m / (double)n);
 			w.Im = sin(2 * PI * m / (double)n);
@@ -118,7 +103,7 @@ void ifft(complex* v, int n, complex* tmp)
 
 /* Convolve signal x with impulse response h.  The return value is
  * the length of the output signal */
-int convolve(float* x, float* h, int lenX, int lenH, float** output)
+int Convolver::convolve(float* x, float* h, int lenX, int lenH, float** output)
 {
 	complex* xComp = NULL;
 	complex* hComp = NULL;
@@ -176,26 +161,26 @@ int convolve(float* x, float* h, int lenX, int lenH, float** output)
 	}
 
 	/* FFT of x */
-	//  print_vector("Orig", xComp, 40);
-	fft(xComp, lenY2, scratch);
-	//  print_vector(" FFT", xComp, lenY2);
+	//  Convolver::print_vector("Orig", xComp, 40);
+Convolver::fft(xComp, lenY2, scratch);
+	//  Convolver::print_vector(" FFT", xComp, lenY2);
 
 	/* FFT of h */
-	//  print_vector("Orig", hComp, 50);
-	fft(hComp, lenY2, scratch);
-	//  print_vector(" FFT", hComp, lenY2);
+	//  Convolver::print_vector("Orig", hComp, 50);
+Convolver::fft(hComp, lenY2, scratch);
+	//  Convolver::print_vector(" FFT", hComp, lenY2);
 
 	/* Muliply ffts of x and h */
 	for (i = 0; i < lenY2; i++) {
-		c = complex_mult(xComp[i], hComp[i]);
+		c = Convolver::complex_mult(xComp[i], hComp[i]);
 		yComp[i].Re = c.Re;
 		yComp[i].Im = c.Im;
 	}
-	//  print_vector("Y", yComp, lenY2);
+	//  Convolver::print_vector("Y", yComp, lenY2);
 
 	/* Take the inverse FFT of Y */
-	ifft(yComp, lenY2, scratch);
-	//  print_vector("iFFT", yComp, lenY2);    
+	Convolver::ifft(yComp, lenY2, scratch);
+	//  Convolver::print_vector("iFFT", yComp, lenY2);    
 
 	/* Take just the first N elements and find the largest value for scaling purposes */
 	float maxY = 0;
@@ -222,13 +207,13 @@ int convolve(float* x, float* h, int lenX, int lenH, float** output)
 		yComp[i].Re = yComp[i].Re * m;
 		(*output)[i] = yComp[i].Re;
 	}
-	//  print_vector("Final", yComp, 400);
+	//  Convolver::print_vector("Final", yComp, 400);
 
 	free(yComp);
 	return lenY;
 }
 
-void envelope_follow(float input, struct EnvelopeFollow* e) {
+void Convolver::envelope_follow(float input, struct EnvelopeFollow* e) {
 	float scalar = pow(0.5, 1.0 / ( (e->release) * (e->samplerate) ) );
 
 	float inputAbs = fabs(input);
@@ -251,7 +236,7 @@ void envelope_follow(float input, struct EnvelopeFollow* e) {
 	}
 }
 
-int reverb( float *smpin, float *smpout, int frames, int verb_size ){
+int Convolver::reverb( float *smpin, float **smpout, int frames, int verb_size ){
 	// create IR float array
 	float* impulseResponse;
 	impulseResponse = (float*)malloc(verb_size * sizeof(float));
@@ -259,10 +244,10 @@ int reverb( float *smpin, float *smpout, int frames, int verb_size ){
 	VRand rand;
 	rand.seed(1);
 	for (pp_int32 i = 0; i < verb_size; i++) {
-    f = rand.white() * (1.0f - ((1.0f / (float)verb_size) * (float)i));
-    impulseResponse[i] = f;
+      f = rand.white() * (1.0f - ((1.0f / (float)verb_size) * (float)i));
+      impulseResponse[i] = f;
 	}
-	int length = convolve(smpin, impulseResponse, frames, verb_size, &smpout);
-  free(impulseResponse);
-  return length;
+	int length = Convolver::convolve(smpin, impulseResponse, frames, verb_size, smpout);
+	free(impulseResponse);
+	return length;
 }

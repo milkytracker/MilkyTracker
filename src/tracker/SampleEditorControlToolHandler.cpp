@@ -161,14 +161,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 
 		case ToolHandlerResponder::SampleToolTypeReverb:{
 			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb", 2, sampleEditor, &SampleEditor::tool_reverb );
-      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
 
-      float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 33.0f;
+			float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 20.0f;
 			sliders->initSlider(0,0,100,value,"Dry..Wet");
-      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 33.0f;
-			sliders->initSlider(1,0,100,value,"Size");
+			value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 20.0f;
+			sliders->initSlider(1,1,100,value,"Size");
 			break;
-    }
+		}
 
 		case ToolHandlerResponder::SampleToolTypeSaturate:{
 			  TXMSample *sample = sampleEditor->getSample();
@@ -183,11 +183,12 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 
 		case ToolHandlerResponder::SampleToolTypeMTBoost:{
 			  TXMSample *sample = sampleEditor->getSample();
-			  dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Milky Exciter", 3, sampleEditor, &SampleEditor::tool_MTboostSample );
+			  dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Milky Exciter", 4, sampleEditor, &SampleEditor::tool_MTboostSample );
 			  DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-			  sliders->initSlider(0,2000,28000,16000,"Freq");
-			  sliders->initSlider(1,1,100,17,"Smear");
-			  sliders->initSlider(2,1,100,30,"Wet");
+			  sliders->initSlider(0,2000,28000,20000,"Freq");
+			  sliders->initSlider(1,1,100,10,"Smear");
+			  sliders->initSlider(2,0,20,0,"Phase");
+			  sliders->initSlider(3,1,100,20,"Wet");
 			  break;
 		}
 

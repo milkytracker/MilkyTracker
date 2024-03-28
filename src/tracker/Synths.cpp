@@ -347,7 +347,6 @@ void Synth::FMPaint( bool init ){
 
 	instrument.modulator.phase = 0;
 	instrument.carrier.phase   = 0;
-	Reverb::reset( (reverb_t *)&instrument.reverb );
 
 	// determine duration
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
@@ -366,10 +365,13 @@ void Synth::FMPaint( bool init ){
 	// see curve @ https://graphtoy.com/?f1(x,t)=max(0,(x*10*x*x)%20)%20+x&v1=true 
 	float scale    = SYN_PARAM_NORMALIZE(synth->param[1].value);
  	scale          = fmax(0,(scale*3*scale*scale))+scale; // exponential in positive side
+	int frames     = overflow*(int)samples;
+	float* smpin;
+	smpin          = (float*)calloc(frames,  sizeof(float));
 	float x;
 
 	// synthesize! 
-	for( pp_int32 i = 0; i < overflow*(int)samples; i++ ){
+	for( pp_int32 i = 0; i < frames; i++ ){
 
 		// apply transient to freq controllers (see trans @ https://graphtoy.com/?f1(x,t)=-0.5*tanh((x*92)-3)+0.5&v1=true)
 		pp_uint32 transSamples = (pp_uint32)( (float(srate)/100) * SYN_PARAM_NORMALIZE(synth->param[15].value ) ); 
@@ -384,15 +386,37 @@ void Synth::FMPaint( bool init ){
 		if( i == 0 ) SynthFM::adsr_trigger( &(instrument.adsr) );
 
 		SynthFM::instrument_play( &instrument, srate, &x);
-		float old = sampleEditor->getFloatSampleFromWaveform( i % (int)samples);
-	    x  = old + (x * scale);
-		sampleEditor->setFloatSampleInWaveform( i % (int)samples, x );
+		smpin[i] = x;
 
 		// cancel overflow rendering if lots of silence
 		if( last == 0.0 && x == 0.0 ) silence++;
 		if( i > samples && silence > 5) break;
 		last = x;
 	}
+	// apply reverb  
+    if( instrument.reverb.size > 0.04 ){    // avoid comb effect
+		float size = (int)instrument.reverb.size*100.0;
+		float* smpout;
+		// apply reverb 
+		int outlength = Convolver::reverb( smpin, &smpout, frames, 100 * (int)instrument.reverb.size*100.0 );
+		for( pp_int32 i = 0; i < frames; i++ ){
+			float old = sampleEditor->getFloatSampleFromWaveform( i % (int)samples);
+			sampleEditor->setFloatSampleInWaveform( i % (int)samples, old + ((smpin[i] + smpout[i])*scale) );
+			//// one-slider reverb: amplify wet with curve 
+			//*out = wet * (size*size*2);
+			//// and add dry back in using curve
+			//*out += sample * ((-size*size*size)+1);
+		}
+		free(smpin);
+		free(smpout);
+	}else{
+		for( pp_int32 i = 0; i < frames; i++ ){
+			float old = sampleEditor->getFloatSampleFromWaveform( i % (int)samples);
+			sampleEditor->setFloatSampleInWaveform( i % (int)samples, old + (smpin[i]*scale) );
+		}
+	}
+
+
 
 	// force loop 
 	if( looptype > 0 ){
