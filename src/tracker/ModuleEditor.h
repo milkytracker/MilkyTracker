@@ -162,7 +162,10 @@ public:
 	void setCurrentPatternIndex(mp_sint32 index) { currentPatternIndex = index; }
 	mp_sint32 getCurrentPatternIndex() const { return currentPatternIndex; }
 
-	void setCurrentInstrumentIndex(mp_sint32 index) { currentInstrumentIndex = index; }
+	void setCurrentInstrumentIndex(mp_sint32 index) { 
+    if( index < 0 ) return;
+    currentInstrumentIndex = index; 
+  }
 	mp_sint32 getCurrentInstrumentIndex() const { return currentInstrumentIndex; }
 
 	void setCurrentSampleIndex(mp_sint32 index) { currentSampleIndex = index; }
