@@ -132,9 +132,11 @@ void DialogSliders::process(){
     for( i = 0; i < numSliders; i++ ){
       par.setParameter(i, FilterParameters::Parameter( getSlider(i) ) );
     }
-	if( preview ) sampleEditor->undo();
+    if( preview ){
+      sampleEditor->undo();
+    }
     (sampleEditor_->*func)(&par);
-	preview = true;
+    preview = true;
   }
 }
 

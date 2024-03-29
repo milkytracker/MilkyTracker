@@ -35,6 +35,9 @@
 #include "Undo.h"
 #include "Singleton.h"
 #include "Synth.h"
+#include "fx/Filter.h"
+#include "fx/Equalizer.h"
+#include "fx/EQConstants.h"
 #include "fx/Convolver.h"
 
 struct TXMSample;

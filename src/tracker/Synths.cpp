@@ -165,12 +165,12 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[0].max   = SYNTH_LAST;
 
 		synths[ID].param[1].name  = "volume";
-		synths[ID].param[1].value = 38.0f;
+		synths[ID].param[1].value = 42.0f;
 		synths[ID].param[1].min   = 0.0f;
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[2].name  = "size";
-		synths[ID].param[2].value = 3.0f;
+		synths[ID].param[2].value = 4.0f;
 		synths[ID].param[2].min   = 1.0f;
 		synths[ID].param[2].max   = 12.0f;
 
@@ -180,22 +180,22 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[4].name  = "decay";
-		synths[ID].param[4].value = 4.0f;
+		synths[ID].param[4].value = 7.0f;
 		synths[ID].param[4].min   = 1.0f;
 		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[5].name  = "sustain";
-		synths[ID].param[5].value = 4.0f;
+		synths[ID].param[5].value = 9.0f;
 		synths[ID].param[5].min   = 0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[6].name  = "release";
-		synths[ID].param[6].value = 2.0f;
+		synths[ID].param[6].value = 17.0f;
 		synths[ID].param[6].min   = 0;
 		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[7].name  = "carrier freq";
-		synths[ID].param[7].value = 0.0f;
+		synths[ID].param[7].value = 24.0f;
 		synths[ID].param[7].min   = 0;
 		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -205,12 +205,12 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[8].max   = 5.0f;
 		
 		synths[ID].param[9].name  = "  AMP              ";
-		synths[ID].param[9].value = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[9].value = 92.0f;
 		synths[ID].param[9].min   = 0.0;
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[10].name  = "mod freq";
-		synths[ID].param[10].value = 40.0f;
+		synths[ID].param[10].value = 49.0f;
 		synths[ID].param[10].min   = 0;
 		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -235,12 +235,12 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[15].name  = "  SIZE           ";
-		synths[ID].param[15].value = 8.0f;
+		synths[ID].param[15].value = 15.0f;
 		synths[ID].param[15].min   = 1.0f;
 		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[16].name  = "feedback";
-		synths[ID].param[16].value = 9.0f;
+		synths[ID].param[16].value = 11.0f;
 		synths[ID].param[16].min   = 0.0f;
 		synths[ID].param[16].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -260,7 +260,7 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[19].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[20].name  = "spacetime";
-		synths[ID].param[20].value = 33.0f;
+		synths[ID].param[20].value = 61.0f;
 		synths[ID].param[20].min   = 0.0f;
 		synths[ID].param[20].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -270,7 +270,7 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[21].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[22].name  = "loop type";
-		synths[ID].param[22].value = 0.0f;
+		synths[ID].param[22].value = 3.0f;
 		synths[ID].param[22].min   = 0.0f;
 		synths[ID].param[22].max   = 3.0f;
 		return;
@@ -394,9 +394,9 @@ void Synth::FMPaint( bool init ){
 		last = x;
 	}
 	// apply reverb  
-  if( instrument.reverb.size > 0.04 ){    // avoid comb effect
+  if( controls.spacetime > 0.04 ){    // avoid comb effect
 		float* smpout;
-		int size = (int)(instrument.reverb.size*50000.0);
+		int size = (int)(controls.spacetime*50000.0);
 		// apply reverb 
 		int outlength = Convolver::reverb( smpin, &smpout, frames, size );
 

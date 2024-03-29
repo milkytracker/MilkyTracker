@@ -35,7 +35,7 @@
 #include "ScrollBar.h"
 #include "Slider.h"
 #include "Seperator.h"
-#include "EQConstants.h"
+#include "fx/EQConstants.h"
 #include "FilterParameters.h"
 
 DialogEQ::DialogEQ(PPScreen* screen, 

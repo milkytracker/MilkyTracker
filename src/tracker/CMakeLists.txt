@@ -37,12 +37,12 @@ add_executable(tracker
     DialogWithValues.cpp
     DialogZap.cpp
     DialogSliders.cpp
-    EQConstants.cpp
+    fx/EQConstants.cpp
     EditorBase.cpp
     EnvelopeContainer.cpp
     EnvelopeEditor.cpp
     EnvelopeEditorControl.cpp
-    Equalizer.cpp
+    fx/Equalizer.cpp
     FileExtProvider.cpp
     FileIdentificator.cpp
     GlobalColorConfig.cpp
@@ -89,7 +89,6 @@ add_executable(tracker
     SectionUpperLeft.cpp
     SongLengthEstimator.cpp
     SystemMessage.cpp
-    fx/Reverb.cpp
     fx/Filter.cpp
     Synth.cpp
     Synths.cpp
@@ -131,13 +130,13 @@ add_executable(tracker
     DialogWithValues.h
     DialogZap.h
     DialogSliders.h
-    EQConstants.h
+    fx/EQConstants.h
     EditModes.h
     EditorBase.h
     EnvelopeContainer.h
     EnvelopeEditor.h
     EnvelopeEditorControl.h
-    Equalizer.h
+    fx/Equalizer.h
     FileExtProvider.h
     FileIdentificator.h
     FileTypes.h
@@ -162,7 +161,6 @@ add_executable(tracker
     RecPosProvider.h
     RecorderLogic.h
     ResamplerHelper.h
-    fx/Reverb.h
     fx/Filter.h
     Synth.h
 	  SynthFM.h

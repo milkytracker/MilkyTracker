@@ -32,12 +32,8 @@
 #include "SimpleVector.h"
 #include "XModule.h"
 #include "VRand.h"
-#include "Equalizer.h"
-#include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
-#include "fx/Reverb.h"
-#include "fx/Filter.h"
 #include "PlayerMaster.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
@@ -313,7 +309,7 @@ SampleEditor::SampleEditor() :
 	memset(&lastSample, 0, sizeof(lastSample));
 
 	// sampleRate is not perfect (ideally get this from settingsDatabase)
-    synth = new Synth(PlayerMaster::getPreferredSampleRate());
+  synth = new Synth(PlayerMaster::getPreferredSampleRate());
 }
 
 SampleEditor::~SampleEditor()
@@ -1843,7 +1839,6 @@ void SampleEditor::tool_scaleSample(const FilterParameters* par)
 	
 	prepareUndo();
 
-	
 	float startScale = par->getParameter(0).floatPart / 100.0f;
 	float endScale = par->getNumParameters() == 1 ? startScale : par->getParameter(1).floatPart / 100.0f;
 	
@@ -3717,7 +3712,7 @@ void SampleEditor::tool_delay(const FilterParameters* par)
 
 void SampleEditor::tool_synth(const FilterParameters* par)
 {
-	preFilter(&SampleEditor::tool_delay, par);
+	preFilter(&SampleEditor::tool_synth, par);
 
 	prepareUndo();
 

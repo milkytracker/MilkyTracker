@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "fx/Filter.h"
-#include "fx/Reverb.h"
 
 #define ECHO_BUFFER_SIZE 96000 // 2 seconds @ 48 kHz
 	
@@ -87,7 +86,6 @@ typedef struct fm_t
     adsr_t adsr;
 	multifilter_t filter;
 	multifilter_state_t filter0;
-	reverb_t reverb;
 	echo_t echo;
 	float feedback;
 } fm_t;

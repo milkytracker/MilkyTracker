@@ -134,9 +134,6 @@ void SynthFM::instrument_control(fm_t *instrument, const fm_control_t *control, 
 		control->filter_resonance,
 		control->filter_gain);
 
-	if( instrument->reverb.size != control->spacetime ){
-		instrument->reverb.size   = control->spacetime;
-	}
 	instrument->echo.delay_samples = control->echo_delay_samples;
 	instrument->echo.karplustrong = control->echo_karplustrong;
     instrument->echo.feedback = control->echo_feedback;
