@@ -126,6 +126,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Delay", MenuCommandIDDelay);
 	subMenuFX->addEntry("Reverb", MenuCommandIDReverb);
+	subMenuFX->addEntry("Vocoder", MenuCommandIDVocode);
 	subMenuFX->addEntry("Timestretch", MenuCommandIDTimeStretch);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Filter" PPSTR_PERIODS, MenuCommandIDFilter);
@@ -1897,6 +1898,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDMTBoost:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeMTBoost);
+			break;
+
+		case MenuCommandIDVocode:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeVocode);
 			break;
 
 		case MenuCommandIDReverb:

@@ -1,6 +1,9 @@
 /*
  *  tracker/SampleEditor.cpp
  *
+ *  vocode(): GPL /Copyright 2008-2011 David Robillard <http://drobilla.net>
+ *  vocode(): GPL /Copyright 1999-2000 Paul Kellett (Maxim Digital Audio)
+ *
  *  Copyright 2009 Peter Barth
  *
  *  This file is part of Milkytracker.
@@ -3732,4 +3735,213 @@ void SampleEditor::tool_synth(const FilterParameters* par)
   finishUndo();
 
   postFilter();
+}
+
+void SampleEditor::tool_vocodeSample(const FilterParameters* par)
+{
+
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_vocodeSample, par);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	pp_int32 cLength = clipBoard->getWidth();
+	pp_int32 sLength = sEnd - sStart;
+	
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	///global internal variables
+	pp_int32 i;
+	const pp_int32 bands = 8 * (int)par->getParameter(0).floatPart;
+	pp_int32  swap;       //input channel swap
+	float gain;       //output level
+	float thru = 100.0f / par->getParameter(3).floatPart;
+	float high = 100.0f / par->getParameter(4).floatPart;
+	float q = 100.0f / par->getParameter(5).floatPart;
+	float kout; //downsampled output
+	pp_int32  kval; //downsample counter
+	pp_int32  nbnd; //number of bands
+
+	float param[7];
+	// SANE DEFAULTS
+	param[0] = 0.0f;   //input select
+  param[1] = 0.0;
+	param[2] = par->getParameter(3).floatPart / 100.0f; // 0.40f;  //hi thru
+	param[3] = par->getParameter(4).floatPart / 50.0f; // 0.40f;  // hi freq 
+	param[4] = (1.0f / 9.0)* par->getParameter(1).floatPart; // envelope
+	param[5] = par->getParameter(5).floatPart / 100.0f; // 0.5f;   // filter q
+	param[6] = 1.0f; 
+
+  printf("bands = %i env = %f hithru=%f hf=%f q=%f out=%f\n",bands, param[4], param[2], param[3], param[5], param[6] );
+	
+
+	//filter coeffs and buffers - seems it's faster to leave this global than make local copy 
+	float f[bands][13]; //[0-8][0 1 2 | 0 1 2 3 | 0 1 2 3 | val rate]
+                        //  #   reson | carrier |modulator| envelope
+	// init 
+	double tpofs = 6.2831853 / XModule::getc4spd(sample->relnote, sample->finetune); /* FIXME somehow guess samplerate */
+	double rr, th; //, re;
+	float sh;
+
+	if( bands == 8){
+		nbnd = 8;
+		//re=0.003f;
+		f[1][2] = 3000.0f;
+		f[2][2] = 2200.0f;
+		f[3][2] = 1500.0f;
+		f[4][2] = 1080.0f;
+		f[5][2] = 700.0f;
+		f[6][2] = 390.0f;
+		f[7][2] = 190.0f;
+		param[1] = 0.40f + (param[4] * 0.6);  //output dB
+	}
+	else
+	{
+		nbnd = 16;
+		//re=0.0015f;
+		f[1][2] = 5000.0f; //+1000
+		f[2][2] = 4000.0f; //+750
+		f[3][2] = 3250.0f; //+500
+		f[4][2] = 2750.0f; //+450
+		f[5][2] = 2300.0f; //+300
+		f[6][2] = 2000.0f; //+250
+		f[7][2] = 1750.0f; //+250
+		f[8][2] = 1500.0f; //+250
+		f[9][2] = 1250.0f; //+250
+		f[10][2] = 1000.0f; //+250
+		f[11][2] = 750.0f; //+210
+		f[12][2] = 540.0f; //+190
+		f[13][2] = 350.0f; //+155
+		f[14][2] = 195.0f; //+100
+		f[15][2] = 95.0f;
+		param[1] = 0.40f;  //output dB
+	}
+
+	for (i = 0; i < nbnd; i++) for (int j = 3; j < 12; j++) f[i][j] = 0.0f; //zero band filters and envelopes
+	kout = 0.0f;
+	kval = 0;
+	swap = (int)par->getParameter(2).floatPart; 
+	gain = (float)pow(10.0f, 2.0f * param[1] - 3.0f * param[5] - 2.0f);
+
+	thru = (float)pow(10.0f, 0.5f + 2.0f * param[1]);
+	high = param[3] * param[3] * param[3] * thru;
+	thru *= param[2] * param[2] * param[2];
+
+	float a, b, c, d, o = 0.0f, aa, bb, oo = kout, g = gain, ht = thru, hh = high, tmp;
+	pp_int32 k = kval, sw = swap, nb = nbnd;
+
+	if (param[4] < 0.05f) //freeze
+	{
+		for (i = 0; i < nbnd; i++) f[i][12] = 0.0f;
+	}
+	else
+	{
+		f[0][12] = (float)pow(10.0, -1.7 - 2.7f * param[4]); //envelope speed
+
+		rr = 0.022f / (float)nbnd; //minimum proportional to frequency to stop distortion
+		for (i = 1; i < nbnd; i++)
+		{
+			f[i][12] = (float)(0.025 - rr * (double)i);
+			if (f[0][12] < f[i][12]) f[i][12] = f[0][12];
+		}
+		f[0][12] = 0.5f * f[0][12]; //only top band is at full rate
+	}
+
+	rr = 1.0 - pow(10.0f, -1.0f - 1.2f * param[5]);
+	sh = (float)pow(2.0f, 3.0f * param[6] - 1.0f); //filter bank range shift
+
+	for (i = 1; i < nbnd; i++)
+	{
+		f[i][2] *= sh;
+		th = acos((2.0 * rr * cos(tpofs * f[i][2])) / (1.0 + rr * rr));
+		f[i][0] = (float)(2.0 * rr * cos(th)); //a0
+		f[i][1] = (float)(-rr * rr);           //a1
+					//was .98
+		f[i][2] *= 0.96f; //shift 2nd stage slightly to stop high resonance peaks
+		th = acos((2.0 * rr * cos(tpofs * f[i][2])) / (1.0 + rr * rr));
+		f[i][2] = (float)(2.0 * rr * cos(th));
+	}
+
+	/* process */
+	for (pp_int32 si = 0; si < sLength; si++) {
+		pp_int32 j  = si % clipBoard->getWidth();               // repeat carrier
+		pp_int16 s  = clipBoard->getSampleWord((pp_int32)j);   // get clipboard sample word
+		float fclip = s < 0 ? (s / 32768.0f) : (s / 32767.0f); // convert to float
+
+		a = this->getFloatSampleFromWaveform(si); // carrier/speech
+		b = fclip;                                // modulator/synth 
+		
+		if (sw == 0) { tmp = a; a = b; b = tmp; } //swap channels?
+
+		tmp = a - f[0][7]; //integrate modulator for HF band and filter bank pre-emphasis
+		f[0][7] = a;
+		a = tmp;
+
+		if (tmp < 0.0f) tmp = -tmp;
+		f[0][11] -= f[0][12] * (f[0][11] - tmp);      //high band envelope
+		o = f[0][11] * (ht * a + hh * (b - f[0][3])); //high band + high thru
+
+		f[0][3] = b; //integrate carrier for HF band
+
+		if (++k & 0x1) //this block runs at half sample rate
+		{
+			oo = 0.0f;
+			aa = a + f[0][9] - f[0][8] - f[0][8];  //apply zeros here instead of in each reson
+			f[0][9] = f[0][8];  f[0][8] = a;
+			bb = b + f[0][5] - f[0][4] - f[0][4];
+			f[0][5] = f[0][4];  f[0][4] = b;
+
+			for (i = 1; i < nb; i++) //filter bank: 4th-order band pass
+			{
+				tmp = f[i][0] * f[i][3] + f[i][1] * f[i][4] + bb;
+				f[i][4] = f[i][3];
+				f[i][3] = tmp;
+				tmp += f[i][2] * f[i][5] + f[i][1] * f[i][6];
+				f[i][6] = f[i][5];
+				f[i][5] = tmp;
+
+				tmp = f[i][0] * f[i][7] + f[i][1] * f[i][8] + aa;
+				f[i][8] = f[i][7];
+				f[i][7] = tmp;
+				tmp += f[i][2] * f[i][9] + f[i][1] * f[i][10];
+				f[i][10] = f[i][9];
+				f[i][9] = tmp;
+
+				if (tmp < 0.0f) tmp = -tmp;
+				f[i][11] -= f[i][12] * (f[i][11] - tmp);
+				oo += f[i][5] * f[i][11];
+			}
+		}
+		o += oo * g; //effect of interpolating back up to Fs would be minimal (aliasing >16kHz)
+
+		setFloatSampleInWaveform(si, o * (par->getParameter(6).floatPart / 100.0f) );
+	}
+
+	finishUndo();
+
+	postFilter();
 }
