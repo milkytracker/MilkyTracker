@@ -173,12 +173,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
 
     case ToolHandlerResponder::SampleToolTypeSaturate:{
         TXMSample *sample = sampleEditor->getSample();
-        dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 3, sampleEditor, &SampleEditor::tool_saturate );
+        dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 5, sampleEditor, &SampleEditor::tool_saturate );
         DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
         float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 10.0f;
         sliders->initSlider(0,1,100,value,"Harmonics");
         sliders->initSlider(1,0,100,0,"Bandpass");
-        sliders->initSlider(2,1,100,100,"Dry \x1d Wet");
+        sliders->initSlider(2,0,100,20,"Compand");
+        sliders->initSlider(3,1,100,100,"Dry \x1d Wet");
+        sliders->initSlider(4,0.0f, 1000.0f, 150.0f,"Volume");
         break;
     }
 
@@ -199,18 +201,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
           return false;
         }
         TXMSample *sample = sampleEditor->getSample();
-        dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Vocode (with clipboard)", 7, sampleEditor, &SampleEditor::tool_vocodeSample );
+        dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Vocode (with clipboard)", 6, sampleEditor, &SampleEditor::tool_vocodeSample );
         DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-        PPString str = "8";
-        str.append("\x1d");
-        str.append("16 bands");
-        sliders->initSlider(0,1,2,1,str);
-        sliders->initSlider(1,1,9,1,"envelope");
-        sliders->initSlider(2,0,1,0,"swap samples");
-        sliders->initSlider(3,0,100,40,"high amp");
-        sliders->initSlider(4,0,100,40,"high band");
-        sliders->initSlider(5,0,100,50,"high q");
-        sliders->initSlider(6,0,100,40,"volume");
+        sliders->initSlider(0,1,9,5,"envelope");
+        sliders->initSlider(1,0,1,1,"swap samples");
+        sliders->initSlider(2,0,100,50,"high amp");
+        sliders->initSlider(3,1,100,50,"high band");
+        sliders->initSlider(4,0,100,0,"high q");
+        sliders->initSlider(5,0,100,50,"volume");
         break;
     }
 

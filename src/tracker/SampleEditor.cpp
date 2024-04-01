@@ -1,8 +1,8 @@
 /*
  *  tracker/SampleEditor.cpp
  *
- *  vocode(): GPL /Copyright 2008-2011 David Robillard <http://drobilla.net>
- *  vocode(): GPL /Copyright 1999-2000 Paul Kellett (Maxim Digital Audio)
+ *  tool_vocode(): GPL /Copyright 2008-2011 David Robillard <http://drobilla.net>
+ *  tool_vocode(): GPL /Copyright 1999-2000 Paul Kellett (Maxim Digital Audio)
  *
  *  Copyright 2009 Peter Barth
  *
@@ -3433,9 +3433,12 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
 	float freq = par->getParameter(1).floatPart / 100.0;
 	freq = (freq*freq*freq) * float(samplerate/2); // curve
-	float dry = fmin( 1.0f - (par->getParameter(2).floatPart / 100.0f  ), 0.5 ) * 2.0f;
-	float wet = ( par->getParameter(2).floatPart / 100.0f);
+	float dry = fmin( 1.0f - (par->getParameter(3).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+	float wet = ( par->getParameter(3).floatPart / 100.0f);
+	float compand = ( par->getParameter(2).floatPart / 25.0f);
+	float volume  = par->getParameter(4).floatPart / 100.0f;
 	float scale;
+
 	// init filter
 	multifilter_t filter;
 	multifilter_state_t filter0;
@@ -3460,9 +3463,12 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	{
 		in  = getFloatSampleFromWaveform(i);                  // normalized amp input
 		out = Filter::multifilter(&filter, &filter0, in );    // bandpass
+    if( compand >= 1.0 ){
+      out = tanh( out * compand );
+    }
 		out = sin( (out*scale) * foldback ) / foldback;       // sinusoid foldback & denormalize 
 		out = (out*wet)  + (in*dry);					      //
-		setFloatSampleInWaveform(i, out * peak );   // full harmonic fold complete
+		setFloatSampleInWaveform(i, out * peak * volume );   // full harmonic fold complete
 	}
 
 	finishUndo();
@@ -3737,9 +3743,9 @@ void SampleEditor::tool_synth(const FilterParameters* par)
   postFilter();
 }
 
+
 void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 {
-
 	if (isEmptySample())
 		return;
 
@@ -3776,12 +3782,12 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 
 	///global internal variables
 	pp_int32 i;
-	const pp_int32 bands = 8 * (int)par->getParameter(0).floatPart;
-	pp_int32  swap;       //input channel swap
+	const pp_int32 bands = 8; // 16 is buggy 
+	pp_int32  swap;   //input channel swap
 	float gain;       //output level
-	float thru = 100.0f / par->getParameter(3).floatPart;
-	float high = 100.0f / par->getParameter(4).floatPart;
-	float q = 100.0f / par->getParameter(5).floatPart;
+	float thru = 100.0f / par->getParameter(2).floatPart;
+	float high = 100.0f / par->getParameter(3).floatPart;
+	float q = 100.0f / par->getParameter(4).floatPart;
 	float kout; //downsampled output
 	pp_int32  kval; //downsample counter
 	pp_int32  nbnd; //number of bands
@@ -3790,14 +3796,11 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 	// SANE DEFAULTS
 	param[0] = 0.0f;   //input select
   param[1] = 0.0;
-	param[2] = par->getParameter(3).floatPart / 100.0f; // 0.40f;  //hi thru
-	param[3] = par->getParameter(4).floatPart / 50.0f; // 0.40f;  // hi freq 
-	param[4] = (1.0f / 9.0)* par->getParameter(1).floatPart; // envelope
-	param[5] = par->getParameter(5).floatPart / 100.0f; // 0.5f;   // filter q
+	param[2] = par->getParameter(2).floatPart / 100.0f; // 0.40f;  //hi thru
+	param[3] = par->getParameter(3).floatPart / 50.0f; // 0.40f;  // hi freq 
+	param[4] = (1.0f / 9.0)* par->getParameter(0).floatPart; // envelope
+	param[5] = par->getParameter(4).floatPart / 100.0f; // 0.5f;   // filter q
 	param[6] = 1.0f; 
-
-  printf("bands = %i env = %f hithru=%f hf=%f q=%f out=%f\n",bands, param[4], param[2], param[3], param[5], param[6] );
-	
 
 	//filter coeffs and buffers - seems it's faster to leave this global than make local copy 
 	float f[bands][13]; //[0-8][0 1 2 | 0 1 2 3 | 0 1 2 3 | val rate]
@@ -3844,7 +3847,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 	for (i = 0; i < nbnd; i++) for (int j = 3; j < 12; j++) f[i][j] = 0.0f; //zero band filters and envelopes
 	kout = 0.0f;
 	kval = 0;
-	swap = (int)par->getParameter(2).floatPart; 
+	swap = (int)par->getParameter(1).floatPart; 
 	gain = (float)pow(10.0f, 2.0f * param[1] - 3.0f * param[5] - 2.0f);
 
 	thru = (float)pow(10.0f, 0.5f + 2.0f * param[1]);
@@ -3938,7 +3941,7 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 		}
 		o += oo * g; //effect of interpolating back up to Fs would be minimal (aliasing >16kHz)
 
-		setFloatSampleInWaveform(si, o * (par->getParameter(6).floatPart / 100.0f) );
+		setFloatSampleInWaveform(si, o * (par->getParameter(5).floatPart / 100.0f) );
 	}
 
 	finishUndo();

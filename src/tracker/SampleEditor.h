@@ -39,6 +39,7 @@
 #include "fx/Equalizer.h"
 #include "fx/EQConstants.h"
 #include "fx/Convolver.h"
+#include <math.h>
 
 struct TXMSample;
 
