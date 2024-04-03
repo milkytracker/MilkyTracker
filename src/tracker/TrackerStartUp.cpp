@@ -37,6 +37,7 @@
 #include "PlayerMaster.h"
 #include "SystemMessage.h"
 #include "version.h"
+#include <cstdlib>
 
 // Logo picture
 #if defined(__EXCLUDE_BIGLOGO__) || defined(__LOWRES__)
