@@ -1,6 +1,6 @@
 
 /*
- *  tracker/Synth.h 
+ *  tracker/Synths.cpp 
  *
  *  Copyright 2023 Leon van Kammen (coderofsalvation)
  * 
@@ -45,6 +45,7 @@
 void Synth::init(){
 	FMPaint(true);
 	CyclePaint(true); 
+	ASCIISynthImport( preset[0] ); // initialize with first preset
 }
 
 void Synth::process( MSynth *s, PPString *preset ){

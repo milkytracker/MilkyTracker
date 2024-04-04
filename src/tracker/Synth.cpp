@@ -63,7 +63,7 @@ bool Synth::ASCIISynthImport( PPString preset ) {
 void Synth::reset(){
   for( int i = 0; i < SYN_PARAMS_MAX; i++){ 
     synth->param[i].value = 0.0f;
-    synth->param[i].name  = PPString("");
+    synth->param[i].name = PPString("");
   }
 }
 
@@ -95,14 +95,31 @@ void Synth::setParam( int i, float v ){
   synth->param[i].value = v;
 } 
 
+void Synth::random(){
+	pp_uint32 pr = rand() % SYNTH_PRESETS;
+	ASCIISynthImport( preset[pr] );
+    FilterParameters par(synth->nparams);
+    pp_int32 i;
+    for( i = 0; i < synth->nparams; i++ ){
+      par.setParameter(i, FilterParameters::Parameter( synth->param[i].value ) );
+    }
+	//TXMSample *s = prepareSample(44100*2,false);
+	if( !sampleEditor->isEmptySample() ){
+		sampleEditor->clearSample();
+	}
+	sampleEditor->tool_synth(&par);
+}
+
 TXMSample * Synth::prepareSample( pp_uint32 duration, bool force){
-  TXMSample *sample = sampleEditor->getSample();
+  TXMSample *sample;
   if( sampleEditor->isEmptySample() || force){
     FilterParameters par(2);
     par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
     par.setParameter(1, FilterParameters::Parameter( 16 ) );
     sampleEditor->tool_newSample(&par);
+	sample = sampleEditor->getSample();
   }else{
+	sample = sampleEditor->getSample();
 	if( duration > sample->samplen ){
 		sampleEditor->selectionStart = sample->samplen-1;
 		sampleEditor->selectionEnd   = sample->samplen-1;

@@ -33,8 +33,8 @@
 #define SYN_PREFIX_V1 "M1"                           // samplename 'M<version><params>' hints XM editors that sample was created with milkysynth <version> using <params> 
 #define SYN_PREFIX_CHARS 2                           // "M*"
 #define SYN_PARAMS_MAX MP_MAXTEXT-SYN_PREFIX_CHARS   // max samplechars minus "M*" (32-2=30)     
-#define SYN_OFFSET_CHAR 33                           // printable chars only 33..127 = 0..91 (this allows ascii copy/paste of synths in the future)
-#define SYN_PARAM_MAX_VALUE 92                       // 92 printable chars
+#define SYN_OFFSET_CHAR 40                           // printable chars only ascii (dec) 40..126 = 0..86 
+#define SYN_PARAM_MAX_VALUE 86                       // 86 printable chars (which allows textual ascii copy/paste of synths in the future)
 #define SYN_PARAM_NORMALIZE(x) (1.0f/(float)SYN_PARAM_MAX_VALUE)*x
 #define NOTE2HZ(m) (440.0 * pow(2, (m - 69) / 12.0)) 
 #define NOTE_START 60                                // C3
@@ -43,6 +43,8 @@
 #define SYNTH_FM_PAINT    0                  //
 #define SYNTH_CYCLE_PAINT 1                  // incremental numbers
 #define SYNTH_LAST        SYNTH_CYCLE_PAINT  // update this when adding a synth
+											 //
+#define SYNTH_PRESETS 7
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -80,6 +82,18 @@ class Synth
     PPScreen *screen;
     DialogResponder *dr;
 
+	// SYNTH PRESETS
+	PPString preset[SYNTH_PRESETS] = { // update PRESETS_TOTAL when adding synths
+		"M1(N,(5,GD)v3)(*5/.(Xt@(*(((((((",
+		"M1(J+85,G])~+*~)()<,*{VM)(((((((",
+		"M1(?+85,GI)~))U*()+,*{~])(((((((",
+		"M1(V)()(**,1,-(.65A(*{((((((((((",
+		"M1(~*()(0_-1,-~(65A(*{>|((((((((",
+		"M1(R+@2(<[-1+)j)(5>(>}Ez)(((((((",
+		"M1(T+89(:<-6h-~.(5(~0}~l)((((((("
+	};
+
+
   public:
     Synth(int samplerate);
     ~Synth();
@@ -95,8 +109,10 @@ class Synth
 
     void reset();
     void init();
+	void random();
     void process( MSynth *s, PPString *preset );
 	TXMSample * prepareSample(pp_uint32 duration, bool force = false);
+	void setSampleEditor( SampleEditor *s ){ this->sampleEditor = s; }
 
     // synths
     void CyclePaint( bool init = false );

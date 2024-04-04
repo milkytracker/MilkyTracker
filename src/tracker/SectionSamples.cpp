@@ -186,6 +186,13 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_SAMPLE_SYNTH_RAND:
+			{
+				sampleEditor->getSynth()->setSampleEditor(sampleEditor);
+				sampleEditor->getSynth()->random();
+				break;
+			}
+
 			case BUTTON_SAMPLE_PLAY_RANGE:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
@@ -520,22 +527,24 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(conSize1,dHeight), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+4), "C-5", false));		
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + (bHeight*2)+4), "C-5", false));		
 
 	pp_int32 size = (pp_int32)(conSize1*0.2183908045977f);
 	pp_int32 size2 = (pp_int32)(conSize1*0.4367816091954f);
 	pp_int32 size3 = (pp_int32)(conSize1/*0.2988505747126f*/*0.3218390804598f);
 
-	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText( screen->getClassic() ? "Up" : "\x18" );
+	PPPoint locUp  = screen->getClassic() ? PPPoint(x2+size2, y2+2+bHeight) : PPPoint(x2+size+size2+1, y2+2+bHeight*2);
+	PPSize  sizeUp = screen->getClassic() ? PPSize(size, bHeightm)          : PPSize(size3, bHeightm);
+	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, locUp, sizeUp ); 
+	button->setText( screen->getClassic() ? "Up" : "\x1a" );
 	container->addControl(button);
 	
-	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm+1));
-	button->setText( screen->getClassic() ? "Dn" : "\x19" );
+	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm));
+	button->setText( screen->getClassic() ? "Dn" : "\x1b" );
 	container->addControl(button);
 
-	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+2 + size+size2-1, y2+2+bHeight*2);
-	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size3, bHeightm+1);
+	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+size, y2+2+bHeight);
+	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size2, bHeightm);
 	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, locStop, sizeStop);
 	button->setText( screen->getClassic() ? "Stop" : "\xa7" );
 	container->addControl(button);
@@ -545,9 +554,21 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	if( !screen->getClassic() ) button->setColor(TrackerConfig::colorHighLight_1);
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_SAMPLE_SYNTH, screen, this, PPPoint(x2+2 , y2+2), PPSize(size3*2, bHeightm));
+	button = new PPButton(BUTTON_SAMPLE_SYNTH, screen, this, PPPoint(x2+2 , y2+2), PPSize((size3*2)-1, bHeightm));
 	button->setText( "synth" );
+	if( !screen->getClassic() ){
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+	}
 	container->addControl(button);
+
+	if( !screen->getClassic() ){
+		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize(size-1, bHeightm));
+		button->setText( "\xa9" );
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+		container->addControl(button);
+	}
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
 	button->setText( screen->getClassic() ? "Wav" : "\x10" );
