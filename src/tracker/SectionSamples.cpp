@@ -190,6 +190,8 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				sampleEditor->getSynth()->setSampleEditor(sampleEditor);
 				sampleEditor->getSynth()->random();
+        tracker.updateSamplesListBox(false);
+        refresh();
 				break;
 			}
 
