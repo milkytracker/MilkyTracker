@@ -545,8 +545,8 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	button->setText( screen->getClassic() ? "Dn" : "\x1b" );
 	container->addControl(button);
 
-	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+size, y2+2+bHeight);
-	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size2, bHeightm);
+	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+size+(size2/2)+1, y2+2+bHeight);
+	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size2/2, bHeightm);
 	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, locStop, sizeStop);
 	button->setText( screen->getClassic() ? "Stop" : "\xa7" );
 	container->addControl(button);
@@ -565,7 +565,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	if( !screen->getClassic() ){
-		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize(size-1, bHeightm));
+		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize( size-1, bHeightm));
+		button->setText( "\x0d" );
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+		container->addControl(button);
+
+		button = new PPButton(BUTTON_SAMPLE_SYNTH_PROMPT, screen, this, PPPoint(x2+2+ (size-1) , y2+2+bHeight), PPSize( size-1, bHeightm));
 		button->setText( "\xa9" );
 		button->setColor(TrackerConfig::colorSampleEditorWaveform);
 		button->setTextColor(TrackerConfig::colorThemeMain);
