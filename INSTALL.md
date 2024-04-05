@@ -82,6 +82,9 @@ line.
 Step 2 varies depending on the target OS/build system.
 On Linux and macOS (when using GNU make):
 
+The above steps can be accomplished by running `build.sh`. This will also
+attempt to generate a release package appropriate to the current system.
+
 ```
 $ make
 ```
@@ -101,5 +104,5 @@ recommended way of obtaining these is by using Homebrew or MacPorts.
 - libtool
 - xmlto
 
-The correct way to build a release .DMG for macOS, including
-special document icons, is to run the `build_macos.sh` script.
+The correct way to build a release .DMG for macOS is to run the `build.sh`
+script.
