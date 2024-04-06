@@ -90,7 +90,9 @@
 		case kVK_ANSI_KeypadEnter:		return VK_DECIMAL;
 			
 		// Modifier keys
-		case kVK_Command:		return VK_CONTROL;
+		case kVK_Command:
+		case kVK_Control:
+		case kVK_RightControl:	return VK_CONTROL;
 		case kVK_Option:		return VK_ALT;
 		case kVK_RightCommand:	return VK_RMENU;	// MilkyTracker uses VK_RMENU for Play Pattern
 		case kVK_RightOption:	return VK_RCONTROL; // and VK_RCONTROL for Play Song

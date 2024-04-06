@@ -640,7 +640,16 @@ static BOOL drawFocusRing;
 		case kVK_RightCommand:
 			keyDown = flags & NSCommandKeyMask ? YES : NO;
 			break;
-			
+
+		// Control could RightControl if mapped to an alternative key (ie, Caps-Lock)
+		case kVK_Control:
+		case kVK_RightControl:
+			if (flags & NSEventModifierFlagControl)
+				setKeyModifier(KeyModifierCTRL);
+			else
+				clearKeyModifier(KeyModifierCTRL);
+			break;
+
 		// Only Left Option is used as a modifier
 		case kVK_Option:
 			if (flags & NSAlternateKeyMask)
