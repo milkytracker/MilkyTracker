@@ -3463,9 +3463,10 @@ void SampleEditor::tool_saturate(const FilterParameters* par)
 	{
 		in  = getFloatSampleFromWaveform(i);                  // normalized amp input
 		out = Filter::multifilter(&filter, &filter0, in );    // bandpass
-    if( compand >= 1.0 ){
-      out = tanh( out * compand );
-    }
+                                                          //
+		if( compand >= 1.0 ){                                 // we average with companded version  
+		  out = (out + tanh( out * compand ))/2.0;            // https://graphtoy.com/?f1(x,t)=(x%20+%20tanh(%20x%20*%205))/2
+		}
 		out = sin( (out*scale) * foldback ) / foldback;       // sinusoid foldback & denormalize 
 		out = (out*wet)  + (in*dry);					      //
 		setFloatSampleInWaveform(i, out * peak * volume );   // full harmonic fold complete

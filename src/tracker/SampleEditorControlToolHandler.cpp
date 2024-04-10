@@ -178,9 +178,9 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
         float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 10.0f;
         sliders->initSlider(0,1,100,value,"Harmonics");
         sliders->initSlider(1,0,100,0,"Bandpass");
-        sliders->initSlider(2,0,100,20,"Compand");
+        sliders->initSlider(2,0,150,50,"Compand");
         sliders->initSlider(3,1,100,100,"Dry \x1d Wet");
-        sliders->initSlider(4,0.0f, 1000.0f, 150.0f,"Volume");
+        sliders->initSlider(4,0.0f, 1000.0f, 100.0f,"Volume");
         break;
     }
 
