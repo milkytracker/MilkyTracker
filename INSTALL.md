@@ -106,3 +106,14 @@ recommended way of obtaining these is by using Homebrew or MacPorts.
 
 The correct way to build a release .DMG for macOS is to run the `build.sh`
 script.
+
+## Environment flags
+
+| env var       | info                                         |
+|---------------|----------------------------------------------|
+| NO_SCALE=1    | disabling resizing/scaling UI                |
+| SCALE_NEAREST | sharper pixels (default linear filtering is more blurry) for resizing window|
+| MIDI_IN=2     | select MIDI port 2 (default=0) for midi input (requires portmidi compiled)|
+| HOME          | directory for home-button in filebrowser     |
+| NO_OPENGL     | disable hardware acceleration (embedded devices e.g. |
+| XDG_CONFIG_HOME | for linux: specifies where to store config |

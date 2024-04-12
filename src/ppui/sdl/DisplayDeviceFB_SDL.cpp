@@ -87,13 +87,9 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	SDL_RenderSetLogicalSize(theRenderer, realWidth, realHeight);
 #endif
 
-#ifdef HIDPI_SUPPORT
-	// Use linear filtering for the scaling (make this optional eventually)
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-#else 
-	// prefer sharp pixel-art/fonts over blurryness when resizing window
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-#endif
+	// Use linear filtering for the scaling 
+	// or..some users prefer sharper pixel-art/fonts over blurryness when enlarging/resizing window
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, getenv("SCALE_NEAREST") != NULL ? "nearest" : "linear" );
 
 	// Create surface for rendering graphics
 	theSurface = SDL_CreateRGBSurface(0, realWidth, realHeight, bpp == -1 ? 32 : bpp, 0, 0, 0, 0);
