@@ -31,12 +31,13 @@ void RecPosProvider::getPosition(pp_int32& order, pp_int32& row)
 		order = -1;
 }
 
-void RecPosProvider::getPosition(pp_int32& order, pp_int32& row, pp_int32& ticker)
+bool RecPosProvider::getPosition(pp_int32& order, pp_int32& row, pp_int32& ticker)
 {
 	playerController.getPosition((mp_sint32&)order, (mp_sint32&)row, (mp_sint32&)ticker);
 	if (playerController.isPlayingPattern())
 		order = -1;
 	
+	bool rounded = false;
 	if (roundToClosestRow)
 	{
 		mp_sint32 speed, bpm;
@@ -44,6 +45,7 @@ void RecPosProvider::getPosition(pp_int32& order, pp_int32& row, pp_int32& ticke
 		// snap position to the closest row
 		if (ticker >= speed / 2)
 		{
+			rounded = true;
 			ticker = 0;
 			
 			ModuleEditor* moduleEditor = playerController.getModuleEditor();
@@ -77,4 +79,6 @@ void RecPosProvider::getPosition(pp_int32& order, pp_int32& row, pp_int32& ticke
 			}
 		}
 	}
+
+	return rounded;
 }
