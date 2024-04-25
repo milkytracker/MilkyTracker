@@ -167,6 +167,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_MULTICHN_EDIT,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY,
+	CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW,
 
 	// Page II
 	CHECKBOX_SETTINGS_HEXCOUNT,
@@ -772,6 +773,14 @@ public:
         radioGroup->addItem("128");
         
         container->addControl(radioGroup);
+
+		y2+=65;
+		container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Bugfixes", true, true));
+
+		y2+=15;
+		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Round close. row:", checkBox, true));
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -791,6 +800,9 @@ public:
                 break;
                 
         }
+
+		v = settingsDatabase->restore("BUGFIX_ROUNDTOCLOSESTROW")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW))->checkIt(v!=0);
     }
     
 };
@@ -2029,6 +2041,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("BUGFIX_ROUNDTOCLOSESTROW", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}

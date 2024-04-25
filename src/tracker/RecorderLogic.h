@@ -55,6 +55,7 @@ private:
 	bool recordMode;
 	bool recordKeyOff;
 	bool recordNoteDelay;
+	bool roundToClosestRow;
 
 public:
 	RecorderLogic(Tracker& tracker);
@@ -70,6 +71,9 @@ public:
 
 	void setRecordNoteDelay(bool recordNoteDelay) { this->recordNoteDelay = recordNoteDelay; }
 	bool setRecordNoteDelay() const { return recordNoteDelay; }
+	
+	void setRoundToClosestRow(bool roundToClosestRow) { this->roundToClosestRow = roundToClosestRow; }
+	bool getRoundToClosestRow() const { return roundToClosestRow; }
 	
 	void reset();
 	

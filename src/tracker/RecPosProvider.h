@@ -36,6 +36,12 @@ public:
 	{
 	}
 	
+	RecPosProvider(PlayerController& playerController, bool roundToClosestRow) :
+		playerController(playerController),
+		roundToClosestRow(roundToClosestRow)
+	{
+	}
+	
 	void getPosition(pp_int32& order, pp_int32& row);
 	bool getPosition(pp_int32& order, pp_int32& row, pp_int32& ticker);	
  };

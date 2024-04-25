@@ -155,7 +155,7 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		}
 		
 		
-		RecPosProvider recPosProvider(*playerController);
+		RecPosProvider recPosProvider(*playerController, roundToClosestRow && !recordNoteDelay);
 		// key is not pressed, play note and remember key + channel + position within module
 		pp_int32 pos = -1, row = 0, ticker = 0;
 		bool roundedRow = false;
@@ -208,14 +208,9 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				if (ticker && recordNoteDelay)
 					patternEditor->writeDirectEffect(1, 0x3D, ticker > 0xf ? 0xf : ticker,
 													 chn, row, pos);
-				else if (roundedRow) {
-					pp_uint8 op = 0;
-					if (keyVolume != -1 && keyVolume >= 0 && keyVolume <= 255)
-						op = (pp_uint8)keyVolume;
-
-					patternEditor->writeDirectEffect(1, 0x80, op,
+				else if (roundedRow)
+					patternEditor->writeDirectEffect(1, 0x80, 0,
 													 chn, row, pos);
-				}
 				
 				if (keyVolume != -1 && keyVolume >= 0 && keyVolume <= 255)
 					patternEditor->writeDirectEffect(0, 0xC, (pp_uint8)keyVolume,
