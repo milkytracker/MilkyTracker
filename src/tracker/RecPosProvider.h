@@ -32,11 +32,18 @@ private:
 public:
 	RecPosProvider(PlayerController& playerController) :
 		playerController(playerController),
-		roundToClosestRow(false)
+		roundToClosestRow(true)
+	{
+	}
+	
+	RecPosProvider(PlayerController& playerController, bool roundToClosestRow) :
+		playerController(playerController),
+		roundToClosestRow(roundToClosestRow)
 	{
 	}
 	
 	void getPosition(pp_int32& order, pp_int32& row);
-	void getPosition(pp_int32& order, pp_int32& row, pp_int32& ticker);	
+	bool getPosition(pp_int32& order, pp_int32& row, pp_int32& ticker);	
+	void incrementRow(pp_int32& order, pp_int32& row);
  };
  

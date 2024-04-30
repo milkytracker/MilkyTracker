@@ -170,6 +170,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_MULTICHN_EDIT,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY,
+	CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW,
 
 	// Page II
 	CHECKBOX_SETTINGS_HEXCOUNT,
@@ -787,10 +788,10 @@ public:
         slider->setBarSize(8192);
         container->addControl(slider);
 
-		y2+=44;
-		PPCheckBox *checkBox = new PPCheckBox(CHECKBOX_SETTINGS_LIMITRESET, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Reset on mod.load", checkBox, true));
-		container->addControl(checkBox);
+        y2+=44;
+        PPCheckBox *checkBox = new PPCheckBox(CHECKBOX_SETTINGS_LIMITRESET, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Reset on mod.load", checkBox, true));
+        container->addControl(checkBox);
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -811,19 +812,19 @@ public:
                 
         }
 
-		PPStaticText *text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_LIMITDRIVE));
-		PPSlider *slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_LIMITDRIVE));
-		v = 0;
-		PPDictionaryKey *k = settingsDatabase->restore("LIMITDRIVE");
-		if( k != NULL ) v = k->getIntValue();
-		char buffer[30];
-		if( v == 0 ) sprintf(buffer, "disabled");
-		else         sprintf(buffer, "Drive: +%i", v);
-		text->setText(buffer);
-		slider->setCurrentValue(v);
+        PPStaticText *text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_LIMITDRIVE));
+        PPSlider *slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_LIMITDRIVE));
+        v = 0;
+        PPDictionaryKey *k = settingsDatabase->restore("LIMITDRIVE");
+        if( k != NULL ) v = k->getIntValue();
+        char buffer[30];
+        if( v == 0 ) sprintf(buffer, "disabled");
+        else         sprintf(buffer, "Drive: +%i", v);
+        text->setText(buffer);
+        slider->setCurrentValue(v);
 
-		v = settingsDatabase->restore("LIMITRESET")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LIMITRESET))->checkIt(v>0);
+        v = settingsDatabase->restore("LIMITRESET")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LIMITRESET))->checkIt(v>0);
     }
     
 };
@@ -1524,7 +1525,12 @@ public:
 		y2+=12;
 		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_ADVANCED_DND, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dnd:", checkBox, true));
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dragdrop:", checkBox, true));
+
+		y2+=15;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Rec closest row:", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -1546,6 +1552,9 @@ public:
 
 		v = settingsDatabase->restore("ADVANCEDDND")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_ADVANCED_DND))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("BUGFIX_ROUNDTOCLOSESTROW")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW))->checkIt(v!=0);
 	}
 
 };
@@ -2082,6 +2091,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("BUGFIX_ROUNDTOCLOSESTROW", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}

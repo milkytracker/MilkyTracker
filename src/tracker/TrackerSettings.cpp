@@ -218,6 +218,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("MULTICHN_RECORDKEYOFF", 1);
 	// disable note delay recording
 	settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", 0);
+	// enable rounding keyjazzed notes to closest row
+	settingsDatabase->store("BUGFIX_ROUNDTOCLOSESTROW", 0);
 	// Invert mousewheel?
 	settingsDatabase->store("INVERTMWHEEL", 0);
 	// Invert mousewheel zoom?  (normally wheelup zooms out: if inverted, wheelup zooms in)
@@ -602,6 +604,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("MULTICHN_RECORDNOTEDELAY") == 0)
 	{
 		recorderLogic->setRecordNoteDelay(v2 != 0);
+	}
+	else if (theKey->getKey().compareTo("BUGFIX_ROUNDTOCLOSESTROW") == 0)
+	{
+		recorderLogic->setRoundToClosestRow(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("INVERTMWHEEL") == 0)
 	{

@@ -155,13 +155,14 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		}
 		
 		
-		RecPosProvider recPosProvider(*playerController);
+		RecPosProvider recPosProvider(*playerController, roundToClosestRow && !recordNoteDelay);
 		// key is not pressed, play note and remember key + channel + position within module
 		pp_int32 pos = -1, row = 0, ticker = 0;
+		bool roundedRow = false;
 		
 		// if we are recording we are doing a query on the current position
 		if (isLiveRecording)
-			recPosProvider.getPosition(pos, row, ticker);
+			roundedRow = recPosProvider.getPosition(pos, row, ticker);
 		else
 		{
 			pos = row = -1;
@@ -207,11 +208,14 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				if (ticker && recordNoteDelay)
 					patternEditor->writeDirectEffect(1, 0x3D, ticker > 0xf ? 0xf : ticker,
 													 chn, row, pos);
+				else if (roundedRow)
+					patternEditor->writeDirectEffect(1, 0x80, 0,
+													 chn, row, pos);
 				
 				if (keyVolume != -1 && keyVolume >= 0 && keyVolume <= 255)
 					patternEditor->writeDirectEffect(0, 0xC, (pp_uint8)keyVolume,
 													 chn, row, pos);
-				
+
 				patternEditor->writeDirectNote(note, chn, row, pos);
 				
 				tracker.screen->paintControl(patternEditorControl);
@@ -257,7 +261,7 @@ void RecorderLogic::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, Pat
 									   tracker.shouldFollowSong();
 							   				
 				bool recPat = false;
-				RecPosProvider recPosProvider(*playerController);
+				RecPosProvider recPosProvider(*playerController, roundToClosestRow && !recordNoteDelay);
 				if (isLiveRecording)
 				{
 					recPosProvider.getPosition(pos, row, ticker);
@@ -284,10 +288,18 @@ void RecorderLogic::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, Pat
 					// if we're in the same slot => send key off by inserting key off effect
 					if (keys[i].row == row && keys[i].pos == pos)
 					{
+						// writing a note off to the same cell will overwrite the note on..
+						// skip one row
+						if (roundToClosestRow && !recordNoteDelay) {
+							recPosProvider.incrementRow(pos, row);
+							patternEditor->writeDirectNote(PatternTools::getNoteOffNote(),
+														   keys[i].channel, row, pos);
+						}
 						//mp_sint32 bpm, speed;
 						//playerController->getSpeed(bpm, speed);
-						patternEditor->writeDirectEffect(1, 0x14, ticker ? ticker : 1,
-														 keys[i].channel, row, pos);
+						else
+							patternEditor->writeDirectEffect(1, 0x14, ticker ? ticker : 1,
+															 keys[i].channel, row, pos);
 					}
 					// else write key off
 					else
