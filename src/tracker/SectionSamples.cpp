@@ -566,7 +566,7 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 
 	if( !screen->getClassic() ){
 		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize(size-1, bHeightm));
-		button->setText( "\xa9" );
+		button->setText( "\x0f" );
 		button->setColor(TrackerConfig::colorSampleEditorWaveform);
 		button->setTextColor(TrackerConfig::colorThemeMain);
 		container->addControl(button);
