@@ -349,6 +349,7 @@ private:
 	void fillInstrumentListBox(PPListBox* listBox, ModuleEditor* moduleEditor = NULL);
 	void fillSampleListBox(PPListBox* listBox, pp_int32 insIndex, ModuleEditor* moduleEditor = NULL);
 	void fillModuleListBox(PPListBox* listBox);
+	void doASCIISTEP16( pp_uint8 character, bool chselect );
 	
 	void setChanged();
 
