@@ -997,6 +997,9 @@ unrecognizedCommandLineSwitch:
 		}
 	}
 
+	// enable system screensaver
+	SDL_EnableScreenSaver();
+
 	// Main event loop
 	done = 0;
 	while (!done && SDL_WaitEvent(&event))
