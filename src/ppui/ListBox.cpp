@@ -1026,8 +1026,10 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 			pp_int32 visibleItems = getNumVisibleItems();
 
 			startIndex += event->getMetaData();
-			if (startIndex + visibleItems > items->size())
+			if (startIndex + visibleItems >= items->size())
 				startIndex = items->size() - visibleItems;
+			else
+				startIndex++;
 
 			float v = (float)(items->size() - visibleItems);
 
@@ -1062,6 +1064,8 @@ pp_int32 PPListBox::handleEvent(PPObject* sender, PPEvent* event)
 			startIndex -= event->getMetaData();
 			if(startIndex < 0)
 				startIndex = 0;
+			else
+				startIndex--;
 			
 			pp_int32 visibleItems = getNumVisibleItems();
 			
