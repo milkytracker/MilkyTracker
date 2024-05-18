@@ -987,13 +987,15 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		sender == reinterpret_cast<PPObject*>(vRightScrollbar)) &&
 		event->getID() == eBarScrollDown)
 	{
-		pp_int32 scrollAmount = event->getMetaData();
+		pp_int32 scrollAmount = event->getMetaData() + 1;
 		if (properties.scrollMode != ScrollModeStayInCenter)
 		{
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 			startIndex += scrollAmount;
-			if (startIndex + visibleItems > pattern->rows)
+			if (startIndex + visibleItems >= pattern->rows)
 				startIndex = pattern->rows - visibleItems;
+			else
+				startIndex++;
 
 			float v = (float)(pattern->rows - visibleItems);
 
@@ -1013,12 +1015,14 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(vRightScrollbar)) &&
 			 event->getID() == eBarScrollUp)
 	{
-		pp_int32 scrollAmount = event->getMetaData();
+		pp_int32 scrollAmount = event->getMetaData() + 1;
 		if (properties.scrollMode != ScrollModeStayInCenter)
 		{
 			startIndex -= scrollAmount;
 			if (startIndex < 0)
 				startIndex = 0;
+			else
+				startIndex--;
 		
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 
