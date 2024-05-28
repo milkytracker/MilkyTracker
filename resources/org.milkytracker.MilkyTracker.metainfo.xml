@@ -8,21 +8,88 @@
     <binary>milkytracker</binary>
   </provides>
   <name>MilkyTracker</name>
-  <developer_name>The MilkyTracker team</developer_name>
+  <developer id="org.milkytracker">
+    <name>The MilkyTracker team</name>
+  </developer>
   <summary>Fast Tracker II inspired music tracker</summary>
   <description>
+    <!-- Copied from https://milkytracker.org/about/ -->
     <p>
       MilkyTracker is an open source, multi-platform music application for creating .MOD and .XM module files.
       It attempts to recreate the module replay and user experience of the popular DOS program Fasttracker II,
       with special playback modes available for improved Amiga ProTracker 2/3 compatibility.
     </p>
+    MilkyTracker's key features:
+    <ul>
+      <li>Fasttracker II like, custom graphical user interface with context menus</li>
+      <li>Supported on multiple platforms including portable devices</li>
+      <li>Very accurate .XM replay compared to FT2</li>
+      <li>ProTracker 2/3 playback modes for playing and editing .MOD files</li>
+      <li>Various resampler options including emulated Amiga 500/1200 sound output</li>
+      <li>Choose between a modern and a true-to-FT2 editing scheme / keyboard layout</li>
+      <li>Tabbed user interface for opening and playing up to 32 modules simultaneously and for exchanging data between them</li>
+      <li>Over 30 imported module formats</li>
+      <li>Basic archive support for loading zipped, powerpacked and UMX modules directly</li>
+      <li>Rendering songs/patterns to disk (.WAV) or directly to sample</li>
+      <li>Powerful sample editor featuring waveform generators</li>
+      <li>In-depth instrument editor featuring envelope zooming and scaling and support for copying and swapping instruments and samples across tabs</li>
+      <li>Low latency audio driver support</li>
+      <li>MIDI In support</li>
+      <li>Module optimizer</li>
+      <li>Internal file browser option</li>
+      <li>Various font sizes for improved visibility of pattern data</li>
+      <li>Prospective pattern view option</li>
+      <li>Playing and editing simultaneously</li>
+      <li>Live mode for seamless pattern changes</li>
+    </ul>
+    A couple of facts:
+    <ul>
+      <li>MilkyTracker is not based on any common module replay. Its core MilkyPlay has been in development since the mid-90s, originally as a Digitrakker .MDL player.</li>
+      <li>MilkyTracker development started a decade later for the Pocket PC and it still fully operates on rather humble PDAs.</li>
+      <li>MilkyTracker is and will stay a 2nd generation tracker. There are already several good 3rd generation trackers out there.</li>
+    </ul>
   </description>
   <screenshots>
+    <!-- Taken from https://milkytracker.org/screenshots/ -->
     <screenshot type="default">
+      <image type="source">https://milkytracker.org/screenshots/desktop/Flasch-InstrumentEditor.png</image>
+      <caption>Action! Showing layout configuration, instrument editor with some sample numbers mapped to different notes and tab bar on the bottom.</caption>
+    </screenshot>
+    <screenshot>
       <image type="source">https://milkytracker.org/screenshots/desktop/raina-Default.png</image>
+      <caption>MilkyTracker at first glance. Main panel with instruments and samples on the top, channel scopes and the pattern editor.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/Flasch-SampleEditor.png</image>
+      <caption>Sample editor. The sample is being played on two channels at the moment.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Chip.png</image>
+      <caption>A typical chiptune "sample", pulse wave. Only one cycle of the wave is needed because it can be looped.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-MODPanning.png</image>
+      <caption>Setting Fasttracker/ProTracker playback mode and configuring channel panning for the latter</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Scream.png</image>
+      <caption>Copying instruments and samples across modules (tabs)</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Why.png</image>
+      <caption>Selecting a resampler for rendering a song (section) into sample. Notes played on muted channels appear grey on the keyboard.</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://milkytracker.org/</url>
+  <url type="bugtracker">https://github.com/milkytracker/MilkyTracker/issues</url>
+  <url type="faq">https://milkytracker.org/docs/FAQ.html</url>
+  <url type="help">https://milkytracker.org/documentation/</url>
+  <url type="donation">https://milkytracker.org/donate/</url>
+  <url type="contact">https://milkytracker.org/community/</url>
+  <url type="vcs-browser">https://github.com/milkytracker/MilkyTracker</url>
   <update_contact>milkytracker_at_chrisoneill.co.uk</update_contact>
+  <branding>
+    <color type="primary">#223344</color>
+  </branding>
   <content_rating type="oars-1.1"/>
 </component>
