@@ -20,8 +20,34 @@
     </p>
   </description>
   <screenshots>
+    <!-- Taken from https://milkytracker.org/screenshots/ -->
     <screenshot type="default">
+      <image type="source">https://milkytracker.org/screenshots/desktop/Flasch-InstrumentEditor.png</image>
+      <caption>Action! Showing layout configuration, instrument editor with some sample numbers mapped to different notes and tab bar on the bottom.</caption>
+    </screenshot>
+    <screenshot>
       <image type="source">https://milkytracker.org/screenshots/desktop/raina-Default.png</image>
+      <caption>MilkyTracker at first glance. Main panel with instruments and samples on the top, channel scopes and the pattern editor.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/Flasch-SampleEditor.png</image>
+      <caption>Sample editor. The sample is being played on two channels at the moment.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Chip.png</image>
+      <caption>A typical chiptune "sample", pulse wave. Only one cycle of the wave is needed because it can be looped.</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-MODPanning.png</image>
+      <caption>Setting Fasttracker/ProTracker playback mode and configuring channel panning for the latter</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Scream.png</image>
+      <caption>Copying instruments and samples across modules (tabs)</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Why.png</image>
+      <caption>Selecting a resampler for rendering a song (section) into sample. Notes played on muted channels appear grey on the keyboard.</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://milkytracker.org/</url>
