@@ -8,7 +8,9 @@
     <binary>milkytracker</binary>
   </provides>
   <name>MilkyTracker</name>
-  <developer_name>The MilkyTracker team</developer_name>
+  <developer id="org.milkytracker">
+    <name>The MilkyTracker team</name>
+  </developer>
   <summary>Fast Tracker II inspired music tracker</summary>
   <description>
     <p>
