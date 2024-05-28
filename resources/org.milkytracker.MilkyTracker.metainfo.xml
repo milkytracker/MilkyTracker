@@ -25,6 +25,12 @@
     </screenshot>
   </screenshots>
   <url type="homepage">https://milkytracker.org/</url>
+  <url type="bugtracker">https://github.com/milkytracker/MilkyTracker/issues</url>
+  <url type="faq">https://milkytracker.org/docs/FAQ.html</url>
+  <url type="help">https://milkytracker.org/documentation/</url>
+  <url type="donation">https://milkytracker.org/donate/</url>
+  <url type="contact">https://milkytracker.org/community/</url>
+  <url type="vcs-browser">https://github.com/milkytracker/MilkyTracker</url>
   <update_contact>milkytracker_at_chrisoneill.co.uk</update_contact>
   <content_rating type="oars-1.1"/>
 </component>
