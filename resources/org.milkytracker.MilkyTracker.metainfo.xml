@@ -88,5 +88,8 @@
   <url type="contact">https://milkytracker.org/community/</url>
   <url type="vcs-browser">https://github.com/milkytracker/MilkyTracker</url>
   <update_contact>milkytracker_at_chrisoneill.co.uk</update_contact>
+  <branding>
+    <color type="primary">#223344</color>
+  </branding>
   <content_rating type="oars-1.1"/>
 </component>
