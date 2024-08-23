@@ -249,6 +249,8 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_TABSWITCHRESUMEPLAY,
 	STATICTEXT_SETTINGS_TABSWITCHRESUMEPLAY,
 	CHECKBOX_SETTINGS_LOADMODULEINNEWTAB,
+	STATICTEXT_SETTINGS_CONFIRMEXIT,
+	CHECKBOX_SETTINGS_CONFIRMEXIT,
 
 	PAGE_IO_1,
 	PAGE_IO_2,
@@ -268,6 +270,7 @@ enum ControlIDs
 	PAGE_MISC_2,
 	PAGE_MISC_3,
 	PAGE_MISC_4,
+	PAGE_MISC_5,
 
 	PAGE_TABS_1,
 	PAGE_TABS_2,
@@ -1648,6 +1651,41 @@ public:
 
 };
 
+class TabPageMisc_5 : public TabPage
+{
+public:
+    TabPageMisc_5(pp_uint32 id, SectionSettings& sectionSettings) :
+    TabPage(id, sectionSettings)
+    {
+    }
+
+    virtual void init(PPScreen* screen)
+    {
+        pp_int32 x = 0;
+        pp_int32 y = 0;
+
+        container = new PPTransparentContainer(id, screen, this, PPPoint(x, y), PPSize(PageWidth,PageHeight));
+        pp_int32 x2 = x;
+        pp_int32 y2 = y;
+
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Misc.", true, true));
+        y2+=14;
+        PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_CONFIRMEXIT, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 + 2 - 1));
+        container->addControl(checkBox);
+        container->addControl(new PPCheckBoxLabel(STATICTEXT_SETTINGS_CONFIRMEXIT, NULL, this, PPPoint(x + 4, y2 + 2), "Confirm Exit", checkBox, true));
+    }
+
+    virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
+    {
+        pp_int32 v = true;
+        if (settingsDatabase->hasKey("CONFIRMEXIT")) {
+            v = settingsDatabase->restore("CONFIRMEXIT")->getIntValue();
+        }
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CONFIRMEXIT))->checkIt(v!=0);
+    }
+};
+
+
 class TabPageTabs_1 : public TabPage
 {
 public:
@@ -2456,6 +2494,15 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				retrieveDisplayResolution();
 				break;
 			}
+			case CHECKBOX_SETTINGS_CONFIRMEXIT:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("CONFIRMEXIT", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
 
 		}
 	}
@@ -2788,6 +2835,7 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	tabPages.get(3)->add(new TabPageMisc_2(PAGE_MISC_2, *this));
 	tabPages.get(3)->add(new TabPageMisc_3(PAGE_MISC_3, *this));
 	tabPages.get(3)->add(new TabPageMisc_4(PAGE_MISC_4, *this));
+	tabPages.get(3)->add(new TabPageMisc_5(PAGE_MISC_5, *this));
 
 #ifndef __LOWRES__
 	tabPages.get(4)->add(new TabPageTabs_1(PAGE_TABS_1, *this));
