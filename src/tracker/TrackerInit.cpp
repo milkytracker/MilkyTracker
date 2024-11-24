@@ -1281,22 +1281,6 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 
 	screen->addControl(container);
 
-  PPString str = PPString("welcome 2 Milkytracker");
-  getModuleEditor()->setInstrumentName(2,str.getStrBuffer(),str.length());
-  str.replace("CTRL+h     = help");
-  getModuleEditor()->setInstrumentName(4,str.getStrBuffer(),str.length());
-  str.replace("CTRL+space = uirotate");
-  getModuleEditor()->setInstrumentName(5,str.getStrBuffer(),str.length());
-  str.replace("CTRL\x18\x19     = instrsel");
-  getModuleEditor()->setInstrumentName(6,str.getStrBuffer(),str.length());
-  str.replace("CTRLSHIFT\x18\x19= smp");
-  getModuleEditor()->setInstrumentName(7,str.getStrBuffer(),str.length());
-  str.replace("ALT +/-    = pat add/del");
-  getModuleEditor()->setInstrumentName(8,str.getStrBuffer(),str.length());
-  str.replace("ALT \x18\x19\x1a\x1b+- = pat nav");
-  getModuleEditor()->setInstrumentName(9,str.getStrBuffer(),str.length());
-  str.replace("");
-  getModuleEditor()->setInstrumentName(10,str.getStrBuffer(),str.length());
 }
 
 void Tracker::showMessageBox(pp_int32 id, const PPString& caption, MessageBoxTypes type, bool update/* = true*/)
