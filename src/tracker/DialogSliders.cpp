@@ -118,7 +118,10 @@ pp_int32 DialogSliders::handleEvent(PPObject* sender, PPEvent* event)
 	}else if( event->getID() == eCommand && id == PP_MESSAGEBOX_BUTTON_CANCEL ){
 		sampleEditor->undo();
 	}
-	if( event->getID() == eLMouseUp && needUpdate ){
+	if( event->getID() == eLMouseUp ){
+		needUpdate = true;
+	}
+	if( needUpdate ){
 		process();
 		update();
 	}
