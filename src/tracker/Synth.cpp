@@ -30,6 +30,7 @@
 
 Synth::Synth(int samplerate){
   this->samplerate = samplerate;
+  this->additive   = false;
   init();
   // assign default synth 
   synth = &synths[0];
@@ -75,7 +76,10 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
   }else{
     sliders->show(false);
   }
-  sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, "milkysynth", synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
+  PPString title = PPString("milkysynth");
+  this->additive = s->hasValidSelection();
+  if( this->additive ) title.append(" [additive]");
+  sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, title, synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
   sliders->show();
   for( int i = 0; i < synth->nparams && i < SYN_PARAMS_MAX; i++){
 	PPString label = PPString(synth->param[i].name);
@@ -110,24 +114,24 @@ void Synth::random(){
 	sampleEditor->tool_synth(&par);
 }
 
-TXMSample * Synth::prepareSample( pp_uint32 duration, bool force){
+TXMSample * Synth::prepareSample( pp_uint32 duration){
   TXMSample *sample;
-  if( sampleEditor->isEmptySample() || force){
+  //if( sampleEditor->isEmptySample() ){
     FilterParameters par(2);
     par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
     par.setParameter(1, FilterParameters::Parameter( 16 ) );
     sampleEditor->tool_newSample(&par);
 	sample = sampleEditor->getSample();
-  }else{
-	sample = sampleEditor->getSample();
-	if( duration > sample->samplen ){
-		sampleEditor->selectionStart = sample->samplen-1;
-		sampleEditor->selectionEnd   = sample->samplen-1;
-		FilterParameters par(1);
-		par.setParameter(0, FilterParameters::Parameter( (pp_int32)(duration - sample->samplen) ) );
-		sampleEditor->tool_generateSilence(&par);
-	}else printf("no new\n");
-	// we just leave the sample as-is when it's longer than required  	
-  }
+  //}else{
+  //  sample = sampleEditor->getSample();
+  //  if( duration > sample->samplen ){
+  //  	sampleEditor->selectionStart = sample->samplen-1;
+  //  	sampleEditor->selectionEnd   = sample->samplen-1;
+  //  	FilterParameters par(1);
+  //  	par.setParameter(0, FilterParameters::Parameter( (pp_int32)(duration - sample->samplen) ) );
+  //  	sampleEditor->tool_generateSilence(&par);
+  //  }else printf("no new\n");
+  //  // we just leave the sample as-is when it's longer than required  	
+  //}
   return sample;
 }

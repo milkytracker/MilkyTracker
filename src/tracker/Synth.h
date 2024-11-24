@@ -74,6 +74,7 @@ class Synth
 
   private:
 	int samplerate;
+	bool additive;
     MSynth *synth;
     MSynth synths[SYNTH_LAST+1];
     DialogSliders *sliders;
@@ -111,7 +112,7 @@ class Synth
     void init();
 	void random();
     void process( MSynth *s, PPString *preset );
-	TXMSample * prepareSample(pp_uint32 duration, bool force = false);
+	TXMSample * prepareSample(pp_uint32 duration);
 	void setSampleEditor( SampleEditor *s ){ this->sampleEditor = s; }
 
     // synths

@@ -119,7 +119,7 @@ void Synth::CyclePaint( bool init ){
 	}
 
 	// determine duration
-	TXMSample *sample = sampleEditor->isEmptySample() ? prepareSample(100) : sampleEditor->getSample();
+	TXMSample *sample = sampleEditor->isEmptySample() || !this->additive ? prepareSample(100) : sampleEditor->getSample();
 
 	// synthesize!
 	FilterParameters parWave(2);
@@ -185,15 +185,15 @@ void Synth::FMPaint( bool init ){
 		synths[ID].param[4].min   = 1.0f;
 		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[5].name  = "sustain";
+		synths[ID].param[5].name  = "release";
 		synths[ID].param[5].value = 9.0f;
 		synths[ID].param[5].min   = 0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[6].name  = "release";
-		synths[ID].param[6].value = 17.0f;
+		synths[ID].param[6].name  = "freq model";
+		synths[ID].param[6].value = 0.0f;
 		synths[ID].param[6].min   = 0;
-		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
+		synths[ID].param[6].max   = 4;
 
 		synths[ID].param[7].name  = "carrier freq";
 		synths[ID].param[7].value = 24.0f;
@@ -312,14 +312,53 @@ void Synth::FMPaint( bool init ){
 		case 4: controls.modulator = OSCILLATOR_TRIANGLE; break;
 		case 5: controls.modulator = OSCILLATOR_NOISE;    break;
 	}
+
 	controls.modulator_amplitude = SYN_PARAM_NORMALIZE( synth->param[12].value );
-    float mf = 0.01f + SYN_PARAM_NORMALIZE(synth->param[10].value);
-    controls.modulator_freq = pow(mf,5) * float(srate/2); // lazy sloop to finetune lowfreqs
+
+	instrument.modulator.phase = 0;
+	instrument.carrier.phase   = 0;
+
+	// since the slider-resolution is limited due to ASCIISYNTH spec 
+	// applying different resolution via a slider offers more sonic abilities 
+	float mf = 0.01f + SYN_PARAM_NORMALIZE(synth->param[10].value);
+	switch( (int)synth->param[6].value ){
+    // syncs modulator & carrier to note frequenceis
+		case 1: {
+					instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
+					break;
+				}
+
+    // syncs modulator & carrier to note frequenceis + phasediff
+		case 2: {
+					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
+          instrument.modulator.phase = 0.3; 
+					break;
+				}
+
+    // carrier freqs synced to notes + freeform modulator freqs 
+		case 3: {
+					instrument.carrier.freq   = NOTE2HZ( (int)synth->param[7].value );
+					float mf = NOTE_START + SYN_PARAM_NORMALIZE(synth->param[10].value);
+					controls.modulator_freq = SYN_PARAM_NORMALIZE( synth->param[10].value ) * float(srate)/2.0;
+					break;
+				}
+
+    // focuses on modulator freq as LFO 
+		case 0:
+		default:{
+					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = mf * (4.0 / float(srate)); 
+					break;
+				}
+
+	}
 
 	controls.attack  = SYN_PARAM_NORMALIZE(synth->param[3].value);
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);
-	controls.sustain = SYN_PARAM_NORMALIZE(synth->param[5].value);
-	controls.release = SYN_PARAM_NORMALIZE(synth->param[6].value) * 0.5f;
+	controls.sustain = SYN_PARAM_NORMALIZE(synth->param[4].value);
+	controls.release = SYN_PARAM_NORMALIZE(synth->param[5].value) * 0.5f;
   
 	// init delay
 	memset( &(instrument.echo.buffer), 0, sizeof(float)*ECHO_BUFFER_SIZE );
@@ -346,9 +385,6 @@ void Synth::FMPaint( bool init ){
 	controls.spacetime = SYN_PARAM_NORMALIZE(synth->param[20].value);
 	controls.feedback  = 1.0f + (100.0f * SYN_PARAM_NORMALIZE(synth->param[16].value));
 
-	instrument.modulator.phase = 0;
-	instrument.carrier.phase   = 0;
-
 	// determine duration
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
 	// enable overflow rendering when loop is set to forward
@@ -360,7 +396,7 @@ void Synth::FMPaint( bool init ){
 	if( looptype == 1 ){ // overflow until silence with forward loop
 		overflow = controls.spacetime > 0.1 ? (int)(1.0 + controls.spacetime*10) : 3;
 	}
-	TXMSample *sample = sampleEditor->isEmptySample() ? prepareSample(samples) : sampleEditor->getSample();
+	TXMSample *sample = sampleEditor->isEmptySample() || !this->additive ? prepareSample(samples) : sampleEditor->getSample();
 
 	// exponential positive drive into sin() function (produces foldback/freq multiply)
 	// see curve @ https://graphtoy.com/?f1(x,t)=max(0,(x*10*x*x)%20)%20+x&v1=true 
@@ -368,19 +404,21 @@ void Synth::FMPaint( bool init ){
  	scale          = fmax(0,(scale*3*scale*scale))+scale; // exponential in positive side
 	int frames     = overflow*(int)samples;
 	float* smpin;
-	smpin          = (float*)calloc(frames,  sizeof(float));
+	smpin           = (float*)calloc(frames,  sizeof(float));
+  float transFreq = instrument.carrier.freq; 
 	float x;
 
 	// synthesize! 
 	for( pp_int32 i = 0; i < frames; i++ ){
 
-		// apply transient to freq controllers (see trans @ https://graphtoy.com/?f1(x,t)=-0.5*tanh((x*92)-3)+0.5&v1=true)
-		pp_uint32 transSamples = (pp_uint32)( (float(srate)/100) * SYN_PARAM_NORMALIZE(synth->param[15].value ) ); 
+		// apply transient to freq controllers (curve: tanh(x*x*x*1000)-1 )
+		pp_uint32 transSamples = (pp_uint32)( float(srate)/2 * SYN_PARAM_NORMALIZE(synth->param[15].value ) ); 
 		float offset   = (1.0f/(float)transSamples) * float(i);
-		float transAmp = SYN_PARAM_NORMALIZE(synth->param[14].value) * float(srate/4); 
-		float c_trans  = fmax( 0.0f, transAmp * (1.0f+(-offset*offset) ) );
-		instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
-		instrument.carrier.freq   += c_trans;
+
+		// add transient
+		float transAmp = SYN_PARAM_NORMALIZE(synth->param[14].value);
+    instrument.carrier.freq = transFreq + (transAmp * (transFreq * (tanh(-offset*offset*offset*1000)+1)*(10*transAmp)));
+
 		SynthFM::instrument_control( &instrument, &controls, srate );
 
 		// trigger note
