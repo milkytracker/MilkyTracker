@@ -103,6 +103,8 @@ private:
 	mp_sint32			panningSeparation;
 	// remember maximum amount of virtual channels
 	mp_sint32			numMaxVirChannels;
+	// remember mastering limiter
+	mp_uint32 			limiterDrive;
 
 	void				adjustSettings();
 
@@ -644,7 +646,8 @@ public:
 									const mp_ubyte* mutingArray = NULL, mp_uint32 mutingNumChannels = 0,
 									const mp_ubyte* customPanningTable = NULL,
 									AudioDriverBase* preferredDriver = NULL,
-									mp_sint32* timingLUT = NULL);
+									mp_sint32* timingLUT = NULL,
+									mp_uint32 limiterDrive = 0);
 	
 	/**
 	 * Grab current channel data from a module channel

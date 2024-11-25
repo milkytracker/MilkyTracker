@@ -118,23 +118,31 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 	static const char* seperatorStringMed = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 
-	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuFX->addEntry("Volume" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
 	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
 	subMenuFX->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
 	subMenuFX->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
-	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
+	subMenuFX->addEntry("Delay", MenuCommandIDDelay);
+	subMenuFX->addEntry("Reverb", MenuCommandIDReverb);
+	subMenuFX->addEntry("Vocoder", MenuCommandIDVocode);
+	subMenuFX->addEntry("Timestretch", MenuCommandIDTimeStretch);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
-	subMenuFX->addEntry("3 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ3Band);
-	subMenuFX->addEntry("10 Band EQ" PPSTR_PERIODS, MenuCommandIDEQ10Band);
-	subMenuFX->addEntry("Exciter [protracker boost]", MenuCommandIDPTBoost);
+	subMenuFX->addEntry("Filter" PPSTR_PERIODS, MenuCommandIDFilter);
+	subMenuFX->addEntry("EQ  3 Band" PPSTR_PERIODS, MenuCommandIDEQ3Band);
+	subMenuFX->addEntry("EQ 10 Band" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuFX->addEntry(seperatorStringLarge, -1);
+	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
+	subMenuFX->addEntry("Saturate", MenuCommandIDSaturate);
+	subMenuFX->addEntry("Excite #Milky", MenuCommandIDMTBoost);
+	subMenuFX->addEntry("Excite #PTboost", MenuCommandIDPTBoost);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
 	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
 
-	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuAdvanced->setSubMenu(true);
 	subMenuAdvanced->addEntry("Cross-fade", MenuCommandIDXFade);
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
@@ -149,7 +157,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuAdvanced->addEntry(seperatorStringLarge, -1);
 	subMenuAdvanced->addEntry("Resample" PPSTR_PERIODS, MenuCommandIDResample);
 
-	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuXPaste = new PPContextMenu(8, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuXPaste->setSubMenu(true);
 	subMenuXPaste->addEntry("Mix", MenuCommandIDMixPaste);
 	subMenuXPaste->addEntry("Mix (overflow)", MenuCommandIDMixOverflowPaste);
@@ -162,10 +170,10 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
 
 
-	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
 
-	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain);
+	subMenuGenerators = new PPContextMenu(7, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuGenerators->addEntry("Noise" PPSTR_PERIODS, MenuCommandIDGenerateNoise);
 	subMenuGenerators->addEntry("Sine" PPSTR_PERIODS, MenuCommandIDGenerateSine);
 	subMenuGenerators->addEntry("Square" PPSTR_PERIODS, MenuCommandIDGenerateSquare);
@@ -177,7 +185,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
 	
 	// build context menu
-	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, true);
+	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, true);
 	editMenuControl->addEntry("New" PPSTR_PERIODS, MenuCommandIDNew);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
@@ -1701,6 +1709,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	// update submenu states
 	subMenuAdvanced->setState(MenuCommandIDNormalize, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDMTBoost, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDReverb, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeOut, isEmptySample);
@@ -1714,6 +1724,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDDCOffset, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDRectangularSmooth, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDTriangularSmooth, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDFilter, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ3Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDEQ10Band, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDResample, isEmptySample);
@@ -1728,6 +1739,9 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuXPaste->setState(MenuCommandIDSelectiveEQ10Band, sampleEditor->clipBoardIsEmpty() || isEmptySample);
 
 	subMenuPT->setState(MenuCommandIDPTBoost, isEmptySample);
+	subMenuPT->setState(MenuCommandIDSaturate, isEmptySample);
+	subMenuPT->setState(MenuCommandIDTimeStretch, isEmptySample);
+	subMenuPT->setState(MenuCommandIDDelay, isEmptySample);
 
 	subMenuGenerators->setState(MenuCommandIDGenerateNoise, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSine, isEmptySample);
@@ -1738,7 +1752,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateAbsoluteSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateQuarterSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
-
+	
 	parentScreen->setContextMenuControl(editMenuControl);
 }
 
@@ -1847,7 +1861,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDVolumeFadeOut:{
 			FilterParameters par(2);
-			par.setParameter(0, FilterParameters::Parameter(1.0f));
+			par.setParameter(0, FilterParameters::Parameter(100.0f));
 			par.setParameter(1, FilterParameters::Parameter(0.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
@@ -1856,7 +1870,7 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDVolumeFadeIn:{
 			FilterParameters par(2);
 			par.setParameter(0, FilterParameters::Parameter(0.0f));
-			par.setParameter(1, FilterParameters::Parameter(1.0f));
+			par.setParameter(1, FilterParameters::Parameter(100.0f));
 			sampleEditor->tool_scaleSample(&par);
 			break;
 		}
@@ -1882,12 +1896,36 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->tool_compressSample(NULL);
 			break;
 
+		case MenuCommandIDMTBoost:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeMTBoost);
+			break;
+
+		case MenuCommandIDVocode:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeVocode);
+			break;
+
+		case MenuCommandIDReverb:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeReverb);
+			break;
+
 		case MenuCommandIDReverse:
 			sampleEditor->tool_reverseSample(NULL);
 			break;
 
 		case MenuCommandIDPTBoost:
 			sampleEditor->tool_PTboostSample(NULL);
+			break;
+
+		case MenuCommandIDSaturate:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSaturate);
+			break;
+
+		case MenuCommandIDTimeStretch:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeTimeStretch);
+			break;
+
+		case MenuCommandIDDelay:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeDelay);
 			break;
 
 		case MenuCommandIDXFade:
@@ -1914,7 +1952,11 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			sampleEditor->tool_triangularSmoothSample(NULL);
 			break;
 
-		case MenuCommandIDEQ3Band:
+		case MenuCommandIDFilter:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFilter);
+			break;
+		
+    case MenuCommandIDEQ3Band:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeEQ3Band);
 			break;
 
@@ -1962,6 +2004,9 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeGenerateQuarterSine);
 			break;
 
+		case MenuCommandIDSynth:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSynth);
+			break;
 	}
 }
 

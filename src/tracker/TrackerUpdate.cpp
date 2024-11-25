@@ -45,6 +45,7 @@
 #include "SectionSamples.h"
 #include "SectionHDRecorder.h"
 #include "SectionQuickOptions.h"
+#include "SectionSettings.h"
 #include "TabHeaderControl.h"
 #include "PPOpenPanel.h"
 #include "TitlePageManager.h"
@@ -53,15 +54,30 @@
 
 void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true*/)
 {
-	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ABOUT));
-	ASSERT(container);
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
-	if (button == NULL)
-		return;
-	button->setPressed(b);	
-	
-	if (repaint)
-		screen->paintControl(button);
+  pp_int32 btns[2] = { CONTAINER_ABOUT, CONTAINER_MENU };
+  for( int i = 0; i < 2; i++ ){
+    PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(btns[i]));
+    ASSERT(container);
+    PPButton* button = static_cast<PPButton*>(container->getControlByID(id));
+    if (button == NULL)
+      return;
+    button->setPressed(b);	
+    
+    if (repaint)
+      screen->paintControl(button);
+  }
+}
+
+void Tracker::updatePlayButtons(pp_int32 id, bool b, bool repaint/* = true*/)
+{
+  pp_int32 btns[3] = { MAINMENU_PLAY_SONG, MAINMENU_PLAY_PATTERN, MAINMENU_PLAY_POSITION };
+  for( int i = 0; i < 3; i++ ){
+    PPButton *btn = static_cast<PPButton*>(screen->getControlByID(btns[i]));
+    btn->setPressed( id == btns[i] && b);	
+    
+    if (repaint)
+      screen->paintControl(btn);
+  }
 }
 
 bool Tracker::updatePianoControl(PianoControl* pianoControl)
@@ -794,6 +810,7 @@ void Tracker::updateRecordButton(PPContainer* container, const PPColor& pColor)
 		if (button->isVisible() && (&pColor) != button->getTextColor())
 		{
 			button->setTextColor(pColor);
+			button->setPressed( !button->isPressed() );
 			screen->paintControl(button);
 		}
 	}
@@ -1061,6 +1078,14 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 	}
 	
 	updateSongInfo(false);
+
+	if( settingsDatabase->restore("LIMITRESET")->getBoolValue() ){ // reset limiter
+		TMixerSettings newMixerSettings;
+		settingsDatabase->store("LIMITDRIVE",0);
+		sectionSettings->saveCurrentMixerSettings(newMixerSettings);
+		bool res = playerMaster->applyNewMixerSettings(newMixerSettings, true);
+		sectionSettings->update(true);
+	}
 }
 
 void Tracker::updateAfterTabSwitch()

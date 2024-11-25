@@ -1,6 +1,9 @@
 /*
  *  tracker/SampleEditor.cpp
  *
+ *  tool_vocode(): GPL /Copyright 2008-2011 David Robillard <http://drobilla.net>
+ *  tool_vocode(): GPL /Copyright 1999-2000 Paul Kellett (Maxim Digital Audio)
+ *
  *  Copyright 2009 Peter Barth
  *
  *  This file is part of Milkytracker.
@@ -32,10 +35,9 @@
 #include "SimpleVector.h"
 #include "XModule.h"
 #include "VRand.h"
-#include "Equalizer.h"
-#include "EQConstants.h"
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
+#include "PlayerMaster.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -308,6 +310,9 @@ SampleEditor::SampleEditor() :
 	resetSelection();
 
 	memset(&lastSample, 0, sizeof(lastSample));
+
+	// sampleRate is not perfect (ideally get this from settingsDatabase)
+  synth = new Synth(PlayerMaster::getPreferredSampleRate());
 }
 
 SampleEditor::~SampleEditor()
@@ -316,6 +321,7 @@ SampleEditor::~SampleEditor()
 	delete undoHistory;
 	delete undoStack;
 	delete before;
+  delete synth;
 }
 
 void SampleEditor::attachSample(TXMSample* sample, XModule* module) 
@@ -1211,9 +1217,6 @@ void SampleEditor::postFilter()
 
 void SampleEditor::tool_newSample(const FilterParameters* par)
 {
-	if (!isValidSample())
-		return;
-
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
@@ -1838,9 +1841,9 @@ void SampleEditor::tool_scaleSample(const FilterParameters* par)
 	preFilter(&SampleEditor::tool_scaleSample, par);
 	
 	prepareUndo();
-	
-	float startScale = par->getParameter(0).floatPart;
-	float endScale = par->getParameter(1).floatPart;
+
+	float startScale = par->getParameter(0).floatPart / 100.0f;
+	float endScale = par->getNumParameters() == 1 ? startScale : par->getParameter(1).floatPart / 100.0f;
 	
 	float step = (endScale - startScale) / (float)(sEnd - sStart);
 	
@@ -2846,7 +2849,8 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	
 	pp_int32 i;
 
-	pp_int32 type = par->getParameter(0).intPart;
+	float    amp  = par->getParameter(0).floatPart;
+	pp_int32 type = par->getParameter(1).intPart;
 
 	VRand rand;
 	rand.seed();
@@ -2854,16 +2858,22 @@ void SampleEditor::tool_generateNoise(const FilterParameters* par)
 	switch (type)
 	{
 		case 0:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.white()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.white()*2.0f)*amp );		
+			}
 			break;
 		case 1:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.pink()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.pink()*2.0f)*amp );		
+			}
 			break;
 		case 2:
-			for (i = sStart; i < sEnd; i++)
-				setFloatSampleInWaveform(i, rand.brown()*2.0f);		
+			for (i = sStart; i < sEnd; i++){
+				float x = getFloatSampleFromWaveform(i);
+				setFloatSampleInWaveform(i, x + (rand.brown()*2.0f)*amp );		
+			}
 			break;
 	}
 	
@@ -2910,8 +2920,9 @@ void SampleEditor::tool_generateSine(const FilterParameters* par)
 	// generate sine wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+		float v = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per)*amplify);	
+		setFloatSampleInWaveform(i, v + (float)sin(per)*amplify);	
 	}
 
 	finishUndo();	
@@ -2921,8 +2932,6 @@ void SampleEditor::tool_generateSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateSquare(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -2957,9 +2966,10 @@ void SampleEditor::tool_generateSquare(const FilterParameters* par)
 	// generate square wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
-		setFloatSampleInWaveform(i, frac < 0.5f ? amplify : -amplify);	
+		setFloatSampleInWaveform(i, v + (frac < 0.5f ? amplify : -amplify) );	
 	}
 
 	finishUndo();	
@@ -2969,8 +2979,6 @@ void SampleEditor::tool_generateSquare(const FilterParameters* par)
 
 void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3005,14 +3013,15 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 	// generate triangle wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
 		if (frac < 0.25f)
-			setFloatSampleInWaveform(i, (frac*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (frac*4.0f)*amplify);	
 		else if (frac < 0.75f)
-			setFloatSampleInWaveform(i, (1.0f-(frac-0.25f)*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (1.0f-(frac-0.25f)*4.0f)*amplify);	
 		else	
-			setFloatSampleInWaveform(i, (-1.0f+(frac-0.75f)*4.0f)*amplify);	
+			setFloatSampleInWaveform(i, v + (-1.0f+(frac-0.75f)*4.0f)*amplify);	
 	}
 
 	finishUndo();	
@@ -3022,8 +3031,6 @@ void SampleEditor::tool_generateTriangle(const FilterParameters* par)
 
 void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 		
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3060,7 +3067,8 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 	{
 		float per = (i-sStart)/(float)sLen * numPeriods;
 		float frac = per-(float)floor(per);
-		setFloatSampleInWaveform(i, frac < 0.5f ? (frac*2.0f)*amplify : (-1.0f+((frac-0.5f)*2.0f))*amplify);	
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v + (frac < 0.5f ? (frac*2.0f)*amplify : (-1.0f+((frac-0.5f)*2.0f))*amplify) );	
 	}
 
 	finishUndo();	
@@ -3070,8 +3078,6 @@ void SampleEditor::tool_generateSawtooth(const FilterParameters* par)
 
 void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3106,12 +3112,14 @@ void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 	// generate half sine wave here
 	for (i = sStart; i < sStart + sLen / 2; i++)
 	{
+		float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sEnd; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+		float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, 0 + v);
 	}
 
 	finishUndo();
@@ -3121,8 +3129,6 @@ void SampleEditor::tool_generateHalfSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3157,8 +3163,9 @@ void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 	// generate absolute sine wave here
 	for (i = sStart; i < sEnd; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, fabs((float)sin(per) * amplify));
+		setFloatSampleInWaveform(i, v + (fabs((float)sin(per) * amplify)) );
 	}
 
 	finishUndo();
@@ -3168,8 +3175,6 @@ void SampleEditor::tool_generateAbsoluteSine(const FilterParameters* par)
 
 void SampleEditor::tool_generateQuarterSine(const FilterParameters* par)
 {
-	if (isEmptySample())
-		return;
 
 	pp_int32 sStart = selectionStart;
 	pp_int32 sEnd = selectionEnd;
@@ -3204,21 +3209,25 @@ void SampleEditor::tool_generateQuarterSine(const FilterParameters* par)
 	// generate quarter sine wave in first and third quarters
 	for (i = sStart; i < sStart + sLen / 4; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - sStart) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sStart + sLen / 2; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v+0);
 	}
 	for (; i < sStart + sLen * 3 / 4; i++)
 	{
+    float v   = getFloatSampleFromWaveform(i);
 		float per = (i - (sStart + sLen / 2)) / (float)sLen * numPeriods;
-		setFloatSampleInWaveform(i, (float)sin(per) * amplify);
+		setFloatSampleInWaveform(i, v + ((float)sin(per) * amplify) );
 	}
 	for (; i < sEnd; i++)
 	{
-		setFloatSampleInWaveform(i, 0);
+    float v   = getFloatSampleFromWaveform(i);
+		setFloatSampleInWaveform(i, v+0);
 	}
 
 	finishUndo();
@@ -3259,3 +3268,684 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 	return (pp_uint32)(((double)pos / c4spd) * 1000.0);
 }
 
+void SampleEditor::tool_reverb(const FilterParameters* par)
+{ 
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+	
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{		
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+	
+	preFilter(&SampleEditor::tool_reverb, par);
+	
+	prepareUndo();
+
+	pp_int32 sLength = sEnd - sStart;
+	float ratio   = par->getParameter(0).floatPart / 100.0f;
+    pp_uint32 verb_size = 700 * (pp_uint32)par->getParameter(1).floatPart;
+    pp_int32 newSampleSize = sLength + verb_size;
+
+	// create buffers (smpout will be calloc'ed by reverb)
+	float* smpin;
+	float* smpout;
+	smpin = (float*)calloc(newSampleSize,  sizeof(float));
+	for (pp_int32 i = 0; i < newSampleSize; i++) { // copy source (and pad with zeros)
+		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i+sStart) : 0.0;
+	}
+
+	int outlength = Convolver::reverb( smpin, &smpout, newSampleSize, verb_size);
+
+	for (pp_int32 i = sStart; i < sStart+outlength; i++) {
+		pp_uint32 pos = i % sEnd;
+		if( pos < sStart ) pos += sStart; // fold back reverb tail to beginning (aid seamless looping)
+		float dry      = this->getFloatSampleFromWaveform( pos ) * ( i < sEnd ?  (1.0-ratio) : 1.0 );
+		float wet      = 1.2 * (smpout[i] * ratio);
+		this->setFloatSampleInWaveform(pos, dry+wet );
+	}
+				
+	finishUndo();	
+	
+	postFilter();
+
+	free(smpin);
+	free(smpout);
+}
+
+void SampleEditor::tool_MTboostSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	pp_int32 sLength = sEnd - sStart;
+
+	preFilter(&SampleEditor::tool_MTboostSample, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+
+	// instead of only distorting highfreqs (PTboost) we 
+	// filter the highfreqs and smear them with a reverb 
+	pp_int32 samplerate = 32000;
+	filter_t hp;
+	Filter::init( (filter_t *)&hp, samplerate );
+    // extract and resonate high end 
+	hp.cutoff = par->getParameter(0).floatPart; //(samplerate/2);
+	hp.q      = 0.01; 
+
+	float* smpin;
+	float* smpout;
+	smpin = (float*)calloc(sLength,  sizeof(float));
+	for (pp_int32 i = 0; i < sLength; i++) { // copy source (and pad with zeros)
+		Filter::process( this->getFloatSampleFromWaveform(i+sStart), (filter_t *)&hp );  // apply HP
+		smpin[i] = hp.out_hp;
+	}
+	// smear and smooth with a phasing roomverb
+	int outlength = Convolver::reverb( smpin, &smpout, sLength, 100 * (int)par->getParameter(1).floatPart );
+	int phase     = (int)( float(samplerate/5000) * par->getParameter(2).floatPart );
+	float wet     = ( par->getParameter(3).floatPart / 100.0f) * 5.0f;
+
+	float in  = 0.0;
+	float out = 0.0;
+
+	pp_int32 pos = 0;
+
+	for (i = 0; i < sLength; i++)
+	{
+        out = i >= phase ? smpout[ i-phase ] : 0.0f;
+		this->setFloatSampleInWaveform(i, this->getFloatSampleFromWaveform(i+sStart) + (out*wet) );
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_saturate(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_saturate, par);
+
+	prepareUndo();
+
+	pp_int32 i;
+	float in;
+	float out;
+	float peak = 0.0f;
+	float foldback = par->getParameter(0).floatPart / 5.0;
+	if( foldback < 1.0 ) foldback = 1.0;
+	pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+	float freq = par->getParameter(1).floatPart / 100.0;
+	freq = (freq*freq*freq) * float(samplerate/2); // curve
+	float dry = fmin( 1.0f - (par->getParameter(3).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+	float wet = ( par->getParameter(3).floatPart / 100.0f);
+	float compand = ( par->getParameter(2).floatPart / 25.0f);
+	float volume  = par->getParameter(4).floatPart / 100.0f;
+	float scale;
+
+	// init filter
+	multifilter_t filter;
+	multifilter_state_t filter0;
+	Filter::multifilter_set(&filter,
+		samplerate,
+	 	freq > 0.05 ? FILTER_BANDPASS: FILTER_NONE,
+		freq, // freq 
+		0.9,  // res 
+		1.5); // gain
+	filter0.x1 = filter0.x2 = filter0.y1 = filter0.y2 = 0.0;
+
+	// find peak value 
+	for (i = sStart; i < sEnd; i++)
+	{
+		float f = getFloatSampleFromWaveform(i);
+		if (ppfabs(f) > peak) peak = ppfabs(f);
+	}
+	scale = 1.0f/peak;
+
+	// process 
+	for (i = sStart; i < sEnd; i++)
+	{
+		in  = getFloatSampleFromWaveform(i);                  // normalized amp input
+		out = Filter::multifilter(&filter, &filter0, in );    // bandpass
+                                                          //
+		if( compand >= 1.0 ){                                 // we average with companded version  
+		  out = (out + tanh( out * compand ))/2.0;            // https://graphtoy.com/?f1(x,t)=(x%20+%20tanh(%20x%20*%205))/2
+		}
+		out = sin( (out*scale) * foldback ) / foldback;       // sinusoid foldback & denormalize 
+		out = (out*wet)  + (in*dry);					      //
+		setFloatSampleInWaveform(i, out * peak * volume );   // full harmonic fold complete
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_filter(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_filter, par);
+
+	prepareUndo();
+
+	pp_int32 samplerate = 48000;
+	// static filter (for highpass/lowpass)
+	filter_t lp;
+	filter_t hp;
+	Filter::init( (filter_t *)&lp, samplerate ); 
+	Filter::init( (filter_t *)&hp, samplerate );
+	hp.cutoff  = par->getParameter(0).floatPart;
+	hp.q       = par->getParameter(2).floatPart / 10.0;
+	lp.cutoff  = par->getParameter(1).floatPart;
+	lp.q       = hp.q;
+	float scale  = par->getParameter(4).floatPart / 100.0f;
+
+	// sweeping filter
+	int sweep   = (int)par->getParameter(3).floatPart;
+	multifilter_t filter;
+	multifilter_state_t filter0;
+	multifilter_type_t type;
+	filter0.x1 = filter0.x2 = filter0.y1 = filter0.y2 = 0.0;
+
+	float sweepmin = 150.0f;
+	float sweepmax = 21000.0f;
+	switch( sweep ){
+		case 0: type = FILTER_NONE;    break;
+		case 1: { type = FILTER_LOWPASS; sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+		case 2: { type = FILTER_BANDPASS;sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+		case 3: { type = FILTER_NOTCH;   sweepmax = lp.cutoff; sweepmin = hp.cutoff; break; }
+	}  
+	float sweepadd = sweepmax/float(sample->samplen);
+
+	// lets go
+	pp_int32 i;
+	float in;
+	float out;
+
+	// process 
+	for (i = sStart; i < sEnd; i++)
+	{
+		in = getFloatSampleFromWaveform(i);
+
+		Filter::process( in, (filter_t *)&lp );               // apply LP (+grit)
+		out = lp.out_lp;                                      
+        if( sweep == 0 ){
+			Filter::process( out, (filter_t *)&hp );          // apply HP
+			out = hp.out_hp;
+        }else{												  
+			Filter::multifilter_set(&filter,
+					samplerate,
+					type,
+					sweepmin + (float(i)*sweepadd),            // freq 
+					0.1+hp.q,                                  // res 
+					1.0);                                      // gain
+			out = Filter::multifilter(&filter, &filter0, out );// sweep it!
+        }													   //
+		setFloatSampleInWaveform(i, sin(out * scale) );        // update 
+	}
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_timestretch(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	preFilter(&SampleEditor::tool_timestretch, par);
+
+	prepareUndo();
+
+	pp_uint32 i;
+  pp_uint32 gi      = 0; // index of grain-window (samples)
+  pp_uint32 overlap = 0;
+  pp_uint32 pos  = 0;
+  pp_uint32 end  = 0;
+  float    gin   = 0.0f; // index of grain-window (normalized between 0..1)
+  float *buf;
+  float scale;
+  pp_int32 grain    = (int)par->getParameter(0).floatPart;    // grain size
+  pp_int32 stretch  = 1+(int)par->getParameter(1).floatPart;  // stretch factor
+  pp_int32 sLength2 = sample->samplen * (2+stretch);
+
+  pp_int32 samplerate = XModule::getc4spd(sample->relnote, sample->finetune);
+  buf = (float*)malloc( sLength2 * sizeof(float));
+  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
+
+	// 90s akai-style timestretch algo
+	for (i = 0; i < sample->samplen; i++) {
+    if( gi == 0 ){
+      for( pp_int32 s = 0; s < stretch; s++ ){
+        overlap += (grain/2);
+        for( pp_int32 j = 0; j < grain; j++ ){
+          gin   = (1.0f/(float)grain) * (float)j;   // normalize grainposition
+          scale = sin(gin/M_PI*9.8664);             // apply fade-in fade-out curve
+          pos   = i+j < sample->samplen-1 ? i+j : sample->samplen-1;
+          float f = getFloatSampleFromWaveform(pos);
+          end = j + overlap < sLength2-1 ? j + overlap : sLength2-1;;
+          buf[ end ] = buf[ end ] + (f*scale);
+        } 
+      }
+    }
+    gi = (gi+1) % grain;
+	}
+
+  // write sample
+  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
+  sample->samplen = end;
+  if( sample->type & 16 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
+    memset(sample->sample, 0, sample->samplen*2);
+  }else{
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
+  }
+
+  for( i = 0; i < end; i++ ){
+    this->setFloatSampleInWaveform(i, buf[i] );
+  }
+
+  // free mem
+  free(buf);
+  module->freeSampleMem(oldsample);
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_delay(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	preFilter(&SampleEditor::tool_delay, par);
+
+	prepareUndo();
+
+  // setup params and vars
+	pp_uint32 i;
+  pp_uint32 looptype = getLoopType();
+  pp_uint32 iecho = 0;                                    // current echo
+  pp_uint32 pos   = 0;                                    // sample position
+  pp_int32 delay  = (int)par->getParameter(0).floatPart;  // delay size in samples
+  pp_int32 echos  = (int)par->getParameter(1).floatPart;  // number of echo's 
+  float dry       = fmin( 1.0f - (par->getParameter(5).floatPart / 100.0f  ), 0.5 ) * 2.0f;
+  float wet       = ( par->getParameter(5).floatPart / 100.0f);
+  float detune    = (1.0f + (float)par->getParameter(2).floatPart) / 500.0f;
+  float bandpass  = (float)par->getParameter(3).floatPart;
+  float saturate  = (float)par->getParameter(4).floatPart / 10.0f;
+
+  // only pad sample when not looped, otherwise overflow in case of forward loop
+  pp_int32 sLength2 = looptype == 0 || looptype == 3? sample->samplen + (echos*delay) : sample->samplen;
+  bool overflow     = looptype == 1;
+
+  // setup bandpass filter (actually this is an brickwall filter [lp+hp]) 
+  filter_t lp; 
+  filter_t hp;
+  Filter::init( (filter_t *)&lp, 48000 ); 
+  Filter::init( (filter_t *)&hp, 48000 );
+  hp.cutoff    = bandpass;
+  lp.cutoff    = hp.cutoff + 500;  // 500hz bpf bandwidth
+  lp.q  = hp.q = 0.66;             // with high resonance
+
+  // create temporary sample
+  float *buf;
+  buf = (float*)malloc( sLength2 * sizeof(float));
+  for( i = 0; i < sLength2; i++ ) buf[i] = 0.0f;
+
+	for (i = 0; i < sample->samplen; i++) {
+    buf[i] = getFloatSampleFromWaveform(i) * dry;
+  }
+
+  // lets go
+	for (iecho= 0; iecho < echos; iecho++ ){
+    float fi = 0.0f;
+    for ( i=0;i < sample->samplen; i++ ){
+      fi += 1.0f - detune;
+      pos = ((iecho+1) * delay) + i;
+      if( pos >= sLength2 &&  overflow ) pos = pos % sLength2;
+      if( pos >= sLength2 && !overflow ) break; 
+      float amp = 1.0f - ((float)iecho/(0.8*(float)echos));    // calculate echo fadeout
+      float out = wet * sin( getFloatSampleFromWaveform( (int)fi ) * (1+saturate) )  * amp; // saturate + apply fadeout
+      if( bandpass > 60.0 ){
+        Filter::process( out, (filter_t *)&lp );    // apply LP
+        out = lp.out_lp;                            //
+        Filter::process( out, (filter_t *)&hp );    // apply HP
+        out = hp.out_hp;                            //
+      }                                             //
+      buf[pos] += -out;                             // add phase-inverted so flange effect will be more articulated due to PWM
+    }
+	}
+
+  // write sample
+  mp_ubyte *oldsample = (mp_ubyte*)sample->sample;
+  sample->samplen = sLength2; 
+  if( sample->type & 16 ){
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen*2);
+    memset(sample->sample, 0, sample->samplen*2);
+  }else{
+    sample->sample = (mp_sbyte*)module->allocSampleMem(sample->samplen);
+    memset(sample->sample, 0, sample->samplen);
+  }
+  for( i = 0; i < sLength2; i++ ){
+    this->setFloatSampleInWaveform(i, buf[i] );
+  }
+
+  // free mem
+  free(buf);
+  module->freeSampleMem(oldsample);
+
+	finishUndo();
+
+	postFilter();
+}
+
+void SampleEditor::tool_synth(const FilterParameters* par)
+{
+	preFilter(&SampleEditor::tool_synth, par);
+
+	prepareUndo();
+
+  // update controls just to be sure
+  for( int i = 0; i < synth->getMaxParam(); i++ ){
+    synth->setParam(i, (float)par->getParameter(i).floatPart );
+  }
+  
+  //enableUndoStack(false);
+  synth->process( NULL,NULL);
+  //enableUndoStack(true);
+
+  // serialize synth to samplename 
+  PPString preset = synth->ASCIISynthExport();
+  memcpy( sample->name, preset.getStrBuffer(), MP_MAXTEXT );
+
+  finishUndo();
+
+  postFilter();
+}
+
+
+void SampleEditor::tool_vocodeSample(const FilterParameters* par)
+{
+	if (isEmptySample())
+		return;
+
+	pp_int32 sStart = selectionStart;
+	pp_int32 sEnd = selectionEnd;
+
+	if (hasValidSelection())
+	{
+		if (sStart >= 0 && sEnd >= 0)
+		{
+			if (sEnd < sStart)
+			{
+				pp_int32 s = sEnd; sEnd = sStart; sStart = s;
+			}
+		}
+	}
+	else
+	{
+		sStart = 0;
+		sEnd = sample->samplen;
+	}
+
+	preFilter(&SampleEditor::tool_vocodeSample, par);
+
+	prepareUndo();
+
+	ClipBoard* clipBoard = ClipBoard::getInstance();
+
+	pp_int32 cLength = clipBoard->getWidth();
+	pp_int32 sLength = sEnd - sStart;
+	
+	if (ClipBoard::getInstance()->isEmpty())
+		return;
+
+	///global internal variables
+	pp_int32 i;
+	const pp_int32 bands = 8; // 16 is buggy 
+	pp_int32  swap;   //input channel swap
+	float gain;       //output level
+	float thru = 100.0f / par->getParameter(2).floatPart;
+	float high = 100.0f / par->getParameter(3).floatPart;
+	float q = 100.0f / par->getParameter(4).floatPart;
+	float kout; //downsampled output
+	pp_int32  kval; //downsample counter
+	pp_int32  nbnd; //number of bands
+
+	float param[7];
+	// SANE DEFAULTS
+	param[0] = 0.0f;   //input select
+  param[1] = 0.0;
+	param[2] = par->getParameter(2).floatPart / 100.0f; // 0.40f;  //hi thru
+	param[3] = par->getParameter(3).floatPart / 50.0f; // 0.40f;  // hi freq 
+	param[4] = (1.0f / 9.0)* par->getParameter(0).floatPart; // envelope
+	param[5] = par->getParameter(4).floatPart / 100.0f; // 0.5f;   // filter q
+	param[6] = 1.0f; 
+
+	//filter coeffs and buffers - seems it's faster to leave this global than make local copy 
+	float f[bands][13]; //[0-8][0 1 2 | 0 1 2 3 | 0 1 2 3 | val rate]
+                        //  #   reson | carrier |modulator| envelope
+	// init 
+	double tpofs = 6.2831853 / XModule::getc4spd(sample->relnote, sample->finetune); /* FIXME somehow guess samplerate */
+	double rr, th; //, re;
+	float sh;
+
+	if( bands == 8){
+		nbnd = 8;
+		//re=0.003f;
+		f[1][2] = 3000.0f;
+		f[2][2] = 2200.0f;
+		f[3][2] = 1500.0f;
+		f[4][2] = 1080.0f;
+		f[5][2] = 700.0f;
+		f[6][2] = 390.0f;
+		f[7][2] = 190.0f;
+		param[1] = 0.40f + (param[4] * 0.6);  //output dB
+	}
+	else
+	{
+		nbnd = 16;
+		//re=0.0015f;
+		f[1][2] = 5000.0f; //+1000
+		f[2][2] = 4000.0f; //+750
+		f[3][2] = 3250.0f; //+500
+		f[4][2] = 2750.0f; //+450
+		f[5][2] = 2300.0f; //+300
+		f[6][2] = 2000.0f; //+250
+		f[7][2] = 1750.0f; //+250
+		f[8][2] = 1500.0f; //+250
+		f[9][2] = 1250.0f; //+250
+		f[10][2] = 1000.0f; //+250
+		f[11][2] = 750.0f; //+210
+		f[12][2] = 540.0f; //+190
+		f[13][2] = 350.0f; //+155
+		f[14][2] = 195.0f; //+100
+		f[15][2] = 95.0f;
+		param[1] = 0.40f;  //output dB
+	}
+
+	for (i = 0; i < nbnd; i++) for (int j = 3; j < 12; j++) f[i][j] = 0.0f; //zero band filters and envelopes
+	kout = 0.0f;
+	kval = 0;
+	swap = (int)par->getParameter(1).floatPart; 
+	gain = (float)pow(10.0f, 2.0f * param[1] - 3.0f * param[5] - 2.0f);
+
+	thru = (float)pow(10.0f, 0.5f + 2.0f * param[1]);
+	high = param[3] * param[3] * param[3] * thru;
+	thru *= param[2] * param[2] * param[2];
+
+	float a, b, c, d, o = 0.0f, aa, bb, oo = kout, g = gain, ht = thru, hh = high, tmp;
+	pp_int32 k = kval, sw = swap, nb = nbnd;
+
+	if (param[4] < 0.05f) //freeze
+	{
+		for (i = 0; i < nbnd; i++) f[i][12] = 0.0f;
+	}
+	else
+	{
+		f[0][12] = (float)pow(10.0, -1.7 - 2.7f * param[4]); //envelope speed
+
+		rr = 0.022f / (float)nbnd; //minimum proportional to frequency to stop distortion
+		for (i = 1; i < nbnd; i++)
+		{
+			f[i][12] = (float)(0.025 - rr * (double)i);
+			if (f[0][12] < f[i][12]) f[i][12] = f[0][12];
+		}
+		f[0][12] = 0.5f * f[0][12]; //only top band is at full rate
+	}
+
+	rr = 1.0 - pow(10.0f, -1.0f - 1.2f * param[5]);
+	sh = (float)pow(2.0f, 3.0f * param[6] - 1.0f); //filter bank range shift
+
+	for (i = 1; i < nbnd; i++)
+	{
+		f[i][2] *= sh;
+		th = acos((2.0 * rr * cos(tpofs * f[i][2])) / (1.0 + rr * rr));
+		f[i][0] = (float)(2.0 * rr * cos(th)); //a0
+		f[i][1] = (float)(-rr * rr);           //a1
+					//was .98
+		f[i][2] *= 0.96f; //shift 2nd stage slightly to stop high resonance peaks
+		th = acos((2.0 * rr * cos(tpofs * f[i][2])) / (1.0 + rr * rr));
+		f[i][2] = (float)(2.0 * rr * cos(th));
+	}
+
+	/* process */
+	for (pp_int32 si = 0; si < sLength; si++) {
+		pp_int32 j  = si % clipBoard->getWidth();               // repeat carrier
+		pp_int16 s  = clipBoard->getSampleWord((pp_int32)j);   // get clipboard sample word
+		float fclip = s < 0 ? (s / 32768.0f) : (s / 32767.0f); // convert to float
+
+		a = this->getFloatSampleFromWaveform(si); // carrier/speech
+		b = fclip;                                // modulator/synth 
+		
+		if (sw == 0) { tmp = a; a = b; b = tmp; } //swap channels?
+
+		tmp = a - f[0][7]; //integrate modulator for HF band and filter bank pre-emphasis
+		f[0][7] = a;
+		a = tmp;
+
+		if (tmp < 0.0f) tmp = -tmp;
+		f[0][11] -= f[0][12] * (f[0][11] - tmp);      //high band envelope
+		o = f[0][11] * (ht * a + hh * (b - f[0][3])); //high band + high thru
+
+		f[0][3] = b; //integrate carrier for HF band
+
+		if (++k & 0x1) //this block runs at half sample rate
+		{
+			oo = 0.0f;
+			aa = a + f[0][9] - f[0][8] - f[0][8];  //apply zeros here instead of in each reson
+			f[0][9] = f[0][8];  f[0][8] = a;
+			bb = b + f[0][5] - f[0][4] - f[0][4];
+			f[0][5] = f[0][4];  f[0][4] = b;
+
+			for (i = 1; i < nb; i++) //filter bank: 4th-order band pass
+			{
+				tmp = f[i][0] * f[i][3] + f[i][1] * f[i][4] + bb;
+				f[i][4] = f[i][3];
+				f[i][3] = tmp;
+				tmp += f[i][2] * f[i][5] + f[i][1] * f[i][6];
+				f[i][6] = f[i][5];
+				f[i][5] = tmp;
+
+				tmp = f[i][0] * f[i][7] + f[i][1] * f[i][8] + aa;
+				f[i][8] = f[i][7];
+				f[i][7] = tmp;
+				tmp += f[i][2] * f[i][9] + f[i][1] * f[i][10];
+				f[i][10] = f[i][9];
+				f[i][9] = tmp;
+
+				if (tmp < 0.0f) tmp = -tmp;
+				f[i][11] -= f[i][12] * (f[i][11] - tmp);
+				oo += f[i][5] * f[i][11];
+			}
+		}
+		o += oo * g; //effect of interpolating back up to Fs would be minimal (aliasing >16kHz)
+
+		setFloatSampleInWaveform(si, o * (par->getParameter(5).floatPart / 100.0f) );
+	}
+
+	finishUndo();
+
+	postFilter();
+}

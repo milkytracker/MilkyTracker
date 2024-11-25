@@ -24,6 +24,7 @@ add_executable(tracker
     AnimatedFXControl.cpp
     ColorExportImport.cpp
     ColorPaletteContainer.cpp
+    fx/Convolver.cpp
     DialogHelp.cpp
     DialogChannelSelector.cpp
     DialogEQ.cpp
@@ -35,12 +36,13 @@ add_executable(tracker
     DialogResample.cpp
     DialogWithValues.cpp
     DialogZap.cpp
-    EQConstants.cpp
+    DialogSliders.cpp
+    fx/EQConstants.cpp
     EditorBase.cpp
     EnvelopeContainer.cpp
     EnvelopeEditor.cpp
     EnvelopeEditorControl.cpp
-    Equalizer.cpp
+    fx/Equalizer.cpp
     FileExtProvider.cpp
     FileIdentificator.cpp
     GlobalColorConfig.cpp
@@ -87,6 +89,10 @@ add_executable(tracker
     SectionUpperLeft.cpp
     SongLengthEstimator.cpp
     SystemMessage.cpp
+    fx/Filter.cpp
+    Synth.cpp
+    Synths.cpp
+	SynthFM.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -111,6 +117,7 @@ add_executable(tracker
     AnimatedFXControl.h
     ColorExportImport.h
     ColorPaletteContainer.h
+    fx/Convolver.h
     ControlIDs.h
     DialogChannelSelector.h
     DialogEQ.h
@@ -122,13 +129,14 @@ add_executable(tracker
     DialogResample.h
     DialogWithValues.h
     DialogZap.h
-    EQConstants.h
+    DialogSliders.h
+    fx/EQConstants.h
     EditModes.h
     EditorBase.h
     EnvelopeContainer.h
     EnvelopeEditor.h
     EnvelopeEditorControl.h
-    Equalizer.h
+    fx/Equalizer.h
     FileExtProvider.h
     FileIdentificator.h
     FileTypes.h
@@ -153,6 +161,9 @@ add_executable(tracker
     RecPosProvider.h
     RecorderLogic.h
     ResamplerHelper.h
+    fx/Filter.h
+    Synth.h
+	  SynthFM.h
     SIPButtons.h
     SampleEditor.h
     SampleEditorControl.h

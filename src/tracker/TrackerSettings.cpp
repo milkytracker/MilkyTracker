@@ -75,8 +75,10 @@ void Tracker::buildDefaultSettings()
 #endif
 	settingsDatabase->store("MIXERVOLUME", 256);
 	settingsDatabase->store("MIXERSHIFT", 1);
+	settingsDatabase->store("LIMITDRIVE",0);
+	settingsDatabase->store("LIMITRESET",1);
 	settingsDatabase->store("RAMPING", 1);
-	settingsDatabase->store("INTERPOLATION", 1);
+	settingsDatabase->store("INTERPOLATION", 4); // rpi zero can handle this already
 	settingsDatabase->store("MIXERFREQ", PlayerMaster::getPreferredSampleRate());
 #ifdef __FORCEPOWEROFTWOBUFFERSIZE__
 	settingsDatabase->store("FORCEPOWEROFTWOBUFFERSIZE", 1);
@@ -108,7 +110,7 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("XRESOLUTION", PPScreen::getDefaultWidth());
 	settingsDatabase->store("YRESOLUTION", PPScreen::getDefaultHeight());
 
-	settingsDatabase->store("SCREENSCALEFACTOR", 1);
+	settingsDatabase->store("SCREENSCALEFACTOR", 2);
 
 	settingsDatabase->store("ENVELOPEEDITORSCALE", 256);
 
@@ -125,13 +127,19 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("PATTERNFONT", PPFont::FONT_SYSTEM);
 #endif
 
+	// flat controls
+	settingsDatabase->store("FLATCONTROLS", 1);
+	
+	// classic UX
+	settingsDatabase->store("CLASSIC", 0);
+
 	// Scopes?
 	settingsDatabase->store("SCOPES", 1);
 
 	// Pattern spacing
 	settingsDatabase->store("SPACING", 0);
 	// Trace instruments setting
-	settingsDatabase->store("INSTRUMENTBACKTRACE", 0);
+	settingsDatabase->store("INSTRUMENTBACKTRACE", 1);
 	// TAB to note?
 	settingsDatabase->store("TABTONOTE", 1);
 	// mouseclick to cursor?
@@ -139,7 +147,7 @@ void Tracker::buildDefaultSettings()
 	// autoresize pattern on paste?
 	settingsDatabase->store("PATTERNAUTORESIZE", 0);
 	// Show hex row numbers
-	settingsDatabase->store("HEXCOUNT", 1);
+	settingsDatabase->store("HEXCOUNT", 0); // mind the newcomers
 	// Show zeroes instead of dots for unused effects
 	settingsDatabase->store("SHOWZEROEFFECT", 0);
 	// Wrap around cursor
@@ -152,12 +160,10 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("FOLLOWSONG", 1);
 	// Live switch
 	settingsDatabase->store("LIVESWITCH", 0);
-	// Our default edit mode
-#ifdef __LOWRES__
+
+	// Our default edit mode (milkytracker for milkytracker)
 	settingsDatabase->store("EDITMODE", EditModeMilkyTracker);
-#else
-	settingsDatabase->store("EDITMODE", EditModeFastTracker);
-#endif
+
 	// Our default scrolling mode
 	settingsDatabase->store("SCROLLMODE", ScrollModeStayInCenter);
 	// Mute fading value (from 0 to 100 percent)
@@ -178,7 +184,7 @@ void Tracker::buildDefaultSettings()
 	// Hexadecimal offsets in the sample editor by default
 	settingsDatabase->store("SAMPLEEDITORDECIMALOFFSETS", 0);
 	// use internal disk browser?
-	settingsDatabase->store("INTERNALDISKBROWSER", 0);
+	settingsDatabase->store("INTERNALDISKBROWSER", 1); // allows realtime preview for samples/instruments
 	// disk browser settings
 	settingsDatabase->store("INTERNALDISKBROWSERSETTINGS", SectionDiskMenu::getDefaultConfigUInt32());
 	settingsDatabase->store("INTERNALDISKBROWSERLASTPATH", "");
@@ -191,15 +197,15 @@ void Tracker::buildDefaultSettings()
 	// show splash screen?
 	settingsDatabase->store("SHOWSPLASH", 1);
 	// orderlist is extended
-	settingsDatabase->store("EXTENDEDORDERLIST", 0);
+	settingsDatabase->store("EXTENDEDORDERLIST", 1);
 	// current row add
-	settingsDatabase->store("ROWINSERTADD", 1);
+	settingsDatabase->store("ROWINSERTADD", 0);
 	// show title field
 	settingsDatabase->store("TITLEPAGE", TitlePageManager::PageTitle);
 	// sample editor last settings
 	settingsDatabase->store("SAMPLEEDITORLASTVALUES", "");
 	// no virtual channels for instrument playback
-	settingsDatabase->store("VIRTUALCHANNELS", 0);
+	settingsDatabase->store("VIRTUALCHANNELS", 5); // be nice to realtime chords
     // default number of XM channel limit
     settingsDatabase->store("XMCHANNELLIMIT", 32);
 	// enable multichn recording by default
@@ -207,11 +213,13 @@ void Tracker::buildDefaultSettings()
 	// enable multichn keyjazzing by default
 	settingsDatabase->store("MULTICHN_KEYJAZZ", 1);
 	// disable multichn edit by default
-	settingsDatabase->store("MULTICHN_EDIT", 0);
+	settingsDatabase->store("MULTICHN_EDIT", 1);  // be nice to realtime chord recording
 	// enable key off recording by default
 	settingsDatabase->store("MULTICHN_RECORDKEYOFF", 1);
 	// disable note delay recording
 	settingsDatabase->store("MULTICHN_RECORDNOTEDELAY", 0);
+	// enable rounding keyjazzed notes to closest row
+	settingsDatabase->store("BUGFIX_ROUNDTOCLOSESTROW", 0);
 	// Invert mousewheel?
 	settingsDatabase->store("INVERTMWHEEL", 0);
 	// Invert mousewheel zoom?  (normally wheelup zooms out: if inverted, wheelup zooms in)
@@ -244,7 +252,7 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("HDRECORDER_MIXERVOLUME", 256);
 	settingsDatabase->store("HDRECORDER_MIXERSHIFT", 1);
 	settingsDatabase->store("HDRECORDER_RAMPING", 1);
-	settingsDatabase->store("HDRECORDER_INTERPOLATION", 1);
+	settingsDatabase->store("HDRECORDER_INTERPOLATION", 4);
 	settingsDatabase->store("HDRECORDER_ALLOWMUTING", 0);
 
 	for (i = 0; i < NUMEFFECTMACROS; i++)
@@ -289,6 +297,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	else if (theKey->getKey().compareTo("MIXERVOLUME") == 0)
 	{
 		settings.mixerVolume = v2;
+	}
+	else if (theKey->getKey().compareTo("LIMITDRIVE") == 0)
+	{
+		settings.limiterDrive = v2;
 	}
 	else if (theKey->getKey().compareTo("MIXERSHIFT") == 0)
 	{
@@ -389,6 +401,14 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		if (patternEditorCtrl)
 			patternEditorCtrl->setFont(PPFont::getFont(v2));
+	}
+	else if (theKey->getKey().compareTo("FLATCONTROLS") == 0)
+	{
+		screen->setFlat(v2 != 0);
+	}
+	else if (theKey->getKey().compareTo("CLASSIC") == 0)
+	{
+		screen->setClassic(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("SCOPES") == 0)
 	{
@@ -585,6 +605,10 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	{
 		recorderLogic->setRecordNoteDelay(v2 != 0);
 	}
+	else if (theKey->getKey().compareTo("BUGFIX_ROUNDTOCLOSESTROW") == 0)
+	{
+		recorderLogic->setRoundToClosestRow(v2 != 0);
+	}
 	else if (theKey->getKey().compareTo("INVERTMWHEEL") == 0)
 	{
 		patternEditorCtrl->setInvertMouseVscroll(v2 != 0);
@@ -659,6 +683,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 			pp_int32 i = str.getIntValue();
 			str = theKey->getStringValue();
 			sectionInstruments->setEncodedEnvelope(SectionInstruments::EnvelopeTypeVolume, i, str);
+      printf("env %i %s\n",i,str.getStrBuffer());
 		}
 	}
 	else if (theKey->getKey().startsWith("PREDEFENVELOPEPANNING_"))
@@ -716,6 +741,7 @@ void Tracker::getMixerSettingsFromDatabase(TMixerSettings& mixerSettings,
 	mixerSettings.ramping = currentSettings.restore("RAMPING")->getIntValue();
 	mixerSettings.setAudioDriverName(currentSettings.restore("AUDIODRIVER")->getStringValue());
     mixerSettings.numPlayerChannels = currentSettings.restore("XMCHANNELLIMIT")->getIntValue();
+    mixerSettings.limiterDrive = currentSettings.restore("LIMITDRIVE")->getIntValue();
 	mixerSettings.numVirtualChannels = currentSettings.restore("VIRTUALCHANNELS")->getIntValue();
 }
 

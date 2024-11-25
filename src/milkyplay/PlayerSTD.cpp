@@ -1630,7 +1630,22 @@ void PlayerSTD::doTickEffect(mp_sint32 chn, TModuleChannel* chnInf, mp_sint32 ef
 			}
 			break;
 		} 
+
+		case 0x80: 
+		{
+			mp_sint32 slotsize = (numEffects*2)+2;
+			TXMPattern* pattern = &module->phead[patternIndex];
+
+			mp_sint32 pp = slotsize*chn;
+			mp_ubyte *row = pattern->patternData+
+						 (pattern->channum*slotsize*rowcnt);
 			
+			// remove noteskip meta-effect 
+			row[pp+2+2] = 0;
+			row[pp+2+2+1] = 0;
+
+			break;
+		}	
 	}
 }
 
@@ -2243,6 +2258,7 @@ void PlayerSTD::progressRow()
 
 			bool noteporta = false;
 			bool notedelay = false;
+			bool noteskip  = false;
 			
 			mp_sint32 oldIns = chnInf->ins;
 			mp_sint32 oldSmp = chnInf->smp;
@@ -2277,7 +2293,15 @@ void PlayerSTD::progressRow()
 								note = chnInf->lastnoportanote;
 						}
 						break;
+					case 0x80:
+						noteskip = true;
+						break;
 				}				
+			}
+
+			if (noteskip) {
+				// do not process anymore of this note
+				continue;
 			}
 			
 			// Check new instrument settings only if valid note or no note at all

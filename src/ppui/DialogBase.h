@@ -50,6 +50,7 @@ public:
 private:
 	DialogResponder* respondListener;
 	pp_int16 keyDownInvokeKeyCode;
+  bool isPrompt; 
 	
 protected:
 	PPScreen* parentScreen;

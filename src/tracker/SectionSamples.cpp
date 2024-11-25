@@ -180,6 +180,21 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_SAMPLE_SYNTH:
+			{
+				getSampleEditorControl()->invokeSynth();
+				break;
+			}
+
+			case BUTTON_SAMPLE_SYNTH_RAND:
+			{
+				sampleEditor->getSynth()->setSampleEditor(sampleEditor);
+				sampleEditor->getSynth()->random();
+        tracker.updateSamplesListBox(false);
+        refresh();
+				break;
+			}
+
 			case BUTTON_SAMPLE_PLAY_RANGE:
 			{
 				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
@@ -514,36 +529,57 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(conSize1,dHeight), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
-	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + bHeight+2), "C-5", false));		
+	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + (bHeight*2)+4), "C-5", false));		
 
 	pp_int32 size = (pp_int32)(conSize1*0.2183908045977f);
 	pp_int32 size2 = (pp_int32)(conSize1*0.4367816091954f);
 	pp_int32 size3 = (pp_int32)(conSize1/*0.2988505747126f*/*0.3218390804598f);
 
-	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+size2, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Up");
+	PPPoint locUp  = screen->getClassic() ? PPPoint(x2+size2, y2+2+bHeight) : PPPoint(x2+size+size2+1, y2+2+bHeight*2);
+	PPSize  sizeUp = screen->getClassic() ? PPSize(size, bHeightm)          : PPSize(size3, bHeightm);
+	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, locUp, sizeUp ); 
+	button->setText( screen->getClassic() ? "Up" : "\x1a" );
 	container->addControl(button);
 	
-	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm+1));
-	button->setText("Dn");
+	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm));
+	button->setText( screen->getClassic() ? "Dn" : "\x1b" );
 	container->addControl(button);
 
-	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, PPPoint(x2+2, y2+2+bHeight*2), PPSize(size2-3, bHeightm+1));
-	button->setText("Stop");
+	PPPoint locStop  = screen->getClassic() ? PPPoint(x2+2, y2+2+bHeight*2) : PPPoint(x2+size, y2+2+bHeight);
+	PPSize  sizeStop = screen->getClassic() ? PPSize(size2-3, bHeightm+1) : PPSize(size2, bHeightm);
+	button = new PPButton(BUTTON_SAMPLE_PLAY_STOP, screen, this, locStop, sizeStop);
+	button->setText( screen->getClassic() ? "Stop" : "\xa7" );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_WAVE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2), PPSize(size3, bHeightm));
-	button->setText("Wav");
+	button->setText( screen->getClassic() ? "Wav" : "\x10" );
+	if( !screen->getClassic() ) button->setColor(TrackerConfig::colorHighLight_1);
 	container->addControl(button);
+
+	button = new PPButton(BUTTON_SAMPLE_SYNTH, screen, this, PPPoint(x2+2 , y2+2), PPSize((size3*2)-1, bHeightm));
+	button->setText( "synth" );
+	if( !screen->getClassic() ){
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+	}
+	container->addControl(button);
+
+	if( !screen->getClassic() ){
+		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize(size-1, bHeightm));
+		button->setText( "\x0f" );
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+		container->addControl(button);
+	}
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
-	button->setText("Rng");
+	button->setText( screen->getClassic() ? "Wav" : "\x10" );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_PLAY_DISPLAY, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight*2), PPSize(size3, bHeightm+1));
 	button->setText("Dsp");
 	container->addControl(button);
+	if( !screen->getClassic() ) button->hide(true);
 
 	containerEntire->addControl(container);
 
@@ -554,11 +590,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->setColor(TrackerConfig::colorThemeMain);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOW, screen, this, PPPoint(x2+2, y2+2), PPSize(size, bHeightm));
-	button->setText("Show rng");
+	button->setText( screen->getClassic() ? "Show rng" : "zoom select");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ALL, screen, this, PPPoint(x2+2, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Rng all");
+	button->setText( screen->getClassic() ? "Rng all" : "select all");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 	
 	pp_int32 h = button->getSize().width;
@@ -572,11 +610,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ZOOMOUT, screen, this, PPPoint(x2+2 + size+1, y2+2), PPSize(size, bHeightm));
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	button->setText("Zoom out");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOWALL, screen, this, PPPoint(x2+2 + size+1, y2+2+bHeight), PPSize(size, bHeightm));
-	button->setText("Show all");
+	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
+	button->setText( screen->getClassic() ? "Show all" : "Zoom full");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_APPLY_LASTFILTER, screen, this, PPPoint(x2+2 + size+1, y2+2+bHeight*2), PPSize(size, bHeightm+1));
@@ -772,7 +812,6 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	PPContainer* container = new PPContainer(CONTAINER_SAMPLE_PLAY, screen, this, PPPoint(x2, y2), PPSize(87,12*3+4), false);
 	container->setColor(TrackerConfig::colorThemeMain);
 
-	container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 4, y2 + 2), "Play:", true));		
 	container->addControl(new PPStaticText(STATICTEXT_SAMPLE_PLAYNOTE, screen, this, PPPoint(x2 + 8, y2 + 2 + 14), "C-5", false));		
 
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, PPPoint(x2+38, y2+2+12), PPSize(18, 11));
@@ -1223,6 +1262,15 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_RANGE))->setClickable(sampleEditorControl->hasValidSelection());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_WAVE))->setClickable(!sampleEditor->isEmptySample());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_DISPLAY))->setClickable(!sampleEditor->isEmptySample());	
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_SYNTH))->setClickable(
+			sampleEditor->isEmptySample() || 
+			sampleEditor->wasGeneratedByMilkySynth() 
+	);
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_SYNTH_RAND))->setClickable(
+			sampleEditor->isEmptySample() || 
+			sampleEditor->wasGeneratedByMilkySynth() 
+	);
+	
 	
 	PPContainer* container9 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT1));
 	bool b = (sampleEditorControl->getCurrentRangeLength()) > 0 && sampleEditorControl->hasValidSelection();
@@ -1232,7 +1280,8 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	
 	PPContainer* container10 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_LOADSAVE));
 	static_cast<PPButton*>(container10->getControlByID(BUTTON_SAMPLE_SAVE))->setClickable(!sampleEditor->isEmptySample());		
-	
+
+
 	screen->paintControl(container10, false);
 	screen->paintControl(container9, false);
 	screen->paintControl(container6, false);

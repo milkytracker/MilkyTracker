@@ -27,18 +27,22 @@ on run argv
 				set sidebar width to 0
 				set statusbar visible to false
 				set toolbar visible to false
-				set the bounds to {X_POS, Y_POS, X_POS + BG_W, Y_POS + BG_H + TITLE_BAR_H}
 
 				-- Move the icons; this is really finicky, the coordinates don't seem
 				-- to make much sense and if you go too far then ugly scrollbars will appear
 				set position of item "Documentation" to {77, 60}
 				set position of item "Example Songs" to {413, 60}
-				set position of item "MilkyTracker.app" to {161, 195}
-				set position of item "Applications" to {332, 195}
+				set position of item "MilkyTracker.app" to {141, 195}
+				set position of item "Applications" to {330, 195}
 
 				-- Move these out of the way for users with Finder configured to show all files
 				set position of item ".background" to {161, 500}
 				set position of item ".fseventsd" to {332, 500}
+
+                -- Resize window after moving icons, else icons that are not visible
+                -- won't be moved
+                delay 2
+				set the bounds to {X_POS, Y_POS, X_POS + BG_W, Y_POS + BG_H + TITLE_BAR_H}
 			end tell
 			update without registering applications
 			delay 5

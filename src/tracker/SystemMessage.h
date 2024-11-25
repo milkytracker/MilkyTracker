@@ -44,7 +44,7 @@ public:
 	{
 		MessageSoundDriverInitFailed,
 		MessageFullScreenFailed,
-		MessageResChangeRestart,
+		MessageChangeRestart,
 		MessageLimitedInput
 	};
 	

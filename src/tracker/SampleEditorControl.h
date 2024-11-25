@@ -73,6 +73,7 @@ private:
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
 
+
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
 	pp_int32 selectionDragPivot;
@@ -289,6 +290,9 @@ private:
 		MenuCommandIDFLPaste,
 		MenuCommandIDNormalize,
 		MenuCommandIDCompress,
+		MenuCommandIDMTBoost,
+		MenuCommandIDVocode,
+		MenuCommandIDReverb,
 		MenuCommandIDVolumeBoost,
 		MenuCommandIDVolumeFade,
 		MenuCommandIDVolumeFadeIn,
@@ -296,6 +300,9 @@ private:
 		MenuCommandIDVolumeFold,
 		MenuCommandIDReverse,
 		MenuCommandIDPTBoost,
+		MenuCommandIDSaturate,
+		MenuCommandIDTimeStretch,
+		MenuCommandIDDelay,
 		MenuCommandIDXFade,
 		MenuCommandIDChangeSign,
 		MenuCommandIDSwapByteOrder,
@@ -304,6 +311,7 @@ private:
 		MenuCommandIDDCOffset,
 		MenuCommandIDRectangularSmooth,
 		MenuCommandIDTriangularSmooth,
+		MenuCommandIDFilter,
 		MenuCommandIDEQ3Band,
 		MenuCommandIDEQ10Band,
 		MenuCommandIDSelectiveEQ10Band,
@@ -316,7 +324,8 @@ private:
 		MenuCommandIDGenerateSawtooth,
 		MenuCommandIDGenerateHalfSine,
 		MenuCommandIDGenerateAbsoluteSine,
-		MenuCommandIDGenerateQuarterSine
+		MenuCommandIDGenerateQuarterSine,
+		MenuCommandIDSynth
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);
@@ -325,6 +334,7 @@ private:
 	
 public:
 	void invokeSetSampleVolume() { executeMenuCommand(MenuCommandIDVolumeBoost); }
+	void invokeSynth() { executeMenuCommand(MenuCommandIDSynth); }
 	
 	bool contextMenuVisible();
 	void invokeContextMenu(const PPPoint& p, bool translatePoint = true);
@@ -344,6 +354,11 @@ private:
 			SampleToolTypeNormalize,
 			SampleToolTypeReverse,
 			SampleToolTypePTBoost,
+			SampleToolTypeMTBoost,
+			SampleToolTypeVocode,
+			SampleToolTypeSaturate,
+			SampleToolTypeTimeStretch,
+			SampleToolTypeDelay,
 			SampleToolTypeXFade,
 			SampleToolTypeChangeSign,
 			SampleToolTypeSwapByteOrder,
@@ -352,6 +367,7 @@ private:
 			SampleToolTypeDCOffset,
 			SampleToolTypeRectangularSmooth,
 			SampleToolTypeTriangularSmooth,
+			SampleToolTypeFilter,
 			SampleToolTypeEQ3Band,
 			SampleToolTypeEQ10Band,
 			SampleToolTypeSelectiveEQ10Band,
@@ -363,7 +379,9 @@ private:
 			SampleToolTypeGenerateSawtooth,
 			SampleToolTypeGenerateHalfSine,
 			SampleToolTypeGenerateAbsoluteSine,
-			SampleToolTypeGenerateQuarterSine
+			SampleToolTypeGenerateQuarterSine,
+			SampleToolTypeReverb,
+			SampleToolTypeSynth
 		};
 	
 	private:

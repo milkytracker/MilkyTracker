@@ -265,23 +265,6 @@ pp_int32 PatternEditor::getCurrentActiveInstrument()
 		
 	if (!instrumentEnabled)
 		return 0;
-		
-	if (instrumentBackTrace)
-	{
-		for (pp_int32 i = cursor.row; i >= 0; i--)
-		{
-			patternTools.setPosition(pattern, cursor.channel, i);
-			
-			pp_int32 ins = patternTools.getInstrument();
-			
-			if (ins != 0)
-			{
-				return ins;
-			}
-		}
-		
-		//return -1;
-	}
 	
 	return currentInstrument;
 }
@@ -1882,4 +1865,11 @@ void PatternEditor::cloneSelection(pp_int32 channels, pp_int32 rows)
 	selection.end = targetEnd;
 	
 	finishUndo(LastChangeCloneSelection);
+}
+
+void PatternEditor::triggerButton( pp_uint32 id, PPScreen *s, EventListenerInterface *e ){
+  PPEvent event(eCommand);
+  PPButton *fakebutton = new PPButton(id, s, e, PPPoint(0,0), PPSize(10, 10));
+  e->handleEvent(reinterpret_cast<PPObject*>(fakebutton), &event);
+  delete fakebutton;
 }

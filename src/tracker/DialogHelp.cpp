@@ -40,9 +40,9 @@ DialogHelp::DialogHelp(PPScreen *screen,
 					   const PPString &caption,
 					   bool okCancel /* = false*/) : PPDialogBase()
 {
-	char line[HELP_MAX_LINE];
-	pp_int32 w = 800;
-	pp_int32 h = screen->getHeight() - 200;
+	pp_int32 w = screen->getWidth() - 12;
+	pp_int32 h = screen->getHeight() - 50;
+  if( w > 780 ) w = 780;
 	if (okCancel)
 		initDialog(screen, responder, id, caption, w, h, 26, "Ok", "Cancel");
 	else
@@ -61,19 +61,26 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
 	x2 = x + width / 2 - 120;
 
-	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 12, y + (3 * 8)), PPSize(width - (3 * 8), height - (8 * 8)), true, false, true, true);
-	listBox->setShowIndex(true);
-	memset(line, 0, HELP_MAX_LINE);
+	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 2, y + 2), PPSize(width - 5, height - (8 * 8)), true, false, true, true);
+	listBox->setShowIndex(false);
+
+	PPString line = PPString("");
+	unsigned char c;
+	// uncomment to display all characters
+	//for( c = 0; c <128; c++ ){
+	//  char msg[255];
+	//  sprintf(msg,"d=%d x=%x %c\n",c,c,c);
+	//  listBox->addItem( msg );
+	//  
+	//}
 	for (pp_int32 i = 0; i < milkytracker_help_len; i++)
 	{
-		char c = milkytracker_help[i];
-		if (c == '\n')
+		c = milkytracker_help[i];
+		if (c == 0x0a ) // '\n'
 		{
-			listBox->addItem(line);
-			memset(line, 0, HELP_MAX_LINE);
-		}
-		else
-			sprintf(line, "%s%c", line, c);
+			listBox->addItem( line );
+      line = PPString("");
+		} else line.append( PPString(c) );
 	}
 	messageBoxContainerGeneric->addControl(listBox);
 }

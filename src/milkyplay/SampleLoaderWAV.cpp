@@ -586,7 +586,7 @@ mp_sint32 SampleLoaderWAV::loadSample(mp_sint32 index, mp_sint32 channelIndex)
 		TXMSample* smp = &theModule.smp[index];
 		
 		mp_dword start = sampleLoop.dwStart/* / (hdr.numBits*hdr.numChannels / 8)*/;
-		mp_dword end = sampleLoop.dwEnd/* / (hdr.numBits*hdr.numChannels / 8)*/;
+		mp_dword end = sampleLoop.dwEnd + 1/* / (hdr.numBits*hdr.numChannels / 8)*/;
 		
 		if (end > smp->samplen)
 			end = smp->samplen;
@@ -666,7 +666,7 @@ mp_sint32 SampleLoaderWAV::saveSample(const SYSCHAR* fileName, mp_sint32 index)
 		
 		sampleLoop.dwType = ((smp->type & 3) == 2 ? 1 : 0);
 		sampleLoop.dwStart = smp->loopstart;
-		sampleLoop.dwEnd = smp->loopstart + smp->looplen;
+		sampleLoop.dwEnd = smp->loopstart + (smp->looplen > 0 ? smp->looplen-1 : 0);
 		
 		f.writeDwords((mp_dword*)&samplerChunk, sizeof(samplerChunk) / sizeof(mp_dword));
 		f.writeDwords((mp_dword*)&sampleLoop, sizeof(sampleLoop) / sizeof(mp_dword));

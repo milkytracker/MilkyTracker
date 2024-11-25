@@ -68,7 +68,7 @@ PPDictionaryKey* PPDictionary::getKeyToModify(const PPString& key) const
 	for (pp_int32 i = 0;  i < keys->size(); i++)
 	{
 		PPDictionaryKey* theKey = keys->get(i);
-		if (theKey->getKey().compareTo(key) == 0)
+		if (theKey != NULL && theKey->getKey().compareTo(key) == 0)
 			return theKey;
 	}
 	return NULL;

@@ -32,6 +32,7 @@
 #define __DIALOGEQ_H__
 
 #include "DialogBase.h"
+#include "SampleEditor.h"
 
 class DialogEQ : public PPDialogBase
 {
@@ -45,6 +46,9 @@ public:
 private:
 	EQNumBands numBands;
 	pp_uint32 numSliders;
+	SampleEditor *sampleEditor;
+	bool needUpdate;
+	bool preview;
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 	
@@ -61,6 +65,9 @@ public:
 	
 	EQNumBands getNumBands() const { return numBands; }
 	pp_uint32 getNumBandsAsInt() const { return numSliders; }
+
+	void setSampleEditor(SampleEditor *s){ this->sampleEditor = s; }
+	SampleEditor * getSampleEditor(){ return this->sampleEditor; }
 };
 
 

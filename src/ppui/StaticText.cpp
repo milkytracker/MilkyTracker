@@ -26,6 +26,7 @@
 #include "Font.h"
 #include "Tools.h"
 #include "PPUIConfig.h"
+#include "Screen.h"
 
 PPStaticText::PPStaticText(pp_int32 id,	PPScreen* parentScreen, EventListenerInterface* eventListener, 
 						   const PPPoint& location, 

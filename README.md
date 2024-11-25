@@ -1,7 +1,6 @@
 MilkyTracker - Cross-Platform XM Tracker
 ========================================
 
-[![Travis Build Status](https://travis-ci.org/milkytracker/MilkyTracker.svg?branch=master)](https://travis-ci.org/milkytracker/MilkyTracker)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/milkytracker/MilkyTracker?branch=master&svg=true)](https://ci.appveyor.com/project/Deltafire/milkytracker)
 
 MilkyTracker is an multi-platform music application for creating .MOD

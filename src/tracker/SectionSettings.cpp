@@ -146,8 +146,11 @@ enum ControlIDs
 	RADIOGROUP_SETTINGS_FREQTAB,
 	STATICTEXT_SETTINGS_BUFFERSIZE,
 	STATICTEXT_SETTINGS_MIXERVOL,
+	STATICTEXT_SETTINGS_LIMITDRIVE,
+	CHECKBOX_SETTINGS_LIMITRESET,
 	SLIDER_SETTINGS_BUFFERSIZE,
 	SLIDER_SETTINGS_MIXERVOL,
+	SLIDER_SETTINGS_LIMITDRIVE,
 	STATICTEXT_SETTINGS_FORCEPOWER2BUFF,
 	CHECKBOX_SETTINGS_FORCEPOWER2BUFF,
 	RADIOGROUP_SETTINGS_AMPLIFY,
@@ -167,11 +170,14 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_MULTICHN_EDIT,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDKEYOFF,
 	CHECKBOX_SETTINGS_MULTICHN_RECORDNOTEDELAY,
+	CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW,
 
 	// Page II
 	CHECKBOX_SETTINGS_HEXCOUNT,
 	CHECKBOX_SETTINGS_SHOWZEROEFFECT,
 	CHECKBOX_SETTINGS_FULLSCREEN,
+	CHECKBOX_SETTINGS_FLATCONTROLS,
+	CHECKBOX_SETTINGS_CLASSIC,
 	LISTBOX_SETTINGS_RESOLUTIONS,
 	BUTTON_RESOLUTIONS_CUSTOM,
 	BUTTON_RESOLUTIONS_FULL,
@@ -772,6 +778,20 @@ public:
         radioGroup->addItem("128");
         
         container->addControl(radioGroup);
+
+        y2 += 60;
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Mastering limiter", true, true));
+        container->addControl(new PPStaticText(STATICTEXT_SETTINGS_LIMITDRIVE, NULL, NULL, PPPoint(x2 + 4, y2 + 30), "", false));
+        
+        PPSlider *slider = new PPSlider(SLIDER_SETTINGS_LIMITDRIVE, screen, this, PPPoint(x + 4, y2 + 4 + 11), 151, true);
+        slider->setMaxValue(10);
+        slider->setBarSize(8192);
+        container->addControl(slider);
+
+        y2+=44;
+        PPCheckBox *checkBox = new PPCheckBox(CHECKBOX_SETTINGS_LIMITRESET, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Reset on mod.load", checkBox, true));
+        container->addControl(checkBox);
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -791,6 +811,20 @@ public:
                 break;
                 
         }
+
+        PPStaticText *text = static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_SETTINGS_LIMITDRIVE));
+        PPSlider *slider = static_cast<PPSlider*>(container->getControlByID(SLIDER_SETTINGS_LIMITDRIVE));
+        v = 0;
+        PPDictionaryKey *k = settingsDatabase->restore("LIMITDRIVE");
+        if( k != NULL ) v = k->getIntValue();
+        char buffer[30];
+        if( v == 0 ) sprintf(buffer, "disabled");
+        else         sprintf(buffer, "Drive: +%i", v);
+        text->setText(buffer);
+        slider->setCurrentValue(v);
+
+        v = settingsDatabase->restore("LIMITRESET")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LIMITRESET))->checkIt(v>0);
     }
     
 };
@@ -1235,12 +1269,29 @@ public:
 		PPCheckBox* checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FULLSCREEN, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
 		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 4, y2), "Fullscreen:", checkBox, true));
+
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_FLATCONTROLS, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "flat controls", checkBox, true));
+
+		y2+=12;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_CLASSIC, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl( new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "classic UX", checkBox, true));
+
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
 	{
 		pp_int32 v = settingsDatabase->restore("FULLSCREEN")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FULLSCREEN))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("FLATCONTROLS")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_FLATCONTROLS))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("CLASSIC")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_CLASSIC))->checkIt(v!=0);
 	}
 
 };
@@ -1290,6 +1341,7 @@ public:
 		container->addControl(new PPSeperator(0, screen, PPPoint(x2, y2), 158, TrackerConfig::colorThemeMain, true));
 
 		y2+=5;
+
 
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x2 + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
@@ -1473,7 +1525,12 @@ public:
 		y2+=12;
 		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_ADVANCED_DND, screen, this, PPPoint(x2 + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dnd:", checkBox, true));
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x2 + 2, y2), "Advanced dragdrop:", checkBox, true));
+
+		y2+=15;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Rec closest row:", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -1495,6 +1552,9 @@ public:
 
 		v = settingsDatabase->restore("ADVANCEDDND")->getIntValue();
 		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_ADVANCED_DND))->checkIt(v!=0);
+
+		v = settingsDatabase->restore("BUGFIX_ROUNDTOCLOSESTROW")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW))->checkIt(v!=0);
 	}
 
 };
@@ -1803,9 +1863,11 @@ void SectionSettings::showRestartMessageBox()
 {
 	if (tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue() ||
 		tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue() ||
+		tracker.settingsDatabase->restore("CLASSIC")->getIntValue() != tracker.settingsDatabaseCopy->restore("CLASSIC")->getIntValue() ||
+		tracker.settingsDatabase->restore("FLATCONTROLS")->getIntValue() != tracker.settingsDatabaseCopy->restore("FLATCONTROLS")->getIntValue() ||
 		tracker.settingsDatabase->restore("SCREENSCALEFACTOR")->getIntValue() != tracker.settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue())
 	{
-		SystemMessage message(*tracker.screen, SystemMessage::MessageResChangeRestart);
+		SystemMessage message(*tracker.screen, SystemMessage::MessageChangeRestart);
 		message.show();
 	}
 }
@@ -2033,6 +2095,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("BUGFIX_ROUNDTOCLOSESTROW", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
 			case CHECKBOX_SETTINGS_HEXCOUNT:
 			{
 				if (event->getID() != eCommand)
@@ -2063,6 +2135,26 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case CHECKBOX_SETTINGS_FLATCONTROLS:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("FLATCONTROLS", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_CLASSIC:
+			{
+				if (event->getID() != eCommand)
+					break;
+        pp_int32 value = (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked();
+				tracker.settingsDatabase->store("CLASSIC", value);
+				update();
+				break;
+			}
+
 			case CHECKBOX_SETTINGS_INSTRUMENTBACKTRACE:
 			{
 				if (event->getID() != eCommand)
@@ -2089,6 +2181,16 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 					break;
 
 				tracker.settingsDatabase->store("TABTONOTE", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				update();
+				break;
+			}
+
+			case CHECKBOX_SETTINGS_LIMITRESET:
+			{
+				if (event->getID() != eCommand)
+					break;
+
+				tracker.settingsDatabase->store("LIMITRESET", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}
@@ -2474,6 +2576,14 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 			{
 				pp_uint32 v = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
 				tracker.settingsDatabase->store("MIXERVOLUME", v);
+				update();
+				break;
+			}
+
+			case SLIDER_SETTINGS_LIMITDRIVE:
+			{
+				pp_uint32 v = reinterpret_cast<PPSlider*>(sender)->getCurrentValue();
+				tracker.settingsDatabase->store("LIMITDRIVE", v);
 				update();
 				break;
 			}

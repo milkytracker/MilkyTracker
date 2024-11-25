@@ -35,6 +35,7 @@
 #include "PPUIConfig.h"
 
 #include "TrackerConfig.h"
+#include "ControlIDs.h"
 
 #define SCROLLBARWIDTH  SCROLLBUTTONSIZE
 
@@ -95,35 +96,90 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	songPos.orderListIndex = songPos.row = -1;
 
 	// context menu
-	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorThemeMain, false, PPFont::getFont(PPFont::FONT_SYSTEM));
-	
-	editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
-	editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
-	editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
-	editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-	editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
-	editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
-	editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
-	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
-	editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-	editMenuControl->addEntry("Cut", MenuCommandIDCut);
-	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
-	editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-	editMenuControl->addEntry("Porous Paste", MenuCommandIDPorousPaste);
-	editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-	editMenuControl->addEntry("Swap channels", MenuCommandIDSwapChannels);
+	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
 
-	editMenuControl->setNotifyParentOnHide(true);
+  if( !parentScreen->getClassic() ){
+
+    moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    moduleMenuControl->setSubMenu(true);
+    moduleMenuControl->addEntry("New", MAINMENU_ZAP);
+    moduleMenuControl->addEntry("Load", MAINMENU_LOAD);
+    moduleMenuControl->addEntry("Save", MAINMENU_SAVE);
+    moduleMenuControl->addEntry("Save as", MAINMENU_SAVEAS);
+    moduleMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    moduleMenuControl->addEntry("Optimize", MAINMENU_OPTIMIZE);
+    moduleMenuControl->addEntry("Playback mode", MAINMENU_QUICKOPTIONS);
+
+    patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    patternMenuControl->setSubMenu(true);
+    patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
+    patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
+    patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
+
+    
+	  keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    keyboardMenuControl->setSubMenu(true);
+    keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
+    keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
+    keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
+    keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
+
+    editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
+    editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
+    editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
+
+    channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    channelMenuControl->setSubMenu(true);
+    channelMenuControl->addEntry("Mute", MenuCommandIDMuteChannel);
+    channelMenuControl->addEntry("Solo", MenuCommandIDSoloChannel);
+    channelMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
+    channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    channelMenuControl->addEntry("Select", MenuCommandIDSelectChannel);
+    channelMenuControl->addEntry("Select all", MenuCommandIDSelectAll);
+    channelMenuControl->addEntry("Swap", MenuCommandIDSwapChannels);
+    channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
+    channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
+    editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
+    
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Undo", MenuCommandIDUndo);
+    editMenuControl->addEntry("Redo", MenuCommandIDRedo);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Cut", MenuCommandIDCut);
+    editMenuControl->addEntry("Copy", MenuCommandIDCopy);
+    editMenuControl->addEntry("Paste", MenuCommandIDPaste);
+    editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
+
+  }else{
+    editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
+    editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
+    editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
+    editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Undo", MenuCommandIDUndo);
+    editMenuControl->addEntry("Redo", MenuCommandIDRedo);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Cut", MenuCommandIDCut);
+    editMenuControl->addEntry("Copy", MenuCommandIDCopy);
+    editMenuControl->addEntry("Paste", MenuCommandIDPaste);
+    editMenuControl->addEntry("Porous Paste", MenuCommandIDPorousPaste);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("Swap channels", MenuCommandIDSwapChannels);
+  }
+
+	//editMenuControl->setNotifyParentOnHide(true);
 
 	initKeyBindings();
 	
 #ifdef __LOWRES__
 	setFont(PPFont::getFont(PPFont::FONT_TINY));
-	switchEditMode(EditModeMilkyTracker);
 #else
 	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
-	switchEditMode(EditModeFastTracker);
 #endif
 		
 	setRecordMode(false);
@@ -157,11 +213,14 @@ void PatternEditorControl::setFont(PPFont* font)
 	this->font = font;
 	
 	adjustExtents();
-	
-	if (editMenuControl->getSize().width < slotSize)
+
+	if( !parentScreen->getClassic() ){
 		editMenuControl->setFont(font);
-	else
-		editMenuControl->setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
+		moduleMenuControl->setFont(font);
+		patternMenuControl->setFont(font);
+		keyboardMenuControl->setFont(font);
+		channelMenuControl->setFont(font);
+	}
 
 	assureCursorVisible();
 }
@@ -1436,6 +1495,36 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDSwapChannels:
 			patternEditor->swapChannels(patternEditor->getCursor().channel, menuInvokeChannel);
 			break;
+
+		case MenuCommandIDChannelAdd:{
+			 patternEditor->triggerButton(BUTTON_MENU_ITEM_ADDCHANNELS, parentScreen, eventListener);
+			 break;
+		 }
+
+		case MenuCommandIDChannelDelete:{
+			 patternEditor->triggerButton(BUTTON_MENU_ITEM_SUBCHANNELS, parentScreen, eventListener);
+			 break;
+		}
+		
+		case MAINMENU_LOAD:
+		case MAINMENU_ZAP:
+		case MAINMENU_SAVE:
+		case MAINMENU_SAVEAS:
+		case MAINMENU_CONFIG:
+		case MAINMENU_TRANSPOSE:
+		case MAINMENU_ADVEDIT:
+		case MAINMENU_QUICKOPTIONS:
+		case MAINMENU_OPTIMIZE:
+		case BUTTON_ABOUT_FOLLOWSONG:
+		case BUTTON_OCTAVE_PLUS:
+		case BUTTON_OCTAVE_MINUS:
+		case BUTTON_ADD_PLUS:
+		case BUTTON_ADD_MINUS:
+		case BUTTON_PATTERN_CAPTURE:
+		{
+			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
+			 break;
+		}
 	}
 	
 	// Hack:

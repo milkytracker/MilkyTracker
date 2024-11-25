@@ -34,7 +34,7 @@
 #include "PlayerController.h"
 #include "ModuleEditor.h"
 #include "RecorderLogic.h"
-
+#include "ControlIDs.h"
 #include "ListBox.h"
 #include "Screen.h"
 #include "PatternEditorControl.h"
@@ -64,6 +64,7 @@ void PlayerLogic::playSong(pp_int32 row/* = 0*/)
 
 	pp_int32 index = tracker.moduleEditor->getCurrentOrderIndex();				
 	tracker.playerController->playSong(index, row, tracker.muteChannels);
+  tracker.updatePlayButtons(MAINMENU_PLAY_SONG, true, true);
 }
 
 void PlayerLogic::playPattern()
@@ -77,6 +78,7 @@ void PlayerLogic::playPattern()
 										  tracker.moduleEditor->getCurrentOrderIndex(),
 										  0,
 										  tracker.muteChannels);
+  tracker.updatePlayButtons(MAINMENU_PLAY_PATTERN, true, true);
 }
 
 void PlayerLogic::playPosition(bool rowOnly/* = false*/)
@@ -104,6 +106,7 @@ void PlayerLogic::playPosition(bool rowOnly/* = false*/)
 										  tracker.getPatternEditorControl()->getCurrentRow(),
 										  tracker.muteChannels,
 										  rowOnly);
+  tracker.updatePlayButtons(MAINMENU_PLAY_PATTERN, true, true);
 }
 
 void PlayerLogic::stopPlayer(PlayerController& playerController)
@@ -123,6 +126,7 @@ void PlayerLogic::stopSong()
 	tracker.getPatternEditorControl()->setSongPosition(-1, -1);
 	tracker.screen->paintControl(tracker.getPatternEditorControl());
 	tracker.updateSpeed();
+  tracker.updatePlayButtons(MAINMENU_STOP, true, true);
 }
 
 void PlayerLogic::stopAll()
@@ -133,6 +137,7 @@ void PlayerLogic::stopAll()
 			tracker.playerMaster->getPlayerController(i)->pause();
 	}
 		//stopPlayer(*tracker.playerMaster->getPlayerController(i));
+  tracker.updatePlayButtons(MAINMENU_STOP, true, true);
 }
 
 void PlayerLogic::storePosition()

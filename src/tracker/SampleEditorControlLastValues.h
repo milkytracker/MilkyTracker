@@ -48,6 +48,14 @@ struct SampleEditorControlLastValues
 	pp_int32 resampleInterpolationType;
 	bool adjustFtAndRelnote;
 	bool adjustSampleOffsetCommand;
+
+	float reverbSize; 
+	float reverbDryWet;
+	float saturate;
+	float filterCutoffL;
+	float filterCutoffH;
+	float filterRes;
+	float filterSweep;
 	
 	static float invalidFloatValue() 
 	{
@@ -74,6 +82,13 @@ struct SampleEditorControlLastValues
 		resampleInterpolationType = invalidIntValue();
 		adjustFtAndRelnote = true;
 		adjustSampleOffsetCommand = false;
+		reverbSize = invalidFloatValue();
+		reverbDryWet = invalidFloatValue();
+		saturate = invalidFloatValue();
+		filterCutoffL = invalidFloatValue();
+		filterCutoffH = invalidFloatValue();
+		filterRes = invalidFloatValue();
+		filterSweep = invalidFloatValue();
 	}
 		
 	PPDictionary convertToDictionary()
@@ -101,6 +116,13 @@ struct SampleEditorControlLastValues
 		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
 
 		result.store("adjustSampleOffsetCommands", adjustSampleOffsetCommand);
+		result.store("saturate", PPDictionary::convertFloatToIntNonLossy(saturate));
+		result.store("reverbSize", PPDictionary::convertFloatToIntNonLossy(reverbSize));
+		result.store("reverbDryWet", PPDictionary::convertFloatToIntNonLossy(reverbDryWet));
+		result.store("filterCutoffL", PPDictionary::convertFloatToIntNonLossy(filterCutoffL));
+		result.store("filterCutoffH", PPDictionary::convertFloatToIntNonLossy(filterCutoffH));
+		result.store("filterRes", PPDictionary::convertFloatToIntNonLossy(filterRes));
+		result.store("filterSweep", PPDictionary::convertFloatToIntNonLossy(filterSweep));
 		return result;
 	}
 	
@@ -156,6 +178,34 @@ struct SampleEditorControlLastValues
 			else if (key->getKey().compareToNoCase("adjustSampleOffsetCommands") == 0)
 			{
 				adjustSampleOffsetCommand = key->getBoolValue();
+			}
+			else if (key->getKey().compareToNoCase("reverbSize") == 0)
+			{
+				reverbSize = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("reverbDryWet") == 0)
+			{
+				reverbDryWet = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("saturate") == 0)
+			{
+				saturate = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterCutoffL") == 0)
+			{
+				filterCutoffL = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterCutoffH") == 0)
+			{
+				filterCutoffH = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterRes") == 0)
+			{
+				filterRes = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("filterSweep") == 0)
+			{
+				filterSweep = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
 			}
 
 			key = dictionary.getNextKey();

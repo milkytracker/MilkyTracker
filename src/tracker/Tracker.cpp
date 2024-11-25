@@ -270,8 +270,9 @@ bool Tracker::isEditingCurrentOrderlistPattern()
 
 pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerController)
 {
-	if (PPControl* ctrl = screen->getModalControl())
-	{
+  PPControl* ctrl = screen->getModalControl();
+	if (dialog != NULL && ctrl) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
+  {
 		note--;
 	
 		PPContainer* container = static_cast<PPContainer*>(ctrl);
@@ -761,6 +762,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				playerLogic->stopSong();
 				break;
 
+			case MAINMENU_HELP:
+				eventKeyDownBinding_InvokeHelp();
+				break;
+
 			// -------- ZAP message box ---------------------
 			case MAINMENU_ZAP:
 				if (event->getID() != eCommand)
@@ -1118,6 +1123,12 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				updatePatternLength(false);
 				screen->update();
 				break;
+
+			case BUTTON_PATTERN_CAPTURE:
+				eventKeyDownBinding_InvokePatternCapture();
+				eventKeyDownBinding_InvokeSectionSamples();
+				break;
+
 
 #ifdef __LOWRES__
 			// go to next order
@@ -1710,10 +1721,16 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 						return 1;
 						
 					// Not wrapped at all... Just calculate new position within pattern and update player position
-					case PatternEditorControl::AdvanceCodeSelectNewRow:
+					case PatternEditorControl::AdvanceCodeSelectNewRow:{
 						if (shouldFollowSong() && 
 							isEditingCurrentOrderlistPattern())
 							updateSongRow();
+						else backtraceInstrument(0,true);
+						break;
+					}
+
+					case PatternEditorControl::AdvanceCodeColumn:
+						backtraceInstrument(0,false);
 						break;
 				}
 				break;
@@ -2345,6 +2362,7 @@ void Tracker::expandOrderlist(bool b)
 
 void Tracker::flipSpeedSection()
 {
+  if( !screen->getClassic() ) return;
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SPEED));
 	ASSERT(container);
 
@@ -3234,3 +3252,39 @@ void Tracker::signalWaitState(bool b)
 	screen->signalWaitState(b, TrackerConfig::colorThemeMain);	
 }
 
+
+void Tracker::backtraceInstrument(pp_uint8 channelIncrement, bool currentPosOnly ){
+	PatternEditor *p = getPatternEditor();
+	if( !p->getInstrumentBackTrace() ) return;
+	// when switching channels: visually auto-switch instrument
+	// (=less misstakes during liveperformance / ASCIISTEP16 stepsequencer mode)                
+	PatternTools patternTools;
+	PatternEditorTools::Position cursor = p->getCursor();
+	pp_int8 chan = cursor.channel + channelIncrement;
+	pp_int32 ins  = -1;
+	// backtrace last instrument on pattern-channel
+	for (pp_int32 i = cursor.row; i >= 0; i--)
+	{
+		patternTools.setPosition( p->getPattern(), chan, cursor.row);
+		if ( patternTools.getInstrument() != 0 ){
+			ins = patternTools.getInstrument();	
+			break;
+		}
+		if( currentPosOnly ) return;
+	}
+	// find future note if backtrace wasn't possible
+	if( ins == -1 && !currentPosOnly ){
+		for (pp_int32 i = cursor.row; i < p->getNumRows(); i++)
+		{
+			patternTools.setPosition( p->getPattern(), chan, i);
+			ins = patternTools.getInstrument();
+			if (ins != 0 ) break;
+		}
+	}
+	if( ins == -1 ) return;
+	getPatternEditor()->setCurrentInstrument(ins);
+	moduleEditor->setCurrentInstrumentIndex(ins-1);
+	listBoxInstruments->setSelectedIndex(ins-1);
+	updateInstrumentsListBox(true);
+	updateSampleEditor(true);
+}

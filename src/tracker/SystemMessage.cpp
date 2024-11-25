@@ -55,9 +55,9 @@ void SystemMessage::show()
 			message = "The video mode you've selected isn't available on your gfx card/monitor.";
 			break;
 			
-		case MessageResChangeRestart:
+		case MessageChangeRestart:
 			header = "Please restart";
-			message = "MilkyTracker needs to be restarted to apply new video mode.";
+			message = "MilkyTracker needs to be restarted to apply new video or UX-related settings.";
 			break;
 
 		case MessageLimitedInput:

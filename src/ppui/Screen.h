@@ -77,6 +77,9 @@ private:
 
 	void adjustEventMouseCoordinates(PPEvent* event);
 
+	bool flat;
+	bool classic;
+
 public:
 	PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* eventListener = NULL);
 
@@ -163,6 +166,12 @@ public:
 	MouseCursorTypes getCurrentActiveMouseCursor() const;
 	
 	void shutDown();
+
+	void setFlat(bool f) { this->flat  = f; };
+	bool getFlat() { return this->flat;  };
+	void setClassic(bool f) { this->classic  = f; };
+	bool getClassic() { return this->classic;  };
+
 };
 
 #endif

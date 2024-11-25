@@ -48,6 +48,7 @@ PPContextMenu::PPContextMenu(pp_int32 id, PPScreen* parentScreen, EventListenerI
 	menu = new PPMenu(font, *selectionColor, *color);
 	menu->setTextBrightColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorMenuTextBright));
 	menu->setTextDarkColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorMenuTextDark));
+  menu->setBorderColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorScrollBarBackground));
 }
 
 PPContextMenu::~PPContextMenu()

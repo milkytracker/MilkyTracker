@@ -34,6 +34,12 @@
 #include "EditorBase.h"
 #include "Undo.h"
 #include "Singleton.h"
+#include "Synth.h"
+#include "fx/Filter.h"
+#include "fx/Equalizer.h"
+#include "fx/EQConstants.h"
+#include "fx/Convolver.h"
+#include <math.h>
 
 struct TXMSample;
 
@@ -122,12 +128,16 @@ private:
 	bool drawing;
 	pp_int32 lastSamplePos;
 
+  Synth *synth;
+
 	void prepareUndo();
 	void finishUndo();
 	
 	bool revoke(const SampleUndoStackEntry* stackEntry);
 	
 	void notifyChanges(bool condition, bool lazy = true);
+ 
+  friend class Synth;
 	
 public:
 	SampleEditor();
@@ -146,6 +156,8 @@ public:
 	bool isEmptySample() const;	
 	bool canMinimize() const;
 	bool isEditableSample() const;
+
+  Synth *getSynth(){ return synth; }
 
 	void setSelectionStart(pp_int32 selectionStart) { this->selectionStart = selectionStart; }
 	pp_int32& getSelectionStart() { return selectionStart; }
@@ -184,6 +196,9 @@ public:
 	void resetSelection() { selectionStart = selectionEnd = -1; }
 	pp_int32 getSelectionLength() const { return abs(selectionEnd - selectionStart); }
 	bool hasValidSelection() const { return ((selectionStart >= 0 && selectionEnd >= 0) && (selectionStart != selectionEnd)); }
+	bool wasGeneratedByMilkySynth() const { 
+		return sample != NULL && sample->name != NULL && sample->name[0] == 'M' && sample->name[1] == '1'; 
+	}
 	
 	void selectAll();
 	void loopRange();
@@ -341,6 +356,7 @@ public:
 	void tool_compressSample(const FilterParameters* par);
 	void tool_reverseSample(const FilterParameters* par);
 	void tool_PTboostSample(const FilterParameters* par);
+	void tool_MTboostSample(const FilterParameters* par);
 	bool isValidxFadeSelection();
 	void tool_xFadeSample(const FilterParameters* par);
 	void tool_changeSignSample(const FilterParameters* par);
@@ -352,6 +368,13 @@ public:
 	void tool_triangularSmoothSample(const FilterParameters* par);
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
+	void tool_reverb(const FilterParameters* par);
+	void tool_filter(const FilterParameters* par);
+	void tool_saturate(const FilterParameters* par);
+	void tool_timestretch(const FilterParameters* par);
+	void tool_delay(const FilterParameters* par);
+	void tool_synth(const FilterParameters* par);
+	void tool_vocodeSample(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);
