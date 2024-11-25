@@ -196,6 +196,9 @@ public:
 	void resetSelection() { selectionStart = selectionEnd = -1; }
 	pp_int32 getSelectionLength() const { return abs(selectionEnd - selectionStart); }
 	bool hasValidSelection() const { return ((selectionStart >= 0 && selectionEnd >= 0) && (selectionStart != selectionEnd)); }
+	bool wasGeneratedByMilkySynth() const { 
+		return sample != NULL && sample->name != NULL && sample->name[0] == 'M' && sample->name[1] == '1'; 
+	}
 	
 	void selectAll();
 	void loopRange();

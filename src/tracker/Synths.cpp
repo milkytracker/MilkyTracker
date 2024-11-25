@@ -26,6 +26,8 @@
 #include "Synth.h" 
 #include "SynthFM.h"
 
+#include "Tracker.h"
+#include "ControlIDs.h"
 #include "DialogSliders.h"
 #include "FilterParameters.h"
 #include "XModule.h"
@@ -37,14 +39,14 @@
  *
  * Rules for new synths:
  *   1. don't include new classes/libraries/FFT libraries e.g., KISS.
- *   2. re-use SampleEditor operations (recursive sample-editing, CyclePaint is an example)  
+ *   2. re-use SampleEditor operations (recursive sample-editing, Cycle is an example)  
  *   3. please use volume as first slider and ADSR after that (if any)
  */
 
 
 void Synth::init(){
-	FMPaint(true);
-	CyclePaint(true); 
+	FM(true);
+	Cycle(true); 
 	ASCIISynthImport( preset[0] ); // initialize with first preset
 }
 
@@ -69,18 +71,18 @@ void Synth::process( MSynth *s, PPString *preset ){
 	}
 
 	switch( s->ID ){
-		case SYNTH_CYCLE_PAINT:  CyclePaint();   break;
-		case SYNTH_FM_PAINT:    FMPaint();     break;
+		case SYNTH_CYCLE:  Cycle();   break;
+		case SYNTH_FM:    FM();     break;
 	}
 }
 
-void Synth::CyclePaint( bool init ){
-	pp_int32 ID = SYNTH_CYCLE_PAINT;
+void Synth::Cycle( bool init ){
+	pp_int32 ID = SYNTH_CYCLE;
 
 	if( init ){
-		synths[ID].nparams = 7;   // < SYN_PARAMS_MAX
+		synths[ID].nparams = 8;   // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 paint wave \x10");
+		synths[ID].param[0].name  = PPString("\x11 cycle \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;
@@ -101,7 +103,7 @@ void Synth::CyclePaint( bool init ){
 		synths[ID].param[3].min   = 1.0f;
 		synths[ID].param[3].max   = 9.0f;
 
-		synths[ID].param[4].name  = "harmonic";
+		synths[ID].param[4].name  = "multiply";
 		synths[ID].param[4].value = 0.0f;
 		synths[ID].param[4].min   = 0;
 		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
@@ -111,10 +113,15 @@ void Synth::CyclePaint( bool init ){
 		synths[ID].param[5].min   = 0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[6].name  = "loop type";
-		synths[ID].param[6].value = 1.0f;
-		synths[ID].param[6].min   = 1.0f;
-		synths[ID].param[6].max   = 2.0f;
+		synths[ID].param[6].name  = "AM";
+		synths[ID].param[6].value = 0;
+		synths[ID].param[6].min   = 0;
+		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[7].name  = "loop type";
+		synths[ID].param[7].value = 1.0f;
+		synths[ID].param[7].min   = 1.0f;
+		synths[ID].param[7].max   = 2.0f;
 		return;
 	}
 
@@ -142,25 +149,29 @@ void Synth::CyclePaint( bool init ){
 	}
 
 	// scale volume
-	float scale    = 2.0f * SYN_PARAM_NORMALIZE(synth->param[1].value);
-	float foldback = 1.0f + synth->param[5].value*2.0f; 
-	for( int i = 0; i < sample->samplen; i++ )
-		sampleEditor->setFloatSampleInWaveform( i, sin( sampleEditor->getFloatSampleFromWaveform(i) * foldback ) * scale );
+	float scale      = 2.0f * SYN_PARAM_NORMALIZE(synth->param[1].value);
+	float foldback   = 1.0f + synth->param[5].value*2.0f; 
+	int   AM         = synth->param[6].value;
+	for( int i = 0; i < sample->samplen; i++ ){
+		float v = sin( sampleEditor->getFloatSampleFromWaveform(i) * foldback );
+		if( AM > 0 ) v = v * sin( (float)(i/2) * SYN_PARAM_NORMALIZE(synth->param[6].value) );
+		sampleEditor->setFloatSampleInWaveform( i, v * scale );
+	}
 
 	// force loop 
-	sampleEditor->setLoopType( synth->param[6].value );
+	sampleEditor->setLoopType( synth->param[7].value );
 	sampleEditor->setRepeatStart(0);
 	sampleEditor->setRepeatEnd(sample->samplen);
 
 }
 
-void Synth::FMPaint( bool init ){
-	pp_int32 ID = SYNTH_FM_PAINT;
+void Synth::FM( bool init ){
+	pp_int32 ID = SYNTH_FM;
 
 	if( init ){
 		synths[ID].nparams = 23;  // < SYN_PARAMS_MAX
 		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 paint FM \x10");
+		synths[ID].param[0].name  = PPString("\x11 FM \x10");
 		synths[ID].param[0].value = 0.0f;
 		synths[ID].param[0].min   = 0;
 		synths[ID].param[0].max   = SYNTH_LAST;

@@ -77,7 +77,7 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
     sliders->show(false);
   }
   PPString title = PPString("milkysynth");
-  this->additive = s->hasValidSelection();
+  this->additive = s != NULL ? s->hasValidSelection() : false;
   if( this->additive ) title.append(" [additive]");
   sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, title, synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
   sliders->show();
@@ -107,7 +107,6 @@ void Synth::random(){
     for( i = 0; i < synth->nparams; i++ ){
       par.setParameter(i, FilterParameters::Parameter( synth->param[i].value ) );
     }
-	//TXMSample *s = prepareSample(44100*2,false);
 	if( !sampleEditor->isEmptySample() ){
 		sampleEditor->clearSample();
 	}
@@ -116,22 +115,10 @@ void Synth::random(){
 
 TXMSample * Synth::prepareSample( pp_uint32 duration){
   TXMSample *sample;
-  //if( sampleEditor->isEmptySample() ){
-    FilterParameters par(2);
-    par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
-    par.setParameter(1, FilterParameters::Parameter( 16 ) );
-    sampleEditor->tool_newSample(&par);
-	sample = sampleEditor->getSample();
-  //}else{
-  //  sample = sampleEditor->getSample();
-  //  if( duration > sample->samplen ){
-  //  	sampleEditor->selectionStart = sample->samplen-1;
-  //  	sampleEditor->selectionEnd   = sample->samplen-1;
-  //  	FilterParameters par(1);
-  //  	par.setParameter(0, FilterParameters::Parameter( (pp_int32)(duration - sample->samplen) ) );
-  //  	sampleEditor->tool_generateSilence(&par);
-  //  }else printf("no new\n");
-  //  // we just leave the sample as-is when it's longer than required  	
-  //}
+  FilterParameters par(2);
+  par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
+  par.setParameter(1, FilterParameters::Parameter( 16 ) );
+  sampleEditor->tool_newSample(&par);
+  sample = sampleEditor->getSample();
   return sample;
 }

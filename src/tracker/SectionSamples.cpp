@@ -1262,6 +1262,15 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_RANGE))->setClickable(sampleEditorControl->hasValidSelection());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_WAVE))->setClickable(!sampleEditor->isEmptySample());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_DISPLAY))->setClickable(!sampleEditor->isEmptySample());	
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_SYNTH))->setClickable(
+			sampleEditor->isEmptySample() || 
+			sampleEditor->wasGeneratedByMilkySynth() 
+	);
+	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_SYNTH_RAND))->setClickable(
+			sampleEditor->isEmptySample() || 
+			sampleEditor->wasGeneratedByMilkySynth() 
+	);
+	
 	
 	PPContainer* container9 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT1));
 	bool b = (sampleEditorControl->getCurrentRangeLength()) > 0 && sampleEditorControl->hasValidSelection();
@@ -1271,7 +1280,8 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	
 	PPContainer* container10 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_LOADSAVE));
 	static_cast<PPButton*>(container10->getControlByID(BUTTON_SAMPLE_SAVE))->setClickable(!sampleEditor->isEmptySample());		
-	
+
+
 	screen->paintControl(container10, false);
 	screen->paintControl(container9, false);
 	screen->paintControl(container6, false);

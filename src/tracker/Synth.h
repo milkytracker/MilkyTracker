@@ -40,11 +40,11 @@
 #define NOTE_START 60                                // C3
                                                     
 // synth ID's
-#define SYNTH_FM_PAINT    0                  //
-#define SYNTH_CYCLE_PAINT 1                  // incremental numbers
-#define SYNTH_LAST        SYNTH_CYCLE_PAINT  // update this when adding a synth
+#define SYNTH_FM    0                  //
+#define SYNTH_CYCLE 1                  // incremental numbers
+#define SYNTH_LAST        SYNTH_CYCLE  // update this when adding a synth
 											 //
-#define SYNTH_PRESETS 7
+#define SYNTH_PRESETS 24
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -85,13 +85,31 @@ class Synth
 
 	// SYNTH PRESETS
 	PPString preset[SYNTH_PRESETS] = { // update PRESETS_TOTAL when adding synths
-    "M1(N*(51)D)vA)/)M),(Xt@(*(((((((",                                 
-    "M1(J+@?9G])~+*~)()<,*{VM)(((((((",
-    "M1(5+85,GF)~i+U*Ds+<2}~c)(((((((",
-		"M1(V)()(**,1,-(.65A(*{((((((((((",
-    "M1(V)(*)(()1,-(.\\.5~@b((((((((((",
-    "M1(V)(+)(()1,-})n/0(@b7(((((((((",
-		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((",
+		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                                 
+		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM
+		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM
+		"M1(V)()(**,1,-(.65A(*{((((((((((", // FM
+		"M1(V)(*)(()1,-(.\\\\.5~@b((((((((((",// FM
+		"M1(V)(+)(()1,-})n/0(@b7(((((((((", // FM
+		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((", // FM
+		"M1(L)(>((F+p@+W-()/n/Z\(*(((((((", // FM
+		"M1(7)(>((F-p@+W-()/~/xFa*(((((((", // FM
+		"M1(J)(IG,F,pj*~*o))X/x((*(((((((", // FM
+		"M1(9)(BG*-+~v*{*()(;/x~()(((((((", // FM
+		"M1(Q*(E1)u+vP)/)@),(,M@(*(((((((", // FM
+		"M1(H+ioL)M)~X)[)()889{6(*(((((((", // FM
+		"M1(A+ioL,0)~X)[)()A89{6(*(((((((", // FM
+		"M1(I)(B.)~-~f-U.b[(~2}:Z*(((((((", // FM
+											//
+		"M1)Sn)(/()((((((((((((((((((((((", // CYCLE
+		"M1)Sn,(0()((((((((((((((((((((((", // CYCLE
+		"M1)Sn,,C<)((((((((((((((((((((((", // CYCLE
+		"M1)\\~)((()((((((((((((((((((((((",	// CYCLE
+		"M1)\\~+)*J*((((((((((((((((((((((", // CYCLE
+		"M1)R~,h/()((((((((((((((((((((((", // CYCLE
+		"M1)G~,(/()((((((((((((((((((((((", // CYCLE
+		"M1)T~,((.)((((((((((((((((((((((", // CYCLE
+		"M1)M~-(9()((((((((((((((((((((((", // CYCLE
 	};
 
 
@@ -116,8 +134,8 @@ class Synth
 	void setSampleEditor( SampleEditor *s ){ this->sampleEditor = s; }
 
     // synths
-    void CyclePaint( bool init = false );
-    void FMPaint( bool init = false );
+    void Cycle( bool init = false );
+    void FM( bool init = false );
 
 };
 
