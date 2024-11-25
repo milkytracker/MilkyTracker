@@ -1,5 +1,25 @@
 # MilkyTracker ChangeLog
 
+## 30/11/2024 (v1.05):
+
+* sample-editor: synth-buttons are disabled on non-generated samples (https://github.com/milkytracker/MilkyTracker/issues/341#issuecomment-2138497797)
+* documentation: updated with synth / sample-editor fx usage
+* ui: cleanup ui interface (classic ui available via config > layout > classic UX)
+* ui: removed onboarding text in listboxes (= help button now)
+* pattern recording: handle row rounding for note-offs (thanks Guy Sviry)
+* pattern recording: Control roundToClosestRow using new config flag (thanks Guy Sviry)
+* pattern recording: Enable RecPosProvider roundToClosestRow (thanks Guy Sviry)
+* ui scaling: nearest pixel-filtering can be enabled via SCALE_NEAREST=1 env-var 
+* sample-editor: better compand + defaults
+* smaple-editor: added vocoder, saturator, milky exciter, delay, timestretch
+* system: screensaver is no longer inhibited  (thanks silvermantis7)
+* system: initialise ticker to 0 (thanks psykose)
+* MacOS: Detect Control key in addition to Command
+* MacOS: Remove docicons and fix packaging
+* repo: added nix shell definition
+* system: [bugfix: hint windows to find std::getenv
+* ui: added vu-meters from MilkyTrackerX
+
 ## 05/07/2023 (v1.04):
 
 * [pattern-editor: stamp-like drag-drop selections](https://github.com/milkytracker/MilkyTracker/pull/277)
