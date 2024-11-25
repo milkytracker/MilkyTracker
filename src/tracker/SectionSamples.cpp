@@ -536,12 +536,12 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	pp_int32 size3 = (pp_int32)(conSize1/*0.2988505747126f*/*0.3218390804598f);
 
 	PPPoint locUp  = screen->getClassic() ? PPPoint(x2+size2, y2+2+bHeight) : PPPoint(x2+size+size2+1, y2+2+bHeight*2);
-	PPSize  sizeUp = screen->getClassic() ? PPSize(size, bHeightm)          : PPSize(size3, bHeightm);
+	PPSize  sizeUp = screen->getClassic() ? PPSize(size, bHeightm)          : PPSize(size3, bHeightm+1);
 	PPButton* button = new PPButton(BUTTON_SAMPLE_PLAY_UP, screen, this, locUp, sizeUp ); 
 	button->setText( screen->getClassic() ? "Up" : "\x1a" );
 	container->addControl(button);
 	
-	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm));
+	button = new PPButton(BUTTON_SAMPLE_PLAY_DOWN, screen, this, PPPoint(x2+size2, y2+2+bHeight*2), PPSize(size, bHeightm+1));
 	button->setText( screen->getClassic() ? "Dn" : "\x1b" );
 	container->addControl(button);
 
@@ -564,13 +564,13 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	}
 	container->addControl(button);
 
+	button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize( screen->getClassic() ? size2-3 : size-1, bHeightm));
+	button->setText( "\x0f" );
 	if( !screen->getClassic() ){
-		button = new PPButton(BUTTON_SAMPLE_SYNTH_RAND, screen, this, PPPoint(x2+2 , y2+2+bHeight), PPSize(size-1, bHeightm));
-		button->setText( "\x0f" );
 		button->setColor(TrackerConfig::colorSampleEditorWaveform);
 		button->setTextColor(TrackerConfig::colorThemeMain);
-		container->addControl(button);
 	}
+	container->addControl(button);
 	
 	button = new PPButton(BUTTON_SAMPLE_PLAY_RANGE, screen, this, PPPoint(x2+2 + size+size2-1, y2+2+bHeight), PPSize(size3, bHeightm));
 	button->setText( screen->getClassic() ? "Wav" : "\x10" );
@@ -1262,6 +1262,7 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_RANGE))->setClickable(sampleEditorControl->hasValidSelection());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_WAVE))->setClickable(!sampleEditor->isEmptySample());	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_PLAY_DISPLAY))->setClickable(!sampleEditor->isEmptySample());	
+	
 	static_cast<PPButton*>(container7->getControlByID(BUTTON_SAMPLE_SYNTH))->setClickable(
 			sampleEditor->isEmptySample() || 
 			sampleEditor->wasGeneratedByMilkySynth() 
@@ -1270,7 +1271,6 @@ void SectionSamples::realUpdate(bool repaint, bool force, bool reAttach)
 			sampleEditor->isEmptySample() || 
 			sampleEditor->wasGeneratedByMilkySynth() 
 	);
-	
 	
 	PPContainer* container9 = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_SAMPLE_EDIT1));
 	bool b = (sampleEditorControl->getCurrentRangeLength()) > 0 && sampleEditorControl->hasValidSelection();
