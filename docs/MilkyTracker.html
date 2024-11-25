@@ -174,6 +174,7 @@
 			<li><a href="#overview">Overview</a></li>
 			<li><a href="#features">Features</a>
 				<ol>
+					<li><a href="#milkysynth">Milkysynth</a></li>
 					<li><a href="#resamplers">Resamplers</a></li>
 					<li><a href="#tabs">Tabs</a></li>
 				</ol>
@@ -254,7 +255,7 @@
 			<li>Over 30 imported module formats</li>
 			<li>Basic archive support for loading zipped, powerpacked and UMX modules directly</li>
 			<li>Rendering songs/patterns to disk (.WAV) or directly to sample</li>
-			<li>Powerful sample editor featuring waveform generators</li>
+			<li>Powerful sample editor featuring waveform generators, synths & fx</li>
 			<li>In-depth instrument editor featuring envelope zooming and scaling and support for copying and swapping instruments and samples across tabs</li>
 			<li>Copy/swap dialog for instrument management</li>
 			<li>Undo/redo in pattern/sample/instrument editor</li>
@@ -266,7 +267,141 @@
 			<li>Prospective pattern view option</li>
 			<li>Playing and editing simultaneously</li>
 			<li>Live mode for seamless pattern changes</li>
+			<li>MilkySynth Sample generator including seamless looping reverb/delay</li>
 		</ul>
+		<h3><a id="sample-editor">Sample Editor</a></h3>
+		<p>
+			The sample editor is an exciting part of Milkytracker, and gives you access to synths, waveform generators and effects.<br>
+			All these are straightforward in their use, an come in 3 types:<br><br>
+			<ol>
+				<li>previewable effects (volume, filter, eq e.g.)</li>
+				<li>non-previewable effects (compress, fade in e.g.)</li>
+				<li>modulating effects (paste effects, vocoder)</li> 
+			</ol>
+
+			<b>Previewable effects</b> are audible while playing a note/pattern with the selected sample, and changing sliders at the same time.<br>
+			In other cases the effect needs to be applied first manually (undo-button will undo the effect). 
+			<br><br>
+			<b>Modulating effects</b> use the <b>clipboard</b> contents (select a sample, and press the copy-button) to apply 
+			the effect to a selected sample.<br>
+			For example to vocode a sample with another, first copy a sample to the clipboard, then select another sample 
+			before launching the vocoder (contextmenu > FX > Vocoder).<br>
+			<br>
+			For samplist and sampletracker artists, the possibilities and combinations here are exciting & endless.<br> 
+		</p>
+
+
+		<h3><a id="milkysynth">Milky synth</a></h3>
+		<p>
+			MilkyTracker offers a modest [beta] synthesizer to generate looped or single/multi-cycle waveforms.<br>
+			A synth-dialog appears when pressing the 'synth' or '*'-button in the sample-screen.<br>
+			The first slider allows several synth-algorithms:
+		</p>
+		<ol>
+			<li><b>FM</b>: (non)additive synth [based on Riku Salminen's jamtoysynth]</li> 
+			<li><b>CYCLE</b>: single/multi cycle waveforms</li> 
+		</ol>
+
+		<p>
+			These rules apply to all synthesis options:
+			<ol>
+				<li>the synth-buttons only work on empty- or previously synthesized samples.</li>
+				<li>enable additive/layered synthesis by hitting 'select all' before launching the synth-dialog</li>
+				<li>pressing the '*'-button will randomly select a starting-preset (which can be edited later)</li> 
+			</ol>
+		<br>
+			<hr>
+			<b>ASCIISYNTH naming-convention</b>
+				Pressing 'OK' after the 'synth'-button will name the sample via the <a href="https://github.com/coderofsalvation/ASCIISYNTH" target="_blank">ASCIISYNTH</a> naming-convention. <br>
+				This allows editing the generated preset across MOD/XM-modules [named with a 'M1' milkysynth prefix] later on.<br>
+				In additive mode this gives you only access to the last generated preset.
+			<br>
+			<hr>
+		</p>
+		<p>
+			<b>FM parameters:</b>
+
+			<ul>
+				<li> <b>volume</b>: total volume of the sample</li>
+				<li> <b>size</b>: samplesize ((samplerate/6)*i)</li>
+				<li> <b>attack</b>: [A]DSR fade in </li> 
+				<li> <b>decay</b>: A[D]SR hold </li> 
+				<li> <b>release</b>: ADS[R] fade out </li> 
+				<li> <b>freq model</b>: <br>
+					&nbsp;&nbsp;&nbsp; 1: syncs modulator & carrier to note frequencies<br>
+					&nbsp;&nbsp;&nbsp; 2: syncs modulator & carrier to note frequenceis + phasediff<br>
+					&nbsp;&nbsp;&nbsp; 3: carrier freqs synced to notes + freeform modulator freqs <br>
+					&nbsp;&nbsp;&nbsp; 4: modulator freq as LFO <br>
+				</li> 
+				<li><b>carrier freq</b>: base frequency<br>
+					&nbsp;&nbsp;&nbsp; SIN/SQ/SAW/TRI/NOIZ: carrier waveform type <br>
+					&nbsp;&nbsp;&nbsp; AMP: amplitude <br>
+				<li><b>modulator freq</b>: frequency which will modulate with base freq <br> 
+					&nbsp;&nbsp;&nbsp;SIN/SQ/SAW/TRI/NOIZ</b>: carrier waveform type <br> 
+					&nbsp;&nbsp;&nbsp;AMP</b>: amplitude<br>
+					&nbsp;&nbsp;&nbsp;NO/AM/FM/RI/TRE/VIB/KS</b>: modulation type:<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO: modulate with 0 <br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AM: modulate amplitude of carrier<br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FM: modulate frequency of carrier<br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RI: ringmodulate carrier<br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TR: tremolo on carrier<br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIB: vibrato on carrier<br> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KS: Karplus-strong via delay + filter<br> 
+				</li>
+				<li><b>transient</b>: onset frequency sweep amp<br>
+					&nbsp;&nbsp;&nbsp; size: sweep size<br>
+				</li>
+				<li><b>delay</b>: seamless loopable delay amp<br>
+					&nbsp;&nbsp;&nbsp; size: delay length<br>
+					&nbsp;&nbsp;&nbsp; feedback: delay feedback<br>
+				</li>
+				<li><b>spacetime</b>: seamless reverb amp + size</li>
+				<li><b>filter</b>: bandpass filter</li>
+				<li><b>loop type</b>:<br>
+					&nbsp;&nbsp;&nbsp; no loop<br> 
+					&nbsp;&nbsp;&nbsp; forward<br> 
+					&nbsp;&nbsp;&nbsp; pingpong<br> 
+					&nbsp;&nbsp;&nbsp; one shot<br> 
+				</li>
+			</ul>
+			 
+			Notes: most parameters allow sample-overflow (long release/reverb/delay leaks into beginning of sample) to aid seamless looping.<br>Also, everything can be further modulated by the Instrument editor [TIP: check the volume envelope-checkbox] to 
+				produce infinite unique textures and synths, so it does not stop at the ADSR of FM.<br> 
+			<br><br>
+		<hr>
+
+			<b>Cycle parameters:</b>
+
+			<ul>
+				<li> <b>volume</b>: total volume of the sample</li>
+				<li> <b>wave amp</b>: amplitude</li>
+				<li> <b>wave type</b>: <br>
+					&nbsp;&nbsp;&nbsp; 1: sine<br>
+					&nbsp;&nbsp;&nbsp; 2: square<br>
+					&nbsp;&nbsp;&nbsp; 3: triangle<br>
+					&nbsp;&nbsp;&nbsp; 4: saw<br>
+					&nbsp;&nbsp;&nbsp; 5: half sine<br>
+					&nbsp;&nbsp;&nbsp; 6: absolute sine<br>
+					&nbsp;&nbsp;&nbsp; 7: white noise<br> 
+					&nbsp;&nbsp;&nbsp; 8: pink noise<br> 
+					&nbsp;&nbsp;&nbsp; 9: brown noise<br> 
+				</li> 
+				<li><b>multiply</b>: frequency multiplier [harmonics]</li>
+				<li><b>feedback</b>: foldback distortion via sin(x*i)<br> 
+				<li><b>loop type</b>:<br>
+					&nbsp;&nbsp;&nbsp; no loop<br> 
+					&nbsp;&nbsp;&nbsp; forward<br> 
+					&nbsp;&nbsp;&nbsp; pingpong<br> 
+					&nbsp;&nbsp;&nbsp; one shot<br> 
+				</li>
+			</ul>
+			Notes: ADSR  & panning envelopes are done in the Instrument Editor (check the volume envelope checkbox).
+		</p>
+
+
+		
+
+
 		<h3><a id="resamplers">Resamplers</a></h3>
 		<p>
 			MilkyTracker offers various resampling options for module playback, rendering and sample processing. These are:
