@@ -857,7 +857,7 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("\x10|");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("\xa7");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "file");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT))->setText(   "\x03");
+		static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT))->setText(   "\x07");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instr");
 		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample");
