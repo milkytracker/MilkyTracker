@@ -54,7 +54,7 @@ for:
   - sh: mkdir -p usr/share usr/lib
   - sh: objdump -p bin/milkytracker | awk '/ NEEDED/ {print $2}' 
   #- sh: objdump -p bin/milkytracker | awk '/ NEEDED/ {print $2}' | while read lib; do { set +e; test -f /usr/lib/x86_64-linux-gnu/$lib && cp /usr/lib/x86_64-linux-gnu/$lib usr/lib/.; set -e; } done
-  - sh: cp /usr/lib/x86_64-linux-gnu/{librtmidi*,libzzip-0.so.13,libsnd*,libvorb*,libFLAC*,libffi*,libogg*} usr/lib/.
+  - sh: cp /usr/lib/x86_64-linux-gnu/{librtmidi*,libzzip-0.so.13,libsnd*,libvorb*,libFLAC*,libffi*,libogg*,liblhasa*} usr/lib/.
   - sh: cd usr && ln -s lib x86_64-linux-gnu && cd -
   - sh: cp ../resources/pictures/carton.png milkytracker.png
   - sh: cp ../resources/milkytracker.desktop .
