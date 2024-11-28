@@ -3262,25 +3262,36 @@ void Tracker::backtraceInstrument(pp_uint8 channelIncrement, bool currentPosOnly
 	PatternEditorTools::Position cursor = p->getCursor();
 	pp_int8 chan = cursor.channel + channelIncrement;
 	pp_int32 ins  = -1;
+
+  // check current position	
+  patternTools.setPosition( p->getPattern(), chan, cursor.row);
+  if ( patternTools.getNote() != 0 ){ ins = patternTools.getInstrument();	}
+
 	// backtrace last instrument on pattern-channel
-	for (pp_int32 i = cursor.row; i >= 0; i--)
-	{
-		patternTools.setPosition( p->getPattern(), chan, cursor.row);
-		if ( patternTools.getInstrument() != 0 ){
-			ins = patternTools.getInstrument();	
-			break;
-		}
-		if( currentPosOnly ) return;
-	}
+	if( ins == -1 && !currentPosOnly ){
+    for (pp_int32 i = cursor.row; i >= 0; i--)
+    {
+      patternTools.setPosition( p->getPattern(), chan, i);
+      if ( patternTools.getNote() != 0 ){
+        ins = patternTools.getInstrument();	
+        break;
+      }
+      if( currentPosOnly ) return;
+    }
+  }
+
 	// find future note if backtrace wasn't possible
 	if( ins == -1 && !currentPosOnly ){
 		for (pp_int32 i = cursor.row; i < p->getNumRows(); i++)
 		{
 			patternTools.setPosition( p->getPattern(), chan, i);
-			ins = patternTools.getInstrument();
-			if (ins != 0 ) break;
+      if( patternTools.getNote() != 0 ){
+        ins = patternTools.getInstrument();
+        break;
+      }
 		}
 	}
+
 	if( ins == -1 ) return;
 	getPatternEditor()->setCurrentInstrument(ins);
 	moduleEditor->setCurrentInstrumentIndex(ins-1);
