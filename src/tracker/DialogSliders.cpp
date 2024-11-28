@@ -44,6 +44,8 @@ DialogSliders::DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandle
 {
 	needUpdate    = false;
 	preview       = false;
+	clicked       = false;
+	valueChanged  = false;
 	numSliders    = sliders; 
 	responder     = toolHandlerResponder;
 	screen        = parentScreen;
@@ -107,24 +109,31 @@ pp_int32 DialogSliders::handleEvent(PPObject* sender, PPEvent* event)
 {
 	char v[255];
 	pp_uint32 id = reinterpret_cast<PPControl*>(sender)->getID();
-	if( id >= MESSAGEBOX_CONTROL_USER1 && id <= MESSAGEBOX_CONTROL_USER1+numSliders ){
-		pp_uint32 slider = id-MESSAGEBOX_CONTROL_USER1;
-		float val = getSlider( slider );
-		sprintf(v,"%i",(int)val);
-		listBoxes[slider]->updateItem( 0, PPString(v) );
-		listBoxes[slider]->commitChanges();
-		update();
-		needUpdate = true;
-	}else if( event->getID() == eCommand && id == PP_MESSAGEBOX_BUTTON_CANCEL ){
-		sampleEditor->undo();
-	}
-	if( event->getID() == eLMouseUp ){
-		needUpdate = true;
-	}
-	if( needUpdate ){
-		process();
-		update();
-	}
+	pp_uint32 eID = event->getID();
+
+  // state management needed (because +/- buttons reflect change after emitting mouseup)
+  if( eID == eLMouseUp     ) clicked       = true;
+  if( eID == eValueChanged ) valueChanged  = true;
+
+  if( id >= MESSAGEBOX_CONTROL_USER1 && id <= MESSAGEBOX_CONTROL_USER1+numSliders ){
+    pp_uint32 slider = id-MESSAGEBOX_CONTROL_USER1;
+    float val = getSlider( slider );
+    sprintf(v,"%i",(int)val);
+    listBoxes[slider]->updateItem( 0, PPString(v) );
+    listBoxes[slider]->commitChanges();
+    needUpdate = true;
+  }
+  if( eID == eCommand && id == PP_MESSAGEBOX_BUTTON_CANCEL ){
+    sampleEditor->undo();
+    update();
+  }else{
+    if( clicked && valueChanged ){
+      process();
+      clicked      = false;
+      valueChanged = false;
+    }
+  }
+  if( needUpdate ) update();
 	return PPDialogBase::handleEvent(sender, event);
 }
 

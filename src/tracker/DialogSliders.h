@@ -55,6 +55,8 @@ private:
   
 	bool needUpdate;
 	bool preview;
+  bool valueChanged;
+  bool clicked;
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
 	
