@@ -44,7 +44,7 @@
 #define SYNTH_CYCLE 1                  // incremental numbers
 #define SYNTH_LAST        SYNTH_CYCLE  // update this when adding a synth
 											 //
-#define SYNTH_PRESETS 24
+#define SYNTH_PRESETS 35
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -83,24 +83,35 @@ class Synth
     PPScreen *screen;
     DialogResponder *dr;
 
-	// SYNTH PRESETS
-	PPString preset[SYNTH_PRESETS] = { // update PRESETS_TOTAL when adding synths
+	// ASCIISYNTH PRESETS: https://github.com/coderofsalvation/ASCIISYNTH
+	PPString preset[SYNTH_PRESETS] = {      // NOTE: update PRESETS_TOTAL when adding synths
 		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                                 
 		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM
 		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM
-		"M1(V)()(**,1,-(.65A(*{((((((((((", // FM
-		"M1(V)(*)(()1,-(.\\\\.5~@b((((((((((",// FM
+	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
+	    "M1(Y)(*),3)p9+()U,)),;((((((((((", // FM 909 kick2
+		"M1(V)(*)())1,-(.\\\\.5~@b(((((((((", // FM 
 		"M1(V)(+)(()1,-})n/0(@b7(((((((((", // FM
 		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((", // FM
 		"M1(L)(>((F+p@+W-()/n/Z\(*(((((((", // FM
 		"M1(7)(>((F-p@+W-()/~/xFa*(((((((", // FM
 		"M1(J)(IG,F,pj*~*o))X/x((*(((((((", // FM
-		"M1(9)(BG*-+~v*{*()(;/x~()(((((((", // FM
+		"M1(A)(BG*/+~t*{*()(;/x~()(((((((", // FM
 		"M1(Q*(E1)u+vP)/)@),(,M@(*(((((((", // FM
 		"M1(H+ioL)M)~X)[)()889{6(*(((((((", // FM
 		"M1(A+ioL,0)~X)[)()A89{6(*(((((((", // FM
 		"M1(I)(B.)~-~f-U.b[(~2}:Z*(((((((", // FM
-											//
+		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
+		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
+		"M1(9*(51,X)O/*X+B~7l~{Za)(((((((", // FM 
+		"M1(?*A:@,(+vn,1*,Q1/A{I()(((((((", // FM
+		"M1(M+(*-*;+fZ)`,1Q9(A{X(*(((((((", // FM
+		"M1(T+()0+d)d~)(,--W(+{\(*(((((((", // FM
+		"M1(X*().+O,[~)(,~)[(+{((*(((((((", // FM
+		"M1(B,(*.+i+b~-1*g)<~.{_(*(((((((", // FM
+		"M1(@*M;F+i+U~-(.()2(.t(()(((((((", // FM 
+		"M1(3*:0:+~,AZ)r.`44~;~ea)(((((((", // FM
+										
 		"M1)Sn)(/()((((((((((((((((((((((", // CYCLE
 		"M1)Sn,(0()((((((((((((((((((((((", // CYCLE
 		"M1)Sn,,C<)((((((((((((((((((((((", // CYCLE
@@ -109,8 +120,9 @@ class Synth
 		"M1)R~,h/()((((((((((((((((((((((", // CYCLE
 		"M1)G~,(/()((((((((((((((((((((((", // CYCLE
 		"M1)T~,((.)((((((((((((((((((((((", // CYCLE
-		"M1)M~-(9()((((((((((((((((((((((", // CYCLE
+		"M1)M~-(9()(((((((((((((((((((((("  // CYCLE
 	};
+
 
 
   public:
