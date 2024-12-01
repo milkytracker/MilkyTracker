@@ -198,6 +198,14 @@ if(UNIX)
         else()
             message("MIDI support disabled (ALSA unavailable)")
         endif()
+
+        # Metainfo version and timestamp configuration, mandatory for flathub
+        string( TIMESTAMP METAINFO_DATE "%Y-%m-%d" )
+        configure_file(
+            ${PROJECT_SOURCE_DIR}/resources/org.milkytracker.MilkyTracker.metainfo.xml.in
+            ${PROJECT_BINARY_DIR}/resources/org.milkytracker.MilkyTracker.metainfo.xml
+            @ONLY
+        )
     endif()
 endif()
 
