@@ -11,6 +11,8 @@ compatibility.
 
 ## [⬇ DOWNLOAD](https://milkytracker.org/downloads)
 
+## [CHAT COMMUNITY](https://milkytracker.org/community/)
+
 <img src="https://github.com/coderofsalvation/MilkyTrackerX/raw/master/res/milkytrackerX.gif" width="100%"/>
 
 > For experimental beta builds see [MilkytrackerX](https://github.com/coderofsalvation/MilkytrackerX)
