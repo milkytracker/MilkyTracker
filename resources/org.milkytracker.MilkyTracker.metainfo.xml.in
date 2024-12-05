@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.milkytracker.MilkyTracker</id>
+  <launchable type="desktop-id">milkytracker.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+ AND BSD-3-Clause</project_license>
+  <provides>
+    <binary>milkytracker</binary>
+    <mediatype>audio/x-mod</mediatype>
+    <mediatype>audio/x-xm</mediatype>
+  </provides>
+  <name>MilkyTracker</name>
+  <developer_name>The MilkyTracker team</developer_name>
+  <summary>Fast Tracker II inspired music tracker</summary>
+  <keywords>
+    <keyword translate="no">MilkyTracker</keyword>
+    <keyword translate="no">Fast Tracker II</keyword>
+    <keyword translate="no">ProTracker</keyword>
+    <keyword>music tracker</keyword>
+    <keyword>mod player</keyword>
+  </keywords>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>AudioVideoEditing</category>
+    <category>Sequencer</category>
+  </categories>
+  <description>
+    <p>
+      MilkyTracker is an open source, multi-platform music application for creating .MOD and .XM
+      module files.
+      It attempts to recreate the module replay and user experience of the popular DOS program
+      Fasttracker II,
+      with special playback modes available for improved Amiga ProTracker 2/3 compatibility.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image type="source">https://milkytracker.org/screenshots/desktop/raina-Default.png</image>
+      <caption>MilkyTracker sequencer screen</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://milkytracker.org/</url>
+  <url type="help">https://milkytracker.org/documentation/</url>
+  <url type="bugtracker">https://github.com/milkytracker/MilkyTracker/issues</url>
+  <url type="donation">https://milkytracker.org/donate/</url>
+  <url type="vcs-browser">https://github.com/milkytracker/MilkyTracker</url>
+  <url type="faq">https://milkytracker.org/docs/FAQ.html</url>
+  <update_contact>milkytracker_at_chrisoneill.co.uk</update_contact>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="@VER_FULL@" date="@METAINFO_DATE@" />
+  </releases>
+</component>
