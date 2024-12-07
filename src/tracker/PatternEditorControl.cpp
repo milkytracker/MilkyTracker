@@ -198,7 +198,11 @@ PatternEditorControl::~PatternEditorControl()
 	delete hBottomScrollbar;
 
 	delete editMenuControl;
-	
+	delete channelMenuControl;
+	delete moduleMenuControl;
+	delete keyboardMenuControl;
+	delete patternMenuControl;
+
 	delete eventKeyDownBindingsMilkyTracker;
 	delete scanCodeBindingsMilkyTracker;
 	delete eventKeyDownBindingsFastTracker;
