@@ -69,6 +69,7 @@ PPScreen::PPScreen(PPDisplayDeviceBase* displayDevice, EventListenerInterface* e
 
 PPScreen::~PPScreen()
 {
+	delete rootContainer;
 	delete contextMenuControls;
 	delete timerEventControls;
 }

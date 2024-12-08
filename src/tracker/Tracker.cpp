@@ -219,7 +219,9 @@ Tracker::~Tracker()
 	delete playerLogic;
 
 	delete playerMaster;
-	
+
+	delete tabManager;
+
 	delete messageBoxContainerGeneric;
 		
 	delete[] muteChannels;
