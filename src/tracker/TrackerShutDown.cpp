@@ -63,7 +63,8 @@ bool Tracker::checkForChanges(ModuleEditor* moduleEditor/* = NULL*/)
 		moduleEditor = this->moduleEditor;
 
 	// save current file?
-	if (moduleEditor->hasChanged())
+	bool confirm_exit = settingsDatabase->hasKey("CONFIRMEXIT") ? settingsDatabase->restore("CONFIRMEXIT")->getBoolValue() : true;
+	if (moduleEditor->hasChanged() && confirm_exit)
 	{
 		
 		PPQuitSaveAlert quitSaveAlertDialog(screen);
