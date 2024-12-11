@@ -72,6 +72,11 @@ struct Limiter : public Mixable
 	{
 	}
 
+  ~Limiter()
+  {
+    cleanup();
+  }
+
   void init(mp_uint32 s_rate, mp_uint32 buffersize){
     cleanup();
     fs = s_rate;
