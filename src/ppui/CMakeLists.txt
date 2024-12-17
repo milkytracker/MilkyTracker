@@ -102,12 +102,19 @@ add_library(ppui STATIC
     VirtualKeys.h
 )
 
-target_include_directories(ppui
-    PUBLIC
-        .
-    PRIVATE
-        osinterface
-)
+if (HAIKU)
+    target_include_directories(ppui
+        PRIVATE
+            osinterface
+    )
+else()
+    target_include_directories(ppui
+        PUBLIC
+            .
+        PRIVATE
+            osinterface
+    )
+endif()
 
 target_link_libraries(ppui PRIVATE osinterface)
 
@@ -136,6 +143,32 @@ elseif(WIN32)
         PUBLIC
             win32
     )
+elseif(HAIKU)
+    target_sources(ppui
+        PRIVATE
+            haiku/DisplayDevice_Haiku.cpp
+            haiku/DisplayDevice_Haiku.h
+            haiku/MilkyView.cpp
+            haiku/MilkyView.h
+            haiku/MilkyWindow.cpp
+            haiku/MilkyWindow.h
+            haiku/KeyCodeMap.cpp
+            haiku/KeyCodeMap.h
+    )
+    target_include_directories(ppui
+        PRIVATE
+            ${PROJECT_SOURCE_DIR}/src/milkyplay
+            ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
+            ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/haiku
+            ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+            ${PROJECT_SOURCE_DIR}/src/ppui/haiku
+            ${PROJECT_SOURCE_DIR}/src/tracker
+            ${PROJECT_SOURCE_DIR}/src/tracker/haiku
+        PUBLIC
+            haiku
+            osinterface/posix
+    )
+    target_compile_options(ppui PRIVATE -iquote ${PROJECT_SOURCE_DIR}/src/ppui)
 else()
     target_sources(ppui
         PRIVATE
