@@ -1079,9 +1079,10 @@ void Tracker::updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingP
 	
 	updateSongInfo(false);
 
-	if( settingsDatabase->restore("LIMITRESET")->getBoolValue() ){ // reset limiter
+	if( settingsDatabase->restore("RESETMFX")->getBoolValue() ){ // reset limiter
 		TMixerSettings newMixerSettings;
 		settingsDatabase->store("LIMITDRIVE",0);
+		settingsDatabase->store("RAMPING",0);
 		sectionSettings->saveCurrentMixerSettings(newMixerSettings);
 		bool res = playerMaster->applyNewMixerSettings(newMixerSettings, true);
 		sectionSettings->update(true);
