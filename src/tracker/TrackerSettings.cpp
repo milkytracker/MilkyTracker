@@ -76,8 +76,8 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("MIXERVOLUME", 256);
 	settingsDatabase->store("MIXERSHIFT", 1);
 	settingsDatabase->store("LIMITDRIVE",0);
-	settingsDatabase->store("LIMITRESET",1);
-	settingsDatabase->store("RAMPING", 1);
+	settingsDatabase->store("RESETMFX",1);
+	settingsDatabase->store("RAMPING", 0);
 	settingsDatabase->store("INTERPOLATION", 4); // rpi zero can handle this already
 	settingsDatabase->store("MIXERFREQ", PlayerMaster::getPreferredSampleRate());
 #ifdef __FORCEPOWEROFTWOBUFFERSIZE__

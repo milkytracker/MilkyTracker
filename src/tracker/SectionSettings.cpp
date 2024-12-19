@@ -147,7 +147,7 @@ enum ControlIDs
 	STATICTEXT_SETTINGS_BUFFERSIZE,
 	STATICTEXT_SETTINGS_MIXERVOL,
 	STATICTEXT_SETTINGS_LIMITDRIVE,
-	CHECKBOX_SETTINGS_LIMITRESET,
+	CHECKBOX_SETTINGS_RESETMFX,
 	SLIDER_SETTINGS_BUFFERSIZE,
 	SLIDER_SETTINGS_MIXERVOL,
 	SLIDER_SETTINGS_LIMITDRIVE,
@@ -486,10 +486,10 @@ public:
 
 		y2+=12;
 
-		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
-		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Volume ramping:", checkBox, true));
-		
+        checkBox = new PPCheckBox(CHECKBOX_SETTINGS_RESETMFX, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+        container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "load resets MFX", checkBox, true));
+
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
 
@@ -572,9 +572,8 @@ public:
 
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_AMPLIFY))->setChoice(v);
 
-		// checkboxes
-		v = settingsDatabase->restore("RAMPING")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
+        v = settingsDatabase->restore("RESETMFX")->getIntValue();
+        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RESETMFX))->checkIt(v>0);
 	}
 
 };
@@ -780,7 +779,7 @@ public:
         container->addControl(radioGroup);
 
         y2 += 60;
-        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Mastering limiter", true, true));
+        container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2 + 2, y2 + 2), "Master FX     (MFX)", true, true));
         container->addControl(new PPStaticText(STATICTEXT_SETTINGS_LIMITDRIVE, NULL, NULL, PPPoint(x2 + 4, y2 + 30), "", false));
         
         PPSlider *slider = new PPSlider(SLIDER_SETTINGS_LIMITDRIVE, screen, this, PPPoint(x + 4, y2 + 4 + 11), 151, true);
@@ -789,9 +788,11 @@ public:
         container->addControl(slider);
 
         y2+=44;
-        PPCheckBox *checkBox = new PPCheckBox(CHECKBOX_SETTINGS_LIMITRESET, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
-        container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Reset on mod.load", checkBox, true));
-        container->addControl(checkBox);
+
+		PPCheckBox *checkBox = new PPCheckBox(CHECKBOX_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Volume ramping:", checkBox, true));
+		
     }
     
     virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
@@ -818,13 +819,13 @@ public:
         PPDictionaryKey *k = settingsDatabase->restore("LIMITDRIVE");
         if( k != NULL ) v = k->getIntValue();
         char buffer[30];
-        if( v == 0 ) sprintf(buffer, "disabled");
-        else         sprintf(buffer, "Drive: +%i", v);
+        if( v == 0 ) sprintf(buffer, "Limiter disabled");
+        else         sprintf(buffer, "Limit drive: +%i", v);
         text->setText(buffer);
         slider->setCurrentValue(v);
 
-        v = settingsDatabase->restore("LIMITRESET")->getIntValue();
-        static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_LIMITRESET))->checkIt(v>0);
+		v = settingsDatabase->restore("RAMPING")->getIntValue();
+		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
     }
     
 };
@@ -2185,12 +2186,12 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
-			case CHECKBOX_SETTINGS_LIMITRESET:
+			case CHECKBOX_SETTINGS_RESETMFX:
 			{
 				if (event->getID() != eCommand)
 					break;
 
-				tracker.settingsDatabase->store("LIMITRESET", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
+				tracker.settingsDatabase->store("RESETMFX", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
 				update();
 				break;
 			}
