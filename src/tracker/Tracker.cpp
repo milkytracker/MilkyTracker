@@ -2161,6 +2161,7 @@ void Tracker::selectInstrument(pp_int32 instrument)
 	getPatternEditorControl()->setCurrentInstrument(instrument);
 	
 	sectionTranspose->setCurrentInstrument(instrument, false);
+	enableInstrument(true); // important: re-enable in case turned off (by numpad 0)
 
 	updateSamplesListBox(false);
 
