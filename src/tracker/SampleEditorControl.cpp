@@ -34,6 +34,7 @@
 #include "PlayerController.h"
 #include "DialogBase.h"
 #include "FilterParameters.h"
+#include "TrackerSettingsDatabase.h"
 
 #include <algorithm>
 #include <math.h>
@@ -373,6 +374,11 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 	pp_int32 sEnd = sampleEditor->getLogicalSelectionEnd();
 
 	TXMSample* sample = sampleEditor->getSample();
+	pp_int32 relNoteSpeed = sampleEditor->getRelNoteSpeed();
+	pp_int32 rampSamples = (relNoteSpeed/1000)*5; // fasttracker 2 5ms volume rampup ('quick-ramp')
+	pp_int32 rampLastX = 0;
+	PPFont* font = PPFont::getFont(PPFont::FONT_TINY);
+
 
 	if (sample && sample->sample)
 	{
@@ -470,10 +476,11 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 				g->setPixel(xOffset + x, yOffset);
 				g->setColor(TrackerConfig::colorSampleEditorWaveform);
 			}
-			
+
 			float findex = ((startPos+x)*xScale);
 			pp_int32 index = (pp_int32)(floor(findex));
 			pp_int32 index2 = index+1;
+
 			if (index2 >= (signed)sample->samplen)
 				index2 = sample->samplen-1;
 			float t = findex - index;
@@ -482,12 +489,26 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 			mp_sint32 y2 = -(mp_sint32)((sample->getSampleValue(index2))*scale); 
 			
 			mp_sint32 y = (mp_sint32)((1.0f-t) * y1 + t * y2);				
-			
+
+			if( tracker->settingsDatabase->restore("RAMPING")->getIntValue() == 1 && index < rampSamples ){ 
+				// remember to visualize volume ramp area to user (to explain loss of transients)
+				rampLastX = x;
+			}
+
 			g->drawLine(xOffset + x-1, yOffset + lasty, 
 						xOffset + x, yOffset + y);
+
 			lasty = y;
 			
 		}	
+	}
+
+	// visualize volume ramp area to user (to explain loss of transients)
+	if( tracker->settingsDatabase->restore("RAMPING")->getIntValue() == 1 ){
+		g->setColor(*borderColor);
+		g->setFont(font);
+		g->drawString("c-4 vol ramp", location.x + rampLastX - (12*5), location.y + 3 + font->getCharHeight() + 1);
+		g->drawVLine(yOffset - (visibleHeight>>1), yOffset + (visibleHeight>>1)-2, xOffset+rampLastX); 
 	}
 	
 	for (pp_int32 sm = 0; sm < TrackerConfig::maximumPlayerChannels; sm++)
@@ -547,7 +568,7 @@ void SampleEditorControl::paint(PPGraphicsAbstract* g)
 		formatMillis(buffer, sizeof(buffer), millis);
 	}
 
-	PPFont* font = PPFont::getFont(PPFont::FONT_TINY);
+	font = PPFont::getFont(PPFont::FONT_TINY);
 	g->setFont(font);
 
 	g->setColor(0, 0, 0);

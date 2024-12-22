@@ -245,6 +245,7 @@ public:
 	bool is16Bit() const;
 
 	pp_int32 getRelNoteNum() const;
+	pp_int32 getRelNoteSpeed() { return XModule::getc4spd(sample->relnote, sample->finetune); }
 	void increaseRelNoteNum(pp_int32 offset);
 	pp_int32 getFinetune() const;
 	void setFinetune(pp_int32 finetune);
