@@ -176,6 +176,7 @@
 				<ol>
 					<li><a href="#milkysynth">Milkysynth</a></li>
 					<li><a href="#resamplers">Resamplers</a></li>
+					<li><a href="#volumeramping">Volume Ramping</a></li>
 					<li><a href="#tabs">Tabs</a></li>
 				</ol>
 			</li>
@@ -421,6 +422,34 @@
 		<p>
 			While the choice of resampler is a matter of personal taste, you should keep in mind that <em>Linear interpolation</em> represents the highest quality option available in Fasttracker II so that's what the majority of .XM files were probably made (to be played) with. Many chiptunes will however sound very muffled with interpolation because of their short samples and therefore relatively greater impact of interpolation. The Amiga modes are meant to be used with 4 channel .MODs only. <em>Precise Sinc</em> is a CPU killer - great for resampling in the sample editor but don't expect hot real-time performance.
 		</p>
+
+		<h3><a id="volumeramping">Volume Ramping</a></h3>
+		<p>
+
+			</ol>
+				<li>None (not adviced: this can cause clicks)</li>
+				<li>Sample end (adviced: keeps drumtransients unaffected)</li>
+				<li>Sample end+start (the revered FT2 sound, at the expense of drumtransients)</li> 
+			</ol>
+
+			The purpose of ramping in samplers, is to avoid unwanted clicks in the song. Clicks happen when there is a sudden DC offset change, which usually occurs:
+			<ol>
+				<li>start: when starting a sample that has a DC offset on the first sample</li>
+				<li>end: when changing the volume of a sample</li>
+				<li>end: when cutting a sample</li>
+			</ol>
+		Let's talk about the last two cases. Ramping is good in these cases because otherwise a click is simply unavoidable.<br>
+		When a sample cuts in the song, the song author has little choice about the phase/position of the sample at the beginning of a tick.<br>
+		<br>
+			In the first case, however, we can say that if the sample starts with a DC offset, then the sample actually contains a click.<br>
+			Is it an intentional click or a mistake of recording?<br>
+			In old mod files, there are certainly plenty of circumstances where there was some error in sampling, and the tools back then could not easily deal with DC offset removal, etc, so it's fine if we ramp it in, even though it may not be "authentic" (plenty of old mod players did not have ramping).<br>
+			This is basically in the same category of 'the listener fixing the song' as surround sound, reverb, EQ in the player.<br>
+
+			
+
+		</p>
+
 		<h3><a id="tabs">Tabs</a></h3>
 		<p>
 			MilkyTracker enables you to open and play up to 32 modules simultaneously and to exchange data between them. Initially, tabs are invisible but can be activated with <a href="#shortcuts">keyboard shortcuts</a> described below. There are some configurable options for tabs as well, like automatically opening modules in new tabs and background stopping behavior control. You can choose to never stop playback on background tabs, or to automatically stop on tab change or stop when playback on another tab is started. Playback can also resume upon returning to a tab.
