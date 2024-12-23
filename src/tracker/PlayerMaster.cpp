@@ -95,6 +95,10 @@ void PlayerMaster::applySettingsToPlayerController(PlayerController& playerContr
 		else
 			resamplerType &= ~1;			
 	}
+
+	if( settings.rampin >= 0){
+		player->setRamp( settings.rampin == 1 ? true : false );
+	}
 	
 	// remember if ramping needs to be set
 	bool ramping = (resamplerType & 1) != 0;
@@ -319,6 +323,9 @@ bool PlayerMaster::applyNewMixerSettings(const TMixerSettings& settings, bool al
 
 	if (settings.ramping >= 0)
 		currentSettings.ramping = settings.ramping;
+	
+	if (settings.rampin >= 0)
+		currentSettings.rampin = settings.rampin;
 
 	if (settings.resampler >= 0)
 		currentSettings.resampler = settings.resampler;

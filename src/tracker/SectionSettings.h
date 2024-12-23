@@ -151,9 +151,11 @@ private:
 
 	// Message box with list of resampler
 	void showResamplerMessageBox();
+	void showVolumeRampingMessageBox();
 
 	void storeAudioDriver(const char* driverName);
 	void storeResampler(pp_uint32 resampler);
+	void storeVolumeRamping(pp_uint32 ramptype);
 
 	void importCurrentColorPalette();
 	void exportCurrentColorPalette();

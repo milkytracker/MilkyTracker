@@ -1066,7 +1066,9 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->insIndex = moduleEditor->currentInstrumentIndex;
 	sectionHDRecorder->fromOrder = getOrderListBoxIndex();
 	sectionHDRecorder->toOrder = getOrderListBoxIndex();
-  sectionHDRecorder->setSettingsAllowMuting(true);
+	sectionHDRecorder->setSettingsResampler( settingsDatabase->restore("INTERPOLATION")->getIntValue() );
+	sectionHDRecorder->setSettingsRamping( settingsDatabase->restore("RAMPING")->getIntValue() );
+    sectionHDRecorder->setSettingsAllowMuting(true);
 	sectionHDRecorder->exportWAVAsSample();
 }
 

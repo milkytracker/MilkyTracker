@@ -48,8 +48,10 @@ struct TMixerSettings
 	pp_int32 powerOfTwoCompensation;
 	// 0 = none, 1 = linear, 2 = lagrange, negative values means ignore 
 	pp_int32 resampler;
-	// 0 = false, 1 = true, negative values means ignore 
+	// 0 = false, 1 = ramping, negative values means ignore 
 	pp_int32 ramping;
+	// 0 = false, 1 = ramp-in during ramping [FT2], negative values means ignore 
+	pp_int32 rampin;
 	// NULL means ignore
 	char* audioDriverName;
     // default number of player channels
@@ -67,6 +69,7 @@ struct TMixerSettings
 		powerOfTwoCompensation(-1),
 		resampler(-1),
 		ramping(-1),
+		rampin(-1),
 		audioDriverName(NULL),
         numPlayerChannels(TrackerConfig::numPlayerChannels),
 		limiterDrive(-1),
@@ -113,7 +116,10 @@ struct TMixerSettings
 
 		if (ramping != source.ramping)
 			return false;
-
+		
+		if (rampin != source.rampin)
+			return false;
+		
         if (numPlayerChannels != source.numPlayerChannels) {
             return false;
         }

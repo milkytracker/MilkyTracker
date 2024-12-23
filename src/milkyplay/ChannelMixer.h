@@ -106,7 +106,14 @@ public:
 		
 		MIXER_INVALID
 	};
-	
+
+	enum RampTypes 
+	{
+		NONE,
+		OUT,
+		IN_OUT_FT2  // FT2 adds 5ms fade-in to sample-start
+	};
+
 	enum
 	{
 		// pretty large buffer for most systems
@@ -368,6 +375,7 @@ private:
 	TSetFreq		setFreqFuncTable[NUMRESAMPLERTYPES];			// If different precisions are used, use other frequency calculation procedures	
 	ResamplerBase*  resamplerTable[NUMRESAMPLERTYPES];
 	
+	bool			rampin;                 // opt-in/out FT2 ramp-in
 	bool			paused;
 	bool			disableMixing;
 	bool			allowFilters;
@@ -418,6 +426,7 @@ public:
 	void			setResamplerType(ResamplerTypes type);
 	ResamplerTypes	getResamplerType() const { return resamplerType; }
 	bool			isRamping()  const { return resamplerTable[resamplerType]->isRamping(); }
+	void			setRamp(bool in){ rampin = in; }
 	
 	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
 	mp_sint32		getMixFrequency() { return mixFrequency; }
