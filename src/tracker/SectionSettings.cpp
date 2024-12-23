@@ -34,6 +34,7 @@
 #include "ModuleEditor.h"
 #include "PlayerMaster.h"
 #include "ResamplerHelper.h"
+#include "VolumeRampHelper.h"
 #include "PlayerController.h"
 #include "SystemMessage.h"
 
@@ -155,7 +156,7 @@ enum ControlIDs
 	CHECKBOX_SETTINGS_FORCEPOWER2BUFF,
 	RADIOGROUP_SETTINGS_AMPLIFY,
 	BUTTON_SETTINGS_RESAMPLING,
-	CHECKBOX_SETTINGS_RAMPING,
+	BUTTON_SETTINGS_RAMPING,
 	RADIOGROUP_SETTINGS_MIXFREQ,
 	BUTTON_SETTINGS_CHOOSEDRIVER,
     RADIOGROUP_SETTINGS_XMCHANNELLIMIT,
@@ -282,7 +283,8 @@ enum ControlIDs
 	RESPONDMESSAGEBOX_CUSTOMRESOLUTION,
 	RESPONDMESSAGEBOX_RESTOREPALETTES,
 	RESPONDMESSAGEBOX_SELECTAUDIODRV,
-	RESPONDMESSAGEBOX_SELECTRESAMPLER
+	RESPONDMESSAGEBOX_SELECTRESAMPLER,
+	RESPONDMESSAGEBOX_SELECTVOLUMERAMPING
 };
 
 struct TScreenRes
@@ -349,6 +351,12 @@ public:
 			{
 				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
 				section.storeResampler(listBox->getSelectedIndex());
+				break;
+			}
+			case RESPONDMESSAGEBOX_SELECTVOLUMERAMPING:
+			{
+				PPListBox* listBox = reinterpret_cast<DialogListBox*>(sender)->getListBox();
+				section.storeVolumeRamping(listBox->getSelectedIndex());
 				break;
 			}
 		}
@@ -486,9 +494,12 @@ public:
 
 		y2+=12;
 
-		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
-		container->addControl(checkBox);
-		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Volume ramping:", checkBox, true));
+		button = new PPButton(BUTTON_SETTINGS_RAMPING, screen, this, PPPoint(x + 4 + 11*11 + 9, y2-1), PPSize(20, 11));
+		button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		button->setText(PPSTR_PERIODS);
+		container->addControl(button);
+		 
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Volume ramping", checkBox, true));
 		
 		//container->addControl(new PPSeperator(0, screen, PPPoint(x + 158, y+4), UPPERFRAMEHEIGHT-8, TrackerConfig::colorThemeMain, false));
 	}
@@ -572,9 +583,9 @@ public:
 
 		static_cast<PPRadioGroup*>(container->getControlByID(RADIOGROUP_SETTINGS_AMPLIFY))->setChoice(v);
 
-		// checkboxes
-		v = settingsDatabase->restore("RAMPING")->getIntValue();
-		static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
+		//// checkboxes
+		//v = settingsDatabase->restore("RAMPING")->getIntValue();
+		//static_cast<PPCheckBox*>(container->getControlByID(CHECKBOX_SETTINGS_RAMPING))->checkIt(v!=0);
 	}
 
 };
@@ -1985,13 +1996,11 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
-			case CHECKBOX_SETTINGS_RAMPING:
+			case BUTTON_SETTINGS_RAMPING:
 			{
 				if (event->getID() != eCommand)
 					break;
-
-				tracker.settingsDatabase->store("RAMPING", (pp_int32)reinterpret_cast<PPCheckBox*>(sender)->isChecked());
-				update();
+				showVolumeRampingMessageBox();
 				break;
 			}
 
@@ -3333,6 +3342,30 @@ void SectionSettings::showResamplerMessageBox()
 	dialog->show();
 }
 
+void SectionSettings::showVolumeRampingMessageBox()
+{
+	if (dialog)
+	{
+		delete dialog;
+		dialog = NULL;
+	}
+
+	dialog = new DialogListBox(tracker.screen,
+							   responder,
+							   RESPONDMESSAGEBOX_SELECTVOLUMERAMPING,
+							   "Volume Ramping Type",
+							   true);
+	PPListBox* listBox = static_cast<DialogListBox*>(dialog)->getListBox();
+
+	VolumeRampHelper volumeRampingHelper;
+	for (pp_uint32 i = 0; i < volumeRampingHelper.getNumVolumeRamps(); i++)
+		listBox->addItem(volumeRampingHelper.getVolumeRampName(i));
+
+	listBox->setSelectedIndex(tracker.settingsDatabase->restore("RAMPING")->getIntValue(), false);
+
+	dialog->show();
+}
+
 void SectionSettings::storeAudioDriver(const char* driverName)
 {
 	const char* curDrvName = tracker.playerMaster->getCurrentDriverName();
@@ -3358,6 +3391,20 @@ void SectionSettings::storeResampler(pp_uint32 resampler)
 
 	TMixerSettings newMixerSettings;
 	newMixerSettings.resampler = resampler;
+	bool res = tracker.playerMaster->applyNewMixerSettings(newMixerSettings, true);
+	if (!res)
+	{
+		SystemMessage message(*tracker.screen, SystemMessage::MessageSoundDriverInitFailed);
+		message.show();
+	}
+}
+
+void SectionSettings::storeVolumeRamping(pp_uint32 ramptype)
+{
+	tracker.settingsDatabase->store("RAMPING", ramptype);
+
+	TMixerSettings newMixerSettings;
+	newMixerSettings.rampin = (MixerSettings::RampTypes)ramptype == MixerSettings::RampTypes::IN_OUT_FT2;
 	bool res = tracker.playerMaster->applyNewMixerSettings(newMixerSettings, true);
 	if (!res)
 	{

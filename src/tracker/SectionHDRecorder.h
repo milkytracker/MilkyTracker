@@ -60,7 +60,7 @@ private:
 	PPSystemString currentFileName;
 
 	bool getSettingsRamping();
-	void setSettingsRamping(bool b);
+	void setSettingsRamping(pp_uint32 type);
 	
 	pp_uint32 getSettingsResampler();
 	void setSettingsResampler(pp_uint32 resampler);

@@ -56,6 +56,7 @@ public:
 	{
 		pp_uint32 sampleRate;
 		pp_uint32 resamplerType;
+		bool      rampin;
 		pp_uint32 playMode;
 		pp_uint32 mixerShift;
 		pp_uint32 mixerVolume;
@@ -76,6 +77,7 @@ public:
 			mixerVolume(0),	
 			fromOrder(0),
 			toOrder(0),
+			rampin(false),
 			muting(NULL),
 			panning(NULL),
 			multiTrack(false),

@@ -163,6 +163,9 @@ void ChannelMixer::ResamplerBase::addChannelsRamping(ChannelMixer* mixer, mp_uin
 				//mp_sint32 beatl = (beatlength*RAMPDOWNFRACTION)>>8;
 				
 				mp_sint32 maxramp = (beatlength*RAMPDOWNFRACTION)>>8;
+				if( !mixer->rampin ){
+				  maxramp = 1; // disable FT2 ramp-in (as specified by user)
+				}
 				mp_sint32 beatl = (!(chn->flags & 3)) ? (ChannelMixer::fixedmul(chn->loopend,chn->rsmpadd) >> 1) : maxramp; 
 
 				if (beatl > maxramp || beatl <= 0)

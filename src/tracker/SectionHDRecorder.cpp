@@ -154,12 +154,12 @@ bool SectionHDRecorder::getSettingsRamping()
 	return checkBox->isChecked();
 }
 
-void SectionHDRecorder::setSettingsRamping(bool b)
+void SectionHDRecorder::setSettingsRamping(pp_uint32 type)
 {
 	PPContainer* container = static_cast<PPContainer*>(sectionContainer);
 	PPCheckBox* checkBox = static_cast<PPCheckBox*>(container->getControlByID(HDRECORD_CHECKBOX_RAMPING));
 	ASSERT(checkBox);
-	checkBox->checkIt(b);
+	checkBox->checkIt( type > 0);
 }
 
 pp_uint32 SectionHDRecorder::getSettingsResampler()
@@ -764,6 +764,7 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 	ModuleServices::WAVWriterParameters parameters;
 	parameters.sampleRate = getSettingsFrequency();
 	parameters.resamplerType = (getSettingsRamping() ? 1 : 0) | (getSettingsResampler() << 1);
+	parameters.rampin        = getSettingsRamping() == 2; // FT2
 	parameters.playMode = tracker.playerController->getPlayMode();
 	parameters.mixerShift = getSettingsMixerShift(); 
 	parameters.mixerVolume = mixerVolume;

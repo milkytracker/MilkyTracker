@@ -68,6 +68,7 @@ add_executable(tracker
     RecPosProvider.cpp
     RecorderLogic.cpp
     ResamplerHelper.cpp
+	VolumeRampHelper.cpp
     SampleEditor.cpp
     SampleEditorControl.cpp
     SampleEditorControlToolHandler.cpp
@@ -161,6 +162,7 @@ add_executable(tracker
     RecPosProvider.h
     RecorderLogic.h
     ResamplerHelper.h
+	VolumeRampHelper.h
     fx/Filter.h
     Synth.h
 	  SynthFM.h
