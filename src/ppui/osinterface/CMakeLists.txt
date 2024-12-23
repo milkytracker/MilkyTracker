@@ -33,12 +33,19 @@ add_library(osinterface STATIC
     PPSystem.h
 )
 
-target_include_directories(osinterface
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/..
-)
+if (HAIKU)
+    target_include_directories(osinterface
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+else()
+    target_include_directories(osinterface
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/..
+    )
+endif()
 
 # Add platform-specific sources and include paths
 if(APPLE)
@@ -86,6 +93,35 @@ elseif(WIN32)
         PUBLIC
             win32
     )
+elseif(HAIKU)
+    target_sources(osinterface
+        PRIVATE
+            # Sources
+            PPPathFactory.cpp
+            posix/PPMutex.cpp
+            posix/PPPath_POSIX.cpp
+            posix/PPSystem_POSIX.cpp
+            haiku/SynchronousFilePanel.cpp
+            haiku/PPMessageBox_Haiku.cpp
+            haiku/PPOpenPanel_Haiku.cpp
+            haiku/PPQuitSaveAlert_Haiku.cpp
+            haiku/PPSavePanel_Haiku.cpp
+            haiku/WaitView.cpp
+            haiku/WaitWindow.cpp
+
+            # Headers
+            posix/PPMutex.h
+            posix/PPPath_POSIX.h
+            posix/PPSystemString_POSIX.h
+            posix/PPSystem_POSIX.h
+    )
+    target_include_directories(osinterface
+        PRIVATE
+            ${PROJECT_SOURCE_DIR}/src/ppui/haiku
+            ${PROJECT_SOURCE_DIR}/src/tracker/haiku
+            posix
+    )
+    target_compile_options(osinterface PRIVATE -iquote ${PROJECT_SOURCE_DIR}/src/ppui)
 else()
     target_sources(osinterface
         PRIVATE
