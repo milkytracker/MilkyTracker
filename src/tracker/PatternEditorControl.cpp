@@ -117,16 +117,22 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 
     
-	  keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     keyboardMenuControl->setSubMenu(true);
     keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
     keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
     keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
     keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
+	helpMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    helpMenuControl->setSubMenu(true);
+    helpMenuControl->addEntry("Help", MAINMENU_HELP );
+    helpMenuControl->addEntry("About", MAINMENU_ABOUT );
+
     editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
     editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
     editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
+    editMenuControl->addEntry("Help        >", 0xFFFF, helpMenuControl);
 
     channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     channelMenuControl->setSubMenu(true);
