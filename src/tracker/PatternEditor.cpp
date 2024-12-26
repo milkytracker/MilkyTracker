@@ -391,6 +391,7 @@ void PatternEditor::copy(ClipBoard& clipBoard)
 	clipBoard.makeCopy(*pattern,
 					   getSelection().start,
 					   getSelection().end);
+	resetSelection(); // prevent user from accidentally [del]eting last selection while in another column
 }
 
 void PatternEditor::paste(ClipBoard& clipBoard, bool transparent/* = false*/, pp_int32 fromChannel/* = -1*/)
