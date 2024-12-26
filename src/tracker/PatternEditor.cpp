@@ -1873,3 +1873,29 @@ void PatternEditor::triggerButton( pp_uint32 id, PPScreen *s, EventListenerInter
   e->handleEvent(reinterpret_cast<PPObject*>(fakebutton), &event);
   delete fakebutton;
 }
+
+bool PatternEditor::writeStep(pp_uint32 channel,
+							  pp_uint32 step,
+							  pp_uint32 note,
+							  pp_uint32 barRow,								
+							  bool withUndo/* = false*/)
+{
+	if (withUndo)
+		prepareUndo();
+	// ASCIISTEP16 standard (https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b)
+	// determines final cursor position based on pckeyboard stepvalue
+	cursor.row = step;
+	cursor.channel = channel;
+	PatternTools patternTools;
+	patternTools.setPosition(pattern, cursor.channel, cursor.row);
+	pp_int32 instr = getCurrentActiveInstrument();
+	bool enable    = (patternTools.getNote() == 0 || instr != patternTools.getInstrument() );
+	patternTools.setNote( enable ? note : 0 );
+	patternTools.setInstrument( enable ? instr : 0 );
+	cursor.row = barRow; // stick cursor to beginning of bar so page-up/down navigates thru bars
+	setCursor(cursor);
+	
+	if (withUndo)
+		finishUndo(LastChangeSlotChange);
+	return true;
+}

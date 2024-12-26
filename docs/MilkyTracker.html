@@ -175,6 +175,7 @@
 			<li><a href="#features">Features</a>
 				<ol>
 					<li><a href="#milkysynth">Milkysynth</a></li>
+					<li><a href="#channels-and-scopes">Channels and scopes</a></li>
 					<li><a href="#resamplers">Resamplers</a></li>
 					<li><a href="#volumeramping">Volume Ramping</a></li>
 					<li><a href="#tabs">Tabs</a></li>
@@ -190,8 +191,8 @@
 			</li>
 			<li><a href="#shortcuts">Keyboard shortcuts</a>
 				<ol>
-					<li><a href="#milkymode">MilkyTracker edit mode</a></li>
 					<li><a href="#ft2mode">Fasttracker II edit mode</a></li>
+					<li><a href="#milkymode">MilkyTracker edit mode</a></li>
 				</ol>
 			</li>
 			<li><a href="#effects">Effect command reference</a>
@@ -400,8 +401,25 @@
 		</p>
 
 
-		
+		<h3><a id="channels-and-scopes">Channels and Scopes</h3>
+		<p>
+			Milkytracker takes a revolutionary approach compared to a most midi samplers: 
 
+			<ul>
+				<li>a channel is not limited to one sample, volume, effect or panning settings</li> 
+				<li>up to 128 channels allowed</li> 
+			</ul>
+			MOD files are true pieces of art when it comes to combining things in max 4 channels.<br>
+			<br><br>
+			The scopes allow you to see the sample-signal & vu-meters, which can be controlled by mouse and keyboard:<br>
+			<br>
+			<ul>
+				<li>mouse left-click: (un)mute</li>
+				<li>mouse left+right-click: (un)solo</li>
+				<li>shift 1..9: (un)mute particular channel</li> 
+				<li>ctrl (shift) M: (un)solo particular channel</li> 
+			</ul>
+		</p>
 
 		<h3><a id="resamplers">Resamplers</a></h3>
 		<p>
@@ -675,17 +693,60 @@
 		<h3><a id="milkymode">I. MilkyTracker edit mode</a></h3>
 		<p>
 			The MilkyTracker mode basically is a bit more "modern" because you can focus on different parts (e.g. Pattern Editor, Instrument listbox, Sample listbox etc.) and when you're pressing keys, they're routed to the focused control.<br>
-      Keyboard shortcuts are also more standard / compatible with slim keyboards.<br>
-      Users who are new to tracking will probably find this a bit more intuitive:
+		  Keyboard shortcuts are also more standard / compatible with slim keyboards.<br>
+		  Users who are new to tracking will probably find this a bit more intuitive:
 
-      <ol>
-        <li>pressing the SHIFT key and navigating with the cursor keys selects pattern-notes</li> 
-        <li>cut, copy &amp; paste by using Ctrl-X/C/V etc. </li>
-        <li>navigating instruments via CTRL-up/down arrow-keys</li>
-        <li>navigating samples via CTRL-SHIFT-up/down arrow-keys</li>
-        <li>navigating orderlist via ALT-up/down arrow-keys</li>
-        <li>selecting pattern in orderlist via ALT-left/right arrow-keys</li>
-      </ol>
+		  <ol>
+			<li>navigate instruments via CTRL-up/down arrow-keys</li>
+			<li>navigate samples via CTRL-SHIFT-up/down arrow-keys</li>
+			<li>navigate orderlist via ALT-up/down arrow-keys</li>
+			<li>select pattern in orderlist via ALT-left/right arrow-keys</li>
+			<li>pattern-note selection: hold SHIFT and use arrow-keys to select a block</li> 
+			<li>cut, copy &amp; paste by using Ctrl-X/C/V etc. </li>
+		  </ol>
+
+		  <b>ASCIISTEP16 stepsequencer mode</b>
+
+		<a href="https://web.archive.org/web/20241226181409/https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b" target="_blank">ASCIISTEP16</a> is a pckeyboard standard & translation of popular hardware 16-step drum/midi/sampler-sequencers.<br>
+		It adds a 'grid'-like keyboard-performancemode to trackers, which toggles pattern-notes/channels.<br>
+		<br><br>
+		Below is the keyboard-to-step translation:
+		<pre>
+key step comment 
+--- ---  -------
+Q   0 
+W   1
+E   2
+R   3
+T   4
+Y   5    international equivalent 'Z' e.g.
+U   6
+I   7
+A   8
+S   9
+D   10
+F   11
+G   12
+H   13
+J   14
+K   15
+
+[un]mute   
+channel  key 
+-------  ---
+1        '1'
+2        '2'
+3        '3'
+4        '4'
+5        '5'
+6        '6'
+7        '7'
+8        '8'
+9        '9'
+10       '0'
+11       '-'
+12       '='
+		</pre>
 		</p>
 		<h4>Section switching:</h4>
 		<table>

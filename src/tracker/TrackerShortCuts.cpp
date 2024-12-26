@@ -47,6 +47,8 @@
 #include "SectionInstruments.h"
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
+#include "ScopesControl.h"
+#include "TrackerSettingsDatabase.h"
 
 void Tracker::sendNoteDown(mp_sint32 note, pp_int32 volume/* = -1*/)
 {
@@ -212,6 +214,18 @@ processBindings:
 								break;
 						}
 					}
+					if (!::getKeyModifier() )
+					{
+						switch (keyCode)
+						{
+							// Stop following song if user wants to navigate current pattern 
+							case VK_UP:
+							case VK_DOWN:
+								setFollowSong(false);
+								break;
+
+						}
+					}
 					getPatternEditorControl()->dispatchEvent(event);
 					event->cancel();
 				}
@@ -247,6 +261,9 @@ processBindings:
 				}
 			}
 
+		}
+		if (::getKeyModifier() == (KeyModifierSHIFT) ){
+			doASCIISTEP16(keyCode, ::getKeyModifier() == (KeyModifierCTRL) );
 		}
 		
 	}
@@ -781,4 +798,36 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 	}
 
 	return false;
+}
+
+void Tracker::doASCIISTEP16( pp_uint8 character, bool chselect ){
+	// check for ASCIISTEP16 events
+	PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
+	pp_int32 stepsize = getPatternEditorControl()->getRowInsertAdd() + 1;
+	pp_int32 bar      = cursor.row / (16*stepsize);
+	pp_int32 step     = ASCIISTEP16(character,bar) * stepsize;
+	pp_int32 ch       = ASCIISTEP16_channel(character);
+	if ( ch > -1 ){
+		if( chselect ){
+			PatternEditor *p = getPatternEditor();
+			PatternEditorTools::Position& cursor = p->getCursor();
+			cursor.channel = ch < p->getNumChannels() ? ch : cursor.channel;
+			getPatternEditorControl()->setChannel( cursor.channel, 0 );
+		}else{
+			muteChannels[ch] = !muteChannels[ch];
+			bool mute = muteChannels[ch];
+			playerController->muteChannel(ch,mute);
+			scopesControl->muteChannel(ch,mute);
+			getPatternEditorControl()->muteChannel(ch,mute);
+			patternEditorControl->muteChannel( ch, mute ); // ASCIISTEP16 mute toggle
+		}
+		updatePatternEditorControl(true);
+	}
+	if ( step > -1 ){
+		PatternEditorTools::Position cursor;
+		// write ASCIISTEP16 step
+		pp_uint32 note = TONOTE(getPatternEditor()->getCurrentOctave(),0);
+		getPatternEditor()->writeStep( patternEditorControl->getCurrentChannel(), step, note, bar * (16*stepsize),true);
+		updatePatternEditorControl(true);
+	}
 }

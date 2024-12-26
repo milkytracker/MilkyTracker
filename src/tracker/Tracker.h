@@ -28,6 +28,7 @@
 #include "EditModes.h"
 #include "FileTypes.h"
 #include "XModule.h"
+#include "ASCIISTEP16.h"
 
 #define INPUTCONTAINERHEIGHT_DEFAULT	(25+SCROLLBUTTONSIZE+4)
 #define INPUTCONTAINERHEIGHT_EXTENDED	(25+SCROLLBUTTONSIZE+4+13)
@@ -350,6 +351,7 @@ private:
 	void fillInstrumentListBox(PPListBox* listBox, ModuleEditor* moduleEditor = NULL);
 	void fillSampleListBox(PPListBox* listBox, pp_int32 insIndex, ModuleEditor* moduleEditor = NULL);
 	void fillModuleListBox(PPListBox* listBox);
+	void doASCIISTEP16( pp_uint8 character, bool chselect );
 	
 	void setChanged();
 

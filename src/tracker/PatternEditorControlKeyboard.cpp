@@ -683,12 +683,12 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 
 void PatternEditorControl::handleKeyChar(pp_uint8 character)
 {
-	PatternEditorTools::Position& cursor = patternEditor->getCursor();
-	pp_int32 number = -1;
 
 	// prevent unnecessary screen refreshing through listener callback
 	// remember to reset this when leaving this function
 	patternEditor->setLazyUpdateNotifications(true);
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	pp_int32 number = -1;
 
 	if ((cursor.inner == 1 || cursor.inner == 2))
 	{
