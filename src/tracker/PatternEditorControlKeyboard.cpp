@@ -79,6 +79,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('C', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Copy);
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Paste);
+	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_PasteStep);
 	eventKeyDownBindingsMilkyTracker->addBinding('A', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_SelectAll);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
@@ -1633,6 +1634,13 @@ void PatternEditorControl::eventKeyCharBinding_Paste()
 	// If row count changed, call notifyUpdate to refresh pattern length indicator
 	if (patternEditor->getLastOperationDidChangeRows())
 		notifyUpdate();
+}
+
+void PatternEditorControl::eventKeyCharBinding_PasteStep()
+{
+	PatternEditorControl::eventKeyCharBinding_Paste();
+	advance();
+	notifyUpdate(AdvanceCodeColumn); 
 }
 
 void PatternEditorControl::eventKeyCharBinding_TransparentPaste()

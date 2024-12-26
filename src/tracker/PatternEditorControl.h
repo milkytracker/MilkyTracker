@@ -513,9 +513,10 @@ private:
 
 	void eventKeyCharBinding_Undo();
 	void eventKeyCharBinding_Redo();
-	void eventKeyCharBinding_Cut();		// Operates on block
-	void eventKeyCharBinding_Copy();	// Operates on block
-	void eventKeyCharBinding_Paste();   // Operates on block
+	void eventKeyCharBinding_Cut();		    // Operates on block
+	void eventKeyCharBinding_Copy();	    // Operates on block
+	void eventKeyCharBinding_Paste();       // Operates on block
+	void eventKeyCharBinding_PasteStep();   // Operates on block
 	void eventKeyCharBinding_TransparentPaste();
 	void eventKeyCharBinding_SelectAll();
 	void eventKeyCharBinding_MuteChannel();
