@@ -921,7 +921,15 @@ markOrMoveSelection:
 
 			pp_uint8 character = *((pp_uint8*)event->getDataPtr());
 
-			handleKeyChar(character);
+			// handle keys which are not part of shortcut 
+			// [otherwise ctrl-minus will add minus-volslides in volcolumn e.g.]
+			if ( 
+				(::getKeyModifier() != (unsigned)KeyModifierCTRL)  && 
+				(::getKeyModifier() != (unsigned)KeyModifierSHIFT) && 
+				(::getKeyModifier() != (unsigned)KeyModifierALT)   
+			){
+				handleKeyChar(character);
+			}
 
 			if (assureUpdate)
 				parentScreen->paintControl(this);
