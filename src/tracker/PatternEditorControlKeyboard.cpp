@@ -37,7 +37,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
 
 	// Key-down bindings MilkyTracker
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, 0, &PatternEditorControl::eventKeyDownBinding_LEFT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT,  0, &PatternEditorControl::eventKeyDownBinding_LEFT);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, 0, &PatternEditorControl::eventKeyDownBinding_RIGHT);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_UP, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_UP);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DOWN, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_DOWN);
@@ -54,6 +54,13 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_NextChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_LEFT);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_RIGHT);
+
+	// compensate for lack of FT2 channel/column selectors:
+	//  1. expand select downward when adding shift while pressing ctrl+arrowkeys
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT,  KeyModifierCTRL | KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SelectColumn);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT,  KeyModifierCTRL | KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SelectColumn);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT,  KeyModifierCTRL|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_LEFT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_RIGHT);
 
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect);
@@ -77,6 +84,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Interpolate);
+
 
 	// Scancode bindings
 	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
@@ -1461,6 +1469,7 @@ void PatternEditorControl::eventKeyDownBinding_CopyTrack()
 	patternEditor->getSelection().start = ss;
 	patternEditor->getSelection().end = se;
 	cursor = cc;
+
 }
 
 void PatternEditorControl::eventKeyDownBinding_PasteTrack()
@@ -1612,6 +1621,7 @@ void PatternEditorControl::eventKeyCharBinding_Copy()
 	cursorCopy = patternEditor->getCursor();
 
 	patternEditor->copy(PatternEditor::ClipBoardTypeSelection);
+	patternEditor->resetSelection(); // prevent user from accidentally [del]eting last selection while in another column
 }
 
 void PatternEditorControl::eventKeyCharBinding_Paste()
@@ -1651,6 +1661,11 @@ void PatternEditorControl::eventKeyCharBinding_SelectAll()
 	{
 		selectAll();
 	}
+}
+
+void PatternEditorControl::eventKeyDownBinding_SelectColumn()
+{
+	patternEditor->selectColumn();
 }
 
 void PatternEditorControl::eventKeyCharBinding_MuteChannel()

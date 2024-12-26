@@ -504,6 +504,7 @@ private:
 	void eventKeyDownBinding_CopyTrack();
 	void eventKeyDownBinding_PasteTrack();
 	void eventKeyDownBinding_TransparentPasteTrack();
+	void eventKeyDownBinding_SelectColumn();
 
 	void eventKeyDownBinding_CutPattern();
 	void eventKeyDownBinding_CopyPattern();

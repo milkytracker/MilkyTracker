@@ -253,6 +253,16 @@ void PatternEditor::selectAll()
 	selection.end.inner = 7;	
 }
 
+void PatternEditor::selectColumn()
+{
+	if (pattern == NULL)
+		return;
+		
+	selection.start.channel = cursor.channel;
+	selection.end.channel = cursor.channel;
+	selection.end.row = pattern->rows-1;
+}
+
 pp_int32 PatternEditor::getCurrentActiveInstrument()
 {
 	PatternTools patternTools;
@@ -391,7 +401,6 @@ void PatternEditor::copy(ClipBoard& clipBoard)
 	clipBoard.makeCopy(*pattern,
 					   getSelection().start,
 					   getSelection().end);
-	resetSelection(); // prevent user from accidentally [del]eting last selection while in another column
 }
 
 void PatternEditor::paste(ClipBoard& clipBoard, bool transparent/* = false*/, pp_int32 fromChannel/* = -1*/)

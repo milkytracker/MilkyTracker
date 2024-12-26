@@ -270,6 +270,7 @@ public:
 	bool selectionContains(const PatternEditorTools::Position& pos);
 	void selectChannel(pp_int32 channel);
 	void selectAll();
+	void selectColumn();
 
 	// dealing with instrument
 	void setCurrentInstrument(pp_int32 ins) { currentInstrument = ins; }
