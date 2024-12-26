@@ -102,7 +102,9 @@ void PPListBoxFileBrowser::refreshFiles()
 
 const PPPathEntry* PPListBoxFileBrowser::getPathEntry(pp_int32 index) const
 {
-	return pathEntries.get(index);
+	if(index >= 0 && index < pathEntries.size())
+        return pathEntries.get(index);
+    return NULL;
 }
 
 bool PPListBoxFileBrowser::canGotoHome() const
