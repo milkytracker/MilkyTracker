@@ -110,7 +110,7 @@ public:
 	enum RampTypes 
 	{
 		NONE,
-		OUT,
+		OUT_ONLY,
 		IN_OUT_FT2  // FT2 adds 5ms fade-in to sample-start
 	};
 
