@@ -124,15 +124,9 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
     keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-	helpMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
-    helpMenuControl->setSubMenu(true);
-    helpMenuControl->addEntry("Help", MAINMENU_HELP );
-    helpMenuControl->addEntry("About", MAINMENU_ABOUT );
-
     editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
     editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
     editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
-    editMenuControl->addEntry("Help        >", 0xFFFF, helpMenuControl);
 
     channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     channelMenuControl->setSubMenu(true);
@@ -147,6 +141,12 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
     channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
     editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
+
+	helpMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+    helpMenuControl->setSubMenu(true);
+    helpMenuControl->addEntry("Help", MAINMENU_HELP );
+    helpMenuControl->addEntry("About", MAINMENU_ABOUT );
+    editMenuControl->addEntry("Help        >", 0xFFFF, helpMenuControl);
     
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Undo", MenuCommandIDUndo);
@@ -226,6 +226,7 @@ void PatternEditorControl::setFont(PPFont* font)
 		patternMenuControl->setFont(font);
 		keyboardMenuControl->setFont(font);
 		channelMenuControl->setFont(font);
+		helpMenuControl->setFont(font);
 	}
 
 	assureCursorVisible();
@@ -1521,6 +1522,8 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MAINMENU_ADVEDIT:
 		case MAINMENU_QUICKOPTIONS:
 		case MAINMENU_OPTIMIZE:
+		case MAINMENU_HELP:
+		case MAINMENU_ABOUT:
 		case BUTTON_ABOUT_FOLLOWSONG:
 		case BUTTON_OCTAVE_PLUS:
 		case BUTTON_OCTAVE_MINUS:

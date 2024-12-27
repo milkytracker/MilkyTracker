@@ -1128,7 +1128,8 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	         sender == reinterpret_cast<PPObject*>(moduleMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(patternMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(keyboardMenuControl) ||
-	         sender == reinterpret_cast<PPObject*>(channelMenuControl) )
+	         sender == reinterpret_cast<PPObject*>(channelMenuControl)  ||
+	         sender == reinterpret_cast<PPObject*>(helpMenuControl) )
 	{
 		switch (event->getID())
 		{
