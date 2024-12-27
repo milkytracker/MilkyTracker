@@ -13,7 +13,7 @@ compatibility.
 
 ## [CHAT COMMUNITY](https://milkytracker.org/community/)
 
-![](https://i.imgur.com/3KAMmvk.gif)
+<img src="https://milkytracker.org/img/milkytracker.gif" style="max-width:700px"/>
 
 Refer to http://milkytracker.org/about for further details.
 
