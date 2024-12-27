@@ -13,9 +13,7 @@ compatibility.
 
 ## [CHAT COMMUNITY](https://milkytracker.org/community/)
 
-<img src="https://github.com/coderofsalvation/MilkyTrackerX/raw/master/res/milkytrackerX.gif" width="100%"/>
-
-> For experimental beta builds see [MilkytrackerX](https://github.com/coderofsalvation/MilkytrackerX)
+<img src="https://i.imgur.com/3KAMmvk.gif"/>
 
 Refer to http://milkytracker.org/about for further details.
 
