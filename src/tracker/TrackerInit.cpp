@@ -285,6 +285,12 @@ void Tracker::initUI()
 	peakLevelControl->setBorderColor(TrackerConfig::colorThemeMain);
 	containerAbout->addControl(peakLevelControl);
 
+    if( !screen->getClassic() ){
+      staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 14), "patterns", true);
+      staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
+      containerAbout->addControl(staticText);
+    }
+
 	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3), "Song title:", true);
 	staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	containerAbout->addControl(staticText);
@@ -546,12 +552,6 @@ void Tracker::initSectionOrderlist(pp_int32 x, pp_int32 y)
   if( !screen->getClassic() ) listBoxOrderList->setTextColor( TrackerConfig::colorPatternEditorEffect );
 
 	containerOrderlist->addControl(listBoxOrderList);
-
-  if( !screen->getClassic() ){
-    staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 14), "patterns", true);
-    staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
-    containerOrderlist->addControl(staticText);
-  }
 
 	screen->addControl(containerOrderlist);	
 	
