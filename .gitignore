@@ -4,3 +4,7 @@ build/
 # Editor config files
 .vscode/
 .vs/
+
+# Audio files
+*.wav
+*.wav.asd

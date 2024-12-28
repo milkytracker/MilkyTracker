@@ -38,11 +38,24 @@ int main(int argc, char* argv[])
     ModuleServices::WAVWriterParameters params = WAVExportParams::parseFromCommandLine(argc, argv, settingsDB);
     params.toOrder = module.header.ordnum - 1;  // Set the end order
 
+    // Setup muting array if needed
+    mp_ubyte* muting = nullptr;
+    if (params.multiTrack) {
+        muting = new mp_ubyte[module.header.channum];
+        params.muting = muting;
+    }
+
     // Convert paths to PPSystemString
     PPSystemString outputFilePath(outputFile);
 
     // Export to WAV using ModuleServices
     int numWrittenSamples = services.exportToWAV(outputFilePath, params);
+    
+    // Clean up
+    if (muting) {
+        delete[] muting;
+    }
+
     if (numWrittenSamples == MP_DEVICE_ERROR) {
         fprintf(stderr, "Failed to export WAV file: %s\n", outputFile);
         return 1;

@@ -26,7 +26,7 @@ ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int ar
     params.toOrder = -1; // Will be set by the caller
     params.muting = nullptr;
     params.panning = nullptr;
-    params.multiTrack = false;
+    params.multiTrack = hasOption(argc, argv, "--split-tracks");
     params.limiterDrive = 0;
 
     return params;
@@ -39,6 +39,9 @@ void WAVExportParams::printUsage(const char* programName) {
     fprintf(stderr, "  --volume <volume>     Mixer volume (default: from settings or 256)\n");
     fprintf(stderr, "  --shift <shift>       Mixer shift (default: from settings or 1)\n");
     fprintf(stderr, "  --resampler <type>    Resampler type (default: from settings or 4)\n");
+    fprintf(stderr, "  --split-tracks        Export each track to a separate WAV file\n");
+    fprintf(stderr, "\nWhen using --split-tracks, output files will be named:\n");
+    fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
 }
 
 int WAVExportParams::getIntOption(int argc, char* argv[], const char* option, int defaultValue) {
@@ -57,4 +60,8 @@ bool WAVExportParams::hasOption(int argc, char* argv[], const char* option) {
         }
     }
     return false;
+}
+
+void WAVExportParams::setupMutingArray(mp_ubyte* muting, int numChannels) {
+    memset(muting, 0, numChannels);
 } 

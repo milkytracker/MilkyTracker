@@ -11,4 +11,5 @@ public:
 private:
     static int getIntOption(int argc, char* argv[], const char* option, int defaultValue);
     static bool hasOption(int argc, char* argv[], const char* option);
+    static void setupMutingArray(mp_ubyte* muting, int numChannels);
 }; 
