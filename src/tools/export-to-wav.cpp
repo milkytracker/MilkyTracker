@@ -127,14 +127,15 @@ int main(int argc, char* argv[]) {
 
     // Export to WAV with proper parameters
     DEBUG_LOG("Starting export...\n");
-    int result = player.exportToWAV(outputFile, module, startOrder, endOrder);
-    if (result != MP_OK) {
-        fprintf(stderr, "Failed to export WAV file: %s (error code: %d)\n", outputFile, result);
+    
+    int numWrittenSamples = player.exportToWAV(outputFile, module, startOrder, endOrder);
+    if (numWrittenSamples == MP_DEVICE_ERROR) {
+        fprintf(stderr, "Failed to export WAV file: %s\n", outputFile);
         delete module;
         return 1;
     }
 
     delete module;
-    printf("Successfully exported to WAV: %s\n", outputFile);
+    printf("Successfully exported to WAV: %s. %d samples written\n", outputFile, numWrittenSamples);
     return 0;
 } 
