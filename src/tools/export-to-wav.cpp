@@ -4,11 +4,12 @@
 #include <milkyplay/XMFile.h>
 #include <ppui/osinterface/posix/PPSystem_POSIX.h>
 #include <milkyplay/XModule.h>
+#include "WAVExportParams.h"
 
 int main(int argc, char* argv[])
 {
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <input.xm> <output.wav>\n", argv[0]);
+    if (argc < 3) {
+        WAVExportParams::printUsage(argv[0]);
         return 1;
     }
 
@@ -33,24 +34,9 @@ int main(int argc, char* argv[])
         settingsDB.serialize(f);
     }
 
-    // Create WAV writer parameters with defaults from settings
-    ModuleServices::WAVWriterParameters params;
-    params.sampleRate = settingsDB.hasKey("HDRECORDER_MIXFREQ") ? 
-                       settingsDB.restore("HDRECORDER_MIXFREQ")->getIntValue() : 44100;
-    params.mixerVolume = settingsDB.hasKey("HDRECORDER_MIXERVOLUME") ? 
-                        settingsDB.restore("HDRECORDER_MIXERVOLUME")->getIntValue() : 256;
-    params.mixerShift = settingsDB.hasKey("HDRECORDER_MIXERSHIFT") ? 
-                       settingsDB.restore("HDRECORDER_MIXERSHIFT")->getIntValue() : 1;
-    params.resamplerType = settingsDB.hasKey("HDRECORDER_INTERPOLATION") ? 
-                          settingsDB.restore("HDRECORDER_INTERPOLATION")->getIntValue() : 4;
-
-    // Set additional required parameters
-    params.fromOrder = 0;
-    params.toOrder = module.header.ordnum - 1;
-    params.muting = nullptr;
-    params.panning = nullptr;
-    params.multiTrack = false;
-    params.limiterDrive = 0;
+    // Get WAV writer parameters from command line arguments
+    ModuleServices::WAVWriterParameters params = WAVExportParams::parseFromCommandLine(argc, argv, settingsDB);
+    params.toOrder = module.header.ordnum - 1;  // Set the end order
 
     // Convert paths to PPSystemString
     PPSystemString outputFilePath(outputFile);

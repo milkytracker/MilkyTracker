@@ -1,5 +1,6 @@
 add_executable(export-to-wav
     export-to-wav.cpp
+    WAVExportParams.cpp
 )
 
 target_link_libraries(export-to-wav
