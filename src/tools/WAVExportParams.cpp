@@ -16,7 +16,7 @@ ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int ar
                           settingsDB.restore("HDRECORDER_INTERPOLATION")->getIntValue() : 4;
 
     // Override with command line arguments if provided
-    params.sampleRate = getIntOption(argc, argv, "--samplerate", params.sampleRate);
+    params.sampleRate = getIntOption(argc, argv, "--sample-rate", params.sampleRate);
     params.mixerVolume = getIntOption(argc, argv, "--volume", params.mixerVolume);
     params.mixerShift = getIntOption(argc, argv, "--shift", params.mixerShift);
     params.resamplerType = getIntOption(argc, argv, "--resampler", params.resamplerType);
@@ -26,7 +26,7 @@ ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int ar
     params.toOrder = -1; // Will be set by the caller
     params.muting = nullptr;
     params.panning = nullptr;
-    params.multiTrack = hasOption(argc, argv, "--split-tracks");
+    params.multiTrack = hasOption(argc, argv, "--multi-track");
     params.limiterDrive = 0;
 
     return params;
@@ -35,12 +35,12 @@ ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int ar
 void WAVExportParams::printUsage(const char* programName) {
     fprintf(stderr, "Usage: %s <input.xm> <output.wav> [options]\n", programName);
     fprintf(stderr, "Options:\n");
-    fprintf(stderr, "  --samplerate <rate>   Sample rate in Hz (default: from settings or 44100)\n");
+    fprintf(stderr, "  --sample-rate <rate>  Sample rate in Hz (default: from settings or 44100)\n");
     fprintf(stderr, "  --volume <volume>     Mixer volume (default: from settings or 256)\n");
     fprintf(stderr, "  --shift <shift>       Mixer shift (default: from settings or 1)\n");
     fprintf(stderr, "  --resampler <type>    Resampler type (default: from settings or 4)\n");
-    fprintf(stderr, "  --split-tracks        Export each track to a separate WAV file\n");
-    fprintf(stderr, "\nWhen using --split-tracks, output files will be named:\n");
+    fprintf(stderr, "  --multi-track         Export each track to a separate WAV file\n");
+    fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
     fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
 }
 
