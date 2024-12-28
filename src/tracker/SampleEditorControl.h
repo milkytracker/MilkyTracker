@@ -316,6 +316,7 @@ private:
 		MenuCommandIDEQ10Band,
 		MenuCommandIDSelectiveEQ10Band,
 		MenuCommandIDCapturePattern,
+		MenuCommandIDCapturePatternOverdub,
 		MenuCommandIDGenerateSilence,
 		MenuCommandIDGenerateNoise,
 		MenuCommandIDGenerateSine,

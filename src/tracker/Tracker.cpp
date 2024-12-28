@@ -1126,6 +1126,13 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 			case BUTTON_PATTERN_CAPTURE:
 				eventKeyDownBinding_InvokePatternCapture();
+				eventKeyDownBinding_InvokeMainScreen();
+				eventKeyDownBinding_InvokeSectionSamples();
+				break;
+
+			case BUTTON_PATTERN_CAPTURE_OVERDUB:
+				eventKeyDownBinding_InvokePatternCaptureOverdub();
+				eventKeyDownBinding_InvokeMainScreen();
 				eventKeyDownBinding_InvokeSectionSamples();
 				break;
 

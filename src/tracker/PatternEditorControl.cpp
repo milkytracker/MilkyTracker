@@ -112,9 +112,11 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 
     patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     patternMenuControl->setSubMenu(true);
-    patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
+    patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
+    patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
 
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
@@ -1530,6 +1532,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_ADD_PLUS:
 		case BUTTON_ADD_MINUS:
 		case BUTTON_PATTERN_CAPTURE:
+		case BUTTON_PATTERN_CAPTURE_OVERDUB:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;

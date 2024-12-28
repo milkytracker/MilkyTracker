@@ -35,6 +35,7 @@
 #include "PlayerLogic.h"
 #include "RecorderLogic.h"
 #include "ModuleEditor.h"
+#include "SampleEditor.h"
 
 #include "PPUIConfig.h"
 #include "Container.h"
@@ -179,6 +180,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DIVIDE, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT, &Tracker::eventKeyDownBinding_InvokePatternCapture);
+	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL | KeyModifierSHIFT | KeyModifierALT, &Tracker::eventKeyDownBinding_InvokePatternCaptureOverdub);
 
   // brujo's secret sauce 
   eventKeyDownBindingsMilkyTracker->addBinding('J', KeyModifierCTRL, &Tracker::eventKeyDownBinding_BpmPlus);
@@ -1070,6 +1072,16 @@ void Tracker::eventKeyDownBinding_InvokePatternCapture()
 	sectionHDRecorder->setSettingsRamping( settingsDatabase->restore("RAMPING")->getIntValue() );
     sectionHDRecorder->setSettingsAllowMuting(true);
 	sectionHDRecorder->exportWAVAsSample();
+}
+
+void Tracker::eventKeyDownBinding_InvokePatternCaptureOverdub()
+{
+	SampleEditor *s = getSampleEditor();
+	eventKeyDownBinding_InvokePatternCapture();
+	s->selectAll();
+	s->copy();
+	s->undo();
+	s->mixOverflowPasteSample();
 }
 
 void Tracker::eventKeyDownBinding_InvokeHelp()
