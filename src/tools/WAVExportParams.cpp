@@ -24,7 +24,11 @@ ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int ar
     // Set additional required parameters
     params.fromOrder = 0;
     params.toOrder = -1; // Will be set by the caller
-    params.muting = nullptr;
+    mp_ubyte* mutingArray = new mp_ubyte[256]; // Allocate with safe size
+    for (int i = 0; i < 256; i++) {
+        mutingArray[i] = 0;  // Initialize all channels to unmuted
+    }
+    params.muting = mutingArray;
     params.panning = nullptr;
     params.multiTrack = hasOption(argc, argv, "--multi-track");
     params.limiterDrive = 0;
@@ -42,6 +46,7 @@ void WAVExportParams::printUsage(const char* programName) {
     fprintf(stderr, "  --multi-track         Export each track to a separate WAV file\n");
     fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
     fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
+    fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
 }
 
 int WAVExportParams::getIntOption(int argc, char* argv[], const char* option, int defaultValue) {
@@ -60,8 +65,4 @@ bool WAVExportParams::hasOption(int argc, char* argv[], const char* option) {
         }
     }
     return false;
-}
-
-void WAVExportParams::setupMutingArray(mp_ubyte* muting, int numChannels) {
-    memset(muting, 0, numChannels);
 } 
