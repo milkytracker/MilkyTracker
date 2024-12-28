@@ -23,6 +23,7 @@
 add_library(trackerlib STATIC
     ModuleServices.cpp
     SongLengthEstimator.cpp
+    TrackerSettingsDatabase.cpp
 )
 
 target_include_directories(trackerlib
