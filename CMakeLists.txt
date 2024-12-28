@@ -63,7 +63,9 @@ configure_file(
 )
 
 # Packaging
-if(APPLE)
+option(BUILD_DMG "Build DMG package on macOS" ON)
+
+if(APPLE AND BUILD_DMG)
     set(CPACK_GENERATOR DragNDrop)
     set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME} ${VER_FULL}")
     set(

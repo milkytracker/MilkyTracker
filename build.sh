@@ -1,18 +1,31 @@
 #!/bin/bash
 # https://crascit.com/2016/04/03/scripting-cmake-builds/
 
-# Default build type is Release if not specified
-BUILD_TYPE=${1:-Release}
+# Set defaults
+BUILD_TYPE="Release"
+BUILD_DMG=ON
 
-# Validate build type
-if [[ "$BUILD_TYPE" != "Release" && "$BUILD_TYPE" != "Debug" ]]; then
-    echo "Invalid build type. Use 'Release' or 'Debug'"
-    exit 1
-fi
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        Release|Debug)
+            BUILD_TYPE="$1"
+            ;;
+        --no-dmg)
+            BUILD_DMG=OFF
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            echo "Usage: $0 [Release|Debug] [--no-dmg]"
+            exit 1
+            ;;
+    esac
+    shift
+done
 
 # Set build directory based on build type
 BUILD_DIR="build"
-CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=$BUILD_TYPE"
+CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_DMG=$BUILD_DMG"
 
 if [[ "$BUILD_TYPE" == "Debug" ]]; then
     BUILD_DIR="build-debug"
@@ -21,6 +34,9 @@ if [[ "$BUILD_TYPE" == "Debug" ]]; then
 fi
 
 echo "Building MilkyTracker in $BUILD_TYPE mode in $BUILD_DIR..."
+if [ "$BUILD_DMG" = "OFF" ]; then
+    echo "DMG generation: OFF"
+fi
 
 cmake -E make_directory $BUILD_DIR
 pushd $BUILD_DIR
