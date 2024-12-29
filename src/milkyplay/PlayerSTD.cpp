@@ -402,6 +402,7 @@ void PlayerSTD::reset()
 	for (mp_sint32 i = 0; i < initialNumChannels; i++)
 		chninfo[i].clear();
 
+	BPMCounter = BPMCounter = 0xFFFFFFFF; // make the first replayer tick happen instantlyUINT32_MAX;
 	RESET_ALL_LOOPING
 }
 
