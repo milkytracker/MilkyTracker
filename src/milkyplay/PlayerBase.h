@@ -196,9 +196,7 @@ public:
 	
 	virtual mp_sint32 adjustFrequency(mp_uint32 frequency);
 	virtual mp_sint32 setBufferSize(mp_uint32 bufferSize);	
-
-	mp_uint32 getAdder(){ return adder; } // needed for wav-writer
-
+	
 	void setPlayMode(PlayModes mode) { playMode = mode; }
 
 	PlayModes getPlayMode() const { return playMode; }

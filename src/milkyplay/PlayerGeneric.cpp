@@ -37,7 +37,6 @@
  *
  */
 #include "PlayerGeneric.h"
-#include "ChannelMixer.h"
 #include "MasterMixer.h"
 #include "XModule.h"
 #include "AudioDriver_WAVWriter.h"
@@ -1027,17 +1026,9 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 	filter.calculateMasterVolume();
 	masterVolume = filter.masterVolume;
 
-	mp_sint32 numWrittenSamples = wavWriter->getNumPlayedSamples();
+	delete player;
 
-    // 8bitbubsy: WAV renders do one tick too much, cut off the last tick
-    if (player->getAdder() != 0)
-    {
-        const mp_sint32 lastSamplesPerTick = (mp_sint32)((0x100000000ULL * (mp_int64)ChannelMixer::MP_BEATLENGTH) / player->getAdder());
-        if (numWrittenSamples >= lastSamplesPerTick)
-            numWrittenSamples -= lastSamplesPerTick;
-    }
-    
-    delete player;
+	mp_sint32 numWrittenSamples = wavWriter->getNumPlayedSamples();
 	
 	if (isWAVWriterDriver)
 		delete wavWriter;
