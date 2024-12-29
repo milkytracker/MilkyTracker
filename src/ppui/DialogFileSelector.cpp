@@ -184,6 +184,7 @@ DialogFileSelector::~DialogFileSelector()
 	delete initialPath;
 	delete fileFullPath;
 	delete overwritePromptMessageBox;
+	delete overwritePrompResponder;
 }
 
 pp_int32 DialogFileSelector::handleEvent(PPObject* sender, PPEvent* event)
