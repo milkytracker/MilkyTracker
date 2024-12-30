@@ -1,5 +1,6 @@
-# The build output folder
+# The build output folders
 build/
+build-debug/
 
 # Editor config files
 .vscode/
