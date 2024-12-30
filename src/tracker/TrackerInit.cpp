@@ -478,14 +478,14 @@ void Tracker::initSectionOrderlist(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_ORDERLIST_SEQENTRY, screen, this, PPPoint(x + 2 + 78 - 2 - 22, y+2+12), PPSize(18, 11));
 	//button->setVerticalText(true);
 	button->setXOffset(-1);
-	button->setText("Seq");
+	button->setText( screen->getClassic() ? "Seq" : "Add" );
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	containerOrderlist->addControl(button);
 
 	button = new PPButton(BUTTON_ORDERLIST_CLNENTRY, screen, this, PPPoint(x + 2 + 78 - 2 - 22, y+2+12+12), PPSize(18, 11));
 	//button->setVerticalText(true);
 	button->setXOffset(-1);
-	button->setText("Cln");
+	button->setText( screen->getClassic() ? "Cln" : "Dup" );
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	containerOrderlist->addControl(button);
 
