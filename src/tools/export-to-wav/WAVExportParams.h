@@ -5,7 +5,13 @@
 
 class WAVExportParams {
 public:
-    static ModuleServices::WAVWriterParameters parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
+    class Parameters : public ModuleServices::WAVWriterParameters {
+    public:
+        Parameters();
+        ~Parameters();
+    };
+
+    static Parameters parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
     static void printUsage(const char* programName);
 
 private:

@@ -2,8 +2,26 @@
 #include <cstring>
 #include <cstdio>
 
-ModuleServices::WAVWriterParameters WAVExportParams::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
-    ModuleServices::WAVWriterParameters params;
+WAVExportParams::Parameters::Parameters() {
+    // Initialize all fields to safe defaults
+    sampleRate = 44100;
+    mixerVolume = 256;
+    mixerShift = 1;
+    resamplerType = 4;
+    fromOrder = 0;
+    toOrder = -1;
+    muting = nullptr;
+    panning = nullptr;
+    multiTrack = false;
+    limiterDrive = 0;
+}
+
+WAVExportParams::Parameters::~Parameters() {
+    delete[] muting;
+}
+
+WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
+    Parameters params;
 
     // Set defaults from settings database
     params.sampleRate = settingsDB.hasKey("HDRECORDER_MIXFREQ") ? 

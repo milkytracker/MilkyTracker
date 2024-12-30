@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     }
 
     // Get WAV writer parameters from command line arguments
-    ModuleServices::WAVWriterParameters params = WAVExportParams::parseFromCommandLine(argc, argv, settingsDB);
+    auto params = WAVExportParams::parseFromCommandLine(argc, argv, settingsDB);
     params.toOrder = module.header.ordnum - 1;  // Set the end order
 
     // Convert paths to PPSystemString
@@ -48,7 +48,6 @@ int main(int argc, char* argv[])
 
     if (numWrittenSamples == MP_DEVICE_ERROR) {
         fprintf(stderr, "Failed to export WAV file: %s\n", outputFile);
-        delete[] params.muting;  // Clean up muting array
         return 1;
     }
     
@@ -70,6 +69,5 @@ int main(int argc, char* argv[])
         }
     }
 
-    delete[] params.muting;  // Clean up muting array
     return 0;
 } 
