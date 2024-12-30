@@ -33,8 +33,17 @@ target_include_directories(trackerlib
         ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/src/ppui
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
 )
+
+if(WIN32)
+    target_include_directories(trackerlib PUBLIC
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
+    )
+else()
+    target_include_directories(trackerlib PUBLIC
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+    )
+endif()
 
 target_link_libraries(trackerlib
     PUBLIC
@@ -153,10 +162,8 @@ target_include_directories(tracker
 
 target_link_libraries(tracker
     fx
-    milkyplay
-    osinterface
-    ppui
     trackerlib
+    osinterface
 )
 
 if(CMAKE_VERSION GREATER_EQUAL 3.12)
