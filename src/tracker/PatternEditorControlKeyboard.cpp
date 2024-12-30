@@ -85,6 +85,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
 	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Interpolate);
+	eventKeyDownBindingsMilkyTracker->addBinding('R', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_PasteStepFill);
 
 
 	// Scancode bindings
@@ -1641,6 +1642,37 @@ void PatternEditorControl::eventKeyCharBinding_PasteStep()
 	PatternEditorControl::eventKeyCharBinding_Paste();
 	advance();
 	notifyUpdate(AdvanceCodeColumn); 
+}
+
+void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
+{
+	mp_sint32 stepsize     = -1;
+	mp_sint32 lastRow      = -1;
+	// remember cursor position
+	cursorCopy = patternEditor->getCursor();
+	pp_int32 row_current   = cursorCopy.row;
+	// assume current row
+	if( !hasValidSelection() ){ 
+		patternEditor->setSelectionStart( cursorCopy );
+		patternEditor->setSelectionEnd( cursorCopy );
+	} 
+	pp_int32 row_selection = patternEditor->getSelection().start.row; 
+
+	cursorCopy.row = row_selection;
+	patternEditor->setCursor(cursorCopy);
+	eventKeyCharBinding_Copy();
+
+	while( true ){ 
+		PatternEditorControl::eventKeyCharBinding_PasteStep();
+		int row = patternEditor->getCursor().row;
+		if( stepsize == -1 ) stepsize = row - row_selection;
+		if( row <= row_selection+stepsize-1 || row == lastRow){ break; }
+		lastRow = row;
+	}
+	cursorCopy = patternEditor->getCursor();
+	cursorCopy.row = row_current;
+	patternEditor->setCursor(cursorCopy);
+	notifyUpdate();
 }
 
 void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
