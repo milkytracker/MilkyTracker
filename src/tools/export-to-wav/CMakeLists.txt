@@ -18,8 +18,17 @@ target_include_directories(export-to-wav PRIVATE
     ${PROJECT_SOURCE_DIR}/src/milkyplay
     ${PROJECT_SOURCE_DIR}/src/ppui
     ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
-    ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
 )
+
+if(WIN32)
+    target_include_directories(export-to-wav PRIVATE
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
+    )
+else()
+    target_include_directories(export-to-wav PRIVATE
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+    )
+endif()
 
 install(TARGETS export-to-wav
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
