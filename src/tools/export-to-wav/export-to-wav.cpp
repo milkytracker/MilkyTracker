@@ -2,7 +2,7 @@
 #include <tracker/ModuleServices.h>
 #include <tracker/TrackerSettingsDatabase.h>
 #include <milkyplay/XMFile.h>
-#include <ppui/osinterface/posix/PPSystem_POSIX.h>
+#include <ppui/osinterface/PPSystem.h>
 #include <milkyplay/XModule.h>
 #include "WAVExportParams.h"
 #include "WavUtils.h"
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     // Create ModuleServices instance
     ModuleServices services(module);
 
-    // Load settings from MilkyTracker's config file
+    // Load settings from config file
     TrackerSettingsDatabase settingsDB;
     const char* configFile = System::getConfigFileName();
     if (XMFile::exists(configFile)) {

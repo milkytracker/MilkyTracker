@@ -5,11 +5,12 @@ add_executable(export-to-wav
 )
 
 target_link_libraries(export-to-wav
+    trackerlib
     milkyplay
     compression
-    ppui
-    trackerlib
-    z
+    ${LHASA_LIBRARIES}
+    ${ZZIPLIB_LIBRARIES}
+    ${ZLIB_LIBRARIES}
 )
 
 target_include_directories(export-to-wav PRIVATE
