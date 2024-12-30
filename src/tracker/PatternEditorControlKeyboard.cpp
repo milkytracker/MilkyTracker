@@ -676,8 +676,10 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	// remember to reset this when leaving this function
 	patternEditor->setLazyUpdateNotifications(true);
 
-	if (cursor.inner == 0)
-	{
+
+	if( scanCode == SC_CAPSLOCK && editMode == EditModeMilkyTracker ){
+		viewMode = viewMode == ViewPattern ? ViewSteps : ViewPattern;
+	}else if (cursor.inner == 0) {
 		handleDeleteKey(keyCode, number);
 
 		if (number == -1 && ::getKeyModifier() == 0)

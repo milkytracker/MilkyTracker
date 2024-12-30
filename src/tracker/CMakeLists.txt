@@ -57,8 +57,7 @@ add_executable(tracker
     PatternEditorControlEventListener.cpp
     PatternEditorControlKeyboard.cpp
     PatternEditorControlTransposeHandler.cpp
-    PatternEditorTools.cpp
-    PatternTools.cpp
+    PatternEditorTools.cpp  PatternTools.cpp
     PeakLevelControl.cpp
     Piano.cpp
     PianoControl.cpp

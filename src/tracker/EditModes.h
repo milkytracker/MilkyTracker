@@ -44,4 +44,10 @@ enum ScrollModes
 	ScrollModeStayInCenter
 };
 
+enum ViewModes 
+{
+	ViewPattern,
+	ViewSteps
+};
+
 #endif

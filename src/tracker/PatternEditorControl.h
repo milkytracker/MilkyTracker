@@ -201,6 +201,7 @@ private:
 
 	// Edit mode
 	EditModes editMode;
+	ViewModes viewMode;
 	pp_int32 selectionKeyModifier;
 	
 public:
@@ -227,6 +228,9 @@ public:
 	
 	// from EventListenerInterface
 	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
+
+	void paintPattern(PPGraphicsAbstract* graphics);
+	void paintSteps(PPGraphicsAbstract* graphics);
 
 	void attachPatternEditor(PatternEditor* patternEditor);
 
