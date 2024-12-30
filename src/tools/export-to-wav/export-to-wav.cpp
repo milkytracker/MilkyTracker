@@ -5,7 +5,7 @@
 #include <ppui/osinterface/PPSystem.h>
 #include <milkyplay/XModule.h>
 #include "WAVExportParams.h"
-#include "WavUtils.h"
+#include "WAVUtils.h"
 #include <cstring>
 
 int main(int argc, char* argv[])
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
             char filename[1024];
             snprintf(filename, sizeof(filename), "%s_%02d%s", baseName.getStrBuffer(), i+1, extension.getStrBuffer());
             
-            if (WavUtils::isWavSilent(filename)) {
+            if (WAVUtils::isWAVSilent(filename)) {
                 remove(filename);
                 fprintf(stderr, "Removed silent track: %s\n", filename);
             } else {

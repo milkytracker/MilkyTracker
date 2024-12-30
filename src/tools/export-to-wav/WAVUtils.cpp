@@ -1,9 +1,9 @@
-#include "WavUtils.h"
+#include "WAVUtils.h"
 #include <milkyplay/SampleLoaderWAV.h>
 
-namespace WavUtils {
+namespace WAVUtils {
 
-bool isWavSilent(const char* filename) {
+bool isWAVSilent(const char* filename) {
     // Create a temporary module to use with SampleLoaderWAV
     XModule module;
     module.createEmptySong(true, true, 1);  // Initialize with 1 channel
