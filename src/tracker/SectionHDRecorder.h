@@ -45,6 +45,7 @@ private:
 	enum RecorderModes
 	{
 		RecorderModeToFile,
+		RecorderModeToFileMulti,
 		RecorderModeToSample
 	};
 

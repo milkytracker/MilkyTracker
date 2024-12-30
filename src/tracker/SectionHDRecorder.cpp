@@ -277,7 +277,7 @@ pp_int32 SectionHDRecorder::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				if (recorderMode == RecorderModeToFile)
+				if (recorderMode == RecorderModeToFile || recorderMode == RecorderModeToFileMulti)
 				{
 					if (TrackerConfig::untitledSong.compareTo(currentFileName.stripExtension()) == 0)
 					{
@@ -301,7 +301,7 @@ pp_int32 SectionHDRecorder::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				ASSERT(recorderMode == RecorderModeToFile);
+				ASSERT(recorderMode == RecorderModeToFile || recorderMode == RecorderModeToFileMulti);
 
 				exportWAVAs(currentFileName);
 				update();
@@ -309,10 +309,13 @@ pp_int32 SectionHDRecorder::handleEvent(PPObject* sender, PPEvent* event)
 			}
 				
 			case HDRECORD_BUTTON_RECORDINGMODE:
-				if (recorderMode == RecorderModeToFile)
-					recorderMode = RecorderModeToSample;
-				else
+				if (recorderMode == RecorderModeToFile){
+					recorderMode = RecorderModeToFileMulti;
+				}else if (recorderMode == RecorderModeToSample){
 					recorderMode = RecorderModeToFile;
+				}else if (recorderMode == RecorderModeToFileMulti){
+					recorderMode = RecorderModeToSample;
+				}
 				update();
 				break;
 				
@@ -562,17 +565,24 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 
 	x2 = x3+6;
 
-	button = new PPButton(HDRECORD_BUTTON_RECORDINGMODE, screen, this, PPPoint(x2-3, y2-2), PPSize(5*8+2,buttonHeight-1), false);
-	button->setColor(TrackerConfig::colorThemeMain);
-	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	button = new PPButton(HDRECORD_BUTTON_RECORDINGMODE, screen, this, PPPoint(x2-3, y2-2), PPSize(5*9+2,buttonHeight-1), false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	if( screen->getClassic() ){
+		button->setColor( TrackerConfig::colorThemeMain );
+		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	}else{
+		button->setColor(TrackerConfig::colorSampleEditorWaveform);
+		button->setTextColor(TrackerConfig::colorThemeMain);
+	}
 	button->setText("File:");
 	container->addControl(button);
 	//container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2, y2), "File:", true));
 
 	x2+=5*8+4;
 
-	PPStaticText* text = new PPStaticText(HDRECORD_STATICTEXT_SAVETOFILENAME, NULL, NULL, PPPoint(x2, y2), "123456789012345678901234", false, false, true);
-	text->setExtent(PPSize(23*8, 8));
+	PPStaticText* text = new PPStaticText(HDRECORD_STATICTEXT_SAVETOFILENAME, NULL, NULL, PPPoint(x2+3, y2), "123456789012345678901234", false, false, true);
+	text->setExtent(PPSize(20*8, 8));
+	text->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	container->addControl(text);
 
 	x2+=2;
@@ -652,10 +662,10 @@ void SectionHDRecorder::update(bool repaint/* = true*/)
 
 	slider->setCurrentValue(mixerVolume);
 
-	if (recorderMode == RecorderModeToFile)
+	if (recorderMode == RecorderModeToFile || recorderMode == RecorderModeToFileMulti)
 	{
 		PPButton* button = static_cast<PPButton*>(container->getControlByID(HDRECORD_BUTTON_RECORDINGMODE));
-		button->setText("File:");
+		button->setText( recorderMode == RecorderModeToFile ? "File:" : "Channels:" );
 	
 		button = static_cast<PPButton*>(container->getControlByID(HDRECORD_BUTTON_RECORD_AS));
 		button->enable(true);
@@ -682,7 +692,7 @@ void SectionHDRecorder::update(bool repaint/* = true*/)
 		container->getControlByID(HDRECORD_BUTTON_SMP_PLUS)->show(false);
 		container->getControlByID(HDRECORD_BUTTON_SMP_MINUS)->show(false);
 	}
-	else
+	if (recorderMode == RecorderModeToSample)
 	{
 		validate();
 
@@ -782,6 +792,8 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 	parameters.panning = tracker.playerController->getPanningTable();
 	parameters.fromOrder = fromOrder;
 	parameters.toOrder = toOrder;
+
+	parameters.multiTrack = recorderMode == RecorderModeToFileMulti;
 
 	tracker.signalWaitState(true);
 
