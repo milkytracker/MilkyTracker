@@ -14,6 +14,7 @@ WAVExportParams::Parameters::Parameters() {
     panning = nullptr;
     multiTrack = false;
     limiterDrive = 0;
+    verbose = false;
 }
 
 WAVExportParams::Parameters::~Parameters() {
@@ -38,6 +39,7 @@ WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char
     params.mixerVolume = getIntOption(argc, argv, "--volume", params.mixerVolume);
     params.mixerShift = getIntOption(argc, argv, "--shift", params.mixerShift);
     params.resamplerType = getIntOption(argc, argv, "--resampler", params.resamplerType);
+    params.verbose = hasOption(argc, argv, "--verbose");
     
     // Set additional required parameters
     params.fromOrder = 0;
@@ -62,6 +64,7 @@ void WAVExportParams::printUsage(const char* programName) {
     fprintf(stderr, "  --shift <shift>       Mixer shift (default: from settings or 1)\n");
     fprintf(stderr, "  --resampler <type>    Resampler type (default: from settings or 4)\n");
     fprintf(stderr, "  --multi-track         Export each track to a separate WAV file\n");
+    fprintf(stderr, "  --verbose             Enable verbose output\n");
     fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
     fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
     fprintf(stderr, "  (Silent tracks will be automatically removed)\n");

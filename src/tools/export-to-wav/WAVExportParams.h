@@ -9,6 +9,7 @@ public:
     public:
         Parameters();
         ~Parameters();
+        bool verbose;  // Flag for verbose output
     };
 
     static Parameters parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);

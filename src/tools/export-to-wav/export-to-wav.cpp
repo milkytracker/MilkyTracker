@@ -62,8 +62,10 @@ int main(int argc, char* argv[])
             
             if (WAVUtils::isWAVSilent(filename)) {
                 remove(filename);
-                fprintf(stderr, "Removed silent track: %s\n", filename);
-            } else {
+                if (params.verbose) {
+                    fprintf(stderr, "Removed silent track: %s\n", filename);
+                }
+            } else if (params.verbose) {
                 fprintf(stderr, "Kept non-silent track: %s\n", filename);
             }
         }
