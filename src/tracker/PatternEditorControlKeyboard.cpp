@@ -679,6 +679,7 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 
 	if( scanCode == SC_CAPSLOCK && editMode == EditModeMilkyTracker ){
 		viewMode = viewMode == ViewPattern ? ViewSteps : ViewPattern;
+		adjustExtents();
 	}else if (cursor.inner == 0) {
 		handleDeleteKey(keyCode, number);
 
@@ -848,6 +849,8 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
+	if( viewMode == ViewSteps ) return eventKeyDownBinding_PreviousChannel();
+
 	cursor.inner--;
 	if (cursor.inner < 0)
 	{
@@ -876,6 +879,8 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 void PatternEditorControl::eventKeyDownBinding_RIGHT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	
+	if( viewMode == ViewSteps ) return eventKeyDownBinding_NextChannel();
 
 	cursor.inner++;
 	if (cursor.inner == 8)

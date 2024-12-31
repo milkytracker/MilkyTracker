@@ -86,7 +86,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	editMode(),
 	selectionKeyModifier(0),
 	lastAction(RMouseDownActionInvalid), RMouseDownInChannelHeading(-1),
-
+	rowHeight(1),
 	dialog(NULL),
 	transposeHandlerResponder(NULL),
 	viewMode( ViewPattern )
@@ -229,7 +229,6 @@ PatternEditorControl::~PatternEditorControl()
 void PatternEditorControl::setFont(PPFont* font)
 {
 	this->font = font;
-	
 	adjustExtents();
 
 	if( !parentScreen->getClassic() ){
@@ -249,7 +248,8 @@ void PatternEditorControl::setSize(const PPSize& size)
 	PPControl::setSize(size);
 	
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
-	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*2;
+	visibleHeight = size.height - (rowHeight + 4) - SCROLLBARWIDTH*2;
+
 
 	delete vLeftScrollbar;
 	delete vRightScrollbar;
@@ -270,7 +270,7 @@ void PatternEditorControl::setLocation(const PPPoint& location)
 	PPControl::setLocation(location);
 
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
-	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*2;
+	visibleHeight = size.height - (rowHeight + 4) - SCROLLBARWIDTH*2;
 
 	delete vLeftScrollbar;
 	delete vRightScrollbar;
@@ -290,6 +290,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 {
 	if (!isVisible())
 		return;
+	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*3 : font->getCharHeight());
 	if( viewMode == ViewPattern ) paintPattern(g);
 	if( viewMode == ViewSteps   ) paintSteps(g);
 }
@@ -351,10 +352,13 @@ pp_int32 PatternEditorControl::getRowCountWidth()
 
 void PatternEditorControl::adjustExtents()
 {
+	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*3 : font->getCharHeight());
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
-	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*2;
+	visibleHeight = size.height - (rowHeight + 4) - SCROLLBARWIDTH*2;
 	
-	slotSize = 10*font->getCharWidth() + 3*1 + 4 + 3*properties.spacing;
+	slotSize = viewMode == ViewSteps 
+			   ? 4*font->getCharWidth() 
+			   : 10*font->getCharWidth() + 3*1 + 4 + 3*properties.spacing;
 
 	cursorPositions[0] = 0;	
 	cursorPositions[1] = 3 * font->getCharWidth() + 1 + properties.spacing;
@@ -381,7 +385,7 @@ void PatternEditorControl::adjustVerticalScrollBarPositions(mp_sint32 startIndex
 	// adjust scrollbar positions
 	if (properties.scrollMode != ScrollModeStayInCenter)
 	{
-		pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
+		pp_int32 visibleItems = (visibleHeight) / rowHeight;
 		float v = (float)(pattern->rows - visibleItems);
 		vLeftScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
 		vRightScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
@@ -409,12 +413,10 @@ void PatternEditorControl::adjustScrollBarSizes()
 	float s;
 	if (properties.scrollMode != ScrollModeStayInCenter)
 	{
-		s = (float)(visibleHeight) / (float)(pattern->rows*(font->getCharHeight()));
+		s = (float)(visibleHeight) / (float)(pattern->rows*(rowHeight));
 	}
 	else
 	{
-		//s = (float)(visibleHeight>>1) / (float)((pattern->rows-1)*(font->getCharHeight()));
-		
 		s = 1.0f / (float)pattern->rows;
 		if (s > 1.0f)
 			s = 1.0f;
@@ -486,11 +488,9 @@ void PatternEditorControl::assureCursorVisible(bool row/* = true*/, bool channel
 			{
 				case ScrollModeToEnd:
 				{
-					pp_int32 visibleItems = (visibleHeight - font->getCharHeight()) / font->getCharHeight();
-					
-					
+					pp_int32 visibleItems = (visibleHeight - rowHeight) / rowHeight;
 					if ((startIndex <= cursor.row) && 
-						((cursor.row - startIndex) * font->getCharHeight()) <= (visibleHeight - font->getCharHeight()))
+						((cursor.row - startIndex) * rowHeight) <= (visibleHeight - rowHeight))
 					{
 					}
 					else if (cursor.row > startIndex &&
@@ -516,7 +516,7 @@ void PatternEditorControl::assureCursorVisible(bool row/* = true*/, bool channel
 
 				case ScrollModeToCenter:
 				{
-					pp_int32 mid = (visibleHeight/2) / font->getCharHeight();
+					pp_int32 mid = (visibleHeight/2) / rowHeight;
 					startIndex = cursor.row - mid;			
 					if (startIndex < 0)
 						startIndex = 0;						
@@ -525,7 +525,7 @@ void PatternEditorControl::assureCursorVisible(bool row/* = true*/, bool channel
 				
 				case ScrollModeStayInCenter:
 				{
-					pp_int32 mid = (visibleHeight/2) / font->getCharHeight();
+					pp_int32 mid = (visibleHeight/2) / rowHeight;
 					startIndex = cursor.row - mid;			
 					break;
 				}
@@ -701,7 +701,7 @@ void PatternEditorControl::validate()
 		assureCursorVisible(true, false);
 	}
 	
-	pp_int32 visibleItems = (visibleHeight - font->getCharHeight()) / font->getCharHeight();
+	pp_int32 visibleItems = (visibleHeight - rowHeight) / rowHeight;
 	
 	if (properties.scrollMode != ScrollModeStayInCenter)
 	{

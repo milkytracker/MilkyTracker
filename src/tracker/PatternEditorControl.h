@@ -84,6 +84,8 @@ private:
 	const PPColor* cursorColor;
 	const PPColor* selectionColor;
 
+	pp_uint32 rowHeight;
+
 	struct Properties
 	{
 		bool showFocus;
