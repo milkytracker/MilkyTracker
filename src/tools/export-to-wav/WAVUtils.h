@@ -1,6 +1,6 @@
 #pragma once
 
-#include <milkyplay/XModule.h>
+#include <XModule.h>
 
 namespace WAVUtils {
     /**

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tracker/ModuleServices.h>
-#include <tracker/TrackerSettingsDatabase.h>
+#include <ModuleServices.h>
+#include <TrackerSettingsDatabase.h>
 
 class WAVExportParams {
 public:

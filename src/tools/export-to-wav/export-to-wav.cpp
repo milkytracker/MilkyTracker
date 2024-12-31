@@ -1,9 +1,9 @@
-#include <ppui/BasicTypes.h>
-#include <tracker/ModuleServices.h>
-#include <tracker/TrackerSettingsDatabase.h>
-#include <milkyplay/XMFile.h>
-#include <ppui/osinterface/PPSystem.h>
-#include <milkyplay/XModule.h>
+#include <BasicTypes.h>
+#include <ModuleServices.h>
+#include <TrackerSettingsDatabase.h>
+#include <XMFile.h>
+#include <PPSystem.h>
+#include <XModule.h>
 #include "WAVExportParams.h"
 #include "WAVUtils.h"
 #include <cstring>

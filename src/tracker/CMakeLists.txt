@@ -28,11 +28,10 @@ add_library(trackerlib STATIC
 
 target_include_directories(trackerlib
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${PROJECT_BINARY_DIR}/src/tracker
-        ${PROJECT_SOURCE_DIR}/src
+        # PPUI is needed for BasicTypes.h and other fundamentals
         ${PROJECT_SOURCE_DIR}/src/ppui
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
+        ${PROJECT_SOURCE_DIR}/src/tracker
 )
 
 if(WIN32)

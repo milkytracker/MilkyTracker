@@ -59,17 +59,7 @@ if(APPLE)
             posix/PPSystemString_POSIX.h
             posix/PPSystem_POSIX.h
     )
-    target_include_directories(osinterface 
-        PUBLIC 
-            posix
-            ${PROJECT_SOURCE_DIR}/src/tracker/cocoa
-    )
-    
-    # Link against Cocoa framework and make osinterface PUBLIC
-    target_link_libraries(osinterface 
-        PUBLIC 
-            "-framework Cocoa"
-    )
+    target_include_directories(osinterface PUBLIC posix)
 elseif(WIN32)
     target_sources(osinterface
         PRIVATE

@@ -1,5 +1,5 @@
 #include "WAVUtils.h"
-#include <milkyplay/SampleLoaderWAV.h>
+#include <SampleLoaderWAV.h>
 
 namespace WAVUtils {
 
