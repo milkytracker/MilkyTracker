@@ -1002,3 +1002,21 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 			break;
 	}
 }
+
+
+void PatternEditorControl::updateUnderCursor(){
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	if( viewMode == ViewSteps && cursor.inner < 3){
+		pp_int32 ins = patternEditor->getCurrentActiveInstrument();	
+		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, this);
+	}
+	if( viewMode == ViewSteps && cursor.inner >= 3 && cursor.inner <= 4 ){
+		patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, 0, true, this);
+	}
+	if( viewMode == ViewSteps && cursor.inner > 5 ){
+		patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, 0, true, this);
+	}
+	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+
+}

@@ -238,7 +238,12 @@ processBindings:
 						case VK_DOWN:
 						case VK_NEXT:
 						case VK_PRIOR:
-							listBoxInstruments->dispatchEvent(event);
+							PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
+							if( patternEditorControl->getViewMode() == ViewPattern ||
+								(patternEditorControl->getViewMode() == ViewSteps && cursor.inner == 1 || cursor.inner == 2) ){
+								listBoxInstruments->dispatchEvent(event);
+							}
+							updatePatternEditorControl();
 							event->cancel();
 							break;
 					}

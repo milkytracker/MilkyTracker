@@ -519,7 +519,8 @@ void Tracker::updatePatternEditorControl(/*TXMPattern* pattern, */bool repaint/*
 			patternEditorCtrl->setOrderlistIndex(getOrderListBoxIndex());
 		else
 			patternEditorCtrl->setOrderlistIndex(-1);
-		
+	
+		patternEditorCtrl->updateUnderCursor();
 		//patternEditorCtrl->attachPattern(pattern, moduleEditor->getModule());
 	}
 
