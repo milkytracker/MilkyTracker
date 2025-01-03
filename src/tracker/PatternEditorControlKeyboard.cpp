@@ -45,11 +45,6 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NEXT, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_NEXT);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_HOME, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_HOME);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_END, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_END);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, 0, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_NextChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_LEFT);
@@ -556,8 +551,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 				break;
 			return PatternTools::getNoteOffNote();
 
-		// CAPS-lock
-		case SC_CAPSLOCK:
+		// note off 
 		case SC_1:
 			return PatternTools::getNoteOffNote();
 
@@ -677,10 +671,7 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	patternEditor->setLazyUpdateNotifications(true);
 
 
-	if( scanCode == SC_CAPSLOCK && editMode == EditModeMilkyTracker ){
-		viewMode = viewMode == ViewPattern ? ViewSteps : ViewPattern;
-		adjustExtents();
-	}else if (cursor.inner == 0) {
+	if (cursor.inner == 0) {
 		handleDeleteKey(keyCode, number);
 
 		if (number == -1 && ::getKeyModifier() == 0)
@@ -1312,7 +1303,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 
 	// if the track inner position is not the note column, we will first
 	// set the position to the note before decrementing the track result
-	if (properties.tabToNote && cursor.inner > 0)
+	if (properties.tabToNote && viewMode == ViewPattern && cursor.inner > 0)
 	{
 		cursor.inner = 0;
 		return;
@@ -1321,7 +1312,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 	if (cursor.channel >  0)
 	{
 		cursor.channel--;
-		if (properties.tabToNote)
+		if (properties.tabToNote && viewMode == ViewPattern)
 			cursor.inner = 0;
 	}
 	else
@@ -1349,7 +1340,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 	if (cursor.channel < patternEditor->getNumChannels() - 1)
 	{
 		cursor.channel++;
-		if (properties.tabToNote)
+		if (properties.tabToNote && viewMode == ViewPattern)
 			cursor.inner = 0;
 	}
 	else
@@ -1363,7 +1354,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 		else
 		{
 			cursor.channel = 0;
-			if (properties.tabToNote)
+			if (properties.tabToNote && viewMode == ViewPattern)
 				cursor.inner = 0;
 		}
 	}
@@ -1733,4 +1724,32 @@ void PatternEditorControl::eventKeyCharBinding_InvertMuting()
 void PatternEditorControl::eventKeyCharBinding_Interpolate()
 {
 	patternEditor->interpolateValuesInSelection();
+}
+
+void PatternEditorControl::viewRotate()
+{
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	printf("from %i\n",cursor.inner);
+	if( viewMode == ViewPattern ){
+		viewMode = ViewSteps;
+		cursor.inner = 1;          // to instr
+		return;
+	}
+	switch( cursor.inner ){
+		case 0:
+		case 1:
+		case 2: cursor.inner = 3;   break;  // to vol-cmd
+		case 3: cursor.inner = 5;	break;  // to fx 
+		case 4:
+		case 5:
+		case 6:
+		case 7: {
+					viewMode = ViewPattern; 
+					cursor.inner = 0;
+					break;
+				}
+	}
+	printf("to %i\n",cursor.inner);
+	patternEditor->setCursor(cursor);
+	adjustExtents();
 }

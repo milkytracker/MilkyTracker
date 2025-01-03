@@ -352,12 +352,12 @@ pp_int32 PatternEditorControl::getRowCountWidth()
 
 void PatternEditorControl::adjustExtents()
 {
-	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*3 : font->getCharHeight());
+	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*4 : font->getCharHeight());
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
 	visibleHeight = size.height - (rowHeight + 4) - SCROLLBARWIDTH*2;
 	
 	slotSize = viewMode == ViewSteps 
-			   ? 4*font->getCharWidth() 
+			   ? 6*font->getCharWidth() 
 			   : 10*font->getCharWidth() + 3*1 + 4 + 3*properties.spacing;
 
 	cursorPositions[0] = 0;	

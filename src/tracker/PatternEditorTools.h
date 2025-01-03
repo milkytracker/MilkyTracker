@@ -42,9 +42,9 @@ class PatternEditorTools
 public:
 	struct Position
 	{
-		pp_int32 channel, row, inner;
+		pp_int32 channel, row, inner, fx;
 		
-		bool isValid() const { return (channel >= 0 && row >= 0 && inner >= 0); }
+		bool isValid() const { return (channel >= 0 && row >= 0 && inner >= 0 ); }
 		
 		bool operator==(const Position& other) 
 		{ 

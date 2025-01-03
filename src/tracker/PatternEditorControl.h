@@ -321,6 +321,8 @@ public:
 	
 	void advanceRow(bool assureCursor = true, bool repaint = true);
 
+	void viewRotate();
+
 	PatternEditor* getPatternEditor() const { return patternEditor; }
 
 	// --- these are defined in PatternEditorControlTransposeHandler.cpp -----
@@ -490,7 +492,9 @@ private:
 	void eventKeyDownBinding_SC_DecreaseRowInsertAdd();
 	
 	void eventKeyDownBinding_PreviousChannel();
+	void eventKeyDownBinding_PreviousChannelOrCol();
 	void eventKeyDownBinding_NextChannel();
+	void eventKeyDownBinding_NextChannelOrCol();
 
 	void eventKeyDownBinding_DeleteNote();
 	void eventKeyDownBinding_DeleteNoteVolumeAndEffect();

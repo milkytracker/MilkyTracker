@@ -35,19 +35,20 @@
 PatternEditorTools::PatternEditorTools(TXMPattern* pattern) :
 	pattern(pattern)
 {
+
 }
 
 PatternEditorTools::Position PatternEditorTools::getMarkStart()
 {
 	Position pos;
-	pos.channel = pos.row = pos.inner = 0;
+	pos.channel = pos.row = pos.inner = pos.fx = 0;
 	return pos;
 }
 
 PatternEditorTools::Position PatternEditorTools::getMarkEnd()
 {
 	Position pos;
-	pos.channel = pos.row = pos.inner = 0;
+	pos.channel = pos.row = pos.inner = pos.fx = 0;
 
 	if (pattern->patternData != NULL)
 	{

@@ -142,7 +142,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				break;
 			}
 			case VK_TAB:{
-				backtraceInstrument( ::getKeyModifier() == (KeyModifierCTRL) ? -1 : +1, false);
+				patternEditorControl->viewRotate();
 				break;
 			}
 
@@ -233,7 +233,6 @@ processBindings:
 				{
 					switch (keyCode)
 					{
-
 						// Select instrument using Ctrl+Up/Down when listbox unfocused
 						case VK_UP:
 						case VK_DOWN:
@@ -264,7 +263,7 @@ processBindings:
 		}
 		if (::getKeyModifier() == (KeyModifierSHIFT) ){
 			doASCIISTEP16(keyCode, ::getKeyModifier() == (KeyModifierCTRL) );
-		}
+		} 
 		
 	}
 	else if (event->getID() == eKeyUp)

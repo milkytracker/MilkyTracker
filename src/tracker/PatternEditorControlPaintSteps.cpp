@@ -41,6 +41,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	adjustExtents();
 
 	char name[32];
+	char label[32];
 
 	mp_sint32 i,j;
 
@@ -52,8 +53,15 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	PatternEditorTools::flattenSelection(selectionStart, selectionEnd);	
 
 	// only entire instrument column is allowed
-	selectionStart.inner = 0;
-	selectionEnd.inner = 7;
+	if (selectionStart.inner >= 1 && selectionStart.inner<=2)
+		selectionStart.inner = 1;
+	if (selectionEnd.inner >= 1 && selectionEnd.inner<=2)
+		selectionEnd.inner = 2;
+	// only entire volume column is allowed
+	if (selectionStart.inner >= 3 && selectionStart.inner<=4)
+		selectionStart.inner = 3;
+	if (selectionEnd.inner >= 3 && selectionEnd.inner<=4)
+		selectionEnd.inner = 4;
 
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -68,11 +76,9 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	PatternTools* patternTools = &this->patternTools;
 
 	// ;----------------- Little adjustment for scrolling in center
-	if (properties.scrollMode == ScrollModeToCenter)
-	{
-		if ((size.height - (SCROLLBARWIDTH + ((signed)rowHeight+4)))/(signed)rowHeight > (pattern->rows - startIndex + 1) && startIndex > 0)
-			startIndex--;
-	}
+	// always assume properties.scrollMode == ScrollModeToCenter)
+	if ((size.height - (SCROLLBARWIDTH + ((signed)rowHeight+4)))/(signed)rowHeight > (pattern->rows - startIndex + 1) && startIndex > 0)
+		startIndex--;
 
 	// ;----------------- start painting rows
 	pp_int32 startx = location.x + (SCROLLBARWIDTH + getRowCountWidth()) + 4;
@@ -89,7 +95,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 
 	// ----------------- colors ----------------- 
 	PPColor noteColor = TrackerConfig::colorPatternEditorNote;
-	PPColor insColor = TrackerConfig::colorPatternEditorInstrument;
+	PPColor insColor = TrackerConfig::colorSampleEditorWaveform;  // colorThemeMain
 	PPColor volColor = TrackerConfig::colorPatternEditorVolume;
 	PPColor effColor = TrackerConfig::colorPatternEditorEffect;
 	PPColor opColor = TrackerConfig::colorPatternEditorOperand;
@@ -97,6 +103,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	PPColor hiLightSecondary = TrackerConfig::colorHighLight_2;	
 	PPColor hiLightPrimaryRow = TrackerConfig::colorRowHighLight_1;
 	PPColor hiLightSecondaryRow = TrackerConfig::colorRowHighLight_2;
+	//TrackerConfig::colorPatternEditorSelection ); 
 
 	PPColor textColor = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
 
@@ -107,7 +114,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 		i = i2 < 0 ? startIndex - i2 - 1: i2;
 
 		pp_int32 px = location.x + SCROLLBARWIDTH;
-		pp_int32 py = location.y + (i-startIndex) * rowHeight;
+		pp_int32 py = location.y+20 + (i-startIndex) * rowHeight;
 
 		// rows are already in invisible area => abort
 		if (py >= location.y + size.height)
@@ -121,26 +128,6 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 		// draw position line
 		bool currentLine = (row == songPos.row && songPosOrderListIndex == songPos.orderListIndex) ||
 			(i >= 0 && i <= pattern->rows - 1 && i == songPos.row && songPos.orderListIndex == -1);
-		if ( currentLine )
-		{
-			PPColor lineColor(TrackerConfig::colorThemeMain.r>>1, TrackerConfig::colorThemeMain.g>>1, TrackerConfig::colorThemeMain.b>>1);
-			g->setColor(lineColor);
-			for (pp_int32 k = 0; k < (pp_int32)rowHeight; k++)
-				g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
-		}
-
-		// draw cursor line
-		if (i == cursor.row )
-		{
-			g->setColor(bCursor);			
-			g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py - 1);
-			g->setColor(dCursor);			
-			g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + (pp_int32)rowHeight);
-
-			g->setColor(lineColor);			
-			for (pp_int32 k = 0; k < (pp_int32)rowHeight; k++)
-				g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
-		}
 
 		// draw rows
 		if (!(i % properties.highlightSpacingPrimary))
@@ -155,7 +142,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 		else
 			PatternTools::convertToDec(name, myMod(row, pattern->rows), properties.prospective ? 3 : PatternTools::getDecNumDigits(pattern->rows-1));
 
-		g->drawString(name, px, py + rowHeight/3);
+		g->drawString(name, px+1, py + rowHeight/3);
 
 		// draw channels
 		for (j = startPos; j <  numVisibleChannels; j++)
@@ -184,10 +171,10 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 				g->setColor(col);
 			}
 
-			sprintf(name, "%i", j+1);
 
 			if (muteChannels[j])
-				strcat(name, " <Mute>");
+			  sprintf(name, "M");
+			else sprintf(name, "%i", j+1);
 
 			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
 		}
@@ -232,17 +219,17 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 				if (selectionStart.channel == selectionEnd.channel && j == selectionStart.channel)
 				{
 					pp_int32 startx = cursorPositions[selectionStart.inner];
-					pp_int32 endx = cursorPositions[selectionEnd.inner] + cursorSizes[selectionEnd.inner];
+					pp_int32 endx = slotSize; 
 					g->fill(PPRect(px + startx, py - (i == cursor.row ? 1 : 0), px + endx, py + rowHeight + (i == cursor.row ? 1 : 0)));
 				}
 				else if (j == selectionStart.channel)
 				{
-					pp_int32 offset = cursorPositions[selectionStart.inner];
+					pp_int32 offset = 0;
 					g->fill(PPRect(px + offset, py - (i == cursor.row ? 1 : 0), px + slotSize, py + rowHeight + (i == cursor.row ? 1 : 0)));
 				}
 				else if (j == selectionEnd.channel)
 				{
-					pp_int32 offset = cursorPositions[selectionEnd.inner] + cursorSizes[selectionEnd.inner];
+					pp_int32 offset = slotSize; 
 					g->fill(PPRect(px, py - (i == cursor.row ? 1 : 0), px + offset, py + rowHeight + (i == cursor.row ? 1 : 0)));
 				}
 				else
@@ -259,7 +246,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 					g->setColor(TrackerConfig::colorPatternEditorCursor);
 				else
 					g->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorGrayedOutSelection));
-				g->fill(PPRect(px+1, py+1, px + slotSize -1, py + rowHeight -1));
+				g->fill(PPRect(px, py+1, px + slotSize, py + rowHeight -1));
 			}
 
 
@@ -281,124 +268,145 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 			}
 
 			// show enabled steps
-			bool enabled = patternTools->getNote() != 0;
-			if( currentLine )
-				g->setColor( TrackerConfig::colorPatternEditorSelection ); 
-			else g->setColor( enabled && !muteChannels[j] ? noteColor : TrackerConfig::colorRowHighLight_1 );
+			bool isNoteOff = patternTools->getNote() == patternTools->getNoteOffNote();
 
-			if( !muteChannels[j] || enabled ){ 
+			// determine whether step should be lit up
+			bool enabled = patternTools->getNote() != 0;
+			pp_int32 eff = 0;
+			pp_int32 op  = 0;
+			patternTools->getFirstEffect(eff, op); // important: call before getNextEffect
+			if( eff != 0 && op != 0 ) enabled = true;
+			patternTools->getNextEffect(eff, op);				
+			if( eff != 0 && op != 0 ) enabled = true;
+
+			bool isCursor = cursor.row == i && cursor.channel == j;
+			bool isInstr = cursor.inner < 3;
+			bool isFX1   = cursor.inner == 3 || cursor.inner == 4;
+			bool isFX2   = cursor.inner > 4;
+			bool showValues = false;
+
+			g->setColor( TrackerConfig::colorRowHighLight_1 );
+			if( currentLine ){
+				g->setColor( textColor );
+			}
+			if( (enabled && !isNoteOff) && !muteChannels[j] ){ 
+				if( isInstr ) g->setColor( insColor );
+				if( isFX1 || isFX2  ) g->setColor( opColor );
+			}
+			if( isCursor ){
+				g->setColor( noteColor );
+			}
+
+		
+			if( !muteChannels[j] && !isNoteOff){
 				g->fill(PPRect(px+3, py +3, px + slotSize -3, py + rowHeight -3 ));
-			}else g->drawHLine(px+4, px + slotSize - 4,py+rowHeight-2);
+				if( currentLine ) g->setColor(noteColor);
+			}else{
+				g->drawHLine(px+3, px + slotSize - 3,py+3);
+				g->drawHLine(px+3, px + slotSize - 3,py+rowHeight-4);
+			}
 			g->drawVLine(py+4, py+rowHeight-4, px+2);
 			g->drawVLine(py+4, py+rowHeight-4, px+slotSize-3);
 			if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
 				g->setColor( noteColor);
 			if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
 				g->setColor(effColor);
-			g->drawHLine(px+7, px + slotSize - 7,py+5);
 
-			px += fontCharWidth3x + properties.spacing;
-
-			if (muteChannels[j])
-			{
-				PPColor insCol = insColor;
-				insCol.scaleFixed(properties.muteFade);
-				g->setColor(insCol);
-			}
-			else
-				g->setColor(insColor);
-
+			// draw instr
+			px += properties.spacing;
+			g->setColor(insColor);
 			pp_uint32 i = patternTools->getInstrument();
+				
+			g->setFont(PPFont::getFont(PPFont::FONT_TINY));
+			g->setColor(bgColor);
+			sprintf(name," ");
+			sprintf(label," ");
 
-			if (i)
+			if (i && isInstr && enabled && !isNoteOff){
 				patternTools->convertToHex(name, i, 2);
-			else 
-			{
-				name[0] = name[1] = '\xf4';
-				name[2] = 0;
+				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-3);
+
+			}
+			if( isFX1 && enabled){
+
+				if (pattern->effnum >= 2)
+				{
+					patternTools->getFirstEffect(eff, op);
+					patternTools->convertEffectsToFT2(eff, op);
+					pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
+					pp_int32 sliderWidth = (pp_int32)( float(volume) * float(slotSize/80.0f) );
+					if( volume != 0 ){
+						patternTools->getVolumeName(name, volume);
+						sprintf(label,"vol");
+						g->setColor(lineColor);
+						g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
+						g->setColor(insColor);
+						g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
+						g->setColor(bgColor);
+					}
+				}
 			}
 
-			if (name[0] == '0')
-				name[0] = '\xf4';
-
-			px += fontCharWidth2x + properties.spacing;
-
-			if (muteChannels[j])
-			{
-				PPColor volCol = volColor;
-				volCol.scaleFixed(properties.muteFade);
-				g->setColor(volCol);
-			}
-			else
-				g->setColor(volColor);
-
-			pp_int32 eff, op;
-
-			name[0] = name[1] = '\xf4';
-			name[2] = 0;
-			if (pattern->effnum >= 2)
-			{
-				patternTools->getFirstEffect(eff, op);
-
-				patternTools->convertEffectsToFT2(eff, op);
-
-				pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
-
-				patternTools->getVolumeName(name, volume);
-			}
-
-			px += fontCharWidth2x + properties.spacing;
-
-			if (muteChannels[j])
-			{
-				PPColor effCol = effColor;
-				effCol.scaleFixed(properties.muteFade);
-				g->setColor(effCol);
-			}
-			else
-				g->setColor(effColor);
-
-			if (pattern->effnum == 1)
-			{
-				patternTools->getFirstEffect(eff, op);				
-				patternTools->convertEffectsToFT2(eff, op);
-			}
-			else
-			{
+			if( isFX2 && pattern->effnum >= 1){
+				if( showValues ) sprintf(name,"  ");
+				sprintf(label,"  ");
+				patternTools->getFirstEffect(eff, op); // important: call before getNextEffect
 				patternTools->getNextEffect(eff, op);				
 				patternTools->convertEffectsToFT2(eff, op);
+				if( eff != 0 && op != 0 ){
+					patternTools->getEffectName(label, eff);
+					switch( label[0] ){
+						case '0': sprintf(label,"arp"); break; 
+						case '1': sprintf(label,"porta up"); break; 
+						case '2': sprintf(label,"porta dn"); break; 
+						case '3': sprintf(label,"porta to"); break; 
+						case '4': sprintf(label,"vibrato"); break; 
+						case '5': sprintf(label,"porta to/"); break; 
+						case '6': sprintf(label,"vibrato/"); break; 
+						case '7': sprintf(label,"tremolo"); break; 
+						case '8': sprintf(label,"pan2"); break; 
+						case '9': sprintf(label,"start"); break; 
+						case 'A': sprintf(label,"vol /\\"); break; 
+						case 'B': sprintf(label,"jump"); break; 
+						case 'C': sprintf(label,"vol2"); break; 
+						case 'D': sprintf(label,"break"); break; 
+						case 'E': sprintf(label,"subcmd"); break; 
+						case 'F': sprintf(label,"BPM"); break; 
+						case 'G': sprintf(label,"Gvol"); break; 
+						case 'H': sprintf(label,"Gvolfade"); break; 
+						case 'K': sprintf(label,"keyoff"); break; 
+						case 'L': sprintf(label,"Envpos"); break; 
+						case 'P': sprintf(label,"panslide"); break; 
+						case 'R': sprintf(label,"retrigfade"); break; 
+						case 'T': sprintf(label,"tremor"); break; 
+						case 'X': sprintf(label,"fineporta"); break; 
+					}
+					pp_int32 sliderWidth = (pp_int32)( float(op) * float(slotSize/80.0f) );
+					g->setColor(lineColor);
+					g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
+					g->setColor(insColor);
+					g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
+					g->setColor(bgColor);
+				}
+
 			}
 
-			if (eff == 0 && op == 0)
-			{
-				name[0] = properties.zeroEffectCharacter;
-				name[1] = 0;
+			if( name[0] != ' ' && ( isInstr || (isFX1 || isFX2) && showValues ) ){
+				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-3);
 			}
-			else
-			{
-				patternTools->getEffectName(name, eff);
+			g->setColor( lineColor );
+			g->drawString(label,px+4, py + rowHeight-font->getCharHeight()-10);
+
+			if( isNoteOff && isInstr ){
+				g->setColor( lineColor );
+				sprintf(name,"off");
+				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-4);
+				g->setFont(font);
+				g->setColor( TrackerConfig::colorSampleEditorWaveform );
+				g->drawHLine(px+3, px + slotSize - 3,py+3);
 			}
 
-			px += fontCharWidth1x;
-
-			if (muteChannels[j])
-			{
-				PPColor opCol = opColor;
-				opCol.scaleFixed(properties.muteFade);
-				g->setColor(opCol);
-			}
-			else
-				g->setColor(opColor);
-
-			if (eff == 0 && op == 0)
-			{
-				name[0] = name[1] = properties.zeroEffectCharacter;
-				name[2] = 0;
-			}
-			else
-			{
-				patternTools->convertToHex(name, op, 2);
-			}			
+			g->setFont(font);
 
 		}
 	}
