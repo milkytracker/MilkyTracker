@@ -646,6 +646,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionDiskMenu()
 		return;
 
 	sectionSwitcher->showUpperSection(sectionDiskMenu, false);
+	sectionDiskMenu->switchState( SectionDiskMenu::BrowseAll );
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionHDRecorder()
