@@ -1004,14 +1004,24 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 }
 
 
-void PatternEditorControl::updateUnderCursor(){
+void PatternEditorControl::updateUnderCursor( mp_sint32 incr ){
+	PatternTools patternTools;
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	patternTools.setPosition( patternEditor->getPattern(), cursor.channel, cursor.row);
+
 	if( viewMode == ViewSteps && cursor.inner < 3){
 		pp_int32 ins = patternEditor->getCurrentActiveInstrument();	
 		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, this);
 	}
 	if( viewMode == ViewSteps && cursor.inner >= 3 && cursor.inner <= 4 ){
-		patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, 0, true, this);
+		pp_int32 eff = 0;
+		pp_int32 op  = 0;
+		patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
+		//if( eff != 0 && op != 0 ) enabled
+		//patternTools->getNextEffect(eff, op);				
+		if( op >= 0 && op <=64 ) op += incr;
+		printf("incr = %i op = %i\n",incr,op);
+		patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, op, true, this);
 	}
 	if( viewMode == ViewSteps && cursor.inner > 5 ){
 		patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, 0, true, this);

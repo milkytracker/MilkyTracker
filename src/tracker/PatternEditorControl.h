@@ -233,7 +233,7 @@ public:
 
 	void paintPattern(PPGraphicsAbstract* graphics);
 	void paintSteps(PPGraphicsAbstract* graphics);
-	void updateUnderCursor();
+	void updateUnderCursor( mp_sint32 incr);
 	ViewModes getViewMode(){ return viewMode;}
 
 	void attachPatternEditor(PatternEditor* patternEditor);

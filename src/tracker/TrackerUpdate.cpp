@@ -520,7 +520,6 @@ void Tracker::updatePatternEditorControl(/*TXMPattern* pattern, */bool repaint/*
 		else
 			patternEditorCtrl->setOrderlistIndex(-1);
 	
-		patternEditorCtrl->updateUnderCursor();
 		//patternEditorCtrl->attachPattern(pattern, moduleEditor->getModule());
 	}
 

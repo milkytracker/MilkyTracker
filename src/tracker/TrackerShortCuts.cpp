@@ -243,7 +243,7 @@ processBindings:
 								(patternEditorControl->getViewMode() == ViewSteps && cursor.inner == 1 || cursor.inner == 2) ){
 								listBoxInstruments->dispatchEvent(event);
 							}
-							updatePatternEditorControl();
+							patternEditorControl->updateUnderCursor( VK_UP || VK_NEXT ? 1 : -1 );
 							event->cancel();
 							break;
 					}
