@@ -157,7 +157,7 @@ void Tracker::buildDefaultSettings()
 	// Beeing prospective
 	settingsDatabase->store("PROSPECTIVE", 0);
 	// follow song when playing
-	settingsDatabase->store("FOLLOWSONG", 1);
+	settingsDatabase->store("FOLLOWSONG", 0);
 	// Live switch
 	settingsDatabase->store("LIVESWITCH", 0);
 
@@ -165,7 +165,7 @@ void Tracker::buildDefaultSettings()
 	settingsDatabase->store("EDITMODE", EditModeMilkyTracker);
 
 	// Our default scrolling mode
-	settingsDatabase->store("SCROLLMODE", ScrollModeStayInCenter);
+	settingsDatabase->store("SCROLLMODE", ScrollModeToEnd);
 	// Mute fading value (from 0 to 100 percent)
 	settingsDatabase->store("MUTEFADE", 50);
 	// Modulo for the first pattern highlight

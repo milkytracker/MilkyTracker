@@ -1136,6 +1136,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				eventKeyDownBinding_InvokeSectionSamples();
 				break;
 
+			case BUTTON_PATTERN_ROTATE_VIEW:
+				getPatternEditorControl()->viewRotate();
+				break;
+
 
 #ifdef __LOWRES__
 			// go to next order

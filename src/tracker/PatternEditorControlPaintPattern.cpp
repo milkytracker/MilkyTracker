@@ -123,6 +123,88 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 			
 		pp_int32 row = i;
 
+		// draw channels
+		for (j = startPos; j < numVisibleChannels; j++)
+		{
+
+			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
+			
+			// columns are already in invisible area => abort
+			if (px >= location.x + size.width)
+				break;
+			
+			pp_int32 py = location.y + SCROLLBARWIDTH;
+
+			if (menuInvokeChannel == j)
+				g->setColor(255-dColor.r, 255-dColor.g, 255-dColor.b);
+			else
+				g->setColor(dColor);
+
+			{
+				PPColor nsdColor = g->getColor(), nsbColor = g->getColor();
+				
+				if (menuInvokeChannel != j)
+				{
+					// adjust not so dark color
+					nsdColor.scaleFixed(50000);
+					
+					// adjust bright color
+					nsbColor.scaleFixed(80000);
+				}
+				else
+				{
+					// adjust not so dark color
+					nsdColor.scaleFixed(30000);
+					
+					// adjust bright color
+					nsbColor.scaleFixed(60000);
+				}
+				
+				PPRect rect(px, py, px+slotSize, py + font->getCharHeight()+1);
+				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
+				
+			}
+			
+			if (muteChannels[j])
+			{
+				g->setColor(128, 128, 128);
+			}
+			else
+			{
+				if (!(j&1))
+					g->setColor(hiLightPrimary);
+				else
+					g->setColor(textColor);
+					
+				if (j == menuInvokeChannel)
+				{
+					PPColor col = g->getColor();
+					col.r = textColor.r - col.r;
+					col.g = textColor.g - col.g;
+					col.b = textColor.b - col.b;
+					col.clamp();
+					g->setColor(col);
+				}
+			}
+
+			sprintf(name, "%i", j+1);
+
+			if (muteChannels[j])
+				strcat(name, " <Mute>");
+
+			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
+
+			if( cursor.channel == j && i == 0 ){
+				py = py + font->getCharHeight() + 6;
+				g->setFont(PPFont::getFont(PPFont::FONT_TINY));
+				g->setColor(opColor);
+				g->drawString( status, px+1, py );
+				g->setFont(font);
+			}
+		}
+
+		py += font->getCharHeight() + 4;
+
 		if (properties.prospective && properties.scrollMode == ScrollModeStayInCenter && currentOrderlistIndex != -1)
 		{
 			if (i < 0)
@@ -248,78 +330,6 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 			PatternTools::convertToDec(name, myMod(row, pattern->rows), properties.prospective ? 3 : PatternTools::getDecNumDigits(pattern->rows-1));
 		
 		g->drawString(name, px, py);
-
-		// draw channels
-		for (j = startPos; j < numVisibleChannels; j++)
-		{
-
-			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
-			
-			// columns are already in invisible area => abort
-			if (px >= location.x + size.width)
-				break;
-			
-			pp_int32 py = location.y + SCROLLBARWIDTH;
-
-			if (menuInvokeChannel == j)
-				g->setColor(255-dColor.r, 255-dColor.g, 255-dColor.b);
-			else
-				g->setColor(dColor);
-
-			{
-				PPColor nsdColor = g->getColor(), nsbColor = g->getColor();
-				
-				if (menuInvokeChannel != j)
-				{
-					// adjust not so dark color
-					nsdColor.scaleFixed(50000);
-					
-					// adjust bright color
-					nsbColor.scaleFixed(80000);
-				}
-				else
-				{
-					// adjust not so dark color
-					nsdColor.scaleFixed(30000);
-					
-					// adjust bright color
-					nsbColor.scaleFixed(60000);
-				}
-				
-				PPRect rect(px, py, px+slotSize, py + font->getCharHeight()+1);
-				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
-				
-			}
-			
-			if (muteChannels[j])
-			{
-				g->setColor(128, 128, 128);
-			}
-			else
-			{
-				if (!(j&1))
-					g->setColor(hiLightPrimary);
-				else
-					g->setColor(textColor);
-					
-				if (j == menuInvokeChannel)
-				{
-					PPColor col = g->getColor();
-					col.r = textColor.r - col.r;
-					col.g = textColor.g - col.g;
-					col.b = textColor.b - col.b;
-					col.clamp();
-					g->setColor(col);
-				}
-			}
-
-			sprintf(name, "%i", j+1);
-
-			if (muteChannels[j])
-				strcat(name, " <Mute>");
-
-			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
-		}
 
 		for (j = startPos; j < numVisibleChannels; j++)
 		{

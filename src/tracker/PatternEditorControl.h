@@ -157,6 +157,7 @@ private:
 	pp_int32 visibleWidth;
 	pp_int32 visibleHeight;
 	pp_int32 slotSize;
+	PPString status;
 
 	pp_uint8 muteChannels[TrackerConfig::MAXCHANNELS];
 	pp_uint8 recChannels[TrackerConfig::MAXCHANNELS];
@@ -234,6 +235,7 @@ public:
 	void paintPattern(PPGraphicsAbstract* graphics);
 	void paintSteps(PPGraphicsAbstract* graphics);
 	void updateUnderCursor( mp_sint32 incr);
+	void updateStatus();
 	ViewModes getViewMode(){ return viewMode;}
 
 	void attachPatternEditor(PatternEditor* patternEditor);

@@ -143,6 +143,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			}
 			case VK_TAB:{
 				patternEditorControl->viewRotate();
+				updatePatternEditorControl(true);
 				break;
 			}
 
@@ -243,7 +244,7 @@ processBindings:
 								(patternEditorControl->getViewMode() == ViewSteps && cursor.inner == 1 || cursor.inner == 2) ){
 								listBoxInstruments->dispatchEvent(event);
 							}
-							patternEditorControl->updateUnderCursor( VK_UP || VK_NEXT ? 1 : -1 );
+							patternEditorControl->updateUnderCursor( keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1 );
 							event->cancel();
 							break;
 					}

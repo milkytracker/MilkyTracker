@@ -865,6 +865,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 			}
 		}
 	}
+	updateStatus();
 }
 
 void PatternEditorControl::eventKeyDownBinding_RIGHT()
@@ -896,6 +897,7 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 			}
 		}
 	}
+	updateStatus();
 }
 
 void PatternEditorControl::eventKeyDownBinding_UP()
@@ -922,6 +924,7 @@ void PatternEditorControl::eventKeyDownBinding_UP()
 		//cursor.row = wrapAround ? pattern->rows-1 : 0;
 		cursor.row = pattern->rows-1;
 	}
+	updateStatus();
 
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
@@ -950,6 +953,7 @@ void PatternEditorControl::eventKeyDownBinding_DOWN()
 		//cursor.row = wrapAround ? 0 : pattern->rows-1;
 		cursor.row = 0;
 	}
+	updateStatus();
 
 	if (!res)
 		notifyUpdate(AdvanceCodeSelectNewRow);
@@ -1732,17 +1736,19 @@ void PatternEditorControl::viewRotate()
 	printf("from %i\n",cursor.inner);
 	if( viewMode == ViewPattern ){
 		viewMode = ViewSteps;
+		startIndex = 0;            // reset view to top
 		cursor.inner = 1;          // to instr
+		updateStatus();
 		return;
 	}
 	switch( cursor.inner ){
 		case 0:
 		case 1:
 		case 2: cursor.inner = 3;   break;  // to vol-cmd
-		case 3: cursor.inner = 5;	break;  // to fx 
-		case 4:
-		case 5:
-		case 6:
+		case 3: 
+		case 4: 
+		case 5: cursor.inner = 6;   break;
+		case 6: cursor.inner = 7;	break;  // to fx 
 		case 7: {
 					viewMode = ViewPattern; 
 					cursor.inner = 0;
@@ -1751,5 +1757,35 @@ void PatternEditorControl::viewRotate()
 	}
 	printf("to %i\n",cursor.inner);
 	patternEditor->setCursor(cursor);
+	updateStatus();
 	adjustExtents();
+}
+
+void PatternEditorControl::updateStatus()
+{
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	if( viewMode == ViewSteps ){
+		switch( cursor.inner ){
+			case 0:
+			case 1:
+			case 2: status = "trigger instrument = shift+<key> and ctrl up/down";  break;
+			case 3: 
+			case 4: status = "set volume         = ctrl up/down"; break;  // to vol-cmd
+			case 5: 
+			case 6: status = "set FX param 1     = ctrl up/down";  break;   // to fx 
+			case 7: status = "set FX param 2     = ctrl up/down"; break;  // to fx 
+		}
+	}
+	if( viewMode == ViewPattern ){
+		switch( cursor.inner ){
+			case 0: status = "note"; break;
+			case 1: 
+			case 2: status = "instrument"; break;  // to vol-cmd
+			case 3:
+			case 4: status = "volume 0-40";break;   // to fx 
+			case 5: status = "FX type";    break;  // to fx 
+			case 6: status = "FX param x"; break;  // to fx 
+			case 7: status = "FX param y"; break;  // to fx 
+		}
+	}
 }
