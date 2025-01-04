@@ -130,7 +130,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    patternMenuControl->addEntry("grid views [tab]", BUTTON_PATTERN_ROTATE_VIEW);
+    patternMenuControl->addEntry("next grid view [ctrl+tab]", BUTTON_PATTERN_ROTATE_VIEW);
 
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
@@ -1011,6 +1011,8 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 
 void PatternEditorControl::updateUnderCursor( mp_sint32 incr ){
 	PatternTools patternTools;
+	pp_int32 eff = 0;
+	pp_int32 op  = 0;
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	patternTools.setPosition( patternEditor->getPattern(), cursor.channel, cursor.row);
 
@@ -1019,8 +1021,6 @@ void PatternEditorControl::updateUnderCursor( mp_sint32 incr ){
 		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, this);
 	}
 	if( viewMode == ViewSteps && cursor.inner >= 3 && cursor.inner <= 4 ){
-		pp_int32 eff = 0;
-		pp_int32 op  = 0;
 		patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
 		//if( eff != 0 && op != 0 ) enabled
 		//patternTools->getNextEffect(eff, op);				
@@ -1029,6 +1029,10 @@ void PatternEditorControl::updateUnderCursor( mp_sint32 incr ){
 		patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, op, true, this);
 	}
 	if( viewMode == ViewSteps && cursor.inner > 5 ){
+		//patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
+		//if( eff != 0 && op != 0 ) enabled
+		//patternTools->getNextEffect(eff, op);				
+		if( op >= 0 && op <=64 ) op += incr;
 		patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, 0, true, this);
 	}
 	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);

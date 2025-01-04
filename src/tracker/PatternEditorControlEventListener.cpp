@@ -925,7 +925,6 @@ markOrMoveSelection:
 			// [otherwise ctrl-minus will add minus-volslides in volcolumn e.g.]
 			if ( 
 				(::getKeyModifier() != (unsigned)KeyModifierCTRL)  && 
-				(::getKeyModifier() != (unsigned)KeyModifierSHIFT) && 
 				(::getKeyModifier() != (unsigned)KeyModifierALT)   
 			){
 				handleKeyChar(character);

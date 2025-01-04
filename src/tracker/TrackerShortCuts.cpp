@@ -142,8 +142,10 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 				break;
 			}
 			case VK_TAB:{
-				patternEditorControl->viewRotate();
-				updatePatternEditorControl(true);
+				if (::getKeyModifier() == KeyModifierCTRL ){
+					patternEditorControl->viewRotate();
+					updatePatternEditorControl(true);
+				}
 				break;
 			}
 

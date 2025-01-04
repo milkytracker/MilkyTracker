@@ -24,6 +24,7 @@
 #define PATTERNTOOLS__H
 
 #include "BasicTypes.h"
+#include "PatternEditor.h"
 
 #define TONOTE(octave, note) \
 ((((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) < 97 ? (((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) : -1)
@@ -73,6 +74,8 @@ public:
 	static void getNoteName(char* name, pp_uint32 note, bool terminate = true);
 	static void getVolumeName(char* name, pp_uint32 volume);
 	static void getEffectName(char* name, pp_uint32 effect);
+    static void getEffectDescription(char* label, char fxchar);
+	static pp_uint8 getNibble(pp_int32 op, PatternEditor::NibbleTypes type);
 
 	static pp_uint32 getHexNumDigits(pp_uint32 value);
 	static void convertToHex(char* name, pp_uint32 value, pp_uint32 numDigits);

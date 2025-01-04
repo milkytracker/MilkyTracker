@@ -800,6 +800,47 @@ void PatternTools::convertVolumeToEffect(pp_int32 vol, pp_int32& effect, pp_int3
 	
 }
 
+
+void PatternTools::getEffectDescription(char* label, char fxchar){
+	switch( fxchar ){
+		case '0': sprintf(label,"arp"); break; 
+		case '1': sprintf(label,"porta up"); break; 
+		case '2': sprintf(label,"porta dn"); break; 
+		case '3': sprintf(label,"porta to"); break; 
+		case '4': sprintf(label,"vibrato"); break; 
+		case '5': sprintf(label,"porta to/"); break; 
+		case '6': sprintf(label,"vibrato/"); break; 
+		case '7': sprintf(label,"tremolo"); break; 
+		case '8': sprintf(label,"pan2"); break; 
+		case '9': sprintf(label,"smp start"); break; 
+		case 'A': sprintf(label,"vol /\\"); break; 
+		case 'B': sprintf(label,"jump"); break; 
+		case 'C': sprintf(label,"vol2"); break; 
+		case 'D': sprintf(label,"break"); break; 
+		case 'E': sprintf(label,"subcmd"); break; 
+		case 'F': sprintf(label,"BPM"); break; 
+		case 'G': sprintf(label,"Gvol"); break; 
+		case 'H': sprintf(label,"Gvolfade"); break; 
+		case 'K': sprintf(label,"keyoff"); break; 
+		case 'L': sprintf(label,"Envpos"); break; 
+		case 'P': sprintf(label,"panslide"); break; 
+		case 'R': sprintf(label,"retrigfade"); break; 
+		case 'T': sprintf(label,"tremor"); break; 
+		case 'X': sprintf(label,"fineporta"); break; 
+	}
+}
+
+pp_uint8 PatternTools::getNibble(pp_int32 op, PatternEditor::NibbleTypes type)
+{
+    pp_uint8 value = 0;
+    if (type == PatternEditor::NibbleTypeHigh) {
+		value = (op >> 4) & 0x0F;
+   } else if (type == PatternEditor::NibbleTypeLow) {
+        value = op & 0x0F;
+   }
+   return value;
+}
+
 pp_uint8 PatternTools::getNoteOffNote() { return XModule::NOTE_OFF; }
 	
 pp_uint32 PatternTools::normalizeVol(pp_uint32 volume) { return XModule::vol64to255((volume*64)/255); }

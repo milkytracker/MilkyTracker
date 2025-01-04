@@ -400,32 +400,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 				patternTools->convertEffectsToFT2(eff, op);
 				if( eff != 0 && op != 0 ){
 					patternTools->getEffectName(label, eff);
-					switch( label[0] ){
-						case '0': sprintf(label,"arp"); break; 
-						case '1': sprintf(label,"porta up"); break; 
-						case '2': sprintf(label,"porta dn"); break; 
-						case '3': sprintf(label,"porta to"); break; 
-						case '4': sprintf(label,"vibrato"); break; 
-						case '5': sprintf(label,"porta to/"); break; 
-						case '6': sprintf(label,"vibrato/"); break; 
-						case '7': sprintf(label,"tremolo"); break; 
-						case '8': sprintf(label,"pan2"); break; 
-						case '9': sprintf(label,"start"); break; 
-						case 'A': sprintf(label,"vol /\\"); break; 
-						case 'B': sprintf(label,"jump"); break; 
-						case 'C': sprintf(label,"vol2"); break; 
-						case 'D': sprintf(label,"break"); break; 
-						case 'E': sprintf(label,"subcmd"); break; 
-						case 'F': sprintf(label,"BPM"); break; 
-						case 'G': sprintf(label,"Gvol"); break; 
-						case 'H': sprintf(label,"Gvolfade"); break; 
-						case 'K': sprintf(label,"keyoff"); break; 
-						case 'L': sprintf(label,"Envpos"); break; 
-						case 'P': sprintf(label,"panslide"); break; 
-						case 'R': sprintf(label,"retrigfade"); break; 
-						case 'T': sprintf(label,"tremor"); break; 
-						case 'X': sprintf(label,"fineporta"); break; 
-					}
+					patternTools->getEffectDescription( label, label[0]);
 					pp_int32 sliderWidth = (pp_int32)( float(op) * float(slotSize/80.0f) );
 					g->setColor(lineColor);
 					g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));

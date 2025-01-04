@@ -1542,6 +1542,11 @@ public:
 		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
 		container->addControl(checkBox);
 		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Rec closest row:", checkBox, true));
+
+		y2+=15;
+		checkBox = new PPCheckBox(CHECKBOX_SETTINGS_BUGFIX_ROUNDTOCLOSESTROW, screen, this, PPPoint(x + 4 + 17 * 8 + 4, y2 - 1));
+		container->addControl(checkBox);
+		container->addControl(new PPCheckBoxLabel(0, NULL, this, PPPoint(x + 4, y2), "Default gridview", checkBox, true));
 	}
 
 	virtual void update(PPScreen* screen, TrackerSettingsDatabase* settingsDatabase, ModuleEditor& moduleEditor)
