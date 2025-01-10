@@ -171,11 +171,11 @@ void Tracker::buildDefaultSettings()
 	// Modulo for the first pattern highlight
 	settingsDatabase->store("HIGHLIGHTMODULO1", 4);
 	// Modulo for the first pattern highlight
-	settingsDatabase->store("HIGHLIGHTROW1", 0);
+	settingsDatabase->store("HIGHLIGHTROW1", 1);
 	// Modulo for the second pattern highlight
 	settingsDatabase->store("HIGHLIGHTMODULO2", 8);
 	// Modulo for the second pattern highlight
-	settingsDatabase->store("HIGHLIGHTROW2", 0);
+	settingsDatabase->store("HIGHLIGHTROW2", 1);
 
 	// Enable sample undobuffer by default
 	settingsDatabase->store("SAMPLEEDITORUNDOBUFFER", 1);

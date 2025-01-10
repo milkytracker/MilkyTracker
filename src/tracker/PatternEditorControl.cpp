@@ -131,7 +131,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    patternMenuControl->addEntry("toggle pattern/grid [ctrl+tab]", BUTTON_PATTERN_TOGGLE_VIEW);
+    patternMenuControl->addEntry("pattern/grid [ctrl+tab]", BUTTON_PATTERN_TOGGLE_VIEW);
 
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);

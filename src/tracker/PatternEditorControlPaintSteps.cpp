@@ -364,10 +364,16 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 			if( currentLine ){
 				g->setColor( textColor );
 			}
+
+			if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
+				g->setColor( hiLightPrimary);
+			if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
+				g->setColor( hiLightSecondary);
+
 			if( (enabled || hasFX ) && !isNoteOff && !muteChannels[j]){
 				g->setColor( stepColor );
 			}
-		
+
 			if( !muteChannels[j] && enabled ){
 				if( isNoteOff ) g->setColor( TrackerConfig::colorRowHighLight_1 );
 				g->fill(PPRect(px+3, py +3, px + slotSize -3, py + rowHeight -3 ));
@@ -378,10 +384,6 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 			}
 			g->drawVLine(py+4, py+rowHeight-4, px+2);
 			g->drawVLine(py+4, py+rowHeight-4, px+slotSize-3);
-			if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
-				g->setColor( noteColor);
-			if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
-				g->setColor(effColor);
 
 			// draw instr
 			px += properties.spacing;

@@ -173,9 +173,7 @@ void Tracker::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD8, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_NUMPAD9, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_MULTIPLY, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_ADD, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_SEPARATOR, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_SUBTRACT, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DECIMAL, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 	eventKeyDownBindingsMilkyTracker->addBinding(VK_DIVIDE, 0, &Tracker::eventKeyDownBinding_InvokeQuickChooseInstrument);	
 

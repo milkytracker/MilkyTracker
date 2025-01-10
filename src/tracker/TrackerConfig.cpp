@@ -92,7 +92,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 												  "ffffff" // ColorPatternEffect // ColorPatternEffect
 												  "7F7F80" // ColorPatternOperand // ColorPatternOperand
 												  "647278" // ColorCursor // ColorCursor
-												  "2E353C" // ColorCursorLine // ColorCursorLine
+												  "28436B" // ColorCursorLine // ColorCursorLine
 												  "A01830" // ColorCursorLineHighlighted // ColorCursorLineHighlighted
 												  "202829" // ColorTheme // ColorTheme
 												  "a7a7a7" // ColorForegroundText // ColorForegroundText
@@ -103,7 +103,7 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 												  "103060" // ColorPatternSelection // ColorPatternSelection
 												  "5d646b" // Hilighted text // Hilighted text
 												  "B5A7AE" // Scopes // Scopes
-												  "FFFFFF" // Hilighted rows (secondary) // Hilighted rows (secondary)
+												  "50437F" // Hilighted rows (secondary) // Hilighted rows (secondary)
 												  "202120" // Row highlight background (primary) // Row highlight background (primary)
 												  "101000" // Row highlight background (secondary) // Row highlight background (secondary)
 												  "000000" // ColorScrollBarBackground // ColorScrollBarBackground
@@ -133,8 +133,10 @@ const PPString TrackerConfig::defaultColorPalette("2B" // Numkeys
 
 const char* TrackerConfig::predefinedColorPalettes[TrackerConfig::numPredefinedColorPalettes] =                // Current last color start in the line of this comment marker
 {
+
+"2BFFFFFF9393ffA7C9F1ffffff7F7F8064727828436BA01830202829a7a7a7282c2cCCCCCC49576B161B1D1030605d646bB5A7AE50437F202120101000000000FF0000FF0000FF00009393ff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // default
-"28FFFFFF9393ffA7C9F1ffffff7F7F806472782E353CA01830202829a7a7a7282c2cCCCCCC49576B161B1D1030605d646bB5A7AEFFFFFF202120101000000000FF0000FF0000FF00009393ff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
+//"28FFFFFF9393ffA7C9F1ffffff7F7F806472782E353CA01830202829a7a7a7282c2cCCCCCC49576B161B1D1030605d646bB5A7AEFFFFFF202120101000000000FF0000FF0000FF00009393ff3B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // classic
 "2BFFFFFF80E0FF80FF80FF80E0FFE0808080FF602040A01830406080FFFFFFC0C0C00000008080FF282849103060FFFF00FFFFFFFFFF80202020101010203040FF0000FF0000FF0000FFFF803B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B00403B0040",
 // bluish
