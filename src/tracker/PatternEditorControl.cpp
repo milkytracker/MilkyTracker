@@ -102,6 +102,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	vRightScrollbar = new PPScrollbar(1, parentScreen, this, PPPoint(location.x + size.width - SCROLLBARWIDTH, location.y), size.height, false);
 	hTopScrollbar = new PPScrollbar(2, parentScreen, this, PPPoint(location.x + SCROLLBARWIDTH, location.y), size.width - SCROLLBARWIDTH*2, true);		
 	hBottomScrollbar = new PPScrollbar(3, parentScreen, this, PPPoint(location.x + SCROLLBARWIDTH, location.y + size.height - SCROLLBARWIDTH), size.width - SCROLLBARWIDTH*2, true);
+
 	
 	songPos.orderListIndex = songPos.row = -1;
 
@@ -130,7 +131,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    patternMenuControl->addEntry("next grid view [ctrl+tab]", BUTTON_PATTERN_ROTATE_VIEW);
+    patternMenuControl->addEntry("toggle pattern/grid [ctrl+tab]", BUTTON_PATTERN_TOGGLE_VIEW);
 
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
@@ -294,7 +295,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 {
 	if (!isVisible())
 		return;
-	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*3 : font->getCharHeight());
+	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*STEP_ROWHEIGHT : font->getCharHeight());
 	if( viewMode == ViewPattern ) paintPattern(g);
 	if( viewMode == ViewSteps   ) paintSteps(g);
 }
@@ -356,12 +357,12 @@ pp_int32 PatternEditorControl::getRowCountWidth()
 
 void PatternEditorControl::adjustExtents()
 {
-	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*4 : font->getCharHeight());
+	rowHeight = (viewMode == ViewSteps ? font->getCharHeight()*STEP_ROWHEIGHT : font->getCharHeight());
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
 	visibleHeight = size.height - (rowHeight + 4) - SCROLLBARWIDTH*2;
 	
 	slotSize = viewMode == ViewSteps 
-			   ? 6*font->getCharWidth() 
+			   ? 5*font->getCharWidth() 
 			   : 10*font->getCharWidth() + 3*1 + 4 + 3*properties.spacing;
 
 	cursorPositions[0] = 0;	
@@ -878,7 +879,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_ADD_MINUS:
 		case BUTTON_PATTERN_CAPTURE:
 		case BUTTON_PATTERN_CAPTURE_OVERDUB:
-		case BUTTON_PATTERN_ROTATE_VIEW:
+		case BUTTON_PATTERN_TOGGLE_VIEW:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;
@@ -1016,26 +1017,56 @@ void PatternEditorControl::updateUnderCursor( mp_sint32 incr ){
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	patternTools.setPosition( patternEditor->getPattern(), cursor.channel, cursor.row);
 
-	if( viewMode == ViewSteps && cursor.inner < 3){
+	if( viewMode == ViewSteps ) {
+
 		pp_int32 ins = patternEditor->getCurrentActiveInstrument();	
-		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, this);
+		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, NULL);
+
 	}
-	if( viewMode == ViewSteps && cursor.inner >= 3 && cursor.inner <= 4 ){
-		patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
-		//if( eff != 0 && op != 0 ) enabled
-		//patternTools->getNextEffect(eff, op);				
-		if( op >= 0 && op <=64 ) op += incr;
-		printf("incr = %i op = %i\n",incr,op);
-		patternEditor->writeFT2Volume(PatternEditor::NibbleTypeBoth, op, true, this);
-	}
-	if( viewMode == ViewSteps && cursor.inner > 5 ){
-		//patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
-		//if( eff != 0 && op != 0 ) enabled
-		//patternTools->getNextEffect(eff, op);				
-		if( op >= 0 && op <=64 ) op += incr;
-		patternEditor->writeEffectOperand(PatternEditor::NibbleTypeBoth, 0, true, this);
-	}
+	// *FUTURE* possibly cycle through values of volume/effect values/types by 
+	// ctrl up/down in stepmode by calling following functions:
+	//
+	//bool writeFT2Volume(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+	//				 bool withUndo = false, 
+	//				 PatternAdvanceInterface* advanceImpl = NULL);
 	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
 	//bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
 
+}
+	
+void PatternEditorControl::drawStatus( 
+		PPString s, 
+		PPColor c,
+		PPGraphicsAbstract* g, 
+		PatternEditorTools::Position cursor,
+		PPFont *font,
+		pp_uint32 px)
+{
+	g->setColor(c);
+	switch( cursor.inner ){
+		case 0: s = PPString("note"); break;
+		case 1:
+		case 2: s = PPString("instrument"); break;
+		case 3: s = PPString("FX1 type"); break;
+		case 4: s = PPString("FX1 param"); break;
+		case 5: s = PPString("FX2 type"); break;
+		case 6: s = PPString("FX2 param1"); break;
+		case 7: s = PPString("FX2 param2"); break;
+		default: s = PPString(""); break;
+	}
+	if( status.length() > 0 ){
+		s.append(": ");
+		s.append(status);
+	}
+	if( viewMode == ViewSteps && cursor.inner <= 2 ){ 
+		s.append(" // use space tab ctrl+up/down/left/right to navigate grid");
+	}
+	if( cursor.inner == 3 ) s.append(" // use 01234+-lrpdmsuv");
+	if( cursor.inner == 4 ) s.append(" // use 0123456789");
+	if( cursor.inner == 5 ) s.append(" // use 1-9 A-F");
+	if( cursor.inner == 6 || cursor.inner == 7 ) s.append(" // use 0-9 A-F");
+	g->drawString( s, px+3+font->getCharWidth()*2, location.y + SCROLLBARWIDTH + font->getCharHeight() + 6 );
 }

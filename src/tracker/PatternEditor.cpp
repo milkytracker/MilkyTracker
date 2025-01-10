@@ -1888,6 +1888,7 @@ bool PatternEditor::writeStep(pp_uint32 channel,
 							  pp_uint32 step,
 							  pp_uint32 note,
 							  pp_uint32 barRow,								
+							  pp_uint32 instr,
 							  bool withUndo/* = false*/)
 {
 	if (withUndo)
@@ -1898,10 +1899,9 @@ bool PatternEditor::writeStep(pp_uint32 channel,
 	cursor.channel = channel;
 	PatternTools patternTools;
 	patternTools.setPosition(pattern, cursor.channel, cursor.row);
-	pp_int32 instr = getCurrentActiveInstrument();
-	bool enable    = (patternTools.getNote() == 0 || instr != patternTools.getInstrument() );
+	bool enable    = patternTools.getNote() == 0; // || instr != patternTools.getInstrument() );
 	patternTools.setNote( enable ? note : 0 );
-	patternTools.setInstrument( enable ? instr : 0 );
+	//patternTools.setInstrument( enable ? instr : 0 );
 	cursor.row = barRow; // stick cursor to beginning of bar so page-up/down navigates thru bars
 	setCursor(cursor);
 	

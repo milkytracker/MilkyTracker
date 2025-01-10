@@ -512,7 +512,20 @@ void Tracker::eventKeyDownBinding_Edit()
 
 	PatternEditorControl* patternEditor = getPatternEditorControl();
 
-	if (!screen->hasFocus(patternEditor) && patternEditor->isVisible())
+	if( patternEditorControl->getViewMode() == ViewSteps )
+	{
+		screen->setFocus(patternEditor);
+		pp_uint32 note = TONOTE(getPatternEditor()->getCurrentOctave(),0);
+		getPatternEditor()->writeStep( 
+				patternEditorControl->getCurrentChannel(), 
+				patternEditorControl->getCurrentRow(), 
+				note, 
+				patternEditorControl->getCurrentRow(), 
+				0,
+				true
+		);
+
+	}else if( !screen->hasFocus(patternEditor) && patternEditor->isVisible() ) 
 	{
 		screen->setFocus(patternEditor);
 		//screen->paintControl(patternEditor);

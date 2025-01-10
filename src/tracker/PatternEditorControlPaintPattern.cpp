@@ -49,6 +49,8 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 	selectionStart = patternEditor->getSelection().start;
 	selectionEnd = patternEditor->getSelection().end;
 
+	PPString statusLine;
+
 	PatternEditorTools::flattenSelection(selectionStart, selectionEnd);	
 
 	// only entire instrument column is allowed
@@ -160,7 +162,7 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 					nsbColor.scaleFixed(60000);
 				}
 				
-				PPRect rect(px, py, px+slotSize, py + font->getCharHeight()+1);
+				PPRect rect(px, py, px+slotSize-3, py + font->getCharHeight()+1);
 				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
 				
 			}
@@ -197,8 +199,7 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 			if( cursor.channel == j && i == 0 ){
 				py = py + font->getCharHeight() + 6;
 				g->setFont(PPFont::getFont(PPFont::FONT_TINY));
-				g->setColor(opColor);
-				g->drawString( status, px+1, py );
+				drawStatus( statusLine, opColor, g, cursor, font, -(font->getCharWidth()*2) +  px - 2  );
 				g->setFont(font);
 			}
 		}
@@ -542,6 +543,8 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 			g->drawString(name,px, py);
 		}
 	}
+		
+	pp_int32 py = location.y + 3*SCROLLBARWIDTH + 3;
 	
 	for (j = startPos; j < numVisibleChannels; j++)
 	{
@@ -558,15 +561,16 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 
 		g->setColor(*borderColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px+1);
+		g->drawVLine(py, py + size.height, px+1);
 		
 		g->setColor(bColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px);
+		g->drawVLine(py, py + size.height, px);
 		
 		g->setColor(dColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px+2);
+		g->drawVLine(py, py + size.height, px+2);
+
 	}
 
 	// ;----------------- Margin lines
@@ -575,13 +579,13 @@ void PatternEditorControl::paintPattern(PPGraphicsAbstract* g)
 		
 	pp_int32 px = location.x + SCROLLBARWIDTH;
 	px+=getRowCountWidth() + 1;
-	g->drawVLine(location.y, location.y + size.height, px+1);
+	g->drawVLine(py, py + size.height, px+1);
 	
 	g->setColor(bColor);	
-	g->drawVLine(location.y, location.y + size.height, px);
+	g->drawVLine(py, py + size.height, px);
 	
 	g->setColor(dColor);	
-	g->drawVLine(location.y, location.y + size.height, px+2);
+	g->drawVLine(py, py + size.height, px+2);
 	
 	// draw margin horizontal lines
 	for (j = 0; j < visibleWidth / slotSize + 1; j++)

@@ -378,6 +378,7 @@ public:
 				   pp_uint32 stup,
 				   pp_uint32 note,
 				   pp_uint32 barRow,								
+				   pp_uint32 instr,
 				   bool withUndo/* = false*/);	
 				   
 	// --- write through, without undo etc. ----------------------------------

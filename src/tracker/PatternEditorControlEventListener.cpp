@@ -925,6 +925,7 @@ markOrMoveSelection:
 			// [otherwise ctrl-minus will add minus-volslides in volcolumn e.g.]
 			if ( 
 				(::getKeyModifier() != (unsigned)KeyModifierCTRL)  && 
+				(::getKeyModifier() != (unsigned)KeyModifierSHIFT) && 
 				(::getKeyModifier() != (unsigned)KeyModifierALT)   
 			){
 				handleKeyChar(character);
@@ -1127,8 +1128,7 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	         sender == reinterpret_cast<PPObject*>(moduleMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(patternMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(keyboardMenuControl) ||
-	         sender == reinterpret_cast<PPObject*>(channelMenuControl)  ||
-	         sender == reinterpret_cast<PPObject*>(helpMenuControl) )
+	         sender == reinterpret_cast<PPObject*>(channelMenuControl) )
 	{
 		switch (event->getID())
 		{

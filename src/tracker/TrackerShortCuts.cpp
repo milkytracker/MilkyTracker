@@ -143,7 +143,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			}
 			case VK_TAB:{
 				if (::getKeyModifier() == KeyModifierCTRL ){
-					patternEditorControl->viewRotate();
+					patternEditorControl->toggleView();
 					updatePatternEditorControl(true);
 				}
 				break;
@@ -242,11 +242,11 @@ processBindings:
 						case VK_NEXT:
 						case VK_PRIOR:
 							PatternEditorTools::Position& cursor = getPatternEditor()->getCursor();
-							if( patternEditorControl->getViewMode() == ViewPattern ||
-								(patternEditorControl->getViewMode() == ViewSteps && cursor.inner == 1 || cursor.inner == 2) ){
-								listBoxInstruments->dispatchEvent(event);
+							listBoxInstruments->dispatchEvent(event);
+
+							if(editMode == EditModeMilkyTracker){
+								patternEditorControl->updateUnderCursor( keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1 );
 							}
-							patternEditorControl->updateUnderCursor( keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1 );
 							event->cancel();
 							break;
 					}
@@ -834,7 +834,7 @@ void Tracker::doASCIISTEP16( pp_uint8 character, bool chselect ){
 		PatternEditorTools::Position cursor;
 		// write ASCIISTEP16 step
 		pp_uint32 note = TONOTE(getPatternEditor()->getCurrentOctave(),0);
-		getPatternEditor()->writeStep( patternEditorControl->getCurrentChannel(), step, note, bar * (16*stepsize),true);
+		getPatternEditor()->writeStep( patternEditorControl->getCurrentChannel(), step, note, bar * (16*stepsize),0,true);
 		updatePatternEditorControl(true);
 	}
 }

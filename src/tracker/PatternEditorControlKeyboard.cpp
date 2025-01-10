@@ -579,12 +579,13 @@ void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 			// Delete (only works in MilkyTracker edit mode)
 			// in FT2 mode this key combination is bound to a method
 			case VK_DELETE:
-				if (hasValidSelection())
-					patternEditor->clearSelection();
-				else
-				{
-					result = 0xFF;
-				}
+				if( !hasValidSelection() ){ 
+					PatternEditorTools::Position& cursorCopy = patternEditor->getCursor();
+					patternEditor->setSelectionStart( cursorCopy );
+					patternEditor->setSelectionEnd( cursorCopy );
+				} 
+				patternEditor->clearSelection();
+				patternEditor->resetSelection(); // prevent user from accidentally [del]eting last selection while in another column
 				break;
 		}
 	}
@@ -676,7 +677,7 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	patternEditor->setLazyUpdateNotifications(true);
 
 
-	if (cursor.inner == 0) {
+	if ( cursor.inner == 0 ) {
 		handleDeleteKey(keyCode, number);
 
 		if (number == -1 && ::getKeyModifier() == 0)
@@ -707,6 +708,7 @@ void PatternEditorControl::handleKeyChar(pp_uint8 character)
 			patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, 0, true, this);
 		else if (number >= 0 && number <= 0xF)
 		{
+			if( viewMode == ViewSteps ) return;
 			if (cursor.inner == 1)
 				patternEditor->writeInstrument(PatternEditor::NibbleTypeHigh, number, true, this);
 			else if (cursor.inner == 2)
@@ -847,14 +849,17 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
-	if( viewMode == ViewSteps ) return eventKeyDownBinding_PreviousChannel();
+	if( viewMode == ViewSteps && ::getKeyModifier() != KeyModifierCTRL ) return eventKeyDownBinding_PreviousChannel();
 
 	cursor.inner--;
+
+	if( viewMode == ViewSteps && cursor.inner == 1 ) cursor.inner--;
+
 	if (cursor.inner < 0)
 	{
 		if (cursor.channel > 0)
 		{
-			cursor.channel--;
+			if( viewMode != ViewSteps ) cursor.channel--;
 			cursor.inner = 7;
 			notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 		}
@@ -868,7 +873,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 			else
 			{
 				cursor.inner = 7;
-				cursor.channel = patternEditor->getNumChannels()-1;
+				if( viewMode != ViewSteps ) cursor.channel = patternEditor->getNumChannels()-1;
 			}
 		}
 	}
@@ -879,14 +884,17 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	
-	if( viewMode == ViewSteps ) return eventKeyDownBinding_NextChannel();
-
+	if( viewMode == ViewSteps && ::getKeyModifier() != KeyModifierCTRL ) return eventKeyDownBinding_NextChannel();
+	
 	cursor.inner++;
+
+	if( viewMode == ViewSteps && cursor.inner == 1 ) cursor.inner++;
+
 	if (cursor.inner == 8)
 	{
 		if (cursor.channel < patternEditor->getNumChannels() - 1)
 		{
-			cursor.channel++;
+			if( viewMode != ViewSteps ) cursor.channel++;
 			cursor.inner = 0;
 			notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 		}
@@ -900,7 +908,7 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 			else
 			{
 				cursor.inner = 0;
-				cursor.channel = 0;
+				if( viewMode != ViewSteps ) cursor.channel = 0;
 			}
 		}
 	}
@@ -1310,6 +1318,8 @@ void PatternEditorControl::eventKeyDownBinding_DeleteEffect()
 
 void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 {
+	if( viewMode == ViewSteps && ::getKeyModifier() == KeyModifierCTRL ) return eventKeyDownBinding_LEFT();
+
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
 	// if the track inner position is not the note column, we will first
@@ -1337,15 +1347,18 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 		else
 		{
 			cursor.channel = patternEditor->getNumChannels() - 1;
-			if (properties.tabToNote)
+			if (properties.tabToNote && viewMode == ViewPattern )
 				cursor.inner = 0;
 		}
 	}
+	updateStatus();
 	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
 void PatternEditorControl::eventKeyDownBinding_NextChannel()
 {
+	if( viewMode == ViewSteps && (::getKeyModifier() == KeyModifierCTRL )  ) return eventKeyDownBinding_RIGHT();
+
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
 	if (cursor.channel < patternEditor->getNumChannels() - 1)
@@ -1369,6 +1382,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 				cursor.inner = 0;
 		}
 	}
+	updateStatus();
 	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
@@ -1630,6 +1644,11 @@ void PatternEditorControl::eventKeyCharBinding_Copy()
 	assureUpdate = true;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
+	// assume current cell if no selection was made
+	if( !hasValidSelection() ){ 
+		patternEditor->setSelectionStart( cursorCopy );
+		patternEditor->setSelectionEnd( cursorCopy );
+	} 
 
 	patternEditor->copy(PatternEditor::ClipBoardTypeSelection);
 	patternEditor->resetSelection(); // prevent user from accidentally [del]eting last selection while in another column
@@ -1655,28 +1674,26 @@ void PatternEditorControl::eventKeyCharBinding_PasteStep()
 
 void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 {
-	mp_sint32 stepsize     = -1;
-	mp_sint32 lastRow      = -1;
+	pp_int32  inner        = 0;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
 	pp_int32 row_current   = cursorCopy.row;
-	// assume current row
+	pp_int32 row           = row_current+1;
+	
 	if( !hasValidSelection() ){ 
 		patternEditor->setSelectionStart( cursorCopy );
 		patternEditor->setSelectionEnd( cursorCopy );
 	} 
+
 	pp_int32 row_selection = patternEditor->getSelection().start.row; 
 
 	cursorCopy.row = row_selection;
 	patternEditor->setCursor(cursorCopy);
 	eventKeyCharBinding_Copy();
 
-	while( true ){ 
+	while( row > row_current  ){
 		PatternEditorControl::eventKeyCharBinding_PasteStep();
-		int row = patternEditor->getCursor().row;
-		if( stepsize == -1 ) stepsize = row - row_selection;
-		if( row <= row_selection+stepsize-1 || row == lastRow){ break; }
-		lastRow = row;
+		row = patternEditor->getCursor().row;
 	}
 	cursorCopy = patternEditor->getCursor();
 	cursorCopy.row = row_current;
@@ -1737,33 +1754,15 @@ void PatternEditorControl::eventKeyCharBinding_Interpolate()
 	patternEditor->interpolateValuesInSelection();
 }
 
-void PatternEditorControl::viewRotate()
+void PatternEditorControl::toggleView()
 {
-	PatternEditorTools::Position& cursor = patternEditor->getCursor();
-	if( viewMode == ViewPattern ){
-		viewMode = ViewSteps;
-		startIndex = 0;            // reset view to top
-		cursor.inner = 1;          // to instr
-		updateStatus();
-		return;
-	}
-	switch( cursor.inner ){
-		case 0:
-		case 1:
-		case 2: cursor.inner = 3;   break;  // to vol-cmd
-		case 3: 
-		case 4: 
-		case 5: cursor.inner = 6;   break;
-		case 6: cursor.inner = 7;	break;  // to fx 
-		case 7: {
-					viewMode = ViewPattern; 
-					cursor.inner = 0;
-					break;
-				}
-	}
-	patternEditor->setCursor(cursor);
+	viewMode = viewMode == ViewPattern ? ViewSteps : ViewPattern;
 	updateStatus();
+	parentScreen->setFocus(this);
 	adjustExtents();
+	if( viewMode == ViewSteps ){
+		startIndex = 0;            // reset view to top
+	}
 }
 
 void PatternEditorControl::updateStatus()
@@ -1774,112 +1773,106 @@ void PatternEditorControl::updateStatus()
 	pp_uint32 op2 = 0;
 	char fxchar[2];
 	char label[64];
+	status = "";
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	patternTools.setPosition( patternEditor->getPattern(), cursor.channel, cursor.row);
 
-	if( viewMode == ViewSteps ){
-		switch( cursor.inner ){
-			case 0:
-			case 1:
-			case 2: status = "trigger instrument = shift+<key> and ctrl up/down";  break;
-			case 3: 
-			case 4: status = "set volume         = ctrl up/down"; break;  // to vol-cmd
-			case 5: 
-			case 6: status = "set FX param 1     = ctrl up/down";  break;   // to fx 
-			case 7: status = "set FX param 2     = ctrl up/down"; break;  // to fx 
-		}
-	}
-
-	if( viewMode == ViewPattern ){
-		switch( cursor.inner ){
-			case 0: status = "note"; break;
-			case 1: 
-			case 2: status = "instrument"; break;  // to vol-cmd
-												   //
-			case 5: {
-						status = "FX2 type";    
-						patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
-						patternTools.getNextEffect(eff, op);				
-						patternTools.convertEffectsToFT2(eff, op);
-						if( eff != 0 ){
-							patternTools.getEffectName( fxchar, eff);
-							patternTools.getEffectDescription(label, fxchar[0] );
-							status = label;
-						}
-						break;
-					}
-
-			case 3:
-			case 4:   // fx1
-			case 6: 
-			case 7: { // fx2
-						bool isFX1 = cursor.inner == 3 || cursor.inner == 4;
-						bool isFX2 = !isFX1;
-						status = isFX1 ? cursor.inner == 3 ? "FX1 type          +-lrpdlmrsuv" : "FX1 param" 
-							           : "FX2 param ";
-						char param = cursor.inner == 6 || cursor.inner == 4 ? '1' : '2';
-						patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
-						if( isFX2 ) patternTools.getNextEffect(eff, op);				
-						patternTools.convertEffectsToFT2(eff, op);
-						op1 = patternTools.getNibble( op, PatternEditor::NibbleTypeHigh );
-					    op2 = patternTools.getNibble( op, PatternEditor::NibbleTypeLow );
+	switch( cursor.inner ){
+		case 0: patternTools.getNoteName(label, patternTools.getNote()); break;
+		case 1: 
+		case 2: op = patternTools.getInstrument();
+				if( op > 0 ){
+					sprintf(label, op > 0 ? "%i" : "",op); 
+					status = label;
+				}
+				break;  // to vol-cmd
+											   //
+		case 5: {
+					patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
+					patternTools.getNextEffect(eff, op);				
+					patternTools.convertEffectsToFT2(eff, op);
+					if( eff != 0 ){
 						patternTools.getEffectName( fxchar, eff);
-						if( eff != 0 ){
-							switch( fxchar[0] ){
-								case '0': sprintf(label,"semitone offset%c", param); break;
-								case '1': sprintf(label,"porta up speed");   break;
-								case '2': sprintf(label,"porta down speed"); break;
-								case '3': sprintf(label,"porta note speed"); break;
-								case '4': sprintf(label,"vibrato %s",        param == '1' ? "speed" : "depth" ); break;
-								case '5': sprintf(label,"portafade %s", param == '1' ? "up" : "down" ); break;
-								case '6': sprintf(label,"vibrafade %s", param == '1' ? "up" : "down" ); break;
-								case '7': sprintf(label,"tremolo  %s",       param == '1' ? "speed" : "depth" ); break;
-								case '8': sprintf(label,"0=left ff=right");  break;
-								case '9': sprintf(label,"samplestart 0-FF"); break;
-								case 'A': sprintf(label,"fade speed %s",     isFX1 ? " " : param == '1' ? "up" : "down" ); break;
-								case 'B': sprintf(label,"song position");    break;
-								case 'C': sprintf(label,"note volume");      break;
-								case 'D': sprintf(label,"row next pattern"); break;
-								case 'E': {
-											  switch( op1 ){
-											    case 1: sprintf(label, param == '1' ? "fine porta up" : "fporta speed"); break;
-											    case 2: sprintf(label, param == '1' ? "fine porta down" : "fporta speed"); break;
-											    case 3: sprintf(label, param == '1' ? "glissando" : "not supported"); break;
-											    case 4: sprintf(label, param == '1' ? "vibrato control" : "not supported"); break;
-											    case 5: sprintf(label, param == '1' ? "note fine-tune" : "fine-tune value"); break;
-											    case 6: sprintf(label, param == '1' ? "pattern loop" : "start=0 / times"); break;
-											    case 7: sprintf(label, param == '1' ? "tremolo control" : "not supported"); break;
-											    case 8: sprintf(label, param == '1' ? "note pan pos" : "dont use this"); break;
-											    case 9: sprintf(label, param == '1' ? "retrigger note" : "trigger interval"); break;
-											    case 10: sprintf(label, param == '1' ? "fine fade up" : "finefade speed"); break;
-											    case 11: sprintf(label, param == '1' ? "fine fade down" : "finefade speed"); break;
-											    case 12: sprintf(label, param == '1' ? "note cut" : "tick number"); break;
-											    case 13: sprintf(label, param == '1' ? "note delay" : "tick number"); break;
-											    case 14: sprintf(label, param == '1' ? "pattern delay" : "rows"); break;
-												default: sprintf(label,"not supported"); break;
-											  }
-											  break;
-										  }
-								case 'F': sprintf(label,"spd < 20 > bpm"); break;
-								case 'G': sprintf(label,"global volume"); break;
-								case 'H': sprintf(label,"global fade %s", param == '1' ? "up" : "down"); break;
-								case 'L': sprintf(label,"envelope tick"); break;
-								case 'P': sprintf(label,"pan speed %s", isFX1 ? " " : param == '1' ? "R" : "L"); break;
-								case 'R': sprintf(label,"%s", param == '1' ? "volfade speed" : "trig interval"); break;
-								case 'T': sprintf(label,"%s", param == '1' ? "ticks on" : "ticks off"); break;
-								case 'X': {
-											  switch( op1 ){
-											    case 1: sprintf(label,"%s", param == '1' ? "xfine porta up" : "speed"); break;
-											    case 2: sprintf(label,"%s", param == '1' ? "xfine porta down" : "speed"); break;
-												default: sprintf(label,"not supported"); break;
-											  }
-											  break;
-										  }
-							}
-							status = label;
-						}
-						break;
+						patternTools.getEffectDescription(label, fxchar[0] );
+						status = PPString(fxchar);
+						status.append(" = ");
+						status.append(label);
 					}
-		}
+					break;
+				}
+
+		case 3:
+		case 4:   // fx1
+		case 6: 
+		case 7: { // fx2
+					bool isFX1 = cursor.inner == 3 || cursor.inner == 4;
+					bool isFX2 = !isFX1;
+					char param = cursor.inner == 6 || cursor.inner == 4 ? '1' : '2';
+					patternTools.getFirstEffect(eff, op); // important: call before getNextEffect
+					if( isFX2 ) patternTools.getNextEffect(eff, op);				
+					patternTools.convertEffectsToFT2(eff, op);
+					op1 = patternTools.getNibble( op, PatternEditor::NibbleTypeHigh );
+					op2 = patternTools.getNibble( op, PatternEditor::NibbleTypeLow );
+					patternTools.getEffectName( fxchar, eff);
+					if( eff != 0 ){
+						sprintf(label,"%i",op);
+						status = PPString(label);
+
+						switch( fxchar[0] ){
+							case '0': sprintf(label,"semitone offset%c", param); break;
+							case '1': sprintf(label,"porta up speed");   break;
+							case '2': sprintf(label,"porta down speed"); break;
+							case '3': sprintf(label,"porta note speed"); break;
+							case '4': sprintf(label,"vibrato %s",        param == '1' ? "speed" : "depth" ); break;
+							case '5': sprintf(label,"portafade %s", param == '1' ? "up" : "down" ); break;
+							case '6': sprintf(label,"vibrafade %s", param == '1' ? "up" : "down" ); break;
+							case '7': sprintf(label,"tremolo  %s",       param == '1' ? "speed" : "depth" ); break;
+							case '8': sprintf(label,"pan 0=left ff=right");  break;
+							case '9': sprintf(label,"samplestart 0-FF"); break;
+							case 'A': sprintf(label,"fade speed %s",     isFX1 ? " " : param == '1' ? "up" : "down" ); break;
+							case 'B': sprintf(label,"song position");    break;
+							case 'C': sprintf(label,"note volume");      break;
+							case 'D': sprintf(label,"row next pattern"); break;
+							case 'E': {
+										  switch( op1 ){
+											case 1: sprintf(label, param == '1' ? "fine porta up" : "fporta speed"); break;
+											case 2: sprintf(label, param == '1' ? "fine porta down" : "fporta speed"); break;
+											case 3: sprintf(label, param == '1' ? "glissando" : "not supported"); break;
+											case 4: sprintf(label, param == '1' ? "vibrato control" : "not supported"); break;
+											case 5: sprintf(label, param == '1' ? "note fine-tune" : "fine-tune value"); break;
+											case 6: sprintf(label, param == '1' ? "pattern loop" : "pattern loop start=0 / times"); break;
+											case 7: sprintf(label, param == '1' ? "tremolo control" : "not supported"); break;
+											case 8: sprintf(label, param == '1' ? "note pan pos" : "dont use this"); break;
+											case 9: sprintf(label, param == '1' ? "retrigger note" : "retrigger interval"); break;
+											case 10: sprintf(label, param == '1' ? "fine fade up" : "finefade speed"); break;
+											case 11: sprintf(label, param == '1' ? "fine fade down" : "finefade speed"); break;
+											case 12: sprintf(label, param == '1' ? "note cut" : "note cut tick number"); break;
+											case 13: sprintf(label, param == '1' ? "note delay" : "note cut tick number"); break;
+											case 14: sprintf(label, param == '1' ? "pattern delay" : "pattern delay rows"); break;
+											default: sprintf(label,"not supported"); break;
+										  }
+										  break;
+									  }
+							case 'F': sprintf(label,"spd < 20 > bpm"); break;
+							case 'G': sprintf(label,"global volume"); break;
+							case 'H': sprintf(label,"global fade %s", param == '1' ? "up" : "down"); break;
+							case 'L': sprintf(label,"envelope tick"); break;
+							case 'P': sprintf(label,"pan speed %s", isFX1 ? " " : param == '1' ? "R" : "L"); break;
+							case 'R': sprintf(label,"%s", param == '1' ? "retrig volfade speed" : "retrigger interval"); break;
+							case 'T': sprintf(label,"%s", param == '1' ? "tremor ticks on" : "tremor ticks off"); break;
+							case 'X': {
+										  switch( op1 ){
+											case 1: sprintf(label,"%s", param == '1' ? "xfine porta up" : "speed"); break;
+											case 2: sprintf(label,"%s", param == '1' ? "xfine porta down" : "speed"); break;
+											default: sprintf(label,"not supported"); break;
+										  }
+										  break;
+									  }
+						}
+						status.append(" = ");
+						status.append(label);
+					}
+					break;
+				}
 	}
 }

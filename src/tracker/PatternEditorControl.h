@@ -30,12 +30,15 @@
 
 #include "BasicTypes.h"
 #include "Control.h"
+#include "Screen.h"
 #include "Event.h"
 #include "PatternEditor.h"
 #include "ScrollBar.h"
 #include "PatternTools.h"
 #include "EditModes.h"
 #include "TrackerConfig.h"
+
+#define STEP_ROWHEIGHT 4
 
 // Forwards ------------------------------------------------------
 class PPScrollbar;
@@ -236,6 +239,7 @@ public:
 	void paintSteps(PPGraphicsAbstract* graphics);
 	void updateUnderCursor( mp_sint32 incr);
 	void updateStatus();
+	void drawStatus( PPString s, PPColor c, PPGraphicsAbstract* g, PatternEditorTools::Position cursor, PPFont *font, pp_uint32 px);
 	ViewModes getViewMode(){ return viewMode;}
 
 	void attachPatternEditor(PatternEditor* patternEditor);
@@ -325,7 +329,7 @@ public:
 	
 	void advanceRow(bool assureCursor = true, bool repaint = true);
 
-	void viewRotate();
+	void toggleView();
 
 	PatternEditor* getPatternEditor() const { return patternEditor; }
 

@@ -1136,8 +1136,9 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				eventKeyDownBinding_InvokeSectionSamples();
 				break;
 
-			case BUTTON_PATTERN_ROTATE_VIEW:
-				getPatternEditorControl()->viewRotate();
+			case BUTTON_PATTERN_TOGGLE_VIEW:
+				screen->setFocus(getPatternEditorControl());
+				getPatternEditorControl()->toggleView();
 				break;
 
 

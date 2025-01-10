@@ -8,6 +8,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 
 	// ;----------------- colors
 	PPColor lineColor;
+	pp_int32 instr = 0;
 
 	if (hasFocus || !properties.showFocus)
 		lineColor = *cursorColor;
@@ -41,10 +42,12 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	adjustExtents();
 
 	char name[32];
-	char label[32];
-
+	char fx1[32];
+	char fx2[32];
+	char channelInstr[128] = {0};
 	pp_uint32 statusHeight = 0;
 	mp_sint32 i,j;
+	PPString statusLine;
 
 	// ;----------------- selection layout
 	PatternEditorTools::Position selectionStart, selectionEnd;
@@ -99,11 +102,35 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 	PPColor hiLightSecondary = TrackerConfig::colorHighLight_2;	
 	PPColor hiLightPrimaryRow = TrackerConfig::colorRowHighLight_1;
 	PPColor hiLightSecondaryRow = TrackerConfig::colorRowHighLight_2;
+	
+	const PPColor colors[] =    // 16 + pastelcolorpallete non-white non-green
+	{
+		opColor,
+		volColor,
+		effColor,
+		insColor, 
+		PPColor(255, 192, 203), // Pastel Magenta
+		PPColor(255, 105, 180), // Pastel Pink
+		PPColor(245, 222, 179), // Light Beige
+		PPColor(230, 150, 210), // Soft Plum
+		PPColor(230, 190, 255), // Pastel Purple
+		PPColor(245, 130, 130), // Pastel Coral
+		PPColor(240, 210, 210), // Pale Pink
+		PPColor(255, 205, 210), // Light Blush
+		PPColor(255, 230, 230), // Pastel Salmon
+		PPColor(220, 180, 220), // Pastel Lilac
+		PPColor(255, 200, 200), // Light Rose
+		PPColor(250, 220, 230), // Soft Peach
+	};
+	PPColor stepColor;
+
 	//TrackerConfig::colorPatternEditorSelection ); 
 
 	PPColor textColor = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
 
 	pp_int32 numVisibleChannels = patternEditor->getNumChannels();
+
+	stepColor = textColor;
 
 	for (pp_int32 i2 = startIndex;; i2++)
 	{
@@ -127,9 +154,9 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 
 		// draw rows
 		if (!(i % properties.highlightSpacingPrimary))
-			g->setColor(textColor);
+			g->setColor(hiLightPrimaryRow);			
 		else if (!(i % properties.highlightSpacingSecondary))
-			g->setColor(textColor);
+			g->setColor(hiLightSecondaryRow);			
 		else
 			g->setColor(TrackerConfig::colorRowHighLight_1);
 
@@ -139,6 +166,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 			PatternTools::convertToDec(name, myMod(row, pattern->rows), properties.prospective ? 3 : PatternTools::getDecNumDigits(pattern->rows-1));
 
 		g->drawString(name, px+1, py + font->getCharHeight() + 6 );
+
 
 		// draw channels
 		for (j = startPos; j < numVisibleChannels; j++)
@@ -177,7 +205,7 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 					nsbColor.scaleFixed(60000);
 				}
 				
-				PPRect rect(px, py, px+slotSize, py + font->getCharHeight()+1);
+				PPRect rect(px+2, py, px+slotSize-2, py + font->getCharHeight()+3);
 				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
 				
 			}
@@ -210,22 +238,18 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 				strcat(name, "M");
 
 			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
-
-			if( j == 0 && i == 0 ){
-				py = py + font->getCharHeight() + 6;
-				g->setFont(PPFont::getFont(PPFont::FONT_TINY));
-				g->setColor(opColor);
-				g->drawString( status, px+1, py );
-				g->setFont(font);
-			}
 		}
+
+		g->setFont(PPFont::getFont(PPFont::FONT_TINY));
+		drawStatus( statusLine, opColor, g, cursor, font, px + 2);
+		g->setFont(font);
 
 		py += font->getCharHeight() + 4;
 
 		for (j = startPos; j < numVisibleChannels; j++)
 		{
-			pp_int32 px = (j-startPos) * slotSize + startx;
 
+			pp_int32 px = (j-startPos) * slotSize + startx;
 
 
 			// columns are already in invisible area => abort
@@ -319,31 +343,33 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 			bool enabled = patternTools->getNote() != 0;
 			pp_int32 eff = 0;
 			pp_int32 op  = 0;
+			bool hasFX   = false;
 			patternTools->getFirstEffect(eff, op); // important: call before getNextEffect
-			if( eff != 0 && op != 0 ) enabled = true;
+			if( eff != 0 ) hasFX = true;
 			patternTools->getNextEffect(eff, op);				
-			if( eff != 0 && op != 0 ) enabled = true;
+			if( eff != 0 ) hasFX = true;
 
+			instr        = patternTools->getInstrument();
 			bool isCursor = cursor.row == i && cursor.channel == j;
-			bool isInstr = cursor.inner < 3;
-			bool isFX1   = cursor.inner == 3 || cursor.inner == 4;
-			bool isFX2   = cursor.inner > 4;
-			bool showValues = false;
+			bool showValues = false; // future
+
+			// update step colors if instrument changes
+			if( instr != 0 ){
+				channelInstr[ j ] = instr;
+			}
+			if( isNoteOff ) channelInstr[ j ] = 0;
+			stepColor = colors[ channelInstr[ j ] ];
 
 			g->setColor( TrackerConfig::colorRowHighLight_1 );
 			if( currentLine ){
 				g->setColor( textColor );
 			}
-			if( (enabled && !isNoteOff) && !muteChannels[j] ){ 
-				if( isInstr ) g->setColor( insColor );
-				if( isFX1 || isFX2  ) g->setColor( opColor );
+			if( (enabled || hasFX ) && !isNoteOff && !muteChannels[j]){
+				g->setColor( stepColor );
 			}
-			if( isCursor ){
-				g->setColor( noteColor );
-			}
-
 		
-			if( !muteChannels[j] && !isNoteOff){
+			if( !muteChannels[j] && enabled ){
+				if( isNoteOff ) g->setColor( TrackerConfig::colorRowHighLight_1 );
 				g->fill(PPRect(px+3, py +3, px + slotSize -3, py + rowHeight -3 ));
 				if( currentLine ) g->setColor(noteColor);
 			}else{
@@ -359,71 +385,85 @@ void PatternEditorControl::paintSteps(PPGraphicsAbstract* g)
 
 			// draw instr
 			px += properties.spacing;
-			g->setColor(insColor);
-			pp_uint32 i = patternTools->getInstrument();
 				
-			g->setFont(PPFont::getFont(PPFont::FONT_TINY));
-			g->setColor(bgColor);
+			g->setColor( enabled ? bgColor : stepColor );
 			sprintf(name," ");
-			sprintf(label," ");
+			sprintf(fx1," ");
+			sprintf(fx2," ");
 
-			if (i && isInstr && enabled && !isNoteOff){
-				patternTools->convertToHex(name, i, 2);
-				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-3);
-
+			if (instr && !isNoteOff && instr > 0) sprintf(name,"%i",instr);
+			if( name[0] != ' ' && cursor.inner == 1 || cursor.inner == 2 ){
+				g->drawString(name,px+5, py + rowHeight-font->getCharHeight()-5);
 			}
-			if( isFX1 && enabled){
 
-				if (pattern->effnum >= 2)
-				{
-					patternTools->getFirstEffect(eff, op);
-					patternTools->convertEffectsToFT2(eff, op);
-					pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
-					pp_int32 sliderWidth = (pp_int32)( float(volume) * float(slotSize/80.0f) );
-					if( volume != 0 ){
-						patternTools->getVolumeName(name, volume);
-						sprintf(label,"vol");
-						g->setColor(lineColor);
-						g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
-						g->setColor(insColor);
-						g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
-						g->setColor(bgColor);
-					}
+			// draw FX
+			g->setFont(PPFont::getFont(PPFont::FONT_TINY));
+
+			sprintf(name,"  ");
+			if (pattern->effnum >= 2)
+			{
+				patternTools->getFirstEffect(eff, op);
+				patternTools->convertEffectsToFT2(eff, op);
+				pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
+				pp_int32 sliderWidth = (pp_int32)( float(volume) * float(slotSize/80.0f) );
+				if( eff != 0  ){
+					patternTools->getEffectName(name, eff);
+					patternTools->getEffectDescription( name, name[0]);
 				}
+				if( volume != 0 ){
+					/* // *FUTURE* show sliders
+					 * if( showValues ){
+					 * g->setColor(lineColor);
+					 * g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
+					 * g->setColor(insColor);
+					 * g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
+					 * g->setColor(bgColor);
+					 */
+				}
+				sprintf(fx1,"%.6s",name);
 			}
 
-			if( isFX2 && pattern->effnum >= 1){
-				if( showValues ) sprintf(name,"  ");
-				sprintf(label,"  ");
+			sprintf(name,"  ");
+			if( pattern->effnum >= 1){
 				patternTools->getFirstEffect(eff, op); // important: call before getNextEffect
 				patternTools->getNextEffect(eff, op);				
 				patternTools->convertEffectsToFT2(eff, op);
-				if( eff != 0 && op != 0 ){
-					patternTools->getEffectName(label, eff);
-					patternTools->getEffectDescription( label, label[0]);
-					pp_int32 sliderWidth = (pp_int32)( float(op) * float(slotSize/80.0f) );
-					g->setColor(lineColor);
-					g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
-					g->setColor(insColor);
-					g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
-					g->setColor(bgColor);
+				if( eff != 0  ){
+					patternTools->getEffectName(name, eff);
+					patternTools->getEffectDescription( name, name[0]);
+					
+					/* // *FUTURE* show sliders
+					 * if( showValues ){
+					 *   pp_int32 sliderWidth = (pp_int32)( float(op) * float(slotSize/80.0f) );
+					 *   g->setColor(lineColor);
+					 *   g->fill(PPRect(px+3, py + 5, px + slotSize -3, py + 9 ));
+					 *   g->setColor(insColor);
+					 *   g->fill(PPRect(px+4, py + 6, px + sliderWidth -4, py + 8 ));
+					 *   g->setColor(bgColor);
+					 * }
+					*/
 				}
-
+				sprintf(fx2,"%.6s",name);
 			}
 
-			if( name[0] != ' ' && ( isInstr || (isFX1 || isFX2) && showValues ) ){
-				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-3);
+			g->setColor( enabled ? bgColor : stepColor );
+			if( cursor.inner == 3 || cursor.inner == 4 ){
+				g->drawString(fx1,px+4, py+ font->getCharHeight()-1);
 			}
-			g->setColor( lineColor );
-			g->drawString(label,px+4, py + rowHeight-font->getCharHeight()-10);
+			if( cursor.inner >= 5 || eff == 13 ){ // show breaks too
+				g->drawString(fx2,px+4, py+ font->getCharHeight()-1);
+			}
 
-			if( isNoteOff && isInstr ){
-				g->setColor( lineColor );
-				sprintf(name,"off");
-				g->drawString(name,px+4, py + rowHeight-font->getCharHeight()-4);
+			if( isNoteOff ){
 				g->setFont(font);
-				g->setColor( TrackerConfig::colorSampleEditorWaveform );
+				g->setColor( stepColor );
 				g->drawHLine(px+3, px + slotSize - 3,py+3);
+			}
+
+			if( cursor.inner == 0 && enabled ){
+				patternTools->getNoteName(name, patternTools->getNote());
+				g->setColor(bgColor);
+				g->drawString(name,px+4, py+ font->getCharHeight()-1);
 			}
 
 			g->setFont(font);
