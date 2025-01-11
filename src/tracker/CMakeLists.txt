@@ -59,6 +59,7 @@ add_executable(tracker
     PatternEditorControlTransposeHandler.cpp
     PatternEditorTools.cpp
     PatternTools.cpp
+	PolyScript.cpp
     PeakLevelControl.cpp
     Piano.cpp
     PianoControl.cpp
@@ -152,6 +153,7 @@ add_executable(tracker
     PatternEditorControl.h
     PatternEditorTools.h
     PatternTools.h
+	PolyScript.h
     PeakLevelControl.h
     Piano.h
     PianoControl.h
