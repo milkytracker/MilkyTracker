@@ -1738,6 +1738,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 					case PatternEditorControl::AdvanceCodeColumn:
 						backtraceInstrument(0,false);
+						getPatternEditorControl()->updateStatus();
 						break;
 				}
 				break;
@@ -2152,6 +2153,7 @@ void Tracker::updateSongRow(bool checkFollowSong/* = true*/)
 {
 	if (checkFollowSong && !shouldFollowSong())
 		return;
+	else getPatternEditorControl()->updateStatus();
 		
 	mp_sint32 row = getPatternEditorControl()->getCurrentRow();
 	mp_sint32 pos = listBoxOrderList->getSelectedIndex();

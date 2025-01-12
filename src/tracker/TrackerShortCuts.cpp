@@ -241,6 +241,11 @@ processBindings:
 						case VK_PRIOR:
 							listBoxInstruments->dispatchEvent(event);
 							event->cancel();
+							
+							bool editing = screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl());
+							if (editing && editMode == EditModeMilkyTracker ){
+								patternEditorControl->updateUnderCursor( 0, keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1);
+							}
 							break;
 					}
 				}
