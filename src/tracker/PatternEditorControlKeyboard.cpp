@@ -1654,8 +1654,8 @@ void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
 	pp_int32 row_current   = cursorCopy.row;
-	pp_int32 row           = row_current+1;
-	
+	pp_uint8 times         = 0;
+
 	if( !hasValidSelection() ){ 
 		patternEditor->setSelectionStart( cursorCopy );
 		patternEditor->setSelectionEnd( cursorCopy );
@@ -1663,13 +1663,16 @@ void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 
 	pp_int32 row_selection = patternEditor->getSelection().start.row; 
 
+	for( pp_uint8 i = row_selection; i < patternEditor->getNumRows(); i += getRowInsertAdd() ){
+		times++;
+	}
+
 	cursorCopy.row = row_selection;
 	patternEditor->setCursor(cursorCopy);
 	eventKeyCharBinding_Copy();
 
-	while( row > row_current  ){
+	for( pp_uint8 i = 0; i < times; i++ ){ // repeat till end of pattern
 		PatternEditorControl::eventKeyCharBinding_PasteStep();
-		row = patternEditor->getCursor().row;
 	}
 	cursorCopy = patternEditor->getCursor();
 	cursorCopy.row = row_current;
