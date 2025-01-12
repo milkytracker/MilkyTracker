@@ -129,6 +129,7 @@ public:
 	pp_uint32 getCharHeight() const { return charHeight; }
 
 	static PPFont* getFont(pp_uint32 fontId);
+	pp_uint32 getFontId(){ return fontId; }
 
 	bool getPixelBit(pp_uint8 chr, pp_uint32 x, pp_uint32 y) const { return bitstream->read(chr*charDim+y*charWidth+x); }
 

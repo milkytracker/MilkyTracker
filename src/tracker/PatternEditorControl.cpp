@@ -334,6 +334,9 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	selectionEnd = patternEditor->getSelection().end;
 
 	PPString statusLine;
+	PPFont  *statusFont = font->getFontId() == PPFont::FONT_LARGE || font->getFontId() == PPFont::FONT_HUGE 
+						? PPFont::getFont(PPFont::FONT_SYSTEM) 
+						: PPFont::getFont(PPFont::FONT_TINY);
 
 	PatternEditorTools::flattenSelection(selectionStart, selectionEnd);	
 
@@ -413,6 +416,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		for (j = startPos; j < numVisibleChannels; j++)
 		{
 
+			g->setFont(font);
 			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
 			
 			// columns are already in invisible area => abort
@@ -482,9 +486,9 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 
 			if( cursor.channel == j && i == startIndex ){
 				py = py + font->getCharHeight() + 6;
-				g->setFont(PPFont::getFont(PPFont::FONT_TINY));
+
+				g->setFont( statusFont );
 				drawStatus( statusLine, opColor, g, cursor, font, -(font->getCharWidth()*2) +  px - 2  );
-				g->setFont(font);
 			}
 		}
 
@@ -826,7 +830,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		}
 	}
 		
-	pp_int32 py = location.y + 3*SCROLLBARWIDTH + 3;
+	pp_int32 py = location.y + 3*SCROLLBARWIDTH + statusFont->getCharHeight();
 	
 	for (j = startPos; j < numVisibleChannels; j++)
 	{
