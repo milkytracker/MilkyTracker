@@ -1650,28 +1650,26 @@ void PatternEditorControl::eventKeyCharBinding_PasteStep()
 
 void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 {
-	mp_sint32 stepsize     = -1;
-	mp_sint32 lastRow      = -1;
+	pp_int32  inner        = 0;
 	// remember cursor position
 	cursorCopy = patternEditor->getCursor();
 	pp_int32 row_current   = cursorCopy.row;
-	// assume current row
+	pp_int32 row           = row_current+1;
+	
 	if( !hasValidSelection() ){ 
 		patternEditor->setSelectionStart( cursorCopy );
 		patternEditor->setSelectionEnd( cursorCopy );
 	} 
+
 	pp_int32 row_selection = patternEditor->getSelection().start.row; 
 
 	cursorCopy.row = row_selection;
 	patternEditor->setCursor(cursorCopy);
 	eventKeyCharBinding_Copy();
 
-	while( true ){ 
+	while( row > row_current  ){
 		PatternEditorControl::eventKeyCharBinding_PasteStep();
-		int row = patternEditor->getCursor().row;
-		if( stepsize == -1 ) stepsize = row - row_selection;
-		if( row <= row_selection+stepsize-1 || row == lastRow){ break; }
-		lastRow = row;
+		row = patternEditor->getCursor().row;
 	}
 	cursorCopy = patternEditor->getCursor();
 	cursorCopy.row = row_current;
@@ -1843,3 +1841,4 @@ void PatternEditorControl::updateStatus()
 				}
 	}
 }
+
