@@ -480,7 +480,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 
 			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
 
-			if( cursor.channel == j && i == 0 ){
+			if( cursor.channel == j && i == startIndex ){
 				py = py + font->getCharHeight() + 6;
 				g->setFont(PPFont::getFont(PPFont::FONT_TINY));
 				drawStatus( statusLine, opColor, g, cursor, font, -(font->getCharWidth()*2) +  px - 2  );
