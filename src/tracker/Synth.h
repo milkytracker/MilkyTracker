@@ -74,6 +74,7 @@ class Synth
 
   private:
 	int samplerate;
+	int random_index;
 	bool additive;
     MSynth *synth;
     MSynth synths[SYNTH_LAST+1];
