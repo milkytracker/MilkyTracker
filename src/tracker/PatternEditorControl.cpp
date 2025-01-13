@@ -707,9 +707,6 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			patternTools->setPosition(pattern, j, row);
 
 			PPColor noteCol = noteColor;
-			if( patternTools->getNote() == 0){
-				noteCol.scaleFixed( properties.muteFade );
-			}
 
 			// Show notes in red if outside PT 3 octaves
 			if(properties.ptNoteLimit
@@ -733,7 +730,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			pp_uint32 i = patternTools->getInstrument();
 
 			PPColor insCol = insColor;
-			if (muteChannels[j] || i == 0)
+			if (muteChannels[j] )
 			{
 				insCol.scaleFixed(properties.muteFade);
 			}
@@ -773,7 +770,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 				pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
 			
 				patternTools->getVolumeName(name, volume);
-			}else volCol.scaleFixed(properties.muteFade);
+			}
 			g->setColor(volCol);
 
 			g->drawString(name,px, py);
@@ -801,7 +798,6 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			{
 				name[0] = properties.zeroEffectCharacter;
 				name[1] = 0;
-				effCol.scaleFixed(properties.muteFade);
 			}
 			else
 			{
@@ -824,7 +820,6 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			{
 				name[0] = name[1] = properties.zeroEffectCharacter;
 				name[2] = 0;
-				opCol.scaleFixed(properties.muteFade);
 			}
 			else
 			{
