@@ -599,7 +599,7 @@ static BOOL drawFocusRing;
 {
 	pp_uint16 chr[] = { [MTKeyTranslator toVK:theEvent.keyCode],
 						[MTKeyTranslator toSC:theEvent.keyCode],
-						theEvent.characters.length > 0 ? [theEvent.characters characterAtIndex:0] : 0 };
+						static_cast<pp_uint16>(theEvent.characters.length > 0 ? [theEvent.characters characterAtIndex:0] : 0) };
 #if DEBUG
 	NSLog(@"Key released: Keycode=%d, VK=%d, SC=%d, Char=%c", theEvent.keyCode, chr[0], chr[1], chr[2]);
 #endif
