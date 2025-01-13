@@ -157,7 +157,13 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     editMenuControl->addEntry("Cut", MenuCommandIDCut);
     editMenuControl->addEntry("Copy", MenuCommandIDCopy);
     editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-    editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+
+    editMenuPasteControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+	editMenuPasteControl->setSubMenu(true);
+    editMenuPasteControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+    editMenuPasteControl->addEntry("Paste StepFill [ctrl+r]", MenuCommandIDPasteStepFill);
+    editMenuControl->addEntry("Paste Special > ", 0xFFF, editMenuPasteControl );
+
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
 
@@ -206,6 +212,7 @@ PatternEditorControl::~PatternEditorControl()
 	delete hBottomScrollbar;
 
 	delete editMenuControl;
+	delete editMenuPasteControl;
 	
 	delete eventKeyDownBindingsMilkyTracker;
 	delete scanCodeBindingsMilkyTracker;
@@ -1497,6 +1504,11 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		// transparent paste
 		case MenuCommandIDPorousPaste:
 			eventKeyCharBinding_TransparentPaste();
+			break;
+
+		// stepfill paste
+		case MenuCommandIDPasteStepFill:
+			eventKeyCharBinding_PasteStepFill(); // Operates on block
 			break;
 
 		// mark all

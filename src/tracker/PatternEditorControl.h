@@ -189,6 +189,7 @@ private:
 	PPContextMenu* keyboardMenuControl;
 	PPContextMenu* helpMenuControl;
 	PPContextMenu* channelMenuControl;
+	PPContextMenu* editMenuPasteControl;
 
 	// Keyboard shortcuts
 	PPKeyBindings<TPatternEditorKeyBindingHandler>* eventKeyDownBindings;
@@ -392,6 +393,7 @@ private:
 		MenuCommandIDUnmuteAll,
 		MenuCommandIDSelectChannel,
 		MenuCommandIDPorousPaste,
+		MenuCommandIDPasteStepFill,
 		MenuCommandIDSwapChannels,
 		MenuCommandIDChannelAdd,
 		MenuCommandIDChannelDelete,
