@@ -1749,7 +1749,7 @@ void PatternEditorControl::drawStatus(
 		s.append(status);
 	}
 	if( cursor.inner == 0  ) s.append(" // use space to record");
-	if( cursor.inner == 1  || cursor.inner == 2) s.append(" // use 0123456789");
+	if( cursor.inner == 1  || cursor.inner == 2) s.append(" // use 0123456789 A-F");
 	if( cursor.inner == 3 ) s.append(" // use 01234+-lrpdmsuv");
 	if( cursor.inner == 4 ) s.append(" // use 0123456789");
 	if( cursor.inner == 5 ) s.append(" // use 1-9 A-F");
