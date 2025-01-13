@@ -126,9 +126,10 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
     keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-    editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
-    editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
-    editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
+    editMenuControl->addEntry("Song          >", 0xFFFF, moduleMenuControl);
+    editMenuControl->addEntry("Pattern       >", 0xFFFF, patternMenuControl);
+    editMenuControl->addEntry("Keyboard      >", 0xFFFF, keyboardMenuControl);
+	                           
 
     channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     channelMenuControl->setSubMenu(true);
@@ -142,18 +143,18 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
     channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
-    editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
+    editMenuControl->addEntry("Channel       >", 0xFFFF, channelMenuControl);
 
 	helpMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     helpMenuControl->setSubMenu(true);
     helpMenuControl->addEntry("Help", MAINMENU_HELP );
     helpMenuControl->addEntry("About", MAINMENU_ABOUT );
-    editMenuControl->addEntry("Help        >", 0xFFFF, helpMenuControl);
+    editMenuControl->addEntry("Help          >", 0xFFFF, helpMenuControl);
     
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Undo", MenuCommandIDUndo);
     editMenuControl->addEntry("Redo", MenuCommandIDRedo);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Cut", MenuCommandIDCut);
     editMenuControl->addEntry("Copy", MenuCommandIDCopy);
     editMenuControl->addEntry("Paste", MenuCommandIDPaste);
@@ -162,16 +163,16 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	editMenuPasteControl->setSubMenu(true);
     editMenuPasteControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
     editMenuPasteControl->addEntry("Paste StepFill [ctrl+r]", MenuCommandIDPasteStepFill);
-    editMenuControl->addEntry("Paste Special > ", 0xFFF, editMenuPasteControl );
+    editMenuControl->addEntry("Paste special >", 0xFFF, editMenuPasteControl );
 
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
 
   }else{
     editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
     editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
     editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
     editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
@@ -195,6 +196,13 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 #else
 	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
 #endif
+
+	editMenuControl->setFont(font);
+	moduleMenuControl->setFont(font);
+	patternMenuControl->setFont(font);
+	keyboardMenuControl->setFont(font);
+	channelMenuControl->setFont(font);
+	helpMenuControl->setFont(font);
 		
 	setRecordMode(false);
 	
@@ -228,15 +236,6 @@ void PatternEditorControl::setFont(PPFont* font)
 	this->font = font;
 	
 	adjustExtents();
-
-	if( !parentScreen->getClassic() ){
-		editMenuControl->setFont(font);
-		moduleMenuControl->setFont(font);
-		patternMenuControl->setFont(font);
-		keyboardMenuControl->setFont(font);
-		channelMenuControl->setFont(font);
-		helpMenuControl->setFont(font);
-	}
 
 	assureCursorVisible();
 }
