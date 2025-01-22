@@ -126,7 +126,6 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;		
 		
 		modalControl->dispatchEvent(event);
-		return;
 	}
 
 	// ------- handle context menu -----------------------------------
@@ -225,7 +224,14 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;
 	}
 
-	rootContainer->dispatchEvent(event);
+	// only bubble events without [clicked] modal
+	bool mouseEvent = event->getID() == eMouseMoved || event->getID() == eLMouseDrag || event->getID() == eLMouseDown || event->getID() == eRMouseDown;
+	bool bubble     = true;
+	if( mouseEvent && modalControl && modalControl->isVisible() ){
+		PPPoint* p = (PPPoint*)event->getDataPtr();
+		if (modalControl->hit(*p)) bubble = false;
+	}
+	if (bubble) rootContainer->dispatchEvent(event);
 }
 
 void PPScreen::pauseUpdate(bool pause)
