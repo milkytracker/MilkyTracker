@@ -29,6 +29,7 @@
 #include "Screen.h"
 #include "Event.h"
 #include "XModule.h"
+#include "Tracker.h"
 
 #define SYN_PREFIX_V1 "M1"                           // samplename 'M<version><params>' hints XM editors that sample was created with milkysynth <version> using <params> 
 #define SYN_PREFIX_CHARS 2                           // "M*"
@@ -40,11 +41,11 @@
 #define NOTE_START 60                                // C3
                                                     
 // synth ID's
-#define SYNTH_FM    0                  //
-#define SYNTH_CYCLE 1                  // incremental numbers
-#define SYNTH_LAST        SYNTH_CYCLE  // update this when adding a synth
-											 //
-#define SYNTH_PRESETS 38
+#define SYNTH_FM      0                  //
+#define SYNTH_CYCLE   1                  // incremental numbers
+#define SYNTH_PL      2                  //
+#define SYNTH_LAST  SYNTH_PL             // update this when adding a synth
+#define SYNTH_PRESETS 43
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -83,13 +84,16 @@ class Synth
     SampleEditor *sampleEditor;
     PPScreen *screen;
     DialogResponder *dr;
+    Tracker *tracker;
 
 	// ASCIISYNTH PRESETS: https://github.com/coderofsalvation/ASCIISYNTH
 	PPString preset[SYNTH_PRESETS] = {      // NOTE: update PRESETS_TOTAL when adding synths
 		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                                 
 		"M1)Sn)(/()((((((((((((((((((((((", // CYCLE
+		"M1*l(?(0+(((((*~S)IM((.d)((((((("  // PL
 		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM
 		"M1)Sn,(0()((((((((((((((((((((((", // CYCLE
+		"M1*l(/646((M*(*~S(=~((-x+((((((("  // PL
 		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM
 		"M1)Sn,,C<)((((((((((((((((((((((", // CYCLE
 	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
@@ -97,7 +101,9 @@ class Synth
 		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
 		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
         "M1(~)(+9+()~5)~,BB(o=xFo)(((((((",   // FM flute
+		"M1*S(k(2-(((((*SS)DO((0H*(((((((",  // PL junglepad
 		"M1(V)(*)())1,-(.\\\\.5~@b(((((((((", // FM 
+		"M1*S2c(2-(((((*SS)5F((*H+((((((("  // PL piano
 		"M1(V)(+)(()1,-})n/0(@b7(((((((((", // FM
 		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((", // FM
 		"M1(L)(>((F+p@+W-()/n/Z\(*(((((((", // FM
@@ -132,7 +138,8 @@ class Synth
   public:
     Synth(int samplerate);
     ~Synth();
-    DialogSliders * dialog( SampleEditor *s, PPScreen *screen, DialogResponder *dr);
+    DialogSliders * dialog();
+	void update();
 
     void setParam( int i, float v);
     MSynthParam& getParam( int i ){ return synth->param[i]; }
@@ -144,6 +151,7 @@ class Synth
 
     void reset();
     void init();
+    void attach( SampleEditor *s, PPScreen *screen, DialogResponder *dr, Tracker *tracker);
 	void random();
     void process( MSynth *s, PPString *preset );
 	TXMSample * prepareSample(pp_uint32 duration);
@@ -152,6 +160,7 @@ class Synth
     // synths
     void Cycle( bool init = false );
     void FM( bool init = false );
+    void PL( bool init = false );
 
 };
 

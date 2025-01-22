@@ -100,19 +100,6 @@ void PPScreen::raiseEvent(PPEvent* event)
 	if (event->getID() == eInvalid)
 		return;
 
-	// route timer event
-	if (event->getID() == eTimer)
-	{
-		for (pp_int32 i = 0; i < timerEventControls->size(); i++)
-		{
-			PPControl* control = timerEventControls->get(i);
-			if (!control->isVisible() || !control->receiveTimerEvent())
-				continue;
-			
-			control->dispatchEvent(event);
-		}
-		return;
-	}
 
 	if (modalControl && modalControl->isVisible())
 	{
@@ -126,6 +113,29 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;		
 		
 		modalControl->dispatchEvent(event);
+		// only bubble events without [clicked] modal
+		bool mouseEvent = event->getID() == eMouseMoved || event->getID() == eLMouseDrag || event->getID() == eLMouseDown || event->getID() == eRMouseDown;
+		bool bubble     = true;
+		if( mouseEvent && modalControl && modalControl->isVisible() ){
+			PPPoint* p = (PPPoint*)event->getDataPtr();
+			if (modalControl->hit(*p)) bubble = false;
+		}
+		if (bubble) rootContainer->dispatchEvent(event);
+		return;
+	}
+
+	// route timer event
+	if (event->getID() == eTimer)
+	{
+		for (pp_int32 i = 0; i < timerEventControls->size(); i++)
+		{
+			PPControl* control = timerEventControls->get(i);
+			if (!control->isVisible() || !control->receiveTimerEvent())
+				continue;
+			
+			control->dispatchEvent(event);
+		}
+		return;
 	}
 
 	// ------- handle context menu -----------------------------------
@@ -224,14 +234,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;
 	}
 
-	// only bubble events without [clicked] modal
-	bool mouseEvent = event->getID() == eMouseMoved || event->getID() == eLMouseDrag || event->getID() == eLMouseDown || event->getID() == eRMouseDown;
-	bool bubble     = true;
-	if( mouseEvent && modalControl && modalControl->isVisible() ){
-		PPPoint* p = (PPPoint*)event->getDataPtr();
-		if (modalControl->hit(*p)) bubble = false;
-	}
-	if (bubble) rootContainer->dispatchEvent(event);
+	rootContainer->dispatchEvent(event);
 }
 
 void PPScreen::pauseUpdate(bool pause)

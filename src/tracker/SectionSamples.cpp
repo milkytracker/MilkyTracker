@@ -188,10 +188,13 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 
 			case BUTTON_SAMPLE_SYNTH_RAND:
 			{
-				sampleEditor->getSynth()->setSampleEditor(sampleEditor);
+				sampleEditor->getSynth()->attach(sampleEditor, (PPScreen *)&(tracker.screen), (DialogResponder *)this, (Tracker *)&tracker);
 				sampleEditor->getSynth()->random();
-        tracker.updateSamplesListBox(false);
-        refresh();
+				tracker.updateSamplesListBox(false);
+				PatternEditor *pe = tracker.getPatternEditor();
+				pe->getCursor().inner = 0; // force note-column to hear notes playing on keyboard
+				tracker.screen->setFocus(sampleEditorControl);  // dont clutter live notes to pattern 
+				refresh();
 				break;
 			}
 

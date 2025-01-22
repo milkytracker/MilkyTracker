@@ -294,9 +294,11 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
     {
       // triggered when user presses 'synth'-button
       getSampleEditor()->getSynth()->ASCIISynthImport( PPString( getSampleEditor()->getSample()->name) );
-      dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
       PatternEditor *pe = this->tracker->getPatternEditor();
       pe->getCursor().inner = 0; // force note-column to hear notes playing on keyboard
+      getSampleEditor()->getSynth()->attach( getSampleEditor(), parentScreen, toolHandlerResponder, tracker );
+      dialog = getSampleEditor()->getSynth()->dialog();
+	  tracker->screen->setFocus(this); // dont clutter live notes to pattern 
       break;
     }
 
@@ -557,7 +559,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
       break;
     }
 
-    case ToolHandlerResponder::SampleToolTypeSynth:
+    case ToolHandlerResponder::SampleToolTypeSynth:;
     {
       this->tracker->updateSamplesListBox();
       break;
