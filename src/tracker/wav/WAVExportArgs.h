@@ -3,19 +3,19 @@
 #include <ModuleServices.h>
 #include <TrackerSettingsDatabase.h>
 
-class WAVExportParams {
+class WAVExportArgs {
 public:
-    class Parameters : public ModuleServices::WAVWriterParameters {
+    class Arguments : public ModuleServices::WAVWriterParameters {
     public:
-        Parameters();
-        ~Parameters();
+        Arguments();
+        ~Arguments();
 
         const char* inputFile;
         const char* outputFile;
         bool verbose;  // Flag for verbose output
     };
 
-    static Parameters parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
+    static Arguments parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
     static void printUsage(const char* programName);
 
 private:

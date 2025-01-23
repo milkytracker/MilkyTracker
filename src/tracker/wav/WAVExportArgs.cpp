@@ -1,9 +1,9 @@
-#include "WAVExportParams.h"
+#include "WAVExportArgs.h"
 #include <cstring>
 #include <cstdio>
 #include <stdexcept>
 
-WAVExportParams::Parameters::Parameters() {
+WAVExportArgs::Arguments::Arguments() {
     // Initialize all fields to safe defaults
     inputFile = nullptr;
     outputFile = nullptr;
@@ -22,11 +22,11 @@ WAVExportParams::Parameters::Parameters() {
     verbose = false;
 }
 
-WAVExportParams::Parameters::~Parameters() {
+WAVExportArgs::Arguments::~Arguments() {
     delete[] muting;
 }
 
-bool WAVExportParams::isParameterThatTakesValue(const char* arg) {
+bool WAVExportArgs::isParameterThatTakesValue(const char* arg) {
     static const char* parametersWithValues[] = {
         "--output",
         "--sample-rate",
@@ -43,7 +43,7 @@ bool WAVExportParams::isParameterThatTakesValue(const char* arg) {
     return false;
 }
 
-bool WAVExportParams::isValueForParameter(const char* arg, int argIndex, int argc, char* argv[]) {
+bool WAVExportArgs::isValueForParameter(const char* arg, int argIndex, int argc, char* argv[]) {
     // Check if the previous argument is a parameter that takes a value
     if (argIndex > 0 && argIndex < argc) {
         const char* prevArg = argv[argIndex - 1];
@@ -54,8 +54,8 @@ bool WAVExportParams::isValueForParameter(const char* arg, int argIndex, int arg
     return false;
 }
 
-WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
-    Parameters params;
+WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
+    Arguments params;
 
     if (argc < 3) {
         printUsage(argv[0]);
@@ -115,7 +115,7 @@ WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char
     return params;
 }
 
-void WAVExportParams::printUsage(const char* programName) {
+void WAVExportArgs::printUsage(const char* programName) {
     fprintf(stderr, "Usage: %s [options] <input.xm>\n", programName);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "  --output <file>       Output file name (required)\n");
@@ -130,7 +130,7 @@ void WAVExportParams::printUsage(const char* programName) {
     fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
 }
 
-int WAVExportParams::getIntOption(int argc, char* argv[], const char* option, int defaultValue) {
+int WAVExportArgs::getIntOption(int argc, char* argv[], const char* option, int defaultValue) {
     for (int i = 1; i < argc - 1; i++) {
         if (strcmp(argv[i], option) == 0 && i + 1 < argc) {
             return atoi(argv[i + 1]);
@@ -139,7 +139,7 @@ int WAVExportParams::getIntOption(int argc, char* argv[], const char* option, in
     return defaultValue;
 }
 
-bool WAVExportParams::hasOption(int argc, char* argv[], const char* option) {
+bool WAVExportArgs::hasOption(int argc, char* argv[], const char* option) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], option) == 0) {
             return true;
@@ -148,7 +148,7 @@ bool WAVExportParams::hasOption(int argc, char* argv[], const char* option) {
     return false;
 }
 
-const char* WAVExportParams::getStringOption(int argc, char* argv[], const char* option, const char* defaultValue) {
+const char* WAVExportArgs::getStringOption(int argc, char* argv[], const char* option, const char* defaultValue) {
     for (int i = 1; i < argc - 1; i++) {
         if (strcmp(argv[i], option) == 0 && i + 1 < argc) {
             return argv[i + 1];

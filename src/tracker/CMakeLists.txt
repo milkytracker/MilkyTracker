@@ -24,7 +24,7 @@ add_library(trackerlib STATIC
     ModuleServices.cpp
     SongLengthEstimator.cpp
     TrackerSettingsDatabase.cpp
-    wav/WAVExportParams.cpp
+    wav/WAVExportArgs.cpp
     wav/WAVUtils.cpp
 )
 
