@@ -1,9 +1,14 @@
 #include "WAVExportParams.h"
 #include <cstring>
 #include <cstdio>
+#include <stdexcept>
 
 WAVExportParams::Parameters::Parameters() {
     // Initialize all fields to safe defaults
+    inputFile = nullptr;
+    outputFile = nullptr;
+    
+    // WAVWriterParameters
     sampleRate = 44100;
     mixerVolume = 256;
     mixerShift = 1;
@@ -21,8 +26,41 @@ WAVExportParams::Parameters::~Parameters() {
     delete[] muting;
 }
 
+bool WAVExportParams::isParameterThatTakesValue(const char* arg) {
+    static const char* parametersWithValues[] = {
+        "--output",
+        "--sample-rate",
+        "--volume",
+        "--shift",
+        "--resampler"
+    };
+    
+    for (const char* param : parametersWithValues) {
+        if (strcmp(arg, param) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WAVExportParams::isValueForParameter(const char* arg, int argIndex, int argc, char* argv[]) {
+    // Check if the previous argument is a parameter that takes a value
+    if (argIndex > 0 && argIndex < argc) {
+        const char* prevArg = argv[argIndex - 1];
+        if (prevArg[0] == '-' && prevArg[1] == '-' && isParameterThatTakesValue(prevArg)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
     Parameters params;
+
+    if (argc < 3) {
+        printUsage(argv[0]);
+        throw std::runtime_error("Not enough arguments");
+    }
 
     // Set defaults from settings database
     params.sampleRate = settingsDB.hasKey("HDRECORDER_MIXFREQ") ? 
@@ -40,6 +78,28 @@ WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char
     params.mixerShift = getIntOption(argc, argv, "--shift", params.mixerShift);
     params.resamplerType = getIntOption(argc, argv, "--resampler", params.resamplerType);
     params.verbose = hasOption(argc, argv, "--verbose");
+    params.multiTrack = hasOption(argc, argv, "--multi-track");
+    
+    // Get output file (required)
+    params.outputFile = getStringOption(argc, argv, "--output", nullptr);
+    if (!params.outputFile) {
+        printUsage(argv[0]);
+        throw std::runtime_error("Output file (--output) is required");
+    }
+
+    // Validate that the last argument is actually an input file
+    const char* lastArg = argv[argc - 1];
+    if (isValueForParameter(lastArg, argc - 1, argc, argv)) {
+        printUsage(argv[0]);
+        throw std::runtime_error("Missing input file (must be last argument)");
+    }
+
+    // Get input file (last argument)
+    params.inputFile = lastArg;
+    if (params.inputFile[0] == '-') {
+        printUsage(argv[0]);
+        throw std::runtime_error("Input file must be the last argument");
+    }
     
     // Set additional required parameters
     params.fromOrder = 0;
@@ -50,15 +110,15 @@ WAVExportParams::Parameters WAVExportParams::parseFromCommandLine(int argc, char
     }
     params.muting = mutingArray;
     params.panning = nullptr;
-    params.multiTrack = hasOption(argc, argv, "--multi-track");
     params.limiterDrive = 0;
 
     return params;
 }
 
 void WAVExportParams::printUsage(const char* programName) {
-    fprintf(stderr, "Usage: %s <input.xm> <output.wav> [options]\n", programName);
+    fprintf(stderr, "Usage: %s [options] <input.xm>\n", programName);
     fprintf(stderr, "Options:\n");
+    fprintf(stderr, "  --output <file>       Output file name (required)\n");
     fprintf(stderr, "  --sample-rate <rate>  Sample rate in Hz (default: from settings or 44100)\n");
     fprintf(stderr, "  --volume <volume>     Mixer volume (default: from settings or 256)\n");
     fprintf(stderr, "  --shift <shift>       Mixer shift (default: from settings or 1)\n");
@@ -86,4 +146,13 @@ bool WAVExportParams::hasOption(int argc, char* argv[], const char* option) {
         }
     }
     return false;
+}
+
+const char* WAVExportParams::getStringOption(int argc, char* argv[], const char* option, const char* defaultValue) {
+    for (int i = 1; i < argc - 1; i++) {
+        if (strcmp(argv[i], option) == 0 && i + 1 < argc) {
+            return argv[i + 1];
+        }
+    }
+    return defaultValue;
 } 
