@@ -7,26 +7,10 @@
 #include <WAVExportArgs.h>
 #include <WAVUtils.h>
 #include <cstring>
+#include <stdexcept>
 
 int main(int argc, char* argv[])
 {
-    if (argc < 3) {
-        WAVExportArgs::printUsage(argv[0]);
-        return 1;
-    }
-
-    const char* inputFile = argv[1];
-    const char* outputFile = argv[2];
-
-    // Load the module
-    XModule module;
-    if (module.loadModule(inputFile) != MP_OK) {
-        fprintf(stderr, "Failed to load module: %s\n", inputFile);
-        return 1;
-    }
-
-    // Create ModuleServices instance
-    ModuleServices services(module);
 
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
@@ -36,18 +20,37 @@ int main(int argc, char* argv[])
         settingsDB.serialize(f);
     }
 
-    // Get WAV writer parameters from command line arguments
-    auto params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
-    params.toOrder = module.header.ordnum - 1;  // Set the end order
+    WAVExportArgs::Arguments params;
+
+    try {
+        // Get filenames and WAV writer parameters from command line arguments
+        params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
+    }
+    catch (const std::runtime_error& e) {
+        fprintf(stderr, "Error: %s\n", e.what());
+        return 1;
+    }
+    // Load the module
+    XModule module;
+    if (module.loadModule(params.inputFile) != MP_OK) {
+        fprintf(stderr, "Failed to load module: %s\n", params.inputFile);
+        return 1;
+    }
+
+    // Create ModuleServices instance
+    ModuleServices services(module);
+
+    // Set the end order
+    params.toOrder = module.header.ordnum - 1;  
 
     // Convert paths to PPSystemString
-    PPSystemString outputFilePath(outputFile);
+    PPSystemString outputFilePath(params.outputFile);
 
     // Export to WAV using ModuleServices
-    int numWrittenSamples = services.exportToWAV(outputFilePath, params);
+    int numWrittenSamples = services.exportToWAV(outputFilePath, (ModuleServices::WAVWriterParameters&) params);
 
     if (numWrittenSamples == MP_DEVICE_ERROR) {
-        fprintf(stderr, "Failed to export WAV file: %s\n", outputFile);
+        fprintf(stderr, "Failed to export WAV file: %s\n", params.outputFile);
         return 1;
     }
     
