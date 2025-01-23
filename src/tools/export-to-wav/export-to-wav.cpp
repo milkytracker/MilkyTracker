@@ -4,8 +4,8 @@
 #include <XMFile.h>
 #include <PPSystem.h>
 #include <XModule.h>
-#include <wav/WAVExportParams.h>
-#include <wav/WAVUtils.h>
+#include <WAVExportParams.h>
+#include <WAVUtils.h>
 #include <cstring>
 
 int main(int argc, char* argv[])

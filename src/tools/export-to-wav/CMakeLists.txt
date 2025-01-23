@@ -4,12 +4,12 @@ add_executable(export-to-wav
 
 target_include_directories(export-to-wav
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/src/tracker
-        ${PROJECT_SOURCE_DIR}/src/ppui
+        ${PROJECT_SOURCE_DIR}/src/tracker/wav
 )
 
 target_link_libraries(export-to-wav
-    trackerlib
+    PRIVATE
+        trackerlib
 )
 
 install(TARGETS export-to-wav
