@@ -125,11 +125,15 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
     params.verbose = hasOption(argc, argv, "--verbose");
     
     // Get output file (required)
-    params.outputFile = getStringOption(argc, argv, "--output", nullptr);
-    if (!params.outputFile) {
+    const char* outputArg = getStringOption(argc, argv, "--output", nullptr);
+    if (!outputArg) {
         printUsage(argv[0]);
         throw std::runtime_error("Output file (--output) is required");
     }
+    // Make a copy of the output file string
+    char* outputCopy = new char[strlen(outputArg) + 1];
+    strcpy(outputCopy, outputArg);
+    params.outputFile = outputCopy;
 
     // Validate that the last argument is actually an input file
     const char* lastArg = argv[argc - 1];
@@ -138,9 +142,13 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
         throw std::runtime_error("Missing input file (must be last argument)");
     }
 
-    // Get input file (last argument)
-    params.inputFile = lastArg;
+    // Get input file (last argument) and make a copy
+    char* inputCopy = new char[strlen(lastArg) + 1];
+    strcpy(inputCopy, lastArg);
+    params.inputFile = inputCopy;
+
     if (params.inputFile[0] == '-') {
+        delete[] inputCopy;  // Clean up if we're going to throw
         printUsage(argv[0]);
         throw std::runtime_error("Input file must be the last argument");
     }
