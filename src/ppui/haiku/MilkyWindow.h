@@ -58,7 +58,7 @@ public:
 								BHandler* target);
 
 			void			ForwardEvents();
-			status_t		RaiseEvent(PPEvent* event);
+			void			RaiseEvent(PPEvent* event);
 private:
 	static	status_t		_EventThread(void* data);
 
@@ -79,7 +79,7 @@ private:
 };
 
 
-inline status_t
+inline void
 MilkyWindow::RaiseEvent(PPEvent* event)
 {
 	status_t status = write_port_etc(fEventPort, 0, event, sizeof(PPEvent),

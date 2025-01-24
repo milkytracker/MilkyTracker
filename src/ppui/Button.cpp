@@ -266,7 +266,7 @@ void PPButton::setText(const PPString& text)
 	if (autoSizeFont &&
 		font != PPFont::getFont(PPFont::FONT_TINY) &&
 		!verticalText && 
-		((signed)font->getStrWidth(text) > size.width - (lastCharIsPeriod ? -6 : 2) ||
+		((signed)font->getStrWidth(text)+1 > size.width - (lastCharIsPeriod ? -6 : 2) ||
 		 (signed)font->getCharHeight() > size.height))
 	{
 		font = PPFont::getFont(PPFont::FONT_TINY);

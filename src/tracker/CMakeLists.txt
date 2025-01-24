@@ -234,6 +234,29 @@ elseif(WIN32)
         win32/ThreadTimer.h
         win32/Win32_resource.h
     )
+elseif(HAIKU)
+    target_sources(tracker PRIVATE
+        haiku/Haiku_main.cpp
+        haiku/Tools.cpp
+        haiku/MilkyApplication.cpp
+    )
+
+    target_include_directories(tracker
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/src/midi/haiku
+    )
+    target_compile_options(tracker PRIVATE -iquote ${PROJECT_SOURCE_DIR}/src/ppui)
+
+
+    add_executable(settings
+        haiku/MilkySettings/main.cpp
+        haiku/MilkySettings/InterfaceSettingsView.cpp
+        haiku/MilkySettings/MidiSettingsView.cpp
+        haiku/MilkySettings/MilkySettingsApplication.cpp
+        haiku/MilkySettings/SettingsWindow.cpp
+    )
+
+    set_target_properties(settings PROPERTIES OUTPUT_NAME MilkySettings)
 else()
     target_sources(tracker PRIVATE
         # Sources
@@ -301,6 +324,10 @@ elseif(WIN32)
     set_target_properties(tracker PROPERTIES WIN32_EXECUTABLE TRUE)
 
     target_link_libraries(tracker midi)
+elseif(HAIKU)
+    target_link_libraries(tracker midi be libtracker.so)
+
+    target_link_libraries(settings midi2 be)
 else()
     if(ALSA_FOUND AND RTMIDI_FOUND)
         target_compile_definitions(tracker PRIVATE -DHAVE_LIBRTMIDI)

@@ -201,7 +201,7 @@ void Synth::FM( bool init ){
 		synths[ID].param[5].min   = 0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[6].name  = "freq model";
+		synths[ID].param[6].name  = "algorithm";
 		synths[ID].param[6].value = 0.0f;
 		synths[ID].param[6].min   = 0;
 		synths[ID].param[6].max   = 4;
@@ -332,40 +332,6 @@ void Synth::FM( bool init ){
 	// since the slider-resolution is limited due to ASCIISYNTH spec 
 	// applying different resolution via a slider offers more sonic abilities 
 	float mf = 0.01f + SYN_PARAM_NORMALIZE(synth->param[10].value);
-	switch( (int)synth->param[6].value ){
-    // syncs modulator & carrier to note frequenceis
-		case 1: {
-					instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
-					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
-					break;
-				}
-
-    // syncs modulator & carrier to note frequenceis + phasediff
-		case 2: {
-					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
-					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
-          instrument.modulator.phase = 0.3; 
-					break;
-				}
-
-    // carrier freqs synced to notes + freeform modulator freqs 
-		case 3: {
-					instrument.carrier.freq   = NOTE2HZ( (int)synth->param[7].value );
-					float mf = NOTE_START + SYN_PARAM_NORMALIZE(synth->param[10].value);
-					controls.modulator_freq = SYN_PARAM_NORMALIZE( synth->param[10].value ) * float(srate)/2.0;
-					break;
-				}
-
-    // focuses on modulator freq as LFO 
-		case 0:
-		default:{
-					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
-					controls.modulator_freq = mf * (4.0 / float(srate)); 
-					break;
-				}
-
-	}
-
 	controls.attack  = SYN_PARAM_NORMALIZE(synth->param[3].value);
 	controls.decay   = SYN_PARAM_NORMALIZE(synth->param[4].value);
 	controls.sustain = SYN_PARAM_NORMALIZE(synth->param[4].value);
@@ -395,6 +361,48 @@ void Synth::FM( bool init ){
 
 	controls.spacetime = SYN_PARAM_NORMALIZE(synth->param[20].value);
 	controls.feedback  = 1.0f + (100.0f * SYN_PARAM_NORMALIZE(synth->param[16].value));
+
+	switch( (int)synth->param[6].value ){
+		// syncs modulator & carrier to note frequenceis
+		case 1: {
+					instrument.carrier.freq   = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
+					break;
+				}
+
+		// syncs modulator & carrier to note frequenceis + phasediff
+		case 2: {
+					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = NOTE2HZ(NOTE_START +  (int)synth->param[10].value );
+          instrument.modulator.phase = 0.3; 
+					break;
+				}
+
+		// carrier freqs synced to notes + freeform modulator freqs 
+		case 3: {
+					instrument.carrier.freq   = NOTE2HZ( (int)synth->param[7].value );
+					float mf = NOTE_START + SYN_PARAM_NORMALIZE(synth->param[10].value);
+					controls.modulator_freq = SYN_PARAM_NORMALIZE( synth->param[10].value ) * float(srate)/2.0;
+					break;
+				}
+
+		// like default but very slow LFO 
+		case 4: {
+					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = mf * 0.01f;
+					break;
+				}		
+
+		// basic focus on modulator freq as fast LFO 
+		case 0:
+		default:{
+					instrument.carrier.freq = NOTE2HZ( NOTE_START + (int)synth->param[7].value );
+					controls.modulator_freq = mf * (4.0 / float(srate)); 
+					break;
+				}
+
+	}
+
 
 	// determine duration
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
@@ -428,7 +436,7 @@ void Synth::FM( bool init ){
 
 		// add transient
 		float transAmp = SYN_PARAM_NORMALIZE(synth->param[14].value);
-    instrument.carrier.freq = transFreq + (transAmp * (transFreq * (tanh(-offset*offset*offset*1000)+1)*(10*transAmp)));
+		instrument.carrier.freq = transFreq + (transAmp * (transFreq * (tanh(-offset*offset*offset*1000)+1)*(10*transAmp)));
 
 		SynthFM::instrument_control( &instrument, &controls, srate );
 

@@ -80,6 +80,25 @@ elseif(WIN32)
     )
 
     target_link_libraries(midi PUBLIC winmm)
+elseif(HAIKU)
+    target_sources(midi PRIVATE
+        # Sources
+        haiku/MidiSetup.cpp
+        haiku/MilkyMidiConsumer.cpp
+
+        # Headers
+        haiku/MidiSetup.h
+        haiku/MilkyMidiConsumer.h
+    )
+
+    target_include_directories(midi
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/haiku
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
+    )
+
+    target_link_libraries(midi PUBLIC midi2)
 else()
     target_sources(midi PRIVATE
         # Sources

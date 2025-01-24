@@ -548,8 +548,8 @@ void Tracker::initSectionOrderlist(pp_int32 x, pp_int32 y)
 	listBoxOrderList->setBorderColor(TrackerConfig::colorThemeMain);
 	listBoxOrderList->setCenterSelection(true);
 	listBoxOrderList->setSelectOnScroll(true);
-  listBoxOrderList->setHexIndex( settingsDatabase->restore("HEXCOUNT")->getIntValue() == 1 );
-  if( !screen->getClassic() ) listBoxOrderList->setTextColor( TrackerConfig::colorPatternEditorEffect );
+	listBoxOrderList->setHexIndex( true ); // the patterneditor is limited to entering hex data 
+    if( !screen->getClassic() ) listBoxOrderList->setTextColor( TrackerConfig::colorPatternEditorEffect );
 
 	containerOrderlist->addControl(listBoxOrderList);
 

@@ -453,18 +453,18 @@ void Tracker::eventKeyDownBinding_RotatePanels()
 		return;
 
 	switch( panelrotate ){
-		case PanelRotate::PanelTop:{
-			panelrotate = PanelRotate::PanelTop_Sample;
+		case PanelTop:{
+			panelrotate = PanelTop_Sample;
 			eventKeyDownBinding_InvokeSectionSamples();
 			break;
 		}
-		case PanelRotate::PanelTop_Sample:{
-			panelrotate = PanelRotate::PanelTop_Instrument;
+		case PanelTop_Sample:{
+			panelrotate = PanelTop_Instrument;
 			eventKeyDownBinding_InvokeSectionInstruments();
 			break;
 		}
-		case PanelRotate::PanelTop_Instrument:{
-			panelrotate = PanelRotate::PanelTop;
+		case PanelTop_Instrument:{
+			panelrotate = PanelTop;
 			sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
 			break;
 		}
@@ -646,6 +646,7 @@ void Tracker::eventKeyDownBinding_InvokeSectionDiskMenu()
 		return;
 
 	sectionSwitcher->showUpperSection(sectionDiskMenu, false);
+	sectionDiskMenu->switchState( SectionDiskMenu::BrowseAll );
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionHDRecorder()

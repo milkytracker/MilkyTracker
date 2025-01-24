@@ -31,6 +31,7 @@
 Synth::Synth(int samplerate){
   this->samplerate = samplerate;
   this->additive   = false;
+  this->random_index = 0;
   init();
   // assign default synth 
   synth = &synths[0];
@@ -100,8 +101,9 @@ void Synth::setParam( int i, float v ){
 } 
 
 void Synth::random(){
-	pp_uint32 pr = rand() % SYNTH_PRESETS;
-	ASCIISynthImport( preset[pr] );
+	random_index++;
+	if( random_index >= SYNTH_PRESETS ) random_index = 0;
+	ASCIISynthImport( preset[ random_index ] );
     FilterParameters par(synth->nparams);
     pp_int32 i;
     for( i = 0; i < synth->nparams; i++ ){

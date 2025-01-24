@@ -157,6 +157,10 @@ elseif(WIN32)
     # Windows MIDI support requires no external libraries
     message(STATUS "Enabled MIDI support (WinMM)")
     add_subdirectory(src/midi)
+elseif(HAIKU)
+    # Haiku MIDI support requires no external libraries
+    message(STATUS "Enabled MIDI support (Haiku)")
+    add_subdirectory(src/midi)
 else()
     # Workaround for SDL bug #3295, which occurs in SDL2 <2.0.5
     # https://bugzilla.libsdl.org/show_bug.cgi?id=3295
