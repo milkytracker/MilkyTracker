@@ -3,21 +3,20 @@
 #include <string>
 #include "WAVExportArgs.h"
 
+class CLIParser;  // Forward declaration
+
 class WAVExporter {
 public:
-    // Static factory method that maintains backward compatibility
+    // Command-line interface
     static int exportFromCommandLine(int argc, char* argv[]);
-
-    // Static method to export using an existing parser
-    static bool exportFromParser(CLIParser& parser);
-
-    // Constructor takes command line arguments
     WAVExporter(int argc, char* argv[]);
 
-    // Phase 1: Parse arguments
-    int parseArguments();
+    // Parser interface
+    WAVExporter(CLIParser& parser);
+    bool initFromParser(CLIParser& parser);
 
-    // Phase 2: Perform the export
+    // Core functionality
+    int parseArguments();  // Used with argc/argv constructor
     int performExport();
 
     // State getters
@@ -27,9 +26,11 @@ public:
     const char* getErrorMessage() const { return errorMessage.c_str(); }
 
 private:
-    int argc;
-    char** argv;
     bool parseError;
     std::string errorMessage;
     WAVExportArgs::Arguments params;
+
+    // Used by command-line interface
+    int argc;
+    char** argv;
 };

@@ -10,7 +10,7 @@
 #include <cstring>
 #include <stdexcept>
 
-// Static factory method for backward compatibility
+// Static factory method for command-line usage
 int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
     WAVExporter exporter(argc, argv);
     int result = exporter.parseArguments();
@@ -26,6 +26,7 @@ int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
     return 0;
 }
 
+// Constructor for command-line usage
 WAVExporter::WAVExporter(int argc, char* argv[])
     : argc(argc)
     , argv(argv)
@@ -33,6 +34,36 @@ WAVExporter::WAVExporter(int argc, char* argv[])
 {
 }
 
+// Constructor for parser usage
+WAVExporter::WAVExporter(CLIParser& parser)
+    : argc(0)
+    , argv(nullptr)
+    , parseError(false)
+{
+    initFromParser(parser);
+}
+
+bool WAVExporter::initFromParser(CLIParser& parser) {
+    // Load settings from config file
+    TrackerSettingsDatabase settingsDB;
+    const char* configFile = System::getConfigFileName();
+    if (XMFile::exists(configFile)) {
+        XMFile f(configFile);
+        settingsDB.serialize(f);
+    }
+
+    try {
+        params = WAVExportArgs::initFromParser(parser, settingsDB);
+        return true;
+    }
+    catch (const std::runtime_error& e) {
+        errorMessage = e.what();
+        parseError = true;
+        return false;
+    }
+}
+
+// Parse arguments from command line
 int WAVExporter::parseArguments() {
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
@@ -118,35 +149,4 @@ int WAVExporter::performExport() {
     }
 
     return 0;
-}
-
-// Static method to export using an existing parser
-bool WAVExporter::exportFromParser(CLIParser& parser) {
-    // Load settings from config file
-    TrackerSettingsDatabase settingsDB;
-    const char* configFile = System::getConfigFileName();
-    if (XMFile::exists(configFile)) {
-        XMFile f(configFile);
-        settingsDB.serialize(f);
-    }
-
-    try {
-        // Create a temporary exporter instance to use performExport
-        WAVExporter exporter(0, nullptr);  // argc/argv not needed since we use parser
-        
-        // Initialize parameters from parser
-        exporter.params = WAVExportArgs::initFromParser(parser, settingsDB);
-
-        // Use existing performExport method
-        if (exporter.performExport() != 0) {
-            fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-            return false;
-        }
-
-        return true;
-    }
-    catch (const std::runtime_error& e) {
-        fprintf(stderr, "Error: %s\n", e.what());
-        return false;
-    }
 }

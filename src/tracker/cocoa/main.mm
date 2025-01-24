@@ -83,7 +83,9 @@ int main(int argc, const char * argv[])
 	const char* outputWAVFile = parser.getOptionValue("--output");
 
 	if (outputWAVFile) {
-		if (!WAVExporter::exportFromParser(parser)) {
+		WAVExporter exporter(parser);
+		if (exporter.hasParseError() || exporter.performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
 			return 1;
 		}
 
