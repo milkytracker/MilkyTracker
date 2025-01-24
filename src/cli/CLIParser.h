@@ -35,12 +35,16 @@ public:
     
     // Error handling
     const char* getError() const;
+    
+    // Check if help was requested
+    bool isHelpRequested() const { return helpRequested; }
 
 private:
     std::string programName;
     std::string errorMessage;
     std::vector<Option> options;
     std::vector<std::pair<std::string, std::string>> positionalArgs; // name, description
+    bool helpRequested;
     
     // Parsed results
     std::unordered_map<std::string, std::string> parsedOptions;

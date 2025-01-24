@@ -4,7 +4,10 @@
 
 CLIParser::CLIParser(const char* programName)
     : programName(programName)
+    , helpRequested(false)
 {
+    // Add built-in help option
+    addOption("--help", false, "Show this help message and exit");
 }
 
 void CLIParser::addOption(const char* name, bool requiresValue, const char* description)
@@ -22,6 +25,7 @@ bool CLIParser::parse(int argc, char* argv[])
     parsedOptions.clear();
     parsedPositionalArgs.clear();
     errorMessage.clear();
+    helpRequested = false;
 
     size_t positionalIndex = 0;
     
@@ -29,6 +33,12 @@ bool CLIParser::parse(int argc, char* argv[])
         const char* arg = argv[i];
         
         if (isOption(arg)) {
+            // Check for help flag first
+            if (strcmp(arg, "--help") == 0) {
+                helpRequested = true;
+                return true;
+            }
+            
             const Option* opt = findOption(arg);
             if (!opt) {
                 errorMessage = "Unknown option: ";
@@ -54,6 +64,11 @@ bool CLIParser::parse(int argc, char* argv[])
             parsedPositionalArgs.push_back(arg);
             positionalIndex++;
         }
+    }
+    
+    // If help was requested, no need to validate other args
+    if (helpRequested) {
+        return true;
     }
     
     // Check if we got all required positional args

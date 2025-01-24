@@ -120,6 +120,15 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
         throw std::runtime_error(parser.getError());
     }
 
+    // Handle help flag
+    if (parser.isHelpRequested()) {
+        parser.printUsage();
+        fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
+        fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
+        fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
+        exit(0);
+    }
+
     // Get required output file
     const char* outputArg = parser.getOptionValue("--output");
     if (!outputArg) {
