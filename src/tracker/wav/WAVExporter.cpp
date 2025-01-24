@@ -119,3 +119,34 @@ int WAVExporter::performExport() {
 
     return 0;
 }
+
+// Static method to export using an existing parser
+bool WAVExporter::exportFromParser(CLIParser& parser) {
+    // Load settings from config file
+    TrackerSettingsDatabase settingsDB;
+    const char* configFile = System::getConfigFileName();
+    if (XMFile::exists(configFile)) {
+        XMFile f(configFile);
+        settingsDB.serialize(f);
+    }
+
+    try {
+        // Create a temporary exporter instance to use performExport
+        WAVExporter exporter(0, nullptr);  // argc/argv not needed since we use parser
+        
+        // Initialize parameters from parser
+        exporter.params = WAVExportArgs::initFromParser(parser, settingsDB);
+
+        // Use existing performExport method
+        if (exporter.performExport() != 0) {
+            fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
+            return false;
+        }
+
+        return true;
+    }
+    catch (const std::runtime_error& e) {
+        fprintf(stderr, "Error: %s\n", e.what());
+        return false;
+    }
+}

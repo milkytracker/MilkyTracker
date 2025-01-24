@@ -8,6 +8,9 @@ public:
     // Static factory method that maintains backward compatibility
     static int exportFromCommandLine(int argc, char* argv[]);
 
+    // Static method to export using an existing parser
+    static bool exportFromParser(CLIParser& parser);
+
     // Constructor takes command line arguments
     WAVExporter(int argc, char* argv[]);
 

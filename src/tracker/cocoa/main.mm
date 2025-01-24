@@ -57,19 +57,6 @@ pp_uint32 PPGetTickCount()
 // -------------------------------------------------------------------
 void QueryKeyModifiers() { }
 
-bool exportToWAV(const char* inputFile, const char* outputFile) {
-	const char* argv[] = {
-		"milkytracker",  // Program name
-		inputFile,       // Input file
-		"--output",      // Output flag
-		outputFile,      // Output file
-		nullptr
-	};
-	int argc = 4;
-
-	return WAVExporter::exportFromCommandLine(argc, (char**)argv) == 0;
-}
-
 // --------------------------------------
 //  Entry point; start Cocoa application
 // --------------------------------------
