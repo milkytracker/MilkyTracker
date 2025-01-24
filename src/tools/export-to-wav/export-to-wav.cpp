@@ -11,7 +11,6 @@
 
 int main(int argc, char* argv[])
 {
-
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
     const char* configFile = System::getConfigFileName();
@@ -20,16 +19,23 @@ int main(int argc, char* argv[])
         settingsDB.serialize(f);
     }
 
-    WAVExportArgs::Arguments params;
+    // Get filenames and WAV writer parameters from command line arguments
+    auto params = [&]() {
+        try {
+            return WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
+        }
+        catch (const std::runtime_error& e) {
+            fprintf(stderr, "Error: %s\n", e.what());
+            exit(1);
+        }
+    }();
 
-    try {
-        // Get filenames and WAV writer parameters from command line arguments
-        params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
-    }
-    catch (const std::runtime_error& e) {
-        fprintf(stderr, "Error: %s\n", e.what());
+    // Check if the input file exists
+    if (!XMFile::exists(params.inputFile)) {
+        fprintf(stderr, "Input file does not exist: %s\n", params.inputFile);
         return 1;
     }
+
     // Load the module
     XModule module;
     if (module.loadModule(params.inputFile) != MP_OK) {
