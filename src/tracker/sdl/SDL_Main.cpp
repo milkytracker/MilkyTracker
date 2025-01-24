@@ -72,7 +72,7 @@
 #include "../ModuleServices.h"
 #include "../ModuleEditor.h"
 #include <XModule.h>
-#include "../wav/WAVExportParams.h"
+#include "../wav/WAVExportArgs.h"
 #include "../wav/WAVUtils.h"
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
