@@ -26,6 +26,7 @@ add_library(trackerlib STATIC
     TrackerSettingsDatabase.cpp
     wav/WAVExportArgs.cpp
     wav/WAVUtils.cpp
+    wav/WAVExporter.cpp
 )
 
 target_include_directories(trackerlib
