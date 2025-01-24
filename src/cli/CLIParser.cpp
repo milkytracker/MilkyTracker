@@ -52,7 +52,17 @@ bool CLIParser::parse(int argc, char* argv[])
                     errorMessage += arg;
                     return false;
                 }
-                parsedOptions[opt->name] = argv[++i];
+                // Check that next argument isn't an option
+                const char* value = argv[i + 1];
+                if (isOption(value)) {
+                    errorMessage = "Option requires value, but got another option: ";
+                    errorMessage += arg;
+                    errorMessage += " ";
+                    errorMessage += value;
+                    return false;
+                }
+                parsedOptions[opt->name] = value;
+                i++; // Skip the value we just processed
             } else {
                 parsedOptions[opt->name] = "true";
             }
