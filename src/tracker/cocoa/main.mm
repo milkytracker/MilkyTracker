@@ -71,22 +71,28 @@ int main(int argc, const char * argv[])
 	// std::unique_ptr<WAVExporter> exporter = WAVExporter::createFromParser(parser);
 	auto exporter = WAVExporter::createFromParser(parser);
 
-	bool headless = parser.hasOption("--headless");
 	const char* inputFile = parser.getPositionalArg(0);
 	const char* outputWAVFile = parser.getOptionValue("--output");
 
 	if (inputFile && outputWAVFile) {
-		if (exporter->hasParseError() || exporter->performExport() != 0) {
+		if (exporter->hasParseError()) {
+			parser.printUsage();
 			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
 			return 1;
 		}
 
-		if (headless) {
-			return 0;
+		if (exporter->performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
 		}
 	}
 
-	// Convert input file path to absolute if specified
+	if (parser.hasOption("--headless")) {
+		return 0;
+	}
+
+	// Convert input file path to absolute if specified, to ensure the
+	// file is found when the GUI is started
 	NSString* absolutePath = nil;
 	if (inputFile) {
 		NSString* path = [NSString stringWithUTF8String:inputFile];
