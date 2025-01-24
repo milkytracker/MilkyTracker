@@ -3,6 +3,7 @@
 #include <ModuleServices.h>
 #include <TrackerSettingsDatabase.h>
 #include <vector>
+#include <cstring>
 
 class WAVExportArgs {
 public:
@@ -11,10 +12,19 @@ public:
         Arguments();
         ~Arguments();
 
+        // Copy constructor
+        Arguments(const Arguments& other);
+        // Copy assignment
+        Arguments& operator=(const Arguments& other);
+
         // Only declare fields we add beyond WAVWriterParameters
         const char* inputFile;
         const char* outputFile;
         bool verbose;  // Flag for verbose output
+
+    private:
+        // Helper to handle deep copying of strings
+        void copyStrings(const Arguments& other);
     };
 
     static Arguments parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);

@@ -3,12 +3,11 @@
 #include <cstdio>
 #include <stdexcept>
 
-WAVExportArgs::Arguments::Arguments() {
-    // Initialize our fields
-    inputFile = nullptr;
-    outputFile = nullptr;
-    verbose = false;
-
+WAVExportArgs::Arguments::Arguments()
+    : inputFile(nullptr)
+    , outputFile(nullptr)
+    , verbose(false)
+{
     // Initialize base class fields to safe defaults
     sampleRate = 44100;
     mixerVolume = 256;
@@ -24,8 +23,51 @@ WAVExportArgs::Arguments::Arguments() {
     limiterDrive = 0;
 }
 
-WAVExportArgs::Arguments::~Arguments() {
+WAVExportArgs::Arguments::~Arguments()
+{
+    delete[] inputFile;
+    delete[] outputFile;
     delete[] muting;
+}
+
+WAVExportArgs::Arguments::Arguments(const Arguments& other)
+    : ModuleServices::WAVWriterParameters(other)  // Copy base class
+    , inputFile(nullptr)
+    , outputFile(nullptr)
+    , verbose(other.verbose)
+{
+    copyStrings(other);
+}
+
+WAVExportArgs::Arguments& WAVExportArgs::Arguments::operator=(const Arguments& other)
+{
+    if (this != &other) {
+        ModuleServices::WAVWriterParameters::operator=(other);  // Copy base class
+        delete[] inputFile;
+        delete[] outputFile;
+        inputFile = nullptr;
+        outputFile = nullptr;
+        verbose = other.verbose;
+        copyStrings(other);
+    }
+    return *this;
+}
+
+void WAVExportArgs::Arguments::copyStrings(const Arguments& other)
+{
+    if (other.inputFile) {
+        size_t len = strlen(other.inputFile);
+        char* newInput = new char[len + 1];
+        strcpy(newInput, other.inputFile);
+        inputFile = newInput;
+    }
+    
+    if (other.outputFile) {
+        size_t len = strlen(other.outputFile);
+        char* newOutput = new char[len + 1];
+        strcpy(newOutput, other.outputFile);
+        outputFile = newOutput;
+    }
 }
 
 bool WAVExportArgs::isParameterThatTakesValue(const char* arg) {
