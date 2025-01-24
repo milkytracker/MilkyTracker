@@ -1,22 +1,17 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include "WAVExportArgs.h"
 
 class CLIParser;  // Forward declaration
 
 class WAVExporter {
 public:
-    // Command-line interface
-    static int exportFromCommandLine(int argc, char* argv[]);
-    WAVExporter(int argc, char* argv[]);
-
-    // Parser interface
-    WAVExporter(CLIParser& parser);
-    bool initFromParser(CLIParser& parser);
+    // Create from parser
+    static std::unique_ptr<WAVExporter> createFromParser(CLIParser& parser);
 
     // Core functionality
-    int parseArguments();  // Used with argc/argv constructor
     int performExport();
 
     // State getters
@@ -25,12 +20,10 @@ public:
     bool hasParseError() const { return parseError; }
     const char* getErrorMessage() const { return errorMessage.c_str(); }
 
-private:
+    virtual ~WAVExporter() = default;
+
+protected:
     bool parseError;
     std::string errorMessage;
     WAVExportArgs::Arguments params;
-
-    // Used by command-line interface
-    int argc;
-    char** argv;
 };

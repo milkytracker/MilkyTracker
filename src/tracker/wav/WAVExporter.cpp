@@ -7,43 +7,26 @@
 #include <XModule.h>
 #include "WAVExportArgs.h"
 #include "WAVUtils.h"
+#include "../../cli/CLIParser.h"
 #include <cstring>
 #include <stdexcept>
 
-// Static factory method for command-line usage
-int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
-    WAVExporter exporter(argc, argv);
-    int result = exporter.parseArguments();
-    if (result != 0) {
-        fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-        return result;
+// Static factory method for parser usage
+std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser) {
+    auto exporter = std::unique_ptr<WAVExporter>(new WAVExporter());
+    
+    WAVExportArgs::registerOptions(parser);
+
+    if (!parser.parse()) {
+        parser.printUsage();
+        exit(1);
     }
-    result = exporter.performExport();
-    if (result != 0) {
-        fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-        return result;
+
+    if (parser.isHelpRequested()) {
+        parser.printUsage();
+        exit(0);
     }
-    return 0;
-}
 
-// Constructor for command-line usage
-WAVExporter::WAVExporter(int argc, char* argv[])
-    : argc(argc)
-    , argv(argv)
-    , parseError(false)
-{
-}
-
-// Constructor for parser usage
-WAVExporter::WAVExporter(CLIParser& parser)
-    : argc(0)
-    , argv(nullptr)
-    , parseError(false)
-{
-    initFromParser(parser);
-}
-
-bool WAVExporter::initFromParser(CLIParser& parser) {
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
     const char* configFile = System::getConfigFileName();
@@ -53,35 +36,13 @@ bool WAVExporter::initFromParser(CLIParser& parser) {
     }
 
     try {
-        params = WAVExportArgs::initFromParser(parser, settingsDB);
-        return true;
+        exporter->params = WAVExportArgs::initFromParser(parser, settingsDB);
+        return exporter;
     }
     catch (const std::runtime_error& e) {
-        errorMessage = e.what();
-        parseError = true;
-        return false;
-    }
-}
-
-// Parse arguments from command line
-int WAVExporter::parseArguments() {
-    // Load settings from config file
-    TrackerSettingsDatabase settingsDB;
-    const char* configFile = System::getConfigFileName();
-    if (XMFile::exists(configFile)) {
-        XMFile f(configFile);
-        settingsDB.serialize(f);
-    }
-
-    // Get filenames and WAV writer parameters from command line arguments
-    try {
-        params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
-        return 0;  // Success
-    }
-    catch (const std::runtime_error& e) {
-        errorMessage = e.what();
-        parseError = true;
-        return 1;  // Error
+        exporter->errorMessage = e.what();
+        exporter->parseError = true;
+        return nullptr;
     }
 }
 

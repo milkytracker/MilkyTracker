@@ -30,14 +30,9 @@ public:
         void copyStrings(const Arguments& other);
     };
 
-    // Original method that creates its own parser
-    static Arguments parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
-    
     // Initialize Arguments from an already-parsed parser
     static Arguments initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB);
     
     // Helper to register WAV export options with a parser
     static void registerOptions(CLIParser& parser);
-    
-    static void printUsage(const char* programName);
 }; 

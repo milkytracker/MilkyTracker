@@ -2,8 +2,9 @@
 #include <cstring>
 #include <cstdio>
 
-CLIParser::CLIParser(const char* programName)
-    : programName(programName)
+CLIParser::CLIParser(int argc, const char* argv[])
+    : argc(argc)
+    , argv(argv)
     , helpRequested(false)
 {
     // Add built-in help option
@@ -20,7 +21,7 @@ void CLIParser::addPositionalArg(const char* name, const char* description, bool
     positionalArgs.emplace_back(name, description, required);
 }
 
-bool CLIParser::parse(int argc, char* argv[])
+bool CLIParser::parse()
 {
     parsedOptions.clear();
     parsedPositionalArgs.clear();
@@ -123,7 +124,7 @@ size_t CLIParser::getPositionalArgCount() const
 
 void CLIParser::printUsage() const
 {
-    fprintf(stderr, "Usage: %s", programName.c_str());
+    fprintf(stderr, "Usage: %s", argv[0]);
     
     // Print positional args in order
     for (const auto& arg : positionalArgs) {
@@ -191,4 +192,13 @@ void CLIParser::setPositionalArgValue(size_t index, const char* value) {
     if (index < parsedPositionalArgs.size()) {
         parsedPositionalArgs[index] = value;
     }
+}
+
+bool CLIParser::hasPositionalArg(const char* name) const {
+    for (const auto& arg : positionalArgs) {
+        if (std::get<0>(arg) == name) {
+            return true;
+        }
+    }
+    return false;
 } 

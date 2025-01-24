@@ -96,32 +96,16 @@ void WAVExportArgs::registerOptions(CLIParser& parser) {
     parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
     parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
     parser.addOption("--verbose", false, "Enable verbose output");
-    
-    parser.addPositionalArg("input", "Input module file (.xm)", true);
+
+    if (!parser.hasPositionalArg("input")) {
+        parser.addPositionalArg("input", "Input module file (.xm)", true);
+    }
     
     parser.setAdditionalHelpText(
         "When using --multi-track, output files will be named:\n"
         "  output_01.wav, output_02.wav, etc.\n"
         "  (Silent tracks will be automatically removed)\n"
     );
-}
-
-WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
-    CLIParser parser(argv[0]);
-    registerOptions(parser);
-    
-    if (!parser.parse(argc, argv)) {
-        parser.printUsage();
-        throw std::runtime_error(parser.getError());
-    }
-
-    // Handle help flag
-    if (parser.isHelpRequested()) {
-        parser.printUsage();
-        exit(0);
-    }
-    
-    return initFromParser(parser, settingsDB);
 }
 
 WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB) {
@@ -174,9 +158,3 @@ WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, Tracke
 
     return params;
 }
-
-void WAVExportArgs::printUsage(const char* programName) {
-    CLIParser parser(programName);
-    registerOptions(parser);
-    parser.printUsage();
-} 

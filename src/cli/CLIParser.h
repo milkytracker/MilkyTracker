@@ -16,14 +16,14 @@ public:
             : name(n), requiresValue(rv), description(d) {}
     };
 
-    explicit CLIParser(const char* programName);
+    explicit CLIParser(int argc, const char* argv[]);
     
     // Register options before parsing
     void addOption(const char* name, bool requiresValue, const char* description);
     void addPositionalArg(const char* name, const char* description, bool required = true);
     
     // Parse and access results
-    bool parse(int argc, char* argv[]);
+    bool parse();
     bool hasOption(const char* name) const;
     const char* getOptionValue(const char* name) const;
     int getIntOptionValue(const char* name, int defaultValue) const;
@@ -43,8 +43,12 @@ public:
     // New method to set positional argument value
     void setPositionalArgValue(size_t index, const char* value);
 
+    // Check if a positional argument exists
+    bool hasPositionalArg(const char* name) const;
+
 private:
-    std::string programName;
+    int argc;
+    const char** argv;
     std::string errorMessage;
     std::string additionalHelpText;
     std::vector<Option> options;

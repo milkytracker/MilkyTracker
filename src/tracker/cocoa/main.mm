@@ -64,25 +64,27 @@ void QueryKeyModifiers() { }
 // --------------------------------------
 int main(int argc, const char * argv[])
 {
-	static CLIParser parser(argv[0]);
+	static CLIParser parser(argc, argv);
+	parser.addPositionalArg("input", "Input file");
 	parser.addOption("--headless", false, "Run in headless mode");
 
-  // This includes registering the positional argument for the input file
-	WAVExportArgs::registerOptions(parser);
-
-	if (!parser.parse(argc, const_cast<char**>(argv))) {
-		parser.printUsage();
-		exit(1);
-	}
-
-	if (parser.isHelpRequested()) {
-		parser.printUsage();
-		exit(0);
-	}
+	// std::unique_ptr<WAVExporter> exporter = WAVExporter::createFromParser(parser);
+	auto exporter = WAVExporter::createFromParser(parser);
 
 	bool headless = parser.hasOption("--headless");
 	const char* inputFile = parser.getPositionalArg(0);
 	const char* outputWAVFile = parser.getOptionValue("--output");
+
+	if (inputFile && outputWAVFile) {
+		if (exporter->hasParseError() || exporter->performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
+		}
+
+		if (headless) {
+			return 0;
+		}
+	}
 
 	// Convert input file path to absolute if specified
 	NSString* absolutePath = nil;
@@ -93,18 +95,6 @@ int main(int argc, const char * argv[])
 			absolutePath = [[cwd stringByAppendingPathComponent:path] stringByStandardizingPath];
 			// Update the parser with the absolute path
 			parser.setPositionalArgValue(0, [absolutePath UTF8String]);
-		}
-	}
-
-	if (outputWAVFile) {
-		WAVExporter exporter(parser);
-		if (exporter.hasParseError() || exporter.performExport() != 0) {
-			fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-			return 1;
-		}
-
-		if (headless) {
-			return 0;
 		}
 	}
 
