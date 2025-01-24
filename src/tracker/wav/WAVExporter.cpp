@@ -10,8 +10,24 @@
 #include <cstring>
 #include <stdexcept>
 
-int WAVExporter::exportFromCommandLine(int argc, char* argv[])
+// Static factory method for backward compatibility
+int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
+    WAVExporter exporter(argc, argv);
+    if (!exporter.parseArguments()) {
+        fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
+        return 1;
+    }
+    return exporter.performExport();
+}
+
+WAVExporter::WAVExporter(int argc, char* argv[])
+    : argc(argc)
+    , argv(argv)
+    , parseError(false)
 {
+}
+
+bool WAVExporter::parseArguments() {
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
     const char* configFile = System::getConfigFileName();
@@ -21,26 +37,30 @@ int WAVExporter::exportFromCommandLine(int argc, char* argv[])
     }
 
     // Get filenames and WAV writer parameters from command line arguments
-    auto params = [&]() {
-        try {
-            return WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
-        }
-        catch (const std::runtime_error& e) {
-            fprintf(stderr, "Error: %s\n", e.what());
-            exit(1);
-        }
-    }();
+    try {
+        params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
+        return true;
+    }
+    catch (const std::runtime_error& e) {
+        errorMessage = e.what();
+        parseError = true;
+        return false;
+    }
+}
 
+int WAVExporter::performExport() {
     // Check if the input file exists
     if (!XMFile::exists(params.inputFile)) {
-        fprintf(stderr, "Input file does not exist: %s\n", params.inputFile);
+        errorMessage = "Input file does not exist: ";
+        errorMessage += params.inputFile;
         return 1;
     }
 
     // Load the module
     XModule module;
     if (module.loadModule(params.inputFile) != MP_OK) {
-        fprintf(stderr, "Failed to load module: %s\n", params.inputFile);
+        errorMessage = "Failed to load module: ";
+        errorMessage += params.inputFile;
         return 1;
     }
 
@@ -48,7 +68,7 @@ int WAVExporter::exportFromCommandLine(int argc, char* argv[])
     ModuleServices services(module);
 
     // Set the end order
-    params.toOrder = module.header.ordnum - 1;
+    params.toOrder = module.header.ordnum - 1;  
 
     // Convert paths to PPSystemString
     PPSystemString outputFilePath(params.outputFile);
@@ -57,7 +77,8 @@ int WAVExporter::exportFromCommandLine(int argc, char* argv[])
     int numWrittenSamples = services.exportToWAV(outputFilePath, (ModuleServices::WAVWriterParameters&) params);
 
     if (numWrittenSamples == MP_DEVICE_ERROR) {
-        fprintf(stderr, "Failed to export WAV file: %s\n", params.outputFile);
+        errorMessage = "Failed to export WAV file: ";
+        errorMessage += params.outputFile;
         return 1;
     }
 
