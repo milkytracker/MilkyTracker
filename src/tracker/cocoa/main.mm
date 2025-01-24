@@ -31,6 +31,8 @@
 #import "ModuleServices.h"
 #import <XModule.h>
 #import <WAVExporter.h>
+#import <CLIParser.h>
+#import "AppDelegate.h"
 
 // ----------------------------------------------------------
 //  Returns number of milliseconds elapsed since last reboot
@@ -68,7 +70,7 @@ int main(int argc, const char * argv[])
   // This includes registering the positional argument for the input file
 	WAVExportArgs::registerOptions(parser);
 
-	if (!parser.parse(argc, argv)) {
+	if (!parser.parse(argc, const_cast<char**>(argv))) {
 		parser.printUsage();
 		exit(1);
 	}

@@ -89,7 +89,7 @@ void WAVExportArgs::Arguments::copyStrings(const Arguments& other)
 }
 
 void WAVExportArgs::registerOptions(CLIParser& parser) {
-    parser.addOption("--output", true, "Output file name (required)");
+    parser.addOption("--output", true, "Output file name");
     parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
     parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
     parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
