@@ -2,6 +2,7 @@
 
 #include <ModuleServices.h>
 #include <TrackerSettingsDatabase.h>
+#include <vector>
 
 class WAVExportArgs {
 public:
@@ -10,6 +11,7 @@ public:
         Arguments();
         ~Arguments();
 
+        // Only declare fields we add beyond WAVWriterParameters
         const char* inputFile;
         const char* outputFile;
         bool verbose;  // Flag for verbose output

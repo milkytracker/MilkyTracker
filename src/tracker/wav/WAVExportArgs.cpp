@@ -4,11 +4,12 @@
 #include <stdexcept>
 
 WAVExportArgs::Arguments::Arguments() {
-    // Initialize all fields to safe defaults
+    // Initialize our fields
     inputFile = nullptr;
     outputFile = nullptr;
-    
-    // WAVWriterParameters
+    verbose = false;
+
+    // Initialize base class fields to safe defaults
     sampleRate = 44100;
     mixerVolume = 256;
     mixerShift = 1;
@@ -17,9 +18,10 @@ WAVExportArgs::Arguments::Arguments() {
     toOrder = -1;
     muting = nullptr;
     panning = nullptr;
+    rampin = false;
+    playMode = 0;
     multiTrack = false;
     limiterDrive = 0;
-    verbose = false;
 }
 
 WAVExportArgs::Arguments::~Arguments() {
@@ -77,8 +79,8 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
     params.mixerVolume = getIntOption(argc, argv, "--volume", params.mixerVolume);
     params.mixerShift = getIntOption(argc, argv, "--shift", params.mixerShift);
     params.resamplerType = getIntOption(argc, argv, "--resampler", params.resamplerType);
-    params.verbose = hasOption(argc, argv, "--verbose");
     params.multiTrack = hasOption(argc, argv, "--multi-track");
+    params.verbose = hasOption(argc, argv, "--verbose");
     
     // Get output file (required)
     params.outputFile = getStringOption(argc, argv, "--output", nullptr);
@@ -100,17 +102,12 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
         printUsage(argv[0]);
         throw std::runtime_error("Input file must be the last argument");
     }
-    
-    // Set additional required parameters
-    params.fromOrder = 0;
-    params.toOrder = -1; // Will be set by the caller
+
     mp_ubyte* mutingArray = new mp_ubyte[256]; // Allocate with safe size
     for (int i = 0; i < 256; i++) {
         mutingArray[i] = 0;  // Initialize all channels to unmuted
     }
     params.muting = mutingArray;
-    params.panning = nullptr;
-    params.limiterDrive = 0;
 
     return params;
 }
