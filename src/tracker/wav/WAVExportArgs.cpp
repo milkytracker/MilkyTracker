@@ -7,6 +7,7 @@ WAVExportArgs::Arguments::Arguments()
     : inputFile(nullptr)
     , outputFile(nullptr)
     , verbose(false)
+    , channelCount(0)
 {
     // Initialize base class fields to safe defaults
     sampleRate = 44100;
@@ -15,7 +16,7 @@ WAVExportArgs::Arguments::Arguments()
     resamplerType = 4;
     fromOrder = 0;
     toOrder = -1;
-    muting = nullptr;
+    muting = nullptr;  // Will be allocated when we know the channel count
     panning = nullptr;
     rampin = false;
     playMode = 0;
@@ -35,8 +36,15 @@ WAVExportArgs::Arguments::Arguments(const Arguments& other)
     , inputFile(nullptr)
     , outputFile(nullptr)
     , verbose(other.verbose)
+    , channelCount(other.channelCount)
 {
     copyStrings(other);
+    // Handle muting array
+    if (other.muting && other.channelCount > 0) {
+        mp_ubyte* newMuting = new mp_ubyte[other.channelCount];
+        memcpy(newMuting, other.muting, other.channelCount);
+        muting = newMuting;
+    }
 }
 
 WAVExportArgs::Arguments& WAVExportArgs::Arguments::operator=(const Arguments& other)
@@ -45,10 +53,19 @@ WAVExportArgs::Arguments& WAVExportArgs::Arguments::operator=(const Arguments& o
         ModuleServices::WAVWriterParameters::operator=(other);  // Copy base class
         delete[] inputFile;
         delete[] outputFile;
+        delete[] muting;
         inputFile = nullptr;
         outputFile = nullptr;
+        muting = nullptr;
         verbose = other.verbose;
+        channelCount = other.channelCount;
         copyStrings(other);
+        // Handle muting array
+        if (other.muting && other.channelCount > 0) {
+            mp_ubyte* newMuting = new mp_ubyte[other.channelCount];
+            memcpy(newMuting, other.muting, other.channelCount);
+            muting = newMuting;
+        }
     }
     return *this;
 }
@@ -152,12 +169,6 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
         printUsage(argv[0]);
         throw std::runtime_error("Input file must be the last argument");
     }
-
-    mp_ubyte* mutingArray = new mp_ubyte[256]; // Allocate with safe size
-    for (int i = 0; i < 256; i++) {
-        mutingArray[i] = 0;  // Initialize all channels to unmuted
-    }
-    params.muting = mutingArray;
 
     return params;
 }

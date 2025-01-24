@@ -17,7 +17,11 @@ int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
         fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
         return 1;
     }
-    return exporter.performExport();
+    if (exporter.performExport() != 0) {
+        fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
+        return 1;
+    }
+    return 0;
 }
 
 WAVExporter::WAVExporter(int argc, char* argv[])
@@ -64,15 +68,14 @@ int WAVExporter::performExport() {
         return 1;
     }
 
-    // Update channel count and reallocate muting array if needed
+    // Update channel count and initialize muting array
     params.channelCount = module.header.channum;
-    if (params.muting) {
-        delete[] params.muting;
-    }
-    params.muting = new mp_ubyte[params.channelCount];
+    mp_ubyte* newMuting = new mp_ubyte[params.channelCount];
     for (pp_uint32 i = 0; i < params.channelCount; i++) {
-        params.muting[i] = 0;  // Initialize all channels to unmuted
+        newMuting[i] = 0;  // Initialize all channels to unmuted
     }
+    delete[] params.muting;  // Safe to delete nullptr
+    params.muting = newMuting;
 
     // Create ModuleServices instance
     ModuleServices services(module);
