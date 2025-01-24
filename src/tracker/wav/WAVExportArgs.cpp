@@ -124,17 +124,20 @@ WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, Tracke
     // Get required output file
     const char* outputArg = parser.getOptionValue("--output");
     if (!outputArg) {
-        parser.printUsage();
         throw std::runtime_error("Output file (--output) is required");
     }
     
-    // Copy output file
+    // Copy output file (safe now since we checked for nullptr)
     char* outputCopy = new char[strlen(outputArg) + 1];
     strcpy(outputCopy, outputArg);
     params.outputFile = outputCopy;
 
     // Get input file (first positional arg)
     const char* inputArg = parser.getPositionalArg(0);
+    if (!inputArg) {
+        throw std::runtime_error("Input file is required");
+    }
+    
     char* inputCopy = new char[strlen(inputArg) + 1];
     strcpy(inputCopy, inputArg);
     params.inputFile = inputCopy;

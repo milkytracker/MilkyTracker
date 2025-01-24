@@ -18,8 +18,9 @@ std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser) {
     WAVExportArgs::registerOptions(parser);
 
     if (!parser.parse()) {
-        parser.printUsage();
-        exit(1);
+        exporter->errorMessage = parser.getError();
+        exporter->parseError = true;
+        return exporter;
     }
 
     if (parser.isHelpRequested()) {
@@ -37,13 +38,13 @@ std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser) {
 
     try {
         exporter->params = WAVExportArgs::initFromParser(parser, settingsDB);
-        return exporter;
     }
     catch (const std::runtime_error& e) {
         exporter->errorMessage = e.what();
         exporter->parseError = true;
-        return nullptr;
     }
+
+    return exporter;
 }
 
 int WAVExporter::performExport() {
