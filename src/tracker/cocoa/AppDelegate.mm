@@ -176,15 +176,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	// Get CLI options
-	CLIParser* parser = [AppDelegate sharedCLIParser];
-	
-	// Handle any CLI-specific initialization here
-	// For example:
-	if (parser && parser->hasOption("--some-option")) {
-		// Handle the option
-	}
-	
 	// Initialisation
 	globalMutex = new PPMutex();
 	[self initTracker];
