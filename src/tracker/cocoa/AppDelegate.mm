@@ -61,6 +61,7 @@ static PPMutex*				globalMutex;
 
 static BOOL					startupAfterFullScreen;
 static BOOL					startupComplete;
+static NSMutableArray*		filesToLoad;
 
 static CVDisplayLinkRef		displayLink;
 
@@ -147,7 +148,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	// Signal startup complete
 	startupComplete = YES;
 	
-	// Check for file to load from CLI
+	// First try to load file from CLI if specified
 	if (CLIParser* parser = [AppDelegate sharedCLIParser]) {
 		if (const char* inputFile = parser->getPositionalArg(0)) {			
 			// Path is already absolute from main.mm
@@ -155,6 +156,13 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 			[self application:NSApp openFile:filename];
 		}
 	}
+	
+	// Then handle any files that were queued during startup
+	for (NSString* filename in filesToLoad) {
+		[self application:NSApp openFile:filename];
+	}
+	[filesToLoad removeAllObjects];
+	filesToLoad = nil;
 }
 
 - (void)timerCallback:(NSTimer*)theTimer
@@ -223,24 +231,30 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 #pragma mark File open events
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	// Only handle file opens after startup is complete
-	if (!startupComplete) {
-		return NO;
+	// Startup not complete; hold onto the file path and load it later
+	if (!startupComplete)
+	{
+		if (!filesToLoad)
+			filesToLoad = [[NSMutableArray alloc] initWithObjects:filename, nil];
+		else
+			[filesToLoad addObject:filename];
 	}
-
-	// Temp buffer for file path
-	char filePath[PATH_MAX + 1];
-	
-	// Convert to C string
-	[filename getCString:filePath maxLength:PATH_MAX encoding:NSUTF8StringEncoding];
-	
-	// Create system string from C string
-	PPSystemString sysString(filePath);
-	PPSystemString* sysStrPtr = &sysString;
-	
-	// Raise file drop event
-	PPEvent event(eFileDragDropped, &sysStrPtr, sizeof(PPSystemString*));
-	RaiseEventSynchronized(&event);
+	else
+	{
+		// Temp buffer for file path
+		char filePath[PATH_MAX + 1];
+		
+		// Convert to C string
+		[filename getCString:filePath maxLength:PATH_MAX encoding:NSUTF8StringEncoding];
+		
+		// Create system string from C string
+		PPSystemString sysString(filePath);
+		PPSystemString* sysStrPtr = &sysString;
+		
+		// Raise file drop event
+		PPEvent event(eFileDragDropped, &sysStrPtr, sizeof(PPSystemString*));
+		RaiseEventSynchronized(&event);
+	}
 	
 	return YES;
 }
