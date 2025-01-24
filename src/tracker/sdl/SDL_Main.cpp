@@ -74,6 +74,7 @@
 #include <XModule.h>
 #include "../wav/WAVExportArgs.h"
 #include "../wav/WAVUtils.h"
+#include <WAVExporter.h>
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
@@ -855,39 +856,16 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 }
 
 bool exportToWAV(const char* inputFile, const char* outputFile) {
-	XModule module;
-	
-	// Load the module file
-	if (module.loadModule(inputFile) != MP_OK) {
-		fprintf(stderr, "Error: Could not load module file '%s'\n", inputFile);
-		return false;
-	}
+	const char* argv[] = {
+		"milkytracker",  // Program name
+		inputFile,       // Input file
+		"--output",      // Output flag
+		outputFile,      // Output file
+		nullptr
+	};
+	int argc = 4;
 
-	// Create ModuleServices instance
-	ModuleServices moduleServices(module);
-
-	// Set up WAV export parameters
-	ModuleServices::WAVWriterParameters params;
-	params.sampleRate = 44100;  // Standard sample rate
-	params.resamplerType = 1;   // Linear interpolation
-	params.mixerVolume = 256;   // Full volume
-	params.playMode = 0;        // Default play mode
-	params.mixerShift = 0;      // No shift
-	params.rampin = false;      // No ramp in
-	params.fromOrder = 0;       // Start from first order
-	params.toOrder = module.header.ordnum - 1;  // Play until last order
-	params.multiTrack = false;  // Single track export
-	params.limiterDrive = 0;    // No limiter
-
-	// Export to WAV
-	pp_int32 result = moduleServices.exportToWAV(outputFile, params);
-	
-	if (result < 0) {
-		fprintf(stderr, "Error: Failed to export WAV file '%s'\n", outputFile);
-		return false;
-	}
-
-	return true;
+	return WAVExporter::exportFromCommandLine(argc, (char**)argv) == 0;
 }
 
 static bool done;
