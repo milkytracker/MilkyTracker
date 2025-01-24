@@ -64,6 +64,16 @@ int WAVExporter::performExport() {
         return 1;
     }
 
+    // Update channel count and reallocate muting array if needed
+    params.channelCount = module.header.channum;
+    if (params.muting) {
+        delete[] params.muting;
+    }
+    params.muting = new mp_ubyte[params.channelCount];
+    for (pp_uint32 i = 0; i < params.channelCount; i++) {
+        params.muting[i] = 0;  // Initialize all channels to unmuted
+    }
+
     // Create ModuleServices instance
     ModuleServices services(module);
 
@@ -81,16 +91,16 @@ int WAVExporter::performExport() {
         errorMessage += params.outputFile;
         return 1;
     }
-
+    
     // Clean up silent files in multi-track mode
     if (params.multiTrack) {
         PPSystemString baseName = outputFilePath.stripExtension();
         PPSystemString extension = outputFilePath.getExtension();
-
-        for (pp_uint32 i = 0; i < module.header.channum; i++) {
+        
+        for (pp_uint32 i = 0; i < params.channelCount; i++) {
             char filename[1024];
             snprintf(filename, sizeof(filename), "%s_%02d%s", baseName.getStrBuffer(), i+1, extension.getStrBuffer());
-
+            
             if (WAVUtils::isWAVSilent(filename)) {
                 remove(filename);
                 if (params.verbose) {

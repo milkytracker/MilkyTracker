@@ -21,6 +21,7 @@ public:
         const char* inputFile;
         const char* outputFile;
         bool verbose;  // Flag for verbose output
+        pp_uint32 channelCount;  // Number of channels in the module
 
     private:
         // Helper to handle deep copying of strings
