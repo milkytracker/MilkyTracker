@@ -20,7 +20,7 @@ public:
     
     // Register options before parsing
     void addOption(const char* name, bool requiresValue, const char* description);
-    void addPositionalArg(const char* name, const char* description);
+    void addPositionalArg(const char* name, const char* description, bool required = true);
     
     // Parse and access results
     bool parse(int argc, char* argv[]);
@@ -48,7 +48,7 @@ private:
     std::string errorMessage;
     std::string additionalHelpText;
     std::vector<Option> options;
-    std::vector<std::pair<std::string, std::string>> positionalArgs; // name, description
+    std::vector<std::tuple<std::string, std::string, bool>> positionalArgs; // name, description, required
     bool helpRequested;
     
     // Parsed results

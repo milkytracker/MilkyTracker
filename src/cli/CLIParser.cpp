@@ -15,9 +15,9 @@ void CLIParser::addOption(const char* name, bool requiresValue, const char* desc
     options.emplace_back(name, requiresValue, description);
 }
 
-void CLIParser::addPositionalArg(const char* name, const char* description)
+void CLIParser::addPositionalArg(const char* name, const char* description, bool required)
 {
-    positionalArgs.emplace_back(name, description);
+    positionalArgs.emplace_back(name, description, required);
 }
 
 bool CLIParser::parse(int argc, char* argv[])
@@ -81,11 +81,14 @@ bool CLIParser::parse(int argc, char* argv[])
         return true;
     }
     
-    // Check if we got all required positional args
-    if (positionalIndex < positionalArgs.size()) {
-        errorMessage = "Missing required argument: ";
-        errorMessage += positionalArgs[positionalIndex].first;
-        return false;
+    // Check each position to ensure required args are satisfied
+    for (size_t i = 0; i < positionalArgs.size(); i++) {
+        bool isRequired = std::get<2>(positionalArgs[i]);
+        if (isRequired && i >= parsedPositionalArgs.size()) {
+            errorMessage = "Missing required argument: ";
+            errorMessage += std::get<0>(positionalArgs[i]);
+            return false;
+        }
     }
     
     return true;
@@ -124,14 +127,21 @@ void CLIParser::printUsage() const
     
     // Print positional args in order
     for (const auto& arg : positionalArgs) {
-        fprintf(stderr, " <%s>", arg.first.c_str());
+        if (std::get<2>(arg)) {
+            fprintf(stderr, " <%s>", std::get<0>(arg).c_str());
+        } else {
+            fprintf(stderr, " [%s]", std::get<0>(arg).c_str());
+        }
     }
     
     fprintf(stderr, " [options]\n\nPositional arguments:\n");
     
     // Print positional arg descriptions
     for (const auto& arg : positionalArgs) {
-        fprintf(stderr, "  %-20s %s\n", arg.first.c_str(), arg.second.c_str());
+        fprintf(stderr, "  %-20s %s%s\n", 
+                std::get<0>(arg).c_str(), 
+                std::get<1>(arg).c_str(),
+                std::get<2>(arg) ? "" : " (optional)");
     }
     
     fprintf(stderr, "\nOptions:\n");

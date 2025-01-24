@@ -97,7 +97,7 @@ void WAVExportArgs::registerOptions(CLIParser& parser) {
     parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
     parser.addOption("--verbose", false, "Enable verbose output");
     
-    parser.addPositionalArg("input", "Input module file (.xm)");
+    parser.addPositionalArg("input", "Input module file (.xm)", true);
     
     parser.setAdditionalHelpText(
         "When using --multi-track, output files will be named:\n"
