@@ -1,5 +1,4 @@
-#ifndef __WAVEXPORTER_H__
-#define __WAVEXPORTER_H__
+#pragma once
 
 #include <string>
 #include "WAVExportArgs.h"
@@ -13,7 +12,7 @@ public:
     WAVExporter(int argc, char* argv[]);
 
     // Phase 1: Parse arguments
-    bool parseArguments();
+    int parseArguments();
 
     // Phase 2: Perform the export
     int performExport();
@@ -31,5 +30,3 @@ private:
     std::string errorMessage;
     WAVExportArgs::Arguments params;
 };
-
-#endif

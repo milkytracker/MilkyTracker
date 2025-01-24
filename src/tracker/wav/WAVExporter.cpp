@@ -13,13 +13,15 @@
 // Static factory method for backward compatibility
 int WAVExporter::exportFromCommandLine(int argc, char* argv[]) {
     WAVExporter exporter(argc, argv);
-    if (!exporter.parseArguments()) {
+    int result = exporter.parseArguments();
+    if (result != 0) {
         fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-        return 1;
+        return result;
     }
-    if (exporter.performExport() != 0) {
+    result = exporter.performExport();
+    if (result != 0) {
         fprintf(stderr, "Error: %s\n", exporter.getErrorMessage());
-        return 1;
+        return result;
     }
     return 0;
 }
@@ -31,7 +33,7 @@ WAVExporter::WAVExporter(int argc, char* argv[])
 {
 }
 
-bool WAVExporter::parseArguments() {
+int WAVExporter::parseArguments() {
     // Load settings from config file
     TrackerSettingsDatabase settingsDB;
     const char* configFile = System::getConfigFileName();
@@ -43,12 +45,12 @@ bool WAVExporter::parseArguments() {
     // Get filenames and WAV writer parameters from command line arguments
     try {
         params = WAVExportArgs::parseFromCommandLine(argc, argv, settingsDB);
-        return true;
+        return 0;  // Success
     }
     catch (const std::runtime_error& e) {
         errorMessage = e.what();
         parseError = true;
-        return false;
+        return 1;  // Error
     }
 }
 
