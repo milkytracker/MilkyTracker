@@ -1,4 +1,5 @@
 #include "WAVExportArgs.h"
+#include "CLIParser.h"
 #include <cstring>
 #include <cstdio>
 #include <stdexcept>
@@ -87,41 +88,8 @@ void WAVExportArgs::Arguments::copyStrings(const Arguments& other)
     }
 }
 
-bool WAVExportArgs::isParameterThatTakesValue(const char* arg) {
-    static const char* parametersWithValues[] = {
-        "--output",
-        "--sample-rate",
-        "--volume",
-        "--shift",
-        "--resampler"
-    };
-    
-    for (const char* param : parametersWithValues) {
-        if (strcmp(arg, param) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool WAVExportArgs::isValueForParameter(const char* arg, int argIndex, int argc, char* argv[]) {
-    // Check if the previous argument is a parameter that takes a value
-    if (argIndex > 0 && argIndex < argc) {
-        const char* prevArg = argv[argIndex - 1];
-        if (prevArg[0] == '-' && prevArg[1] == '-' && isParameterThatTakesValue(prevArg)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
     Arguments params;
-
-    if (argc < 3) {
-        printUsage(argv[0]);
-        throw std::runtime_error("Not enough arguments");
-    }
 
     // Set defaults from settings database
     params.sampleRate = settingsDB.hasKey("HDRECORDER_MIXFREQ") ? 
@@ -133,84 +101,81 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
     params.resamplerType = settingsDB.hasKey("HDRECORDER_INTERPOLATION") ? 
                           settingsDB.restore("HDRECORDER_INTERPOLATION")->getIntValue() : 4;
 
-    // Override with command line arguments if provided
-    params.sampleRate = getIntOption(argc, argv, "--sample-rate", params.sampleRate);
-    params.mixerVolume = getIntOption(argc, argv, "--volume", params.mixerVolume);
-    params.mixerShift = getIntOption(argc, argv, "--shift", params.mixerShift);
-    params.resamplerType = getIntOption(argc, argv, "--resampler", params.resamplerType);
-    params.multiTrack = hasOption(argc, argv, "--multi-track");
-    params.verbose = hasOption(argc, argv, "--verbose");
+    CLIParser parser(argv[0]);
     
-    // Get output file (required)
-    const char* outputArg = getStringOption(argc, argv, "--output", nullptr);
+    // Register options
+    parser.addOption("--output", true, "Output file name (required)");
+    parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
+    parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
+    parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
+    parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
+    parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
+    parser.addOption("--verbose", false, "Enable verbose output");
+    
+    // Register positional args
+    parser.addPositionalArg("input", "Input module file (.xm)");
+    
+    if (!parser.parse(argc, argv)) {
+        parser.printUsage();
+        throw std::runtime_error(parser.getError());
+    }
+
+    // Get required output file
+    const char* outputArg = parser.getOptionValue("--output");
     if (!outputArg) {
-        printUsage(argv[0]);
+        parser.printUsage();
         throw std::runtime_error("Output file (--output) is required");
     }
-    // Make a copy of the output file string
+    
+    // Copy output file
     char* outputCopy = new char[strlen(outputArg) + 1];
     strcpy(outputCopy, outputArg);
     params.outputFile = outputCopy;
 
-    // Validate that the last argument is actually an input file
-    const char* lastArg = argv[argc - 1];
-    if (isValueForParameter(lastArg, argc - 1, argc, argv)) {
-        printUsage(argv[0]);
-        throw std::runtime_error("Missing input file (must be last argument)");
-    }
-
-    // Get input file (last argument) and make a copy
-    char* inputCopy = new char[strlen(lastArg) + 1];
-    strcpy(inputCopy, lastArg);
+    // Get input file (first positional arg)
+    const char* inputArg = parser.getPositionalArg(0);
+    char* inputCopy = new char[strlen(inputArg) + 1];
+    strcpy(inputCopy, inputArg);
     params.inputFile = inputCopy;
 
-    if (params.inputFile[0] == '-') {
-        delete[] inputCopy;  // Clean up if we're going to throw
-        printUsage(argv[0]);
-        throw std::runtime_error("Input file must be the last argument");
+    // Override defaults with command line arguments if provided
+    if (parser.hasOption("--sample-rate")) {
+        params.sampleRate = parser.getIntOptionValue("--sample-rate", params.sampleRate);
     }
+    if (parser.hasOption("--volume")) {
+        params.mixerVolume = parser.getIntOptionValue("--volume", params.mixerVolume);
+    }
+    if (parser.hasOption("--shift")) {
+        params.mixerShift = parser.getIntOptionValue("--shift", params.mixerShift);
+    }
+    if (parser.hasOption("--resampler")) {
+        params.resamplerType = parser.getIntOptionValue("--resampler", params.resamplerType);
+    }
+    
+    params.multiTrack = parser.hasOption("--multi-track");
+    params.verbose = parser.hasOption("--verbose");
 
     return params;
 }
 
 void WAVExportArgs::printUsage(const char* programName) {
-    fprintf(stderr, "Usage: %s [options] <input.xm>\n", programName);
-    fprintf(stderr, "Options:\n");
-    fprintf(stderr, "  --output <file>       Output file name (required)\n");
-    fprintf(stderr, "  --sample-rate <rate>  Sample rate in Hz (default: from settings or 44100)\n");
-    fprintf(stderr, "  --volume <volume>     Mixer volume (default: from settings or 256)\n");
-    fprintf(stderr, "  --shift <shift>       Mixer shift (default: from settings or 1)\n");
-    fprintf(stderr, "  --resampler <type>    Resampler type (default: from settings or 4)\n");
-    fprintf(stderr, "  --multi-track         Export each track to a separate WAV file\n");
-    fprintf(stderr, "  --verbose             Enable verbose output\n");
+    CLIParser parser(programName);
+    
+    // Register options to generate help text
+    parser.addOption("--output", true, "Output file name (required)");
+    parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
+    parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
+    parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
+    parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
+    parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
+    parser.addOption("--verbose", false, "Enable verbose output");
+    
+    parser.addPositionalArg("input", "Input module file (.xm)");
+    
+    parser.printUsage();
+    
+    // Add additional help text
     fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
     fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
     fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
-}
-
-int WAVExportArgs::getIntOption(int argc, char* argv[], const char* option, int defaultValue) {
-    for (int i = 1; i < argc - 1; i++) {
-        if (strcmp(argv[i], option) == 0 && i + 1 < argc) {
-            return atoi(argv[i + 1]);
-        }
-    }
-    return defaultValue;
-}
-
-bool WAVExportArgs::hasOption(int argc, char* argv[], const char* option) {
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], option) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-const char* WAVExportArgs::getStringOption(int argc, char* argv[], const char* option, const char* defaultValue) {
-    for (int i = 1; i < argc - 1; i++) {
-        if (strcmp(argv[i], option) == 0 && i + 1 < argc) {
-            return argv[i + 1];
-        }
-    }
-    return defaultValue;
 } 

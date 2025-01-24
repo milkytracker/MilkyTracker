@@ -36,6 +36,7 @@ target_include_directories(trackerlib
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
         ${PROJECT_SOURCE_DIR}/src/tracker
         ${PROJECT_SOURCE_DIR}/src/tracker/wav
+        ${PROJECT_SOURCE_DIR}/src/cli
 )
 
 if(WIN32)
@@ -52,6 +53,7 @@ target_link_libraries(trackerlib
     PUBLIC
         milkyplay
         ppui
+        cli
 )
 
 add_executable(tracker
