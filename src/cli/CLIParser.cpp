@@ -140,6 +140,11 @@ void CLIParser::printUsage() const
                     "", opt.description.c_str());
         }
     }
+
+    // Print additional help text if present
+    if (!additionalHelpText.empty()) {
+        fprintf(stderr, "\n%s", additionalHelpText.c_str());
+    }
 }
 
 const char* CLIParser::getError() const

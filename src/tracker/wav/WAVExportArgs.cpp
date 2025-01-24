@@ -88,7 +88,43 @@ void WAVExportArgs::Arguments::copyStrings(const Arguments& other)
     }
 }
 
+void WAVExportArgs::registerOptions(CLIParser& parser) {
+    parser.addOption("--output", true, "Output file name (required)");
+    parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
+    parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
+    parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
+    parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
+    parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
+    parser.addOption("--verbose", false, "Enable verbose output");
+    
+    parser.addPositionalArg("input", "Input module file (.xm)");
+    
+    parser.setAdditionalHelpText(
+        "When using --multi-track, output files will be named:\n"
+        "  output_01.wav, output_02.wav, etc.\n"
+        "  (Silent tracks will be automatically removed)\n"
+    );
+}
+
 WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB) {
+    CLIParser parser(argv[0]);
+    registerOptions(parser);
+    
+    if (!parser.parse(argc, argv)) {
+        parser.printUsage();
+        throw std::runtime_error(parser.getError());
+    }
+
+    // Handle help flag
+    if (parser.isHelpRequested()) {
+        parser.printUsage();
+        exit(0);
+    }
+    
+    return parseFromCommandLine(parser, settingsDB);
+}
+
+WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(CLIParser& parser, TrackerSettingsDatabase& settingsDB) {
     Arguments params;
 
     // Set defaults from settings database
@@ -100,34 +136,6 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
                        settingsDB.restore("HDRECORDER_MIXERSHIFT")->getIntValue() : 1;
     params.resamplerType = settingsDB.hasKey("HDRECORDER_INTERPOLATION") ? 
                           settingsDB.restore("HDRECORDER_INTERPOLATION")->getIntValue() : 4;
-
-    CLIParser parser(argv[0]);
-    
-    // Register options
-    parser.addOption("--output", true, "Output file name (required)");
-    parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
-    parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
-    parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
-    parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
-    parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
-    parser.addOption("--verbose", false, "Enable verbose output");
-    
-    // Register positional args
-    parser.addPositionalArg("input", "Input module file (.xm)");
-    
-    if (!parser.parse(argc, argv)) {
-        parser.printUsage();
-        throw std::runtime_error(parser.getError());
-    }
-
-    // Handle help flag
-    if (parser.isHelpRequested()) {
-        parser.printUsage();
-        fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
-        fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
-        fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
-        exit(0);
-    }
 
     // Get required output file
     const char* outputArg = parser.getOptionValue("--output");
@@ -169,22 +177,6 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
 
 void WAVExportArgs::printUsage(const char* programName) {
     CLIParser parser(programName);
-    
-    // Register options to generate help text
-    parser.addOption("--output", true, "Output file name (required)");
-    parser.addOption("--sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
-    parser.addOption("--volume", true, "Mixer volume (default: from settings or 256)");
-    parser.addOption("--shift", true, "Mixer shift (default: from settings or 1)");
-    parser.addOption("--resampler", true, "Resampler type (default: from settings or 4)");
-    parser.addOption("--multi-track", false, "Export each track to a separate WAV file");
-    parser.addOption("--verbose", false, "Enable verbose output");
-    
-    parser.addPositionalArg("input", "Input module file (.xm)");
-    
+    registerOptions(parser);
     parser.printUsage();
-    
-    // Add additional help text
-    fprintf(stderr, "\nWhen using --multi-track, output files will be named:\n");
-    fprintf(stderr, "  output_01.wav, output_02.wav, etc.\n");
-    fprintf(stderr, "  (Silent tracks will be automatically removed)\n");
 } 

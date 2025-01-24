@@ -32,6 +32,7 @@ public:
     
     // Help text generation
     void printUsage() const;
+    void setAdditionalHelpText(const char* text) { additionalHelpText = text ? text : ""; }
     
     // Error handling
     const char* getError() const;
@@ -42,6 +43,7 @@ public:
 private:
     std::string programName;
     std::string errorMessage;
+    std::string additionalHelpText;
     std::vector<Option> options;
     std::vector<std::pair<std::string, std::string>> positionalArgs; // name, description
     bool helpRequested;

@@ -913,6 +913,8 @@ int main(int argc, char *argv[])
 	PPDisplayDevice::Orientations orientation = PPDisplayDevice::ORIENTATION_NORMAL;
 	bool swapRedBlue = false, noSplash = false;
 	bool recVelocity = false;
+
+	// TODO: Use CLIParser to parse command line
 	bool headless = false;
 	char* outputWAVFile = nullptr;
 

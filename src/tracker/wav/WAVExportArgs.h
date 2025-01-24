@@ -5,6 +5,8 @@
 #include <vector>
 #include <cstring>
 
+class CLIParser;  // Forward declaration
+
 class WAVExportArgs {
 public:
     class Arguments : public ModuleServices::WAVWriterParameters {
@@ -28,6 +30,14 @@ public:
         void copyStrings(const Arguments& other);
     };
 
+    // Original method that creates its own parser
     static Arguments parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
+    
+    // New variant that uses an existing parser
+    static Arguments parseFromCommandLine(CLIParser& parser, TrackerSettingsDatabase& settingsDB);
+    
+    // Helper to register WAV export options with a parser
+    static void registerOptions(CLIParser& parser);
+    
     static void printUsage(const char* programName);
 }; 
