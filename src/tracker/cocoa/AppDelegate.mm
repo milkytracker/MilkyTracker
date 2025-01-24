@@ -149,8 +149,8 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	
 	// Check for file to load from CLI
 	if (CLIParser* parser = [AppDelegate sharedCLIParser]) {
-		if (const char* inputFile = parser->getPositionalArg(0)) {
-			// Convert C string to NSString and use existing file open mechanism
+		if (const char* inputFile = parser->getPositionalArg(0)) {			
+			// Path is already absolute from main.mm
 			NSString* filename = [NSString stringWithUTF8String:inputFile];
 			[self application:NSApp openFile:filename];
 		}

@@ -175,4 +175,10 @@ const CLIParser::Option* CLIParser::findOption(const char* name) const
         }
     }
     return nullptr;
+}
+
+void CLIParser::setPositionalArgValue(size_t index, const char* value) {
+    if (index < parsedPositionalArgs.size()) {
+        parsedPositionalArgs[index] = value;
+    }
 } 

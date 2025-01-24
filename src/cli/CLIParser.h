@@ -40,6 +40,9 @@ public:
     // Check if help was requested
     bool isHelpRequested() const { return helpRequested; }
 
+    // New method to set positional argument value
+    void setPositionalArgValue(size_t index, const char* value);
+
 private:
     std::string programName;
     std::string errorMessage;

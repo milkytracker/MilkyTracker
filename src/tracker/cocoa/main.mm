@@ -64,7 +64,7 @@ void QueryKeyModifiers() { }
 // --------------------------------------
 int main(int argc, const char * argv[])
 {
-	CLIParser parser(argv[0]);
+	static CLIParser parser(argv[0]);
 	parser.addOption("--headless", false, "Run in headless mode");
 
   // This includes registering the positional argument for the input file
@@ -83,6 +83,18 @@ int main(int argc, const char * argv[])
 	bool headless = parser.hasOption("--headless");
 	const char* inputFile = parser.getPositionalArg(0);
 	const char* outputWAVFile = parser.getOptionValue("--output");
+
+	// Convert input file path to absolute if specified
+	NSString* absolutePath = nil;
+	if (inputFile) {
+		NSString* path = [NSString stringWithUTF8String:inputFile];
+		if (![path isAbsolutePath]) {
+			NSString* cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+			absolutePath = [[cwd stringByAppendingPathComponent:path] stringByStandardizingPath];
+			// Update the parser with the absolute path
+			parser.setPositionalArgValue(0, [absolutePath UTF8String]);
+		}
+	}
 
 	if (outputWAVFile) {
 		WAVExporter exporter(parser);
