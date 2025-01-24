@@ -33,8 +33,8 @@ public:
     // Original method that creates its own parser
     static Arguments parseFromCommandLine(int argc, char* argv[], TrackerSettingsDatabase& settingsDB);
     
-    // New variant that uses an existing parser
-    static Arguments parseFromCommandLine(CLIParser& parser, TrackerSettingsDatabase& settingsDB);
+    // Initialize Arguments from an already-parsed parser
+    static Arguments initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB);
     
     // Helper to register WAV export options with a parser
     static void registerOptions(CLIParser& parser);

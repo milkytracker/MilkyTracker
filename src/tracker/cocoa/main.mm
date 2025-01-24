@@ -75,45 +75,38 @@ bool exportToWAV(const char* inputFile, const char* outputFile) {
 // --------------------------------------
 int main(int argc, const char * argv[])
 {
-	bool headless = false;
-	const char* loadFile = nullptr;
-	const char* outputWAVFile = nullptr;
+	CLIParser parser(argv[0]);
+	parser.addOption("--headless", false, "Run in headless mode");
 
-	// Parse command line arguments
-	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "--headless") == 0) {
-			headless = true;
-		}
-		else if (strcmp(argv[i], "--output") == 0 && i + 1 < argc) {
-			outputWAVFile = argv[++i];
-		}
-		else if (argv[i][0] != '-') {
-			loadFile = argv[i];
-		}
-		else {
-			fprintf(stderr, "Usage: %s [--headless] [--output file.wav] [inputfile.xm]\n", argv[0]);
-			exit(1);
-		}
-	}
+  // This includes registering the positional argument for the input file
+	WAVExportArgs::registerOptions(parser);
 
-	// Validate arguments
-	if (outputWAVFile && !loadFile) {
-		fprintf(stderr, "Error: Input XM file must be specified when using --output\n");
+	if (!parser.parse(argc, argv)) {
+		parser.printUsage();
 		exit(1);
 	}
 
-	if (headless && !outputWAVFile) {
-		fprintf(stderr, "Error: --output must be specified when using --headless mode\n");
-		exit(1);
+	if (parser.isHelpRequested()) {
+		parser.printUsage();
+		exit(0);
 	}
 
-	// Handle headless mode before starting GUI
-	if (headless) {
-		if (!exportToWAV(loadFile, outputWAVFile)) {
+	bool headless = parser.hasOption("--headless");
+	const char* inputFile = parser.getPositionalArg(0);
+	const char* outputWAVFile = parser.getOptionValue("--output");
+
+	if (outputWAVFile) {
+		if (!WAVExporter::exportFromParser(parser)) {
 			return 1;
 		}
-		return 0;
+
+		if (headless) {
+			return 0;
+		}
 	}
+
+	// Store parser for AppDelegate to access
+	[AppDelegate setSharedCLIParser:&parser];
 
 	// Start GUI application
 	return NSApplicationMain(argc, argv);

@@ -121,10 +121,10 @@ WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(int argc, char* arg
         exit(0);
     }
     
-    return parseFromCommandLine(parser, settingsDB);
+    return initFromParser(parser, settingsDB);
 }
 
-WAVExportArgs::Arguments WAVExportArgs::parseFromCommandLine(CLIParser& parser, TrackerSettingsDatabase& settingsDB) {
+WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB) {
     Arguments params;
 
     // Set defaults from settings database
