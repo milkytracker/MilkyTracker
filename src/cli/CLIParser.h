@@ -63,6 +63,9 @@ public:
 	// Check if a positional argument exists
 	bool hasPositionalArg(const char* name) const;
 
+	// Debug helper to dump all parsed options and arguments
+	void dumpParsedOptions() const;
+
 private:
 	int argc;
 	const char** argv;  // Store as const internally

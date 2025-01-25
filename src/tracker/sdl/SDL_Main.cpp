@@ -917,6 +917,8 @@ int main(int argc, char *argv[])
 	
 	auto exporter = WAVExporter::createFromParser(parser, WAVExportArgs::DashFormat::SINGLE);
 
+	parser.dumpParsedOptions();
+
 	// Process options
 	if (parser.hasOption("-bpp")) {
 		defaultBPP = parser.getIntOptionValue("-bpp", defaultBPP);

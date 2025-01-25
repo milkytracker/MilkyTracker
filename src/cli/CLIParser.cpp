@@ -235,3 +235,16 @@ bool CLIParser::hasPositionalArg(const char* name) const {
 	}
 	return false;
 }
+
+void CLIParser::dumpParsedOptions() const {
+	fprintf(stderr, "\n=== Parsed Options ===\n");
+	for (const auto& [name, value] : parsedOptions) {
+		fprintf(stderr, "Option: %s = %s\n", name.c_str(), value.c_str());
+	}
+
+	fprintf(stderr, "\n=== Positional Arguments ===\n");
+	for (size_t i = 0; i < parsedPositionalArgs.size(); i++) {
+		fprintf(stderr, "Arg[%zu]: %s\n", i, parsedPositionalArgs[i].c_str());
+	}
+	fprintf(stderr, "\n");
+}
