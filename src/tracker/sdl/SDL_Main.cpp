@@ -959,7 +959,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (parser.hasOption("-output")) {
-		outputWAVFile = parser.getOptionValue("-output");
+		outputWAVFile = strdup(parser.getOptionValue("-output")); // Use strdup to create a non-const copy
 	}
 
 	globalMutex = new PPMutex();
@@ -970,8 +970,9 @@ int main(int argc, char *argv[])
 
 	auto exporter = WAVExporter::createFromParser(parser);
 
-	loadFile = parser.getPositionalArg(0);
-	outputWAVFile = parser.getOptionValue("-output");
+	if (parser.getPositionalArgCount() > 0) {
+		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
+	}
 
 	if (loadFile && outputWAVFile) {
 		if (exporter->hasParseError()) {
@@ -986,7 +987,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (parser.hasOption("--headless")) {
+	if (parser.hasOption("-headless")) {
 		return 0;
 	}
 

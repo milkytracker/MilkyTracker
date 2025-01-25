@@ -19,7 +19,16 @@ public:
 			: name(n), requiresValue(rv), description(d), allowedValues(av) {}
 	};
 
-	explicit CLIParser(int argc, const char* argv[]);
+	// Template constructor to handle both const and non-const argv
+	template<typename T>
+	explicit CLIParser(int argc, T argv[]) 
+		: argc(argc)
+		, argv(const_cast<const char**>(argv))  // Store as const internally
+		, helpRequested(false)
+	{
+		// Add built-in help option
+		addOption("--help", false, "Show this help message and exit");
+	}
 	
 	// Register options before parsing
 	void addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues = std::vector<std::string>());
@@ -51,7 +60,7 @@ public:
 
 private:
 	int argc;
-	const char** argv;
+	const char** argv;  // Store as const internally
 	std::string errorMessage;
 	std::string additionalHelpText;
 	std::vector<Option> options;

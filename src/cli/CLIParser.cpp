@@ -2,14 +2,7 @@
 #include <cstring>
 #include <cstdio>
 
-CLIParser::CLIParser(int argc, const char* argv[])
-	: argc(argc)
-	, argv(argv)
-	, helpRequested(false)
-{
-	// Add built-in help option
-	addOption("--help", false, "Show this help message and exit");
-}
+// Constructor is now a template in the header
 
 void CLIParser::addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues)
 {
