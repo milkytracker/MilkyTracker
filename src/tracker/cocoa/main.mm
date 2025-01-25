@@ -65,7 +65,7 @@ void QueryKeyModifiers() { }
 int main(int argc, const char * argv[])
 {
 	static CLIParser parser(argc, argv);
-	parser.addPositionalArg("input", "Input file", false);
+	parser.addPositionalArg("input", "Input module file (.xm)", false);
 	parser.addOption("--headless", false, "Run in headless mode");
 
 	auto exporter = WAVExporter::createFromParser(parser);
