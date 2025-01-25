@@ -41,7 +41,7 @@ std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser, WA
 	}
 	catch (const std::runtime_error& e) {
 		exporter->errorMessage = e.what();
-		exporter->parseError = true;
+		exporter->argumentError = true;
 	}
 
 	return exporter;

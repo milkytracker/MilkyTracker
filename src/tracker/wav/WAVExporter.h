@@ -18,12 +18,14 @@ public:
 	bool hasOutputFile() const { return params.outputFile != nullptr; }
 	bool hasInputFile() const { return params.inputFile != nullptr; }
 	bool hasParseError() const { return parseError; }
+	bool hasArgumentError() const { return argumentError; }
 	const char* getErrorMessage() const { return errorMessage.c_str(); }
 
 	virtual ~WAVExporter() = default;
 
 protected:
 	bool parseError;
+    bool argumentError;
 	std::string errorMessage;
 	WAVExportArgs::Arguments params;
 };

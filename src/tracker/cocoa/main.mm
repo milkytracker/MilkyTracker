@@ -70,11 +70,17 @@ int main(int argc, const char * argv[])
 
 	auto exporter = WAVExporter::createFromParser(parser);
 
+	if (exporter->hasParseError()) {
+		parser.printUsage();
+		fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+		return 1;
+	}
+
 	const char* inputFile = parser.getPositionalArg(0);
 	const char* outputWAVFile = parser.getOptionValue("--output");
 
 	if (inputFile && outputWAVFile) {
-		if (exporter->hasParseError()) {
+		if (exporter->hasArgumentError()) {
 			parser.printUsage();
 			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
 			return 1;

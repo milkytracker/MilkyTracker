@@ -917,7 +917,11 @@ int main(int argc, char *argv[])
 	
 	auto exporter = WAVExporter::createFromParser(parser, WAVExportArgs::DashFormat::SINGLE);
 
-	parser.dumpParsedOptions();
+	if (exporter->hasParseError()) {
+		parser.printUsage();
+		fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+		return 1;
+	}
 
 	// Process options
 	if (parser.hasOption("-bpp")) {
@@ -962,7 +966,7 @@ int main(int argc, char *argv[])
 	printf("outputWAVFile: %s\n", outputWAVFile);
 
 	if (loadFile && outputWAVFile) {
-		if (exporter->hasParseError()) {
+		if (exporter->hasArgumentError()) {
 			parser.printUsage();
 			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
 			return 1;
