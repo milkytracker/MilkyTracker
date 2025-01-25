@@ -915,18 +915,9 @@ int main(int argc, char *argv[])
 	
 	// Add optional input file argument
 	parser.addPositionalArg("inputfile", "Input module file (.xm)", false);
-	
-	if (!parser.parse()) {
-		fprintf(stderr, "%s\n", parser.getError());
-		parser.printUsage();
-		exit(1);
-	}
-	
-	if (parser.isHelpRequested()) {
-		parser.printUsage();
-		exit(0);
-	}
-	
+
+	auto exporter = WAVExporter::createFromParser(parser);
+
 	// Process options
 	if (parser.hasOption("-bpp")) {
 		defaultBPP = parser.getIntOptionValue("-bpp", defaultBPP);
@@ -967,8 +958,6 @@ int main(int argc, char *argv[])
 	// Store current working path (init routine is likely to change it)
 	PPPath_POSIX path;
 	PPSystemString oldCwd = path.getCurrent();
-
-	auto exporter = WAVExporter::createFromParser(parser);
 
 	if (parser.getPositionalArgCount() > 0) {
 		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
