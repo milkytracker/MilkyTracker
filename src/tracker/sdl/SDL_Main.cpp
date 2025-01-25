@@ -949,15 +949,13 @@ int main(int argc, char *argv[])
 		recVelocity = true;
 	}
 
-	outputWAVFile = parser.getOptionValue("-output");
+	if (parser.hasOption("-output")) {
+		outputWAVFile = strdup(parser.getOptionValue("-output")); // Use strdup to create a non-const copy
+	}
 
-	globalMutex = new PPMutex();
-
-	// Store current working path (init routine is likely to change it)
-	PPPath_POSIX path;
-	PPSystemString oldCwd = path.getCurrent();
-
-	loadFile = parser.getPositionalArg(0);
+	if (parser.getPositionalArgCount() > 0) {
+		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
+	}
 
 	printf("loadFile: %s\n", loadFile);
 	printf("outputWAVFile: %s\n", outputWAVFile);
@@ -978,6 +976,12 @@ int main(int argc, char *argv[])
 	if (parser.hasOption("-headless")) {
 		return 0;
 	}
+
+	globalMutex = new PPMutex();
+
+	// Store current working path (init routine is likely to change it)
+	PPPath_POSIX path;
+	PPSystemString oldCwd = path.getCurrent();
 
 	globalMutex->lock();
 	initTracker(defaultBPP, orientation, swapRedBlue, noSplash);
