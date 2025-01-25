@@ -914,7 +914,6 @@ int main(int argc, char *argv[])
 	parser.addOption("-orientation", true, "Set screen orientation", {"NORMAL", "ROTATE90CCW", "ROTATE90CW"});
 	parser.addOption("-recvelocity", false, "Enable recording velocity");
 	parser.addOption("-headless", false, "Run in headless mode");
-	parser.addOption("-output", true, "Output WAV file path");
 	
 	auto exporter = WAVExporter::createFromParser(parser, WAVExportArgs::DashFormat::SINGLE);
 
