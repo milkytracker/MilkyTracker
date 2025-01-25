@@ -86,6 +86,7 @@
 #ifdef HAVE_LIBRTMIDI
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif
+#include <CLIParser.h>
 // --------------------------------------------------------------------------
 
 static SDL_TimerID			timer;
@@ -853,19 +854,6 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 	ticking = true;
 }
 
-bool exportToWAV(const char* inputFile, const char* outputFile) {
-	const char* argv[] = {
-		"milkytracker",  // Program name
-		inputFile,       // Input file
-		"--output",      // Output flag
-		outputFile,      // Output file
-		nullptr
-	};
-	int argc = 4;
-
-	return WAVExporter::exportFromCommandLine(argc, (char**)argv) == 0;
-}
-
 static bool done;
 
 void exitSDLEventLoop(bool serializedEventInvoked/* = true*/)
@@ -905,6 +893,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Event event;
 	char *loadFile = 0;
+	char *outputWAVFile = 0;
 	char loadFileAbsPath[PATH_MAX];
 
 	pp_int32 defaultBPP = -1;
@@ -912,90 +901,65 @@ int main(int argc, char *argv[])
 	bool swapRedBlue = false, noSplash = false;
 	bool recVelocity = false;
 
-	// TODO: Use CLIParser to parse command line
-	bool headless = false;
-	char* outputWAVFile = nullptr;
-
 	// Parse command line
-	while ( argc > 1 )
-	{
-		--argc;
-
-#ifdef __APPLE__
-		// OSX: Swallow "-psn_xxx" argument passed by Finder on OSX <10.9
-		if ( strncmp(argv[argc], "-psn", 4) == 0 )
-		{
-			continue;
-		}
-		else
-#endif
-		if ( strcmp(argv[argc-1], "-bpp") == 0 )
-		{
-			defaultBPP = atoi(argv[argc]);
-			--argc;
-		}
-		else if ( strcmp(argv[argc], "-nosplash") == 0 )
-		{
-			noSplash = true;
-		}
-		else if ( strcmp(argv[argc], "-swap") == 0 )
-		{
-			swapRedBlue = true;
-		}
-		else if ( strcmp(argv[argc-1], "-orientation") == 0 )
-		{
-			if (strcmp(argv[argc], "NORMAL") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_NORMAL;
-			}
-			else if (strcmp(argv[argc], "ROTATE90CCW") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_ROTATE90CCW;
-			}
-			else if (strcmp(argv[argc], "ROTATE90CW") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_ROTATE90CW;
-			}
-			else
-				goto unrecognizedCommandLineSwitch;
-			--argc;
-		}
-		else if ( strcmp(argv[argc], "-recvelocity") == 0)
-		{
-			recVelocity = true;
-		}
-		else if ( strcmp(argv[argc], "--headless") == 0)
-		{
-			headless = true;
-		}
-		else if ( strcmp(argv[argc], "--output") == 0 && argc > 1)
-		{
-			outputWAVFile = argv[argc + 1];
-			argc--;
-		}
-		else
-		{
-unrecognizedCommandLineSwitch:
-			if (argv[argc][0] == '-')
-			{
-				fprintf(stderr,
-						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-recvelocity] [--headless] [--output file.wav] [inputfile.xm]\n", argv[0]);
-				exit(1);
-			}
-			else
-			{
-				loadFile = argv[argc];
-			}
-
-	// Validate arguments
-	if (outputWAVFile && !loadFile) {
-		fprintf(stderr, "Error: Input XM file must be specified when using --output\n");
+	CLIParser parser(argc, argv);
+	
+	// Register all command line options
+	parser.addOption("-bpp", true, "Set bits per pixel");
+	parser.addOption("-nosplash", false, "Skip splash screen");
+	parser.addOption("-swap", false, "Swap red and blue colors");
+	parser.addOption("-orientation", true, "Set screen orientation", {"NORMAL", "ROTATE90CCW", "ROTATE90CW"});
+	parser.addOption("-recvelocity", false, "Enable recording velocity");
+	parser.addOption("-headless", false, "Run in headless mode");
+	parser.addOption("-output", true, "Output WAV file path");
+	
+	// Add optional input file argument
+	parser.addPositionalArg("inputfile", "Input module file (.xm)", false);
+	
+	if (!parser.parse()) {
+		fprintf(stderr, "%s\n", parser.getError());
+		parser.printUsage();
 		exit(1);
 	}
+	
+	if (parser.isHelpRequested()) {
+		parser.printUsage();
+		exit(0);
+	}
+	
+	// Process options
+	if (parser.hasOption("-bpp")) {
+		defaultBPP = parser.getIntOptionValue("-bpp", defaultBPP);
+	}
+	
+	if (parser.hasOption("-nosplash")) {
+		noSplash = true;
+	}
+	
+	if (parser.hasOption("-swap")) {
+		swapRedBlue = true;
+	}
+	
+	if (parser.hasOption("-orientation")) {
+		const char* orientStr = parser.getOptionValue("-orientation");
+		// No need to validate values anymore since CLIParser does it for us
+		if (strcmp(orientStr, "NORMAL") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_NORMAL;
+		}
+		else if (strcmp(orientStr, "ROTATE90CCW") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_ROTATE90CCW;
+		}
+		else if (strcmp(orientStr, "ROTATE90CW") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_ROTATE90CW;
+		}
+	}
+	
+	if (parser.hasOption("-recvelocity")) {
+		recVelocity = true;
+	}
 
-	if (headless && !outputWAVFile) {
-		fprintf(stderr, "Error: --output must be specified when using --headless mode\n");
-		exit(1);
+	if (parser.hasOption("-output")) {
+		outputWAVFile = parser.getOptionValue("-output");
 	}
 
 	globalMutex = new PPMutex();
@@ -1004,13 +968,25 @@ unrecognizedCommandLineSwitch:
 	PPPath_POSIX path;
 	PPSystemString oldCwd = path.getCurrent();
 
-	// Handle headless mode before initializing tracker
-	if (headless) {
-		if (!exportToWAV(loadFile, outputWAVFile)) {
-			delete globalMutex;
+	auto exporter = WAVExporter::createFromParser(parser);
+
+	loadFile = parser.getPositionalArg(0);
+	outputWAVFile = parser.getOptionValue("-output");
+
+	if (loadFile && outputWAVFile) {
+		if (exporter->hasParseError()) {
+			parser.printUsage();
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
 			return 1;
 		}
-		delete globalMutex;
+
+		if (exporter->performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
+		}
+	}
+
+	if (parser.hasOption("--headless")) {
 		return 0;
 	}
 

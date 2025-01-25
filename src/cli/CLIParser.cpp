@@ -11,14 +11,28 @@ CLIParser::CLIParser(int argc, const char* argv[])
 	addOption("--help", false, "Show this help message and exit");
 }
 
-void CLIParser::addOption(const char* name, bool requiresValue, const char* description)
+void CLIParser::addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues)
 {
-	options.emplace_back(name, requiresValue, description);
+	options.emplace_back(name, requiresValue, description, allowedValues);
 }
 
 void CLIParser::addPositionalArg(const char* name, const char* description, bool required)
 {
 	positionalArgs.emplace_back(name, description, required);
+}
+
+bool CLIParser::isValidOptionValue(const Option* opt, const char* value) const
+{
+	if (opt->allowedValues.empty()) {
+		return true;  // No restrictions
+	}
+	
+	for (const auto& allowed : opt->allowedValues) {
+		if (allowed == value) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool CLIParser::parse()
@@ -62,6 +76,21 @@ bool CLIParser::parse()
 					errorMessage += value;
 					return false;
 				}
+				
+				// Validate value against allowed values if any
+				if (!isValidOptionValue(opt, value)) {
+					errorMessage = "Invalid value for option ";
+					errorMessage += arg;
+					errorMessage += ": ";
+					errorMessage += value;
+					errorMessage += "\nAllowed values are: ";
+					for (size_t j = 0; j < opt->allowedValues.size(); j++) {
+						if (j > 0) errorMessage += ", ";
+						errorMessage += opt->allowedValues[j];
+					}
+					return false;
+				}
+				
 				parsedOptions[opt->name] = value;
 				i++; // Skip the value we just processed
 			} else {
@@ -147,13 +176,24 @@ void CLIParser::printUsage() const
 	
 	fprintf(stderr, "\nOptions:\n");
 	
-	// Print option descriptions
+	// Print option descriptions with allowed values
 	for (const auto& opt : options) {
 		if (opt.requiresValue) {
 			fprintf(stderr, "  %s <value>", opt.name.c_str());
-			fprintf(stderr, "%*s%s\n", 
+			fprintf(stderr, "%*s%s", 
 					static_cast<int>(20 - strlen(opt.name.c_str()) - 8), 
 					"", opt.description.c_str());
+			
+			// Print allowed values if any
+			if (!opt.allowedValues.empty()) {
+				fprintf(stderr, " (allowed values: ");
+				for (size_t i = 0; i < opt.allowedValues.size(); i++) {
+					if (i > 0) fprintf(stderr, ", ");
+					fprintf(stderr, "%s", opt.allowedValues[i].c_str());
+				}
+				fprintf(stderr, ")");
+			}
+			fprintf(stderr, "\n");
 		} else {
 			fprintf(stderr, "  %s", opt.name.c_str());
 			fprintf(stderr, "%*s%s\n",
