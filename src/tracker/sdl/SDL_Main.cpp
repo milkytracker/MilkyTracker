@@ -902,7 +902,7 @@ int main(int argc, char *argv[])
 	bool recVelocity = false;
 
 	// Parse command line
-	CLIParser parser(argc, argv);
+	CLIParser parser(argc, argv, {"-help"});
 	
 	// Register all command line options
 	parser.addOption("-bpp", true, "Set bits per pixel");

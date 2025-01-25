@@ -14,24 +14,29 @@ public:
 		bool requiresValue;
 		std::string description;
 		std::vector<std::string> allowedValues;
+		bool isHelpFlag;  // New: track if this is a help flag
 		
-		Option(const char* n, bool rv, const char* d, const std::vector<std::string>& av = std::vector<std::string>())
-			: name(n), requiresValue(rv), description(d), allowedValues(av) {}
+		Option(const char* n, bool rv, const char* d, const std::vector<std::string>& av = std::vector<std::string>(), bool help = false)
+			: name(n), requiresValue(rv), description(d), allowedValues(av), isHelpFlag(help) {}
 	};
 
 	// Template constructor to handle both const and non-const argv
 	template<typename T>
-	explicit CLIParser(int argc, T argv[]) 
+	explicit CLIParser(int argc, T argv[], const std::vector<const char*>& helpFlags = {"--help"}) 
 		: argc(argc)
 		, argv(const_cast<const char**>(argv))  // Store as const internally
 		, helpRequested(false)
 	{
-		// Add built-in help option
-		addOption("--help", false, "Show this help message and exit");
+		// Add help flags
+		for (const char* flag : helpFlags) {
+			addOption(flag, false, "Show this help message and exit", {}, true);
+		}
 	}
 	
 	// Register options before parsing
-	void addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues = std::vector<std::string>());
+	void addOption(const char* name, bool requiresValue, const char* description, 
+	              const std::vector<std::string>& allowedValues = std::vector<std::string>(),
+	              bool isHelpFlag = false);
 	void addPositionalArg(const char* name, const char* description, bool required = true);
 	
 	// Parse and access results

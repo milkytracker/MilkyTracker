@@ -4,9 +4,9 @@
 
 // Constructor is now a template in the header
 
-void CLIParser::addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues)
+void CLIParser::addOption(const char* name, bool requiresValue, const char* description, const std::vector<std::string>& allowedValues, bool isHelpFlag)
 {
-	options.emplace_back(name, requiresValue, description, allowedValues);
+	options.emplace_back(name, requiresValue, description, allowedValues, isHelpFlag);
 }
 
 void CLIParser::addPositionalArg(const char* name, const char* description, bool required)
@@ -41,17 +41,17 @@ bool CLIParser::parse()
 		const char* arg = argv[i];
 		
 		if (isOption(arg)) {
-			// Check for help flag first
-			if (strcmp(arg, "--help") == 0) {
-				helpRequested = true;
-				return true;
-			}
-			
 			const Option* opt = findOption(arg);
 			if (!opt) {
 				errorMessage = "Unknown option: ";
 				errorMessage += arg;
 				return false;
+			}
+			
+			// Check if this is a help flag
+			if (opt->isHelpFlag) {
+				helpRequested = true;
+				return true;
 			}
 			
 			if (opt->requiresValue) {
