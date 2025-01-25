@@ -949,9 +949,7 @@ int main(int argc, char *argv[])
 		recVelocity = true;
 	}
 
-	if (parser.hasOption("-output")) {
-		outputWAVFile = strdup(parser.getOptionValue("-output")); // Use strdup to create a non-const copy
-	}
+	outputWAVFile = parser.getOptionValue("-output");
 
 	globalMutex = new PPMutex();
 
@@ -959,9 +957,10 @@ int main(int argc, char *argv[])
 	PPPath_POSIX path;
 	PPSystemString oldCwd = path.getCurrent();
 
-	if (parser.getPositionalArgCount() > 0) {
-		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
-	}
+	loadFile = parser.getPositionalArg(0);
+
+	printf("loadFile: %s\n", loadFile);
+	printf("outputWAVFile: %s\n", outputWAVFile);
 
 	if (loadFile && outputWAVFile) {
 		if (exporter->hasParseError()) {
