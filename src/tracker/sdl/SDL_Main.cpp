@@ -903,6 +903,9 @@ int main(int argc, char *argv[])
 
 	// Parse command line
 	CLIParser parser(argc, argv, {"-help"});
+
+	// Add optional input file argument
+	parser.addPositionalArg("input", "Input module file (.xm)", false);
 	
 	// Register all command line options
 	parser.addOption("-bpp", true, "Set bits per pixel");
@@ -913,10 +916,7 @@ int main(int argc, char *argv[])
 	parser.addOption("-headless", false, "Run in headless mode");
 	parser.addOption("-output", true, "Output WAV file path");
 	
-	// Add optional input file argument
-	parser.addPositionalArg("input", "Input module file (.xm)", false);
-
-	auto exporter = WAVExporter::createFromParser(parser);
+	auto exporter = WAVExporter::createFromParser(parser, WAVExportArgs::DashFormat::SINGLE);
 
 	// Process options
 	if (parser.hasOption("-bpp")) {
@@ -956,6 +956,9 @@ int main(int argc, char *argv[])
 	if (parser.getPositionalArgCount() > 0) {
 		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
 	}
+
+	printf("loadFile: %s\n", loadFile);
+	printf("outputWAVFile: %s\n", outputWAVFile);
 
 	if (loadFile && outputWAVFile) {
 		if (exporter->hasParseError()) {
