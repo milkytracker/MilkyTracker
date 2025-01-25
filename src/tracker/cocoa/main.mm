@@ -27,6 +27,12 @@
 
 // ---------- Tracker ---------
 #import "BasicTypes.h"
+#import "Tracker.h"
+#import "ModuleServices.h"
+#import <XModule.h>
+#import <WAVExporter.h>
+#import <CLIParser.h>
+#import "AppDelegate.h"
 
 // ----------------------------------------------------------
 //  Returns number of milliseconds elapsed since last reboot
@@ -58,5 +64,54 @@ void QueryKeyModifiers() { }
 // --------------------------------------
 int main(int argc, const char * argv[])
 {
+	static CLIParser parser(argc, argv);
+	parser.addPositionalArg("input", "Input file", false);
+	parser.addOption("--headless", false, "Run in headless mode");
+
+	auto exporter = WAVExporter::createFromParser(parser);
+
+	if (exporter->hasParseError()) {
+		parser.printUsage();
+		fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+		return 1;
+	}
+
+	const char* inputFile = parser.getPositionalArg(0);
+	const char* outputWAVFile = parser.getOptionValue("--output");
+
+	if (inputFile && outputWAVFile) {
+		if (exporter->hasArgumentError()) {
+			parser.printUsage();
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
+		}
+
+		if (exporter->performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
+		}
+	}
+
+	if (parser.hasOption("--headless")) {
+		return 0;
+	}
+
+	// Convert input file path to absolute if specified, to ensure the
+	// file is found when the GUI is started
+	NSString* absolutePath = nil;
+	if (inputFile) {
+		NSString* path = [NSString stringWithUTF8String:inputFile];
+		if (![path isAbsolutePath]) {
+			NSString* cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+			absolutePath = [[cwd stringByAppendingPathComponent:path] stringByStandardizingPath];
+			// Update the parser with the absolute path
+			parser.setPositionalArgValue(0, [absolutePath UTF8String]);
+		}
+	}
+
+	// Store parser for AppDelegate to access
+	[AppDelegate setSharedCLIParser:&parser];
+
+	// Start GUI application
 	return NSApplicationMain(argc, argv);
 }

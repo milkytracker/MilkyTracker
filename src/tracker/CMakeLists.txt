@@ -20,31 +20,42 @@
 #
 
 # Create a library for shared functionality
-add_library(trackerlib STATIC
+add_library(commandlib STATIC
+    # Core services
     ModuleServices.cpp
     SongLengthEstimator.cpp
     TrackerSettingsDatabase.cpp
+    
+    # WAV functionality
+    wav/WAVExporter.cpp
+    wav/WAVExportArgs.cpp
+    wav/WAVUtils.cpp
+    
+    # CLI functionality
+    ${PROJECT_SOURCE_DIR}/src/cli/CLIParser.cpp
 )
 
-target_include_directories(trackerlib
+target_include_directories(commandlib
     PUBLIC
         # PPUI is needed for BasicTypes.h and other fundamentals
         ${PROJECT_SOURCE_DIR}/src/ppui
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
         ${PROJECT_SOURCE_DIR}/src/tracker
+        ${PROJECT_SOURCE_DIR}/src/cli
+        ${CMAKE_CURRENT_SOURCE_DIR}/wav
 )
 
 if(WIN32)
-    target_include_directories(trackerlib PUBLIC
+    target_include_directories(commandlib PUBLIC
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
     )
 else()
-    target_include_directories(trackerlib PUBLIC
+    target_include_directories(commandlib PUBLIC
         ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
     )
 endif()
 
-target_link_libraries(trackerlib
+target_link_libraries(commandlib
     PUBLIC
         milkyplay
         ppui
@@ -161,7 +172,7 @@ target_include_directories(tracker
 
 target_link_libraries(tracker
     fx
-    trackerlib
+    commandlib
     osinterface
 )
 
