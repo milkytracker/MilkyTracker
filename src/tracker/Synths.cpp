@@ -54,6 +54,7 @@ void Synth::init(){
 	FM(true);
 	Cycle(true); 
 	PL(true); 
+	UNZ(true); 
 	ASCIISynthImport( preset[0] ); // initialize with first preset
 }
 
@@ -81,6 +82,7 @@ void Synth::process( MSynth *s, PPString *preset ){
 		case SYNTH_CYCLE:  Cycle();   break;
 		case SYNTH_FM:     FM();      break;
 		case SYNTH_PL:     PL();      break;
+		case SYNTH_UNZ:    UNZ();     break;
 	}
 
 }
@@ -835,3 +837,239 @@ void Synth::PL( bool init ){
 	delete[] song.tracks;
 
 }
+
+void Synth::UNZ( bool init ){
+	pp_int32 ID = SYNTH_UNZ;
+
+	if( init ){
+		synths[ID].nparams = 20;   // < SYN_PARAMS_MAX
+		synths[ID].ID      = ID;
+		synths[ID].param[0].name  = PPString("\x11 UNZ! \x10");
+		synths[ID].param[0].value = 0.0f;
+		synths[ID].param[0].min   = 0;
+		synths[ID].param[0].max   = SYNTH_LAST;
+
+
+		synths[ID].param[1].name  = "volume";
+		synths[ID].param[1].value = 26.0f;
+		synths[ID].param[1].min   = 0;
+		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[2].name  = "size";
+		synths[ID].param[2].value = 51.0f;
+		synths[ID].param[2].min   = 0;
+		synths[ID].param[2].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[3].name  = "amp decay";
+		synths[ID].param[3].value = 81.0f;
+		synths[ID].param[3].min   = 0;
+		synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[4].name  = "frequency";
+		synths[ID].param[4].value = 28.0f;
+		synths[ID].param[4].min   = 0;
+		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[5].name  = "  START         ";
+		synths[ID].param[5].value = 43.0f;
+		synths[ID].param[5].min   = 0;
+		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[6].name  = "  STOP          ";
+		synths[ID].param[6].value = 10.0f;
+		synths[ID].param[6].min   = 0;
+		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
+		
+		synths[ID].param[7].name  = "  SHAPE         ";
+		synths[ID].param[7].value = 68.0f;
+		synths[ID].param[7].min   = 0;
+		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
+		
+		synths[ID].param[8].name  = "noise";
+		synths[ID].param[8].value = 0.0f;
+		synths[ID].param[8].min   = 0;
+		synths[ID].param[8].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[9].name  = "  TRANSIENT VOL  ";
+		synths[ID].param[9].value = ((float)SYN_PARAM_MAX_VALUE)/2.0f;
+		synths[ID].param[9].min   = 0;
+		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[10].name  = "  TRANSIENT SIZE";
+		synths[ID].param[10].value = 10.0f;
+		synths[ID].param[10].min   = 0;
+		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
+		
+		synths[ID].param[11].name  = "  ATTACK       ";
+		synths[ID].param[11].value = 30.0f;
+		synths[ID].param[11].min   = 0;
+		synths[ID].param[11].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[12].name  = "  SUSTAIN      ";
+		synths[ID].param[12].value = 0;
+		synths[ID].param[12].min   = 0;
+		synths[ID].param[12].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[13].name  = "  RELEASE      ";
+		synths[ID].param[13].value = 10;
+		synths[ID].param[13].min   = 0;
+		synths[ID].param[13].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[14].name  = "reverb";
+		synths[ID].param[14].value = 10.0f;
+		synths[ID].param[14].min   = 1.0f;
+		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
+		
+		synths[ID].param[15].name  = "  HP FREQ      ";
+		synths[ID].param[15].value = 50.0f;
+		synths[ID].param[15].min   = 0.0f;
+		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[16].name  = "  HP Q         ";
+		synths[ID].param[16].value = 10.0f;
+		synths[ID].param[16].min   = 0.0f;
+		synths[ID].param[16].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[17].name  = "  SIZE         ";
+		synths[ID].param[17].value = 5.0f;
+		synths[ID].param[17].min   = 1.0f;
+		synths[ID].param[17].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[18].name  = "feedback";
+		synths[ID].param[18].value = 1.0f;
+		synths[ID].param[18].min   = 1.0f;
+		synths[ID].param[18].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		synths[ID].param[19].name  = "attack";
+		synths[ID].param[19].value = 0.0f;
+		synths[ID].param[19].min   = 0.0f;
+		synths[ID].param[19].max   = (float)SYN_PARAM_MAX_VALUE;
+
+		return;
+	}
+
+	float attack = 0.05f * SYN_PARAM_NORMALIZE(synth->param[19].value);
+
+	// Parameters for FSM kick 
+	// Copyright (C) 2007 Krzysztof Foltman  <kfoltman@users.sourceforge.net>
+    // this is an LLM resynthesis of FSM Kick [GPL2 or later] 
+	float startFrq = ( SYN_PARAM_NORMALIZE(synth->param[5].value) *  280.0f) * powf(128.0f, 198.0f / 240.0f);
+	float endFrq = ( SYN_PARAM_NORMALIZE(synth->param[6].value) *  140.0f) * powf(16.0f, 64.0f / 240.0f);
+	float tDecay = (46.0f / 240.0f) * powf(SYN_PARAM_NORMALIZE(synth->param[4].value),2.0f);
+	float tShape = 0.1f * SYN_PARAM_NORMALIZE(synth->param[7].value);
+	float aDecay = 10.0f - (SYN_PARAM_NORMALIZE(synth->param[3].value) * 10.0f);
+	float curVolume = 1.0f;
+	float xSin = 0.0f, xCos = 1.0f, dxSin, dxCos;
+	float amp = curVolume, mulAmp = powf(1.0f / 256.0f, aDecay / 5000.0f);
+	float freq = startFrq;
+	float antiClick = 0.0f, lastValue = 0.0f;
+
+	// We've extended FSM kick with a noise generator so it can produce snaredrums too
+	// Parameters for noise generator
+	float noiseTransientAmp = SYN_PARAM_NORMALIZE(synth->param[9].value);   // Attack duration (seconds)
+	float noiseTransientSize = 0.005f * SYN_PARAM_NORMALIZE(synth->param[10].value);   // Attack duration (seconds)
+	float noiseAttack = 0.05f  * SYN_PARAM_NORMALIZE(synth->param[11].value);   // Attack duration (seconds)
+	float noiseSustain = 0.05f * SYN_PARAM_NORMALIZE(synth->param[12].value);  // Sustain duration (seconds)
+	float noiseRelease = 0.1f * SYN_PARAM_NORMALIZE(synth->param[13].value);  // Release duration (seconds)
+	float noiseVolume = 1.5f * SYN_PARAM_NORMALIZE(synth->param[8].value);   // Noise amplitude
+	bool noiseTail   = (noiseAttack + noiseSustain + noiseRelease) > 0.0f;
+
+	pp_int32 samplerate = 44100;
+
+	// reverb
+	filter_t hp;
+	Filter::init( (filter_t *)&hp, samplerate );
+	hp.cutoff       = SYN_PARAM_NORMALIZE(synth->param[15].value) * (float)samplerate/1.8; // allow grit / aliasing above nyquist 
+	hp.q            = SYN_PARAM_NORMALIZE(synth->param[16].value);
+	float reverbAmp = SYN_PARAM_NORMALIZE(synth->param[14].value) * 5.0f;
+	int reverbSize  = (int)( 50000.0f * SYN_PARAM_NORMALIZE(synth->param[17].value));
+
+	// Noise variables
+	float noiseEnv = 0.0f;
+	float noisePhase = 0.0f;
+
+	// determine duration
+	int samples = (int)(10000.0f * SYN_PARAM_NORMALIZE(synth->param[2].value));
+
+	TXMSample *sample = sampleEditor->isEmptySample() || !this->additive ? prepareSample(samples) : sampleEditor->getSample();
+
+	float feedback = 10.0f * SYN_PARAM_NORMALIZE(synth->param[18].value);   // Noise amplitude
+
+	// Synthesis loop
+	for (int i = 0; i < sample->samplen; i++) {
+		// Calculate kick envelope and frequency
+		if (amp < 16.0f && fabs(antiClick) < 256.0f) amp = 0.0f; // Stop condition
+		float envPoint = (i * tDecay) / 400.0f;
+		float shapedPoint = powf(envPoint, tShape * 2.0f);
+		freq = startFrq * powf(endFrq / startFrq, fmax(0.0f, shapedPoint));
+		amp = curVolume * powf(1.0f / 256.0f, aDecay * i / 5000.0f);
+		dxSin = sinf(2.0f * M_PI * freq / 44100.0f);
+		dxCos = cosf(2.0f * M_PI * freq / 44100.0f);
+		float kickSample = antiClick + amp * xSin;
+		antiClick *= 0.98f;
+		float xSin2 = xSin * dxCos + xCos * dxSin;
+		float xCos2 = xCos * dxCos - xSin * dxSin;
+		xSin = xSin2;
+		xCos = xCos2;
+
+		// Calculate noise envelope
+		float time = i / (float)samplerate;
+		if (time < noiseTransientSize) {
+			noiseEnv = (1.0f - (time  /  noiseTransientSize)) * noiseTransientAmp;  // Transient decay 
+		} else if (noiseTail && time < noiseTransientSize + noiseAttack) {
+			noiseEnv = noiseVolume * (time / noiseAttack);  // Attack phase
+		} else if (noiseTail && time < noiseAttack + noiseSustain + noiseTransientSize) {
+			noiseEnv = noiseVolume * 1.0f;  // Sustain phase
+		} else if (noiseTail && time < noiseAttack + noiseSustain + noiseRelease + noiseTransientSize) {
+			noiseEnv = noiseVolume * (noiseAttack + noiseSustain + noiseRelease - time) / noiseRelease;  // Release phase
+		} else {
+			noiseEnv = 0.0f;  // Silence
+		}
+
+		// Generate high-frequency noise
+		float noiseSample = noiseEnv  * ((rand() / (float)RAND_MAX) * 2.0f - 1.0f);
+
+		// Mix kick and noise samples
+		float finalSample = kickSample + noiseSample;
+		finalSample *= (2.0f * SYN_PARAM_NORMALIZE(synth->param[1].value));
+
+		// Write to waveform
+		sampleEditor->setFloatSampleInWaveform(i, finalSample);
+	}
+
+
+	// instead of only distorting highfreqs (PTboost) we 
+	// filter the highfreqs and smear them with a reverb 
+	float* smpin;
+	smpin = (float*)calloc(samples,  sizeof(float));
+	float* smpout;
+
+	for (int i = 0; i < sample->samplen; i++) { // copy source (and pad with zeros)
+		Filter::process( sampleEditor->getFloatSampleFromWaveform(i), (filter_t *)&hp );  // apply HP
+		smpin[i] = hp.out_hp;
+	}
+	// smear and smooth with roomverb
+	int outlength = Convolver::reverb( smpin, &smpout, sample->samplen, reverbSize );
+
+	for (int i = 0; i < sample->samplen; i++) // mix reverb 
+	{
+		float out = sampleEditor->getFloatSampleFromWaveform(i); // dry 
+		out = sin( out * (1.0f + feedback) );                   // feedback final result
+		out += smpout[i] * reverbAmp;
+		// attack
+		float time = i / (float)samplerate;
+		out = time < attack ? (time / attack ) * out : out;
+		sampleEditor->setFloatSampleInWaveform(i, out );
+	}
+
+	free(smpin);
+	free(smpout);
+
+
+	// force loop 
+	//sampleEditor->setLoopType( synth->param[7].value );
+	//sampleEditor->setRepeatStart(0);
+	//sampleEditor->setRepeatEnd(sample->samplen);
+
+}
+

@@ -44,8 +44,9 @@
 #define SYNTH_FM      0                  //
 #define SYNTH_CYCLE   1                  // incremental numbers
 #define SYNTH_PL      2                  //
-#define SYNTH_LAST  SYNTH_PL             // update this when adding a synth
-#define SYNTH_PRESETS 43
+#define SYNTH_UNZ     3                  //
+#define SYNTH_LAST  SYNTH_UNZ             // update this when adding a synth
+#define SYNTH_PRESETS 48
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -88,22 +89,27 @@ class Synth
 
 	// ASCIISYNTH PRESETS: https://github.com/coderofsalvation/ASCIISYNTH
 	PPString preset[SYNTH_PRESETS] = {      // NOTE: update PRESETS_TOTAL when adding synths
-		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                                 
-		"M1)Sn)(/()((((((((((((((((((((((", // CYCLE
+		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                  
+		"M1)8n)(/()((((((((((((((((((((((", // CYCLE               
 		"M1*l(?(0+(((((*~S)IM((.d)((((((("  // PL
 		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM
-		"M1)Sn,(0()((((((((((((((((((((((", // CYCLE
+		"M1)9n,(0()((((((((((((((((((((((", // CYCLE
 		"M1*l(/646((M*(*~S(=~((-x+((((((("  // PL
 		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM
-		"M1)Sn,,C<)((((((((((((((((((((((", // CYCLE
-	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
-	    "M1(Y)(*),3)p9+()U,)),;((((((((((", // FM 909 kick2
-		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
-		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
-        "M1(~)(+9+()~5)~,BB(o=xFo)(((((((",   // FM flute
-		"M1*S(k(2-(((((*SS)DO((0H*(((((((",  // PL junglepad
+        "M1)9n,(0()((((((((((((((((((((((", // CYCLE
 		"M1(V)(*)())1,-(.\\\\.5~@b(((((((((", // FM 
 		"M1*S2c(2-(((((*SS)5F((*H+((((((("  // PL piano
+		"M1+B[yDS2l(S2F(22Z2-)(((((((((((", // UNZ kick
+	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
+	    "M1(Y)(*),3)p9+()U,)),;((((((((((", // FM 909 kick2
+        "M1+~VdPqB^7S2J(R9[?0)(((((((((((", // UNZ snare
+        "M1+ue:~R<~8~JJ(>-x(2*(((((((((((", // UNZ snare 2
+		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
+		"M1+2[z(~~((~))026R(->(((((((((((", // UNZ tom
+		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
+		"M1+1<((~~{9~3((@[r(*)2((((((((((", // UNZ hihat
+        "M1(~)(+9+()~5)~,BB(o=xFo)(((((((", // FM flute
+		"M1*S(k(2-(((((*SS)DO((0H*(((((((",  // PL junglepad
 		"M1(V)(+)(()1,-})n/0(@b7(((((((((", // FM
 		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((", // FM
 		"M1(L)(>((F+p@+W-()/n/Z\(*(((((((", // FM
@@ -161,6 +167,7 @@ class Synth
     void Cycle( bool init = false );
     void FM( bool init = false );
     void PL( bool init = false );
+    void UNZ( bool init = false );
 
 };
 
