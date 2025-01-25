@@ -7,7 +7,7 @@
 #include <XModule.h>
 #include "WAVExportArgs.h"
 #include "WAVUtils.h"
-#include "../../cli/CLIParser.h"
+#include <CLIParser.h>
 #include <cstring>
 #include <stdexcept>
 

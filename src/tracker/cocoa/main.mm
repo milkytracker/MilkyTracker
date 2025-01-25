@@ -68,7 +68,6 @@ int main(int argc, const char * argv[])
 	parser.addPositionalArg("input", "Input file");
 	parser.addOption("--headless", false, "Run in headless mode");
 
-	// std::unique_ptr<WAVExporter> exporter = WAVExporter::createFromParser(parser);
 	auto exporter = WAVExporter::createFromParser(parser);
 
 	const char* inputFile = parser.getPositionalArg(0);

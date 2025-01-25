@@ -69,11 +69,9 @@
 
 #include <SDL.h>
 #include "SDL_KeyTranslation.h"
-#include "../ModuleServices.h"
-#include "../ModuleEditor.h"
+#include <ModuleServices.h>
+#include <ModuleEditor.h>
 #include <XModule.h>
-#include "../wav/WAVExportArgs.h"
-#include "../wav/WAVUtils.h"
 #include <WAVExporter.h>
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
