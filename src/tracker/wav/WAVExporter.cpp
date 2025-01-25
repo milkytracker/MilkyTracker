@@ -15,7 +15,7 @@
 std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser, WAVExportArgs::DashFormat dashFormat) {
 	auto exporter = std::unique_ptr<WAVExporter>(new WAVExporter());
 	
-	WAVExportArgs::registerOptions(parser);
+	WAVExportArgs::registerOptions(parser, dashFormat);
 
 	if (!parser.parse()) {
 		exporter->errorMessage = parser.getError();
