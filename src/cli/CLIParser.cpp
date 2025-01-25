@@ -208,7 +208,7 @@ const char* CLIParser::getError() const
 
 bool CLIParser::isOption(const char* arg) const
 {
-	return arg[0] == '-' && arg[1] == '-';
+	return arg[0] == '-' && (arg[1] == '-' || isalpha(arg[1]));  // Accept both -- and -alpha
 }
 
 const CLIParser::Option* CLIParser::findOption(const char* name) const
