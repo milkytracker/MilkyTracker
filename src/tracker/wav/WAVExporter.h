@@ -8,22 +8,22 @@ class CLIParser;  // Forward declaration
 
 class WAVExporter {
 public:
-    // Create from parser
-    static std::unique_ptr<WAVExporter> createFromParser(CLIParser& parser);
+	// Create from parser
+	static std::unique_ptr<WAVExporter> createFromParser(CLIParser& parser);
 
-    // Core functionality
-    int performExport();
+	// Core functionality
+	int performExport();
 
-    // State getters
-    bool hasOutputFile() const { return params.outputFile != nullptr; }
-    bool hasInputFile() const { return params.inputFile != nullptr; }
-    bool hasParseError() const { return parseError; }
-    const char* getErrorMessage() const { return errorMessage.c_str(); }
+	// State getters
+	bool hasOutputFile() const { return params.outputFile != nullptr; }
+	bool hasInputFile() const { return params.inputFile != nullptr; }
+	bool hasParseError() const { return parseError; }
+	const char* getErrorMessage() const { return errorMessage.c_str(); }
 
-    virtual ~WAVExporter() = default;
+	virtual ~WAVExporter() = default;
 
 protected:
-    bool parseError;
-    std::string errorMessage;
-    WAVExportArgs::Arguments params;
+	bool parseError;
+	std::string errorMessage;
+	WAVExportArgs::Arguments params;
 };
