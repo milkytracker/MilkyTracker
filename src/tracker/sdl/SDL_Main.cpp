@@ -914,7 +914,7 @@ int main(int argc, char *argv[])
 	parser.addOption("-output", true, "Output WAV file path");
 	
 	// Add optional input file argument
-	parser.addPositionalArg("inputfile", "Input module file (.xm)", false);
+	parser.addPositionalArg("input", "Input module file (.xm)", false);
 
 	auto exporter = WAVExporter::createFromParser(parser);
 
@@ -956,9 +956,6 @@ int main(int argc, char *argv[])
 	if (parser.getPositionalArgCount() > 0) {
 		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
 	}
-
-	printf("loadFile: %s\n", loadFile);
-	printf("outputWAVFile: %s\n", outputWAVFile);
 
 	if (loadFile && outputWAVFile) {
 		if (exporter->hasParseError()) {
