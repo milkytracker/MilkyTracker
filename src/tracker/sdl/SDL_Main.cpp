@@ -962,9 +962,6 @@ int main(int argc, char *argv[])
 		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
 	}
 
-	printf("loadFile: %s\n", loadFile);
-	printf("outputWAVFile: %s\n", outputWAVFile);
-
 	if (loadFile && outputWAVFile) {
 		if (exporter->hasArgumentError()) {
 			parser.printUsage();
