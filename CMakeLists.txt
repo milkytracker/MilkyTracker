@@ -32,9 +32,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Enable tracker-specific functions in MilkyPlay
 add_definitions(-DMILKYTRACKER)
 
-# Add cli library
-add_subdirectory(src/cli)
-
 # Adhere to GNU filesystem layout conventions
 include(GNUInstallDirs)
 

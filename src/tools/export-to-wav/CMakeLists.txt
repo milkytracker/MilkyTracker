@@ -9,7 +9,7 @@ target_include_directories(export-to-wav
 
 target_link_libraries(export-to-wav
     PRIVATE
-        trackerlib
+        commandlib
 )
 
 install(TARGETS export-to-wav
