@@ -193,7 +193,7 @@ if(UNIX)
 		if(PkgConfig_FOUND)
 			pkg_check_modules(PIPEWIRE REQUIRED libpipewire-0.3)
 			if (PIPEWIRE_FOUND)
-				message("Enabled Pipewire support")
+				message(STATUS "Enabled Pipewire support")
 			endif()
 		endif()
 
