@@ -91,15 +91,25 @@ void PPScreen::adjustEventMouseCoordinates(PPEvent* event)
 
 void PPScreen::raiseEvent(PPEvent* event)
 {
-	if (event->isMouseEvent())
+	if (event->isMouseEvent()){
 		adjustEventMouseCoordinates(event);
+		PPPoint* p = (PPPoint*)event->getDataPtr();
+		if( modalControl && modalControl->isVisible() && modalControl->hit(*p) ){
+			lastMouseOverControl = modalControl;
+		}else{
+			lastMouseOverControl = NULL;
+		}
+	}
+
+	// bubble from modal to parent container [or not]
+	bool bubble = lastMouseOverControl != modalControl;
+	bool keyEvent   = event->getID() == eKeyDown || event->getID() == eKeyUp;
 
 	// route events to event listener first
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), event);
 
 	if (event->getID() == eInvalid)
 		return;
-
 
 	if (modalControl && modalControl->isVisible())
 	{
@@ -111,17 +121,14 @@ void PPScreen::raiseEvent(PPEvent* event)
 		// if the above listener removed the control we're out of here
 		if (!modalControl)
 			return;		
-		
-		modalControl->dispatchEvent(event);
-		// only bubble events without [clicked] modal
-		bool mouseEvent = event->getID() == eMouseMoved || event->getID() == eLMouseDrag || event->getID() == eLMouseDown || event->getID() == eRMouseDown;
-		bool bubble     = true;
-		if( mouseEvent && modalControl && modalControl->isVisible() ){
-			PPPoint* p = (PPPoint*)event->getDataPtr();
-			if (modalControl->hit(*p)) bubble = false;
+
+		// only allow keys to arrive at modal when mousecursor is in modal
+		if( bubble ){
+		  rootContainer->dispatchEvent(event);
+		}else{
+		  modalControl->dispatchEvent(event);
+		  return;
 		}
-		if (bubble) rootContainer->dispatchEvent(event);
-		return;
 	}
 
 	// route timer event
