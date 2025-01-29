@@ -52,6 +52,8 @@ public:
 				  bool okCancel = false);
 	
 	PPListBox* getListBox() { return listBox; }
+	void show(bool show);
+	static pp_int32 position;
 
 };
 

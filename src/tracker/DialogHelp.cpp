@@ -63,27 +63,29 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	PPButton *button = static_cast<PPButton *>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_OK));
 	pp_int32 align_right = x + width - button->getSize().width;
 	pp_int32 align_bottom = button->getLocation().y;
+	pp_int32 top_margin = y+10;
 
 	// add shortcut buttons
-	button = new PPButton( BUTTON_HELP_SHORTCUTS, screen, this, PPPoint( x + 4, y+16), PPSize(110, 11));
-	button->setText("\x1f shortcuts");
+	button = new PPButton( BUTTON_HELP_SHORTCUTS, screen, this, PPPoint( x + 4, top_margin+16), PPSize(110, 11));
+	button->setText("shortcuts");
 	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
 	getMessageBoxContainer()->addControl(button);
 
-	button = new PPButton( BUTTON_HELP_MILKYSYNTH, screen, this, PPPoint( (x + 4)+(110*1), y+16), PPSize(110, 11));
-	button->setText("\x1f milkysynth");
+	button = new PPButton( BUTTON_HELP_MILKYSYNTH, screen, this, PPPoint( (x + 4)+(110*1), top_margin+16), PPSize(110, 11));
+	button->setText("milkysynth");
 	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
 	getMessageBoxContainer()->addControl(button);
 
-	button = new PPButton( BUTTON_HELP_PATTERNFX, screen, this, PPPoint( (x + 4)+(110*2), y+16), PPSize(110, 11));
-	button->setText("\x1f pattern fx");
+	button = new PPButton( BUTTON_HELP_PATTERNFX, screen, this, PPPoint( (x + 4)+(110*2), top_margin+16), PPSize(110, 11));
+	button->setText("pattern fx");
 	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
 	getMessageBoxContainer()->addControl(button);
 
 	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
 	pp_int32 x2 = x + width / 2 - 120;
 
-	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 4, y + 28), PPSize(width - 6, height - (8 * 8)), true, false, true, true);
+	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 4, top_margin + 28), PPSize(width - 6, height - (8 * 8) - 10), true, false, true, true);
+	listBox->setSelectedIndex( position );
 	listBox->setShowIndex(false);
 	listBox->setSelectOnScroll(false);
 	listBox->setShowFocus(false);
@@ -107,9 +109,10 @@ DialogHelp::DialogHelp(PPScreen *screen,
 		if (c == 0x0a ) // '\n'
 		{
 			listBox->addItem( line );
-			if( line.startsWith("    Milky synth")           ) lineMilkySynth = lineN;
-			if( line.startsWith("     Alt-Enter Switch")     ) lineShortcuts  = lineN;
-			if( line.startsWith("       * 0xy [31]Arpeggio") ) linePatternFX  = lineN;
+			// add bookmarks
+			if( line.startsWith("    Milky synth")           ) lineMilkySynth = lineN-1;
+			if( line.startsWith("     Alt-Enter Switch")     ) lineShortcuts  = lineN-1;
+			if( line.startsWith("       * 0xy [30]Arpeggio") ) linePatternFX  = lineN-1;
 			line = PPString("");
 			lineN++;
 		} else line.append( PPString(c) );
@@ -152,3 +155,14 @@ pp_int32 DialogHelp::handleEvent(PPObject* sender, PPEvent* event)
 	}
 	return PPDialogBase::handleEvent(sender, event);
 }
+
+void DialogHelp::show(bool show){
+  if( show ){
+	listBox->setSelectedIndex( position );
+  }else{
+	position = listBox->getStartIndex();
+  }
+  PPDialogBase::show(show);
+}
+
+pp_int32 DialogHelp::position = 0;
