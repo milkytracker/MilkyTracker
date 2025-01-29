@@ -39,6 +39,10 @@ class DialogHelp : public PPDialogBase
 {
 private:
 	class PPListBox* listBox;
+	pp_int32 lineMilkySynth;
+	pp_int32 lineShortcuts;
+	pp_int32 linePatternFX;
+	pp_int32 handleEvent(PPObject* sender, PPEvent* event);
 
 public:
 	DialogHelp(PPScreen* screen, 

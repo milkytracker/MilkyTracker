@@ -32,13 +32,18 @@
 #include "DialogHelpText.h"
 #include "MessageBoxContainer.h"
 #include "ListBox.h"
+#include "ControlIDs.h"
 #include "PPUI.h"
+#include "GlobalColorConfig.h"
 
 DialogHelp::DialogHelp(PPScreen *screen,
 					   DialogResponder *responder,
 					   pp_int32 id,
 					   const PPString &caption,
-					   bool okCancel /* = false*/) : PPDialogBase()
+					   bool okCancel /* = false*/) : PPDialogBase(),
+	lineMilkySynth(0),
+	lineShortcuts(0),
+	linePatternFX(0)
 {
 	pp_int32 w = screen->getWidth() - 12;
 	pp_int32 h = screen->getHeight() - 50;
@@ -54,17 +59,40 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	pp_int32 width = getMessageBoxContainer()->getSize().width;
 	pp_int32 height = getMessageBoxContainer()->getSize().height;
 
-	PPButton *button = static_cast<PPButton *>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_YES));
-	pp_int32 y2 = button->getLocation().y;
-	pp_int32 x2 = x + width / 2 - 30;
+	// position OK button
+	PPButton *button = static_cast<PPButton *>(messageBoxContainerGeneric->getControlByID(PP_MESSAGEBOX_BUTTON_OK));
+	pp_int32 align_right = x + width - button->getSize().width;
+	pp_int32 align_bottom = button->getLocation().y;
 
-	y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
-	x2 = x + width / 2 - 120;
+	// add shortcut buttons
+	button = new PPButton( BUTTON_HELP_SHORTCUTS, screen, this, PPPoint( x + 4, y+16), PPSize(110, 11));
+	button->setText("\x1f shortcuts");
+	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
+	getMessageBoxContainer()->addControl(button);
 
-	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 2, y + 2), PPSize(width - 5, height - (8 * 8)), true, false, true, true);
+	button = new PPButton( BUTTON_HELP_MILKYSYNTH, screen, this, PPPoint( (x + 4)+(110*1), y+16), PPSize(110, 11));
+	button->setText("\x1f milkysynth");
+	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
+	getMessageBoxContainer()->addControl(button);
+
+	button = new PPButton( BUTTON_HELP_PATTERNFX, screen, this, PPPoint( (x + 4)+(110*2), y+16), PPSize(110, 11));
+	button->setText("\x1f pattern fx");
+	button->setTextColor(GlobalColorConfig::getInstance()->getColor(GlobalColorConfig::ColorSampleEditorWaveform));
+	getMessageBoxContainer()->addControl(button);
+
+	pp_int32 y2 = getMessageBoxContainer()->getControlByID(MESSAGEBOX_STATICTEXT_MAIN_CAPTION)->getLocation().y + 18;
+	pp_int32 x2 = x + width / 2 - 120;
+
+	listBox = new PPListBox(MESSAGEBOX_LISTBOX_USER1, screen, this, PPPoint(x + 4, y + 28), PPSize(width - 6, height - (8 * 8)), true, false, true, true);
 	listBox->setShowIndex(false);
+	listBox->setSelectOnScroll(false);
+	listBox->setShowFocus(false);
+	listBox->setKeepsFocus(true);
+	listBox->showSelection(false);
+		
 
 	PPString line = PPString("");
+	pp_int32 lineN = 0;
 	unsigned char c;
 	// uncomment to display all characters
 	//for( c = 0; c <128; c++ ){
@@ -79,8 +107,48 @@ DialogHelp::DialogHelp(PPScreen *screen,
 		if (c == 0x0a ) // '\n'
 		{
 			listBox->addItem( line );
-      line = PPString("");
+			if( line.startsWith("    Milky synth")           ) lineMilkySynth = lineN;
+			if( line.startsWith("     Alt-Enter Switch")     ) lineShortcuts  = lineN;
+			if( line.startsWith("       * 0xy [31]Arpeggio") ) linePatternFX  = lineN;
+			line = PPString("");
+			lineN++;
 		} else line.append( PPString(c) );
 	}
 	messageBoxContainerGeneric->addControl(listBox);
+
+}
+
+pp_int32 DialogHelp::handleEvent(PPObject* sender, PPEvent* event)
+{
+	if (event->getID() == eCommand)
+	{
+		switch (reinterpret_cast<PPControl*>(sender)->getID())
+		{
+
+			case BUTTON_HELP_PATTERNFX:
+				if( linePatternFX > 0 && linePatternFX < listBox->getNumItems() ){
+					listBox->setSelectedIndex( linePatternFX );
+					parentScreen->paintControl(messageBoxContainerGeneric);
+				}
+				event->cancel();
+				break;
+
+			case BUTTON_HELP_MILKYSYNTH:
+				if( lineMilkySynth > 0 && lineMilkySynth < listBox->getNumItems() ){
+					listBox->setSelectedIndex( lineMilkySynth );
+					parentScreen->paintControl(messageBoxContainerGeneric);
+				}
+				event->cancel();
+				break;
+
+			case BUTTON_HELP_SHORTCUTS:
+				if( lineShortcuts > 0 && lineMilkySynth < listBox->getNumItems() ){
+					listBox->setSelectedIndex( lineShortcuts );
+					parentScreen->paintControl(messageBoxContainerGeneric);
+				}
+				event->cancel();
+				break;
+		}
+	}
+	return PPDialogBase::handleEvent(sender, event);
 }
