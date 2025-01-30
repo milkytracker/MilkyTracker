@@ -35,9 +35,10 @@
  * Created by Evan Walter on 27/1/2025
  */
 
+#ifdef HAVE_PIPEWIRE
+
 #include "pipewire/stream.h"
 #include <cstdint>
-#ifdef HAVE_PIPEWIRE
 #include "AudioDriver_Pipewire.h"
 #include <pipewire/pipewire.h>
 #include <spa/param/audio/format-utils.h>
@@ -61,7 +62,6 @@ void AudioDriver_Pipewire::on_stream_param_change(void *userdata, uint32_t id, c
 			SPA_PARAM_BUFFERS_dataType, SPA_POD_CHOICE_FLAGS_Int(1 << SPA_DATA_MemPtr),
 			SPA_PARAM_BUFFERS_metaType, SPA_POD_Int(0),
 			SPA_PARAM_BUFFERS_align, SPA_POD_Int(sizeof(int)));
-
 
 	pw_stream_update_params(stream, params, 1);
 	printf("Pipewire: stream parameters updated\n");
