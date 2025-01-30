@@ -187,7 +187,6 @@ mp_sint32 AudioDriver_Pipewire::closeDevice()
 		pw_stream_destroy(stream);
 		pw_thread_loop_destroy(thread_loop);
 		pw_deinit();
-		printf("Pipewire: app closed\n");
 	}
 	return 0;
 }
@@ -203,20 +202,17 @@ mp_sint32 AudioDriver_Pipewire::start()
 		deviceHasStarted = 1;
 		printf("Pipewire: started device\n");
 	}
-	printf("Pipewire: exiting start\n");
 	return 0;
 }
 
 mp_sint32 AudioDriver_Pipewire::stop() 
 {
-	printf("Pipewire: stopping device\n");
 	if (deviceHasStarted) 
 	{
 		pw_thread_loop_stop(thread_loop);
 		deviceHasStarted = 0;
 		printf("Pipewire: stopped device\n");
 	}
-	printf("Pipewire: exiting stop function\n");
 	return 0;
 }
 
