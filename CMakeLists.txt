@@ -22,8 +22,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(MilkyTracker)
 
-# add_compile_options( -g)
-
 # Set C++ standard to C++98
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_EXTENSIONS OFF)
