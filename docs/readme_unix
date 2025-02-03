@@ -46,11 +46,9 @@ made manually.
 
 * Pipewire support (experimental) *
 
-A Pipewire driver has been added.  The driver requests that the Pipewire server
-attempt to automatically connect to an output device.  To enable Pipewire support,
-you need to have pkg-config and pipewire-0.3's development libraries on 
-available when running CMake.
-
+An experimental audio driver for Pipewire has been implemented.  The output
+stream is set to auto-connect to an output device via Pipewire's usual
+mechanisms.
 
 Video Driver
 ============
