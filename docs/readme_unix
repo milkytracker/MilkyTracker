@@ -44,6 +44,13 @@ Two new audio drivers have been added; ALSA and JACK. JACK by default does not
 attempt to guess which output device to connect to, the connection should be
 made manually.
 
+* Pipewire support (experimental) *
+
+A Pipewire driver has been added.  The driver requests that the Pipewire server
+attempt to automatically connect to an output device.  To enable Pipewire support,
+you need to have pkg-config and pipewire-0.3's development libraries on 
+available when running CMake.
+
 
 Video Driver
 ============
