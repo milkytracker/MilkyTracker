@@ -19,6 +19,48 @@
 #  along with MilkyTracker.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Create a library for shared functionality
+add_library(commandlib STATIC
+    # Core services
+    ModuleServices.cpp
+    SongLengthEstimator.cpp
+    TrackerSettingsDatabase.cpp
+    
+    # WAV functionality
+    wav/WAVExporter.cpp
+    wav/WAVExportArgs.cpp
+    wav/WAVUtils.cpp
+    
+    # CLI functionality
+    ${PROJECT_SOURCE_DIR}/src/cli/CLIParser.cpp
+)
+
+target_include_directories(commandlib
+    PUBLIC
+        # PPUI is needed for BasicTypes.h and other fundamentals
+        ${PROJECT_SOURCE_DIR}/src/ppui
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface
+        ${PROJECT_SOURCE_DIR}/src/tracker
+        ${PROJECT_SOURCE_DIR}/src/cli
+        ${CMAKE_CURRENT_SOURCE_DIR}/wav
+)
+
+if(WIN32)
+    target_include_directories(commandlib PUBLIC
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/win32
+    )
+else()
+    target_include_directories(commandlib PUBLIC
+        ${PROJECT_SOURCE_DIR}/src/ppui/osinterface/posix
+    )
+endif()
+
+target_link_libraries(commandlib
+    PUBLIC
+        milkyplay
+        ppui
+)
+
 add_executable(tracker
     # Sources
     AnimatedFXControl.cpp
@@ -50,7 +92,6 @@ add_executable(tracker
     LogoBig.cpp
     LogoSmall.cpp
     ModuleEditor.cpp
-    ModuleServices.cpp
     PatternEditor.cpp
     PatternEditorClipBoard.cpp
     PatternEditorControl.cpp
@@ -68,7 +109,7 @@ add_executable(tracker
     RecPosProvider.cpp
     RecorderLogic.cpp
     ResamplerHelper.cpp
-	VolumeRampHelper.cpp
+    VolumeRampHelper.cpp
     SampleEditor.cpp
     SampleEditorControl.cpp
     SampleEditorControlToolHandler.cpp
@@ -88,12 +129,11 @@ add_executable(tracker
     SectionSwitcher.cpp
     SectionTranspose.cpp
     SectionUpperLeft.cpp
-    SongLengthEstimator.cpp
     SystemMessage.cpp
     fx/Filter.cpp
     Synth.cpp
     Synths.cpp
-	SynthFM.cpp
+    SynthFM.cpp
     TabHeaderControl.cpp
     TabManager.cpp
     TabTitleProvider.cpp
@@ -112,93 +152,6 @@ add_executable(tracker
     Undo.cpp
     VRand.cpp
     Zapper.cpp
-
-    # Headers
-    ${PROJECT_BINARY_DIR}/src/tracker/version.h
-    AnimatedFXControl.h
-    ColorExportImport.h
-    ColorPaletteContainer.h
-    fx/Convolver.h
-    ControlIDs.h
-    DialogChannelSelector.h
-    DialogEQ.h
-    DialogGroupSelection.h
-    DialogHandlers.h
-    DialogListBox.h
-    DialogPanning.h
-    DialogQuickChooseInstrument.h
-    DialogResample.h
-    DialogWithValues.h
-    DialogZap.h
-    DialogSliders.h
-    fx/EQConstants.h
-    EditModes.h
-    EditorBase.h
-    EnvelopeContainer.h
-    EnvelopeEditor.h
-    EnvelopeEditorControl.h
-    fx/Equalizer.h
-    FileExtProvider.h
-    FileIdentificator.h
-    FileTypes.h
-    FilterParameters.h
-    GlobalColorConfig.h
-    InputControlListener.h
-    LogoBig.h
-    LogoSmall.h
-    ModuleEditor.h
-    ModuleServices.h
-    PatternEditor.h
-    PatternEditorControl.h
-    PatternEditorTools.h
-    PatternTools.h
-    PeakLevelControl.h
-    Piano.h
-    PianoControl.h
-    PlayerController.h
-    PlayerCriticalSection.h
-    PlayerLogic.h
-    PlayerMaster.h
-    RecPosProvider.h
-    RecorderLogic.h
-    ResamplerHelper.h
-	VolumeRampHelper.h
-    fx/Filter.h
-    Synth.h
-	  SynthFM.h
-    SIPButtons.h
-    SampleEditor.h
-    SampleEditorControl.h
-    SampleEditorControlLastValues.h
-    SampleEditorResampler.h
-    SamplePlayer.h
-    ScopesControl.h
-    SectionAbout.h
-    SectionAbstract.h
-    SectionAdvancedEdit.h
-    SectionDiskMenu.h
-    SectionHDRecorder.h
-    SectionInstruments.h
-    SectionOptimize.h
-    SectionQuickOptions.h
-    SectionSamples.h
-    SectionSettings.h
-    SectionSwitcher.h
-    SectionTranspose.h
-    SectionUpperLeft.h
-    SongLengthEstimator.h
-    SystemMessage.h
-    TabHeaderControl.h
-    TabManager.h
-    TabTitleProvider.h
-    TitlePageManager.h
-    ToolInvokeHelper.h
-    Tracker.h
-    TrackerConfig.h
-    TrackerSettingsDatabase.h
-    Undo.h
-    VRand.h
-    Zapper.h
 )
 
 # Set target name for the executable
@@ -219,9 +172,8 @@ target_include_directories(tracker
 
 target_link_libraries(tracker
     fx
-    milkyplay
+    commandlib
     osinterface
-    ppui
 )
 
 if(CMAKE_VERSION GREATER_EQUAL 3.12)
