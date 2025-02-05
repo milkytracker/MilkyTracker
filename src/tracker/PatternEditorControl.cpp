@@ -117,7 +117,6 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
-
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     keyboardMenuControl->setSubMenu(true);
@@ -167,6 +166,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
+	editMenuControl->addEntry("Toggle sharp/flat display", BUTTON_ABOUT_SHARPFLAT);
 
   }else{
     editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
@@ -1549,6 +1549,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MAINMENU_HELP:
 		case MAINMENU_ABOUT:
 		case BUTTON_ABOUT_FOLLOWSONG:
+		case BUTTON_ABOUT_SHARPFLAT:
 		case BUTTON_OCTAVE_PLUS:
 		case BUTTON_OCTAVE_MINUS:
 		case BUTTON_ADD_PLUS:

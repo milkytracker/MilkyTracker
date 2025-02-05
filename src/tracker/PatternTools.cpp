@@ -26,7 +26,7 @@
 #include "PatternTools.h"
 #include "MilkyPlay.h"
 
-static const char* noteNames[12] = {"C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-"};
+static char* noteNames[12] = {(char*)"C-",(char*)"C#",(char*)"D-",(char*)"D#",(char*)"E-",(char*)"F-",(char*)"F#",(char*)"G-",(char*)"G#",(char*)"A-",(char*)"A#",(char*)"B-"};
 static const char hex[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
 /*TXMPattern* PatternTools::pattern = NULL;
@@ -34,6 +34,22 @@ pp_int32 PatternTools::currentEffectIndex = 0;
 pp_int32 PatternTools::offset = 0;
 
 pp_int32 PatternTools::lockOffset = 0;*/
+
+void PatternTools::switchSharpFlat() {
+	if (strcmp(noteNames[1], "C#") == 0) {
+		noteNames[1] = (char *) "Db";
+		noteNames[3] = (char *) "Eb";
+		noteNames[6] = (char *) "Gb";
+		noteNames[8] = (char *) "Ab";
+		noteNames[10] = (char *) "Bb";
+	} else {
+		noteNames[1] = (char *) "C#";
+		noteNames[3] = (char *) "D#";
+		noteNames[6] = (char *) "F#";
+		noteNames[8] = (char *) "G#";
+		noteNames[10] = (char *) "A#";
+	}
+}
 
 void PatternTools::setPosition(TXMPattern* pattern, pp_uint32 channel, pp_uint32 row)
 {

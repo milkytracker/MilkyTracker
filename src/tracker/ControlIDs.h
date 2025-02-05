@@ -333,6 +333,9 @@ enum
 	BUTTON_ABOUT_SHOWPEAK =				601,
 	BUTTON_ABOUT_SHOWTIME =				602,
 	BUTTON_ABOUT_FOLLOWSONG =			603,
+	// Kind of using Basic listing rules to sandwich SHARPFLAT under
+	// the button it'll show up under
+	BUTTON_ABOUT_SHARPFLAT =            6031,
 	BUTTON_ABOUT_PROSPECTIVE =			604,
 	BUTTON_ABOUT_WRAPCURSOR =			605,
 	BUTTON_ABOUT_LIVESWITCH =			606,

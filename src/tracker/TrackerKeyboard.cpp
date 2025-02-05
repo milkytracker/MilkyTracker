@@ -42,6 +42,7 @@
 #include "ListBox.h"
 #include "ListBoxFileBrowser.h"
 #include "PatternEditorControl.h"
+#include "PatternTools.h"
 
 #include "ControlIDs.h"
 #include "TrackerConfig.h"
@@ -729,6 +730,11 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 void Tracker::eventKeyDownBinding_ToggleFollowSong()
 {
 	setFollowSong(!getFollowSong());
+}
+
+void Tracker::eventKeyDownBinding_ToggleSharpFlat()
+{
+	PatternTools::switchSharpFlat();
 }
 
 void Tracker::eventKeyDownBinding_ToggleProspectiveMode()
