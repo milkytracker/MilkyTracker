@@ -561,6 +561,7 @@ private:
 	// Some handy shortcuts
 	void eventKeyDownBinding_ToggleFT2Edit();
 	void eventKeyDownBinding_ToggleFollowSong();
+	void eventKeyDownBinding_ToggleSharpFlat();
 	void eventKeyDownBinding_ToggleProspectiveMode();
 	void eventKeyDownBinding_ToggleCursorWrapAround();
 	void eventKeyDownBinding_ToggleLiveSwitch();

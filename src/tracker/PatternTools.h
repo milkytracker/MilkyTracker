@@ -51,6 +51,7 @@ public:
 		pattern = src.pattern;
 	}
 
+	static void switchSharpFlat();
 	void setPosition(TXMPattern* pattern, pp_uint32 channel, pp_uint32 row);
 	pp_int32 getNote();
 	void setNote(pp_uint32);

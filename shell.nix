@@ -8,6 +8,7 @@ pkgs.mkShell {
     ];
 
 	shellHook = ''
-		export NIX_SHELL_MILKYTRACKER=1
-	''
+	  export NIX_SHELL_MILKYTRACKER=1
+          bash
+	'';
 }

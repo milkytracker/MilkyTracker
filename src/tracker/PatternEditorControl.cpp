@@ -114,10 +114,10 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->setSubMenu(true);
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
-    patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+	patternMenuControl->addEntry("Toggle #/b notation", BUTTON_PATTERN_SHARPFLAT);
+    patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
-
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     keyboardMenuControl->setSubMenu(true);
@@ -1555,6 +1555,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_ADD_MINUS:
 		case BUTTON_PATTERN_CAPTURE:
 		case BUTTON_PATTERN_CAPTURE_OVERDUB:
+		case BUTTON_PATTERN_SHARPFLAT:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;

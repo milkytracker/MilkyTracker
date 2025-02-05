@@ -569,7 +569,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			caughtMouseInUpperLeftCorner = false;
 	}
 #endif
-	else if (event->getID() == eCommand || event->getID() == eCommandRepeat)
+	else if (event->getID() == eCommand)
 	{
 
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
@@ -644,6 +644,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 				eventKeyDownBinding_ToggleFollowSong();
+				break;
+			}
+
+			case BUTTON_PATTERN_SHARPFLAT:
+			{
+				if (event->getID() != eCommand)
+					break;
+				eventKeyDownBinding_ToggleSharpFlat();
 				break;
 			}
 
