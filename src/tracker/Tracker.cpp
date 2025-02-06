@@ -647,7 +647,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
-			case BUTTON_ABOUT_SHARPFLAT:
+			case BUTTON_PATTERN_SHARPFLAT:
 			{
 				if (event->getID() != eCommand)
 					break;
