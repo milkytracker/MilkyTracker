@@ -113,7 +113,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     patternMenuControl->setSubMenu(true);
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
-    patternMenuControl->addEntry("Avanced edit", MAINMENU_ADVEDIT);
+    patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 	patternMenuControl->addEntry("Toggle #/b notation", BUTTON_PATTERN_SHARPFLAT);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
