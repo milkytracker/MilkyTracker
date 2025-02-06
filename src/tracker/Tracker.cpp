@@ -271,7 +271,7 @@ bool Tracker::isEditingCurrentOrderlistPattern()
 pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerController)
 {
   PPControl* ctrl = screen->getModalControl();
-	if (dialog != NULL && ctrl) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
+	if (dialog != NULL && ctrl && screen->hasFocusModal() ) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
   {
 		note--;
 	

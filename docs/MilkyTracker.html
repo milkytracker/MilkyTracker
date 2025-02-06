@@ -1,43 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>MilkyTracker Manual v1.05</title>
-		<meta charset="UTF-8" />
-		<style type="text/css">
-			html, body {
+		<title>MilkyTracker Manual v1.05.1</title>
+		<meta charset="UTF-8">
+		<style>
+			html {
+				color-scheme: light dark;
 				font-family: sans-serif, serif;
-				background-color: #fff;
-				color: #000;
+				scroll-behavior: smooth;
+				scroll-padding-top: 1rem;
 			}
 
 			body {
-				margin: auto;
 				margin: 1em;
-				font-size: 10pt;
-				max-width: 52em;
+				max-width: 52rem;
 			}
 
 			h1, h2, h3, h4 {
-				font-size: 16pt;
-				margin: 0;
-				margin-bottom: 1em;
+				margin: 1em 0;
 				padding: 0;
 				text-decoration: underline;
 			}
 
 			h2 {
-				font-size: 14pt;
 				margin-top: 2em;
 			}
 
 			h3 {
-				font-size: 12pt;
 				margin-top: 2em;
 				margin-left: 1.5em;
 			}
 
 			h4 {
-				font-size: 10pt;
 				font-weight: normal;
 				margin: 0;
 				margin-top: 1em;
@@ -51,8 +45,6 @@
 			}
 
 			p, table {
-				margin: 0;
-				margin-bottom: 1em;
 				margin-left: 2em;
 			}
 
@@ -70,6 +62,9 @@
 
 			tr:nth-child(odd) {
 				background-color: #eee;
+				@media (prefers-color-scheme: dark) {
+					background-color: #222;
+				}
  			}
 
 			td {
@@ -89,19 +84,36 @@
 			}
 
 			ul, ol {
-				list-style-position: outside;
-				margin: 0;
-				padding: 0;
-				padding-left: 3.5em;
+				padding-inline-start: 6ex;
 			}
 
-			ol ol {
-				list-style-type: upper-roman;
-				padding-left: 2em;
+			ol#toc,
+			h2:nth-of-type(2) {
+				counter-reset: h2;
+			}
+
+			ol#toc > li,
+			h2 {
+				counter-increment: h2;
+				counter-reset: h3;
+			}
+
+			ol#toc > li::marker,
+			h2:not(:first-of-type)::before {
+				content: counter(h2) ". ";
+			}
+
+			ol#toc ol > li,
+			h3:not([id^="fx"]) {
+				counter-increment: h3;
+			}
+
+			ol#toc ol > li::marker,
+			h3:not([id^="fx"])::before {
+				content: counter(h2) "." counter(h3) " ";
 			}
 
 			ul ul {
-				padding-left: 0;
 			}
 
 			ul.fx {
@@ -133,14 +145,6 @@
 				margin: 0;
 			}
 
-			td p + h4,  td ul + h4, td p + p, ul + p, table + h4 {
-				margin-top: 1em !important;
-			}
-
-			table + h4 {
-				margin-top: 0 !important;
-			}
-
 			.tooltip {
 				border-bottom: 1px dotted;
 				cursor: help;
@@ -153,10 +157,10 @@
 		</style>
 	</head>
 	<body>
-		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.05</span></h1>
+		<h1>MilkyTracker Manual <span id="version" style="font-size: small; font-weight: normal;">v1.05.1</span></h1>
 		<p>
-			Hello and welcome to MilkyTracker, an all-in-one Tracker musicstudio.<br>
-      It's opensource, multi-platform and inspired (and compatible) with Fasttracker.
+			Hello and welcome to MilkyTracker, an all-in-one Tracker musicstudio.
+			It's open source, multi-platform and inspired by and compatible with Fasttracker II.
 		</p>
 		<h4>Disclaimer:</h4>
 		<p>
@@ -166,15 +170,13 @@
 			Now, with the formalities taken care of, let's have a look at the&hellip;
 		</p>
 
-
-
 		<h2>Table of Contents</h2>
-		<ol>
+		<ol id="toc">
 			<li><a href="#platforms">Supported platforms</a></li>
 			<li><a href="#overview">Overview</a></li>
 			<li><a href="#features">Features</a>
-			<li><a href="#sample-editor">Sample Editor</a>
 				<ol>
+					<li><a href="#sample-editor">Sample Editor</a></li>
 					<li><a href="#loopstation">Loop station</a></li>
 					<li><a href="#milkysynth">Milkysynth</a></li>
 					<li><a href="#channels-and-scopes">Channels and scopes</a></li>
@@ -193,8 +195,8 @@
 			</li>
 			<li><a href="#shortcuts">Keyboard shortcuts</a>
 				<ol>
-					<li><a href="#ft2mode">Fasttracker II edit mode</a></li>
 					<li><a href="#milkymode">MilkyTracker edit mode</a></li>
+					<li><a href="#ft2mode">Fasttracker II edit mode</a></li>
 				</ol>
 			</li>
 			<li><a href="#effects">Effect command reference</a>
@@ -207,12 +209,10 @@
 			<li><a href="#issues">Known issues and bug reports</a></li>
 			<li><a href="#credits">Credits</a></li>
 			<li><a href="#contact">Contact</a></li>
-			<li><a href="#donations">Donations</a></li>
+			<!-- <li><a href="#donations">Donations</a></li> -->
 		</ol>
 
-
-
-		<h2><a id="platforms">1. Supported platforms</a></h2>
+		<h2 id="platforms">Supported platforms</h2>
 		<p>
 			MilkyTracker currently runs on the following platforms:
 		</p>
@@ -238,16 +238,12 @@
 			You can run MilkyTracker on other platforms by compiling from source.
 		</p>
 
-
-
-		<h2><a id="overview">2. Overview</a></h2>
+		<h2 id="overview">Overview</h2>
 		<p>
 			MilkyTracker is an open source, multi-platform music application; more specifically part of the tracker family. It attempts to recreate the module replay and user experience of the popular DOS application Fasttracker II, with special playback modes available for improved Amiga ProTracker 2.x/3.x compatibility. MilkyTracker is not "another Windows tracker", which should already be made obvious by the plethora of supported desktop and portable platforms. In fact it started as a project to bring tracking to the Pocket PC. When this milestone was reached, the next one was creating a truly FT2 compatible tracker for portable as well as modern desktop platforms.
 		</p>
 
-
-
-		<h2><a id="features">3. Features</a></h2>
+		<h2 id="features">Features</h2>
 		<ul>
 			<li>Fasttracker II-like, custom graphical user interface with context menus</li>
 			<li>Supported on multiple platforms including portable devices</li>
@@ -275,37 +271,44 @@
 		</ul>
 
 		<hr>
-		<h3><a id="sample-editor">Sample Editor</a></h3>
+		<h3 id="sample-editor">Sample Editor</h3>
 		<p>
-			The sample editor is an exciting part of Milkytracker, and gives you access to synths, waveform generators and effects.<br>
-			All these are straightforward in their use, an come in 3 types:<br><br>
-			<ol>
-				<li>previewable effects (volume, filter, eq e.g.)</li>
-				<li>non-previewable effects (compress, fade in e.g.)</li>
-				<li>modulating effects (paste effects, vocoder)</li> 
-			</ol>
-
-			<b>Previewable effects</b> are audible while playing a note/pattern with the selected sample, and changing sliders at the same time.<br>
-			In other cases the effect needs to be applied first manually (undo-button will undo the effect). 
-			<br><br>
-			<b>Modulating effects</b> use the <b>clipboard</b> contents (select a sample, and press the copy-button) to apply 
-			the effect to a selected sample.<br>
-			For example to vocode a sample with another, first copy a sample to the clipboard, then select another sample 
+			The sample editor is an exciting part of Milkytracker, and gives you access to synths, waveform generators and effects.
+			All these are straightforward in their use, an come in 3 types:
+		</p>
+		<ol>
+			<li>Previewable effects (volume, filter, eq e.g.)</li>
+			<li>Non-previewable effects (compress, fade in e.g.)</li>
+			<li>Modulating effects (paste effects, vocoder)</li>
+		</ol>
+		<p>
+			<b>Previewable effects</b> are audible while playing a note/pattern with the selected sample, and
+			changing sliders at the same time. In other cases the effect needs to be applied first manually
+			(undo-button will undo the effect).
+		</p>
+		<p>
+			<b>Modulating effects</b> use the <b>clipboard</b> contents (select a sample, and press the copy-button) to apply
+			the effect to a selected sample.
+			For example to vocode a sample with another, first copy a sample to the clipboard, then select another sample
 			before launching the vocoder (contextmenu > FX > Vocoder).<br>
-			<br>
-			For samplist and sampletracker artists, the possibilities and combinations here are exciting & endless.<br> 
+		</p>
+		<p>
+			For samplist and sampletracker artists, the possibilities and combinations here are exciting & endless.
 		</p>
 
 		<hr>
-		<h3><a id="loop-station">Loop station</a></h3>
+		<h3 id="loop-station">Loop station</h3>
+		<p>
 			Milkytracker is also a loopstation to create, edit and mix sample-loops for use in modules or external gear.<br>
 			It ships with ability to render a pattern into a sample(loop):<br><br>
+		</p>
 
-			<ol>
-				<li>render to sample (ctrl+shift+v)</li>
-				<li>render to sample [overdub] (ctrl+alt+shift+v)</li>
-			</ol>
+		<ol>
+			<li>render to sample (ctrl+shift+v)</li>
+			<li>render to sample [overdub] (ctrl+alt+shift+v)</li>
+		</ol>
 
+		<p>
 			The current selected sample (in the sample-editor) will be the target sample.<br>
 			Overdub mode will act as a loop-pedal: it records the pattern into the sample (while preserving the target sample-length).<br>
 			This allows for complex loops and exciting bundling capabilities.<br>
@@ -315,135 +318,151 @@
 		<hr>
 
 
-		<h3><a id="milkysynth">Milky synth</a></h3>
+		<h3 id="milkysynth">Milky synth</h3>
 		<p>
-			MilkyTracker offers a modest [beta] synthesizer to generate looped or single/multi-cycle waveforms.<br>
+			MilkyTracker offers a modest (beta) synthesizer to generate looped or single/multi-cycle waveforms.<br>
 			A synth-dialog appears when pressing the 'synth' or '*'-button in the sample-screen.<br>
 			The first slider allows several synth-algorithms:
 		</p>
 		<ol>
-			<li><b>FM</b>: synth [based on Riku Salminen's jamtoysynth]</li> 
-			<li><b>CYCLE</b>: single/multi cycle waveforms</li> 
+			<li><b>FM</b>: synth (based on Riku Salminen's jamtoysynth)</li>
+			<li><b>CYCLE</b>: single/multi cycle waveforms</li>
 		</ol>
 
 		<p>
 			These rules apply to all synthesis options:
-			<ol>
-				<li>the synth-buttons only work on empty- or previously synthesized samples.</li>
-				<li>enable additive/layered synthesis by enabling 'draw'-button before launching the synth-dialog</li>
-				<li>pressing the '*'-button will randomly select a starting-preset (which can be edited later)</li> 
-			</ol>
-		<br>
-			<hr>
-			<b>ASCIISYNTH naming-convention</b>
-				Pressing 'OK' after the 'synth'-button will name the sample via the <a href="https://github.com/coderofsalvation/ASCIISYNTH" target="_blank">ASCIISYNTH</a> naming-convention. <br>
-				This allows editing the generated preset across MOD/XM-modules [named with a 'M1' milkysynth prefix] later on.<br>
-				In additive mode this gives you only access to the last generated preset.
-			<br>
-			<hr>
 		</p>
+		<ol>
+			<li>the synth-buttons only work on empty- or previously synthesized samples.</li>
+			<li>enable additive/layered synthesis by hitting 'select all' before launching the synth-dialog</li>
+			<li>pressing the '*'-button will randomly select a starting-preset (which can be edited later)</li>
+		</ol>
+		<hr>
+		<p>
+			<b>ASCIISYNTH naming-convention</b>
+		</p>
+		<p>
+			Pressing 'OK' after the 'synth'-button will name the sample via the <a href="https://github.com/coderofsalvation/ASCIISYNTH" target="_blank">ASCIISYNTH</a> naming-convention.
+			This allows editing the generated preset across MOD/XM-modules (named with a 'M1' milkysynth prefix) later on.
+			In additive mode this gives you only access to the last generated preset.
+		</p>
+		<hr>
 		<p>
 			<b>FM parameters:</b>
-
-			<ul>
-				<li> <b>volume</b>: total volume of the sample</li>
-				<li> <b>size</b>: samplesize ((samplerate/6)*i)</li>
-				<li> <b>attack</b>: [A]DSR fade in </li> 
-				<li> <b>decay</b>: A[D]SR hold </li> 
-				<li> <b>release</b>: ADS[R] fade out </li> 
-				<li> <b>freq model</b>: <br>
-					&nbsp;&nbsp;&nbsp; 1: syncs modulator & carrier to note frequencies<br>
-					&nbsp;&nbsp;&nbsp; 2: syncs modulator & carrier to note frequenceis + phasediff<br>
-					&nbsp;&nbsp;&nbsp; 3: carrier freqs synced to notes + freeform modulator freqs <br>
-					&nbsp;&nbsp;&nbsp; 4: modulator freq as LFO <br>
-				</li> 
-				<li><b>carrier freq</b>: base frequency<br>
-					&nbsp;&nbsp;&nbsp; SIN/SQ/SAW/TRI/NOIZ: carrier waveform type <br>
-					&nbsp;&nbsp;&nbsp; AMP: amplitude <br>
-				<li><b>modulator freq</b>: frequency which will modulate with base freq <br> 
-					&nbsp;&nbsp;&nbsp;SIN/SQ/SAW/TRI/NOIZ</b>: carrier waveform type <br> 
-					&nbsp;&nbsp;&nbsp;AMP</b>: amplitude<br>
-					&nbsp;&nbsp;&nbsp;NO/AM/FM/RI/TRE/VIB/KS</b>: modulation type:<br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO: modulate with 0 <br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AM: modulate amplitude of carrier<br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FM: modulate frequency of carrier<br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RI: ringmodulate carrier<br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TR: tremolo on carrier<br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIB: vibrato on carrier<br> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KS: Karplus-strong via delay + filter<br> 
-				</li>
-				<li><b>transient</b>: onset frequency sweep amp<br>
-					&nbsp;&nbsp;&nbsp; size: sweep size<br>
-				</li>
-				<li><b>delay</b>: seamless loopable delay amp<br>
-					&nbsp;&nbsp;&nbsp; size: delay length<br>
-					&nbsp;&nbsp;&nbsp; feedback: delay feedback<br>
-				</li>
-				<li><b>spacetime</b>: seamless reverb amp + size</li>
-				<li><b>filter</b>: bandpass filter</li>
-				<li><b>loop type</b>:<br>
-					&nbsp;&nbsp;&nbsp; no loop<br> 
-					&nbsp;&nbsp;&nbsp; forward<br> 
-					&nbsp;&nbsp;&nbsp; pingpong<br> 
-					&nbsp;&nbsp;&nbsp; one shot<br> 
-				</li>
-			</ul>
-			 
-			Notes: most parameters allow sample-overflow (long release/reverb/delay leaks into beginning of sample) to aid seamless looping.<br>Also, everything can be further modulated by the Instrument editor [TIP: check the volume envelope-checkbox] to 
-				produce infinite unique textures and synths, so it does not stop at the ADSR of FM.<br> 
-			<br><br>
+		</p>
+		<ul>
+			<li> <b>volume</b>: total volume of the sample</li>
+			<li> <b>size</b>: samplesize ((samplerate/6)*i)</li>
+			<li> <b>attack</b>: [A]DSR fade in </li>
+			<li> <b>decay</b>: A[D]SR hold </li>
+			<li> <b>release</b>: ADS[R] fade out </li>
+			<li> <b>freq model</b>: <br>
+				&nbsp;&nbsp;&nbsp; 1: syncs modulator & carrier to note frequencies<br>
+				&nbsp;&nbsp;&nbsp; 2: syncs modulator & carrier to note frequenceis + phasediff<br>
+				&nbsp;&nbsp;&nbsp; 3: carrier freqs synced to notes + freeform modulator freqs <br>
+				&nbsp;&nbsp;&nbsp; 4: modulator freq as LFO <br>
+			</li>
+			<li><b>carrier freq</b>: base frequency<br>
+				&nbsp;&nbsp;&nbsp; SIN/SQ/SAW/TRI/NOIZ: carrier waveform type <br>
+				&nbsp;&nbsp;&nbsp; AMP: amplitude <br>
+			<li><b>modulator freq</b>: frequency which will modulate with base freq <br>
+				&nbsp;&nbsp;&nbsp;SIN/SQ/SAW/TRI/NOIZ: carrier waveform type <br>
+				&nbsp;&nbsp;&nbsp;AMP: amplitude<br>
+				&nbsp;&nbsp;&nbsp;NO/AM/FM/RI/TRE/VIB/KS: modulation type:<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO: modulate with 0 <br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AM: modulate amplitude of carrier<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FM: modulate frequency of carrier<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RI: ringmodulate carrier<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TR: tremolo on carrier<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIB: vibrato on carrier<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KS: Karplus-strong via delay + filter<br>
+			</li>
+			<li><b>transient</b>: onset frequency sweep amp<br>
+				&nbsp;&nbsp;&nbsp; size: sweep size<br>
+			</li>
+			<li><b>delay</b>: seamless loopable delay amp<br>
+				&nbsp;&nbsp;&nbsp; size: delay length<br>
+				&nbsp;&nbsp;&nbsp; feedback: delay feedback<br>
+			</li>
+			<li><b>spacetime</b>: seamless reverb amp + size</li>
+			<li><b>filter</b>: bandpass filter</li>
+			<li><b>loop type</b>:
+				<ul>
+					<li>no loop</li>
+					<li>forward</li>
+					<li>pingpong</li>
+					<li>one shot</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			Notes: most parameters allow sample-overflow (long release/reverb/delay leaks into beginning of sample)
+			to aid seamless looping. Also, everything can be further modulated by the Instrument editor
+			(TIP: check the volume envelope-checkbox) to produce infinite unique textures and synths, so it does not
+			stop at the ADSR of FM.
+		</p>
 		<hr>
 
-			<b>Cycle parameters:</b>
 
-			<ul>
-				<li> <b>volume</b>: total volume of the sample</li>
-				<li> <b>wave amp</b>: amplitude</li>
-				<li> <b>wave type</b>: <br>
-					&nbsp;&nbsp;&nbsp; 1: sine<br>
-					&nbsp;&nbsp;&nbsp; 2: square<br>
-					&nbsp;&nbsp;&nbsp; 3: triangle<br>
-					&nbsp;&nbsp;&nbsp; 4: saw<br>
-					&nbsp;&nbsp;&nbsp; 5: half sine<br>
-					&nbsp;&nbsp;&nbsp; 6: absolute sine<br>
-					&nbsp;&nbsp;&nbsp; 7: white noise<br> 
-					&nbsp;&nbsp;&nbsp; 8: pink noise<br> 
-					&nbsp;&nbsp;&nbsp; 9: brown noise<br> 
-				</li> 
-				<li><b>multiply</b>: frequency multiplier [harmonics]</li>
-				<li><b>feedback</b>: foldback distortion via sin(x*i)<br> 
-				<li><b>loop type</b>:<br>
-					&nbsp;&nbsp;&nbsp; no loop<br> 
-					&nbsp;&nbsp;&nbsp; forward<br> 
-					&nbsp;&nbsp;&nbsp; pingpong<br> 
-					&nbsp;&nbsp;&nbsp; one shot<br> 
-				</li>
-			</ul>
-			Notes: ADSR  & panning envelopes are done in the Instrument Editor (check the volume envelope checkbox).
-		</p>
-
-
-		<h3><a id="channels-and-scopes">Channels and Scopes</h3>
 		<p>
-			Milkytracker takes a revolutionary approach compared to a most midi samplers: 
-
-			<ul>
-				<li>a channel is not limited to one sample, volume, effect or panning settings</li> 
-				<li>up to 128 channels allowed</li> 
-			</ul>
-			MOD files are true pieces of art when it comes to combining things in max 4 channels.<br>
-			<br><br>
-			The scopes allow you to see the sample-signal & vu-meters, which can be controlled by mouse and keyboard:<br>
-			<br>
-			<ul>
-				<li>mouse left-click: (un)mute</li>
-				<li>mouse left+right-click: (un)solo</li>
-				<li>shift 1..9: (un)mute particular channel</li> 
-				<li>ctrl (shift) M: (un)solo particular channel</li> 
-			</ul>
+			<b>Cycle parameters:</b>
+		</p>
+		<ul>
+			<li><b>volume</b>: total volume of the sample</li>
+			<li><b>wave amp</b>: amplitude</li>
+			<li><b>wave type</b>:
+				<ul>
+					<li>1: sine</li>
+					<li>2: square</li>
+					<li>3: triangle</li>
+					<li>4: saw</li>
+					<li>5: half sine</li>
+					<li>6: absolute sine</li>
+					<li>7: white noise</li>
+					<li>8: pink noise</li>
+					<li>9: brown noise</li>
+				</ul>
+			</li>
+			<li><b>multiply</b>: frequency multiplier (harmonics)</li>
+			<li><b>feedback</b>: foldback distortion via sin(x*i)</li>
+			<li><b>loop type</b>:
+				<ul>
+					<li>no loop</li>
+					<li>forward</li>
+					<li>pingpong</li>
+					<li>one shot</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			Notes: ADSR & panning envelopes are done in the Instrument Editor (check the volume envelope checkbox).
 		</p>
 
-		<h3><a id="resamplers">Resamplers</a></h3>
+		<hr/>
+		<h3 id="channels-and-scopes">Channels and Scopes</h3>
+		<p>
+			Milkytracker takes a revolutionary approach compared to a most midi samplers:
+		</p>
+		<ul>
+			<li>a channel is not limited to one sample, volume, effect or panning settings</li>
+			<li>up to 128 channels allowed</li>
+		</ul>
+		<p>
+			MOD files are true pieces of art when it comes to combining things in max 4 channels.
+		</p>
+		<p>
+			The scopes allow you to see the sample-signal & vu-meters, which can be controlled by mouse and keyboard:<br>
+		</p>
+		<ul>
+			<li>mouse left-click: (un)mute</li>
+			<li>mouse left+right-click: (un)solo</li>
+			<li>shift 1..9: (un)mute particular channel</li>
+			<li>ctrl (shift) M: (un)solo particular channel</li>
+		</ul>
+
+
+		<hr/>
+		<h3 id="resamplers">Resamplers</h3>
 		<p>
 			MilkyTracker offers various resampling options for module playback, rendering and sample processing. These are:
 		</p>
@@ -463,138 +482,138 @@
 			While the choice of resampler is a matter of personal taste, you should keep in mind that <em>Linear interpolation</em> represents the highest quality option available in Fasttracker II so that's what the majority of .XM files were probably made (to be played) with. Many chiptunes will however sound very muffled with interpolation because of their short samples and therefore relatively greater impact of interpolation. The Amiga modes are meant to be used with 4 channel .MODs only. <em>Precise Sinc</em> is a CPU killer - great for resampling in the sample editor but don't expect hot real-time performance.
 		</p>
 
-		<h3><a id="volumeramping">Volume Ramping</a></h3>
+		<hr/>
+		<h3 id="volumeramping">Volume Ramping</h3>
+		<ol>
+			<li>None (not adviced: this can cause clicks)</li>
+			<li>Sample end (adviced: keeps drumtransients unaffected)</li>
+			<li>Sample end+start (the revered FT2 sound, at the expense of drumtransients)</li>
+		</ol>
+
 		<p>
-
-			<ol>
-				<li>None (not adviced: this can cause clicks)</li>
-				<li>Sample end (adviced: keeps drumtransients unaffected)</li>
-				<li>Sample end+start (the revered FT2 sound, at the expense of drumtransients)</li> 
-			</ol>
-
 			The purpose of ramping in samplers, is to avoid unwanted clicks in the song. Clicks happen when there is a sudden DC offset change, which usually occurs:
-			<ol>
-				<li>start: when starting a sample that has a DC offset on the first sample</li>
-				<li>end: when changing the volume of a sample</li>
-				<li>end: when cutting a sample</li>
-			</ol>
-		Let's talk about the last two cases. Ramping is good in these cases because otherwise a click is simply unavoidable.<br>
-		When a sample cuts in the song, the song author has little choice about the phase/position of the sample at the beginning of a tick.<br>
-		<br>
-			In the first case, however, we can say that if the sample starts with a DC offset, then the sample actually contains a click.<br>
-			Is it an intentional click or a mistake of recording?<br>
-			In old mod files, there are certainly plenty of circumstances where there was some error in sampling, and the tools back then could not easily deal with DC offset removal, etc, so it's fine if we ramp it in, even though it may not be "authentic" (plenty of old mod players did not have ramping).<br>
-			This is basically in the same category of 'the listener fixing the song' as surround sound, reverb, EQ in the player.<br>
-
-			
-
+		</p>
+		<ol>
+			<li>start: when starting a sample that has a DC offset on the first sample</li>
+			<li>end: when changing the volume of a sample</li>
+			<li>end: when cutting a sample</li>
+		</ol>
+		<p>
+		Let's talk about the last two cases. Ramping is good in these cases because otherwise a click is simply unavoidable.
+		When a sample cuts in the song, the song author has little choice about the phase/position of the sample at the beginning of a tick.
+		</p>
+		<p>
+			In the first case, however, we can say that if the sample starts with a DC offset, then the sample actually contains a click.
+			Is it an intentional click or a mistake of recording?
+			In old mod files, there are certainly plenty of circumstances where there was some error in sampling, and the tools back then could not easily deal with DC offset removal, etc, so it's fine if we ramp it in, even though it may not be "authentic" (plenty of old mod players did not have ramping).
+			This is basically in the same category of 'the listener fixing the song' as surround sound, reverb, EQ in the player.
 		</p>
 
-		<h3><a id="tabs">Tabs</a></h3>
+		<hr/>
+		<h3 id="tabs">Tabs</h3>
 		<p>
 			MilkyTracker enables you to open and play up to 32 modules simultaneously and to exchange data between them. Initially, tabs are invisible but can be activated with <a href="#shortcuts">keyboard shortcuts</a> described below. There are some configurable options for tabs as well, like automatically opening modules in new tabs and background stopping behavior control. You can choose to never stop playback on background tabs, or to automatically stop on tab change or stop when playback on another tab is started. Playback can also resume upon returning to a tab.
 		</p>
 
-
-
-		<h2><a id="formats">4. Imported and exported file formats</a></h2>
-		<h3><a id="modules">I. Modules</a></h3>
+		<hr/>
+		<h2 id="formats">Imported and exported file formats</h2>
+		<h3 id="modules">Modules</h3>
 		<p>
 			MilkyTracker can import a wide range of tracker module formats but since Milky is a FT2 clone, modules are replayed in an FT2 environment which means not all features of different formats are supported. MilkyTracker also has basic archive support, so it's possible to load zipped, powerpacked and UMX modules directly.
 		</p>
 		<h4>Import:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>.669</em></td><td>669 Composer/Unis669 (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td rowspan="2"><em>.AMF</em></td><td>Asylum Music Format ("Crusader" in-game music) (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td>Digital Sound and Music Interface (DSMI) library (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td rowspan="2"><em>.AMS</em></td><td>Extreme Tracker (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td>Velvet Studio (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.CBA</em></td><td>Chuck Biscuits+Black Artist module format (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.DBM</em></td><td>DigiBooster Pro (Amiga)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.DIGI</em></td><td>Digibooster 1.0-1.7 (Amiga)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td rowspan="2"><em>.DSM</em></td><td>Digisound Interface Kit (DSIK) library (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td>Dynamic Studio (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td rowspan="2"><em>.DTM</em></td><td>Digital Tracker (Atari)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td>DigiTrekker 3.0 (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.FAR</em></td><td>Farandole Composer (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.GDM</em></td><td>General Digimusic (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.GMC</em></td><td>Game Music Creator (Amiga)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.IMF</em></td><td>Imago Orpheus (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.IT</em></td><td>Impulse Tracker (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.MDL</em></td><td>DigiTrakker 1.0-3.0 (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.MOD</em></td><td>Sound-/ProTracker and variants (Amiga &amp; PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.MTM</em></td><td>MultiTracker (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.MXM</em></td><td>Cubic Tiny XM (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.OKT</em></td><td>Oktalyzer (Amiga)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.PLM</em></td><td>DisorderTracker II (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.PSM</em></td><td>Epic MegaGames MASI (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.PTM</em></td><td>PolyTracker (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.S3M</em></td><td>Scream Tracker 3.0 (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.SFX</em></td><td>SoundFX (Amiga)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.STM</em></td><td>Scream Tracker 2.0 (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.ULT</em></td><td>UltraTracker (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.UNI</em></td><td>MikMod (PC)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.XM</em></td><td>Fasttracker II (PC)</td>
 			</tr>
 		</table>
@@ -603,66 +622,61 @@
 		</p>
 		<h4>Export:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>.MOD</em></td><td>ProTracker boundaries (including 64kb max sample length), although can save 2&ndash;32 channels</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.WAV</em></td><td>Microsoft/IBM PCM Waveform audio rendering</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.XM</em></td><td>Fasttracker II compatible, not as common as one might think</td>
 			</tr>
 		</table>
 
-
-
-		<h3><a id="samples">II. Samples</a></h3>
+		<hr/>
+		<h3 id="samples">Samples</h3>
 		<p>
 			Milky can load practically anything as RAW PCM audio samples; one of FT2's famous features.
 		</p>
 		<h4>Import:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>.8SVX</em> / <em>.IFF</em></td><td>Compressed/uncompressed Interchange File Format</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.AIF</em> / <em>.AIFF</em></td><td>Apple Audio Interchange File Format</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.WAV</em></td><td>Microsoft/IBM uncompressed PCM Waveform audio</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.*</em></td><td>RAW PCM audio</td>
 			</tr>
 		</table>
 		<h4>Export:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>.IFF</em></td><td>Uncompressed Interchange File Format</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>.WAV</em></td><td>Microsoft/IBM uncompressed PCM Waveform audio</td>
 			</tr>
 		</table>
 
-
-
-		<h3><a id="instruments">III. Instruments</a></h3>
+		<hr/>
+		<h3 id="instruments">Instruments</h3>
 		<p>
 			MilkyTracker can load and save FT2's eXtended Instrument (<em>.XI</em>) format
 			and additionally import Gravis Ultrasound GF1 Patch (<em>.PAT</em>) files.
 		</p>
 
-		<hr>
-
-		<h3><a id="patterns">IV. Patterns and Tracks</a></h3>
+		<hr/>
+		<h3 id="patterns">Patterns and Tracks</h3>
 		<p>
 			MilkyTracker handles FT2's eXtended Pattern (<em>.XP</em>) and eXtended Track (<em>.XT</em>) files with full compatibility.
 		</p>
 
-		<hr>
-
-		<h2><a id="shortcuts">5. Keyboard shortcuts</a></h2>
+		<h2 id="shortcuts">Keyboard shortcuts</h2>
 		<p>
 			By user request, MilkyTracker features two edit modes. You can switch between these in the Config screen (Misc. tab). To learn about the differences and which might better suit you, read the appropriate sections below. There are a couple of shortcuts that are the same for both modes so let's clear those out of the way first:
 		</p>
@@ -670,74 +684,80 @@
 			<em>Please note that under Mac OS X the Command key can be used in addition to the Ctrl key.</em>
 		</p>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Alt-Enter</em></td><td>Switch between full screen and windowed display (Windows &amp; SDL)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Command-F</em></td><td>Switch between full screen and windowed display (OS X)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-M</em></td><td>Mute current channel</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-M</em></td><td>Invert muting</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-U</em></td><td>Un-mute all</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-T</em></td><td>Open a new tab</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-W</em></td><td>Close current tab</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-Left</em></td><td>Select previous tab</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-Right</em></td><td>Select next tab</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-=</em></td><td>Increment instrument number of all notes in the current selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt--</em></td><td>Decrement instrument number of all notes in the current selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-=</em></td><td>Increment instrument number of all notes in the current track under the cursor</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift--</em></td><td>Decrement instrument number of all notes in the current track under the cursor</td>
 			</tr>
 		</table>
 
-		<hr>
-
-		<h3><a id="milkymode">I. MilkyTracker edit mode</a></h3>
+		<hr/>
+		<h3 id="milkymode">MilkyTracker edit mode</h3>
 		<p>
-			The MilkyTracker mode basically is a bit more "modern" because you can focus on different parts (e.g. Pattern Editor, Instrument listbox, Sample listbox etc.) and when you're pressing keys, they're routed to the focused control.<br>
-		  Keyboard shortcuts are also more standard / compatible with slim keyboards.<br>
-		  Users who are new to tracking will probably find this a bit more intuitive:
-
-		  <ol>
+			The MilkyTracker mode basically is a bit more "modern" because you can focus on different parts (e.g. Pattern Editor,
+			Instrument listbox, Sample listbox etc.) and when you're pressing keys, they're routed to the focused control.
+			Keyboard shortcuts are also more standard / compatible with slim keyboards.
+			Users who are new to tracking will probably find this a bit more intuitive.
+		</p>
+		<ol>
 			<li>navigate instruments via CTRL-up/down arrow-keys</li>
 			<li>navigate samples via CTRL-SHIFT-up/down arrow-keys</li>
 			<li>navigate orderlist via ALT-up/down arrow-keys</li>
 			<li>select pattern in orderlist via ALT-left/right arrow-keys</li>
-			<li>pattern-note selection: hold SHIFT and use arrow-keys to select a block</li> 
+			<li>pattern-note selection: hold SHIFT and use arrow-keys to select a block</li>
 			<li>cut, copy &amp; paste by using Ctrl-X/C/V etc. </li>
-		  </ol>
+		</ol>
 
-		  <b>ASCIISTEP16 stepsequencer mode</b>
+		<p>
+			<b>ASCIISTEP16 stepsequencer mode</b>
+		</p>
 
-		<a href="https://web.archive.org/web/20241226181409/https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b" target="_blank">ASCIISTEP16</a> is a pckeyboard standard & translation of popular hardware 16-step drum/midi/sampler-sequencers.<br>
-		It adds a 'grid'-like keyboard-performancemode to trackers, which toggles pattern-notes/channels.<br>
-		<br><br>
+		<p>
+			<a href="https://web.archive.org/web/20241226181409/https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b" target="_blank">ASCIISTEP16</a> is a pckeyboard standard & translation of popular hardware 16-step drum/midi/sampler-sequencers.
+			It adds a 'grid'-like keyboard-performancemode to trackers, which toggles pattern-notes/channels.<br>
+			In Milkytracker pressing SHIFT activates ASCIISTEP16-mode (pressing SHIFT+Q e.g.).
+		</p>
+		<p>
 		Below is the keyboard-to-step translation:
+		</p>
 		<pre>
-			key step comment 
+			key step comment
 			--- ---  -------
-			Q   0 
+			Q   0
 			W   1
 			E   2
 			R   3
@@ -754,8 +774,8 @@
 			J   14
 			K   15
 
-			[un]mute   
-			channel  key 
+			[un]mute
+			channel  key
 			-------  ---
 			1        '1'
 			2        '2'
@@ -770,127 +790,120 @@
 			11       '-'
 			12       '='
 		</pre>
-		</p>
 
 		<hr>
 
 		<h4>Section switching:</h4>
 		<table>
-			<tr >
-				<td colspan="2"><em>Ctrl-Alt-Space</em> (cycles thru pattern/instrument/sampler section)</td>
+			<tr>
+				<td><em>Ctrl-Alt-Space</em></td><td>(cycles thru pattern/instrument/sampler section)</td>
 			</tr>
-		</table>
-		<hr>
-		<table>
-			<tr >
-				<td colspan="2"><em>Ctrl-Alt-</em></td>
+			<tr>
+				<td><em>Ctrl-Alt-A</em></td><td>Advanced edit</td>
 			</tr>
-			<tr >
-				<td><em>A</em></td><td>Advanced edit</td>
+			<tr>
+				<td><em>Ctrl-Alt-C</em></td><td>Configuration</td>
 			</tr>
-			<tr >
-				<td><em>C</em></td><td>Configuration</td>
+			<tr>
+				<td><em>Ctrl-Alt-D</em></td><td>Disk operations</td>
 			</tr>
-			<tr >
-				<td><em>D</em></td><td>Disk operations</td>
+			<tr>
+				<td><em>Ctrl-Alt-I</em></td><td>Instrument editor</td>
 			</tr>
-			<tr >
-				<td><em>I</em></td><td>Instrument editor</td>
+			<tr>
+				<td><em>Ctrl-Alt-R</em></td><td>Disk recorder</td>
 			</tr>
-			<tr >
-				<td><em>R</em></td><td>Disk recorder</td>
+			<tr>
+				<td><em>Ctrl-Alt-S</em></td><td>Sample editor</td>
 			</tr>
-			<tr >
-				<td><em>S</em></td><td>Sample editor</td>
+			<tr>
+				<td><em>Ctrl-Alt-T</em></td><td>Transpose</td>
 			</tr>
-			<tr >
-				<td><em>T</em></td><td>Transpose</td>
+			<tr>
+				<td><em>Ctrl-Alt-X</em></td><td>Main screen</td>
 			</tr>
-			<tr >
-				<td><em>X</em></td><td>Main screen</td>
-			</tr>
-			<tr >
-				<td><em>Z</em></td><td>Toggle scopes</td>
+			<tr>
+				<td><em>Ctrl-Alt-Z</em></td><td>Toggle scopes</td>
 			</tr>
 		</table>
 		<h4>Global:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>2, 3, 5, 6&hellip;</em></td><td rowspan="4" style="vertical-align: middle;">Play / insert notes (depending on whether edit mode is on)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Q, W, E, R&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>S, D, F, G&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Z, X, C, V&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F1&hellip;F8</em></td><td rowspan="2">Select octave</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-1&hellip;8</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Space</em></td><td>Toggle pattern editor focus (edit mode on/off)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Enter</em></td><td>Play song from current order</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Enter</em></td><td>Play current pattern from beginning</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Enter</em></td><td>Play current pattern from cursor position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F9</em></td><td>Play current pattern from beginning (same as Ctrl-Enter)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F10</em></td><td>Play current pattern from position after the first quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F11</em></td><td>Play current pattern from position after the second quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F12</em></td><td>Play current pattern from position after the third quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-Space</em></td><td>Play song from current row (stop and return when keys are released)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Space</em></td><td>Play row by row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Esc</em></td><td>Stop</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F</em></td><td>Toggle song follow</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-P</em></td><td>Toggle prospective pattern view</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-W</em></td><td>Toggle pattern wrapping</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-L</em></td><td>Toggle pattern change behavior (live mode)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-O</em></td><td>Load song</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-S</em></td><td>Save song</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-S</em></td><td>Save song as&hellip;</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Q</em></td><td rowspan="2">Exit program</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F4</em></td>
 			</tr>
 		</table>
@@ -1074,251 +1087,247 @@
 			</tr>
 			<tr>
 				<td><em>Mousedrag selection</em></td>
-				<td>move selection</td> 
+				<td>move selection</td>
 			</tr>
 			<tr>
 				<td><em>Shift+Mousedrag selection</em></td>
-				<td>clones selection (when 'advanced dnd' is enabled in Misc-tab in config)</td> 
+				<td>clones selection (when 'advanced dnd' is enabled in Misc-tab in config)</td>
 			</tr>
 		</table>
 		<h4>Transpose:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Alt-F7</em></td><td>Transpose current instrument in block down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F8</em></td><td>Transpose current instrument in block up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F7</em></td><td>Transpose current instrument in track down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F8</em></td><td>Transpose current instrument in track up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F7</em></td><td>Transpose current instrument in pattern down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F8</em></td><td>Transpose current instrument in pattern up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F1</em></td><td>Transpose all instruments in block down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F2</em></td><td>Transpose all instruments in block up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F1</em></td><td>Transpose all instruments in track down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F2</em></td><td>Transpose all instruments in track up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F1</em></td><td>Transpose all instruments in pattern down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F2</em></td><td>Transpose all instruments in pattern up</td>
 			</tr>
 		</table>
 		<h4>Sample Editor:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift up/down</em></td><td>Select next/previous sample</td>
-			<tr >
+			<tr>
 				<td><em>Shift &amp; drag</em></td><td>Quick draw</td>
 			</tr>
-			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift &amp; drag</em></td><td>Quick draw</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl &amp; drag</em></td><td>Resize selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt &amp; drag</em></td><td>Move selection or loop range</td>
 			</tr>
 		</table>
 		<h4>Live performance:</h4>
 		<table>
-			<tr >
-				<td><em>CTRL+H</em></td><td>decrease BPM</td> 
+			<tr>
+				<td><em>CTRL+H</em></td><td>decrease BPM</td>
 			</tr>
 			<tr>
-				<td><em>CTRL+J</em></td><td>increase BPM</td> 
+				<td><em>CTRL+J</em></td><td>increase BPM</td>
 			</tr>
 			<tr>
-				<td><em>CTRL+G</em></td><td>decrease fine BPM</td> 
+				<td><em>CTRL+G</em></td><td>decrease fine BPM</td>
 			</tr>
 			<tr>
-				<td><em>CTRL+K</em></td><td>increase fine BPM</td> 
+				<td><em>CTRL+K</em></td><td>increase fine BPM</td>
 			</tr>
 			<tr>
-				<td><em>ALT+I</em></td><td>load instrument</td> 
+				<td><em>ALT+I</em></td><td>load instrument</td>
 			</tr>
 			<tr>
-				<td><em>CLTR+O</em></td><td>load module</td> 
+				<td><em>CLTR+O</em></td><td>load module</td>
 			</tr>
 			<tr>
-				<td><em>SHIFT+Q..H</em></td><td>(un)toggle note (ASCIISTEP16)</td> 
+				<td><em>SHIFT+Q..H</em></td><td>(un)toggle note (ASCIISTEP16)</td>
 			</tr>
 			<tr>
-				<td><em>SHIFT+1..9</em></td><td>(un)mute channel (ASCIISTEP16)</td> 
+				<td><em>SHIFT+1..9</em></td><td>(un)mute channel (ASCIISTEP16)</td>
 			</tr>
 			<tr>
-				<td><em>CTRL (SHIFT) M</em></td><td>(un)solo channel</td> 
+				<td><em>CTRL (SHIFT) M</em></td><td>(un)solo channel</td>
 			</tr>
 			<tr>
-				<td><em>mouseclick scope</em></td><td>(un)mute channel</td> 
+				<td><em>mouseclick scope</em></td><td>(un)mute channel</td>
 			</tr>
 			<tr>
-				<td><em>left+right mouseclick scope</em></td><td>(un)solo channel</td> 
+				<td><em>left+right mouseclick scope</em></td><td>(un)solo channel</td>
 			</tr>
 		</table>
 
 
-
-		<h3><a id="ft2mode">II. Fasttracker II edit mode</a></h3>
+		<hr/>
+		<h3 id="ft2mode">Fasttracker II edit mode</h3>
 		<p>
-			The FT2 edit mode is for the die-hard FT2 users and probably isn't very intuitive to beginners. <em>Please note</em> that not all FT2 shortcuts are implemented yet and some may differ for various technical reasons. <em>Also note</em> that this edit mode may not be optimal on Pocket PC because of the limitations of some input devices.
+			The FT2 edit mode is for the die-hard FT2 users and probably isn't very intuitive to beginners. <em>Please note</em> that not all FT2 shortcuts are implemented yet and some may differ for various technical reasons. <em>Also note</em> that this edit mode may not be optimal on Pocket PC because of the limitations of their input devices.
 		</p>
 		<h4>Section switching:</h4>
 		<table>
-			<tr >
-				<td colspan="2"><em>Ctrl-</em></td>
+			<tr>
+				<td><em>Ctrl-A</em></td><td>Advanced edit</td>
 			</tr>
-			<tr >
-				<td><em>A</em></td><td>Advanced edit</td>
+			<tr>
+				<td><em>Ctrl-C</em></td><td>Configuration</td>
 			</tr>
-			<tr >
-				<td><em>C</em></td><td>Configuration</td>
+			<tr>
+				<td><em>Ctrl-D</em></td><td>Disk operations</td>
 			</tr>
-			<tr >
-				<td><em>D</em></td><td>Disk operations</td>
+			<tr>
+				<td><em>Ctrl-I</em></td><td>Instrument editor</td>
 			</tr>
-			<tr >
-				<td><em>I</em></td><td>Instrument editor</td>
+			<tr>
+				<td><em>Ctrl-R</em></td><td>Disk recorder</td>
 			</tr>
-			<tr >
-				<td><em>R</em></td><td>Disk recorder</td>
+			<tr>
+				<td><em>Ctrl-S</em></td><td>Sample editor</td>
 			</tr>
-			<tr >
-				<td><em>S</em></td><td>Sample editor</td>
+			<tr>
+				<td><em>Ctrl-T</em></td><td>Transpose</td>
 			</tr>
-			<tr >
-				<td><em>T</em></td><td>Transpose</td>
+			<tr>
+				<td><em>Ctrl-X</em></td><td>Main screen</td>
 			</tr>
-			<tr >
-				<td><em>X</em></td><td>Main screen</td>
-			</tr>
-			<tr >
-				<td><em>Z</em></td><td>Toggle scopes</td>
+			<tr>
+				<td><em>Ctrl-Z</em></td><td>Toggle scopes</td>
 			</tr>
 		</table>
 		<h4>Global:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>2, 3, 5, 6&hellip;</em></td><td rowspan="4" style="vertical-align: middle;">Play / insert notes (depending on whether edit mode is on)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Q, W, E, R&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>S, D, F, G&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Z, X, C, V&hellip;</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>F1&hellip;F8</em></td><td>Select octave</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Right Ctrl</em></td><td>Play song from current order</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Enter</em></td><td>Play song from current order</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Right Alt</em></td><td>Play current pattern from beginning (Windows &amp;SDL)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Enter</em></td><td>Play current pattern from beginning</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Enter</em></td><td>Play current pattern from current row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F9</em></td><td>Play current pattern from beginning (same as Ctrl-Enter/Right Alt)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F10</em></td><td>Play current pattern from position after the first quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F11</em></td><td>Play current pattern from position after the second quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F12</em></td><td>Play current pattern from position after the third quarter of the pattern length</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-Space</em></td><td>Play song from current row (stop and return when keys are released)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Space</em></td><td>Play row by row</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Space</em></td><td>Stop / Edit</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Left</em></td><td>Increase song position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Right</em></td><td>Decrease song position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Left</em></td><td>Increase current pattern number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Right</em></td><td>Decrease current pattern number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F9</em></td><td>Delete current order position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F10</em></td><td>Insert new order position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F11</em></td><td>Decrease
 				current order pattern number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F12</em></td><td>Increase current order pattern number</td>
-			<tr >
+			<tr>
 				<td><em>Key below ESC (ANSI: Alt-Minus)*</em></td><td>Increase Add value</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-key below ESC (ANSI: Alt-Plus)*</em></td><td>Decrease Add value</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F</em></td><td>Toggle song follow</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-P</em></td><td>Toggle prospective pattern view</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-W</em></td><td>Toggle pattern wrapping</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-L</em></td><td>Toggle pattern change behavior (live mode)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Ctrl-L</em></td><td>Load song</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-R</em></td><td>Toggle record mode</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Ctrl-S</em></td><td>Save song</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Esc</em></td><td>Exit program</td>
 			</tr>
 		</table>
@@ -1409,11 +1418,11 @@
 			</tr>
 			<tr>
 				<td><em>Ins</em></td>
-				<td>Insert space on current track at cursor position (F13 on mac)</td>
+				<td>Insert space on current track at cursor position (F13 on Mac)</td>
 			</tr>
 			<tr>
 				<td><em>Shift-Ins</em></td>
-				<td>Insert row at cursor position (shift-F13 on mac)</td>
+				<td>Insert row at cursor position (Shift-F13 on Mac)</td>
 			</tr>
 			<tr>
 				<td><em>Alt-Backspace</em></td>
@@ -1438,136 +1447,136 @@
 		</table>
 		<h4>Clipboard operations:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Alt-Cursor keys</em></td><td>Select block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Alt-Cursor keys</em></td><td>Extend block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F3</em></td><td>Cut block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F4</em></td><td>Copy block (yes, even under Windows =)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F5</em></td><td>Paste block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F6</em></td><td>Porous paste block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F3</em></td><td>Cut track</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F4</em></td><td>Copy track</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F5</em></td><td>Paste track</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F6</em></td><td>Porous paste track</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F3</em></td><td>Cut pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F4</em></td><td>Copy pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F5</em></td><td>Paste pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F6</em></td><td>Porous paste pattern</td>
 			</tr>
 		</table>
 		<h4>Additional shortcuts (not found in FT2):</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Alt-Z</em></td><td>Undo</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Alt-Y</em></td><td>Redo</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Alt-A</em></td><td>Select entire pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-I</em></td><td>Interpolate values</td>
 			</tr>
 		</table>
 		<h4>Volume scaling:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Alt-V</em></td><td>Volume scale block</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-V</em></td><td>Volume scale track</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-V</em></td><td>Volume scale pattern</td>
 			</tr>
 		</table>
 		<h4>Command/Volume macro:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Shift-Alt-1&hellip;0</em></td><td>Read command/volume at cursor</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-1&hellip;0</em></td><td>Write command/volume at cursor</td>
 			</tr>
 		</table>
-		<h4>Transpose:</h4>
+		<h4>Transposing notes:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Alt-F7</em></td><td>Transpose current instrument in block down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F8</em></td><td>Transpose current instrument in block up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F7</em></td><td>Transpose current instrument in track down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F8</em></td><td>Transpose current instrument in track up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F7</em></td><td>Transpose current instrument in pattern down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F8</em></td><td>Transpose current instrument in pattern up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F1</em></td><td>Transpose all instruments in block down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt-F2</em></td><td>Transpose all instruments in block up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F1</em></td><td>Transpose all instruments in track down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-F2</em></td><td>Transpose all instruments in track up</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F1</em></td><td>Transpose all instruments in pattern down</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-F2</em></td><td>Transpose all instruments in pattern up</td>
 			</tr>
 		</table>
 		<h4>Instrument selection:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Shift-Up or Ctrl-Up</em></td><td>Select previous instrument</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Shift-Down or Ctrl-Down</em></td><td>Select next instrument</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-Up</em></td><td>Select previous sample</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl-Shift-Down</em></td><td>Select next sample</td>
 			</tr>
 		</table>
@@ -1576,73 +1585,72 @@
 			keypad, the layout is like this:
 		</p>
 		<table>
-			<tr >
+			<tr>
 				<td>PC</td><td colspan="2">Mac</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num 0&hellip;9</em></td><td><em>Num 0&hellip;9</em></td><td>Digit 0&hellip;9</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num /</em></td><td><em>Num =</em></td><td>Digit A</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num *</em></td><td><em>Num /</em></td><td>Digit B</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num -</em></td><td><em>Num *</em></td><td>Digit C</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num +</em></td><td><em>Num -</em></td><td>Digit D</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num Enter</em></td><td><em>Num +</em></td><td>Digit E</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Num ,</em></td><td><em>Num Enter</em></td><td>Digit F</td>
 			</tr>
 		</table>
 		<h4>Sample editor:</h4>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Shift &amp; drag</em></td><td>Quick draw</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Ctrl &amp; drag</em></td><td>Resize selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Alt &amp; drag</em></td><td>Move selection or loop range</td>
 			</tr>
 		</table>
 
-
-
-		<h2><a id="effects">6. Effect command reference</a></h2>
-		<h3><a id="glossary">I. Glossary</a></h3>
+		<hr/>
+		<h2 id="effects">Effect command reference</h2>
+		<h3 id="glossary">Glossary</h3>
 		<table>
-			<tr >
+			<tr>
 				<td><em>BPM</em></td><td>Traditionally Beats Per Minute, but in tracker terminology it defines the speed of ticks.</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Effect memory</em></td><td>When an effect command is called with 0 parameters, previous parameters are used.</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Row/line</em></td><td>Refers to one line of "text" on a pattern. In playback its duration depends on how many ticks there are per row (Speed) and fast they are (BPM).</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Sample fine-tune/volume/panning</em></td><td>Per sample default settings available through the instrument editor (thus also called instrument volume etc). Overrideable with effect commands. .MODs support these as well but with lower precision. (Save module and load back to enforce .MOD precision.)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Tick</em></td><td>The base time unit in traditional trackers like MilkyTracker, originating from Amiga. Notes are triggered on the first tick of a row (unless delayed) and effects are applied on the following ticks.</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Semitone</em></td><td>The smallest musical interval in Western music and in MilkyTracker. A C# note is one semitone away from the note C.</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Speed (Spd.)</em></td><td>Number of ticks per row.</td>
 			</tr>
 		</table>
 
-		<h3><a id="commands">II. Effect commands</a></h3>
+		<h3 id="commands">Effect commands</h3>
 		<h4>Standard commands (.MOD &amp;.XM)</h4>
 		<ul class="fx">
 			<li><em><code>0xy</code></em> <a href="#fx0xy">Arpeggio</a></li>
@@ -1712,12 +1720,12 @@
 			<li><em><code>Vx</code></em> <a href="#fxVx">Vibrato</a></li>
 		</ul>
 		<p>
-			*) Not implemented, no plans to support<br />
-			**) Not implemented yet, will be required for feature completeness<br />
-			***) Not supported on Amiga nor in FT2, effect relocation (8xx, Px) advised<br />
+			*) Not implemented, no plans to support<br>
+			**) Not implemented yet, will be required for feature completeness<br>
+			***) Not supported on Amiga nor in FT2, effect relocation (8xx, Px) advised<br>
 		</p>
 
-		<h3><a id="fx0xy"><em>0xy</em> Arpeggio</a></h3>
+		<h3 id="fx0xy"><em>0xy</em> Arpeggio</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>0</code></em></td>
@@ -1728,14 +1736,14 @@
 			<tr>
 				<td><em><code>y</code></em> = semitone offset</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 037<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 037<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 037<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 037<br />
+						C-4 ·1 ·· 037<br>
+						··· ·· ·· 037<br>
+						··· ·· ·· 037<br>
+						··· ·· ·· 037<br>
 					</code>
 				</td>
 			</tr>
@@ -1755,7 +1763,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 						<p>In MilkyTracker <span class="tooltip" title="The pattern dots ARE zeroes. Bricks shat, I know right.">you don't have to</span> and indeed you CAN'T enter the effect digit 0. Just start with the parameter digits and the effect digit will be filled in.</p>
@@ -1773,7 +1781,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx1xx"><em>1xx</em> Portamento up</a></h3>
+		<h3 id="fx1xx"><em>1xx</em> Portamento up</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td>
@@ -1782,14 +1790,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = portamento speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 103<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 103<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 103<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 103<br />
+						C-4 ·1 ·· 103<br>
+						··· ·· ·· 103<br>
+						··· ·· ·· 103<br>
+						··· ·· ·· 103<br>
 					</code>
 				</td>
 			</tr>
@@ -1805,7 +1813,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>ProTracker 2/3</h4>
@@ -1816,7 +1824,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx2xx"><em>2xx</em> Portamento down</a></h3>
+		<h3 id="fx2xx"><em>2xx</em> Portamento down</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>2</code></em></td>
@@ -1824,14 +1832,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = portamento speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 203<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 203<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 203<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 203<br />
+						C-4 ·1 ·· 203<br>
+						··· ·· ·· 203<br>
+						··· ·· ·· 203<br>
+						··· ·· ·· 203<br>
 					</code>
 				</td>
 			</tr>
@@ -1841,7 +1849,7 @@
 					Works similarly to <a href="#fx1xx"><em><code>1xx</code></em> portamento up</a>, only bending note pitch down instead of up.
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>ProTracker 2/3</h4>
@@ -1852,7 +1860,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx3xx"><em>3xx</em> Portamento to note</a></h3>
+		<h3 id="fx3xx"><em>3xx</em> Portamento to note</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>3</code></em></td>
@@ -1860,14 +1868,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = portamento speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						E-4 &middot;1 &middot;&middot; 304<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 300<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 310<br />
+						C-4 ·1 ·· ···<br>
+						E-4 ·1 ·· 304<br>
+						··· ·· ·· 300<br>
+						··· ·· ·· 310<br>
 					</code>
 				</td>
 			</tr>
@@ -1881,7 +1889,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx4xy"><em>4xy</em> Vibrato</a></h3>
+		<h3 id="fx4xy"><em>4xy</em> Vibrato</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>4</code></em></td>
@@ -1892,14 +1900,14 @@
 			<tr>
 				<td><em><code>y</code></em> = depth</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 481<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 402<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 400<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 460<br />
+						C-4 ·1 ·· 481<br>
+						··· ·· ·· 402<br>
+						··· ·· ·· 400<br>
+						··· ·· ·· 460<br>
 					</code>
 				</td>
 			</tr>
@@ -1913,7 +1921,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx5xy"><em>5xy</em> Portamento to note with volume slide</a></h3>
+		<h3 id="fx5xy"><em>5xy</em> Portamento to note with volume slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>5</code></em></td>
@@ -1924,14 +1932,14 @@
 			<tr>
 				<td><em><code>y</code></em> = volume slide down speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						E-4 &middot;1 &middot;&middot; 304<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 504<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 504<br />
+						C-4 ·1 ·· ···<br>
+						E-4 ·1 ·· 304<br>
+						··· ·· ·· 504<br>
+						··· ·· ·· 504<br>
 					</code>
 				</td>
 			</tr>
@@ -1943,7 +1951,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>ProTracker 2/3</h4>
@@ -1954,7 +1962,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx6xy"><em>6xy</em> Vibrato with volume slide</a></h3>
+		<h3 id="fx6xy"><em>6xy</em> Vibrato with volume slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>6</code></em></td>
@@ -1965,14 +1973,14 @@
 			<tr>
 				<td><em><code>y</code></em> = volume slide down speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 481<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 601<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 600<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 6C0<br />
+						C-4 ·1 ·· 481<br>
+						··· ·· ·· 601<br>
+						··· ·· ·· 600<br>
+						··· ·· ·· 6C0<br>
 					</code>
 				</td>
 			</tr>
@@ -1984,7 +1992,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>ProTracker 2/3</h4>
@@ -1995,7 +2003,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx7xy"><em>7xy</em> Tremolo</a></h3>
+		<h3 id="fx7xy"><em>7xy</em> Tremolo</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>7</code></em></td>
@@ -2006,14 +2014,14 @@
 			<tr>
 				<td><em><code>y</code></em> = depth</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 787<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 700<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 7C0<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 700<br />
+						C-4 ·1 ·· 787<br>
+						··· ·· ·· 700<br>
+						··· ·· ·· 7C0<br>
+						··· ·· ·· 700<br>
 					</code>
 				</td>
 			</tr>
@@ -2027,7 +2035,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx8xx"><em>8xx</em> Set note panning position</a></h3>
+		<h3 id="fx8xx"><em>8xx</em> Set note panning position</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>8</code></em></td>
@@ -2035,14 +2043,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = panning position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 880<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 8A0<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 8C0<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 8F0<br />
+						C-4 ·1 ·· 880<br>
+						··· ·· ·· 8A0<br>
+						··· ·· ·· 8C0<br>
+						··· ·· ·· 8F0<br>
 					</code>
 				</td>
 			</tr>
@@ -2054,7 +2062,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>ProTracker 2/3</h4>
@@ -2069,7 +2077,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx9xx"><em>9xx</em> Sample offset</a></h3>
+		<h3 id="fx9xx"><em>9xx</em> Sample offset</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>9</code></em></td>
@@ -2077,14 +2085,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = sample offset</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						C-4 &middot;1 &middot;&middot; 908<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
+						C-4 ·1 ·· 908<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2096,7 +2104,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Tips:</em></td>
 				<td>
 					Resampling a loop to exactly (0x10000=) 65536 bytes gives you the highest possible level of control over the sample.
@@ -2104,7 +2112,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxAxy"><em>Axy</em> Volume slide</a></h3>
+		<h3 id="fxAxy"><em>Axy</em> Volume slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>A</code></em></td>
@@ -2115,14 +2123,14 @@
 			<tr>
 				<td><em><code>y</code></em> = volume slide down speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; A04<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; A04<br />
-						C-4 &middot;1 &middot;&middot; A0F<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; A80<br />
+						C-4 ·1 ·· A04<br>
+						··· ·· ·· A04<br>
+						C-4 ·1 ·· A0F<br>
+						··· ·· ·· A80<br>
 					</code>
 				</td>
 			</tr>
@@ -2134,7 +2142,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<ul>
@@ -2148,7 +2156,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxBxx"><em>Bxx</em> Jump to order</a></h3>
+		<h3 id="fxBxx"><em>Bxx</em> Jump to order</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>B</code></em></td>
@@ -2156,14 +2164,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = song position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; B04<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
+						··· ·· ·· ···<br>
+						··· ·· ·· B04<br>
 					</code>
 				</td>
 			</tr>
@@ -2175,7 +2183,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Tips:</em></td>
 				<td>
 					<p>
@@ -2185,7 +2193,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxCxx"><em>Cxx</em> Set note volume</a></h3>
+		<h3 id="fxCxx"><em>Cxx</em> Set note volume</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>C</code></em></td>
@@ -2193,14 +2201,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = volume</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; C10<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; C40<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; C00<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· C10<br>
+						··· ·· ·· C40<br>
+						··· ·· ·· C00<br>
 					</code>
 				</td>
 			</tr>
@@ -2212,7 +2220,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<h4>Fasttracker II</h4>
@@ -2223,7 +2231,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxDxx"><em>Dxx</em> Pattern break</a></h3>
+		<h3 id="fxDxx"><em>Dxx</em> Pattern break</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>D</code></em></td>
@@ -2231,14 +2239,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = row number on next pattern</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; D04<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
+						··· ·· ·· ···<br>
+						··· ·· ·· D04<br>
 					</code>
 				</td>
 			</tr>
@@ -2250,7 +2258,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2263,7 +2271,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE1x"><em>E1x</em> Fine portamento up</a></h3>
+		<h3 id="fxE1x"><em>E1x</em> Fine portamento up</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E1</code></em></td>
@@ -2271,14 +2279,14 @@
 			<tr>
 				<td><em><code>x</code></em> = portamento speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E11<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E12<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E13<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E14<br />
+						C-4 ·1 ·· E11<br>
+						··· ·· ·· E12<br>
+						··· ·· ·· E13<br>
+						··· ·· ·· E14<br>
 					</code>
 				</td>
 			</tr>
@@ -2292,7 +2300,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE2x"><em>E2x</em> Fine portamento down</a></h3>
+		<h3 id="fxE2x"><em>E2x</em> Fine portamento down</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E2</code></em></td>
@@ -2300,14 +2308,14 @@
 			<tr>
 				<td><em><code>x</code></em> = portamento speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E21<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E22<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E23<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E24<br />
+						C-4 ·1 ·· E21<br>
+						··· ·· ·· E22<br>
+						··· ·· ·· E23<br>
+						··· ·· ·· E24<br>
 					</code>
 				</td>
 			</tr>
@@ -2321,7 +2329,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE3x"><em>E3x</em> Glissando control</a></h3>
+		<h3 id="fxE3x"><em>E3x</em> Glissando control</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E3</code></em></td>
@@ -2329,14 +2337,14 @@
 			<tr>
 				<td><em><code>x</code></em> = glissando control toggle on/off</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E31<br />
-						D-4 01 &middot;&middot; 305<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 300<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E30<br />
+						C-4 ·1 ·· E31<br>
+						D-4 01 ·· 305<br>
+						··· ·· ·· 300<br>
+						··· ·· ·· E30<br>
 					</code>
 				</td>
 			</tr>
@@ -2348,7 +2356,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2358,7 +2366,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE4x"><em>E4x</em> Vibrato control</a></h3>
+		<h3 id="fxE4x"><em>E4x</em> Vibrato control</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E4</code></em></td>
@@ -2366,14 +2374,14 @@
 			<tr>
 				<td><em><code>x</code></em> = vibrato waveform selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 48C<br />
-						&middot;&middot;&middot; &middot;&middot; V0 E41<br />
-						&middot;&middot;&middot; &middot;&middot; V0 E42<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E40<br />
+						C-4 ·1 ·· 48C<br>
+						··· ·· V0 E41<br>
+						··· ·· V0 E42<br>
+						··· ·· ·· E40<br>
 					</code>
 				</td>
 			</tr>
@@ -2393,7 +2401,7 @@
 					</ul>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2403,7 +2411,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE5x"><em>E5x</em> Set note fine-tune</a></h3>
+		<h3 id="fxE5x"><em>E5x</em> Set note fine-tune</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E5</code></em></td>
@@ -2411,14 +2419,14 @@
 			<tr>
 				<td><em><code>x</code></em> = fine-tune</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E54<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						C-4 &middot;1 &middot;&middot; E5C<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· E54<br>
+						··· ·· ·· ···<br>
+						C-4 ·1 ·· E5C<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2485,7 +2493,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE6x"><em>E6x</em> Pattern loop</a></h3>
+		<h3 id="fxE6x"><em>E6x</em> Pattern loop</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E6</code></em></td>
@@ -2493,14 +2501,14 @@
 			<tr>
 				<td><em><code>x</code></em> = set loop point / number of iterations</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E60<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						F-4 01 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E63<br />
+						C-4 ·1 ·· E60<br>
+						··· ·· ·· ···<br>
+						F-4 01 ·· ···<br>
+						··· ·· ·· E63<br>
 					</code>
 				</td>
 			</tr>
@@ -2512,7 +2520,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2529,7 +2537,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE7x"><em>E7x</em> Tremolo control</a></h3>
+		<h3 id="fxE7x"><em>E7x</em> Tremolo control</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E7</code></em></td>
@@ -2537,14 +2545,14 @@
 			<tr>
 				<td><em><code>x</code></em> = tremolo waveform selection</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E72<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 76C<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; E70<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 700<br />
+						C-4 ·1 ·· E72<br>
+						··· ·· ·· 76C<br>
+						··· ·· ·· E70<br>
+						··· ·· ·· 700<br>
 					</code>
 				</td>
 			</tr>
@@ -2564,7 +2572,7 @@
 					</ul>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2574,7 +2582,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE8x"><em>E8x</em> Set note panning position</a></h3>
+		<h3 id="fxE8x"><em>E8x</em> Set note panning position</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E8</code></em></td>
@@ -2582,7 +2590,7 @@
 			<tr>
 				<td><em><code>x</code></em> = panning position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
@@ -2600,7 +2608,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxE9x"><em>E9x</em> Re-trigger note</a></h3>
+		<h3 id="fxE9x"><em>E9x</em> Re-trigger note</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>E9</code></em></td>
@@ -2608,14 +2616,14 @@
 			<tr>
 				<td><em><code>x</code></em> = triggering interval</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; E93<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· E93<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
+						C-4 ·1 ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2629,7 +2637,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxEAx"><em>EAx</em> Fine volume slide up</a></h3>
+		<h3 id="fxEAx"><em>EAx</em> Fine volume slide up</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>EA</code></em></td>
@@ -2637,14 +2645,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 10 EA2<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EA0<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EA4<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EA0<br />
+						C-4 ·1 10 EA2<br>
+						··· ·· ·· EA0<br>
+						··· ·· ·· EA4<br>
+						··· ·· ·· EA0<br>
 					</code>
 				</td>
 			</tr>
@@ -2658,7 +2666,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxEBx"><em>EBx</em> Fine volume slide down</a></h3>
+		<h3 id="fxEBx"><em>EBx</em> Fine volume slide down</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>EB</code></em></td>
@@ -2666,14 +2674,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; EB2<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EB0<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EB4<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EB0<br />
+						C-4 ·1 ·· EB2<br>
+						··· ·· ·· EB0<br>
+						··· ·· ·· EB4<br>
+						··· ·· ·· EB0<br>
 					</code>
 				</td>
 			</tr>
@@ -2687,7 +2695,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxECx"><em>ECx</em> Note cut</a></h3>
+		<h3 id="fxECx"><em>ECx</em> Note cut</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>EC</code></em></td>
@@ -2695,14 +2703,14 @@
 			<tr>
 				<td><em><code>x</code></em> = tick number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; EC1<br />
-						C-4 &middot;1 &middot;&middot; EC2<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; EC0<br />
+						C-4 ·1 ·· EC1<br>
+						C-4 ·1 ·· EC2<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· EC0<br>
 					</code>
 				</td>
 			</tr>
@@ -2716,7 +2724,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxEDx"><em>EDx</em> Note delay</a></h3>
+		<h3 id="fxEDx"><em>EDx</em> Note delay</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>ED</code></em></td>
@@ -2724,14 +2732,14 @@
 			<tr>
 				<td><em><code>x</code></em> = tick number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						A#3 01 &middot;&middot; ED3<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						A#3 01 ·· ED3<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2745,7 +2753,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxEEx"><em>EEx</em> Pattern delay</a></h3>
+		<h3 id="fxEEx"><em>EEx</em> Pattern delay</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>EE</code></em></td>
@@ -2753,14 +2761,14 @@
 			<tr>
 				<td><em><code>x</code></em> = amount of rows</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						A#3 01 &middot;&middot; EE5<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						A#3 01 ·· EE5<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2774,7 +2782,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxFxx"><em>Fxx</em> Set song speed/BPM</a></h3>
+		<h3 id="fxFxx"><em>Fxx</em> Set song speed/BPM</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>F</code></em></td>
@@ -2782,14 +2790,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = speed/BPM value</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; F90<br />
-						A#3 01 &middot;&middot; F03<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· F90<br>
+						A#3 01 ·· F03<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2803,7 +2811,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxGxx"><em>Gxx</em> Set global volume</a></h3>
+		<h3 id="fxGxx"><em>Gxx</em> Set global volume</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>G</code></em></td>
@@ -2811,14 +2819,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = volume</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; G40<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; G20<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; G10<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; G00<br />
+						C-4 ·1 ·· G40<br>
+						··· ·· ·· G20<br>
+						··· ·· ·· G10<br>
+						··· ·· ·· G00<br>
 					</code>
 				</td>
 			</tr>
@@ -2832,7 +2840,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxHxy"><em>Hxy</em> Global volume slide</a></h3>
+		<h3 id="fxHxy"><em>Hxy</em> Global volume slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>H</code></em></td>
@@ -2843,14 +2851,14 @@
 			<tr>
 				<td><em><code>y</code></em> = volume slide down speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; H04<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; H04<br />
-						C-4 &middot;1 &middot;&middot; H0F<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; H80<br />
+						C-4 ·1 ·· H04<br>
+						··· ·· ·· H04<br>
+						C-4 ·1 ·· H0F<br>
+						··· ·· ·· H80<br>
 					</code>
 				</td>
 			</tr>
@@ -2862,7 +2870,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2872,7 +2880,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxKxx"><em>Kxx</em> Key-off</a></h3>
+		<h3 id="fxKxx"><em>Kxx</em> Key-off</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>K</code></em></td>
@@ -2880,14 +2888,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = tick number</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; K03<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; K00<br />
+						C-4 ·1 ·· K03<br>
+						··· ·· ·· ···<br>
+						C-4 ·1 ·· ···<br>
+						··· ·· ·· K00<br>
 					</code>
 				</td>
 			</tr>
@@ -2901,7 +2909,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxLxx"><em>Lxx</em> Set envelope position</a></h3>
+		<h3 id="fxLxx"><em>Lxx</em> Set envelope position</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>L</code></em></td>
@@ -2909,14 +2917,14 @@
 			<tr>
 				<td><em><code>xx</code></em> = envelope position</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; L20<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; L00<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 ·· L20<br>
+						··· ·· ·· ···<br>
+						··· ·· ·· L00<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -2924,14 +2932,14 @@
 				<td><em>Explanation:</em></td>
 				<td>
 					<p>
-						Makes the currently playing note jump to tick <em><code>xx</code></em> on the volume envelope timeline.<br />
-                        If the <em>volume</em> envelope's sustain point is set, the <em>panning</em> envelope also jumps to tick <em><code>xx</code></em> (This is an original FT2 quirk).
+						Makes the currently playing note jump to tick <em><code>xx</code></em> on the volume envelope timeline.<br>
+						If the <em>volume</em> envelope's sustain point is set, the <em>panning</em> envelope also jumps to tick <em><code>xx</code></em> (This is an original FT2 quirk).
 					</p>
 				</td>
 			</tr>
 		</table>
 
-		<h3><a id="fxPxy"><em>Pxy</em> Panning slide</a></h3>
+		<h3 id="fxPxy"><em>Pxy</em> Panning slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>P</code></em></td>
@@ -2942,14 +2950,14 @@
 			<tr>
 				<td><em><code>y</code></em> = panning slide left speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; P04<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; P00<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; P80<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; P00<br />
+						C-4 ·1 ·· P04<br>
+						··· ·· ·· P00<br>
+						··· ·· ·· P80<br>
+						··· ·· ·· P00<br>
 					</code>
 				</td>
 			</tr>
@@ -2961,7 +2969,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -2971,7 +2979,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxRxy"><em>Rxy</em> Re-trigger note with volume slide</a></h3>
+		<h3 id="fxRxy"><em>Rxy</em> Re-trigger note with volume slide</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>R</code></em></td>
@@ -2982,14 +2990,14 @@
 			<tr>
 				<td><em><code>y</code></em> = triggering interval</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; R81<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; R12<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; R23<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; R04<br />
+						C-4 ·1 ·· R81<br>
+						··· ·· ·· R12<br>
+						··· ·· ·· R23<br>
+						··· ·· ·· R04<br>
 					</code>
 				</td>
 			</tr>
@@ -3019,10 +3027,10 @@
 					</ul>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
-					<p>This command is very buggy from the start, straight from the source, Fasttracker II. While FT2's own documentation is inaccurate in many places, this is different. Extensive testing has revealed almost bizarre qualities of this effect and it's up to MilkyTracker to emulate it all. Without doubt the quirk the team has spent the most time and iterations working on getting it right. And still we advise to be careful with it. When using <em><code>Rxy</code></em>, check your song with FT2 (render to .WAV if you don't have the hardware (to emulate)), or at least BASS/XMPlay. And if you do find something odd, please report the bug as accurately and detailed as possible.
+					<p>This command is very buggy from the start, straight from the source, Fasttracker II. While FT2's own documentation is inaccurate in many places, this is different. Extensive testing has revealed almost bizarre qualities of this effect and it's up to MilkyTracker to emulate it all. Without a doubt the quirk the team has spent the most time and iterations working on getting it right. And still we advise to be careful with it. When using <em><code>Rxy</code></em>, check your song with FT2 (render to .WAV if you don't have the hardware (to emulate)), or at least BASS/XMPlay. And if you do find something odd, please report the bug as accurately and detailed as possible.
 					</p>
 					<p>
 						Setting volume on the volume column (<em><code>xx</code></em>) at the same time with <em><code>Rxy</code></em> resets the volume to <em><code>xx</code></em> before each re-trigger making the effect sound different.
@@ -3039,7 +3047,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxTxy"><em>Txy</em> Tremor</a></h3>
+		<h3 id="fxTxy"><em>Txy</em> Tremor</h3>
 		<table>
 			<tr>
 				<td rowspan="3"><em>Syntax:</em></td><td><em><code>T</code></em></td>
@@ -3050,14 +3058,14 @@
 			<tr>
 				<td><em><code>y</code></em> + 1 = ticks off</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; T13<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; T00<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; T31<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; T00<br />
+						C-4 ·1 ·· T13<br>
+						··· ·· ·· T00<br>
+						··· ·· ·· T31<br>
+						··· ·· ·· T00<br>
 					</code>
 				</td>
 			</tr>
@@ -3069,7 +3077,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -3079,7 +3087,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxX1x"><em>X1x</em> Extra fine portamento up</a></h3>
+		<h3 id="fxX1x"><em>X1x</em> Extra fine portamento up</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>X1</code></em></td>
@@ -3087,14 +3095,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; X11<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X10<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X18<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X10<br />
+						C-4 ·1 ·· X11<br>
+						··· ·· ·· X10<br>
+						··· ·· ·· X18<br>
+						··· ·· ·· X10<br>
 					</code>
 				</td>
 			</tr>
@@ -3108,7 +3116,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxX2x"><em>X2x</em> Extra fine portamento down</a></h3>
+		<h3 id="fxX2x"><em>X2x</em> Extra fine portamento down</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>X2</code></em></td>
@@ -3116,14 +3124,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; X11<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X20<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X28<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; X20<br />
+						C-4 ·1 ·· X21<br>
+						··· ·· ·· X20<br>
+						··· ·· ·· X28<br>
+						··· ·· ·· X20<br>
 					</code>
 				</td>
 			</tr>
@@ -3137,20 +3145,19 @@
 			</tr>
 		</table>
 
-
-		<h3><a id="fxxx"><em>xx</em> Set note volume</a></h3>
+		<h3 id="fxxx"><em>xx</em> Set note volume</h3>
 		<table>
 			<tr>
 				<td><em>Syntax:</em></td><td><em><code>xx</code></em> = volume</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; 10 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; 40 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; 00 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· 10 ···<br>
+						··· ·· 40 ···<br>
+						··· ·· 00 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3164,7 +3171,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxPLUSx"><em>+x</em> Volume slide up</a></h3>
+		<h3 id="fxPLUSx"><em>+x</em> Volume slide up</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>+</code></em></td>
@@ -3172,14 +3179,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 10 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; +2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; +4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; +8 &middot;&middot;&middot;<br />
+						C-4 ·1 10 ···<br>
+						··· ·· +2 ···<br>
+						··· ·· +4 ···<br>
+						··· ·· +8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3193,7 +3200,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fx-x"><em>-x</em> Volume slide down</a></h3>
+		<h3 id="fx-x"><em>-x</em> Volume slide down</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>-</code></em></td>
@@ -3201,14 +3208,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; -2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; -4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; -8 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· -2 ···<br>
+						··· ·· -4 ···<br>
+						··· ·· -8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3222,7 +3229,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxDx"><em>Dx</em> Fine volume slide down</a> (displayed as &#9660;x)</h3>
+		<h3 id="fxDx"><em>Dx</em> Fine volume slide down (displayed as &#9660;x)</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>D</code></em></td>
@@ -3230,14 +3237,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9660;2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9660;4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9660;8 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· &#9660;2 ···<br>
+						··· ·· &#9660;4 ···<br>
+						··· ·· &#9660;8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3251,7 +3258,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxLx"><em>Lx</em> Panning slide left</a> (displayed as &#9664;x)</h3>
+		<h3 id="fxLx"><em>Lx</em> Panning slide left (displayed as &#9664;x)</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>L</code></em></td>
@@ -3259,14 +3266,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9664;2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9664;4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9664;8 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· &#9664;2 ···<br>
+						··· ·· &#9664;4 ···<br>
+						··· ·· &#9664;8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3280,7 +3287,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxMx"><em>Mx</em> Portamento to note</a></h3>
+		<h3 id="fxMx"><em>Mx</em> Portamento to note</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>M</code></em></td>
@@ -3288,14 +3295,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						E-4 01 &middot;&middot; 304<br />
-						&middot;&middot;&middot; &middot;&middot; M0 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; M1 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						E-4 01 ·· 304<br>
+						··· ·· M0 ···<br>
+						··· ·· M1 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3307,7 +3314,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Tips:</em></td>
 				<td>
 					<p>
@@ -3317,7 +3324,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxPx"><em>Px</em> Set note panning position</a></h3>
+		<h3 id="fxPx"><em>Px</em> Set note panning position</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>P</code></em></td>
@@ -3325,14 +3332,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 P4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; PC &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; &middot;&middot;&middot;<br />
+						C-4 ·1 P4 ···<br>
+						··· ·· ·· ···<br>
+						··· ·· PC ···<br>
+						··· ·· ·· ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3346,7 +3353,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxRx"><em>Rx</em> Panning slide right</a> (displayed as &#9654;x)</h3>
+		<h3 id="fxRx"><em>Rx</em> Panning slide right (displayed as &#9654;x)</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>R</code></em></td>
@@ -3354,14 +3361,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9654;2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9654;4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9654;8 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· ···<br>
+						··· ·· &#9654;2 ···<br>
+						··· ·· &#9654;4 ···<br>
+						··· ·· &#9654;8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3375,7 +3382,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxSx"><em>Sx</em> Set vibrato speed</a></h3>
+		<h3 id="fxSx"><em>Sx</em> Set vibrato speed</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>S</code></em></td>
@@ -3383,14 +3390,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 48F<br />
-						&middot;&middot;&middot; &middot;&middot; S4 A01<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 600<br />
-						&middot;&middot;&middot; &middot;&middot; &middot;&middot; 400<br />
+						C-4 ·1 ·· 48F<br>
+						··· ·· S4 A01<br>
+						··· ·· ·· 600<br>
+						··· ·· ·· 400<br>
 					</code>
 				</td>
 			</tr>
@@ -3404,7 +3411,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxUx"><em>Ux</em> Fine volume slide up</a> (displayed as &#9650;x)</h3>
+		<h3 id="fxUx"><em>Ux</em> Fine volume slide up (displayed as &#9650;x)</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>U</code></em></td>
@@ -3412,14 +3419,14 @@
 			<tr>
 				<td><em><code>x</code></em> = speed</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 10 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9650;2 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9650;4 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; &#9650;8 &middot;&middot;&middot;<br />
+						C-4 ·1 10 ···<br>
+						··· ·· &#9650;2 ···<br>
+						··· ·· &#9650;4 ···<br>
+						··· ·· &#9650;8 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3433,7 +3440,7 @@
 			</tr>
 		</table>
 
-		<h3><a id="fxVx"><em>Vx</em> Vibrato</a></h3>
+		<h3 id="fxVx"><em>Vx</em> Vibrato</h3>
 		<table>
 			<tr>
 				<td rowspan="2"><em>Syntax:</em></td><td><em><code>V</code></em></td>
@@ -3441,14 +3448,14 @@
 			<tr>
 				<td><em><code>x</code></em> = depth</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Example:</em></td>
 				<td>
 					<code class="example">
-						C-4 &middot;1 &middot;&middot; 484<br />
-						&middot;&middot;&middot; &middot;&middot; V0 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; V8 &middot;&middot;&middot;<br />
-						&middot;&middot;&middot; &middot;&middot; V0 &middot;&middot;&middot;<br />
+						C-4 ·1 ·· 484<br>
+						··· ·· V0 ···<br>
+						··· ·· V8 ···<br>
+						··· ·· V0 ···<br>
 					</code>
 				</td>
 			</tr>
@@ -3460,7 +3467,7 @@
 					</p>
 				</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Notes:</em></td>
 				<td>
 					<p>
@@ -3470,30 +3477,26 @@
 			</tr>
 		</table>
 
-
-
-		<h2><a id="MIDI">7. MIDI support</a></h2>
+		<h2 id="MIDI">MIDI support</h2>
 		<p>
 			MilkyTracker supports basic MIDI input, which means you can use your MIDI device to feed notes into MilkyTracker. Enabling MIDI input varies a little from platform to platform - here's how to do it on&hellip;
 		</p>
 		<table>
-			<tr >
+			<tr>
 				<td><em>Windows:</em></td>
 				<td>Select Preferences from the system menu (top left corner of the window)</td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>OSX:</em></td>
 				<td>Select Preferences from the MilkyTracker menu or press <em>Command-,</em></td>
 			</tr>
-			<tr >
+			<tr>
 				<td><em>Linux:</em></td>
 				<td>Enabled by default if available on the system. By default midi-in port 0 will be connected, but the environment variable MIDI_IN=x allows you to change that (see console output for available portnumbers). See the Linux readme for more details.</td>
 			</tr>
 		</table>
 
-
-
-		<h2><a id="issues">8. Known issues and bug reports</a></h2>
+		<h2 id="issues">Known issues and bug reports</h2>
 		<p>
 			MilkyTracker aims for full Fasttracker II compatibility in its replay but this goal is easier set than achieved. Some of the original effect implementations defy all documentation and logic. Here's a list of current replay differences between FT2 and Milky:
 		</p>
@@ -3509,12 +3512,11 @@
 			If you find more incompatibilities, or if MilkyTracker crashes or does something really stupid, we'd really like to hear from you and it would be even cooler if you could describe how to reproduce the problem. There's a section dedicated to bug reports on our web forum.
 		</p>
 
-    <hr>
+		<hr>
 
-    <p>Concerning UI-scaling, some users had better results with enabling nearest-pixel mode: run milkytracker with environment-flag SCALE_NEAREST=1</p>
+		<p>Concerning UI-scaling, some users had better results with enabling nearest-pixel mode: run milkytracker with environment-flag SCALE_NEAREST=1</p>
 
-
-		<h2 id="credits">9. Credits</h2>
+		<h2 id="credits">Credits</h2>
 		<h4>
 			The MilkyTracker experience is brought to you by the following people:
 		</h4>
@@ -3568,18 +3570,17 @@
 			and everybody who donated or dropped a letter.
 		</p>
 		<p>
-			Special greetings to everyone at <a href="http://milkytracker.titandemo.org/community/">#MilkyTracker</a> for making it a daily active channel.
+			Special greetings to everyone at <a href="http://milkytracker.org/community/">#MilkyTracker</a> for making it a daily active channel.
 		</p>
 
-		<h2><a id="contact">10. Contact</a></h2>
+		<h2 id="contact">Contact</h2>
 		<p>
-			You can contact the MilkyTracker team at github (<span class="email">https://github.com/milkytracker/Milkytracker</span>) or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
+			You can contact the MilkyTracker team at GitHub (<a href="https://github.com/milkytracker/Milkytracker">https://github.com/milkytracker/Milkytracker</a>) or in IRC. To chat with the community live, you can connect to #MilkyTracker on <a href="http://www.esper.net/">EsperNet</a> with your IRC client or use the java client on our website.
 		</p>
-
 
 <!-- Removed; not sure this address still works and pailes is
 		currently missing.
-		<h2><a id="donations">11. Donations</a></h2>
+		<h2 id="donations">Donations</h2>
 		<p>
 			A word from pailes:
 		</p>
@@ -3590,8 +3591,6 @@
 		<p>
 			Don't worry, MilkyTracker will always be free because I really enjoy working on it, but you should remember that FT2 wasn't real freeware either.
 		</p-->
-
-
 
 	</body>
 </html>

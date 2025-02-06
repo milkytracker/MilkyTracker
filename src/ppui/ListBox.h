@@ -160,6 +160,7 @@ public:
 	void updateItem(pp_int32 index, const PPString& item);
 
 	pp_int32 getNumItems() const { return items->size(); }
+	pp_uint32 getStartIndex(){ return startIndex; }
 
 	void clear();
 

@@ -175,7 +175,7 @@ processBindings:
 			case VK_END:
 			case VK_PRIOR:
 			case VK_NEXT: {
-				if (screen->getModalControl())
+				if ( screen->hasFocusModal() )
 					break;
 
 				if (!::getKeyModifier() ||
@@ -676,7 +676,7 @@ processOthers:
 			default:
 				processShortcutsMilkyTracker(event);
 
-				if (screen->getModalControl())
+				if (screen->hasFocusModal())
 					/*break;*/return;
 
 				if (recorderLogic->getRecordMode())
