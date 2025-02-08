@@ -9,6 +9,7 @@ on run argv
 	set diskImage to item 1 of argv
 
 	tell application "Finder"
+		delay 1
 		tell disk diskImage
 			-- Setup background and icon arrangement
 			open
