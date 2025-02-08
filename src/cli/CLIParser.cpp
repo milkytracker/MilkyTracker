@@ -1,6 +1,7 @@
 #include "CLIParser.h"
 #include <cstring>
 #include <cstdio>
+#include <algorithm>
 
 // Constructor is now a template in the header
 
