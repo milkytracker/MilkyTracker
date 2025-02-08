@@ -169,12 +169,25 @@ void CLIParser::printUsage() const
 	
 	fprintf(stderr, "\nOptions:\n");
 	
+	// Calculate max option length including <value> for options that need it
+	size_t maxOptionLength = 0;
+	for (const auto& opt : options) {
+		size_t length = strlen(opt.name.c_str());
+		if (opt.requiresValue) {
+			length += 8; // Length of " <value>"
+		}
+		maxOptionLength = std::max(maxOptionLength, length);
+	}
+	// Add minimum padding of 2 spaces for alignment
+	maxOptionLength += 2;
+	
 	// Print option descriptions with allowed values
 	for (const auto& opt : options) {
 		if (opt.requiresValue) {
 			fprintf(stderr, "  %s <value>", opt.name.c_str());
+			int padding = std::max(1, static_cast<int>(maxOptionLength - strlen(opt.name.c_str()) - 8));
 			fprintf(stderr, "%*s%s", 
-					static_cast<int>(20 - strlen(opt.name.c_str()) - 8), 
+					padding,
 					"", opt.description.c_str());
 			
 			// Print allowed values if any
@@ -190,7 +203,7 @@ void CLIParser::printUsage() const
 		} else {
 			fprintf(stderr, "  %s", opt.name.c_str());
 			fprintf(stderr, "%*s%s\n",
-					static_cast<int>(20 - strlen(opt.name.c_str())),
+					static_cast<int>(maxOptionLength - strlen(opt.name.c_str())),
 					"", opt.description.c_str());
 		}
 	}
