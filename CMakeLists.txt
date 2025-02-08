@@ -227,7 +227,7 @@ add_subdirectory(src/fx)
 add_subdirectory(src/milkyplay)
 add_subdirectory(src/ppui)
 add_subdirectory(src/tracker)
-add_subdirectory(src/tools/export-to-wav)
+add_subdirectory(src/tools/milkycli)
 
 # Set MilkyTracker target as startup project in Visual Studio
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT tracker)
