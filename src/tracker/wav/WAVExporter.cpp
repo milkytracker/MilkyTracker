@@ -12,10 +12,10 @@
 #include <stdexcept>
 
 // Static factory method for parser usage
-std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser, WAVExportArgs::DashFormat dashFormat) {
+std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser) {
 	auto exporter = std::unique_ptr<WAVExporter>(new WAVExporter());
 	
-	WAVExportArgs::registerOptions(parser, dashFormat);
+	WAVExportArgs::registerOptions(parser);
 
 	if (!parser.parse()) {
 		exporter->errorMessage = parser.getError();
@@ -37,7 +37,7 @@ std::unique_ptr<WAVExporter> WAVExporter::createFromParser(CLIParser& parser, WA
 	}
 
 	try {
-		exporter->params = WAVExportArgs::initFromParser(parser, settingsDB, dashFormat);
+		exporter->params = WAVExportArgs::initFromParser(parser, settingsDB);
 	}
 	catch (const std::runtime_error& e) {
 		exporter->errorMessage = e.what();

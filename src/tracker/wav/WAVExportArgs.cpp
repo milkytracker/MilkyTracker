@@ -88,27 +88,27 @@ void WAVExportArgs::Arguments::copyStrings(const Arguments& other)
 	}
 }
 
-void WAVExportArgs::registerOptions(CLIParser& parser, DashFormat format) {
-	parser.addOption(getOptionName("output", format).c_str(), true, "Output file name");
-	parser.addOption(getOptionName("sample-rate", format).c_str(), true, "Sample rate in Hz (default: from settings or 44100)");
-	parser.addOption(getOptionName("volume", format).c_str(), true, "Mixer volume (default: from settings or 256)");
-	parser.addOption(getOptionName("shift", format).c_str(), true, "Mixer shift (default: from settings or 1)");
-	parser.addOption(getOptionName("resampler", format).c_str(), true, "Resampler type (default: from settings or 4)");
-	parser.addOption(getOptionName("multi-track", format).c_str(), false, "Export each track to a separate WAV file");
-	parser.addOption(getOptionName("verbose", format).c_str(), false, "Enable verbose output");
+void WAVExportArgs::registerOptions(CLIParser& parser) {
+	parser.addOption("-output", true, "Output file name");
+	parser.addOption("-sample-rate", true, "Sample rate in Hz (default: from settings or 44100)");
+	parser.addOption("-volume", true, "Mixer volume (default: from settings or 256)");
+	parser.addOption("-shift", true, "Mixer shift (default: from settings or 1)");
+	parser.addOption("-resampler", true, "Resampler type (default: from settings or 4)");
+	parser.addOption("-multi-track", false, "Export each track to a separate WAV file");
+	parser.addOption("-verbose", false, "Enable verbose output");
 
 	if (!parser.hasPositionalArg("input")) {
 		parser.addPositionalArg("input", "Input module file (.xm)", true);
 	}
 	
 	parser.setAdditionalHelpText(
-		"When using --multi-track, output files will be named:\n"
+		"When using -multi-track, output files will be named:\n"
 		"  output_01.wav, output_02.wav, etc.\n"
 		"  (Silent tracks will be automatically removed)\n"
 	);
 }
 
-WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB, DashFormat format) {
+WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, TrackerSettingsDatabase& settingsDB) {
 	Arguments params;
 
 	// Set defaults from settings database
@@ -122,9 +122,9 @@ WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, Tracke
 						  settingsDB.restore("HDRECORDER_INTERPOLATION")->getIntValue() : 4;
 
 	// Get required output file
-	const char* outputArg = parser.getOptionValue(getOptionName("output", format).c_str());
+	const char* outputArg = parser.getOptionValue("-output");
 	if (!outputArg) {
-		throw std::runtime_error("Output file (" + getOptionName("output", format) + ") is required");
+		throw std::runtime_error("Output file (-output) is required");
 	}
 	
 	// Copy output file (safe now since we checked for nullptr)
@@ -143,21 +143,21 @@ WAVExportArgs::Arguments WAVExportArgs::initFromParser(CLIParser& parser, Tracke
 	params.inputFile = inputCopy;
 
 	// Override defaults with command line arguments if provided
-	if (parser.hasOption(getOptionName("sample-rate", format).c_str())) {
-		params.sampleRate = parser.getIntOptionValue(getOptionName("sample-rate", format).c_str(), params.sampleRate);
+	if (parser.hasOption("-sample-rate")) {
+		params.sampleRate = parser.getIntOptionValue("-sample-rate", params.sampleRate);
 	}
-	if (parser.hasOption(getOptionName("volume", format).c_str())) {
-		params.mixerVolume = parser.getIntOptionValue(getOptionName("volume", format).c_str(), params.mixerVolume);
+	if (parser.hasOption("-volume")) {
+		params.mixerVolume = parser.getIntOptionValue("-volume", params.mixerVolume);
 	}
-	if (parser.hasOption(getOptionName("shift", format).c_str())) {
-		params.mixerShift = parser.getIntOptionValue(getOptionName("shift", format).c_str(), params.mixerShift);
+	if (parser.hasOption("-shift")) {
+		params.mixerShift = parser.getIntOptionValue("-shift", params.mixerShift);
 	}
-	if (parser.hasOption(getOptionName("resampler", format).c_str())) {
-		params.resamplerType = parser.getIntOptionValue(getOptionName("resampler", format).c_str(), params.resamplerType);
+	if (parser.hasOption("-resampler")) {
+		params.resamplerType = parser.getIntOptionValue("-resampler", params.resamplerType);
 	}
 	
-	params.multiTrack = parser.hasOption(getOptionName("multi-track", format).c_str());
-	params.verbose = parser.hasOption(getOptionName("verbose", format).c_str());
+	params.multiTrack = parser.hasOption("-multi-track");
+	params.verbose = parser.hasOption("-verbose");
 
 	return params;
 }

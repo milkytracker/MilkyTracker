@@ -915,7 +915,7 @@ int main(int argc, char *argv[])
 	parser.addOption("-recvelocity", false, "Enable recording velocity");
 	parser.addOption("-headless", false, "Run in headless mode");
 	
-	auto exporter = WAVExporter::createFromParser(parser, WAVExportArgs::DashFormat::SINGLE);
+	auto exporter = WAVExporter::createFromParser(parser);
 
 	if (exporter->hasParseError()) {
 		parser.printUsage();

@@ -22,7 +22,7 @@ public:
 
 	// Template constructor to handle both const and non-const argv
 	template<typename T>
-	explicit CLIParser(int argc, T argv[], const std::vector<const char*>& helpFlags = {"--help"}) 
+	explicit CLIParser(int argc, T argv[], const std::vector<const char*>& helpFlags = {"-help"}) 
 		: argc(argc)
 		, argv(const_cast<const char**>(argv))  // Store as const internally
 		, helpRequested(false)

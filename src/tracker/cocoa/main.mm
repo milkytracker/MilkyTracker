@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
 {
 	static CLIParser parser(argc, argv);
 	parser.addPositionalArg("input", "Input module file (.xm)", false);
-	parser.addOption("--headless", false, "Run in headless mode");
+	parser.addOption("-headless", false, "Run in headless mode");
 
 	auto exporter = WAVExporter::createFromParser(parser);
 
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
 	}
 
 	const char* inputFile = parser.getPositionalArg(0);
-	const char* outputWAVFile = parser.getOptionValue("--output");
+	const char* outputWAVFile = parser.getOptionValue("-output");
 
 	if (inputFile && outputWAVFile) {
 		if (exporter->hasArgumentError()) {
@@ -92,7 +92,7 @@ int main(int argc, const char * argv[])
 		}
 	}
 
-	if (parser.hasOption("--headless")) {
+	if (parser.hasOption("-headless")) {
 		return 0;
 	}
 

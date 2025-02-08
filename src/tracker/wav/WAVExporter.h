@@ -9,7 +9,7 @@ class CLIParser;  // Forward declaration
 class WAVExporter {
 public:
 	// Create from parser
-	static std::unique_ptr<WAVExporter> createFromParser(CLIParser& parser, WAVExportArgs::DashFormat dashFormat = WAVExportArgs::DashFormat::DOUBLE);
+	static std::unique_ptr<WAVExporter> createFromParser(CLIParser& parser);
 
 	// Core functionality
 	int performExport();
