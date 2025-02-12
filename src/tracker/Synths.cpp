@@ -1079,11 +1079,10 @@ void Synth::UNZ( bool init ){
 	free(smpin);
 	free(smpout);
 
-
-	// force loop 
-	//sampleEditor->setLoopType( synth->param[7].value );
-	//sampleEditor->setRepeatStart(0);
-	//sampleEditor->setRepeatEnd(sample->samplen);
+	// disable loop 
+	sampleEditor->setLoopType( 0 );
+	sampleEditor->setRepeatStart(0);
+	sampleEditor->setRepeatEnd(sample->samplen);
 
 }
 

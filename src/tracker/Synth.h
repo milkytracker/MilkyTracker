@@ -98,7 +98,7 @@ class Synth
 		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM bell
 		"M1*S2c(2-(((((*SS)5F((*H+(((((((", // sonant piano
 		"M1+a[|w\\l4j(eAF(2)Z2-)((((((((((", // UNZ kick
-		"M1+a[xw1~4U(Hj7(28V2/)((((((((((", // UNZ acoust kick
+		"M1+a[vw~~7R(~o7(26R24)((((((((((", // UNZ acoust kick
 	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
 	    "M1(Y)(*),3)p9+()U,)),;((((((((((", // FM 909 kick2
         "M1+l[[w|[Zl9bj7[8_V2/0((((((((((", // UNZ snare
