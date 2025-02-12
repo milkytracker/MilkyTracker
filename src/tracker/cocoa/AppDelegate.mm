@@ -30,8 +30,20 @@
 #import "PPMutex.h"
 #import "Screen.h"
 #import "Tracker.h"
+#import "CLIParser.h"
 
 @implementation AppDelegate
+
+// Static CLI parser instance
+static CLIParser* sharedCLIParser = nullptr;
+
++ (void)setSharedCLIParser:(CLIParser*)parser {
+	sharedCLIParser = parser;
+}
+
++ (CLIParser*)sharedCLIParser {
+	return sharedCLIParser;
+}
 
 // ---------- Display ---------
 @synthesize myWindow;
@@ -136,10 +148,18 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	// Signal startup complete
 	startupComplete = YES;
 	
-	// Handle deferred file loading
-	for (NSString* filename in filesToLoad)
-		[self application: NSApp openFile:filename];
+	// First try to load file from CLI if specified
+	if (CLIParser* parser = [AppDelegate sharedCLIParser]) {
+		if (const char* inputFile = parser->getPositionalArg(0)) {			
+			NSString* filename = [NSString stringWithUTF8String:inputFile];
+			[self application:NSApp openFile:filename];
+		}
+	}
 	
+	// Then handle any files that were queued during startup
+	for (NSString* filename in filesToLoad) {
+		[self application:NSApp openFile:filename];
+	}
 	[filesToLoad removeAllObjects];
 	filesToLoad = nil;
 }

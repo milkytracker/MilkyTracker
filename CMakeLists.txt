@@ -22,8 +22,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(MilkyTracker)
 
-# Set C++ standard to C++98
-set(CMAKE_CXX_STANDARD 98)
+# Set C++ standard to C++11
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Enable IDE solution folders
@@ -63,7 +63,9 @@ configure_file(
 )
 
 # Packaging
-if(APPLE)
+option(BUILD_DMG "Build DMG package on macOS" ON)
+
+if(APPLE AND BUILD_DMG)
     set(CPACK_GENERATOR DragNDrop)
     set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME} ${VER_FULL}")
     set(
@@ -225,6 +227,7 @@ add_subdirectory(src/fx)
 add_subdirectory(src/milkyplay)
 add_subdirectory(src/ppui)
 add_subdirectory(src/tracker)
+add_subdirectory(src/tools/milkycli)
 
 # Set MilkyTracker target as startup project in Visual Studio
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT tracker)

@@ -20,11 +20,15 @@
  *
  */
 
+#pragma once
+
 // -------- Cocoa/OS X --------
 #import <Cocoa/Cocoa.h>
 
 // ---------- Tracker ---------
 #import "BasicTypes.h"
+
+class CLIParser;  // Forward declaration
 
 // Defined in main.mm
 pp_uint32 PPGetTickCount();
@@ -37,6 +41,10 @@ pp_uint32 PPGetTickCount();
 @property (assign) IBOutlet MTTrackerView* myTrackerView;
 @property (assign) IBOutlet NSWindow* myProgressWindow;
 @property (assign) IBOutlet NSProgressIndicator* myProgressIndicator;
+
+// CLI handling
++ (void)setSharedCLIParser:(CLIParser*)parser;
++ (CLIParser*)sharedCLIParser;
 
 - (void)showProgress:(BOOL)yes;
 @end
