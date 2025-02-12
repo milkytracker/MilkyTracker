@@ -419,7 +419,7 @@ void Synth::FM( bool init ){
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
 	// enable overflow rendering when loop is set to forward
 	// to allow seamless loops without clicks
-	pp_uint32 overflow = 1;
+	pp_uint32 overflow = 2;
 	pp_uint32 looptype = (pp_uint32)synth->param[22].value;
 	pp_uint32 silence  = 0;
 	float     last     = 0.0;
@@ -851,7 +851,7 @@ void Synth::UNZ( bool init ){
 
 
 		synths[ID].param[1].name  = "volume";
-		synths[ID].param[1].value = 26.0f;
+		synths[ID].param[1].value = 57.0f;
 		synths[ID].param[1].min   = 0;
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -861,32 +861,32 @@ void Synth::UNZ( bool init ){
 		synths[ID].param[2].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[3].name  = "amp decay";
-		synths[ID].param[3].value = 81.0f;
+		synths[ID].param[3].value = 84.0f;
 		synths[ID].param[3].min   = 0;
 		synths[ID].param[3].max   = (float)SYN_PARAM_MAX_VALUE;
 
-		synths[ID].param[4].name  = "frequency";
-		synths[ID].param[4].value = 28.0f;
+		synths[ID].param[4].name  = "frequency base";
+		synths[ID].param[4].value = 79.0f;
 		synths[ID].param[4].min   = 0;
 		synths[ID].param[4].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[5].name  = "  BEGIN         ";
-		synths[ID].param[5].value = 86.0f;
-		synths[ID].param[5].min   = 0;
+		synths[ID].param[5].value = 52.0f;
+		synths[ID].param[5].min   = 1.0;
 		synths[ID].param[5].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[6].name  = "  MIDDLE        ";
-		synths[ID].param[6].value = 86.0f;
+		synths[ID].param[6].value = 68.0f;
 		synths[ID].param[6].min   = 0;
 		synths[ID].param[6].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[7].name  = "  END           ";
-		synths[ID].param[7].value = 2.0f;
-		synths[ID].param[7].min   = 0;
+		synths[ID].param[7].value = 12.0f;
+		synths[ID].param[7].min   = 1.0;
 		synths[ID].param[7].max   = (float)SYN_PARAM_MAX_VALUE;
 		
 		synths[ID].param[8].name  = "  SHAPE         ";
-		synths[ID].param[8].value = 68.0f;
+		synths[ID].param[8].value = 66.0f;
 		synths[ID].param[8].min   = 0;
 		synths[ID].param[8].max   = (float)SYN_PARAM_MAX_VALUE;
 		
@@ -896,12 +896,12 @@ void Synth::UNZ( bool init ){
 		synths[ID].param[9].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[10].name  = "  TRANSIENT VOL  ";
-		synths[ID].param[10].value = ((float)SYN_PARAM_MAX_VALUE)/2.0f;
+		synths[ID].param[10].value = 61.0f;
 		synths[ID].param[10].min   = 0;
 		synths[ID].param[10].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[11].name  = "  TRANSIENT SIZE";
-		synths[ID].param[11].value = 10.0f;
+		synths[ID].param[11].value = 25.0f;
 		synths[ID].param[11].min   = 0;
 		synths[ID].param[11].max   = (float)SYN_PARAM_MAX_VALUE;
 		
@@ -921,7 +921,7 @@ void Synth::UNZ( bool init ){
 		synths[ID].param[14].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[15].name  = "reverb";
-		synths[ID].param[15].value = 0.0f;
+		synths[ID].param[15].value = 1.0f;
 		synths[ID].param[15].min   = 1.0f;
 		synths[ID].param[15].max   = (float)SYN_PARAM_MAX_VALUE;
 		
@@ -953,15 +953,16 @@ void Synth::UNZ( bool init ){
 		return;
 	}
 
-	float attack = 0.05f * SYN_PARAM_NORMALIZE(synth->param[19].value);
+	float attack = 0.05f * SYN_PARAM_NORMALIZE(synth->param[20].value);
 
 	// Parameters for FSM kick 
 	// Copyright (C) 2007 Krzysztof Foltman  <kfoltman@users.sourceforge.net>
     // this is an LLM resynthesis of FSM Kick [GPL2 or later] 
-	float startFrq = ( SYN_PARAM_NORMALIZE(synth->param[5].value) *  280.0f) * powf(128.0f, 198.0f / 240.0f);
-	float midFrq = ( SYN_PARAM_NORMALIZE(synth->param[6].value) *  140.0f) * powf(16.0f, 64.0f / 240.0f);
-	float endFrq = ( SYN_PARAM_NORMALIZE(synth->param[7].value) *  140.0f) * powf(16.0f, 64.0f / 240.0f);
-	float tDecay = (46.0f / 240.0f) * powf(SYN_PARAM_NORMALIZE(synth->param[4].value),2.0f);
+	float startFrq = ( SYN_PARAM_NORMALIZE(synth->param[5].value) *  280.0f) * 100.0;
+	float midFrq = ( SYN_PARAM_NORMALIZE(synth->param[6].value) *  140.0f) * 2.0;
+	float endFrq = ( SYN_PARAM_NORMALIZE(synth->param[7].value) *  140.0f) * 2.0;
+	float tDecayRev = 1.0 - SYN_PARAM_NORMALIZE(synth->param[4].value);
+	float tDecay = 0.1 * tDecayRev;
 	float tShape = 0.1f * SYN_PARAM_NORMALIZE(synth->param[8].value);
 	float aDecay = 10.0f - (SYN_PARAM_NORMALIZE(synth->param[3].value) * 10.0f);
 	float curVolume = 1.0f;
