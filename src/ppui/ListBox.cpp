@@ -76,7 +76,7 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 	autoHideHScroll(true),
 
 	showIndex(false),
-	hexIndex(false),
+	hexIndex(true),
 	indexBaseCount(1),
 
 	showSelectionAlways(showSelectionAlways),

@@ -42,6 +42,7 @@
 #include "ListBox.h"
 #include "ListBoxFileBrowser.h"
 #include "PatternEditorControl.h"
+#include "PatternTools.h"
 
 #include "ControlIDs.h"
 #include "TrackerConfig.h"
@@ -449,8 +450,6 @@ void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
 
 void Tracker::eventKeyDownBinding_RotatePanels()
 {
-	if (screen->getModalControl())
-		return;
 
 	switch( panelrotate ){
 		case PanelTop:{
@@ -505,9 +504,6 @@ void Tracker::eventKeyDownBinding_Stop()
 void Tracker::eventKeyDownBinding_Edit()
 {
 	if (isActiveEditing())
-		return;
-
-	if (screen->getModalControl())
 		return;
 
 	PatternEditorControl* patternEditor = getPatternEditorControl();
@@ -599,27 +595,18 @@ void Tracker::eventKeyDownBinding_PreviousPattern()
 // - Invoke sections
 void Tracker::eventKeyDownBinding_InvokeMainScreen()
 {
-	if (screen->getModalControl())
-		return;
-
 	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
 	sectionSwitcher->showUpperSection(NULL);	
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionInstruments()
 {
-	if (screen->getModalControl())
-		return;
-
 	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionInstrumentEditor);
 	screen->paint(true, true);
 }
 
 void Tracker::eventKeyDownBinding_InvokeSectionSamples()
 {
-	if (screen->getModalControl())
-		return;
-
 	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionSampleEditor);
 	screen->paint(true, true);
 }
@@ -743,6 +730,11 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 void Tracker::eventKeyDownBinding_ToggleFollowSong()
 {
 	setFollowSong(!getFollowSong());
+}
+
+void Tracker::eventKeyDownBinding_ToggleSharpFlat()
+{
+	PatternTools::switchSharpFlat();
 }
 
 void Tracker::eventKeyDownBinding_ToggleProspectiveMode()

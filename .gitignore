@@ -1,6 +1,11 @@
-# The build output folder
+# The build output folders
 build/
+build-debug/
 
 # Editor config files
 .vscode/
 .vs/
+
+# Audio files
+*.wav
+*.wav.asd

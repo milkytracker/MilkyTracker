@@ -29,6 +29,7 @@
 #include "Screen.h"
 #include "Event.h"
 #include "XModule.h"
+#include "Tracker.h"
 
 #define SYN_PREFIX_V1 "M1"                           // samplename 'M<version><params>' hints XM editors that sample was created with milkysynth <version> using <params> 
 #define SYN_PREFIX_CHARS 2                           // "M*"
@@ -40,11 +41,12 @@
 #define NOTE_START 60                                // C3
                                                     
 // synth ID's
-#define SYNTH_FM    0                  //
-#define SYNTH_CYCLE 1                  // incremental numbers
-#define SYNTH_LAST        SYNTH_CYCLE  // update this when adding a synth
-											 //
-#define SYNTH_PRESETS 35
+#define SYNTH_FM      0                  //
+#define SYNTH_CYCLE   1                  // incremental numbers
+#define SYNTH_PL      2                  //
+#define SYNTH_UNZ     3                  //
+#define SYNTH_LAST  SYNTH_UNZ             // update this when adding a synth
+#define SYNTH_PRESETS 47
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -74,6 +76,7 @@ class Synth
 
   private:
 	int samplerate;
+	int random_index;
 	bool additive;
     MSynth *synth;
     MSynth synths[SYNTH_LAST+1];
@@ -82,15 +85,30 @@ class Synth
     SampleEditor *sampleEditor;
     PPScreen *screen;
     DialogResponder *dr;
+    Tracker *tracker;
 
 	// ASCIISYNTH PRESETS: https://github.com/coderofsalvation/ASCIISYNTH
 	PPString preset[SYNTH_PRESETS] = {      // NOTE: update PRESETS_TOTAL when adding synths
-		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM                                 
-		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM
-		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM
+		"M1(C*(51)D)vA)/)M),(Xt@(*(((((((", // FM piano          
+		"M1)8n)(/()((((((((((((((((((((((", // CYCLE organ        
+		"M1*l(?(0+(((((*~S)IM((.d)(((((((", // SONANT organ
+		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM bell
+		"M1)9n,(0()((((((((((((((((((((((", // CYCLE brass
+		"M1*l(/646((M*(*~S(=~((-x+(((((((", // SONANT airchamber 
+		"M1(5+85,GF)~i+U*Ds+<2}~c)(((((((", // FM bell
+		"M1*S2c(2-(((((*SS)5F((*H+(((((((", // sonant piano
+		"M1+a[|w\\l4j(eAF(2)Z2-)((((((((((", // UNZ kick
+		"M1+a[vw~~7R(~o7(26R24)((((((((((", // UNZ acoust kick
 	    "M1(Y)(+),()b9+()U.)),;((((((((((", // FM 909 kick
 	    "M1(Y)(*),3)p9+()U,)),;((((((((((", // FM 909 kick2
-		"M1(V)(*)())1,-(.\\\\.5~@b(((((((((", // FM 
+        "M1+l[[w|[Zl9bj7[8_V2/0((((((((((", // UNZ snare
+        "M1+d[Qw|y2p9bj7(<__2/D((((((((((", // UNZ snare 2
+		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
+		"M1+/y~(~~)(X))-26~q-9)F(((((((((", // UNZ hihat
+		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
+		"M1+Jy|W~]cU,h>(@[)(*))((((((((((", // UNZ tom
+        "M1(~)(+9+()~5)~,BB(o=xFo)(((((((", // FM flute
+		"M1*S(k(2-(((((*SS)DO((0H*(((((((", // PL junglepad
 		"M1(V)(+)(()1,-})n/0(@b7(((((((((", // FM
 		"M1(++85,GJ-~J*b.(<A~3}v_)(((((((", // FM
 		"M1(L)(>((F+p@+W-()/n/Z\(*(((((((", // FM
@@ -101,8 +119,6 @@ class Synth
 		"M1(H+ioL)M)~X)[)()889{6(*(((((((", // FM
 		"M1(A+ioL,0)~X)[)()A89{6(*(((((((", // FM
 		"M1(I)(B.)~-~f-U.b[(~2}:Z*(((((((", // FM
-		"M1(~*()+*4)~U-~)s,)0,;8m((((((((", // FM snare
-		"M1(q*(06*u-8~*~+()9(*~9}((((((((", // FM hihat
 		"M1(9*(51,X)O/*X+B~7l~{Za)(((((((", // FM 
 		"M1(?*A:@,(+vn,1*,Q1/A{I()(((((((", // FM
 		"M1(M+(*-*;+fZ)`,1Q9(A{X(*(((((((", // FM
@@ -111,10 +127,9 @@ class Synth
 		"M1(B,(*.+i+b~-1*g)<~.{_(*(((((((", // FM
 		"M1(@*M;F+i+U~-(.()2(.t(()(((((((", // FM 
 		"M1(3*:0:+~,AZ)r.`44~;~ea)(((((((", // FM
+		"M1(E-?5F,R)vK)A*()5(XtwJ)(((((((", // FM bg
+		"M1(?*85,,G)~()6*~4,(2}~()(((((((", // FM tone
 										
-		"M1)Sn)(/()((((((((((((((((((((((", // CYCLE
-		"M1)Sn,(0()((((((((((((((((((((((", // CYCLE
-		"M1)Sn,,C<)((((((((((((((((((((((", // CYCLE
 		"M1)\\~)((()((((((((((((((((((((((",	// CYCLE
 		"M1)\\~+)*J*((((((((((((((((((((((", // CYCLE
 		"M1)R~,h/()((((((((((((((((((((((", // CYCLE
@@ -128,7 +143,8 @@ class Synth
   public:
     Synth(int samplerate);
     ~Synth();
-    DialogSliders * dialog( SampleEditor *s, PPScreen *screen, DialogResponder *dr);
+    DialogSliders * dialog();
+	void update();
 
     void setParam( int i, float v);
     MSynthParam& getParam( int i ){ return synth->param[i]; }
@@ -140,6 +156,7 @@ class Synth
 
     void reset();
     void init();
+    void attach( SampleEditor *s, PPScreen *screen, DialogResponder *dr, Tracker *tracker);
 	void random();
     void process( MSynth *s, PPString *preset );
 	TXMSample * prepareSample(pp_uint32 duration);
@@ -148,6 +165,8 @@ class Synth
     // synths
     void Cycle( bool init = false );
     void FM( bool init = false );
+    void PL( bool init = false );
+    void UNZ( bool init = false );
 
 };
 

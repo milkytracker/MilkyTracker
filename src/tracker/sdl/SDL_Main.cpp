@@ -69,6 +69,10 @@
 
 #include <SDL.h>
 #include "SDL_KeyTranslation.h"
+#include <ModuleServices.h>
+#include <ModuleEditor.h>
+#include <XModule.h>
+#include <WAVExporter.h>
 // ---------------------------- Tracker includes ----------------------------
 #include "PPUI.h"
 #include "DisplayDevice_SDL.h"
@@ -82,6 +86,7 @@
 #ifdef HAVE_LIBRTMIDI
 #include "../midi/posix/MidiReceiver_pthread.h"
 #endif
+#include <CLIParser.h>
 // --------------------------------------------------------------------------
 
 static SDL_TimerID			timer;
@@ -888,6 +893,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Event event;
 	char *loadFile = 0;
+	char *outputWAVFile = 0;
 	char loadFileAbsPath[PATH_MAX];
 
 	pp_int32 defaultBPP = -1;
@@ -896,67 +902,81 @@ int main(int argc, char *argv[])
 	bool recVelocity = false;
 
 	// Parse command line
-	while ( argc > 1 )
-	{
-		--argc;
+	CLIParser parser(argc, argv, {"-help"});
 
-#ifdef __APPLE__
-		// OSX: Swallow "-psn_xxx" argument passed by Finder on OSX <10.9
-		if ( strncmp(argv[argc], "-psn", 4) == 0 )
-		{
-			continue;
+	// Add optional input file argument
+	parser.addPositionalArg("input", "Input module file (.xm)", false);
+	
+	// Register all command line options
+	parser.addOption("-bpp", true, "Set bits per pixel");
+	parser.addOption("-nosplash", false, "Skip splash screen");
+	parser.addOption("-swap", false, "Swap red and blue colors");
+	parser.addOption("-orientation", true, "Set screen orientation", {"NORMAL", "ROTATE90CCW", "ROTATE90CW"});
+	parser.addOption("-recvelocity", false, "Enable recording velocity");
+	parser.addOption("-headless", false, "Run in headless mode");
+	
+	auto exporter = WAVExporter::createFromParser(parser);
+
+	if (exporter->hasParseError()) {
+		parser.printUsage();
+		fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+		return 1;
+	}
+
+	// Process options
+	if (parser.hasOption("-bpp")) {
+		defaultBPP = parser.getIntOptionValue("-bpp", defaultBPP);
+	}
+	
+	if (parser.hasOption("-nosplash")) {
+		noSplash = true;
+	}
+	
+	if (parser.hasOption("-swap")) {
+		swapRedBlue = true;
+	}
+	
+	if (parser.hasOption("-orientation")) {
+		const char* orientStr = parser.getOptionValue("-orientation");
+		// No need to validate values anymore since CLIParser does it for us
+		if (strcmp(orientStr, "NORMAL") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_NORMAL;
 		}
-		else
-#endif
-		if ( strcmp(argv[argc-1], "-bpp") == 0 )
-		{
-			defaultBPP = atoi(argv[argc]);
-			--argc;
+		else if (strcmp(orientStr, "ROTATE90CCW") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_ROTATE90CCW;
 		}
-		else if ( strcmp(argv[argc], "-nosplash") == 0 )
-		{
-			noSplash = true;
+		else if (strcmp(orientStr, "ROTATE90CW") == 0) {
+			orientation = PPDisplayDevice::ORIENTATION_ROTATE90CW;
 		}
-		else if ( strcmp(argv[argc], "-swap") == 0 )
-		{
-			swapRedBlue = true;
+	}
+	
+	if (parser.hasOption("-recvelocity")) {
+		recVelocity = true;
+	}
+
+	if (parser.hasOption("-output")) {
+		outputWAVFile = strdup(parser.getOptionValue("-output")); // Use strdup to create a non-const copy
+	}
+
+	if (parser.getPositionalArgCount() > 0) {
+		loadFile = strdup(parser.getPositionalArg(0)); // Use strdup to create a non-const copy
+	}
+
+	if (loadFile && outputWAVFile) {
+		if (exporter->hasArgumentError()) {
+			parser.printUsage();
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
 		}
-		else if ( strcmp(argv[argc-1], "-orientation") == 0 )
-		{
-			if (strcmp(argv[argc], "NORMAL") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_NORMAL;
-			}
-			else if (strcmp(argv[argc], "ROTATE90CCW") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_ROTATE90CCW;
-			}
-			else if (strcmp(argv[argc], "ROTATE90CW") == 0)
-			{
-				orientation = PPDisplayDevice::ORIENTATION_ROTATE90CW;
-			}
-			else
-				goto unrecognizedCommandLineSwitch;
-			--argc;
+
+		if (exporter->performExport() != 0) {
+			fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
+			return 1;
 		}
-		else if ( strcmp(argv[argc], "-recvelocity") == 0)
-		{
-			recVelocity = true;
-		}
-		else
-		{
-unrecognizedCommandLineSwitch:
-			if (argv[argc][0] == '-')
-			{
-				fprintf(stderr,
-						"Usage: %s [-bpp N] [-swap] [-orientation NORMAL|ROTATE90CCW|ROTATE90CW] [-nosplash] [-recvelocity]\n", argv[0]);
-				exit(1);
-			}
-			else
-			{
-				loadFile = argv[argc];
-			}
-		}
+	}
+
+	if (parser.hasOption("-headless")) {
+		return 0;
 	}
 
 	globalMutex = new PPMutex();

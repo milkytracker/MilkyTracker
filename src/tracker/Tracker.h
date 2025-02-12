@@ -311,11 +311,11 @@ private:
 	void doFollowSong();
 	
 	PatternEditorControl* getPatternEditorControl() { return patternEditorControl; }
-	void updatePatternEditorControl(bool repaint = true, bool fast = false);
 	PatternEditor* getPatternEditor();
 	SampleEditor* getSampleEditor();
 	EnvelopeEditor* getEnvelopeEditor();
 
+	void updatePatternEditorControl(bool repaint = true, bool fast = false);
 	pp_int32 getOrderListBoxIndex();
 	void setOrderListIndex(pp_int32 index);
 	bool isEditingCurrentOrderlistPattern();
@@ -477,7 +477,9 @@ public:
 	void sendNoteDown(pp_int32 note, pp_int32 volume = -1);
 	void sendNoteUp(pp_int32 note);
 
-  ModuleEditor* getModuleEditor(){ return moduleEditor; }
+	ModuleEditor* getModuleEditor(){ return moduleEditor; }
+	PPListBox* getListBoxInstruments() { return listBoxInstruments; }
+	PPListBox* getListBoxSamples() { return listBoxSamples; }
 
 private:
 	void switchEditMode(EditModes mode);
@@ -559,6 +561,7 @@ private:
 	// Some handy shortcuts
 	void eventKeyDownBinding_ToggleFT2Edit();
 	void eventKeyDownBinding_ToggleFollowSong();
+	void eventKeyDownBinding_ToggleSharpFlat();
 	void eventKeyDownBinding_ToggleProspectiveMode();
 	void eventKeyDownBinding_ToggleCursorWrapAround();
 	void eventKeyDownBinding_ToggleLiveSwitch();
@@ -640,6 +643,7 @@ private:
 	friend class Zapper;
 	friend class SectionSwitcher;
 	friend class SampleEditorControl;
+	friend class Synth;
 };
 
 #endif

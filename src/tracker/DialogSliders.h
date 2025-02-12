@@ -49,34 +49,34 @@ private:
 	DialogResponder *responder;
 	pp_int32 id;
 	SampleEditor *sampleEditor;
-  SampleEditor *sampleEditor_;
-  void (SampleEditor::*func)(const FilterParameters*);
+	SampleEditor *sampleEditor_;
+	void (SampleEditor::*func)(const FilterParameters*);
 	class PPListBox* listBoxes[MAX_SLIDERS];
-  
+
 	bool needUpdate;
 	bool preview;
-  bool valueChanged;
-  bool clicked;
+	bool valueChanged;
+	bool clicked;
 
 	virtual pp_int32 handleEvent(PPObject* sender, PPEvent* event);	
-	
+
 	void resetSliders();
-	void update();
 
 public:
-  DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandlerResponder, pp_int32 id, const PPString& title, pp_int32 sliders, SampleEditor *sampleEditor, void (SampleEditor::*fn)(const FilterParameters*) );
+	DialogSliders(PPScreen *parentScreen, DialogResponder *toolHandlerResponder, pp_int32 id, const PPString& title, pp_int32 sliders, SampleEditor *sampleEditor, void (SampleEditor::*fn)(const FilterParameters*) );
 
 
 	void setSlider(pp_uint32 index, float param);
 	float getSlider(pp_uint32 index) const;
-  pp_int32 getNumSliders(){ return this->numSliders; }
+	pp_int32 getNumSliders(){ return this->numSliders; }
 
 	void initSlider(int i, float min, float max, float value, PPString caption, PPColor *color = NULL, PPFont *font = NULL);
 
 	void setSampleEditor(SampleEditor *s){ this->sampleEditor = s; }
 	SampleEditor * getSampleEditor(){ return this->sampleEditor; }
 
-  void process();
+	void process();
+	void update();
 
 };
 

@@ -258,8 +258,8 @@ pp_int32 PatternEditorControl::dispatchEvent(PPEvent* event)
 				PPPoint cp = *p;
 				
 				cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
-				cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight() + 4;
-				
+				cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight()*2 + 4;
+
 				if (cp.y <  -((pp_int32)font->getCharHeight() + 6))
 					break;
 
@@ -623,7 +623,7 @@ unmuteAll:
 						PPPoint cp = *p;
 						
 						cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
-						cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight() + 4;
+						cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight()*2 + 4;
 						
 						// not in our local CS
 						if (cp.x < 0 || cp.y < 0)
@@ -658,7 +658,7 @@ markOrMoveSelection:
 			PPPoint cp2 = cp;
 
 			cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
-			cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight() + 4;
+			cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight()*2 + 4;
 			
 			cp2.x-=location.x;
 			cp2.y-=location.y;
@@ -925,7 +925,6 @@ markOrMoveSelection:
 			// [otherwise ctrl-minus will add minus-volslides in volcolumn e.g.]
 			if ( 
 				(::getKeyModifier() != (unsigned)KeyModifierCTRL)  && 
-				(::getKeyModifier() != (unsigned)KeyModifierSHIFT) && 
 				(::getKeyModifier() != (unsigned)KeyModifierALT)   
 			){
 				handleKeyChar(character);
@@ -1129,6 +1128,7 @@ pp_int32 PatternEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 	         sender == reinterpret_cast<PPObject*>(patternMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(keyboardMenuControl) ||
 	         sender == reinterpret_cast<PPObject*>(channelMenuControl)  ||
+	         sender == reinterpret_cast<PPObject*>(editMenuPasteControl)  ||
 	         sender == reinterpret_cast<PPObject*>(helpMenuControl) )
 	{
 		switch (event->getID())

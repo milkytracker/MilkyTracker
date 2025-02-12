@@ -271,7 +271,7 @@ bool Tracker::isEditingCurrentOrderlistPattern()
 pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerController)
 {
   PPControl* ctrl = screen->getModalControl();
-	if (dialog != NULL && ctrl) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
+	if (dialog != NULL && ctrl && screen->hasFocusModal() ) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
   {
 		note--;
 	
@@ -284,8 +284,10 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 		PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 		PPListBox* listBoxDstModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST3));
 		
-		if (!listBoxSrc || !listBoxDst)
-			return -1;
+		if (!listBoxSrc || !listBoxDst){
+			// sliderdialogs e.g. can just allow keyjazz 
+			return getPatternEditorControl()->isInstrumentEnabled() ? listBoxInstruments->getSelectedIndex() + 1 : 0;
+		}
 
 		PPListBox* focusedListBox = static_cast<PPListBox*>(container->getFocusedControl());
 		if (focusedListBox == NULL)
@@ -569,7 +571,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			caughtMouseInUpperLeftCorner = false;
 	}
 #endif
-	else if (event->getID() == eCommand || event->getID() == eCommandRepeat)
+	else if (event->getID() == eCommand)
 	{
 
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
@@ -644,6 +646,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 				eventKeyDownBinding_ToggleFollowSong();
+				break;
+			}
+
+			case BUTTON_PATTERN_SHARPFLAT:
+			{
+				if (event->getID() != eCommand)
+					break;
+				eventKeyDownBinding_ToggleSharpFlat();
 				break;
 			}
 
@@ -1738,6 +1748,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 
 					case PatternEditorControl::AdvanceCodeColumn:
 						backtraceInstrument(0,false);
+						getPatternEditorControl()->updateStatus();
 						break;
 				}
 				break;
@@ -2152,6 +2163,7 @@ void Tracker::updateSongRow(bool checkFollowSong/* = true*/)
 {
 	if (checkFollowSong && !shouldFollowSong())
 		return;
+	else getPatternEditorControl()->updateStatus();
 		
 	mp_sint32 row = getPatternEditorControl()->getCurrentRow();
 	mp_sint32 pos = listBoxOrderList->getSelectedIndex();

@@ -27,10 +27,15 @@
 #include "DialogSliders.h"
 #include "TrackerConfig.h"
 #include "FilterParameters.h"
+#include "EnvelopeEditor.h"
+#include "ModuleEditor.h"
+#include "Tracker.h"
+#include "ListBox.h"
 
 Synth::Synth(int samplerate){
   this->samplerate = samplerate;
   this->additive   = false;
+  this->random_index = 0;
   init();
   // assign default synth 
   synth = &synths[0];
@@ -67,20 +72,19 @@ void Synth::reset(){
     synth->param[i].name = PPString("");
   }
 }
+void Synth::attach( SampleEditor *s, PPScreen *screen, DialogResponder *dr, Tracker *t ){
+  assert( screen != NULL && dr != NULL && t != NULL);
+  this->screen = screen;
+  this->dr = dr;
+  this->tracker = t;
+  this->sampleEditor = s;
+}
 
-DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponder *dr ){
-  if( s != NULL && screen != NULL && dr != NULL ){
-    this->sampleEditor = s;
-    this->screen = screen;
-    this->dr = dr;
-  }else{
-    sliders->show(false);
-  }
+DialogSliders * Synth::dialog(){
   PPString title = PPString("milkysynth");
-  this->additive = s != NULL ? s->hasValidSelection() : false;
+  this->additive = sampleEditor != NULL ? sampleEditor->hasValidSelection() : false;
   if( this->additive ) title.append(" [additive]");
   sliders = new DialogSliders( this->screen, this->dr, PP_DEFAULT_ID, title, synth->nparams, this->sampleEditor, &SampleEditor::tool_synth );
-  sliders->show();
   for( int i = 0; i < synth->nparams && i < SYN_PARAMS_MAX; i++){
 	PPString label = PPString(synth->param[i].name);
     PPFont *font   = NULL;
@@ -92,7 +96,20 @@ DialogSliders * Synth::dialog( SampleEditor *s, PPScreen *screen, DialogResponde
 	}
     sliders->initSlider(i, (int)synth->param[i].min, (int)synth->param[i].max, synth->param[i].value, label, color, font );
   }
+
+  sliders->show();
+  update();
   return sliders;
+}
+
+void Synth::update(){
+  // enable envelope as sane startingpoint
+  tracker->getModuleEditor()->reloadEnvelope(
+  	  tracker->getListBoxInstruments()->getSelectedIndex(),
+  	  tracker->getListBoxSamples()->getSelectedIndex(), 
+  	  0
+  );		
+  tracker->getModuleEditor()->getEnvelopeEditor()->enableEnvelope(true);
 }
 
 void Synth::setParam( int i, float v ){
@@ -100,8 +117,9 @@ void Synth::setParam( int i, float v ){
 } 
 
 void Synth::random(){
-	pp_uint32 pr = rand() % SYNTH_PRESETS;
-	ASCIISynthImport( preset[pr] );
+	random_index++;
+	if( random_index >= SYNTH_PRESETS ) random_index = 0;
+	ASCIISynthImport( preset[ random_index ] );
     FilterParameters par(synth->nparams);
     pp_int32 i;
     for( i = 0; i < synth->nparams; i++ ){
@@ -111,6 +129,9 @@ void Synth::random(){
 		sampleEditor->clearSample();
 	}
 	sampleEditor->tool_synth(&par);
+	sampleEditor->resetSelection();
+    update();
+	if( sliders != NULL ) sliders->show(false);
 }
 
 TXMSample * Synth::prepareSample( pp_uint32 duration){
@@ -120,5 +141,6 @@ TXMSample * Synth::prepareSample( pp_uint32 duration){
   par.setParameter(1, FilterParameters::Parameter( 16 ) );
   sampleEditor->tool_newSample(&par);
   sample = sampleEditor->getSample();
+
   return sample;
 }

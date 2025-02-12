@@ -188,10 +188,13 @@ pp_int32 SectionSamples::handleEvent(PPObject* sender, PPEvent* event)
 
 			case BUTTON_SAMPLE_SYNTH_RAND:
 			{
-				sampleEditor->getSynth()->setSampleEditor(sampleEditor);
+				sampleEditor->getSynth()->attach(sampleEditor, (PPScreen *)&(tracker.screen), (DialogResponder *)this, (Tracker *)&tracker);
 				sampleEditor->getSynth()->random();
-        tracker.updateSamplesListBox(false);
-        refresh();
+				tracker.updateSamplesListBox(false);
+				PatternEditor *pe = tracker.getPatternEditor();
+				pe->getCursor().inner = 0; // force note-column to hear notes playing on keyboard
+				tracker.screen->setFocus(sampleEditorControl);  // dont clutter live notes to pattern 
+				refresh();
 				break;
 			}
 
@@ -591,12 +594,11 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOW, screen, this, PPPoint(x2+2, y2+2), PPSize(size, bHeightm));
 	button->setText( screen->getClassic() ? "Show rng" : "zoom select");
-	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
+	//if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ALL, screen, this, PPPoint(x2+2, y2+2+bHeight), PPSize(size, bHeightm));
 	button->setText( screen->getClassic() ? "Rng all" : "select all");
-	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	container->addControl(button);
 	
 	pp_int32 h = button->getSize().width;
@@ -610,12 +612,10 @@ void SectionSamples::init(pp_int32 x, pp_int32 y)
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_ZOOMOUT, screen, this, PPPoint(x2+2 + size+1, y2+2), PPSize(size, bHeightm));
-	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	button->setText("Zoom out");
 	container->addControl(button);
 
 	button = new PPButton(BUTTON_SAMPLE_RANGE_SHOWALL, screen, this, PPPoint(x2+2 + size+1, y2+2+bHeight), PPSize(size, bHeightm));
-	if( !screen->getClassic() ) button->setFont( PPFont::getFont( PPFont::FONT_TINY) );
 	button->setText( screen->getClassic() ? "Show all" : "Zoom full");
 	container->addControl(button);
 

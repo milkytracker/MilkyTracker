@@ -42,10 +42,11 @@
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
-  if (dialog)
-  {
+  dialog = tracker->dialog; // we support only one window
+  if (dialog)               // and we want HelpDialog to remember
+  {                         // its scrollposition
     delete dialog;
-    dialog = NULL;
+	dialog = NULL;
   }
 
   toolHandlerResponder->setSampleToolType(type);
@@ -175,12 +176,20 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
         TXMSample *sample = sampleEditor->getSample();
         dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 5, sampleEditor, &SampleEditor::tool_saturate );
         DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-        float value = lastValues.saturate   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturate : 10.0f;
+        float value = lastValues.saturator[0]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturator[0] : 18.0f;
         sliders->initSlider(0,1,100,value,"Harmonics");
-        sliders->initSlider(1,0,100,0,"Bandpass");
-        sliders->initSlider(2,0,150,50,"Compand");
-        sliders->initSlider(3,1,100,100,"Dry \x1d Wet");
-        sliders->initSlider(4,0.0f, 1000.0f, 100.0f,"Volume");
+
+        value = lastValues.saturator[1]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturator[1] : 0.0f;
+        sliders->initSlider(1,0,100,value,"Bandpass");
+
+        value = lastValues.saturator[2]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturator[2] : 50.0f;
+        sliders->initSlider(2,0,150,value,"Compand");
+
+        value = lastValues.saturator[3]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturator[3] : 50.0f;
+        sliders->initSlider(3,1,100,value,"Dry \x1d Wet");
+
+        value = lastValues.saturator[4]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.saturator[4] : 150.0f;
+        sliders->initSlider(4,0.0f, 1000.0f, value,"Volume");
         break;
     }
 
@@ -188,10 +197,15 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
         TXMSample *sample = sampleEditor->getSample();
         dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Milky Exciter", 4, sampleEditor, &SampleEditor::tool_MTboostSample );
         DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-        sliders->initSlider(0,2000,28000,20000,"Freq");
-        sliders->initSlider(1,1,100,10,"Smear");
-        sliders->initSlider(2,0,20,0,"Phase");
-        sliders->initSlider(3,1,100,20,"Wet");
+
+        float value = lastValues.milkyexcite[0]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.milkyexcite[0] : 20000.0f;
+        sliders->initSlider(0,2000,28000,value,"Freq");
+        value = lastValues.milkyexcite[1]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.milkyexcite[1] : 10.0f;
+        sliders->initSlider(1,1,100,value,"Smear");
+        value = lastValues.milkyexcite[2]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.milkyexcite[2] : 0.0f;
+        sliders->initSlider(2,0,20,value,"Phase");
+        value = lastValues.milkyexcite[3]   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.milkyexcite[3] : 20.0f;
+        sliders->initSlider(3,1,100,value,"Wet");
         break;
     }
 
@@ -281,9 +295,11 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
     {
       // triggered when user presses 'synth'-button
       getSampleEditor()->getSynth()->ASCIISynthImport( PPString( getSampleEditor()->getSample()->name) );
-      dialog = getSampleEditor()->getSynth()->dialog( getSampleEditor(), parentScreen, toolHandlerResponder );
       PatternEditor *pe = this->tracker->getPatternEditor();
       pe->getCursor().inner = 0; // force note-column to hear notes playing on keyboard
+      getSampleEditor()->getSynth()->attach( getSampleEditor(), parentScreen, toolHandlerResponder, tracker );
+      dialog = getSampleEditor()->getSynth()->dialog();
+	  tracker->screen->setFocus(this); // dont clutter live notes to pattern 
       break;
     }
 
@@ -337,6 +353,8 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
     case ToolHandlerResponder::SampleToolTypeMTBoost:
     {
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+	  for( pp_uint8 i = 0; i < 5; i++ ) lastValues.milkyexcite[i]   = sliders->getSlider(i);
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }
@@ -344,7 +362,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
     case ToolHandlerResponder::SampleToolTypeSaturate:
     {
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      lastValues.saturate     = sliders->getSlider(0);
+	  for( pp_uint8 i = 0; i < 4; i++ ) lastValues.saturator[i]     = sliders->getSlider(i);
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }
@@ -375,8 +393,10 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 
     case ToolHandlerResponder::SampleToolTypeFade:
     {
-      lastValues.fadeSampleVolumeStart = static_cast<DialogWithValues*>(dialog)->getValueOne();
-      lastValues.fadeSampleVolumeEnd = static_cast<DialogWithValues*>(dialog)->getValueTwo();
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      lastValues.fadeSampleVolumeStart = sliders->getSlider(0);
+      lastValues.fadeSampleVolumeEnd   = sliders->getSlider(1);
+	  printf("%f %f\n",lastValues.fadeSampleVolumeStart, lastValues.fadeSampleVolumeEnd);
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }
@@ -540,7 +560,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
       break;
     }
 
-    case ToolHandlerResponder::SampleToolTypeSynth:
+    case ToolHandlerResponder::SampleToolTypeSynth:;
     {
       this->tracker->updateSamplesListBox();
       break;

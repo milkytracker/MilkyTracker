@@ -24,6 +24,7 @@
 #define PATTERNTOOLS__H
 
 #include "BasicTypes.h"
+#include "PatternEditor.h"
 
 #define TONOTE(octave, note) \
 ((((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) < 97 ? (((pp_uint8)(octave)*12 + (pp_uint8)(note)) + 1) : -1)
@@ -50,6 +51,7 @@ public:
 		pattern = src.pattern;
 	}
 
+	static void switchSharpFlat();
 	void setPosition(TXMPattern* pattern, pp_uint32 channel, pp_uint32 row);
 	pp_int32 getNote();
 	void setNote(pp_uint32);
@@ -81,6 +83,9 @@ public:
 	
 	static pp_uint8 getNoteOffNote();	
 	static pp_uint32 normalizeVol(pp_uint32 volume);
+
+	static pp_uint8 getNibble(pp_int32 op, PatternEditor::NibbleTypes type);
+	static void getEffectDescription(char* label, char fxchar);
 };
 
 #endif

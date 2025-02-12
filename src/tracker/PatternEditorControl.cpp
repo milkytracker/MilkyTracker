@@ -114,10 +114,10 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->setSubMenu(true);
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
-    patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+	patternMenuControl->addEntry("Toggle #/b notation", BUTTON_PATTERN_SHARPFLAT);
+    patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
-
     
 	keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     keyboardMenuControl->setSubMenu(true);
@@ -126,9 +126,10 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
     keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-    editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
-    editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
-    editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
+    editMenuControl->addEntry("Song          >", 0xFFFF, moduleMenuControl);
+    editMenuControl->addEntry("Pattern       >", 0xFFFF, patternMenuControl);
+    editMenuControl->addEntry("Keyboard      >", 0xFFFF, keyboardMenuControl);
+	                           
 
     channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     channelMenuControl->setSubMenu(true);
@@ -142,30 +143,36 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
     channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
-    editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
+    editMenuControl->addEntry("Channel       >", 0xFFFF, channelMenuControl);
 
 	helpMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
     helpMenuControl->setSubMenu(true);
     helpMenuControl->addEntry("Help", MAINMENU_HELP );
     helpMenuControl->addEntry("About", MAINMENU_ABOUT );
-    editMenuControl->addEntry("Help        >", 0xFFFF, helpMenuControl);
+    editMenuControl->addEntry("Help          >", 0xFFFF, helpMenuControl);
     
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Undo", MenuCommandIDUndo);
     editMenuControl->addEntry("Redo", MenuCommandIDRedo);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Cut", MenuCommandIDCut);
     editMenuControl->addEntry("Copy", MenuCommandIDCopy);
     editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-    editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+
+    editMenuPasteControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+	editMenuPasteControl->setSubMenu(true);
+    editMenuPasteControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+    editMenuPasteControl->addEntry("Paste StepFill [ctrl+r]", MenuCommandIDPasteStepFill);
+    editMenuControl->addEntry("Paste special >", 0xFFF, editMenuPasteControl );
+
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
 
   }else{
     editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
     editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
     editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
     editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
@@ -189,7 +196,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 #else
 	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
 #endif
-		
+
 	setRecordMode(false);
 	
 	transposeHandlerResponder = new TransposeHandlerResponder(*this);
@@ -206,6 +213,7 @@ PatternEditorControl::~PatternEditorControl()
 	delete hBottomScrollbar;
 
 	delete editMenuControl;
+	delete editMenuPasteControl;
 	
 	delete eventKeyDownBindingsMilkyTracker;
 	delete scanCodeBindingsMilkyTracker;
@@ -222,13 +230,9 @@ void PatternEditorControl::setFont(PPFont* font)
 	
 	adjustExtents();
 
-	if( !parentScreen->getClassic() ){
+	if( parentScreen->getClassic() ){
+		// classic contextmenu font scales along with patternfont
 		editMenuControl->setFont(font);
-		moduleMenuControl->setFont(font);
-		patternMenuControl->setFont(font);
-		keyboardMenuControl->setFont(font);
-		channelMenuControl->setFont(font);
-		helpMenuControl->setFont(font);
 	}
 
 	assureCursorVisible();
@@ -333,6 +337,11 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	selectionStart = patternEditor->getSelection().start;
 	selectionEnd = patternEditor->getSelection().end;
 
+	PPString statusLine;
+	PPFont  *statusFont = font->getFontId() == PPFont::FONT_LARGE || font->getFontId() == PPFont::FONT_HUGE 
+						? PPFont::getFont(PPFont::FONT_SYSTEM) 
+						: PPFont::getFont(PPFont::FONT_TINY);
+
 	PatternEditorTools::flattenSelection(selectionStart, selectionEnd);	
 
 	// only entire instrument column is allowed
@@ -406,6 +415,88 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			break;
 			
 		pp_int32 row = i;
+
+		// draw channels
+		for (j = startPos; j < numVisibleChannels; j++)
+		{
+
+			g->setFont(font);
+			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
+			
+			// columns are already in invisible area => abort
+			if (px >= location.x + size.width)
+				break;
+			
+			pp_int32 py = location.y + SCROLLBARWIDTH;
+
+			if (menuInvokeChannel == j)
+				g->setColor(255-dColor.r, 255-dColor.g, 255-dColor.b);
+			else
+				g->setColor(dColor);
+
+			{
+				PPColor nsdColor = g->getColor(), nsbColor = g->getColor();
+				
+				if (menuInvokeChannel != j)
+				{
+					// adjust not so dark color
+					nsdColor.scaleFixed(50000);
+					
+					// adjust bright color
+					nsbColor.scaleFixed(80000);
+				}
+				else
+				{
+					// adjust not so dark color
+					nsdColor.scaleFixed(30000);
+					
+					// adjust bright color
+					nsbColor.scaleFixed(60000);
+				}
+				
+				PPRect rect(px, py, px+slotSize-3, py + font->getCharHeight()+1);
+				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
+				
+			}
+			
+			if (muteChannels[j])
+			{
+				g->setColor(128, 128, 128);
+			}
+			else
+			{
+				if (!(j&1))
+					g->setColor(hiLightPrimary);
+				else
+					g->setColor(textColor);
+					
+				if (j == menuInvokeChannel)
+				{
+					PPColor col = g->getColor();
+					col.r = textColor.r - col.r;
+					col.g = textColor.g - col.g;
+					col.b = textColor.b - col.b;
+					col.clamp();
+					g->setColor(col);
+				}
+			}
+
+			sprintf(name, "%i", j+1);
+
+			if (muteChannels[j])
+				strcat(name, " <Mute>");
+
+			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
+
+			if( cursor.channel == j && i == startIndex ){
+				py = py + font->getCharHeight() + 6;
+
+				g->setFont( statusFont );
+				drawStatus( statusLine, opColor, g, cursor, font, -(font->getCharWidth()*2) +  px - 2  );
+			}
+		}
+
+		py += font->getCharHeight() + 4;
 
 		if (properties.prospective && properties.scrollMode == ScrollModeStayInCenter && currentOrderlistIndex != -1)
 		{
@@ -533,78 +624,6 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		
 		g->drawString(name, px, py);
 
-		// draw channels
-		for (j = startPos; j < numVisibleChannels; j++)
-		{
-
-			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
-			
-			// columns are already in invisible area => abort
-			if (px >= location.x + size.width)
-				break;
-			
-			pp_int32 py = location.y + SCROLLBARWIDTH;
-
-			if (menuInvokeChannel == j)
-				g->setColor(255-dColor.r, 255-dColor.g, 255-dColor.b);
-			else
-				g->setColor(dColor);
-
-			{
-				PPColor nsdColor = g->getColor(), nsbColor = g->getColor();
-				
-				if (menuInvokeChannel != j)
-				{
-					// adjust not so dark color
-					nsdColor.scaleFixed(50000);
-					
-					// adjust bright color
-					nsbColor.scaleFixed(80000);
-				}
-				else
-				{
-					// adjust not so dark color
-					nsdColor.scaleFixed(30000);
-					
-					// adjust bright color
-					nsbColor.scaleFixed(60000);
-				}
-				
-				PPRect rect(px, py, px+slotSize, py + font->getCharHeight()+1);
-				g->fillVerticalShaded(rect, nsbColor, nsdColor, false);
-				
-			}
-			
-			if (muteChannels[j])
-			{
-				g->setColor(128, 128, 128);
-			}
-			else
-			{
-				if (!(j&1))
-					g->setColor(hiLightPrimary);
-				else
-					g->setColor(textColor);
-					
-				if (j == menuInvokeChannel)
-				{
-					PPColor col = g->getColor();
-					col.r = textColor.r - col.r;
-					col.g = textColor.g - col.g;
-					col.b = textColor.b - col.b;
-					col.clamp();
-					g->setColor(col);
-				}
-			}
-
-			sprintf(name, "%i", j+1);
-
-			if (muteChannels[j])
-				strcat(name, " <Mute>");
-
-			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
-		}
-
 		for (j = startPos; j < numVisibleChannels; j++)
 		{
 			pp_int32 px = (j-startPos) * slotSize + startx;
@@ -706,16 +725,14 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 
 			px += fontCharWidth3x + properties.spacing;
 			
-			if (muteChannels[j])
-			{
-				PPColor insCol = insColor;
-				insCol.scaleFixed(properties.muteFade);
-				g->setColor(insCol);
-			}
-			else
-				g->setColor(insColor);
-
 			pp_uint32 i = patternTools->getInstrument();
+
+			PPColor insCol = insColor;
+			if (muteChannels[j] )
+			{
+				insCol.scaleFixed(properties.muteFade);
+			}
+			g->setColor(insCol);
 
 			if (i)
 				patternTools->convertToHex(name, i, 2);
@@ -732,14 +749,11 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			
 			px += fontCharWidth2x + properties.spacing;
 
+			PPColor volCol = volColor;
 			if (muteChannels[j])
 			{
-				PPColor volCol = volColor;
 				volCol.scaleFixed(properties.muteFade);
-				g->setColor(volCol);
 			}
-			else
-				g->setColor(volColor);
 
 			pp_int32 eff, op;
 
@@ -755,19 +769,17 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 			
 				patternTools->getVolumeName(name, volume);
 			}
+			g->setColor(volCol);
 
 			g->drawString(name,px, py);
 			
 			px += fontCharWidth2x + properties.spacing;
 
+			PPColor effCol = effColor;
 			if (muteChannels[j])
 			{
-				PPColor effCol = effColor;
 				effCol.scaleFixed(properties.muteFade);
-				g->setColor(effCol);
 			}
-			else
-				g->setColor(effColor);
 			
 			if (pattern->effnum == 1)
 			{
@@ -790,18 +802,17 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 				patternTools->getEffectName(name, eff);
 			}
 
+			g->setColor(effCol);
+
 			g->drawString(name,px, py);
 
 			px += fontCharWidth1x;
 
+			PPColor opCol = opColor;
 			if (muteChannels[j])
 			{
-				PPColor opCol = opColor;
 				opCol.scaleFixed(properties.muteFade);
-				g->setColor(opCol);
 			}
-			else
-				g->setColor(opColor);
 			
 			if (eff == 0 && op == 0)
 			{
@@ -813,9 +824,12 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 				patternTools->convertToHex(name, op, 2);
 			}			
 
+			g->setColor(opCol);
 			g->drawString(name,px, py);
 		}
 	}
+		
+	pp_int32 py = location.y + 3*SCROLLBARWIDTH + statusFont->getCharHeight();
 	
 	for (j = startPos; j < numVisibleChannels; j++)
 	{
@@ -832,15 +846,16 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 
 		g->setColor(*borderColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px+1);
+		g->drawVLine(py, py + size.height, px+1);
 		
 		g->setColor(bColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px);
+		g->drawVLine(py, py + size.height, px);
 		
 		g->setColor(dColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px+2);
+		g->drawVLine(py, py + size.height, px+2);
+
 	}
 
 	// ;----------------- Margin lines
@@ -849,13 +864,13 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 		
 	pp_int32 px = location.x + SCROLLBARWIDTH;
 	px+=getRowCountWidth() + 1;
-	g->drawVLine(location.y, location.y + size.height, px+1);
+	g->drawVLine(py, py + size.height, px+1);
 	
 	g->setColor(bColor);	
-	g->drawVLine(location.y, location.y + size.height, px);
+	g->drawVLine(py, py + size.height, px);
 	
 	g->setColor(dColor);	
-	g->drawVLine(location.y, location.y + size.height, px+2);
+	g->drawVLine(py, py + size.height, px+2);
 	
 	// draw margin horizontal lines
 	for (j = 0; j < visibleWidth / slotSize + 1; j++)
@@ -1011,7 +1026,7 @@ pp_int32 PatternEditorControl::getRowCountWidth()
 void PatternEditorControl::adjustExtents()
 {
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
-	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*2;
+	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*3;
 	
 	slotSize = 10*font->getCharWidth() + 3*1 + 4 + 3*properties.spacing;
 
@@ -1483,6 +1498,11 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 			eventKeyCharBinding_TransparentPaste();
 			break;
 
+		// stepfill paste
+		case MenuCommandIDPasteStepFill:
+			eventKeyCharBinding_PasteStepFill(); // Operates on block
+			break;
+
 		// mark all
 		case MenuCommandIDSelectAll:
 			eventKeyCharBinding_SelectAll();
@@ -1533,6 +1553,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_ADD_MINUS:
 		case BUTTON_PATTERN_CAPTURE:
 		case BUTTON_PATTERN_CAPTURE_OVERDUB:
+		case BUTTON_PATTERN_SHARPFLAT:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;
@@ -1662,3 +1683,69 @@ void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::Ed
 	}
 }
 
+/*
+ * updateUnderCursor()
+ *
+ * This is a startingpoint for easier-control of milkytracker pattern editing,
+ * like updating values using ctrl-up/down (possibly indirectly via handheld dev: trigger + up/down/left/right)
+ * incX / incY range = -1..0..1
+ *
+ */
+void PatternEditorControl::updateUnderCursor( mp_sint32 incX, mp_sint32 incY ){
+	PatternTools patternTools;
+	pp_int32 eff = 0;
+	pp_int32 op  = 0;
+	PatternEditorTools::Position& cursor = patternEditor->getCursor();
+	patternTools.setPosition( patternEditor->getPattern(), cursor.channel, cursor.row);
+
+	if( cursor.inner == 1 || cursor.inner == 2 ){
+		// we don't use incY but instead instrument listbox changes
+		pp_int32 ins = patternEditor->getCurrentActiveInstrument();	
+		patternEditor->writeInstrument(PatternEditor::NibbleTypeBoth, ins, true, NULL);
+	}
+	// *FUTURE* possibly cycle through values of volume/effect values/types by 
+	// ctrl up/down in stepmode by calling following functions:
+	//
+	//bool writeFT2Volume(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffect(pp_int32 effNum, pp_uint8 eff, pp_uint8 op, 
+	//				 bool withUndo = false, 
+	//				 PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectNumber(pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+	//bool writeEffectOperand(NibbleTypes nibleType, pp_uint8 value, bool withUndo = false, PatternAdvanceInterface* advanceImpl = NULL);
+
+}
+	
+void PatternEditorControl::drawStatus( 
+		PPString s, 
+		PPColor c,
+		PPGraphicsAbstract* g, 
+		PatternEditorTools::Position cursor,
+		PPFont *font,
+		pp_uint32 px)
+{
+	g->setColor(c);
+	switch( cursor.inner ){
+		case 0: s = PPString("note"); break;
+		case 1:
+		case 2: s = PPString("instrument"); break;
+		case 3: s = PPString("FX1 type"); break;
+		case 4: s = PPString("FX1 param"); break;
+		case 5: s = PPString("FX2 type"); break;
+		case 6: s = PPString("FX2 param1"); break;
+		case 7: s = PPString("FX2 param2"); break;
+		default: s = PPString(""); break;
+	}
+	if( status.length() > 0 ){
+		s.append(": ");
+		s.append(status);
+	}
+	if( cursor.inner == 0  ) s.append(" // use space to record");
+	if( cursor.inner == 1  || cursor.inner == 2) s.append(" // use 0123456789 A-F");
+	if( cursor.inner == 3 ) s.append(" // use 01234+-lrpdmsuv");
+	if( cursor.inner == 4 ) s.append(" // use 0123456789");
+	if( cursor.inner == 5 ) s.append(" // use 1-9 A-F");
+	if( cursor.inner == 6 || cursor.inner == 7 ) s.append(" // use 0-9 A-F");
+	g->drawString( s, px+3+font->getCharWidth()*2, location.y + SCROLLBARWIDTH + font->getCharHeight() + 6 );
+}

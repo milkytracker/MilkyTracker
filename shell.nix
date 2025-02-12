@@ -6,5 +6,9 @@ pkgs.mkShell {
     nativeBuildInputs = with pkgs.buildPackages; [ 
      cmake gdb SDL2 alsa-lib libjack2 lhasa perl rtmidi zlib zziplib lynx
     ];
- 
+
+	shellHook = ''
+	  export NIX_SHELL_MILKYTRACKER=1
+          bash
+	'';
 }

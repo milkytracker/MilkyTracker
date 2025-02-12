@@ -67,12 +67,12 @@ private:
 
 	Tracker* tracker;
 	PPContextMenu* editMenuControl;
+	PPContextMenu* subMenuPolyScript;
 	PPContextMenu* subMenuFX;
 	PPContextMenu* subMenuAdvanced;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
-
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;

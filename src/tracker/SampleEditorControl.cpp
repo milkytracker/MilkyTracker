@@ -34,6 +34,7 @@
 #include "PlayerController.h"
 #include "DialogBase.h"
 #include "FilterParameters.h"
+#include "PolyScript.h"
 
 #include <algorithm>
 #include <math.h>
@@ -118,6 +119,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	static const char* seperatorStringLarge = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 	static const char* seperatorStringMed = "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4";
 
+	// Create tool handler responder
+	toolHandlerResponder = new ToolHandlerResponder(*this);
+	dialog = NULL;	
+	this->tracker = (Tracker *)&tracker;
+
 	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuFX->addEntry("Volume" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
 	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
@@ -184,6 +190,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuGenerators->addEntry("Absolute Sine" PPSTR_PERIODS, MenuCommandIDGenerateAbsoluteSine);
 	subMenuGenerators->addEntry("Quarter Sine" PPSTR_PERIODS, MenuCommandIDGenerateQuarterSine);
 	subMenuGenerators->addEntry("Silence" PPSTR_PERIODS, MenuCommandIDGenerateSilence);
+
+
 	
 	// build context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, true);
@@ -192,10 +200,16 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Undo", MenuCommandIDUndo);
 	editMenuControl->addEntry("Redo", MenuCommandIDRedo);
 	editMenuControl->addEntry(seperatorStringMed, -1);
-	editMenuControl->addEntry("FX           \x10", 0xFFFF, subMenuFX);
-	editMenuControl->addEntry("Generators   \x10", 0xFFFF, subMenuGenerators);
-	editMenuControl->addEntry("Paste        \x10", 0xFFFF, subMenuXPaste);
-	editMenuControl->addEntry("Advanced     \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry("FX         \x10", 0xFFFF, subMenuFX);
+	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
+	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
+	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
+	
+	// scripting menu
+	subMenuPolyScript = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
+	editMenuControl->addEntry("Script     \x10", 0xFFFF, subMenuPolyScript );
+	PolyScript::load( PPString("scripts.sample.txt"), subMenuPolyScript, this->tracker );
+
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
 	editMenuControl->addEntry("Copy", MenuCommandIDCopy);
@@ -203,11 +217,6 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Crop", MenuCommandIDCrop);
 	editMenuControl->addEntry("Range all", MenuCommandIDSelectAll);
 	editMenuControl->addEntry("Loop range", MenuCommandIDLoopRange);
-
-	// Create tool handler responder
-	toolHandlerResponder = new ToolHandlerResponder(*this);
-	dialog = NULL;	
-	this->tracker = (Tracker *)&tracker;
 	
 	resetLastValues();
 }
@@ -226,9 +235,10 @@ SampleEditorControl::~SampleEditorControl()
 	delete hScrollbar;
 	
 	delete editMenuControl;	
+	delete subMenuPolyScript;
 	delete subMenuAdvanced;
 	delete subMenuXPaste;
-  delete subMenuFX;
+    delete subMenuFX;
 	delete subMenuPT;
 	delete subMenuGenerators;
 }
@@ -1228,6 +1238,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		startPos = (pp_uint32)(v*pos);
 	}
 	else if ((sender == reinterpret_cast<PPObject*>(editMenuControl) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuPolyScript) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
@@ -2012,6 +2023,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDSynth:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSynth);
 			break;
+	}
+	if (commandId >= PolyScript::MenuID)
+	{
+		PolyScript::onScriptMenu( commandId, this->tracker );
 	}
 }
 

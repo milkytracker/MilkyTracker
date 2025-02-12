@@ -26,7 +26,7 @@
 #include "PatternTools.h"
 #include "MilkyPlay.h"
 
-static const char* noteNames[12] = {"C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-"};
+static char* noteNames[12] = {(char*)"C-",(char*)"C#",(char*)"D-",(char*)"D#",(char*)"E-",(char*)"F-",(char*)"F#",(char*)"G-",(char*)"G#",(char*)"A-",(char*)"A#",(char*)"B-"};
 static const char hex[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
 /*TXMPattern* PatternTools::pattern = NULL;
@@ -34,6 +34,22 @@ pp_int32 PatternTools::currentEffectIndex = 0;
 pp_int32 PatternTools::offset = 0;
 
 pp_int32 PatternTools::lockOffset = 0;*/
+
+void PatternTools::switchSharpFlat() {
+	if (strcmp(noteNames[1], "C#") == 0) {
+		noteNames[1] = (char *) "Db";
+		noteNames[3] = (char *) "Eb";
+		noteNames[6] = (char *) "Gb";
+		noteNames[8] = (char *) "Ab";
+		noteNames[10] = (char *) "Bb";
+	} else {
+		noteNames[1] = (char *) "C#";
+		noteNames[3] = (char *) "D#";
+		noteNames[6] = (char *) "F#";
+		noteNames[8] = (char *) "G#";
+		noteNames[10] = (char *) "A#";
+	}
+}
 
 void PatternTools::setPosition(TXMPattern* pattern, pp_uint32 channel, pp_uint32 row)
 {
@@ -803,3 +819,43 @@ void PatternTools::convertVolumeToEffect(pp_int32 vol, pp_int32& effect, pp_int3
 pp_uint8 PatternTools::getNoteOffNote() { return XModule::NOTE_OFF; }
 	
 pp_uint32 PatternTools::normalizeVol(pp_uint32 volume) { return XModule::vol64to255((volume*64)/255); }
+
+pp_uint8 PatternTools::getNibble(pp_int32 op, PatternEditor::NibbleTypes type)
+{
+    pp_uint8 value = 0;
+    if (type == PatternEditor::NibbleTypeHigh) {
+		value = (op >> 4) & 0x0F;
+   } else if (type == PatternEditor::NibbleTypeLow) {
+        value = op & 0x0F;
+   }
+   return value;
+}
+
+void PatternTools::getEffectDescription(char* label, char fxchar){
+	switch( fxchar ){
+		case '0': sprintf(label,"arp"); break; 
+		case '1': sprintf(label,"portup"); break; 
+		case '2': sprintf(label,"portdown"); break; 
+		case '3': sprintf(label,"portnote"); break; 
+		case '4': sprintf(label,"vibrato"); break; 
+		case '5': sprintf(label,"portafade"); break; 
+		case '6': sprintf(label,"vibrafade"); break; 
+		case '7': sprintf(label,"tremolo"); break; 
+		case '8': sprintf(label,"pan"); break; 
+		case '9': sprintf(label,"smpstart"); break; 
+		case 'A': sprintf(label,"volfade"); break; 
+		case 'B': sprintf(label,"jump"); break; 
+		case 'C': sprintf(label,"vol"); break; 
+		case 'D': sprintf(label,"break"); break; 
+		case 'E': sprintf(label,"subcmd"); break; 
+		case 'F': sprintf(label,"bpm"); break; 
+		case 'G': sprintf(label,"gvol"); break; 
+		case 'H': sprintf(label,"gfade"); break; 
+		case 'K': sprintf(label,"keyoff"); break; 
+		case 'L': sprintf(label,"envpos"); break; 
+		case 'P': sprintf(label,"panslide"); break; 
+		case 'R': sprintf(label,"retrigfade"); break; 
+		case 'T': sprintf(label,"tremor"); break; 
+		case 'X': sprintf(label,"fineporta"); break; 
+	}
+}

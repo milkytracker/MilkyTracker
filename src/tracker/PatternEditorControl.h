@@ -189,6 +189,7 @@ private:
 	PPContextMenu* keyboardMenuControl;
 	PPContextMenu* helpMenuControl;
 	PPContextMenu* channelMenuControl;
+	PPContextMenu* editMenuPasteControl;
 
 	// Keyboard shortcuts
 	PPKeyBindings<TPatternEditorKeyBindingHandler>* eventKeyDownBindings;
@@ -323,6 +324,9 @@ public:
 	pp_int32 noteTransposePattern(const PatternEditorTools::TransposeParameters& transposeParameters);
 	pp_int32 noteTransposeSelection(const PatternEditorTools::TransposeParameters& transposeParameters);	
 	
+	void updateUnderCursor( mp_sint32 incX, mp_sint32 incY );
+	void updateStatus();
+	
 private:
 	// --- Transpose handler
 	class TransposeHandlerResponder : public DialogResponder
@@ -347,6 +351,8 @@ private:
 	PPDialogBase* dialog;
 	TransposeHandlerResponder* transposeHandlerResponder;
 
+	PPString status;
+
 private:
 	pp_int32 getRowCountWidth();
 
@@ -364,6 +370,14 @@ private:
 	void scrollCursorUp();
 
 	void assureCursorVisible(bool row = true, bool channel = true);
+	
+	void drawStatus( 
+			PPString s, 
+			PPColor c,
+			PPGraphicsAbstract* g, 
+			PatternEditorTools::Position cursor,
+			PPFont *font,
+			pp_uint32 px);
 
 	mp_sint32 getNextRecordingChannel(mp_sint32 currentChannel);
 
@@ -379,6 +393,7 @@ private:
 		MenuCommandIDUnmuteAll,
 		MenuCommandIDSelectChannel,
 		MenuCommandIDPorousPaste,
+		MenuCommandIDPasteStepFill,
 		MenuCommandIDSwapChannels,
 		MenuCommandIDChannelAdd,
 		MenuCommandIDChannelDelete,

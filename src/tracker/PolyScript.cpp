@@ -1,20 +1,37 @@
 #include "PolyScript.h"
+#include "PPOpenPanel.h"
+#include "Tracker.h"
+#include "SampleEditor.h"
+#include "PPSystem.h"
+#include "ControlIDs.h"
+#include "SectionSamples.h"
+#include "SampleEditorControl.h"
 
 FILE* PolyScript::scripts = NULL;
+PPString PolyScript::scriptsFolder = PPString("");
 
-void PolyScript::loadScripts(const PPString& scriptsFile, PPString* scriptsFolder) {
+void PolyScript::load( PPString scriptsFile, PPContextMenu *menu, Tracker *tracker ){
+
+	PPString path = PPString(System::getConfigFileName());
+	path.deleteAt( path.length()-6, 6); // strip 'config'
+	scriptsFolder = path;
+	loadScripts(scriptsFile );
+	loadScriptsToMenu(menu);
+}
+
+void PolyScript::loadScripts(PPString scriptsFile) {
     if (scripts) {
         fclose(scripts);
         scripts = NULL;
     }
-    scripts = fopen(scriptsFile.getStrBuffer(), "r");
+
+	PPString scriptsFileAbs = PPString(scriptsFolder);
+	scriptsFileAbs.append(scriptsFile);
+    scripts = fopen(scriptsFileAbs.getStrBuffer(), "r");
     if (!scripts) {
-        printf("Error: could not open %s\n", scriptsFile.getStrBuffer());
+        printf("scripts: did not detect %s\n", scriptsFileAbs.getStrBuffer());
         return;
-    }
-    *scriptsFolder = scriptsFile;
-    PPString path = scriptsFolder->stripPath();
-    scriptsFolder->deleteAt(scriptsFolder->length() - path.length() - 1, path.length() + 1);
+    }else printf("scripts: detected %s\n", scriptsFileAbs.getStrBuffer());
 }
 
 void PolyScript::loadScriptsToMenu(PPContextMenu* menu) {
@@ -24,7 +41,8 @@ void PolyScript::loadScriptsToMenu(PPContextMenu* menu) {
     int i = 0;
     rewind(scripts);
 
-    while (fscanf(scripts, SCRIPTS_FORMAT, name, cmd, ext) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
+    while (fscanf(scripts, SCRIPTS_FORMAT, name, ext, cmd) >= SCRIPTS_TOKENS_MIN && i < SCRIPTS_MAX) {
+		printf("%s | %s | %s\n",name,ext,cmd);
         menu->addEntry(name, MenuID + i);
         i++;
     }
@@ -39,13 +57,11 @@ int PolyScript::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScre
     PPString selectedFile;
     rewind(scripts);
 
-    if (ID == MenuIDFile) {
-        return runScript(cwd, cmd, screen, fin, fout, selectedFile);
-    }
 
-    while (fscanf(scripts, SCRIPTS_FORMAT, name, cmd, ext) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
+    while (fscanf(scripts, SCRIPTS_FORMAT, name, ext, cmd) >= SCRIPTS_TOKENS_MIN && i < SCRIPTS_MAX) {
         if (MenuID + i == ID) {
-            if (strlen(ext) == 0 || strcmp(ext, "exec") == 0) {
+	printf("JA %s %s %s:]\n",name,cmd, ext);
+            if (strlen(ext) == 0 || PPString(ext).startsWith(" ") || strcmp(ext, "exec") == 0) {
                 ext[0] = '\0'; // Default to "exec" if empty
             } else {
                 filepicker(name, ext, &selectedFile, screen);
@@ -74,7 +90,7 @@ int PolyScript::runScript(const PPString& cwd, const char* cmd, PPScreen* screen
              file.getStrBuffer());
 
     printf("> %s\n", finalCmd);
-    return system(finalCmd);
+    return 1; //system(finalCmd);
 }
 
 void PolyScript::filepicker(const char* name, const char* ext, PPString* result, PPScreen* screen) {
@@ -94,9 +110,10 @@ void PolyScript::filepicker(const char* name, const char* ext, PPString* result,
 
 void PolyScript::editScripts(const PPString& scriptsFile) {
     char command[512];
+	PPString application_cmd = PPString(""); // get from db or env
 
     // If a specific application command is provided, use it
-    if (!application_cmd.isEmpty()) {
+    if (!application_cmd.length() == 0) {
         snprintf(command, sizeof(command), "%s \"%s\" &", 
                  application_cmd.getStrBuffer(), scriptsFile.getStrBuffer());
     } else {
@@ -136,3 +153,57 @@ void PolyScript::editScripts(const PPString& scriptsFile) {
     system(command);
 }
 
+void PolyScript::onScriptMenu(int commandId, Tracker *tracker){
+	char cmd[255];
+	pp_int32 selected_instrument;
+	pp_int32 selected_sample;
+	PPString selected;
+	SampleEditor *sampleEditor = tracker->getSampleEditor();
+
+	#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
+	AllocConsole();				   // popup console for errors
+	HWND hwnd = ::GetConsoleWindow();
+	if (hwnd != NULL){ // prevent user from closing console (thus milkytracker)
+		HMENU hMenu = ::GetSystemMenu(hwnd, FALSE);
+		if (hMenu != NULL) DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
+	}
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+	#endif
+
+	PPPath *currentPath = PPPathFactory::createPath();
+	PPString projectPath = currentPath->getCurrent();
+	if( scriptsFolder.length() != 0 ) currentPath->change(scriptsFolder);
+	PPString fin   = PPString("in.wav");
+	PPString fout  = PPString("out.wav");
+	selected_instrument = (pp_int32)tracker->getListBoxInstruments()->getSelectedIndex();
+	selected_sample     = (pp_int32)tracker->getListBoxSamples()->getSelectedIndex();
+	// save samples to local disk
+	tracker->getModuleEditor()->saveSample(
+		fin,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->saveSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	sampleEditor->prepareUndo();
+	int ret = runScriptMenuItem(scriptsFolder, commandId, cmd, tracker->screen, fin, fout, &selected);
+	if (ret != 0 && ret != -1)
+		return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
+	tracker->getModuleEditor()->loadSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
+	tracker->sectionSamples->updateAfterLoad();
+	tracker->sectionSamples->getSampleEditorControl()->rangeAll(true);
+	tracker->sectionSamples->getSampleEditorControl()->showAll();
+	sampleEditor->finishUndo();
+	sampleEditor->postFilter();
+	currentPath->change(projectPath); // restore
+}
