@@ -89,7 +89,7 @@ class Synth
 
 	// ASCIISYNTH PRESETS: https://github.com/coderofsalvation/ASCIISYNTH
 	PPString preset[SYNTH_PRESETS] = {      // NOTE: update PRESETS_TOTAL when adding synths
-		"M1(N*(51)D)vA)/)M),(Xt@(*(((((((", // FM piano          
+		"M1(C*(51)D)vA)/)M),(Xt@(*(((((((", // FM piano          
 		"M1)8n)(/()((((((((((((((((((((((", // CYCLE organ        
 		"M1*l(?(0+(((((*~S)IM((.d)(((((((", // SONANT organ
 		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM bell

@@ -188,7 +188,7 @@ void Synth::FM( bool init ){
 		synths[ID].param[0].max   = SYNTH_LAST;
 
 		synths[ID].param[1].name  = "volume";
-		synths[ID].param[1].value = 42.0f;
+		synths[ID].param[1].value = 27.0f;
 		synths[ID].param[1].min   = 0.0f;
 		synths[ID].param[1].max   = (float)SYN_PARAM_MAX_VALUE;
 
@@ -419,12 +419,12 @@ void Synth::FM( bool init ){
 	pp_uint32 samples = (srate/6) * (int)synth->param[2].value; // 300ms * param
 	// enable overflow rendering when loop is set to forward
 	// to allow seamless loops without clicks
-	pp_uint32 overflow = 2;
+	pp_uint32 overflow = 3;
 	pp_uint32 looptype = (pp_uint32)synth->param[22].value;
 	pp_uint32 silence  = 0;
 	float     last     = 0.0;
 	if( looptype == 1 ){ // overflow until silence with forward loop
-		overflow = controls.spacetime > 0.1 ? (int)(1.0 + controls.spacetime*10) : 3;
+		overflow = controls.spacetime > 0.1 ? (int)(1.0 + controls.spacetime*10) : overflow;
 	}
 	TXMSample *sample = sampleEditor->isEmptySample() || !this->additive ? prepareSample(samples) : sampleEditor->getSample();
 
