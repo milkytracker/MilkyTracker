@@ -284,8 +284,10 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 		PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 		PPListBox* listBoxDstModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST3));
 		
-		if (!listBoxSrc || !listBoxDst)
-			return -1;
+		if (!listBoxSrc || !listBoxDst){
+			// sliderdialogs e.g. can just allow keyjazz 
+			return getPatternEditorControl()->isInstrumentEnabled() ? listBoxInstruments->getSelectedIndex() + 1 : 0;
+		}
 
 		PPListBox* focusedListBox = static_cast<PPListBox*>(container->getFocusedControl());
 		if (focusedListBox == NULL)
