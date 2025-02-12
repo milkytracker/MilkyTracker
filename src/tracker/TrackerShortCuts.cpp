@@ -151,7 +151,6 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 processBindings:
 				pp_int32 keyModifier = ::getKeyModifier(); 
 				bool res = executeBinding(eventKeyDownBindings, keyCode);
-
 				if (res && !isActiveEditing())
 					event->cancel();
 					
@@ -175,8 +174,6 @@ processBindings:
 			case VK_END:
 			case VK_PRIOR:
 			case VK_NEXT: {
-				if ( screen->hasFocusModal() )
-					break;
 
 				if (!::getKeyModifier() ||
 					::getKeyModifier() == KeyModifierALT ||
@@ -267,7 +264,7 @@ processBindings:
 			}
 
 		}
-		if (::getKeyModifier() == (KeyModifierSHIFT) ){
+		if (::getKeyModifier() == (KeyModifierSHIFT) && !screen->hasFocusModal() ){
 			doASCIISTEP16(keyCode, ::getKeyModifier() == (KeyModifierCTRL) );
 		}
 		

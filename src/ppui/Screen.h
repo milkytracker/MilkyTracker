@@ -108,7 +108,7 @@ public:
 	PPControl* getFocusedControl() const;
 
 	bool hasFocus(PPControl* control) const;
-	bool hasFocusModal(){ return lastMouseOverControl == modalControl; }
+	bool hasFocusModal(){ return modalControl != NULL && lastMouseOverControl == modalControl; }
 
 	void addControl(PPControl* control);
 	bool removeControl(PPControl* control);
