@@ -118,7 +118,6 @@ void Synth::setParam( int i, float v ){
 
 void Synth::random(){
 	random_index++;
-	printf("add random++\n");
 	if( random_index >= SYNTH_PRESETS ) random_index = 0;
 	ASCIISynthImport( preset[ random_index ] );
     FilterParameters par(synth->nparams);
@@ -130,6 +129,7 @@ void Synth::random(){
 		sampleEditor->clearSample();
 	}
 	sampleEditor->tool_synth(&par);
+	sampleEditor->resetSelection();
     update();
 	if( sliders != NULL ) sliders->show(false);
 }
