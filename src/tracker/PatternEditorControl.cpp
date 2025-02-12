@@ -197,13 +197,6 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
 #endif
 
-	editMenuControl->setFont(font);
-	moduleMenuControl->setFont(font);
-	patternMenuControl->setFont(font);
-	keyboardMenuControl->setFont(font);
-	channelMenuControl->setFont(font);
-	helpMenuControl->setFont(font);
-		
 	setRecordMode(false);
 	
 	transposeHandlerResponder = new TransposeHandlerResponder(*this);
@@ -236,6 +229,11 @@ void PatternEditorControl::setFont(PPFont* font)
 	this->font = font;
 	
 	adjustExtents();
+
+	if( parentScreen->getClassic() ){
+		// classic contextmenu font scales along with patternfont
+		editMenuControl->setFont(font);
+	}
 
 	assureCursorVisible();
 }
