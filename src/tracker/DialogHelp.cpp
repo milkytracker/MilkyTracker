@@ -46,7 +46,7 @@ DialogHelp::DialogHelp(PPScreen *screen,
 	linePatternFX(0)
 {
 	pp_int32 w = screen->getWidth() - 12;
-	pp_int32 h = screen->getHeight() - 50;
+	pp_int32 h = screen->getHeight() - (screen->getHeight()/4);
   if( w > 780 ) w = 780;
 	if (okCancel)
 		initDialog(screen, responder, id, caption, w, h, 26, "Ok", "Cancel");
@@ -112,7 +112,7 @@ DialogHelp::DialogHelp(PPScreen *screen,
 			// add bookmarks
 			if( line.startsWith("    Milky synth")           ) lineMilkySynth = lineN-1;
 			if( line.startsWith("     Alt-Enter Switch")     ) lineShortcuts  = lineN-1;
-			if( line.startsWith("       * 0xy [30]Arpeggio") ) linePatternFX  = lineN-1;
+			if( line.startsWith("       * 0xy [32]Arpeggio") ) linePatternFX  = lineN-1;
 			line = PPString("");
 			lineN++;
 		} else line.append( PPString(c) );

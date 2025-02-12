@@ -206,6 +206,8 @@
 				</ol>
 			</li>
 			<li><a href="#MIDI">MIDI support</a></li>
+			<li><a href="#DAWMultitrack">Exporting / [DAW] Multitrack</a></li>
+			<li><a href="#publishing">Publishing to the world</a></li>
 			<li><a href="#issues">Known issues and bug reports</a></li>
 			<li><a href="#credits">Credits</a></li>
 			<li><a href="#contact">Contact</a></li>
@@ -320,13 +322,15 @@
 
 		<h3 id="milkysynth">Milky synth</h3>
 		<p>
-			MilkyTracker offers a modest (beta) synthesizer to generate looped or single/multi-cycle waveforms.<br>
+			MilkyTracker offers a modest a multi-synthesizer to generate looped or single/multi-cycle waveforms.<br>
 			A synth-dialog appears when pressing the 'synth' or '*'-button in the sample-screen.<br>
 			The first slider allows several synth-algorithms:
 		</p>
 		<ol>
 			<li><b>FM</b>: synth (based on Riku Salminen's jamtoysynth)</li>
 			<li><b>CYCLE</b>: single/multi cycle waveforms</li>
+			<li><b>SONANT</b>: 4k PLsynth by [Ferris/YouthUprising,Dominic Szablewski]</li>
+			<li><b>UNZ</b>: percussion synth [based on FSM kick]</li>
 		</ol>
 
 		<p>
@@ -336,13 +340,20 @@
 			<li>the synth-buttons only work on empty- or previously synthesized samples.</li>
 			<li>enable additive/layered synthesis by hitting 'select all' before launching the synth-dialog</li>
 			<li>pressing the '*'-button will randomly select a starting-preset (which can be edited later)</li>
+      <li>extra ADSR & panning envelopes in the Instrument Editor (check the volume envelope checkbox)</li>
 		</ol>
+		<p>
+      <b>Note:</b> most parameters allow sample-overflow (long release/reverb/delay leaks into beginning of sample)
+			to aid seamless looping. Also, everything can be further modulated by the Instrument editor
+			(TIP: check the volume envelope-checkbox) to produce infinite unique textures and synths, so it does not
+			stop at the ADSR of FM.
+		</p>
 		<hr>
 		<p>
 			<b>ASCIISYNTH naming-convention</b>
 		</p>
 		<p>
-			Pressing 'OK' after the 'synth'-button will name the sample via the <a href="https://github.com/coderofsalvation/ASCIISYNTH" target="_blank">ASCIISYNTH</a> naming-convention.
+			Pressing 'OK' after the 'synth'-button will name the sample via the <a href="https://milkytracker.org/docs/ASCIISYNTH.txt" target="_blank">ASCIISYNTH</a> naming-convention.
 			This allows editing the generated preset across MOD/XM-modules (named with a 'M1' milkysynth prefix) later on.
 			In additive mode this gives you only access to the last generated preset.
 		</p>
@@ -395,15 +406,8 @@
 				</ul>
 			</li>
 		</ul>
-		<p>
-			Notes: most parameters allow sample-overflow (long release/reverb/delay leaks into beginning of sample)
-			to aid seamless looping. Also, everything can be further modulated by the Instrument editor
-			(TIP: check the volume envelope-checkbox) to produce infinite unique textures and synths, so it does not
-			stop at the ADSR of FM.
-		</p>
+
 		<hr>
-
-
 		<p>
 			<b>Cycle parameters:</b>
 		</p>
@@ -427,16 +431,101 @@
 			<li><b>feedback</b>: foldback distortion via sin(x*i)</li>
 			<li><b>loop type</b>:
 				<ul>
-					<li>no loop</li>
-					<li>forward</li>
-					<li>pingpong</li>
-					<li>one shot</li>
+					<li>0: no loop</li>
+					<li>1: forward</li>
+					<li>2: pingpong</li>
+					<li>3: one shot</li>
 				</ul>
 			</li>
 		</ul>
+
+		<hr>
 		<p>
-			Notes: ADSR & panning envelopes are done in the Instrument Editor (check the volume envelope checkbox).
+			<b>SONANT parameters:</b>
 		</p>
+		<ul>
+      <li><b>osc mix</b>: ratio between osc0 and osc1</li>
+			<li><b>attack</b>: fade-in of note</li>
+			<li><b>decay</b>: fade-out [sustain+release] of note</li>
+      <li><b>noise</b>: volume of noise oscillator</li>>
+      <li><b>osc waveforms</b>: sin/sq/saw/tri waveform combinations between osc0/osc1
+				<ul>
+					<li>octaves: octave-combinations between osc0/osc1</li>
+					<li>envelope mode: exponential freq-env combinations for osc0/osc1</li>
+				</ul>
+			</li>
+      <li><b>osc0</b>: frequency
+				<ul>
+					<li>detune: frequency</li>
+        </ul>
+      </li>
+      <li><b>osc1</b>: frequency
+				<ul>
+					<li>detune: frequency</li>
+        </ul>
+      </li>
+      <li><b>filter type</b>: [1]off [2]highpass [3]lowpass [4]bandpass [5]notch 
+				<ul>
+					<li>filter requency</li>
+					<li>filter resonance</li>
+        </ul>
+      </li>
+			<li><b>LFO amp/filter</b> LFO targets [0]nothing [1]amplitude [2]filterfreq [3]1+2
+				<ul>
+					<li>freq: LFO frequency</li>
+					<li>amount: LFO amplitude</li>
+					<li>waveform: sin/sq/saw/tri</li>
+				</ul>
+			</li>
+      <li><b>delay</b>: delay frequency (50% wet)</li>>
+      <li><b>trigger algo</b>: single/multi note presets</li>>
+			<li><b>spacetime</b>: seamless reverb amp + size</li>
+			<li><b>loop type</b>:
+				<ul>
+					<li>0: no loop</li>
+					<li>1: forward</li>
+					<li>2: pingpong</li>
+					<li>3: one shot</li>
+					<li>4: forward + 1x loopfold</li>
+					<li>5: forward + 2x loopfold</li>
+					<li>6: forward + 3x loopfold</li>
+				</ul>
+			</li>
+		</ul>
+		<hr>
+		<p>
+			<b>UNZ parameters:</b>
+		</p>
+		<ul>
+			<li> <b>volume</b>: total volume of the sample</li>
+			<li> <b>size</b>: samplesize ((samplerate/6)*i)</li>
+      <li><b>amp decay</b>: note fade-ratio between osc0 and osc1</li>
+			<li><b>frequency</b>: base frequency 
+				<ul>
+					<li>start: frequency slide begin</li>
+					<li>stop: frequency slide end</li>
+					<li>share: slide curve</li>
+				</ul>
+      </li>
+			<li><b>noise</b>: noise oscillator volume 
+				<ul>
+					<li>transient vol: transient oscillator volume</li>
+					<li>transient size: length of transient</li>
+					<li>attack: noise oscillator fade-in</li>
+					<li>sustain: noise oscillator max</li>
+					<li>release: noise oscillator fade-out</li>
+				</ul>
+      </li>
+			<li><b>reverb</b>: noise oscillator volume 
+				<ul>
+					<li>hp freq: highpass frequency</li>
+					<li>hp Q: highpass resonance</li>
+					<li>size: reverb impulse length</li>
+				</ul>
+      </li>
+      <li><b>feedback</b>: frequency multiplier</li> 
+      <li><b>attack</b>: overall attack of output</li> 
+    </ul>
 
 		<hr/>
 		<h3 id="channels-and-scopes">Channels and Scopes</h3>
@@ -741,55 +830,6 @@
 			<li>pattern-note selection: hold SHIFT and use arrow-keys to select a block</li>
 			<li>cut, copy &amp; paste by using Ctrl-X/C/V etc. </li>
 		</ol>
-
-		<p>
-			<b>ASCIISTEP16 stepsequencer mode</b>
-		</p>
-
-		<p>
-			<a href="https://web.archive.org/web/20241226181409/https://gist.github.com/coderofsalvation/8d760b191f4bb5465c8772d5618e5c4b" target="_blank">ASCIISTEP16</a> is a pckeyboard standard & translation of popular hardware 16-step drum/midi/sampler-sequencers.
-			It adds a 'grid'-like keyboard-performancemode to trackers, which toggles pattern-notes/channels.<br>
-			In Milkytracker pressing SHIFT activates ASCIISTEP16-mode (pressing SHIFT+Q e.g.).
-		</p>
-		<p>
-		Below is the keyboard-to-step translation:
-		</p>
-		<pre>
-			key step comment
-			--- ---  -------
-			Q   0
-			W   1
-			E   2
-			R   3
-			T   4
-			Y   5    international equivalent 'Z' e.g.
-			U   6
-			I   7
-			A   8
-			S   9
-			D   10
-			F   11
-			G   12
-			H   13
-			J   14
-			K   15
-
-			[un]mute
-			channel  key
-			-------  ---
-			1        '1'
-			2        '2'
-			3        '3'
-			4        '4'
-			5        '5'
-			6        '6'
-			7        '7'
-			8        '8'
-			9        '9'
-			10       '0'
-			11       '-'
-			12       '='
-		</pre>
 
 		<hr>
 
@@ -1186,6 +1226,56 @@
 				<td><em>left+right mouseclick scope</em></td><td>(un)solo channel</td>
 			</tr>
 		</table>
+
+		<p>
+			<b>ASCIISTEP16 stepsequencer mode</b>
+		</p>
+
+		<p>
+			<a href="https://milkytracker.org/docs/ASCIISTEP16.txt" target="_blank">ASCIISTEP16</a> is a pckeyboard standard & translation of popular hardware 16-step drum/midi/sampler-sequencers.
+			It adds a 'grid'-like keyboard-performancemode to trackers, which toggles pattern-notes/channels.<br>
+			In Milkytracker pressing SHIFT activates ASCIISTEP16-mode (pressing SHIFT+Q e.g.).
+		</p>
+		<p>
+		Below is the keyboard-to-step translation:
+		</p>
+		<pre>
+			key step comment
+			--- ---  -------
+			Q   0
+			W   1
+			E   2
+			R   3
+			T   4
+			Y   5    international equivalent 'Z' e.g.
+			U   6
+			I   7
+			A   8
+			S   9
+			D   10
+			F   11
+			G   12
+			H   13
+			J   14
+			K   15
+
+			[un]mute
+			channel  key
+			-------  ---
+			1        '1'
+			2        '2'
+			3        '3'
+			4        '4'
+			5        '5'
+			6        '6'
+			7        '7'
+			8        '8'
+			9        '9'
+			10       '0'
+			11       '-'
+			12       '='
+		</pre>
+
 
 
 		<hr/>
@@ -3477,6 +3567,7 @@
 			</tr>
 		</table>
 
+    <hr/>
 		<h2 id="MIDI">MIDI support</h2>
 		<p>
 			MilkyTracker supports basic MIDI input, which means you can use your MIDI device to feed notes into MilkyTracker. Enabling MIDI input varies a little from platform to platform - here's how to do it on&hellip;
@@ -3495,6 +3586,76 @@
 				<td>Enabled by default if available on the system. By default midi-in port 0 will be connected, but the environment variable MIDI_IN=x allows you to change that (see console output for available portnumbers). See the Linux readme for more details.</td>
 			</tr>
 		</table>
+    
+    <hr/>
+    <h2 id="DAWMultitrack">Exporting / [DAW] Multitrack</h2>
+    <p>
+      The milkytracker-experience is an OPENSOURCE but selfcontained workstation & fileformat using a PCKeyboard.<br>
+        This does not mean you cannot export wav-files (to upload on a faircamp artistsite e.g.), or do a multitrack import into a DAW:<br>
+        <ol>
+          <li>click 'file' to open file-explorer</li> 
+          <li>click 'module' in the file-explorer</li>
+          <li>click the 'wav'-option<li> 
+          <li>enter a filename if needed</li> 
+          <li>click 'save'</li>
+          <li>adjust settings if needed (*)</li>
+          <li>click 'record' (*)</li>
+          <li>profit!</li>
+      </ol> 
+      * = optionally you can click the file/channels/samp button:
+
+        <ul>
+          <li>file: renders one wav-file (default)</li>
+          <li>channels: renders each channel to seperate wav-file (multitrack)</li>
+          <li>samp: render to an instrument (equivalent of ctrl+shift+v in pattern editor)</li> 
+        </ul>
+
+      To import a track into a DAW: use 'channels' for multichannel export.<br> 
+      However, since channels can contain multiple instruments, a more popular approach is to export loops:<br>
+      </p>
+      <br>
+      <ul>
+        <li>set the orderlist to a certain pattern ('0A' e.g.)</li> 
+        <li>mute the channel (scopes) which should not be exported</li> 
+        <li>in step 6 (see above) enable 'allow muting'</li> 
+        <li>set the file/channels/samp-button to 'file'</li>
+        <li>set range from/to the pattern ('0A' e.g.)</li>
+        <li>click 'record' (rinse and repeat)</li>
+        <li>in DAW: import the wav-loops</li> 
+        <li>in DAW: set the BPM tempo to milkytracker's BPM</li> 
+      </ul>
+
+
+    </p>
+
+    <hr/>
+    <h2 id="publishing">Publishing</h2>
+    <p>
+      The previous section adresses ways to publish to traditional music-channels (streaming services e.g.).<br> 
+      However, the module ecosystem has its own selfoperated distribution-channels, which pre-date everything else.<br> 
+      This module 'verse' distributes portable source-remixable songs, something the traditional music-industry has never been 
+      able to achieve years later.<br>
+        How awesome is that?<br><br>
+      <br>
+        Cross-publish modules to the following channels for future generations/remixes:<br><br>
+
+      <ul>
+        <li><a href="https://modarchjve.org" target="_blank">https://modarchive.org</a></li> 
+        <li><a href="https://modland.com" target="_blank">https://modarchive.org</a></li> 
+        <li><a href="https://modules.pl" target="_blank">https://modules.pl</a></li> 
+        <li><a href="http://www.indiegamemusic.com/" target="_blank">http://www.indiegamemusic.com</a></li>
+        <li><a href="http://amp.dascene.net/" target="_blank">http://amp.dascene.net</a></li>
+      </ul>
+
+      To selfhost [a netlabel or artistprofile] on the web, check out:
+      <br><br>
+      <ul>
+        <li><a href="https://github.com/9001/copyparty" target="_blank">https://github.com/9001/copyparty (*)</a></li> 
+        <li><a href="https://codeberg.org/simonrepp/faircamp" target="_blank">https://codeberg.org/simonrepp/faircamp</a></li> 
+      </ul>
+      * = plays xm/mod/etc out of the box via automatic ffmpeg/libopenmpt transcoding
+
+    </p>
 
 		<h2 id="issues">Known issues and bug reports</h2>
 		<p>
@@ -3529,7 +3690,7 @@
 				<td><em>Deltafire</em></td><td>maintainer since v0.90.85</td>
 			</tr>
 			<tr>
-				<td><em>coderofsalvation</em></td><td>maintainer since v1.03.00</td>
+				<td><em>coderofsalvation</em></td><td>maintainer v1.03 till v1.06</td>
 			</tr>
 			<tr>
 				<td><em>kenet</em></td><td>graphics</td>
