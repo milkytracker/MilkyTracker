@@ -121,6 +121,12 @@ DialogHelp::DialogHelp(PPScreen *screen,
 
 }
 
+DialogHelp::~DialogHelp()
+{
+	// remember scrollposition
+	position = listBox->getStartIndex();
+}
+
 pp_int32 DialogHelp::handleEvent(PPObject* sender, PPEvent* event)
 {
 	if (event->getID() == eCommand)

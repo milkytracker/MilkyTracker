@@ -50,6 +50,7 @@ public:
 				  pp_int32 id,
 				  const PPString& caption,
 				  bool okCancel = false);
+	~DialogHelp();
 	
 	PPListBox* getListBox() { return listBox; }
 	void show(bool show);
