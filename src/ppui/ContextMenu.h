@@ -86,6 +86,7 @@ public:
 	
 	// menu controlling
 	void addEntry(const PPString& s, pp_int32 theId, PPContextMenu* contextMenu = NULL);
+	void clear(){ menu->items.clear(); }
 
 	bool setState(pp_int32 theId, pp_uint32 newState) { return menu->setState(theId, newState); }
 	

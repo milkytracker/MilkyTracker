@@ -9,29 +9,29 @@
 
 FILE* PolyScript::scripts = NULL;
 PPString PolyScript::scriptsFolder = PPString("");
+PPString PolyScript::scriptsFile   = PPString("");
 
-void PolyScript::load( PPString scriptsFile, PPContextMenu *menu, Tracker *tracker ){
+void PolyScript::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *tracker ){
 
 	PPString path = PPString(System::getConfigFileName());
 	path.deleteAt( path.length()-6, 6); // strip 'config'
 	scriptsFolder = path;
-	loadScripts(scriptsFile );
+	scriptsFile   = PPString(path);
+	scriptsFile.append(_scriptsFile);
+	loadScripts();
 	loadScriptsToMenu(menu);
 }
 
-void PolyScript::loadScripts(PPString scriptsFile) {
-    if (scripts) {
+void PolyScript::loadScripts() {
+    if (scripts != NULL) {
         fclose(scripts);
         scripts = NULL;
     }
-
-	PPString scriptsFileAbs = PPString(scriptsFolder);
-	scriptsFileAbs.append(scriptsFile);
-    scripts = fopen(scriptsFileAbs.getStrBuffer(), "r");
+    scripts = fopen(scriptsFile.getStrBuffer(), "r");
     if (!scripts) {
-        printf("scripts: did not detect %s\n", scriptsFileAbs.getStrBuffer());
+        printf("scripts: did not detect %s\n", scriptsFile.getStrBuffer());
         return;
-    }else printf("scripts: detected %s\n", scriptsFileAbs.getStrBuffer());
+    }else printf("scripts: detected %s\n", scriptsFile.getStrBuffer());
 }
 
 void PolyScript::loadScriptsToMenu(PPContextMenu* menu) {
@@ -42,10 +42,13 @@ void PolyScript::loadScriptsToMenu(PPContextMenu* menu) {
     rewind(scripts);
 
     while (fscanf(scripts, SCRIPTS_FORMAT, name, ext, cmd) >= SCRIPTS_TOKENS_MIN && i < SCRIPTS_MAX) {
-		printf("%s | %s | %s\n",name,ext,cmd);
-        menu->addEntry(name, MenuID + i);
+		if( ! PPString(name).startsWith("#") ){
+			menu->addEntry(name, MenuID + i);
+		}
         i++;
     }
+	menu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", MenuIDEdit + 1);
+	menu->addEntry("edit extensions", MenuIDEdit );
 }
 
 int PolyScript::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* screen,
@@ -108,7 +111,7 @@ void PolyScript::filepicker(const char* name, const char* ext, PPString* result,
     }
 }
 
-void PolyScript::editScripts(const PPString& scriptsFile) {
+void PolyScript::editScripts() {
     char command[512];
 	PPString application_cmd = PPString(""); // get from db or env
 
@@ -172,9 +175,13 @@ void PolyScript::onScriptMenu(int commandId, Tracker *tracker){
 	freopen("conout$", "w", stderr);
 	#endif
 
+	if( commandId == MenuIDEdit ) return editScripts();
+
 	PPPath *currentPath = PPPathFactory::createPath();
 	PPString projectPath = currentPath->getCurrent();
 	if( scriptsFolder.length() != 0 ) currentPath->change(scriptsFolder);
+
+	//PPSystemString in(ModuleEditor::getTempFilename());
 	PPString fin   = PPString("in.wav");
 	PPString fout  = PPString("out.wav");
 	selected_instrument = (pp_int32)tracker->getListBoxInstruments()->getSelectedIndex();

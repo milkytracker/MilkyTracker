@@ -203,12 +203,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("FX         \x10", 0xFFFF, subMenuFX);
 	editMenuControl->addEntry("Generators \x10", 0xFFFF, subMenuGenerators);
 	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
-	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced);
+	editMenuControl->addEntry(seperatorStringMed, -1);
 	
 	// scripting menu
 	subMenuPolyScript = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
-	editMenuControl->addEntry("Script     \x10", 0xFFFF, subMenuPolyScript );
-	PolyScript::load( PPString("scripts.sample.txt"), subMenuPolyScript, this->tracker );
+	editMenuControl->addEntry("Extension  \x10", 0xFFFF, subMenuPolyScript );
 
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
@@ -1765,6 +1764,10 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateQuarterSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
 	
+	// load scripts
+	subMenuPolyScript->clear();
+	PolyScript::load( PPString("extensions.txt"), subMenuPolyScript, this->tracker );
+
 	parentScreen->setContextMenuControl(editMenuControl);
 }
 
