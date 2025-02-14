@@ -34,7 +34,7 @@
 #include "PlayerController.h"
 #include "DialogBase.h"
 #include "FilterParameters.h"
-#include "PolyScript.h"
+#include "Addon.h"
 
 #include <algorithm>
 #include <math.h>
@@ -206,8 +206,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	
 	// scripting menu
-	subMenuPolyScript = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
-	editMenuControl->addEntry("Extension  \x10", 0xFFFF, subMenuPolyScript );
+	subMenuAddon = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
+	editMenuControl->addEntry("Addons     \x10", 0xFFFF, subMenuAddon );
 
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);
@@ -234,7 +234,7 @@ SampleEditorControl::~SampleEditorControl()
 	delete hScrollbar;
 	
 	delete editMenuControl;	
-	delete subMenuPolyScript;
+	delete subMenuAddon;
 	delete subMenuAdvanced;
 	delete subMenuXPaste;
     delete subMenuFX;
@@ -1237,7 +1237,7 @@ pp_int32 SampleEditorControl::handleEvent(PPObject* sender, PPEvent* event)
 		startPos = (pp_uint32)(v*pos);
 	}
 	else if ((sender == reinterpret_cast<PPObject*>(editMenuControl) ||
-			 sender == reinterpret_cast<PPObject*>(subMenuPolyScript) ||
+			 sender == reinterpret_cast<PPObject*>(subMenuAddon) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuAdvanced) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuXPaste) ||
 			 sender == reinterpret_cast<PPObject*>(subMenuPT) ||
@@ -1765,8 +1765,8 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
 	
 	// load scripts
-	subMenuPolyScript->clear();
-	PolyScript::load( PPString("extensions.txt"), subMenuPolyScript, this->tracker );
+	subMenuAddon->clear();
+	Addon::load( PPString("addons.txt"), subMenuAddon, this->tracker );
 
 	parentScreen->setContextMenuControl(editMenuControl);
 }
@@ -2027,9 +2027,9 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSynth);
 			break;
 	}
-	if (commandId >= PolyScript::MenuID)
+	if (commandId >= Addon::MenuID)
 	{
-		PolyScript::onScriptMenu( commandId, this->tracker );
+		Addon::onScriptMenu( commandId, this->tracker );
 	}
 }
 

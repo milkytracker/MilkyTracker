@@ -10,13 +10,13 @@
 #include <cstring>
 
 #define SCRIPTS_MAX 75
-#define SCRIPTS_TOKENS_MIN 2
+#define SCRIPTS_TOKENS 3
 #define SCRIPTS_FORMAT "%99[^;];%20[^;];%255[^\n]\n"
-#define PARAMS_FORMAT "%15[^;];%15[^;];%15[^\n]\n"
+#define PARAMS_FORMAT "%15[^;];%15[^;];%s"
 
 // <name>;<cmd format string>|<extension_for_filedialog>
 
-class PolyScript {
+class Addon {
 public:
     static const int MenuID = 10000;
     static const int MenuIDFile = MenuID - 1;

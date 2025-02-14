@@ -67,7 +67,7 @@ private:
 
 	Tracker* tracker;
 	PPContextMenu* editMenuControl;
-	PPContextMenu* subMenuPolyScript;
+	PPContextMenu* subMenuAddon;
 	PPContextMenu* subMenuFX;
 	PPContextMenu* subMenuAdvanced;
 	PPContextMenu* subMenuXPaste;

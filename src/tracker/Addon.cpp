@@ -1,4 +1,41 @@
-#include "PolyScript.h"
+// ############## Milkytracker addons ################
+// ##                                               ##
+// ## get more at https://..../                     ##
+// ##                                               ##
+// ###################################################
+// 
+// # syntax: name      ; flags ; command
+// ################################################
+// hello linux         ; w     ; cp %s %s  && pwd
+// hello windows       ; w     ; copy %s %s 
+// hello linux sliders ; w    ; hellosliders.sh %s %s $foo:1:5:3 bar:1:5:3
+// 
+// # ffmpeg.com
+// ffmpeg smooth       ; w    ; ffmpeg.com --smooth %s %s
+// 
+// ###################################################
+// ##                                               ##
+// ##      flags:  w = sample editor addon          ##
+// ##                  (shows up in contextmenu)    ##
+// ##                                               ##
+// ##              s = invokes parameter dialog     ##
+// ##                  the cmd runs twice now:      ##
+// ##                                               ##
+// ##                    1) PARAMS=1 [the cmd]      ##
+// ##                                               ##
+// ##                       output: foo;1:10:5      ##
+// ##                               bar;1:20:3      ##
+// ##                               ..and so on     ##
+// ##                                               ##
+// ##                    2) [the cmd]               ##
+// ##                                               ##
+// ##                                               ##
+// ##                                               ##
+// ###################################################
+// 
+
+
+#include "Addon.h"
 #include "PPOpenPanel.h"
 #include "Tracker.h"
 #include "SampleEditor.h"
@@ -7,11 +44,11 @@
 #include "SectionSamples.h"
 #include "SampleEditorControl.h"
 
-FILE* PolyScript::scripts = NULL;
-PPString PolyScript::scriptsFolder = PPString("");
-PPString PolyScript::scriptsFile   = PPString("");
+FILE* Addon::scripts = NULL;
+PPString Addon::scriptsFolder = PPString("");
+PPString Addon::scriptsFile   = PPString("");
 
-void PolyScript::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *tracker ){
+void Addon::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *tracker ){
 
 	PPString path = PPString(System::getConfigFileName());
 	path.deleteAt( path.length()-6, 6); // strip 'config'
@@ -22,81 +59,97 @@ void PolyScript::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *trac
 	loadScriptsToMenu(menu);
 }
 
-void PolyScript::loadScripts() {
+void Addon::loadScripts() {
     if (scripts != NULL) {
         fclose(scripts);
         scripts = NULL;
     }
     scripts = fopen(scriptsFile.getStrBuffer(), "r");
     if (!scripts) {
-        printf("scripts: did not detect %s\n", scriptsFile.getStrBuffer());
+        printf("addons: did not detect %s\n", scriptsFile.getStrBuffer());
         return;
-    }else printf("scripts: detected %s\n", scriptsFile.getStrBuffer());
+    }else printf("addons: loading %s\n", scriptsFile.getStrBuffer());
 }
 
-void PolyScript::loadScriptsToMenu(PPContextMenu* menu) {
+void Addon::loadScriptsToMenu(PPContextMenu* menu) {
     if (!scripts) return;
 
-    char name[100], cmd[255], ext[20];
-    int i = 0;
+    char name[100], cmd[255], ext[20], line[1024];
+    int i      = 0;
     rewind(scripts);
 
-    while (fscanf(scripts, SCRIPTS_FORMAT, name, ext, cmd) >= SCRIPTS_TOKENS_MIN && i < SCRIPTS_MAX) {
-		if( ! PPString(name).startsWith("#") ){
+	while (fgets(line,sizeof(line),scripts)){
+		if( line[0] == '#' ) continue; // skip comments
+		if( sscanf(line, SCRIPTS_FORMAT, name, ext, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
 			menu->addEntry(name, MenuID + i);
+			i++;
 		}
-        i++;
-    }
+	}
 	menu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", MenuIDEdit + 1);
-	menu->addEntry("edit extensions", MenuIDEdit );
+	menu->addEntry("edit addons", MenuIDEdit );
 }
 
-int PolyScript::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* screen,
+int Addon::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* screen,
                                  const PPString& fin, const PPString& fout, PPString* selectedName) {
     if (!scripts) return -1;
 
     int i = 0;
-    char name[100], ext[20];
+    char name[100], ext[20], line[1024];
     PPString selectedFile;
     rewind(scripts);
 
-
-    while (fscanf(scripts, SCRIPTS_FORMAT, name, ext, cmd) >= SCRIPTS_TOKENS_MIN && i < SCRIPTS_MAX) {
-        if (MenuID + i == ID) {
-	printf("JA %s %s %s:]\n",name,cmd, ext);
-            if (strlen(ext) == 0 || PPString(ext).startsWith(" ") || strcmp(ext, "exec") == 0) {
-                ext[0] = '\0'; // Default to "exec" if empty
-            } else {
-                filepicker(name, ext, &selectedFile, screen);
-            }
-            *selectedName = PPString(name).subString(0, 24);
-            return runScript(cwd, cmd, screen, fin, fout, selectedFile);
-        }
-        i++;
-    }
+	while (fgets(line,sizeof(line),scripts)){
+		if( line[0] == '#' ) continue; // skip comments
+		if( sscanf(line, SCRIPTS_FORMAT, name, ext, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
+			if (MenuID + i == ID) {
+				if (strlen(ext) == 0 
+						|| PPString(ext).startsWith(" ") 
+						|| strcmp(ext, "xp") == 0
+						|| strcmp(ext, "xi") == 0
+						|| strcmp(ext, "wav") == 0) {
+					ext[0] = '\0'; // Default to "exec" if empty
+				} else {
+					filepicker(name, ext, &selectedFile, screen);
+				}
+				*selectedName = PPString(name).subString(0, 24);
+				return runScript(cwd, cmd, screen, fin, fout, selectedFile);
+			}
+			i++;
+		}
+	}
 
     return -1;
 }
 
-int PolyScript::runScript(const PPString& cwd, const char* cmd, PPScreen* screen,
-                         const PPString& fin, const PPString& fout, const PPString& file) {
+
+int Addon::runScript(const PPString& cwd, const char* cmd, PPScreen* screen,
+                         const PPString& fin, const PPString& fout, const PPString& selectedFile) {
     char finalCmd[255];
-    PPString fclipboard;
+	int res;
+
+	setenv("SELECTED_FILE",selectedFile.getStrBuffer(),1);
 
     PPPath* currentPath = PPPathFactory::createPath();
     currentPath->change(cwd);
 
+	// first invoke without arguments [to present slider values]
+    snprintf(finalCmd, sizeof(finalCmd), cmd, "", "");
+    res = system(finalCmd) >> 8;
+	printf("exit=%i\n",res);
+	if( res == 255 ){ // present dialog values
+		printf("addons: show sliders!\n");
+		// setenv("P1",1); 
+	}
+
     snprintf(finalCmd, sizeof(finalCmd), cmd,
              fin.getStrBuffer(),
-             fout.getStrBuffer(),
-             fclipboard.getStrBuffer(),
-             file.getStrBuffer());
+             fout.getStrBuffer());
 
-    printf("> %s\n", finalCmd);
-    return 1; //system(finalCmd);
+    printf("addons: %s\n", finalCmd);
+    return system(finalCmd);
 }
 
-void PolyScript::filepicker(const char* name, const char* ext, PPString* result, PPScreen* screen) {
+void Addon::filepicker(const char* name, const char* ext, PPString* result, PPScreen* screen) {
     const char* extensions[] = {ext, name, NULL, NULL};
 
     PPOpenPanel* openPanel = new PPOpenPanel(screen, name);
@@ -111,7 +164,7 @@ void PolyScript::filepicker(const char* name, const char* ext, PPString* result,
     }
 }
 
-void PolyScript::editScripts() {
+void Addon::editScripts() {
     char command[512];
 	PPString application_cmd = PPString(""); // get from db or env
 
@@ -156,7 +209,7 @@ void PolyScript::editScripts() {
     system(command);
 }
 
-void PolyScript::onScriptMenu(int commandId, Tracker *tracker){
+void Addon::onScriptMenu(int commandId, Tracker *tracker){
 	char cmd[255];
 	pp_int32 selected_instrument;
 	pp_int32 selected_sample;
@@ -181,9 +234,15 @@ void PolyScript::onScriptMenu(int commandId, Tracker *tracker){
 	PPString projectPath = currentPath->getCurrent();
 	if( scriptsFolder.length() != 0 ) currentPath->change(scriptsFolder);
 
-	//PPSystemString in(ModuleEditor::getTempFilename());
-	PPString fin   = PPString("in.wav");
-	PPString fout  = PPString("out.wav");
+	// write temporary files
+	PPString tmpFilePath = PPString(ModuleEditor::getTempFilename());
+	PPString tmpFile    = tmpFilePath.stripPath();
+	tmpFilePath.deleteAt( tmpFilePath.length()-tmpFile.length(), tmpFile.length());
+	PPString fin   = PPString(tmpFilePath);
+	PPString fout  = PPString(tmpFilePath);
+	fin.append("in.wav");
+	fout.append("out.wav");
+
 	selected_instrument = (pp_int32)tracker->getListBoxInstruments()->getSelectedIndex();
 	selected_sample     = (pp_int32)tracker->getListBoxSamples()->getSelectedIndex();
 	// save samples to local disk
@@ -200,7 +259,7 @@ void PolyScript::onScriptMenu(int commandId, Tracker *tracker){
 	sampleEditor->prepareUndo();
 	int ret = runScriptMenuItem(scriptsFolder, commandId, cmd, tracker->screen, fin, fout, &selected);
 	if (ret != 0 && ret != -1)
-		return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "script error :/", Tracker::MessageBox_OK);
+		return tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "oops! check console :(", Tracker::MessageBox_OK);
 	tracker->getModuleEditor()->loadSample(
 		fout,
 		selected_instrument,

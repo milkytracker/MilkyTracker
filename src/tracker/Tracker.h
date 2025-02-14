@@ -644,7 +644,7 @@ private:
 	friend class SectionSwitcher;
 	friend class SampleEditorControl;
 	friend class Synth;
-	friend class PolyScript;
+	friend class Addon;
 };
 
 #endif
