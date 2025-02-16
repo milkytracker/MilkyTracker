@@ -11,10 +11,16 @@
 
 #define SCRIPTS_MAX 75
 #define SCRIPTS_TOKENS 3
+// <name>;<cmd format string>|<extension_for_filedialog>
 #define SCRIPTS_FORMAT "%99[^;];%20[^;];%255[^\n]\n"
 #define PARAMS_FORMAT "%15[^;];%15[^;];%s"
+#define MAX_PARAMS 21
 
-// <name>;<cmd format string>|<extension_for_filedialog>
+typedef struct {
+    int min, max, value;
+    char label[16];
+} Param;
+
 
 class Addon {
 public:
@@ -29,14 +35,16 @@ public:
     static int runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* screen,
                                  const PPString& fin, const PPString& fout, PPString* selectedName);
     static int runScript(const PPString& cwd, const char* cmd, PPScreen* screen,
-                         const PPString& fin, const PPString& fout, const PPString& file);
+                         const PPString& fin, const PPString& fout, const PPString& file, PPString name);
     static void filepicker(const char* name, const char* ext, PPString* result, PPScreen* screen);
     static void onScriptMenu(int commandId, Tracker *tracker);
+	static void parseAddon(const char *str, char *type, Param *params, int *param_count);
 
 private:
     static FILE* scripts;
 	static PPString scriptsFolder;
 	static PPString scriptsFile;
+	static Tracker *tracker;
 };
 
 #endif // SCRIPT_H

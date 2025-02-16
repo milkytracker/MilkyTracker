@@ -47,14 +47,16 @@
 FILE* Addon::scripts = NULL;
 PPString Addon::scriptsFolder = PPString("");
 PPString Addon::scriptsFile   = PPString("");
+Tracker *tracker = NULL;
 
-void Addon::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *tracker ){
+void Addon::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *_tracker ){
 
 	PPString path = PPString(System::getConfigFileName());
 	path.deleteAt( path.length()-6, 6); // strip 'config'
 	scriptsFolder = path;
 	scriptsFile   = PPString(path);
 	scriptsFile.append(_scriptsFile);
+	tracker = _tracker;
 	loadScripts();
 	loadScriptsToMenu(menu);
 }
@@ -112,7 +114,7 @@ int Addon::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* s
 					filepicker(name, ext, &selectedFile, screen);
 				}
 				*selectedName = PPString(name).subString(0, 24);
-				return runScript(cwd, cmd, screen, fin, fout, selectedFile);
+				return runScript(cwd, cmd, screen, fin, fout, selectedFile, PPString(name) );
 			}
 			i++;
 		}
@@ -123,9 +125,31 @@ int Addon::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* s
 
 
 int Addon::runScript(const PPString& cwd, const char* cmd, PPScreen* screen,
-                         const PPString& fin, const PPString& fout, const PPString& selectedFile) {
+                         const PPString& fin, const PPString& fout, const PPString& selectedFile, PPString name) {
     char finalCmd[255];
 	int res;
+
+	// parse addon parameters if any
+	char *str = "hellosliders.sh %s.wav %s.wav %foo:1:5:3 %bar:1:5:4";
+    char addonType[8];
+    Param params[MAX_PARAMS];
+    int param_count = 0;
+    parseAddon(str, addonType, params, &param_count);
+    printf("AddonType: %s\n", addonType);
+    for (int i = 0; i < param_count; i++) {
+        printf("Param[%d]: label=%s, min=%d, max=%d, value=%d\n", i, params[i].label, params[i].min, params[i].max, params[i].value);
+    }
+
+	// *TODO* present dialog
+	//if( param_count > 0 ){ 
+	//	tracker->dialog = new DialogSliders(tracker->screen, toolHandlerResponder, PP_DEFAULT_ID, name, param_count, tracker->getSampleEditor(), &SampleEditor::tool_scaleSample );
+	//	DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+	//	for (int i = 0; i < param_count; i++) {
+	//	  sliders->initSlider(i, float(params[i].min), float(params[i].max), float(params[i].value, params[i].label );
+	//	}
+
+	//	tracker->dialog->show();
+	//}
 
 	setenv("SELECTED_FILE",selectedFile.getStrBuffer(),1);
 
@@ -272,4 +296,23 @@ void Addon::onScriptMenu(int commandId, Tracker *tracker){
 	sampleEditor->finishUndo();
 	sampleEditor->postFilter();
 	currentPath->change(projectPath); // restore
+}
+
+void Addon::parseAddon(const char *str, char *type, Param *params, int *param_count) {
+    *param_count = 0;
+    char temp_str[256];
+    strncpy(temp_str, str, sizeof(temp_str) - 1);
+    temp_str[sizeof(temp_str) - 1] = '\0';
+    
+    char *token = strtok(temp_str, " ");
+    while (token) {
+        if (sscanf(token, "%%%[^.].%s", type, type) == 2) {
+            // Extract file type
+        } else if (sscanf(token, "%%%[^:]:%d:%d:%d", params[*param_count].label,
+                           &params[*param_count].min, &params[*param_count].max, &params[*param_count].value) == 4) {
+            (*param_count)++;
+        }
+        token = strtok(NULL, " ");
+    }
+
 }
