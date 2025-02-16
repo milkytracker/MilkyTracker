@@ -1,38 +1,25 @@
-// ############## Milkytracker addons ################
-// ##                                               ##
-// ## get more at https://..../                     ##
-// ##                                               ##
-// ###################################################
-// 
-// # syntax: name      ; flags ; command
-// ################################################
-// hello linux         ; w     ; cp %s %s  && pwd
-// hello windows       ; w     ; copy %s %s 
-// hello linux sliders ; w    ; hellosliders.sh %s %s $foo:1:5:3 bar:1:5:3
-// 
-// # ffmpeg.com
-// ffmpeg smooth       ; w    ; ffmpeg.com --smooth %s %s
-// 
-// ###################################################
-// ##                                               ##
-// ##      flags:  w = sample editor addon          ##
-// ##                  (shows up in contextmenu)    ##
-// ##                                               ##
-// ##              s = invokes parameter dialog     ##
-// ##                  the cmd runs twice now:      ##
-// ##                                               ##
-// ##                    1) PARAMS=1 [the cmd]      ##
-// ##                                               ##
-// ##                       output: foo;1:10:5      ##
-// ##                               bar;1:20:3      ##
-// ##                               ..and so on     ##
-// ##                                               ##
-// ##                    2) [the cmd]               ##
-// ##                                               ##
-// ##                                               ##
-// ##                                               ##
-// ###################################################
-// 
+//############## Milkytracker addons ################
+//##                                               ##
+//## get more at https://..../                     ##
+//##                                               ##
+//###################################################
+//
+//# syntax: name      ; command
+//################################################
+//hello linux         ; cp %s %s  && pwd
+//hello windows       ; copy %s %s 
+//hello linux sliders ; hellosliders.sh %s %s %foo:1:5:3 %bar:1:5:3
+//
+//# ffmpeg.com
+//ffmpeg smooth!       ; ffmpeg -y -i %s -af "afftfilt=real='re*0.6':imag='im*0.6':win_size=2048:overlap=0.9" %s
+//ffmpeg smooth atempo ; ffmpeg -y -i %s -af "atempo=0.5, atempo=2.0" %s
+//
+//
+
+
+// if first cmd not available, grayed out 
+// if 2 %s: it means export-import (sampleditor) script?
+
 
 
 #include "Addon.h"
@@ -47,7 +34,7 @@
 FILE* Addon::scripts = NULL;
 PPString Addon::scriptsFolder = PPString("");
 PPString Addon::scriptsFile   = PPString("");
-Tracker *tracker = NULL;
+Tracker* Addon::tracker = NULL;
 
 void Addon::load( PPString _scriptsFile, PPContextMenu *menu, Tracker *_tracker ){
 
@@ -76,13 +63,13 @@ void Addon::loadScripts() {
 void Addon::loadScriptsToMenu(PPContextMenu* menu) {
     if (!scripts) return;
 
-    char name[100], cmd[255], ext[20], line[1024];
+    char name[100], cmd[255], line[1024];
     int i      = 0;
     rewind(scripts);
 
 	while (fgets(line,sizeof(line),scripts)){
 		if( line[0] == '#' ) continue; // skip comments
-		if( sscanf(line, SCRIPTS_FORMAT, name, ext, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
+		if( sscanf(line, SCRIPTS_FORMAT, name, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
 			menu->addEntry(name, MenuID + i);
 			i++;
 		}
@@ -96,23 +83,17 @@ int Addon::runScriptMenuItem(const PPString& cwd, int ID, char* cmd, PPScreen* s
     if (!scripts) return -1;
 
     int i = 0;
-    char name[100], ext[20], line[1024];
+    char name[100], line[1024];
     PPString selectedFile;
     rewind(scripts);
 
 	while (fgets(line,sizeof(line),scripts)){
 		if( line[0] == '#' ) continue; // skip comments
-		if( sscanf(line, SCRIPTS_FORMAT, name, ext, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
+		if( sscanf(line, SCRIPTS_FORMAT, name, cmd) == SCRIPTS_TOKENS && i < SCRIPTS_MAX) {
 			if (MenuID + i == ID) {
-				if (strlen(ext) == 0 
-						|| PPString(ext).startsWith(" ") 
-						|| strcmp(ext, "xp") == 0
-						|| strcmp(ext, "xi") == 0
-						|| strcmp(ext, "wav") == 0) {
-					ext[0] = '\0'; // Default to "exec" if empty
-				} else {
-					filepicker(name, ext, &selectedFile, screen);
-				}
+				//if( pickfile )
+				//	filepicker(name, ext, &selectedFile, screen);
+				//}
 				*selectedName = PPString(name).subString(0, 24);
 				return runScript(cwd, cmd, screen, fin, fout, selectedFile, PPString(name) );
 			}

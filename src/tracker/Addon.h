@@ -10,9 +10,9 @@
 #include <cstring>
 
 #define SCRIPTS_MAX 75
-#define SCRIPTS_TOKENS 3
+#define SCRIPTS_TOKENS 2
 // <name>;<cmd format string>|<extension_for_filedialog>
-#define SCRIPTS_FORMAT "%99[^;];%20[^;];%255[^\n]\n"
+#define SCRIPTS_FORMAT "%99[^;];%255[^\n]\n"
 #define PARAMS_FORMAT "%15[^;];%15[^;];%s"
 #define MAX_PARAMS 21
 
