@@ -382,7 +382,8 @@ private:
 			SampleToolTypeGenerateAbsoluteSine,
 			SampleToolTypeGenerateQuarterSine,
 			SampleToolTypeReverb,
-			SampleToolTypeSynth
+			SampleToolTypeSynth,
+			SampleToolTypeAddon
 		};
 	
 	private:

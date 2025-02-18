@@ -492,6 +492,32 @@ public:
 		allocatedSize = str.allocatedSize;
 	}
 
+	void search_replace( const char *old, const char *replace) {
+		char *pos = strstr(strBuffer, old); // Find "old" in str
+		if (!pos) return; // If not found, return
+
+		size_t old_len = strlen(old);
+		size_t new_len = strlen(replace);
+		size_t tail_len = strlen(pos + old_len) + 1; // +1 for null terminator
+
+		if (new_len <= old_len) {
+			// Case 1: `new` is shorter or same size, overwrite and shift left if needed
+			memcpy(pos, replace, new_len);
+			memmove(pos + new_len, pos + old_len, tail_len);
+		} else {
+			// Case 2: `new` is longer, shift right to make space
+			// Check if the buffer has enough space
+			size_t buffer_len = strlen(strBuffer);
+			if (buffer_len + new_len - old_len >= buffer_len) {
+				memmove(pos + new_len, pos + old_len, tail_len);
+				memcpy(pos, replace, new_len);
+			} else {
+				// Handle the case when the buffer is not large enough
+				printf("Buffer is not large enough to hold the modified string\n");
+			}
+		}		
+	}
+
 	pp_int32 getIntValue() const
 	{
 		pp_uint32 v; 

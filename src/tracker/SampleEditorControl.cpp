@@ -34,6 +34,7 @@
 #include "PlayerController.h"
 #include "DialogBase.h"
 #include "FilterParameters.h"
+#include "DialogSliders.h"
 #include "Addon.h"
 
 #include <algorithm>
@@ -2029,7 +2030,12 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 	}
 	if (commandId >= Addon::MenuID)
 	{
-		Addon::onScriptMenu( commandId, this->tracker );
+		if( commandId == Addon::MenuIDEdit ){
+			Addon::editAddons();
+		}else{
+			Addon::onMenuSelect( commandId, this->tracker );
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeAddon);
+		}
 	}
 }
 
