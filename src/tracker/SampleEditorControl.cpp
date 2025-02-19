@@ -2030,11 +2030,23 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 	}
 	if (commandId >= Addon::MenuID)
 	{
-		if( commandId == Addon::MenuIDEdit ){
-			Addon::editAddons();
-		}else{
-			Addon::onMenuSelect( commandId, this->tracker );
-			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeAddon);
+		switch( commandId ){
+			case Addon::MenuIDEdit:
+				Addon::editAddons();
+				break;
+
+			case Addon::MenuIDImport:{
+				pp_int32 selected_instrument = (pp_int32)tracker->getListBoxInstruments()->getSelectedIndex();
+				pp_int32 selected_sample     = (pp_int32)tracker->getListBoxSamples()->getSelectedIndex();
+				Addon::importResult(selected_instrument, selected_sample);
+				break;
+			}
+
+			default:{
+				Addon::onMenuSelect( commandId, this->tracker );
+				invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeAddon);
+				break;
+			}
 		}
 	}
 }

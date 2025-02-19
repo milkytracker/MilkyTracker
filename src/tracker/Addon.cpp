@@ -1,27 +1,64 @@
-//############## Milkytracker addons ################
-//##                                               ##
-//## get more at https://..../                     ##
-//##                                               ##
-//###################################################
+//############## Milkytracker addons ##############################
+//##                                                             ##
+//## get more at https://..../                                   ##
+//##                                                             ##
+//## vars  : %s                   input [exported] wav           ##
+//##         %s                   output [imported[ wav          ##
+//##         %p(name:min:max:val) sliderdialog parameter value   ##
+//##                                                             ##                      
+//## syntax: name            ; command                           ##
+//#################################################################
 //
-//# syntax: name      ; command
-//################################################
-//hello linux         ; cp %s %s  && pwd
-//hello windows       ; copy %s %s 
-//hello linux sliders ; hellosliders.sh %s %s %foo:1:5:3 %bar:1:5:3
 //
-//# ffmpeg.com
-//smooth              ; ffmpeg -y -hide_banner -i %s -af "afftdn=nr=%reduction:1:97:10:nf=-%floor_noise:20:80:50:bm=%band_multiply:1:5:1:gs=%gain_smooth:0:50:0" %s
-//stretch speedup     ; ffmpeg -y -hide_banner -i %s -af "atempo=%speed:1:5:1" %s
-//stretch slowdown    ; ffmpeg -y -hide_banner -i %s -af "atempo=0.%speed:5:9:9" %s
-
-// if first cmd not available, grayed out 
-// if 2 %s: it means export-import (sampleditor) script?
-// %s.pd? triggers filepicker
-
+//# FFMPEG
+//# https://ffmpeg.org
+//#
+//# FX
+//ffmpeg smooth               ; ffmpeg -y -hide_banner -i %s -af "afftdn=nr=%p(reduction:1:97:10):nf=-%p(floor_noise:20:80:50):bm=%p(band_multiply:1:5:1):gs=%p(gain_smooth:0:50:0)" %s
+//ffmpeg stretch speedup      ; ffmpeg -y -hide_banner -i %s -af "atempo=%p(speed:1:5:1)" %s
+//ffmpeg stretch slowdown     ; ffmpeg -y -hide_banner -i %s -af "atempo=0.%p(speed:5:9:9)" %s
+//
+//# SOX 
+//# https://sourceforge.net/projects/sox/
+//#
+//# SAMPLERS
+//#
+//# ps1. uncomment the ones you want (and which work for your OS)
+//# ps2. if you dont want them to freeze the UI, add '&' and select 'Addon > import from addon' afterwards
+//# ps3. if you're on windows, uncomment the sox/waveaudio one
+//# TIP: add your own oneliner which immediately targets the right backed+inputdevice and call it 'hardwaresynth' e.g.
+//#
+//sampler: sox/alsa          ; sox -V6 -t alsa hw:%p(alsa_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: sox/pulse input   ; sox -V6 -t pulseaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: sox/pulse output  ; sox -V6 -t pulseaudio $(pactl list sources short | awk '/\.monitor\t/ {print $2}') -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: sox/coreaudio     ; sox -V6 -t coreaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: sox/JACK          ; sox -V6 -t jack default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: sox/waveaudio     ; sox -V6 -t waveaudio %p(pulse_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
+//sampler: JACK/jack_capture ; jack_capture -d %p(duration_sec:1:10:1) --channels 1 --port system:playback* %s
+//sampler: arecord/pulse     ; arecord -D pulse -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
+//sampler: arecord/alsa      ; arecord -D hw:%p(alsa_device:0:20:0),0 -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
+//sampler: pulseaudio/parec  ; timeout %p(duration_sec:1:10:1) parec -d $(pactl list sources short | awk '/\.monitor\t/ {print $2}') --channels=1 --rate=44100 --format=s16le --file-format=wav %s
+//
+//# linux/mac apps
+//tenacity                   ; tenacity %s &
+//audacity                   ; audacity %s &
+//sunvox                     ; sunvox %s &
+//polyphone                  ; polyphone &
+//
+//# windows apps
+//audacity                   ; start /b audacity.exe %s
+//sunvox                     ; start /b sunvox.exe %s
+//
+//# linux specific
+//#hello linux               ; echo %p(hello:1:5:3) && cp %s %s
+//
+//# windows specific ##############################################
+//#hello windows             ; echo %p(hello:1:5:3) && copy %s %s 
+//
 
 
 #include "Addon.h"
+#include "Addons.h"
 #include "PPOpenPanel.h"
 #include "Tracker.h"
 #include "SampleEditor.h"
@@ -31,14 +68,16 @@
 #include "SampleEditorControl.h"
 
 // singleton (since addons should never run in parallel)
+Param Addon::params[MAX_PARAMS];
 FILE* Addon::addons          = NULL;
 PPString Addon::addonsFolder = PPString("");
 PPString Addon::addonsFile   = PPString("");
 Tracker* Addon::tracker       = NULL;
-Param Addon::params[MAX_PARAMS];
-int Addon::param_count       = 0;
+int Addon::param_count        = 0;
 PPString Addon::selectedName  = PPString();
 PPString Addon::selectedCmd   = PPString();
+PPString Addon::fin           = PPString();
+PPString Addon::fout          = PPString();
 
 void Addon::load( PPString _addonsFile, PPContextMenu *menu, Tracker *_tracker ){
 
@@ -47,6 +86,15 @@ void Addon::load( PPString _addonsFile, PPContextMenu *menu, Tracker *_tracker )
 	addonsFolder = path;
 	addonsFile   = PPString(path);
 	addonsFile.append(_addonsFile);
+	// generate temporary files
+	PPString tmpFilePath = PPString(ModuleEditor::getTempFilename());
+	PPString tmpFile    = tmpFilePath.stripPath();
+	tmpFilePath.deleteAt( tmpFilePath.length()-tmpFile.length(), tmpFile.length());
+	fin   = PPString(tmpFilePath);
+	fout  = PPString(tmpFilePath);
+	fin.append("in.wav");
+	fout.append("out.wav");
+
 	tracker = _tracker;
 	loadAddons();
 	loadAddonsToMenu(menu);
@@ -59,23 +107,42 @@ void Addon::loadAddons() {
     }
     addons = fopen(addonsFile.getStrBuffer(), "r");
     if (!addons) {
-        printf("addons: did not detect %s\n", addonsFile.getStrBuffer());
-        return;
-    }else printf("addons: loading %s\n", addonsFile.getStrBuffer());
+		addons = fopen(addonsFile.getStrBuffer(), "wb");
+		if( addons ){
+			fwrite(src_tools_addons_txt,1,src_tools_addons_txt_len,addons);
+			fclose(addons);
+			addons = fopen(addonsFile.getStrBuffer(), "r");
+		}else printf("addons: could not write default %s\n", addonsFile.getStrBuffer());
+    }
+	printf("addons: loading %s\n", addonsFile.getStrBuffer());
 }
 
 void Addon::loadAddonsToMenu(PPContextMenu* menu) {
     if (!addons) return;
-    char name[100], cmd[255], line[1024];
-    int i      = 0;
+    char name[100], cmd[MAX_CMD_LENGTH], line[1024], testCmd[128];
+	bool brokenAddon = false;
+    int i            = 0;
     rewind(addons);
 	while (fgets(line,sizeof(line),addons)){
 		if( line[0] == '#' ) continue; // skip comments
 		if( sscanf(line, ADDON_FORMAT, name, cmd) == ADDON_TOKENS && i < ADDON_MAX) {
-			menu->addEntry(name, MenuID + i);
+			char *firstCmd = strtok(cmd," ");
+            snprintf(testCmd, sizeof(testCmd), "command -v %s > /dev/null 2>&1", firstCmd );
+            if (system(testCmd) == 0) { // application is installed/accessible 
+				menu->addEntry(name, MenuID + i);
+            }else{
+				brokenAddon = true;
+				if( getenv("ADDON_DEBUG") ) printf("addons: '%s' not detected\n", firstCmd, name );
+			}
 			i++;
 		}
 	}
+	if( brokenAddon && getenv("ADDON_DEBUG") ){
+		printf("addons: to enjoy (optional) addons, install missing utils to %s [or add to PATH]\n", addonsFolder.getStrBuffer());
+	}
+
+	menu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", MenuIDEdit + 1);
+	menu->addEntry("import from addon", MenuIDImport );
 	menu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", MenuIDEdit + 1);
 	menu->addEntry("edit addons", MenuIDEdit );
 }
@@ -101,15 +168,6 @@ int Addon::runMenuItem( const FilterParameters *par){
 	PPString projectPath = currentPath->getCurrent();
 	if( addonsFolder.length() != 0 ) currentPath->change(addonsFolder);
 
-	// write temporary files
-	PPString tmpFilePath = PPString(ModuleEditor::getTempFilename());
-	PPString tmpFile    = tmpFilePath.stripPath();
-	tmpFilePath.deleteAt( tmpFilePath.length()-tmpFile.length(), tmpFile.length());
-	PPString fin   = PPString(tmpFilePath);
-	PPString fout  = PPString(tmpFilePath);
-	fin.append("in.wav");
-	fout.append("out.wav");
-
 	selected_instrument = (pp_int32)tracker->getListBoxInstruments()->getSelectedIndex();
 	selected_sample     = (pp_int32)tracker->getListBoxSamples()->getSelectedIndex();
 	// save samples to local disk
@@ -125,21 +183,13 @@ int Addon::runMenuItem( const FilterParameters *par){
 		ModuleEditor::SampleFormatTypeWAV);
 	sampleEditor->prepareUndo();
 
-	int ret = runAddon(fin, fout, par);
+	int ret = runAddon(par);
 
 	if (ret != 0 && ret != -1){
 		tracker->showMessageBox(MESSAGEBOX_UNIVERSAL, "addon failed :( see console", Tracker::MessageBox_OK);
 		return ret;
 	}
-	printf("addon: importing /tmp/out.wav\n");
-	tracker->getModuleEditor()->loadSample(
-		fout,
-		selected_instrument,
-		selected_sample,
-		ModuleEditor::SampleFormatTypeWAV);
-		tracker->sectionSamples->updateAfterLoad();
-		tracker->sectionSamples->getSampleEditorControl()->rangeAll(true);
-		tracker->sectionSamples->getSampleEditorControl()->showAll();
+	importResult(selected_instrument, selected_sample);
 	//if( selected ){
 	//	tracker->getModuleEditor()->setSampleName(selected_instrument, selected_sample, selected.getStrBuffer(), selected.length() );
 	//}
@@ -150,10 +200,22 @@ int Addon::runMenuItem( const FilterParameters *par){
 
 }
 
+void Addon::importResult(int selected_instrument, int selected_sample ){
+	printf("addons: importing /tmp/out.wav\n");
+	tracker->getModuleEditor()->loadSample(
+		fout,
+		selected_instrument,
+		selected_sample,
+		ModuleEditor::SampleFormatTypeWAV);
+	tracker->sectionSamples->updateAfterLoad();
+	tracker->sectionSamples->getSampleEditorControl()->rangeAll(true);
+	tracker->sectionSamples->getSampleEditorControl()->showAll();
+}
 
-int Addon::runAddon(const PPString& fin, const PPString& fout, const FilterParameters *par) {
+
+int Addon::runAddon(const FilterParameters *par) {
 	int res;
-    char finalCmd[1024];
+    char finalCmd[MAX_CMD_LENGTH];
 
 	setenv("MILKY_ADDON",selectedName,true);
 
@@ -172,7 +234,7 @@ int Addon::runAddon(const PPString& fin, const PPString& fout, const FilterParam
 		ivalue = int(fvalue);                     // why not .intPart   ?
 		snprintf(tmp,20,"%i",ivalue);             // this looks/is convoluted 
 		PPString value  = PPString(tmp);          // but it bugfixes PPString( int(par->getParameter(i).floatPart ) )
-		PPString token  = PPString("%");     
+		PPString token  = PPString("%p(");     
 		token.append( params[i].label );
 		token.append(":");
 		snprintf(tmp,15,"%i", params[i].min);
@@ -183,11 +245,12 @@ int Addon::runAddon(const PPString& fin, const PPString& fout, const FilterParam
 		token.append(":");
 		snprintf(tmp,15,"%i", params[i].value);
 		token.append( tmp );
+		token.append(")");
 		finalCmdWithParams.search_replace( token.getStrBuffer(), value.getStrBuffer() );
 	}
 	// invoke without arguments [to present slider values]
     snprintf(finalCmd, sizeof(finalCmd), finalCmdWithParams.getStrBuffer(),
-             fin.getStrBuffer(),
+             finalCmdWithParams.matches("%s") == 2 ? fin.getStrBuffer() : fout.getStrBuffer(),
              fout.getStrBuffer());
 
     printf("addons: %s\n", finalCmd );
@@ -220,7 +283,7 @@ void Addon::editAddons() {
     } else {
 #ifdef _WIN32
         // On Windows, use `start` to open the file
-        snprintf(command, sizeof(command), "start \"\" \"%s\"", addonsFile.getStrBuffer());
+        snprintf(command, sizeof(command), "start \"\" \"%s\"", addonsFile.getStrBuffer()); // start /b for bg?
 #elif __APPLE__
         // On macOS, use `open` to open the file (no polling needed)
         snprintf(command, sizeof(command), "open \"%s\"", addonsFile.getStrBuffer());
@@ -257,7 +320,7 @@ void Addon::editAddons() {
 void Addon::onMenuSelect(int commandId, Tracker *tracker){
 
     int i = 0;
-    char name[100], cmd[1024], line[2048];
+    char name[100], cmd[MAX_CMD_LENGTH], line[MAX_CMD_LENGTH];
     PPString selectedFile;
     rewind(addons);
 
@@ -270,6 +333,7 @@ void Addon::onMenuSelect(int commandId, Tracker *tracker){
 				//}
 				selectedName = PPString(name).subString(0, 24);
 				selectedCmd  = PPString(cmd);
+				printf("selected=%s\n",selectedCmd.getStrBuffer());
 				parseParams(cmd);
 			}
 			i++;
@@ -280,17 +344,14 @@ void Addon::onMenuSelect(int commandId, Tracker *tracker){
 void Addon::parseParams(const char *str){
     param_count = 0;
     const char *ptr = str;
-    while ((ptr = strchr(ptr, '%')) != nullptr) {
-        // Skip %s placeholders
-        if (strncmp(ptr, "%s", 2) == 0) {
-            ptr += 2;
-            continue;
-        }
-        // Try to extract parameters in %key:min:max:value format
+
+    while ((ptr = strstr(ptr, "%p(")) != nullptr) {  // Look for "%p("
+        ptr += 3;  // Move past "%p("
+
+        // Extract content inside the parentheses
         char label[16];
         int min, max, value;
-        if (sscanf(ptr, "%%%15[^:]:%d:%d:%d", label, &min, &max, &value) == 4) {
-            // Store in params array
+        if (sscanf(ptr, "%15[^:]:%d:%d:%d)", label, &min, &max, &value) == 4) {
             if (param_count < MAX_PARAMS) {
                 strncpy(params[param_count].label, label, sizeof(params[param_count].label) - 1);
                 params[param_count].label[sizeof(params[param_count].label) - 1] = '\0';
@@ -301,11 +362,14 @@ void Addon::parseParams(const char *str){
             }
         }
 
-
-        // Move to the next '%' occurrence
-        ptr++;
-    }	
-   for (int i = 0; i < param_count; i++) {
-		printf("%s %i %i %i\n", params[i].label,params[i].min,params[i].max,params[i].value);
+        // Move past the closing parenthesis `)` to find the next parameter
+        ptr = strchr(ptr, ')');
+        if (!ptr) break; // Stop if no closing parenthesis is found
+        ptr++; // Move to the next character after ')'
     }
+
+    // Debug output
+    for (int i = 0; i < param_count; i++) {
+        printf("Parsed: %s %d %d %d\n", params[i].label, params[i].min, params[i].max, params[i].value);
+    }	
 }

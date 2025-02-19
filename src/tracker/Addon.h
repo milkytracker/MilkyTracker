@@ -15,11 +15,9 @@
 #define ADDON_MAX 75
 #define ADDON_TOKENS 2
 // <name>;<cmd format string>|<extension_for_filedialog>
-#define ADDON_FORMAT "%99[^;];%255[^\n]\n"
-#define PARAMS_FORMAT1 "%%%[^:]:%d:%d:%d";
-#define PARAMS_FORMAT2 "%*[^%]%%%[^:]:%d:%d:%d";
-#define PARAMS_FORMATS 2
 #define MAX_PARAMS 21
+#define MAX_CMD_LENGTH 2048
+#define ADDON_FORMAT "%99[^;];%2048[^\n]\n"
 
 typedef struct {
     int min, max, value;
@@ -30,8 +28,9 @@ typedef struct {
 class Addon {
 public:
     static const int MenuID = 10000;
-    static const int MenuIDFile = MenuID - 1;
-    static const int MenuIDEdit = MenuID + ADDON_MAX;
+    static const int MenuIDFile   = MenuID - 1;
+    static const int MenuIDEdit   = MenuID + ADDON_MAX;
+    static const int MenuIDImport = MenuID + ADDON_MAX + 1;
 	static Param params[MAX_PARAMS];
 	static int param_count;
 	static PPString selectedName;
@@ -39,11 +38,12 @@ public:
 
 	static void load( PPString _addonsFile, PPContextMenu *menu, Tracker *tracker );
     static void loadAddons();
+	static void importResult(int selected_instrument, int selected_sample );
 	static void editAddons();
     static void loadAddonsToMenu(PPContextMenu* menu);
     static void onMenuSelect(int commandId, Tracker *tracker);
     static int runMenuItem(const FilterParameters *par);
-    static int runAddon( const PPString& fin, const PPString& fout, const FilterParameters *par);
+    static int runAddon( const FilterParameters *par);
     static void filepicker(const char* name, const char* ext, PPString* result, PPScreen* screen);
 	static void parseParams(const char *str);
 
@@ -52,6 +52,8 @@ private:
 	static PPString addonsFolder;
 	static PPString addonsFile;
 	static Tracker *tracker;
+	static PPString fin;  
+	static PPString fout;
 };
 
 #endif // SCRIPT_H

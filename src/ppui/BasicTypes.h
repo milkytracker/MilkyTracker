@@ -538,6 +538,19 @@ public:
 		return numLines;
 	}
 
+	pp_int32 matches(const char *str) {
+		pp_int32 count = 0;
+		const char *pos = strBuffer;
+
+		while ((pos = strstr(pos, str)) != NULL) {
+			count++;
+			pos += strlen(str); // Move past the found occurrence
+		}
+
+		return count;
+	}
+
+
 	void toUpper()
 	{
 		for (pp_uint32 i = 0; i < length(); i++)
