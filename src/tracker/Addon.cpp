@@ -1,62 +1,3 @@
-//############## Milkytracker addons ##############################
-//##                                                             ##
-//## get more at https://..../                                   ##
-//##                                                             ##
-//## vars  : %s                   input [exported] wav           ##
-//##         %s                   output [imported[ wav          ##
-//##         %p(name:min:max:val) sliderdialog parameter value   ##
-//##                                                             ##                      
-//## syntax: name            ; command                           ##
-//#################################################################
-//
-//
-//# FFMPEG
-//# https://ffmpeg.org
-//#
-//# FX
-//ffmpeg smooth               ; ffmpeg -y -hide_banner -i %s -af "afftdn=nr=%p(reduction:1:97:10):nf=-%p(floor_noise:20:80:50):bm=%p(band_multiply:1:5:1):gs=%p(gain_smooth:0:50:0)" %s
-//ffmpeg stretch speedup      ; ffmpeg -y -hide_banner -i %s -af "atempo=%p(speed:1:5:1)" %s
-//ffmpeg stretch slowdown     ; ffmpeg -y -hide_banner -i %s -af "atempo=0.%p(speed:5:9:9)" %s
-//
-//# SOX 
-//# https://sourceforge.net/projects/sox/
-//#
-//# SAMPLERS
-//#
-//# ps1. uncomment the ones you want (and which work for your OS)
-//# ps2. if you dont want them to freeze the UI, add '&' and select 'Addon > import from addon' afterwards
-//# ps3. if you're on windows, uncomment the sox/waveaudio one
-//# TIP: add your own oneliner which immediately targets the right backed+inputdevice and call it 'hardwaresynth' e.g.
-//#
-//sampler: sox/alsa          ; sox -V6 -t alsa hw:%p(alsa_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: sox/pulse input   ; sox -V6 -t pulseaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: sox/pulse output  ; sox -V6 -t pulseaudio $(pactl list sources short | awk '/\.monitor\t/ {print $2}') -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: sox/coreaudio     ; sox -V6 -t coreaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: sox/JACK          ; sox -V6 -t jack default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: sox/waveaudio     ; sox -V6 -t waveaudio %p(pulse_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-//sampler: JACK/jack_capture ; jack_capture -d %p(duration_sec:1:10:1) --channels 1 --port system:playback* %s
-//sampler: arecord/pulse     ; arecord -D pulse -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
-//sampler: arecord/alsa      ; arecord -D hw:%p(alsa_device:0:20:0),0 -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
-//sampler: pulseaudio/parec  ; timeout %p(duration_sec:1:10:1) parec -d $(pactl list sources short | awk '/\.monitor\t/ {print $2}') --channels=1 --rate=44100 --format=s16le --file-format=wav %s
-//
-//# linux/mac apps
-//tenacity                   ; tenacity %s &
-//audacity                   ; audacity %s &
-//sunvox                     ; sunvox %s &
-//polyphone                  ; polyphone &
-//
-//# windows apps
-//audacity                   ; start /b audacity.exe %s
-//sunvox                     ; start /b sunvox.exe %s
-//
-//# linux specific
-//#hello linux               ; echo %p(hello:1:5:3) && cp %s %s
-//
-//# windows specific ##############################################
-//#hello windows             ; echo %p(hello:1:5:3) && copy %s %s 
-//
-
-
 #include "Addon.h"
 #include "Addons.h"
 #include "PPOpenPanel.h"
@@ -234,7 +175,7 @@ int Addon::runAddon(const FilterParameters *par) {
 		ivalue = int(fvalue);                     // why not .intPart   ?
 		snprintf(tmp,20,"%i",ivalue);             // this looks/is convoluted 
 		PPString value  = PPString(tmp);          // but it bugfixes PPString( int(par->getParameter(i).floatPart ) )
-		PPString token  = PPString("%p(");     
+		PPString token  = PPString("%~(");     
 		token.append( params[i].label );
 		token.append(":");
 		snprintf(tmp,15,"%i", params[i].min);
@@ -345,13 +286,13 @@ void Addon::parseParams(const char *str){
     param_count = 0;
     const char *ptr = str;
 
-    while ((ptr = strstr(ptr, "%p(")) != nullptr) {  // Look for "%p("
-        ptr += 3;  // Move past "%p("
+    while ((ptr = strstr(ptr, "%~(")) != nullptr) {  // Look for "%~("
+        ptr += 3;  // Move past "%~("
 
         // Extract content inside the parentheses
-        char label[16];
+        char label[25];
         int min, max, value;
-        if (sscanf(ptr, "%15[^:]:%d:%d:%d)", label, &min, &max, &value) == 4) {
+        if (sscanf(ptr, "%25[^:]:%d:%d:%d)", label, &min, &max, &value) == 4) {
             if (param_count < MAX_PARAMS) {
                 strncpy(params[param_count].label, label, sizeof(params[param_count].label) - 1);
                 params[param_count].label[sizeof(params[param_count].label) - 1] = '\0';

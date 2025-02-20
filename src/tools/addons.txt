@@ -1,101 +1,157 @@
-############## Milkytracker addons ##############################
-##                                                             ##
-## get more at https://..../                                   ##
-##                                                             ##
-## vars  : %s                   input [exported] wav           ##
-##         %s                   output [imported[ wav          ##
-##         %p(name:min:max:val) sliderdialog parameter value   ##
-##                                                             ##                      
-## syntax: name            ; command                           ##
-#################################################################
+####################### Milkytracker addons ###############################
+##                                                                       ##       
+## Welcome to the exciting world of Milkytracker addons.                 ##
+## These exciting addons allow integration with apps/utils/plugins found ##
+## on the host OS.                                                       ##
+## They are triggered via parametric cli cmds, so you can easily script  ##
+## your own, without the traditional burden of VST SDK's etc.            ##
+##                                                                       ##
+## Addons are defined in this file (you're currently reading), and are   ##
+##  ignored when they are not detected/installed on the OS:              ##
+##                                                                       ##
+##   LINUX/MAC:  ~/.config/milkytracker/addons.txt                       ##
+##     WINDOWS:  C:\Users\<user>\AppData\Roaming\MilkyTracker\addons.txt ##
+##                                                                       ##
+## Anyways, feel free to just comment out addons you don't use often,    ##
+## Also, you're encouraged to share/find wonderful addons here:          ##
+##                                                                       ##
+##         https://github.com/milkytracker/milkytracker-addons           ##
+##                                                                       ##
+## For more (developer) info on addons, see the footer-comments below.   ##
+##                                                                       ##
+###########################################################################
 
-
-# LADSPA PLUGINS
+# quick links:
 #
-# these are examples of sliderdialogs for ladspa plugins
-LADSPA smooth decimate      ; sox %s -D %s rate 44100 ladspa smooth_decimate_1414 %p(rate:1:44100:6000) 0.%p(smooth:1:9:9)
-LADSPA fastLookaheadLimiter ; ffmpeg -y -hide_banner -i %s -af "ladspa=fast_lookahead_limiter_1913:fastLookaheadLimiter:20|0|2" %s
+#   CSOUND FX/SYNTH :     https://github.com/milkytracker/milkytracker-addons/tree/master/csound
+#   LADSPA PLUGIN FX:     https://github.com/milkytracker/milkytracker-addons/tree/master/ladspa 
+#   RANDOM SAMPLE PICKER: https://github.com/milkytracker/milkytracker-addons/tree/master/random-sample
 
 # FFMPEG
 # https://ffmpeg.org
+# make sure you have ffmpeg installed (manually/via package manager) otherwise milkytracker ignores these addons
 #
-# FX
-ffmpeg stretch speedup      ; ffmpeg -y -hide_banner -i %s -af "atempo=%p(speed:1:5:1)" %s
-ffmpeg stretch slowdown     ; ffmpeg -y -hide_banner -i %s -af "atempo=0.%p(speed:5:9:9)" %s
-ffmpeg pitchshift up        ; ffmpeg -y -hide_banner -i %s -af asetrate=44100*2,aresample=44100,atempo=1/%p(shift:1:5:2) %s
-ffmpeg pitchshift down      ; ffmpeg -y -hide_banner -i %s -af asetrate=44100/2,aresample=44100,atempo=1/0.%p(shift:5:9:5) %s
+ffmpeg stretch speedup      ; ffmpeg -y -hide_banner -i %s -af "atempo=%~(speed:1:5:1)" %s
+ffmpeg stretch slowdown     ; ffmpeg -y -hide_banner -i %s -af "atempo=0.%~(speed:5:9:9)" %s
+ffmpeg pitchshift up        ; ffmpeg -y -hide_banner -i %s -af asetrate=44100*2,aresample=44100,atempo=1/%~(shift:1:5:2) %s
+ffmpeg pitchshift down      ; ffmpeg -y -hide_banner -i %s -af asetrate=44100/2,aresample=44100,atempo=1/0.%~(shift:5:9:5) %s
 ffmpeg flanger              ; ffmpeg -y -hide_banner -i %s -af flanger %s
-ffmpeg phaser               ; ffmpeg -y -hide_banner -i %s -af "aphaser=in_gain=0.%p(in_gain:1:9:6):delay=%p(delay:0:10:3):decay=0.%p(decay:1:9:4):speed=0.%p(speed:1:9:2):out_gain=0.%p(out_gain:1:9:9)" %s 
-ffmpeg deesser              ; ffmpeg -y -hide_banner -i %s -af "deesser=i=0.%p(intensity:1:9:4):m=0.%p(treble_duck:1:9:2):f=0.%p(keep_freq:1:9:2)" %s
-ffmpeg gate                 ; ffmpeg -y -hide_banner -i %s -af "agate=mode=downward:range=0.%p(range:1:9:1):threshold=0.%p(threshold:1:9:1):ratio=%p(ratio:1:9000:2):attack=%p(attack:1:9000:20):release=%p(release:1:9000:250):makeup=%p(makeup:1:64:1):knee=%p(knee:1:8:3)" %s
-ffmpeg expander             ; ffmpeg -y -hide_banner -i %s -af "agate=mode=upward:range=0.%p(range:1:9:1):threshold=0.%p(threshold:1:9:1):ratio=%p(ratio:1:9000:2):attack=%p(attack:1:9000:20):release=%p(release:1:9000:250):makeup=%p(makeup:1:64:1):knee=%p(knee:1:8:3)" %s
+ffmpeg phaser               ; ffmpeg -y -hide_banner -i %s -af "aphaser=in_gain=0.%~(in_gain:1:9:6):delay=%~(delay:0:10:3):decay=0.%~(decay:1:9:4):speed=0.%~(speed:1:9:2):out_gain=0.%~(out_gain:1:9:9)" %s 
+ffmpeg deesser              ; ffmpeg -y -hide_banner -i %s -af "deesser=i=0.%~(intensity:1:9:4):m=0.%~(treble_duck:1:9:2):f=0.%~(keep_freq:1:9:2)" %s
+ffmpeg gate                 ; ffmpeg -y -hide_banner -i %s -af "agate=mode=downward:range=0.%~(range:1:9:1):threshold=0.%~(threshold:1:9:1):ratio=%~(ratio:1:9000:2):attack=%~(attack:1:9000:20):release=%~(release:1:9000:250):makeup=%~(makeup:1:64:1):knee=%~(knee:1:8:3)" %s
+ffmpeg expander             ; ffmpeg -y -hide_banner -i %s -af "agate=mode=upward:range=0.%~(range:1:9:1):threshold=0.%~(threshold:1:9:1):ratio=%~(ratio:1:9000:2):attack=%~(attack:1:9000:20):release=%~(release:1:9000:250):makeup=%~(makeup:1:64:1):knee=%~(knee:1:8:3)" %s
 ffmpeg compand              ; ffmpeg -y -hide_banner -i %s -af compand %s
 ffmpeg crystalizer          ; ffmpeg -y -hide_banner -i %s -af crystalizer=i=1 %s
-ffmpeg denoise              ; ffmpeg -y -hide_banner -i %s -af "afftdn=nr=%p(reduction:1:97:10):nf=-%p(floor_noise:20:80:50):bm=%p(band_multiply:1:5:1):gs=%p(gain_smooth:0:50:0)" %s
+ffmpeg denoise              ; ffmpeg -y -hide_banner -i %s -af "afftdn=nr=%~(reduction:1:97:10):nf=-%~(floor_noise:20:80:50):bm=%~(band_multiply:1:5:1):gs=%~(gain_smooth:0:50:0)" %s
 
-# SOX SAMPLERS
-# https://sourceforge.net/projects/sox/
+# SAMPLERS
 #
-# ps1. uncomment the ones you want (and which work for your OS)
-# ps2. if you dont want them to freeze the UI, add '&' and select 'Addon > import from addon' afterwards
-# ps3. if you're on windows, uncomment the sox/waveaudio one
-# TIP: add your own oneliner which immediately targets the right backed+inputdevice and call it 'hardwaresynth' e.g.
+# ps1. linux users probably want to have sox installed (manually or via package manager)
+# ps2. uncomment the ones you want (and which work for your OS)
+# ps3. if you dont want them to freeze the UI, add '&' and select 'Addon > import from addon' afterwards
+# ps4. if you're on windows, uncomment the sox/waveaudio one
 #
-sampler sox/alsa          ; sox -V6 -t alsa hw:%p(alsa_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler sox/pulse input   ; sox -V6 -t pulseaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler sox/pulse output  ; sox -V6 -t pulseaudio $(pactl list sources short | awk '/\.monitor\t/ {print $2}') -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler sox/coreaudio     ; sox -V6 -t coreaudio default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler sox/JACK          ; sox -V6 -t jack default -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler sox/waveaudio     ; sox -V6 -t waveaudio %p(pulse_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %p(duration_sec:1:10:1)
-sampler JACK/jack_capture ; jack_capture -d %p(duration_sec:1:10:1) --channels 1 --port system:playback* %s
-sampler arecord/pulse     ; arecord -D pulse -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
-sampler arecord/alsa      ; arecord -D hw:%p(alsa_device:0:20:0),0 -f S16_LE -r 44100 -c 1 -d %p(duration_sec:1:10:1) %s
-sampler pulseaudio/parec  ; timeout %p(duration_sec:1:10:1) parec -d $(pactl list sources short | awk '/\.monitor\t/ {print $2}') --channels=1 --rate=44100 --format=s16le --file-format=wav %s ; exit 0
+sampler sox/alsa          ; sox -V6 -t alsa hw:%~(alsa_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler sox/pulse input   ; sox -V6 -t pulseaudio default -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler sox/pulse output  ; sox -V6 -t pulseaudio $(pactl list sources short | awk '/\.monitor\t/ {print $2}') -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler sox/coreaudio     ; sox -V6 -t coreaudio default -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler sox/JACK          ; sox -V6 -t jack default -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler sox/waveaudio     ; sox -V6 -t waveaudio %~(pulse_device:0:20:0) -c1 -b16 -r44100 %s trim 0 %~(duration_sec:1:10:1)
+sampler JACK/jack_capture ; jack_capture -d %~(duration_sec:1:10:1) --channels 1 --port system:playback* %s
+sampler arecord/pulse     ; arecord -D pulse -f S16_LE -r 44100 -c 1 -d %~(duration_sec:1:10:1) %s
+sampler arecord/alsa      ; arecord -D hw:%~(alsa_device:0:20:0),0 -f S16_LE -r 44100 -c 1 -d %~(duration_sec:1:10:1) %s
+sampler pulseaudio/parec  ; parec --version && timeout %~(duration_sec:1:10:1) parec -d $(pactl list sources short | awk '/\.monitor\t/ {print $2}') --channels=1 --rate=44100 --format=s16le --file-format=wav %s ; exit 0
 
-# SOX FX 
-# https://sourceforge.net/projects/sox/
 #
-sox chorus                 ; sox %s -D %s chorus 0.%p(gain_in:0:9:7) 0.%p(gain_out:0:9:9) %p(delay:20:200:55) 0.%p(decay:0:9:4) 0.%p(speed:1:9:2) %p(depth:0:9:2) -t
-sox phaser                 ; sox %s -D %s phaser 0.%p(gain_in:0:9:7) 0.%p(gain_out:0:9:9) %p(delay:0:5:4) 0.%p(decay:0:9:4) 0.%p(speed:1:9:6) -t
-sox freeverb               ; sox %s -D %s gain -1 pad 0 %p(sample_length:1:10:2) reverb %p(reverberance:0:100:50) %p(hf_damping:0:100:50) %p(room_scale:0:100:100) 100 %p(pre_delay:0:500:20) %p(wet:0:10:0) highpass 10
-sox sinc-filter            ; sox %s -D %s sinc -b %p(window_type:0:16:16) -n %p(taps:11:32767:11) %p(freq_min:1:22500:400)-%p(freq_max:1:22500:800)
-sox contrast               ; sox %s -D %s contrast %p(contrast:0:100:50)
-sox repeat                 ; sox %s -D %s repeat %p(repeat:0:20:1)
+# SOX FX (+SYNTHS)
+# https://sourceforge.net/projects/sox/
+# make sure you have sox installed (manually/via package manager) otherwise milkytracker ignores these addons
+#
+sox chorus                 ; sox %s -D %s chorus 0.%~(gain_in:0:9:7) 0.%~(gain_out:0:9:9) %~(delay:20:200:55) 0.%~(decay:0:9:4) 0.%~(speed:1:9:2) %~(depth:0:9:2) -t
+sox phaser                 ; sox %s -D %s phaser 0.%~(gain_in:0:9:7) 0.%~(gain_out:0:9:9) %~(delay:0:5:4) 0.%~(decay:0:9:4) 0.%~(speed:1:9:6) -t
+sox freeverb               ; sox %s -D %s gain -1 pad 0 %~(sample_length:1:10:2) reverb %~(reverberance:0:100:50) %~(hf_damping:0:100:50) %~(room_scale:0:100:100) 100 %~(pre_delay:0:500:20) %~(wet:0:10:0) highpass 10
+sox sinc-filter            ; sox %s -D %s sinc -b %~(window_type:0:16:16) -n %~(taps:11:32767:11) %~(freq_min:1:22500:400)-%~(freq_max:1:22500:800)
+sox contrast               ; sox %s -D %s contrast %~(contrast:0:100:50)
+sox repeat                 ; sox %s -D %s repeat %~(repeat:0:20:1)
 sox 4bit                   ; sox %s -b4 %s
 sox spectrogram            ; sox %s -n spectrogram && ffplay spectrogram.png &
-sox speed up               ; sox %s -D %s speed %p(speed:1:20:1)
-sox speed down             ; sox %s -D %s speed 0.%p(speed:1:9:9)
-sox shrink                 ; sox %s -D %s stretch 0.%p(factor:1:9:9) %p(window:1:2048:512)
-sox stretch                ; sox %s -D %s stretch %p(factor:1:9:5) %p(window:1:2048:128)
-sox tremolo                ; sox %s -D %s tremolo %p(speed:1:100:4) %p(depth:0:100:40)
-sox upsample               ; sox %s -D %s upsample %p(factor:1:10:1)
-sox downsample             ; sox %s -D %s downsample %p(factor:1:10:1)
+sox speed up               ; sox %s -D %s speed %~(speed:1:20:1)
+sox speed down             ; sox %s -D %s speed 0.%~(speed:1:9:9)
+sox shrink                 ; sox %s -D %s stretch 0.%~(factor:1:9:9) %~(window:1:2048:512)
+sox stretch                ; sox %s -D %s stretch %~(factor:1:9:5) %~(window:1:2048:128)
+sox tremolo                ; sox %s -D %s tremolo %~(speed:1:100:4) %~(depth:0:100:40)
+sox upsample               ; sox %s -D %s upsample %~(factor:1:10:1)
+sox downsample             ; sox %s -D %s downsample %~(factor:1:10:1)
 sox noise: set profile     ; sox %s -n noiseprof noise-profile
-sox noise: remove          ; sox %s -D %s noisered noise-profile 0.%p(noise_reduction:0:9:0)
-sox multiband compress 2   ; sox %s -D %s gain %p(drive:0:30:5q) mcompand "0.005,0.1 -47,-40,-34,-34,-17,-33" %p(crossover:100:15000:9000) "0,0.025 -47,-40,-28,-28,-0,-25" gain -%p(attenuate:0:30:2)
-sox multiband compress 5   ; sox %s -D %s gain %p(drive:0:30:3) mcompand "0.005,0.1 -47,-40,-34,-34,-17,-33" %p(crossover_1:22:300:100) "0.003,0.05 -47,-40,-34,-34,-17,-33" %p(crossover_2:300:500:400) "0.000625,0.0125 -47,-40,-34,-34,-15,-33" %p(crossover_3:500:3500:1600) "0.0001,0.025 -47,-40,-34,-34,-31,-31,-0,-30" %p(crossover_4:3500:8000:6400) "0,0.025 -47,-40,-28,-28,-0,-25" gain -%p(attenuate:0:30:3)
-sox loudness               ; sox %s -D %s loudness -%p(loudness:0:100:10)
-sox resample               ; sox %s -D -b%p(bits:4:16:8) %s rate %p(samplerate:200:48000:27928) 
-
-# SOX SYNTHS (livehackable) 
-# https://sourceforge.net/projects/sox/
-#
+sox noise: remove          ; sox %s -D %s noisered noise-profile 0.%~(noise_reduction:0:9:0)
+sox multiband compress 2   ; sox %s -D %s gain %~(drive:0:30:5q) mcompand "0.005,0.1 -47,-40,-34,-34,-17,-33" %~(crossover:100:15000:9000) "0,0.025 -47,-40,-28,-28,-0,-25" gain -%~(attenuate:0:30:2)
+sox multiband compress 5   ; sox %s -D %s gain %~(drive:0:30:3) mcompand "0.005,0.1 -47,-40,-34,-34,-17,-33" %~(crossover_1:22:300:100) "0.003,0.05 -47,-40,-34,-34,-17,-33" %~(crossover_2:300:500:400) "0.000625,0.0125 -47,-40,-34,-34,-15,-33" %~(crossover_3:500:3500:1600) "0.0001,0.025 -47,-40,-34,-34,-31,-31,-0,-30" %~(crossover_4:3500:8000:6400) "0,0.025 -47,-40,-28,-28,-0,-25" gain -%~(attenuate:0:30:3)
+sox loudness               ; sox %s -D %s loudness -%~(loudness:0:100:10)
+sox resample               ; sox %s -D -b%~(bits:4:16:8) %s rate %~(samplerate:200:48000:27928) 
 sox synth pluck C4         ; sox -n -c1 -r44100 -b 16 %s synth 0.5 pluck C4 vol 0.2
 sox synth pluckchord       ; sox -n -c1 -r44100 -b 16 %s synth pl G2 pl B2 pl D3 pl G3 pl D4 pl G4 delay 0 .05 .1 .15 .2 .25 remix - fade 0 4 .1 norm -1
 sox synth FM note          ; sox -n -c1 -r44100 -b 16 %s synth 3 sin 960 synth 3 sin fmod 1920 fade l 0 3 2.8 trim 0 1 repeat 2
 sox synth laser            ; sox -n -c1 -r44100 -b 16 %s synth 0.5 sine 200-500 synth 0.5 sine fmod 700-100
 
-
-# APPS
 #
-# TIP: sending an instrument to a app prevents filedialog plumbing
+# APPS (LINUX/MAC)
 #
-# LINUX/MAC
+# TIP1: sending an instrument to a app prevents filedialog plumbing
+# TIP2: to not freeze milkytracker until the application exits, use: &
+# TIP3: select 'Import from addon' to re-import the updated sample (later/again)
+#
 tenacity                   ; tenacity %s &
 #audacity                  ; audacity %s &
-#sunvox                    ; sunvox %s &
+sunvox                     ; sunvox %s &
 polyphone                  ; polyphone &
 
-# WINDOWS
-#audacity                   ; start /b audacity.exe %s
-#sunvox                     ; start /b sunvox.exe %s
+#
+# APPS (WINDOWS)
+#
+# TIP1: sending an instrument to a app prevents filedialog plumbing
+# TIP2: to not freeze milkytracker until the application exits, use: start /b
+# TIP3: select 'Import from addon' to re-import the updated sample (later/again)
+#
+audacity                   ; start /b audacity.exe %s
+sunvox                     ; start /b sunvox.exe %s
+
+
+########################## MORE INFO ######################################
+##                                                                       ##
+## There are 2 ways to make milkytracker detect addons succesfully.      ##
+## The first command (after ';') needs to be either:                     ##
+##                                                                       ##
+##      1. installed in the config-directory:                            ##
+##                                                                       ##
+##             LINUX/MAC:  ~/.config/milkytracker                        ##
+##               WINDOWS:  C:\Users\<user>\AppData\Roaming\MilkyTracker  ##
+##                                                                       ##
+##      2. added to $PATH somehow:                                       ## 
+##                                                                       ##
+##               WINDOWS: setx PATH "%PATH%;C:\Path\To\Util" /M          ##
+##             LINUX/MAC: this is done automatically when installing     ##
+##                        packages, but for userscripts try:             ##
+##                                                                       ##
+##            echo 'export PATH=$PATH:~/scriptfolder' >> ~/.bashrc       ##
+##                                                                       ##
+###########################################################################
+##                                                                       ##
+## Information for developers                                            ##
+##                                                                       ##
+## The addons.txt syntax is just CSV with formatstring-replacement       ## 
+##                                                                       ##
+## syntax : (name)                  ; (command)                          ##
+## example: myEffect                ; cp %s %s                           ## 
+##                                                                       ##
+## vars   : %s                   input [exported] wav                    ##
+##          %s                   output [imported[ wav                   ##
+##          %~(name:min:max:val) sliderdialog parameter value            ##
+##                                                                       ##
+## NOTE: Only the first token (of a command) is used as heuristic by     ##
+##       by milkytracker, to detect whether a tool is installed.         ##
+##       Since addons are executed via system(), it's adviced to prevent ##
+##       milkytracker hangups, by these kind of definitions:             ##
+##                                                                       ##
+##          parec --version && timeout 5 ./myparecscript.py              ##
+##                                                                       ##
+###########################################################################

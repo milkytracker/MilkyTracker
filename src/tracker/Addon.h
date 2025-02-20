@@ -15,13 +15,13 @@
 #define ADDON_MAX 75
 #define ADDON_TOKENS 2
 // <name>;<cmd format string>|<extension_for_filedialog>
-#define MAX_PARAMS 21
-#define MAX_CMD_LENGTH 2048
+#define MAX_PARAMS 30
+#define MAX_CMD_LENGTH 4096
 #define ADDON_FORMAT "%99[^;];%2048[^\n]\n"
 
 typedef struct {
     int min, max, value;
-    char label[16];
+    char label[25];
 } Param;
 
 
