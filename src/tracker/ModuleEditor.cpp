@@ -2484,9 +2484,9 @@ void ModuleEditor::adjustSampleOffsetCommandAfterSampleSizeChange(TXMSample *sam
 	mp_ubyte* lastIns = new mp_ubyte[module->header.channum];
 	memset(lastIns, 0, module->header.channum);
 
-	for (mp_sint32 l = 0; l < module->header.ordnum; l++)
+	for (mp_sint32 i = 0; i < MAX_PATTERNS; i++)
 	{
-		TXMPattern* pattern = &module->phead[module->header.ord[l]];
+		TXMPattern* pattern = &module->phead[i];
 
 		if (pattern->patternData == NULL)
 			continue;
