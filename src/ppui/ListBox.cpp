@@ -780,10 +780,11 @@ placeCursor:
 
 
 		case eKeyDown:
-		{	
-			if (caughtControl)
+		{
+			// prevent double triggers for kb shortcuts directly adressing this control
+			if (caughtControl )
 				break;
-		
+
 			if (selectionIndex < 0 ||
 				selectionIndex >= items->size()/* ||
 				columnSelectionStart < 0*/)

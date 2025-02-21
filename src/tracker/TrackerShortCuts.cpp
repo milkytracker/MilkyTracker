@@ -223,7 +223,10 @@ processBindings:
 
 						}
 					}
-					getPatternEditorControl()->dispatchEvent(event);
+					bool editing = screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl());
+					if (editing && editMode == EditModeMilkyTracker ){
+						getPatternEditorControl()->dispatchEvent(event);
+					}
 					event->cancel();
 				}
 				else if (::getKeyModifier() == KeyModifierCTRL)
@@ -236,6 +239,7 @@ processBindings:
 						case VK_DOWN:
 						case VK_NEXT:
 						case VK_PRIOR:
+							screen->setFocus(listBoxInstruments);
 							listBoxInstruments->dispatchEvent(event);
 							event->cancel();
 							
@@ -243,6 +247,7 @@ processBindings:
 							if (editing && editMode == EditModeMilkyTracker ){
 								patternEditorControl->updateUnderCursor( 0, keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1);
 							}
+							return;
 							break;
 					}
 				}
@@ -255,6 +260,7 @@ processBindings:
 						case VK_DOWN:
 						case VK_NEXT:
 						case VK_PRIOR:
+							screen->setFocus(listBoxSamples);
 							listBoxSamples->dispatchEvent(event);
 							event->cancel();
 							break;

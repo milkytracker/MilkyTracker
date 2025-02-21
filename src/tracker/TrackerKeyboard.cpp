@@ -378,6 +378,11 @@ void Tracker::eventKeyDownBinding_PlaySong()
 	if (isActiveEditing())
 		return;
 
+	// in milkytracker mode, consider unfocused patterneditor as editing too
+	// that way hitting enter in the filebrowser will not trigger play
+	bool editing = screen->getFocusedControl() != static_cast<PPControl*>(getPatternEditorControl());
+	if (editing && editMode == EditModeMilkyTracker ) return;
+
 	playerLogic->playSong();
 }
 
@@ -450,21 +455,25 @@ void Tracker::eventKeyDownBinding_PlayPatternFromTHIRDQUARTER()
 
 void Tracker::eventKeyDownBinding_RotatePanels()
 {
+	bool isBrowsing = sectionDiskMenu->fileBrowserHasFocus();
 
 	switch( panelrotate ){
 		case PanelTop:{
 			panelrotate = PanelTop_Sample;
 			eventKeyDownBinding_InvokeSectionSamples();
+			if( !isBrowsing ) screen->setFocus(listBoxSamples);
 			break;
 		}
 		case PanelTop_Sample:{
 			panelrotate = PanelTop_Instrument;
 			eventKeyDownBinding_InvokeSectionInstruments();
+			if( !isBrowsing ) screen->setFocus(listBoxInstruments);
 			break;
 		}
 		case PanelTop_Instrument:{
 			panelrotate = PanelTop;
 			sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionNone);
+			if( !isBrowsing ) screen->setFocus(listBoxOrderList);
 			break;
 		}
 	}

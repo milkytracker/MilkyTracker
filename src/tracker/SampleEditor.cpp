@@ -3722,9 +3722,12 @@ void SampleEditor::tool_delay(const FilterParameters* par)
 
 void SampleEditor::tool_synth(const FilterParameters* par)
 {
-	preFilter(&SampleEditor::tool_synth, par);
+  bool skipUndo = synth->getParam(0).value != (float)par->getParameter(0).floatPart;
 
-	prepareUndo();
+  if( !skipUndo ){
+	  prepareUndo();
+	  preFilter(&SampleEditor::tool_synth, par);
+  } 
 
   // update controls just to be sure
   for( int i = 0; i < synth->getMaxParam(); i++ ){
@@ -3736,12 +3739,15 @@ void SampleEditor::tool_synth(const FilterParameters* par)
   //enableUndoStack(true);
 
   // serialize synth to samplename 
-  PPString preset = synth->ASCIISynthExport();
-  memcpy( sample->name, preset.getStrBuffer(), MP_MAXTEXT );
+  if( !synth->synth->facade ){
+	  PPString preset = synth->ASCIISynthExport();
+	  memcpy( sample->name, preset.getStrBuffer(), MP_MAXTEXT );
+  }
 
-  finishUndo();
-
-  postFilter();
+  if( !skipUndo ){
+	  finishUndo();
+	  postFilter();
+  } 
 }
 
 

@@ -56,9 +56,23 @@ pp_int32 PPListBoxFileBrowser::dispatchEvent(PPEvent* event)
 	{	
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());		
 			
-		if (keyCode < 255)
+		if (keyCode < 255 && cycleFilenames)
 			cycle((char)keyCode);
+
 	}
+
+	if (event->getID() == eKeyUp ){
+
+		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());		
+		pp_int32 selectionIndex = PPListBox::getSelectedIndex();
+
+		if( keyCode == VK_RETURN ){ // enter confirms + selects next item
+			PPEvent e(eConfirmed, &selectionIndex, sizeof(selectionIndex));
+			eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
+			parentScreen->paintControl(this);
+		}
+	}
+
 	return PPListBox::dispatchEvent(event);
 }
 

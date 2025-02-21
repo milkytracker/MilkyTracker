@@ -138,6 +138,7 @@ private:
 	void notifyChanges(bool condition, bool lazy = true);
  
   friend class Synth;
+  friend class Tracker;
 	
 public:
 	SampleEditor();

@@ -66,6 +66,7 @@ const char* FileExtProvider::instrumentExtensions[] =
 {
 	"xi","FT2 Instruments",
 	"pat","GUS Patches",
+	"sf2","SoundFont 2.0",
 	NULL, NULL
 };
 

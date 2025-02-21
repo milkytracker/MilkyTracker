@@ -27,6 +27,7 @@
 #include "BasicTypes.h"
 #include "PatternEditorTools.h"
 #include "SongLengthEstimator.h"
+#include "soundfont/sf2.h"
 
 class XIInstrument;
 class PatternEditor;
@@ -320,7 +321,9 @@ public:
 	void freeInstrument();
 	
 	// load instrument
-	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index);
+	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index );
+	// load soundfont instrument
+	bool loadSFInstrument(const SYSCHAR* fileName, mp_sint32 index, mp_sint32 SF2inst);
 	// save instrument
 	bool saveInstrument(const SYSCHAR* fileName, mp_sint32 index);
 
@@ -392,6 +395,9 @@ public:
 	
 	friend class ChangesListener;
 	friend class Tracker;
+	friend class SF2File;
+	friend class SectionSamples;
+
 };
 
 #endif

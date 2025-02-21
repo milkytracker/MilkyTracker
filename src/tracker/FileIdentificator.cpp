@@ -101,6 +101,8 @@ bool FileIdentificator::isInstrument()
 	if (memcmp(sig,"GF1PATCH",8) == 0)
 		return true;
 
+	if( fileName.compareExtensions( PPString(".sf2") ) == 0 ) return true;
+
 	return memcmp(sig,"Extended Instrument: ",21) == 0;
 }
 

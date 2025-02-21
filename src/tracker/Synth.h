@@ -41,11 +41,12 @@
 #define NOTE_START 60                                // C3
                                                     
 // synth ID's
-#define SYNTH_FM      0                  //
-#define SYNTH_CYCLE   1                  // incremental numbers
-#define SYNTH_PL      2                  //
-#define SYNTH_UNZ     3                  //
-#define SYNTH_LAST  SYNTH_UNZ             // update this when adding a synth
+#define SYNTH_FM            0                  //
+#define SYNTH_CYCLE         1                  // incremental numbers
+#define SYNTH_PL            2                  //
+#define SYNTH_UNZ           3                  //
+#define SYNTH_SOUNDFONT     4                  //
+#define SYNTH_LAST  SYNTH_SOUNDFONT            // update this when adding a synth
 #define SYNTH_PRESETS 48
 
 #ifndef M_PI
@@ -65,6 +66,7 @@ struct MSynth{
   int nparams;
   pp_uint32 ID;
   bool inited;
+  bool facade = false;
 };
 	
 class SampleEditor; // forward
@@ -76,7 +78,7 @@ class Synth
 
   private:
 	int samplerate;
-	int random_index;
+	int preset_index;
 	bool additive;
     MSynth *synth;
     MSynth synths[SYNTH_LAST+1];
@@ -139,7 +141,7 @@ class Synth
 		"M1)M~-(9()(((((((((((((((((((((("  // CYCLE
 	};
 
-
+	friend class SampleEditor;
 
   public:
     Synth(int samplerate);
@@ -155,19 +157,21 @@ class Synth
 	PPString ASCIISynthExport( );
     bool ASCIISynthImport( PPString preset );
 
-    void reset();
     void init();
     void attach( SampleEditor *s, PPScreen *screen, DialogResponder *dr, Tracker *tracker);
-	void random();
+	void next();
+	void prev();
     void process( MSynth *s, PPString *preset );
 	TXMSample * prepareSample(pp_uint32 duration);
 	void setSampleEditor( SampleEditor *s ){ this->sampleEditor = s; }
+	void selectSynth( int ID );
 
     // synths
     void Cycle( bool init = false );
     void FM( bool init = false );
     void PL( bool init = false );
     void UNZ( bool init = false );
+    void Soundfont( bool init = false );
 
 };
 

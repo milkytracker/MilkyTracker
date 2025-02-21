@@ -32,6 +32,7 @@
 #include "TrackerConfig.h"
 #include "PPSystem.h"
 #include "version.h"
+#include "soundfont/sf2.h"
 
 static const char validCharacters[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!.";
 
@@ -1564,22 +1565,37 @@ bool ModuleEditor::loadInstrument(const SYSCHAR* fileName, mp_sint32 index)
 {
 	ASSERT(index < module->header.insnum);
 
-	XIInstrument* ins = new XIInstrument();
-	
-	bool res = ins->load(fileName) == 0; 
-	
-	if (res)
-	{
-		res = insertXIInstrument(index, ins);
-	
-		finishSamples();
-		
-		validateInstruments();
-	}
-	
-	delete ins;
+	PPString file = PPString(fileName);
 
-	return res;
+	if( file.compareExtensions( PPString(".sf2") ) == 0 ){
+		SF2File::sampleIndex = 0;
+		bool ok = SF2File::loadSFSampleToEditor(fileName, index, currentSampleIndex, this );
+		if( ok ){
+			finishSamples();
+			validateInstruments();
+			changed = true;
+		}else printf("warning: could not load sf2\n");
+		return ok;
+	}else{
+
+		XIInstrument* ins = new XIInstrument();
+		bool res = ins->load(fileName) == 0; 
+		
+		if (res)
+		{
+			res = insertXIInstrument(index, ins);
+		
+			finishSamples();
+			
+			validateInstruments();
+		}
+		
+		delete ins;
+		return res;
+	}
+
+
+	return false;
 }
 
 bool ModuleEditor::saveInstrument(const SYSCHAR* fileName, mp_sint32 index)

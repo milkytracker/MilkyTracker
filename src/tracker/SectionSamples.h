@@ -41,6 +41,15 @@ class SampleEditorControl;
 class SectionSamples : public SectionAbstract
 {
 private:
+	enum BankMode
+	{
+		Synth,
+		Switch_Synth,
+		Switch_SF2
+	};
+	BankMode bankMode = Synth;
+	pp_uint32 sf2Preset = 0;
+
 	PPContainer* containerEntire;
 
 	bool visible;
