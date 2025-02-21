@@ -717,34 +717,56 @@ void Synth::PL( bool init ){
 	
 	// A sound is described by an instrument (synth), the row_len in samples and a note.
 	pl_synth_sound_t sound = {
-		.synth = s,
-		.row_len = 5168*2, 
-		.note = 135
+		s,      // .synth
+		5168*2, // .row_len
+		135,    // .note
 	};
 
 	// the chords are unnamed & the comments might not be theoretically correct (please add new ones to not break user presets)
 	pl_synth_song_t song = {
-		.row_len = (uint8_t)synths[ID].param[20].value < 9 ? 256 : 768,
-		.num_tracks = 1,
-		.tracks = new pl_synth_track_t[1]{
+		(uint8_t)synths[ID].param[20].value < 9? 256 : 768, // row_len
+		1,                                                   // num_tracks
+		new pl_synth_track_t[1]{                             // tracks
 			{
-				.synth = s,
-				.sequence_len = 1,
-				.sequence = new uint8_t[1]{  (uint8_t)synths[ID].param[20].value  }, // algo slider chooses pattern 
-				.patterns = new pl_synth_pattern_t[11]{                               
-					{.notes = {135}},                                                // single note
-					{.notes = {135,135+12}},                                         // perfect diad
-					{.notes = {135,135+15}},                                         // minor diad
-					{.notes = {135,135+14}},                                         // major diad
-					{.notes = {135,135+7}},                                          // perfect fift diad
-					{.notes = {135,135+4,135+7}},                                    // major triad
-					{.notes = {135,135+3,135+7}},                                    // minor triad
-					{.notes = {135,135+4,135+7,135+11}},                             // major 7th
-					{.notes = {135,135+3,135+7,135+11}},                             // minor 7th 
+				s, // synth
+				1, // sequence_len
+				new uint8_t[1]{ (uint8_t)synths[ID].param[20].value }, // sequence
+				new pl_synth_pattern_t[11]{                               
+					{
+						{135} // notes (single note)
+					},
+					{
+						{135,135+12} // notes (perfect diad)
+					},
+					{
+						{135,135+15} // notes (minor diad)
+					},
+					{
+						{135,135+14} // notes (major diad)
+					},
+					{
+						{135,135+7} // notes (perfect fift diad)
+					},
+					{
+						{135,135+4,135+7} // notes (major triad)
+					},
+					{
+						{135,135+3,135+7} // notes (minor triad)
+					},
+					{
+						{135,135+4,135+7,135+11} // notes (major 7th)
+					},
+					{
+						{135,135+3,135+7,135+11} // notes (minor 7th)
+					},
 					// arp minor 7th
-					{.notes = {135,0,0,0,135+3,0,0,0,135+7,0,0,0,135+11,0,0,0,135+7,0,0,0,135+3,0,0,0}},   
+					{
+						{135,0,0,0,135+3,0,0,0,135+7,0,0,0,135+11,0,0,0,135+7,0,0,0,135+3,0,0,0}
+					},
 					// arp major 7th
-					{.notes = {135,0,0,0,135+4,0,0,0,135+7,0,0,0,135+11,0,0,0,135+7,0,0,0,135+4,0,0,0}},   
+					{
+						{135,0,0,0,135+4,0,0,0,135+7,0,0,0,135+11,0,0,0,135+7,0,0,0,135+4,0,0,0}
+					}
 				}
 			}
 		}
