@@ -79,7 +79,7 @@ void PatternEditorControl::initKeyBindings()
 	eventKeyDownBindingsMilkyTracker->addBinding('C', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Copy);
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
 	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Paste);
-	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_PasteStep);
+	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_PasteStepFill);
 	eventKeyDownBindingsMilkyTracker->addBinding('A', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_SelectAll);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
 	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
@@ -1644,7 +1644,6 @@ void PatternEditorControl::eventKeyCharBinding_Paste()
 void PatternEditorControl::eventKeyCharBinding_PasteStep()
 {
 	PatternEditorControl::eventKeyCharBinding_Paste();
-	advance();
 	notifyUpdate(AdvanceCodeColumn); 
 }
 
@@ -1655,15 +1654,16 @@ void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 	cursorCopy = patternEditor->getCursor();
 	pp_int32 row_current   = cursorCopy.row;
 	pp_uint8 times         = 0;
+	PatternEditor::Selection selection = patternEditor->getSelection();
 
 	if( !hasValidSelection() ){ 
 		patternEditor->setSelectionStart( cursorCopy );
 		patternEditor->setSelectionEnd( cursorCopy );
 	} 
+	pp_int32 row_selection = selection.start.row; 
+	pp_uint32 nSelectedRows = selection.end.row - selection.start.row;
 
-	pp_int32 row_selection = patternEditor->getSelection().start.row; 
-
-	for( pp_uint8 i = row_selection; i < patternEditor->getNumRows(); i += getRowInsertAdd() ){
+	for( pp_uint8 i = row_selection; i < patternEditor->getNumRows(); i += nSelectedRows ){
 		times++;
 	}
 
@@ -1673,8 +1673,10 @@ void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 
 	for( pp_uint8 i = 0; i < times; i++ ){ // repeat till end of pattern
 		PatternEditorControl::eventKeyCharBinding_PasteStep();
+		cursorCopy = patternEditor->getCursor();
+		cursorCopy.row += nSelectedRows+1; 
+		patternEditor->setCursor(cursorCopy);
 	}
-	cursorCopy = patternEditor->getCursor();
 	cursorCopy.row = row_current;
 	patternEditor->setCursor(cursorCopy);
 	notifyUpdate();
