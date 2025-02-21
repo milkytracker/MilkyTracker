@@ -46,7 +46,7 @@
 #define SYNTH_PL      2                  //
 #define SYNTH_UNZ     3                  //
 #define SYNTH_LAST  SYNTH_UNZ             // update this when adding a synth
-#define SYNTH_PRESETS 47
+#define SYNTH_PRESETS 48
 
 #ifndef M_PI
 #define M_PI   3.14159265358979323846264338327950288
@@ -92,6 +92,7 @@ class Synth
 		"M1(C*(51)D)vA)/)M),(Xt@(*(((((((", // FM piano          
 		"M1)8n)(/()((((((((((((((((((((((", // CYCLE organ        
 		"M1*l(?(0+(((((*~S)IM((.d)(((((((", // SONANT organ
+		"M1*o(?(03(S[9(*~S)IM((0d)(((((((", // SONANT bell
 		"M1(J+@?9G])~+*~)()<,*{VM)(((((((", // FM bell
 		"M1)9n,(0()((((((((((((((((((((((", // CYCLE brass
 		"M1*l(/646((M*(*~S(=~((-x+(((((((", // SONANT airchamber 
