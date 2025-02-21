@@ -274,7 +274,8 @@ static void pl_synth_gen(int16_t *samples, int write_pos, int row_len, int note,
 			low += filter_f * band;
 			high = fx_resonance * (sample - band) - low;
 			band += filter_f * high;
-			sample = (float[5]){sample, high, low, band, low + high}[s->fx_filter];
+			float sampleArray[5] = {sample, high, low, band, low + high};
+			sample = sampleArray[s->fx_filter];
 		}
 
 		// Panning & master volume
