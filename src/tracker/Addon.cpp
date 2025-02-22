@@ -229,7 +229,7 @@ void Addon::editAddons() {
         // On macOS, use `open` to open the file (no polling needed)
         snprintf(command, sizeof(command), "open \"%s\"", addonsFile.getStrBuffer());
 #else
-        // On Linux, poll for available commands
+        // On Linux & HAIKU, poll for available commands
         const char* commands[] = { "xdg-open", "gnome-open", "kde-open", "open", NULL };
         const char* selectedCommand = NULL;
 
