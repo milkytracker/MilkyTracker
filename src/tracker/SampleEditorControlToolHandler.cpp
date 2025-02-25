@@ -39,6 +39,7 @@
 #include "FilterParameters.h"
 #include "SectionSamples.h"
 #include "PatternEditor.h"
+#include "Addon.h"
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
@@ -303,11 +304,28 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
     }
 
+    case ToolHandlerResponder::SampleToolTypeAddon:
+    {
+		Param *params = Addon::params;
+		int nparams = Addon::param_count;
+		if( nparams > 0 ){ 
+			dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, Addon::selectedName, nparams, sampleEditor, &SampleEditor::tool_addon );
+			DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+			for (int i = 0; i < nparams; i++) {
+			  sliders->initSlider(i, float(params[i].min), float(params[i].max), float(params[i].value), params[i].label );
+			}
+		}else{
+		    FilterParameters par(0);
+			sampleEditor->tool_addon(&par);
+		}
+      break;
+    }
+
     default:
       break;
   }
 
-  dialog->show();
+  if( dialog != NULL ) dialog->show();
 
   return true;
 }

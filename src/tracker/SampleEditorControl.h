@@ -67,12 +67,12 @@ private:
 
 	Tracker* tracker;
 	PPContextMenu* editMenuControl;
+	PPContextMenu* subMenuAddon;
 	PPContextMenu* subMenuFX;
 	PPContextMenu* subMenuAdvanced;
 	PPContextMenu* subMenuXPaste;
 	PPContextMenu* subMenuGenerators;
 	PPContextMenu* subMenuPT;
-
 
 	// extent
 	pp_int32 selectionStartNew, selectionEndNew;
@@ -382,7 +382,8 @@ private:
 			SampleToolTypeGenerateAbsoluteSine,
 			SampleToolTypeGenerateQuarterSine,
 			SampleToolTypeReverb,
-			SampleToolTypeSynth
+			SampleToolTypeSynth,
+			SampleToolTypeAddon
 		};
 	
 	private:

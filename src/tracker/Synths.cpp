@@ -1136,10 +1136,12 @@ void Synth::Soundfont( bool init ){
 		return;
 	}
 
-	SF2File::sampleIndex = (pp_uint32)synth->param[1].value;
-	pp_uint32 instr  = tracker->listBoxInstruments->getSelectedIndex();
-	pp_uint32 sample = tracker->listBoxSamples->getSelectedIndex();
-	bool ok = SF2File::loadSFSampleToEditor( SF2File::fontFile.getStrBuffer(), instr, sample, tracker->moduleEditor );
+	if( SF2File::fontFile.length() > 0 ){
+		SF2File::sampleIndex = (pp_uint32)synth->param[1].value;
+		pp_uint32 instr  = tracker->listBoxInstruments->getSelectedIndex();
+		pp_uint32 sample = tracker->listBoxSamples->getSelectedIndex();
+		bool ok = SF2File::loadSFSampleToEditor( SF2File::fontFile.getStrBuffer(), instr, sample, tracker->moduleEditor );
+	}
 
 }
 

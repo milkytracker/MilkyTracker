@@ -38,6 +38,7 @@
 #include "FilterParameters.h"
 #include "SampleEditorResampler.h"
 #include "PlayerMaster.h"
+#include "Addon.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -3950,6 +3951,21 @@ void SampleEditor::tool_vocodeSample(const FilterParameters* par)
 
 		setFloatSampleInWaveform(si, o * (par->getParameter(5).floatPart / 100.0f) );
 	}
+
+	finishUndo();
+
+	postFilter();
+}
+	
+void SampleEditor::tool_addon(const FilterParameters* par)
+{
+	preFilter(&SampleEditor::tool_addon, par);
+
+	prepareUndo();
+
+	pp_uint8 looptype = getLoopType(); // remember
+	int ret = Addon::runMenuItem(par);
+	setLoopType(looptype);             // revert back (because new wav-file was imported)
 
 	finishUndo();
 

@@ -688,9 +688,9 @@ bool SF2File::Analyse(IFFDigest *_digest)
 // Milkytracker import-code which caches the last loaded SF in memory (hence the static vars)
 
 SF2File SF2File::font;
-PPString SF2File::fontFile;
+PPString SF2File::fontFile = PPString();
 unsigned int SF2File::sampleIndex;
-char* SF2File::data;
+char* SF2File::data = NULL;
 struct stat SF2File::stbuf;
 FILE* SF2File::f;
 unsigned int SF2File::maxSamples = 0;

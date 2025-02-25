@@ -107,6 +107,15 @@ recommended way of obtaining these is by using Homebrew or MacPorts.
 The correct way to build a release .DMG for macOS is to run the `build.sh`
 script.
 
+## Rebuilding internal documentation + default addons file 
+
+The following scripts (rarely) need to be run when one of these file changes:
+
+* `doc/Milkytracker.html` needs `src/tool/generateHelp.sh` (to generate `src/tracker/DialogHelpText.h`)
+* `src/tools/addons.txt` needs `src/tool/generateAddons.sh` (to generate `src/tracker/Addons.h`)
+
+> NOTE: don't update `doc/Milkytracker.html`, instead update/mirror https://github.com/milkytracker/manual
+
 ## Environment flags
 
 | env var       | info                                         |

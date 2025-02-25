@@ -102,6 +102,7 @@ add_executable(tracker
     PatternEditorControlTransposeHandler.cpp
     PatternEditorTools.cpp
     PatternTools.cpp
+	Addon.cpp
     PeakLevelControl.cpp
     Piano.cpp
     PianoControl.cpp
@@ -154,6 +155,94 @@ add_executable(tracker
     Undo.cpp
     VRand.cpp
     Zapper.cpp
+
+    # Headers
+    ${PROJECT_BINARY_DIR}/src/tracker/version.h
+    AnimatedFXControl.h
+    ColorExportImport.h
+    ColorPaletteContainer.h
+    fx/Convolver.h
+    ControlIDs.h
+    DialogChannelSelector.h
+    DialogEQ.h
+    DialogGroupSelection.h
+    DialogHandlers.h
+    DialogListBox.h
+    DialogPanning.h
+    DialogQuickChooseInstrument.h
+    DialogResample.h
+    DialogWithValues.h
+    DialogZap.h
+    DialogSliders.h
+    fx/EQConstants.h
+    EditModes.h
+    EditorBase.h
+    EnvelopeContainer.h
+    EnvelopeEditor.h
+    EnvelopeEditorControl.h
+    fx/Equalizer.h
+    FileExtProvider.h
+    FileIdentificator.h
+    FileTypes.h
+    FilterParameters.h
+    GlobalColorConfig.h
+    InputControlListener.h
+    LogoBig.h
+    LogoSmall.h
+    ModuleEditor.h
+    ModuleServices.h
+    PatternEditor.h
+    PatternEditorControl.h
+    PatternEditorTools.h
+    PatternTools.h
+	Addon.h
+    PeakLevelControl.h
+    Piano.h
+    PianoControl.h
+    PlayerController.h
+    PlayerCriticalSection.h
+    PlayerLogic.h
+    PlayerMaster.h
+    RecPosProvider.h
+    RecorderLogic.h
+    ResamplerHelper.h
+	VolumeRampHelper.h
+    fx/Filter.h
+    Synth.h
+	  SynthFM.h
+    SIPButtons.h
+    SampleEditor.h
+    SampleEditorControl.h
+    SampleEditorControlLastValues.h
+    SampleEditorResampler.h
+    SamplePlayer.h
+    ScopesControl.h
+    SectionAbout.h
+    SectionAbstract.h
+    SectionAdvancedEdit.h
+    SectionDiskMenu.h
+    SectionHDRecorder.h
+    SectionInstruments.h
+    SectionOptimize.h
+    SectionQuickOptions.h
+    SectionSamples.h
+    SectionSettings.h
+    SectionSwitcher.h
+    SectionTranspose.h
+    SectionUpperLeft.h
+    SongLengthEstimator.h
+    SystemMessage.h
+    TabHeaderControl.h
+    TabManager.h
+    TabTitleProvider.h
+    TitlePageManager.h
+    ToolInvokeHelper.h
+    Tracker.h
+    TrackerConfig.h
+    TrackerSettingsDatabase.h
+    Undo.h
+    VRand.h
+    Zapper.h
 )
 
 # Set target name for the executable
