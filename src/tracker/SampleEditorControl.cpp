@@ -175,8 +175,8 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuXPaste->addEntry("Flanger", MenuCommandIDFLPaste);
 	subMenuXPaste->addEntry("Selective EQ" PPSTR_PERIODS, MenuCommandIDSelectiveEQ10Band);
 	subMenuXPaste->addEntry(seperatorStringLarge, -1);
-	subMenuXPaste->addEntry("Capture pattern" PPSTR_PERIODS, MenuCommandIDCapturePattern);
-	subMenuXPaste->addEntry("Capture pattern [overdub]" PPSTR_PERIODS, MenuCommandIDCapturePatternOverdub);
+	subMenuXPaste->addEntry("Pattern" , MenuCommandIDCapturePattern);
+	subMenuXPaste->addEntry("Pattern overdub" , MenuCommandIDCapturePatternOverdub);
 
 	subMenuPT = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuPT->addEntry("Boost", MenuCommandIDPTBoost);
