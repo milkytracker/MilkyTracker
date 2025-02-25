@@ -92,6 +92,7 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 		pp_uint16 scanCode = *(((pp_uint16 *)event->getDataPtr()) + 1);
+		bool isEditing = screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl());
 
 		if (::getKeyModifier() == (KeyModifierALT))
 		{
@@ -223,11 +224,10 @@ processBindings:
 
 						}
 					}
-					bool editing = screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl());
-					if (editing && editMode == EditModeMilkyTracker ){
+					if (isEditing){
 						getPatternEditorControl()->dispatchEvent(event);
+						event->cancel();
 					}
-					event->cancel();
 				}
 				else if (::getKeyModifier() == KeyModifierCTRL)
 				{
@@ -242,7 +242,7 @@ processBindings:
 							screen->setFocus(listBoxInstruments);
 							listBoxInstruments->dispatchEvent(event);
 							event->cancel();
-							
+
 							bool editing = screen->getFocusedControl() == static_cast<PPControl*>(getPatternEditorControl());
 							if (editing && editMode == EditModeMilkyTracker ){
 								patternEditorControl->updateUnderCursor( 0, keyCode == VK_UP || keyCode == VK_NEXT ? 1 : -1);
