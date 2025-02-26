@@ -761,7 +761,7 @@ bool SF2File::loadSFSampleToEditor(const SYSCHAR* fileName, pp_uint32 MTinstrInd
 	dst->vibdepth = instrument.vibdepth << 1;
 	dst->vibrate = instrument.vibrate;
 	dst->volfade = instrument.volfade << 1;
-	dst->relnote = sfsmp.byOriginalPitch-60;
+	dst->relnote = relnote == 0 ? 12 : relnote; // sfsmp.byOriginalPitch-60;
 	dst->loopstart = sfsmp.dwStartloop-sfsmp.dwStart;
 	dst->looplen  = sfsmp.dwEndloop - sfsmp.dwStartloop;
 	dst->type = 16; // 16=16bits 0=8bit 

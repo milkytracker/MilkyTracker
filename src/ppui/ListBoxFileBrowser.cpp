@@ -39,6 +39,7 @@ PPListBoxFileBrowser::PPListBoxFileBrowser(pp_int32 id, PPScreen* parentScreen, 
 	directoryPrefix("<DIR>  "), directorySuffix(""),
 	sortAscending(true),
 	cycleFilenames(true),
+	confirmed(false),
 	sortType(SortByName)
 {
 	setRightButtonConfirm(true);
@@ -70,6 +71,11 @@ pp_int32 PPListBoxFileBrowser::dispatchEvent(PPEvent* event)
 			PPEvent e(eConfirmed, &selectionIndex, sizeof(selectionIndex));
 			eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 			parentScreen->paintControl(this);
+			confirmed = true;
+		}
+
+		if( keyCode == VK_UP || keyCode == VK_DOWN ){ // exit keyjazz 
+			confirmed = false;											
 		}
 	}
 
@@ -423,6 +429,7 @@ void PPListBoxFileBrowser::sortFileList()
 
 void PPListBoxFileBrowser::cycle(char chr)
 {
+	if( confirmed ) return; // don't cycle when instrument/sample was just loaded (allow keyjazz)
 	pp_int32 currentIndex = PPListBox::getSelectedIndex();
 	
 	PPSystemString prefix(chr);

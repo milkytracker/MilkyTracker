@@ -57,6 +57,7 @@ private:
 
 	bool sortAscending;
 	bool cycleFilenames;
+	bool confirmed;
 
 	PPSimpleVector<Descriptor> items;
 
