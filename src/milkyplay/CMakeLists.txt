@@ -255,6 +255,23 @@ else()
         message(STATUS "Enabled JACK support")
     endif()
 
+	if(PIPEWIRE_FOUND)
+		target_sources(milkyplay PRIVATE
+			# Source
+			drivers/pipewire/AudioDriver_Pipewire.cpp
+
+			# Header
+			drivers/pipewire/AudioDriver_Pipewire.h
+		)
+		target_compile_definitions(milkyplay PRIVATE -DHAVE_PIPEWIRE)
+		target_include_directories(milkyplay PRIVATE
+			drivers/pipewire
+			${PIPEWIRE_INCLUDE_DIRS}
+		)
+		target_link_libraries(milkyplay PUBLIC ${PIPEWIRE_LIBRARIES})
+		message(STATUS "Enabled Pipewire support")
+	endif()
+
     if(SDL2_FOUND)
         target_sources(milkyplay PRIVATE
             # Sources

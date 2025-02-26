@@ -19,6 +19,7 @@ following development libraries installed on your system:
 
 - RtMidi/ALSA (optional, for Linux MIDI support)
 - JACK (optional)
+- Pipewire (optional and requires pkg-config to discover library in build script)
 - SDL2
 
 For all **non-Windows/macOS ports**, the decompression libs (optional):
