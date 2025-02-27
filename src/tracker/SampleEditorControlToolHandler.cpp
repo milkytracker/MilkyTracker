@@ -104,7 +104,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
           static_cast<DialogResample*>(dialog)->setInterpolationType(lastValues.resampleInterpolationType);
 
         static_cast<DialogResample*>(dialog)->setAdjustFtAndRelnote(lastValues.adjustFtAndRelnote);
-
+        static_cast<DialogResample*>(dialog)->setAdjustSampleOffsetCommand(lastValues.adjustSampleOffsetCommand);
         static_cast<DialogResample*>(dialog)->setRelNote(sampleEditor->getRelNoteNum());
         static_cast<DialogResample*>(dialog)->setFineTune(sampleEditor->getFinetune());
         static_cast<DialogResample*>(dialog)->setSize(sampleEditor->getSampleLen());
@@ -372,7 +372,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
     case ToolHandlerResponder::SampleToolTypeMTBoost:
     {
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-	  for( pp_uint8 i = 0; i < 5; i++ ) lastValues.milkyexcite[i]   = sliders->getSlider(i);
+	  for( pp_uint8 i = 0; i < 4; i++ ) lastValues.milkyexcite[i]   = sliders->getSlider(i);
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }

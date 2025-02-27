@@ -117,7 +117,7 @@ struct SampleEditorControlLastValues
 		
 		result.store("adjustFtAndRelnote", adjustFtAndRelnote);
 
-		result.store("adjustSampleOffsetCommands", adjustSampleOffsetCommand);
+		result.store("adjustSampleOffsetCommand", adjustSampleOffsetCommand);
 		result.store("reverbSize", PPDictionary::convertFloatToIntNonLossy(reverbSize));
 		result.store("reverbDryWet", PPDictionary::convertFloatToIntNonLossy(reverbDryWet));
 		result.store("filterCutoffL", PPDictionary::convertFloatToIntNonLossy(filterCutoffL));
@@ -186,7 +186,7 @@ struct SampleEditorControlLastValues
 			{
 				adjustFtAndRelnote = key->getBoolValue();
 			}
-			else if (key->getKey().compareToNoCase("adjustSampleOffsetCommands") == 0)
+			else if (key->getKey().compareToNoCase("adjustSampleOffsetCommand") == 0)
 			{
 				adjustSampleOffsetCommand = key->getBoolValue();
 			}
