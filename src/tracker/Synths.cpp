@@ -1136,6 +1136,10 @@ void Synth::Soundfont( bool init ){
 		return;
 	}
 
+	// trigger file load browser	
+	tracker->loadType(FileTypes::FileTypeSongAllInstruments);
+
+
 	if( SF2File::fontFile.length() > 0 ){
 		SF2File::sampleIndex = (pp_uint32)synth->param[1].value;
 		pp_uint32 instr  = tracker->listBoxInstruments->getSelectedIndex();
