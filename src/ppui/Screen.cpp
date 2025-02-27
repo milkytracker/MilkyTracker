@@ -91,7 +91,7 @@ void PPScreen::adjustEventMouseCoordinates(PPEvent* event)
 
 void PPScreen::raiseEvent(PPEvent* event)
 {
-	if (event->isMouseEvent()){
+	if (event->isMouseEvent() && event->getID() == eLMouseDown ){
 		adjustEventMouseCoordinates(event);
 		PPPoint* p = (PPPoint*)event->getDataPtr();
 		if( modalControl && modalControl->isVisible() && modalControl->hit(*p) ){
@@ -111,6 +111,7 @@ void PPScreen::raiseEvent(PPEvent* event)
 	if (event->getID() == eInvalid)
 		return;
 
+
 	if (modalControl && modalControl->isVisible())
 	{
 		// listener of the modal control also gets a chance to listen to these events
@@ -122,8 +123,9 @@ void PPScreen::raiseEvent(PPEvent* event)
 		if (!modalControl)
 			return;		
 
+	
 		// only allow keys to arrive at modal when mousecursor is in modal
-		if( bubble && event->getID() == eKeyDown ){
+		if( bubble && event->getID() != eKeyUp ){
 		  rootContainer->dispatchEvent(event);
 		  return; // prevent keydown duplicates
 		}else{
@@ -556,6 +558,7 @@ void PPScreen::setFocus(PPControl* control, bool repaint/* = true*/)
 			static_cast<PPContainer*>(chain.get(i))->setFocus(chain.get(i-1), repaint);
 		}
 	}
+	lastMouseOverControl = control;
 }
 
 PPControl* PPScreen::getFocusedControl() const
@@ -664,6 +667,7 @@ void PPScreen::setModalControl(PPControl* control, bool repaint/* = true*/)
 	}
 
 	modalControl = control; 
+	setFocus(modalControl);
 	
 	if (repaint)
 		paint(); 

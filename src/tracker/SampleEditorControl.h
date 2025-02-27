@@ -403,7 +403,6 @@ private:
 	friend class ToolHandlerResponder;
 	friend class Tracker;
 	
-	PPDialogBase* dialog;
 	ToolHandlerResponder* toolHandlerResponder;
 	
 	bool invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypes type);

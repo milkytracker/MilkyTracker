@@ -1137,6 +1137,7 @@ void Synth::Soundfont( bool init ){
 	}
 
 	// trigger file load browser	
+	tracker->eventKeyDownBinding_InvokeSectionDiskMenu();
 	tracker->loadType(FileTypes::FileTypeSongAllInstruments);
 
 
