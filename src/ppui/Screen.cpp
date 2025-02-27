@@ -123,8 +123,9 @@ void PPScreen::raiseEvent(PPEvent* event)
 			return;		
 
 		// only allow keys to arrive at modal when mousecursor is in modal
-		if( bubble ){
+		if( bubble && event->getID() == eKeyDown ){
 		  rootContainer->dispatchEvent(event);
+		  return; // prevent keydown duplicates
 		}else{
 		  modalControl->dispatchEvent(event);
 		  return;
