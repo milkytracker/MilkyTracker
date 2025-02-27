@@ -655,6 +655,14 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				break;
 			}
 
+			case BUTTON_PATTERN_REPEATSELECTION:
+			{
+				if (event->getID() != eCommand)
+					break;
+				getPatternEditorControl()->eventKeyCharBinding_PasteStepFill();
+				break;
+			}
+
 			case BUTTON_ABOUT_PROSPECTIVE:
 			{
 				if (event->getID() != eCommand)

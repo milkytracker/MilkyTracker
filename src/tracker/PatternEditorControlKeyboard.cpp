@@ -1656,9 +1656,8 @@ void PatternEditorControl::eventKeyCharBinding_PasteStepFill()
 	pp_uint8 times         = 0;
 	PatternEditor::Selection selection = patternEditor->getSelection();
 
-	if( !hasValidSelection() ){ 
-		patternEditor->setSelectionStart( cursorCopy );
-		patternEditor->setSelectionEnd( cursorCopy );
+	if( !hasValidSelection() || selection.end.row - selection.start.row < 1 ){ 
+		return;
 	} 
 	pp_int32 row_selection = selection.start.row; 
 	pp_uint32 nSelectedRows = selection.end.row - selection.start.row;

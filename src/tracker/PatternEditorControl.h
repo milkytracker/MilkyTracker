@@ -533,7 +533,6 @@ private:
 	void eventKeyCharBinding_Copy();	      // Operates on block
 	void eventKeyCharBinding_Paste();         // Operates on block
 	void eventKeyCharBinding_PasteStep();     // Operates on block
-	void eventKeyCharBinding_PasteStepFill(); // Operates on block
 	void eventKeyCharBinding_TransparentPaste();
 	void eventKeyCharBinding_SelectAll();
 	void eventKeyCharBinding_MuteChannel();
@@ -541,6 +540,8 @@ private:
 	void eventKeyCharBinding_Interpolate();
 
 public:
+	void eventKeyCharBinding_PasteStepFill(); // Operates on block
+											  
 	enum AdvanceCodes
 	{
 		AdvanceCodeJustUpdate,

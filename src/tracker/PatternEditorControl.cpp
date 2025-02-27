@@ -115,6 +115,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 	patternMenuControl->addEntry("Toggle #/b notation", BUTTON_PATTERN_SHARPFLAT);
+	patternMenuControl->addEntry("Repeat selection [ctrl+r]", BUTTON_PATTERN_REPEATSELECTION);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
@@ -1554,6 +1555,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_PATTERN_CAPTURE:
 		case BUTTON_PATTERN_CAPTURE_OVERDUB:
 		case BUTTON_PATTERN_SHARPFLAT:
+		case BUTTON_PATTERN_REPEATSELECTION:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;
