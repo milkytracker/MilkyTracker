@@ -115,7 +115,6 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
     patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 	patternMenuControl->addEntry("Toggle #/b notation", BUTTON_PATTERN_SHARPFLAT);
-	patternMenuControl->addEntry("Repeat selection [ctrl+r]", BUTTON_PATTERN_REPEATSELECTION);
     patternMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
     patternMenuControl->addEntry("Render to sample [overdub]", BUTTON_PATTERN_CAPTURE_OVERDUB);
@@ -165,6 +164,7 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     editMenuPasteControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
     editMenuPasteControl->addEntry("Paste StepFill [ctrl+r]", MenuCommandIDPasteStepFill);
     editMenuControl->addEntry("Paste special >", 0xFFF, editMenuPasteControl );
+	editMenuControl->addEntry("Repeat", BUTTON_PATTERN_REPEATSELECTION);
 
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
