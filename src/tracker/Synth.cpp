@@ -97,13 +97,17 @@ DialogSliders * Synth::dialog(){
 }
 
 void Synth::update(){
-  // enable envelope as sane startingpoint
-  tracker->getModuleEditor()->reloadEnvelope(
-  	  tracker->getListBoxInstruments()->getSelectedIndex(),
-  	  tracker->getListBoxSamples()->getSelectedIndex(), 
-  	  0
-  );		
-  tracker->getModuleEditor()->getEnvelopeEditor()->enableEnvelope(true);
+	// enable envelope as sane startingpoint
+	tracker->getModuleEditor()->reloadEnvelope(
+			tracker->getListBoxInstruments()->getSelectedIndex(),
+			tracker->getListBoxSamples()->getSelectedIndex(), 
+			0
+			);		
+	if( !tracker->getModuleEditor()->getEnvelopeEditor()->isEmptyEnvelope() ){
+		tracker->getModuleEditor()->getEnvelopeEditor()->enableEnvelope(true);
+		//tracker->getModuleEditor()->getEnvelopeEditor()->addPoint();
+		//tracker->getModuleEditor()->getEnvelopeEditor()->setEnvelopePoint(0, 0, 100 );
+	}
 }
 
 void Synth::setParam( int i, float v ){
@@ -147,14 +151,14 @@ void Synth::prev(){
 }
 
 TXMSample * Synth::prepareSample( pp_uint32 duration){
-  TXMSample *sample;
-  FilterParameters par(2);
-  par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
-  par.setParameter(1, FilterParameters::Parameter( 16 ) );
-  sampleEditor->tool_newSample(&par);
-  sample = sampleEditor->getSample();
+	TXMSample *sample;
+	FilterParameters par(2);
+	par.setParameter(0, FilterParameters::Parameter( (pp_int32)duration ) );
+	par.setParameter(1, FilterParameters::Parameter( 16 ) );
+	sampleEditor->tool_newSample(&par);
+	sample = sampleEditor->getSample();
 
-  return sample;
+	return sample;
 }
 
 void Synth::selectSynth( int ID ){
