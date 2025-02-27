@@ -209,6 +209,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	// scripting menu
 	subMenuAddon = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
 	editMenuControl->addEntry("Addons     \x10", 0xFFFF, subMenuAddon );
+	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced );
 
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	editMenuControl->addEntry("Cut", MenuCommandIDCut);

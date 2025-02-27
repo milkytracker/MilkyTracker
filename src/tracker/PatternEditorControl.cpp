@@ -162,9 +162,8 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
     editMenuPasteControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	editMenuPasteControl->setSubMenu(true);
     editMenuPasteControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
-    editMenuPasteControl->addEntry("Paste StepFill [ctrl+r]", MenuCommandIDPasteStepFill);
+    editMenuPasteControl->addEntry("Paste Repeat [ctrl+r]", MenuCommandIDPasteStepFill);
     editMenuControl->addEntry("Paste special >", 0xFFF, editMenuPasteControl );
-	editMenuControl->addEntry("Repeat", BUTTON_PATTERN_REPEATSELECTION);
 
     editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
     editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
@@ -1555,7 +1554,6 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case BUTTON_PATTERN_CAPTURE:
 		case BUTTON_PATTERN_CAPTURE_OVERDUB:
 		case BUTTON_PATTERN_SHARPFLAT:
-		case BUTTON_PATTERN_REPEATSELECTION:
 		{
 			 patternEditor->triggerButton(commandId, parentScreen, eventListener);
 			 break;

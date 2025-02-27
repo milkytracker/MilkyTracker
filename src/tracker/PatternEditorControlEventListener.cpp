@@ -1223,7 +1223,7 @@ void PatternEditorControl::invokeMenu(pp_int32 channel, const PPPoint& p)
 	editMenuControl->setState(MenuCommandIDCopy, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDPaste, patternEditor->clipBoardSelectionIsEmpty());
 	editMenuControl->setState(MenuCommandIDPorousPaste, patternEditor->clipBoardSelectionIsEmpty());
-	editMenuControl->setState(BUTTON_PATTERN_REPEATSELECTION, !hasValidSelection());
+	editMenuControl->setState(MenuCommandIDPasteStepFill, !hasValidSelection());
 	editMenuControl->setState(MenuCommandIDUndo, !patternEditor->canUndo());
 	editMenuControl->setState(MenuCommandIDRedo, !patternEditor->canRedo());
 	editMenuControl->setState(MenuCommandIDSwapChannels, menuInvokeChannel == patternEditor->getCursor().channel);
