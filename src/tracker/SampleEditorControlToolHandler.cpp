@@ -43,7 +43,7 @@
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
-  PPDialogBase *dialog = tracker->dialog; // we support only one window
+  dialog = tracker->dialog; // we support only one window
   if (dialog)               // and we want HelpDialog to remember
   {                         // its scrollposition
     delete dialog;
@@ -325,17 +325,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
   }
 
-  if( dialog != NULL ){
-	  dialog->show();
-  }
+  if( dialog != NULL ) dialog->show();
 
   return true;
 }
 
 bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
 {
-  PPDialogBase *dialog = tracker->dialog; // we support only one window
-  if (!sampleEditor->isValidSample() || dialog == NULL)
+  if (!sampleEditor->isValidSample())
     return false;
 
   switch (type)

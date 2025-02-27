@@ -122,6 +122,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 	// Create tool handler responder
 	toolHandlerResponder = new ToolHandlerResponder(*this);
+	dialog = NULL;	
 	this->tracker = (Tracker *)&tracker;
 
 	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
@@ -226,6 +227,8 @@ SampleEditorControl::~SampleEditorControl()
 	if (sampleEditor)
 		sampleEditor->removeNotificationListener(this);
 
+	delete dialog;
+		
 	delete toolHandlerResponder;
 
 	delete[] showMarks;

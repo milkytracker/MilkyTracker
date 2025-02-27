@@ -760,8 +760,6 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 			&& event->getID() != eKeyChar))
 		return false;
 
-	if( !screen->hasFocusModal() ) return false; // leave unfocused dialog alone
-
 	PPSimpleVector<PPControl>& controls = static_cast<PPContainer*>(ctrl)->getControls();
 
 	pp_int32 i;
@@ -778,7 +776,7 @@ bool Tracker::processMessageBoxShortcuts(PPEvent* event)
 	// iterate over controls in dialog and see whether we can find
 	// yes/no/cancel buttons
 	// if that's the case we simulate mouse button press
-	if (event->getID() == eKeyDown )
+	if (event->getID() == eKeyDown)
 	{
 		pp_uint16 keyCode = *((pp_uint16*)event->getDataPtr());
 

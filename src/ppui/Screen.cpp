@@ -91,13 +91,13 @@ void PPScreen::adjustEventMouseCoordinates(PPEvent* event)
 
 void PPScreen::raiseEvent(PPEvent* event)
 {
-	if (event->isMouseEvent() && (event->getID() == eLMouseDown || event->getID() == eRMouseDown) ){
+	if (event->isMouseEvent() ){
 		adjustEventMouseCoordinates(event);
 		PPPoint* p = (PPPoint*)event->getDataPtr();
 		if( modalControl && modalControl->isVisible() && modalControl->hit(*p) ){
 			lastMouseOverControl = modalControl;
 		}else{
-			lastMouseOverControl = NULL;
+			lastMouseOverControl = getFocusedControl();
 		}
 	}
 

@@ -61,6 +61,9 @@ pp_int32 PPListBoxFileBrowser::dispatchEvent(PPEvent* event)
 			cycle((char)keyCode);
 
 	}
+	if (event->getID() == eRMouseUp ){
+		confirmed = true;
+	}
 
 	if (event->getID() == eKeyUp ){
 

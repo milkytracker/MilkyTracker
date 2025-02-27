@@ -31,6 +31,7 @@
 #include "ModuleEditor.h"
 #include "Tracker.h"
 #include "ListBox.h"
+#include "SectionInstruments.h"
 
 Synth::Synth(int samplerate){
   this->samplerate = samplerate;
@@ -103,10 +104,9 @@ void Synth::update(){
 			tracker->getListBoxSamples()->getSelectedIndex(), 
 			0
 			);		
+	tracker->sectionInstruments->resetPianoAssignment();
 	if( !tracker->getModuleEditor()->getEnvelopeEditor()->isEmptyEnvelope() ){
 		tracker->getModuleEditor()->getEnvelopeEditor()->enableEnvelope(true);
-		//tracker->getModuleEditor()->getEnvelopeEditor()->addPoint();
-		//tracker->getModuleEditor()->getEnvelopeEditor()->setEnvelopePoint(0, 0, 100 );
 	}
 }
 
