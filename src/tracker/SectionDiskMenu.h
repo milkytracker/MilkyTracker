@@ -119,7 +119,7 @@ public:
 	void setCurrentPath(const PPSystemString& path, bool reload = true);
 	PPString getCurrentPathASCII();
 
-	void setModuleTypeAdjust(bool moduleTypeAdjust) { this->moduleTypeAdjust = moduleTypeAdjust; }
+	void setModuleTypeAdjust(bool moduleTypeAdjust);
 	
 	bool isDiskMenuVisible() { return diskMenuVisible; }
 	void resizeInstrumentContainer();

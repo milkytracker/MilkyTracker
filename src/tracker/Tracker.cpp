@@ -3120,16 +3120,11 @@ void Tracker::saveType(FileTypes eType)
 	{
 		prepareLoadSaveUI();
 	
-		sectionDiskMenu->selectSaveType(eType);
-		
-		if (eType == FileTypes::FileTypeSongWAV)
-			sectionDiskMenu->setModuleTypeAdjust(false);
-		
 		eventKeyDownBinding_InvokeSectionDiskMenu();
-		
-		if (eType == FileTypes::FileTypeSongWAV)
-			sectionDiskMenu->setModuleTypeAdjust(true);
-	
+
+		sectionDiskMenu->setModuleTypeAdjust(true);
+		sectionDiskMenu->switchState( SectionDiskMenu::BrowseModules );
+
 		finishLoadSaveUI();
 	}
 	else

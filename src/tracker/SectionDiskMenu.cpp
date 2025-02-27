@@ -210,7 +210,7 @@ public:
 SectionDiskMenu::SectionDiskMenu(Tracker& theTracker) :
 	SectionUpperLeft(theTracker, NULL, new DialogResponderDisk(*this)),
 	diskMenuVisible(false),
-	classicViewState(BrowseModules),
+	classicViewState(BrowseAll),
 	forceClassicBrowser(false),
 	moduleTypeAdjust(true),
 	sortAscending(true),
@@ -1941,6 +1941,8 @@ void SectionDiskMenu::assureExtension()
 	updateFilenameEditFieldExtension(classicViewState);
 }
 
-
-
-
+void SectionDiskMenu::setModuleTypeAdjust(bool moduleTypeAdjust)
+{ 
+	this->moduleTypeAdjust = moduleTypeAdjust; 
+	if( classicViewVisible ) updateClassicView(true);
+}

@@ -256,7 +256,12 @@ pp_int32 DialogFileSelector::handleEvent(PPObject* sender, PPEvent* event)
 	{
 		pp_int32 index = *((pp_int32*)event->getDataPtr());
 		
-		return confirm(*listBoxFiles->getPathEntry(index));
+		if (listBoxFiles->stepIntoCurrentSelection())
+		{
+			updateButtonStates(true);
+			refresh(true);
+			return PPDialogBase::handleEvent(sender, event);
+		}else return confirm(*listBoxFiles->getPathEntry(index));
 	}
 	else if (reinterpret_cast<PPControl*>(sender) == listBoxFiles && event->getID() == eSelection)
 	{
@@ -382,12 +387,6 @@ pp_int32 DialogFileSelector::processKeys(PPObject* sender, PPEvent* event)
 				if (editFieldCurrentFile->isEditing())
 					goto callBaseClass;
 				return discard();
-				break;
-				
-			case VK_RETURN:
-				if (editFieldCurrentFile->isEditing())
-					goto callBaseClass;
-				return confirm();			
 				break;
 				
 			default:
