@@ -1567,35 +1567,20 @@ bool ModuleEditor::loadInstrument(const SYSCHAR* fileName, mp_sint32 index)
 
 	PPString file = PPString(fileName);
 
-	if( file.compareExtensions( PPString(".sf2") ) == 0 ){
-		SF2File::sampleIndex = 0;
-		bool ok = SF2File::loadSFSampleToEditor(fileName, index, currentSampleIndex, this );
-		if( ok ){
-			finishSamples();
-			validateInstruments();
-			changed = true;
-		}else printf("warning: could not load sf2\n");
-		return ok;
-	}else{
-
-		XIInstrument* ins = new XIInstrument();
-		bool res = ins->load(fileName) == 0; 
+	XIInstrument* ins = new XIInstrument();
+	bool res = ins->load(fileName) == 0; 
+	
+	if (res)
+	{
+		res = insertXIInstrument(index, ins);
+	
+		finishSamples();
 		
-		if (res)
-		{
-			res = insertXIInstrument(index, ins);
-		
-			finishSamples();
-			
-			validateInstruments();
-		}
-		
-		delete ins;
-		return res;
+		validateInstruments();
 	}
-
-
-	return false;
+	
+	delete ins;
+	return res;
 }
 
 bool ModuleEditor::saveInstrument(const SYSCHAR* fileName, mp_sint32 index)

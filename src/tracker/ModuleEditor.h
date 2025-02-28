@@ -322,8 +322,6 @@ public:
 	
 	// load instrument
 	bool loadInstrument(const SYSCHAR* fileName, mp_sint32 index );
-	// load soundfont instrument
-	bool loadSFInstrument(const SYSCHAR* fileName, mp_sint32 index, mp_sint32 SF2inst);
 	// save instrument
 	bool saveInstrument(const SYSCHAR* fileName, mp_sint32 index);
 

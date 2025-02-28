@@ -304,6 +304,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
     }
 
+	case ToolHandlerResponder::SampleToolTypeSoundfont:
+	{
+		dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "select soundfont sample", 1, sampleEditor, &SampleEditor::tool_soundfont );
+		DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+		sliders->initSlider(0, float(0), float(10), float(0), "sample" );
+		break;
+	}
+
     case ToolHandlerResponder::SampleToolTypeAddon:
     {
 		Param *params = Addon::params;
@@ -380,7 +388,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
     case ToolHandlerResponder::SampleToolTypeSaturate:
     {
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-	  for( pp_uint8 i = 0; i < 4; i++ ) lastValues.saturator[i]     = sliders->getSlider(i);
+	  for( pp_uint8 i = 0; i < 5; i++ ) lastValues.saturator[i]     = sliders->getSlider(i);
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }
@@ -578,7 +586,7 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
       break;
     }
 
-    case ToolHandlerResponder::SampleToolTypeSynth:;
+    case ToolHandlerResponder::SampleToolTypeSynth:
     {
       this->tracker->updateSamplesListBox();
       break;

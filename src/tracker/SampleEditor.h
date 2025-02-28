@@ -378,6 +378,7 @@ public:
 	void tool_synth(const FilterParameters* par);
 	void tool_vocodeSample(const FilterParameters* par);
 	void tool_addon(const FilterParameters* par);
+	void tool_soundfont(const FilterParameters* par);
 	
 	// generators
 	void tool_generateSilence(const FilterParameters* par);

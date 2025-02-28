@@ -56,7 +56,6 @@ void Synth::init(){
 	Cycle(true); 
 	PL(true); 
 	UNZ(true); 
-	Soundfont(true);
 	ASCIISynthImport( preset[0] ); // initialize with first preset
 }
 
@@ -85,7 +84,6 @@ void Synth::process( MSynth *s, PPString *preset ){
 		case SYNTH_FM:           FM();            break;
 		case SYNTH_PL:           PL();            break;
 		case SYNTH_UNZ:          UNZ();           break;
-		case SYNTH_SOUNDFONT:    Soundfont();     break;
 	}
 
 }
@@ -1110,42 +1108,3 @@ void Synth::UNZ( bool init ){
 	sampleEditor->setRepeatEnd(sample->samplen);
 
 }
-
-void Synth::Soundfont( bool init ){
-	pp_int32 ID = SYNTH_SOUNDFONT;
-
-	if( init ){
-
-		synths[ID].nparams = 2;   // < SYN_PARAMS_MAX
-		synths[ID].ID      = ID;
-		synths[ID].param[0].name  = PPString("\x11 soundfont \x10");
-		synths[ID].param[0].value = 0.0f;
-		synths[ID].param[0].min   = 0;
-		synths[ID].param[0].max   = SYNTH_LAST;
-
-		synths[ID].param[1].name  = "sample";
-		synths[ID].param[1].value = 0.0f;
-		synths[ID].param[1].min   = 0;
-		synths[ID].param[1].max   = SF2File::maxSamples-1;
-
-		// hint to synth-dialog that sample-management it done 
-		// outside of the synth, so a new sample (prepareSample e.g.)
-		// does not have to be managed 
-		synths[ID].facade = true;
-
-		return;
-	}
-
-	// trigger file load browser	
-	tracker->loadType(FileTypes::FileTypeSongAllInstruments);
-
-
-	if( SF2File::fontFile.length() > 0 ){
-		SF2File::sampleIndex = (pp_uint32)synth->param[1].value;
-		pp_uint32 instr  = tracker->listBoxInstruments->getSelectedIndex();
-		pp_uint32 sample = tracker->listBoxSamples->getSelectedIndex();
-		bool ok = SF2File::loadSFSampleToEditor( SF2File::fontFile.getStrBuffer(), instr, sample, tracker->moduleEditor );
-	}
-
-}
-

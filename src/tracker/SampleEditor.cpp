@@ -3971,3 +3971,16 @@ void SampleEditor::tool_addon(const FilterParameters* par)
 
 	postFilter();
 }
+
+void SampleEditor::tool_soundfont(const FilterParameters* par)
+{
+	preFilter(&SampleEditor::tool_addon, par);
+
+	prepareUndo();
+
+	printf("sampleeditor soundfont\n");
+
+	finishUndo();
+
+	postFilter();
+}

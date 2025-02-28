@@ -2763,66 +2763,72 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 		case FileTypes::FileTypeSongAllInstruments:
 		{
 			loadingParameters.res = moduleEditor->loadInstrument(loadingParameters.filename, listBoxInstruments->getSelectedIndex());
-			sectionInstruments->updateAfterLoad();
-			if( loadingParameters.filename.compareExtensions( PPString(".sf2") ) == 0 ){
-				getSampleEditor()->synth->selectSynth( SYNTH_SOUNDFONT );
-				sectionSamples->getSampleEditorControl()->invokeSynth();
+			if( loadingParameters.filename.compareExtensions( PPString(".sf2") ) == 0 ){ 
+				printf("sf2 FileTypesongAllInstruments\n");
+				sectionSamples->getSampleEditorControl()->invokeSoundfont();
+				loadingParameters.res = true;
 			}
+			sectionInstruments->updateAfterLoad();
 			break;
 		}
 			
 		case FileTypes::FileTypeSongAllSamples:
 		{
-			pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
-			
-			pp_int32 chnIndex = 0;
-			if (numSampleChannels <= 0)
-			{
-				loadingParameters.res = false;
-				break;
-			}
-			else if (numSampleChannels > 1 && 
-					 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
-			{
-				if (dialog)
-					delete dialog;
+			if( loadingParameters.filename.compareExtensions( PPString(".sf2") ) == 0 ){
+				//getSampleEditorControl()->invokeSoundfont();
+				printf("sf2 FileTypesongAllSamples\n");
+			}else{
+				pp_int32 numSampleChannels = moduleEditor->getNumSampleChannels(loadingParameters.filename);
 				
-				if (responder)
-					delete responder;
+				pp_int32 chnIndex = 0;
+				if (numSampleChannels <= 0)
+				{
+					loadingParameters.res = false;
+					break;
+				}
+				else if (numSampleChannels > 1 && 
+						 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
+				{
+					if (dialog)
+						delete dialog;
 					
-				responder = new SampleLoadChannelSelectionHandler(*this);				
-				dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);	
-				
-				// Add names of sample channels to instrument box
-				for (pp_int32 i = 0; i < numSampleChannels; i++)
-					static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
-				
-				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
-				static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
-				static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
-				
-				signalWaitState(false);
-				
-				dialog->show();
-				return true;
-			}
-			else if (numSampleChannels > 1 && 
-					 settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
-			{
-				chnIndex = -1;
-			}
+					if (responder)
+						delete responder;
+						
+					responder = new SampleLoadChannelSelectionHandler(*this);				
+					dialog = new DialogChannelSelector(screen, responder, PP_DEFAULT_ID, "Choose channel to load" PPSTR_PERIODS);	
+					
+					// Add names of sample channels to instrument box
+					for (pp_int32 i = 0; i < numSampleChannels; i++)
+						static_cast<DialogChannelSelector*>(dialog)->getListBox()->addItem(moduleEditor->getNameOfSampleChannel(loadingParameters.filename, i));
+					
+					static_cast<SampleLoadChannelSelectionHandler*>(responder)->setCurrentFileName(loadingParameters.filename);
+					static_cast<SampleLoadChannelSelectionHandler*>(responder)->setPreferredFileName(loadingParameters.preferredFilename);
+					static_cast<SampleLoadChannelSelectionHandler*>(responder)->suspendPlayer = suspendPlayer;
+					
+					signalWaitState(false);
+					
+					dialog->show();
+					return true;
+				}
+				else if (numSampleChannels > 1 && 
+						 settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
+				{
+					chnIndex = -1;
+				}
 
-			if (loadingParameters.preferredFilename.length())
-				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
-																 listBoxInstruments->getSelectedIndex(), 
-																 listBoxSamples->getSelectedIndex(), 
-																 chnIndex,
-																 loadingParameters.preferredFilename);
-			else
-				loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
-																 listBoxInstruments->getSelectedIndex(), 
-																 listBoxSamples->getSelectedIndex(), 
-																 chnIndex);
+				if (loadingParameters.preferredFilename.length())
+					loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
+																	 listBoxInstruments->getSelectedIndex(), 
+																	 listBoxSamples->getSelectedIndex(), 
+																	 chnIndex,
+																	 loadingParameters.preferredFilename);
+				else
+					loadingParameters.res = moduleEditor->loadSample(loadingParameters.filename, 
+																	 listBoxInstruments->getSelectedIndex(), 
+																	 listBoxSamples->getSelectedIndex(), 
+																	 chnIndex);
+			}
 
 			sectionSamples->updateAfterLoad();
 			break;

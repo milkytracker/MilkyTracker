@@ -163,6 +163,5 @@ TXMSample * Synth::prepareSample( pp_uint32 duration){
 
 void Synth::selectSynth( int ID ){
     synth = &synths[ID];
-	if( ID == SYNTH_SOUNDFONT ) Soundfont(true); // re-init sample-slider (with max value);
 	setParam(0, float(ID) );
 }

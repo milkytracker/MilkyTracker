@@ -109,6 +109,8 @@ bool FileIdentificator::isInstrument()
 bool FileIdentificator::isSample()
 {
 	XModule module;
+	
+	if( fileName.compareExtensions( PPString(".sf2") ) == 0 ) return true;
 
 	SampleLoaderGeneric sampleLoader(fileName, module);
 		

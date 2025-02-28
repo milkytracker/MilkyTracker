@@ -326,7 +326,8 @@ private:
 		MenuCommandIDGenerateHalfSine,
 		MenuCommandIDGenerateAbsoluteSine,
 		MenuCommandIDGenerateQuarterSine,
-		MenuCommandIDSynth
+		MenuCommandIDSynth,
+		MenuCommandIDSoundfont
 	};
 	
 	void executeMenuCommand(pp_int32 commandId);
@@ -336,6 +337,7 @@ private:
 public:
 	void invokeSetSampleVolume() { executeMenuCommand(MenuCommandIDVolumeBoost); }
 	void invokeSynth() { executeMenuCommand(MenuCommandIDSynth); }
+	void invokeSoundfont() { executeMenuCommand(MenuCommandIDSoundfont); }
 	
 	bool contextMenuVisible();
 	void invokeContextMenu(const PPPoint& p, bool translatePoint = true);
@@ -383,7 +385,8 @@ private:
 			SampleToolTypeGenerateQuarterSine,
 			SampleToolTypeReverb,
 			SampleToolTypeSynth,
-			SampleToolTypeAddon
+			SampleToolTypeAddon,
+			SampleToolTypeSoundfont
 		};
 	
 	private:

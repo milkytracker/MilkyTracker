@@ -2028,6 +2028,10 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MenuCommandIDSynth:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSynth);
 			break;
+
+		case MenuCommandIDSoundfont:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSoundfont);
+			break;
 	}
 	if (commandId >= Addon::MenuID)
 	{
