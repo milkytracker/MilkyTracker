@@ -206,9 +206,11 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	editMenuControl->addEntry("Paste      \x10", 0xFFFF, subMenuXPaste);
 	editMenuControl->addEntry(seperatorStringMed, -1);
 	
+	#if !defined(WINDOWS) && !defined(WIN32) // C++ >= v17
 	// scripting menu
 	subMenuAddon = new PPContextMenu(8, parentScreen, this, PPPoint(0, 0), TrackerConfig::colorThemeMain);
 	editMenuControl->addEntry("Addons     \x10", 0xFFFF, subMenuAddon );
+    #endif
 	editMenuControl->addEntry("Advanced   \x10", 0xFFFF, subMenuAdvanced );
 
 	editMenuControl->addEntry(seperatorStringMed, -1);
@@ -1766,9 +1768,11 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuGenerators->setState(MenuCommandIDGenerateQuarterSine, isEmptySample);
 	subMenuGenerators->setState(MenuCommandIDGenerateSilence, isEmptySample);
 	
-	// load scripts
+	#if !defined(WINDOWS) && !defined(WIN32) // C++ >= v17
+	// load scripts (*TODO* windows needs more testing, feel free to do so)
 	subMenuAddon->clear();
 	Addon::load( PPString("addons.txt"), subMenuAddon, this->tracker );
+    #endif
 
 	parentScreen->setContextMenuControl(editMenuControl);
 }
