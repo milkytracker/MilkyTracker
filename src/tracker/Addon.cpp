@@ -158,8 +158,11 @@ int Addon::runAddon(const FilterParameters *par) {
 	int res;
     char finalCmd[MAX_CMD_LENGTH];
 
+	#if defined(WINDOWS) || defined(WIN32) // C++ >= v17
+	SetEnvironmentVariable("MILKY_ADDON", selectedName);
+	#else
 	setenv("MILKY_ADDON",selectedName,true);
-
+	#endif
 
     PPPath* currentPath = PPPathFactory::createPath();
     currentPath->change(addonsFolder);
