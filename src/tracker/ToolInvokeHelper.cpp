@@ -46,6 +46,7 @@ ToolInvokeHelper::ToolInvokeHelper(Tracker& theTracker) :
 ToolInvokeHelper::~ToolInvokeHelper()
 {
 	delete dialog;
+	dialog = NULL;
 }
 
 void ToolInvokeHelper::resetLastValues()

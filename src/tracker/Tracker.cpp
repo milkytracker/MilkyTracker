@@ -779,8 +779,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				if (dialog)
+				if (dialog){
 					delete dialog;
+					dialog = NULL;
+				}
 				
 				if (responder)
 					delete responder;
@@ -2789,8 +2791,10 @@ bool Tracker::loadTypeFromFile(FileTypes eType, const PPSystemString& fileName, 
 				else if (numSampleChannels > 1 && 
 						 !settingsDatabase->restore("AUTOMIXDOWNSAMPLES")->getIntValue())
 				{
-					if (dialog)
+					if (dialog){
 						delete dialog;
+						dialog = NULL;
+					}
 					
 					if (responder)
 						delete responder;
@@ -3231,8 +3235,10 @@ void Tracker::buildMODSaveErrorWarning(pp_int32 error)
 									 "* Volume column is not used        \n"\
 									 "* Only effects between 0 and F     \n\nSave anyway?"};
 	
-	if (dialog)
+	if (dialog){
 		delete dialog;
+		dialog = NULL;
+	}
 	
 	if (responder)
 		delete responder;
