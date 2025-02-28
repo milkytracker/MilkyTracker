@@ -6,7 +6,7 @@ platform:
   - x64
 
 image:
-  - Ubuntu1804
+  - Ubuntu1604
   - Visual Studio 2017
 
 environment:
@@ -19,6 +19,7 @@ install:
       Update-AppveyorBuild -Version "$env:GIT_TAG-$env:APPVEYOR_BUILD_NUMBER"
 
 before_build:
+  - sh: wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
   - sh: sudo apt-get update
   - sh: sudo apt-get install libjack-dev liblhasa-dev librtmidi-dev libsdl2-dev libzzip-dev -y
   - sh: if [ $PLATFORM == "Win32" ]; then exit 0; fi 
@@ -36,7 +37,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu1804
+      - image: Ubuntu1604
 
   build_script:
   - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
