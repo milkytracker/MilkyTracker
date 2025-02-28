@@ -380,8 +380,8 @@ void Tracker::eventKeyDownBinding_PlaySong()
 
 	// in milkytracker mode, consider unfocused patterneditor as editing too
 	// that way hitting enter in the filebrowser will not trigger play
-	bool editing = screen->getFocusedControl() != static_cast<PPControl*>(getPatternEditorControl());
-	if (editing && editMode == EditModeMilkyTracker ) return;
+	PPControl* fileBrowsing = sectionDiskMenu->isFileBrowserVisible() ? static_cast<PPControl*>(sectionDiskMenu->getListBoxFiles()) : NULL;
+	if( fileBrowsing && screen->hasFocus(fileBrowsing) ) return;
 
 	playerLogic->playSong();
 }
