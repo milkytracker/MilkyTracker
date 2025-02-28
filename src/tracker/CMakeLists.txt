@@ -68,7 +68,6 @@ add_executable(tracker
     ColorPaletteContainer.cpp
     fx/Convolver.cpp
 	soundfont/sf2.cpp
-	soundfont/iffdigest.cpp
     DialogHelp.cpp
     DialogChannelSelector.cpp
     DialogEQ.cpp
