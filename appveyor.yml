@@ -36,7 +36,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu1604
+      - image: Ubuntu1804
 
   build_script:
   - sh: cmake -DCMAKE_BUILD_TYPE=Debug ..
