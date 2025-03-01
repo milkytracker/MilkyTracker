@@ -43,9 +43,8 @@
 
 bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHandlerResponder::SampleToolTypes type)
 {
-  dialog = tracker->dialog; // we support only one window
-  if (dialog)               // and we want HelpDialog to remember
-  {                         // its scrollposition
+  if (dialog)
+  {
     delete dialog;
 	dialog = NULL;
   }
