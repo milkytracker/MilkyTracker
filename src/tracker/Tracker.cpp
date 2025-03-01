@@ -3292,36 +3292,37 @@ void Tracker::backtraceInstrument(pp_uint8 channelIncrement, bool currentPosOnly
 	pp_int8 chan = cursor.channel + channelIncrement;
 	pp_int32 ins  = -1;
 
-  // check current position	
-  patternTools.setPosition( p->getPattern(), chan, cursor.row);
-  if ( patternTools.getNote() != 0 ){ ins = patternTools.getInstrument();	}
+    // check current position	
+	patternTools.setPosition( p->getPattern(), chan, cursor.row);
+	if ( patternTools.getNote() != 0 ){ ins = patternTools.getInstrument();	}
 
 	// backtrace last instrument on pattern-channel
-	if( ins == -1 && !currentPosOnly ){
-    for (pp_int32 i = cursor.row; i >= 0; i--)
-    {
-      patternTools.setPosition( p->getPattern(), chan, i);
-      if ( patternTools.getNote() != 0 ){
-        ins = patternTools.getInstrument();	
-        break;
-      }
-      if( currentPosOnly ) return;
-    }
-  }
-
-	// find future note if backtrace wasn't possible
-	if( ins == -1 && !currentPosOnly ){
-		for (pp_int32 i = cursor.row; i < p->getNumRows(); i++)
+	if( ins < 1 && !currentPosOnly ){
+		for (pp_int32 i = cursor.row; i >= 0; i--)
 		{
 			patternTools.setPosition( p->getPattern(), chan, i);
-      if( patternTools.getNote() != 0 ){
-        ins = patternTools.getInstrument();
-        break;
-      }
+			pp_int32 lastIns = patternTools.getInstrument();	
+			if ( patternTools.getNote() != 0 && lastIns > 0){
+				ins = lastIns;
+				break;
+			}
 		}
 	}
 
-	if( ins == -1 ) return;
+	// find future note if backtrace wasn't possible
+	if( ins < 1 && !currentPosOnly ){
+		for (pp_int32 i = cursor.row; i < p->getNumRows(); i++)
+		{
+			patternTools.setPosition( p->getPattern(), chan, i);
+			pp_int32 lastIns = patternTools.getInstrument();	
+			if ( patternTools.getNote() != 0 && lastIns > 0){
+				ins = lastIns;
+				break;
+			}
+		}
+	}
+
+	if( ins < 1 ) return;
 	getPatternEditor()->setCurrentInstrument(ins);
 	moduleEditor->setCurrentInstrumentIndex(ins-1);
 	listBoxInstruments->setSelectedIndex(ins-1);
