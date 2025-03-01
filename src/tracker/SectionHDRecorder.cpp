@@ -774,7 +774,8 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 	ModuleServices::WAVWriterParameters parameters;
 	parameters.sampleRate = getSettingsFrequency();
 	parameters.resamplerType = (getSettingsRamping() ? 1 : 0) | (getSettingsResampler() << 1);
-	parameters.rampin        = getSettingsRamping() == 2; // FT2
+	// to ramp-in is determined by global settings for now
+	parameters.rampin        = tracker.settingsDatabase->restore("RAMPING")->getIntValue() == 2;
 	parameters.playMode = tracker.playerController->getPlayMode();
 	parameters.mixerShift = getSettingsMixerShift(); 
 	parameters.mixerVolume = mixerVolume;
@@ -801,6 +802,8 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 
 	tracker.signalWaitState(false);
 
+	printf("ramp-in = %i\n",parameters.rampin);
+
 	delete[] muting;
 
 	if (res > 0)
@@ -823,6 +826,8 @@ void SectionHDRecorder::getPeakLevel()
 	ModuleServices::WAVWriterParameters parameters;
 	parameters.sampleRate = getSettingsFrequency();
 	parameters.resamplerType = (getSettingsRamping() ? 1 : 0) | (getSettingsResampler() << 1);
+	// to ramp-in is determined by global settings for now
+	parameters.rampin        = tracker.settingsDatabase->restore("RAMPING")->getIntValue() == 2;
 	parameters.playMode = tracker.playerController->getPlayMode();
 	parameters.mixerShift = getSettingsMixerShift(); 
 	parameters.mixerVolume = 256;
@@ -884,6 +889,8 @@ void SectionHDRecorder::exportWAVAsSample()
 	ModuleServices::WAVWriterParameters parameters;
 	parameters.sampleRate = getSettingsFrequency();
 	parameters.resamplerType = (getSettingsRamping() ? 1 : 0) | (getSettingsResampler() << 1);
+	// to ramp-in is determined by global settings for now
+	parameters.rampin        = tracker.settingsDatabase->restore("RAMPING")->getIntValue() == 2;
 	parameters.playMode = tracker.playerController->getPlayMode();
 	parameters.mixerShift = getSettingsMixerShift(); 
 	parameters.mixerVolume = mixerVolume;
