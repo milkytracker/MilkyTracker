@@ -66,6 +66,8 @@ private:
 	// ----------------------------------------------------------
 	// remember mixer type
 	ChannelMixer::ResamplerTypes	resamplerType;
+	// whether to ramp-in or not
+	bool rampIn;
 	// remember mixing frequency
 	mp_uint32			frequency;
 	// overwrite default audiodriver
@@ -145,6 +147,13 @@ public:
 	 * @see				MixerSettings
 	 */
 	void				setResamplerType(ResamplerTypes type);
+
+	/**
+	 * Specify ramp-in (FT2) or not (keep transients).
+	 * @param  type		mixer type
+	 * @see				MixerSettings
+	 */
+	void                setRamp(bool rampIn);
 
 	/**
 	 * Specify mixer type with two flags indicating whether to interpolate or to do volume ramping. 

@@ -168,6 +168,7 @@ PlayerGeneric::PlayerGeneric(mp_sint32 frequency, AudioDriverInterface* audioDri
 	sampleShift = 0;
 	
 	resamplerType = MIXER_NORMAL;
+	rampIn = true;
 
 	idle = false;
 	playOneRowOnly = false;
@@ -224,6 +225,13 @@ void PlayerGeneric::setResamplerType(ResamplerTypes type)
 	resamplerType = type;
 	if (player)
 		player->setResamplerType(type);
+}
+
+void PlayerGeneric::setRamp(bool rampIn){
+	this->rampIn = rampIn;
+	if( player ){
+		player->setRamp(rampIn);
+	}
 }
 
 void PlayerGeneric::setResamplerType(bool interpolation, bool ramping)
@@ -963,6 +971,8 @@ mp_sint32 PlayerGeneric::exportToWAV(const SYSCHAR* fileName, XModule* module,
 		player->setPlayMode(playMode);
 		player->setDisableMixing(disableMixing);
 		player->setAllowFilters(allowFilters);		
+
+		player->setRamp(rampIn);
 #ifndef MILKYTRACKER
 		if (player->getType() == PlayerBase::PlayerType_IT)
 		{

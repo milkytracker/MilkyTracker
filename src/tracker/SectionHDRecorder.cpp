@@ -802,8 +802,6 @@ void SectionHDRecorder::exportWAVAsFileName(const PPSystemString& fileName)
 
 	tracker.signalWaitState(false);
 
-	printf("ramp-in = %i\n",parameters.rampin);
-
 	delete[] muting;
 
 	if (res > 0)

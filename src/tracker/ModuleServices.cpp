@@ -110,6 +110,7 @@ pp_int32 ModuleServices::exportToWAV(const PPSystemString& fileName, WAVWriterPa
 	player->setResamplerType((ChannelMixer::ResamplerTypes)parameters.resamplerType);
 	player->setSampleShift(parameters.mixerShift);
 	player->setMasterVolume(parameters.mixerVolume);
+	player->setRamp( parameters.rampin == 1 ? true : false );
 	
 	pp_int32 res = 0;
 	
