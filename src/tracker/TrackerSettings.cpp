@@ -505,8 +505,11 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	}
 	else if (theKey->getKey().compareTo("SAMPLEEDITORUNDOBUFFER") == 0)
 	{
-		if (sampleEditor)
+		if (sampleEditor){
 			sampleEditor->enableUndoStack(v2 != 0);
+			sampleEditor->reset();
+		}
+
 	}
 	else if (theKey->getKey().compareTo("SAMPLEEDITORDECIMALOFFSETS") == 0)
 	{

@@ -123,9 +123,6 @@ void Synth::next(){
     for( i = 0; i < synth->nparams; i++ ){
       par.setParameter(i, FilterParameters::Parameter( synth->param[i].value ) );
     }
-	if( !sampleEditor->isEmptySample() ){
-		sampleEditor->clearSample();
-	}
 	sampleEditor->tool_synth(&par);
 	sampleEditor->resetSelection();
     update();
@@ -141,9 +138,6 @@ void Synth::prev(){
     for( i = 0; i < synth->nparams; i++ ){
       par.setParameter(i, FilterParameters::Parameter( synth->param[i].value ) );
     }
-	if( !sampleEditor->isEmptySample() ){
-		sampleEditor->clearSample();
-	}
 	sampleEditor->tool_synth(&par);
 	sampleEditor->resetSelection();
     update();

@@ -195,12 +195,13 @@ void SampleEditor::prepareUndo()
 
 void SampleEditor::finishUndo()
 {
+	lastOperationDidChangeSize = before == NULL || (sample->samplen != before->getSampLen());
+
 	if (undoStackEnabled && undoStackActivated && undoStack) 
 	{ 
 		// first of all the listener should get the chance to adjust
 		// user data according to our new changes BEFORE we actually save
 		// the new state in the undo stack for redo
-		lastOperationDidChangeSize = (sample->samplen != before->getSampLen());					
 		notifyListener(NotificationChangesValidate);
 		
 		undoUserData.clear();
@@ -211,7 +212,7 @@ void SampleEditor::finishUndo()
 										 getSelectionStart(), 
 										 getSelectionEnd(), 
 										 &undoUserData)); 
-		if (*before != after) 
+		if (before != NULL && *before != after) 
 		{ 
 			if (undoStack) 
 			{ 
@@ -427,7 +428,6 @@ bool SampleEditor::isEditableSample() const
 void SampleEditor::enableUndoStack(bool enable)
 {
 	undoStackEnabled = enable;
-	reset();
 }
 
 bool SampleEditor::undo()
@@ -1340,6 +1340,7 @@ void SampleEditor::tool_cropSample(const FilterParameters* par)
 
 void SampleEditor::tool_clearSample(const FilterParameters* par)
 {
+	if( isEmptySample() ) return; // nothing to clear
 	preFilter(NULL, NULL);
 	
 	prepareUndo();
@@ -3723,32 +3724,30 @@ void SampleEditor::tool_delay(const FilterParameters* par)
 
 void SampleEditor::tool_synth(const FilterParameters* par)
 {
-  bool skipUndo = synth->getParam(0).value != (float)par->getParameter(0).floatPart;
+  prepareUndo();
+  preFilter(&SampleEditor::tool_synth, par);
 
-  if( !skipUndo ){
-	  prepareUndo();
-	  preFilter(&SampleEditor::tool_synth, par);
-  } 
+  if( !isEmptySample() ) clearSample();
 
   // update controls just to be sure
   for( int i = 0; i < synth->getMaxParam(); i++ ){
     synth->setParam(i, (float)par->getParameter(i).floatPart );
   }
   
-  //enableUndoStack(false);
+  // dont affect undo stack when synths call sampleeditor funcs
+  enableUndoStack(false); 
+
   synth->process( NULL,NULL);
-  //enableUndoStack(true);
 
   // serialize synth to samplename 
   if( !synth->synth->facade ){
 	  PPString preset = synth->ASCIISynthExport();
 	  memcpy( sample->name, preset.getStrBuffer(), MP_MAXTEXT );
   }
+  enableUndoStack(true);
 
-  if( !skipUndo ){
-	  finishUndo();
-	  postFilter();
-  } 
+  finishUndo();
+  postFilter();
 }
 
 

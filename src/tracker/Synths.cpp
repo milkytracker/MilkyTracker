@@ -68,11 +68,6 @@ void Synth::process( MSynth *s, PPString *preset ){
 
 	// if slider 0 changed, change synth + relaunch dialog
 	if( s->ID != synth->ID ){     
-		if( !sampleEditor->isEmptySample() && !s->facade ){
-			// FM synth does not fit into a single cycle waveform 
-			sampleEditor->selectAll();
-			sampleEditor->cut();
-		}
 		synth  = s;                 
 		synth->param[0].value = (float)synth->ID;
 		dialog();
