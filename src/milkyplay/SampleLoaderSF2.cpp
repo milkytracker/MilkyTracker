@@ -65,7 +65,7 @@ INFORMATION
 #include "XMFile.h"
 #include "XModule.h"
 #include "LittleEndian.h"
-
+#include <cstdint>
 
 char SampleLoaderSF2::lastSF2File[255];
 int  SampleLoaderSF2::lastSF2FileSamples;
