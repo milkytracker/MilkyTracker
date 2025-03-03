@@ -2557,6 +2557,7 @@ pp_uint32 Tracker::fileTypeToHint(FileTypes type)
 		case FileTypes::FileTypeSongAllSamples:
 		case FileTypes::FileTypeSampleWAV:
 		case FileTypes::FileTypeSampleIFF:
+		case FileTypes::FileTypeSampleSF2:
 			return DecompressorBase::HintSamples;
 
 		default:

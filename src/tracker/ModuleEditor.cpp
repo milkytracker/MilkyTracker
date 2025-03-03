@@ -1566,6 +1566,11 @@ bool ModuleEditor::loadInstrument(const SYSCHAR* fileName, mp_sint32 index)
 
 	PPString file = PPString(fileName);
 
+	if( file.compareExtensions( PPString(".sf2") ) == 0 ){
+		// for now we reroute to loadSample
+		loadSample(fileName, index, 0, 1 );
+	}
+
 	XIInstrument* ins = new XIInstrument();
 	bool res = ins->load(fileName) == 0; 
 	
