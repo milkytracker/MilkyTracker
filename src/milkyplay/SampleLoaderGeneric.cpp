@@ -39,6 +39,7 @@
 #include "SampleLoaderWAV.h"
 #include "SampleLoaderIFF.h"
 #include "SampleLoaderAIFF.h"
+#include "SampleLoaderSF2.h"
 #include "SampleLoaderALL.h"
 
 SampleLoaderGeneric::SampleLoaderGeneric(const SYSCHAR* fileName, XModule& module, bool supportRawLoading/* = true*/) 
@@ -157,6 +158,13 @@ SampleLoaderAbstract* SampleLoaderGeneric::getSuitableLoader()
 
 	// Try to find AIFF then
 	loader = new SampleLoaderAIFF(theFileName, theModule);
+	if (loader && loader->identifySample())
+		return loader;
+	
+	delete loader;
+
+	// Try to find SF2 then
+	loader = new SampleLoaderSF2(theFileName, theModule);
 	if (loader && loader->identifySample())
 		return loader;
 	

@@ -32,7 +32,6 @@
 #include "TrackerConfig.h"
 #include "PPSystem.h"
 #include "version.h"
-#include "soundfont/sf2.h"
 
 static const char validCharacters[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!.";
 

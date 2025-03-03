@@ -39,6 +39,7 @@
 #include "SampleEditorResampler.h"
 #include "PlayerMaster.h"
 #include "Addon.h"
+#include "SampleLoaderSF2.h"
 
 #define ZEROCROSS(a,b) (a > 0.0 && b <= 0.0 || a < 0.0 && b >= 0.0)
 
@@ -3977,7 +3978,10 @@ void SampleEditor::tool_soundfont(const FilterParameters* par)
 
 	prepareUndo();
 
-	printf("sampleeditor soundfont\n");
+	SampleLoaderSF2 *loader;
+	loader = new SampleLoaderSF2( (const SYSCHAR *)SampleLoaderSF2::lastSF2File, *module );
+	loader->loadSampleIndexToSample( sample, 1, (int)par->getParameter(0).floatPart );
+	delete loader;
 
 	finishUndo();
 

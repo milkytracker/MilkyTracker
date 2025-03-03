@@ -37,7 +37,6 @@
 #include "SampleEditor.h"
 #include "ListBox.h"
 #include "fx/Convolver.h"
-#include "soundfont/sf2.h"
 #include <math.h>
 
 /*

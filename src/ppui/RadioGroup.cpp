@@ -56,7 +56,9 @@ void PPRadioGroup::paint(PPGraphicsAbstract* g)
 	g->setFont(font);
 
 	PPColor dark, ldark, bright, normal;
-	
+
+	PPColor disabledText = *(this->textColor);		
+	disabledText.scale(0.75f);
 	normal = bright = ldark = dark = *radioButtonColor;
 	bright.scale(1.25f);
 	ldark.scale(0.75f);
@@ -84,93 +86,95 @@ void PPRadioGroup::paint(PPGraphicsAbstract* g)
 		pp_int32 px = location.x + 2 + (horizontal ? i*spacerWidth : 0);
 		pp_int32 py = location.y + 2 + (!horizontal ? (i*spacerHeight) : 0) + (spacerHeight>>1);
 
-		if (i == (signed)choice)
-		{
+		if( !disabled[i] ){
+			if (i == (signed)choice)
+			{
 
-			for (j = 0; j < 5; j++)
-			{
+				for (j = 0; j < 5; j++)
+				{
+					
+					g->setColor(ldark);
+					for (k = px+j; k <= px+8-j; k++)
+						g->setPixel(k, py-j);
+					
+					g->setColor(dark);
+					g->setPixel(px+j, py-j-1);
+					g->setPixel(px+8-j, py-j-1);
+					
+					g->setPixel(px+j, py-j);
+					g->setPixel(px+8-j, py-j);
+				}
 				
-				g->setColor(ldark);
-				for (k = px+j; k <= px+8-j; k++)
-					g->setPixel(k, py-j);
-				
-				g->setColor(dark);
-				g->setPixel(px+j, py-j-1);
-				g->setPixel(px+8-j, py-j-1);
-				
-				g->setPixel(px+j, py-j);
-				g->setPixel(px+8-j, py-j);
-			}
-			
-			for (j = 0; j < 5; j++)
-			{
-				
-				g->setColor(ldark);
-				for (k = px+j; k <= px+8-j; k++)
-					g->setPixel(k, py+j);
-				
-				g->setColor(normal);
-				g->setPixel(px+j, py+j);
-				g->setPixel(px+j-1, py+j);
-				
-				g->setPixel(px+8-j, py+j+1);
-				g->setPixel(px+8-j+1, py+j+1);
-			}
+				for (j = 0; j < 5; j++)
+				{
+					
+					g->setColor(ldark);
+					for (k = px+j; k <= px+8-j; k++)
+						g->setPixel(k, py+j);
+					
+					g->setColor(normal);
+					g->setPixel(px+j, py+j);
+					g->setPixel(px+j-1, py+j);
+					
+					g->setPixel(px+8-j, py+j+1);
+					g->setPixel(px+8-j+1, py+j+1);
+				}
 
-			
-			for (j = 0; j < 3; j++)
-			{
 				
-				g->setColor(textColor);
-				for (k = px+j; k <= px+4-j; k++)
-					g->setPixel(k+2, py-j+1);
-			}
-			
-			for (j = 0; j < 3; j++)
-			{
+				for (j = 0; j < 3; j++)
+				{
+					
+					g->setColor(textColor);
+					for (k = px+j; k <= px+4-j; k++)
+						g->setPixel(k+2, py-j+1);
+				}
 				
-				g->setColor(textColor);
-				for (k = px+j; k <= px+4-j; k++)
-					g->setPixel(k+2, py+j+1);
-				
-			}
+				for (j = 0; j < 3; j++)
+				{
+					
+					g->setColor(textColor);
+					for (k = px+j; k <= px+4-j; k++)
+						g->setPixel(k+2, py+j+1);
+					
+				}
 
+			}
+			else
+			{
+				for (j = 0; j < 5; j++)
+				{
+					
+					g->setColor(normal);
+					for (k = px+j; k <= px+8-j; k++)
+						g->setPixel(k, py-j);
+					
+					g->setColor(bright);
+					g->setPixel(px+j, py-j-1);
+					g->setPixel(px+8-j, py-j-1);
+				}
+				
+				for (j = 0; j < 5; j++)
+				{
+					
+					g->setColor(normal);
+					for (k = px+j; k <= px+8-j; k++)
+						g->setPixel(k, py+j);
+					
+					g->setColor(dark);
+					g->setPixel(px+j, py+j+1);
+					g->setPixel(px+j-1, py+j+1);
+					
+					g->setPixel(px+8-j, py+j+1);
+					g->setPixel(px+8-j+1, py+j+1);
+				}
+
+			}
 		}
-		else
-		{
-			for (j = 0; j < 5; j++)
-			{
-				
-				g->setColor(normal);
-				for (k = px+j; k <= px+8-j; k++)
-					g->setPixel(k, py-j);
-				
-				g->setColor(bright);
-				g->setPixel(px+j, py-j-1);
-				g->setPixel(px+8-j, py-j-1);
-			}
-			
-			for (j = 0; j < 5; j++)
-			{
-				
-				g->setColor(normal);
-				for (k = px+j; k <= px+8-j; k++)
-					g->setPixel(k, py+j);
-				
-				g->setColor(dark);
-				g->setPixel(px+j, py+j+1);
-				g->setPixel(px+j-1, py+j+1);
-				
-				g->setPixel(px+8-j, py+j+1);
-				g->setPixel(px+8-j+1, py+j+1);
-			}
 
-		}
-		
 		g->setColor(0, 0, 0);
 		g->drawString(*items.get(i), px + 12 + 1, py - (font->getCharHeight()>>1)+1 + 1);
 
-		g->setColor(textColor);
+		g->setColor( disabled[i] ? disabledText : textColor );
 
 		g->drawString(*items.get(i), px + 12, py - (font->getCharHeight()>>1)+1);
 
@@ -207,7 +211,7 @@ pp_int32 PPRadioGroup::dispatchEvent(PPEvent* event)
 			else
 				index = p->x / spacerWidth;
 
-			if (index >= items.size() || index < 0)
+			if (index >= items.size() || index < 0 || disabled[index])
 				break;
 
 			pp_int32 size = font->getStrWidth(*items.get(index)) + 12;
@@ -237,11 +241,18 @@ pp_int32 PPRadioGroup::dispatchEvent(PPEvent* event)
 void PPRadioGroup::addItem(const PPString& item)
 {
 	items.add(new PPString(item));
+	disabled[ items.size() -1 ] = false;
 
 	pp_int32 width = font->getStrWidth(item);
 
 	if (width > maxWidth)
 		maxWidth = width;
+}
+
+void PPRadioGroup::addItem(const PPString& item, bool enabled)
+{
+	addItem(item);
+	disabled[ items.size() -1 ] = !enabled;	
 }
 
 const PPString& PPRadioGroup::getItem(pp_int32 index) const

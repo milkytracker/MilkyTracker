@@ -44,6 +44,7 @@ private:
 	const PPColor* textColor;
 
 	PPSimpleVector<PPString> items;
+	bool disabled[50];
 
 	pp_uint32 spacerHeight;
 
@@ -63,7 +64,7 @@ public:
 	};
 
 	PPRadioGroup(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
-				 const PPPoint& location, const PPSize& size, 
+			 const PPPoint& location, const PPSize& size, 
 				 pp_uint32 spacerHeight = DefaultSpacerHeight);
 
 	virtual ~PPRadioGroup();
@@ -71,6 +72,7 @@ public:
 	void setColor(const PPColor& color) { this->radioButtonColor = &color; }
 
 	void addItem(const PPString& item);
+	void addItem(const PPString& item, bool enabled);
 	const PPString& getItem(pp_int32 index) const;
 
 	void setSpacerHeight(pp_uint32 spacerHeight) { this->spacerHeight = spacerHeight; }

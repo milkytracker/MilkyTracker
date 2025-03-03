@@ -66,6 +66,7 @@ add_library(milkyplay STATIC
     SampleLoaderGeneric.cpp
     SampleLoaderIFF.cpp
     SampleLoaderWAV.cpp
+	SampleLoaderSF2.cpp
     XIInstrument.cpp
     XMFile.cpp
     XModule.cpp

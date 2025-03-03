@@ -93,6 +93,7 @@ DialogSliders * Synth::dialog(){
   }
 
   sliders->show();
+  sliders->process();
   update();
   return sliders;
 }

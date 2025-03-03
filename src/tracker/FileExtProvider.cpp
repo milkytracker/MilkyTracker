@@ -77,6 +77,7 @@ const char* FileExtProvider::sampleExtensions[] =
 	"8svx","IFF (un)compressed",
 	"aif","Apple AIFF uncompressed",
 	"aiff","Apple AIFF uncompressed",
+	"sf2","SoundFont 2.0",
 	NULL, NULL
 };
 

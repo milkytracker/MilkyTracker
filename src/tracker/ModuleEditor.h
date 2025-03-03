@@ -27,7 +27,6 @@
 #include "BasicTypes.h"
 #include "PatternEditorTools.h"
 #include "SongLengthEstimator.h"
-#include "soundfont/sf2.h"
 
 class XIInstrument;
 class PatternEditor;
@@ -393,7 +392,6 @@ public:
 	
 	friend class ChangesListener;
 	friend class Tracker;
-	friend class SF2File;
 	friend class SectionSamples;
 
 };

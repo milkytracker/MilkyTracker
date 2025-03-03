@@ -673,11 +673,13 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(button);
 	y+=buttonHeight;
 	
-	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 30));
+	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 45));
 	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_INSTRUMENTTYPE)] = radioGroup->getLocation(); 
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xi");
+	radioGroup->addItem(" pat",false);
+	radioGroup->addItem(" sf2",false);
 	container->addControl(radioGroup);
 
 	// ---- Sample ----------
@@ -697,12 +699,14 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	container->addControl(button);
 	y+=buttonHeight;
 	
-	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 2*14));
+	radioGroup = new PPRadioGroup(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE, screen, this, PPPoint(x, y), PPSize(buttonWidth, 4*14));
 	radioGroupLocations[RADIOGROUPTOINDEX(DISKMENU_NORMAL_RADIOGROUP_SAMPLETYPE)] = radioGroup->getLocation(); 
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".wav");
 	radioGroup->addItem(".iff");
+	radioGroup->addItem(" aiff", false);
+	radioGroup->addItem(" sf2", false);
 	container->addControl(radioGroup);
 	
 	// Now get all controls built for the "normal" view (not the FT2 retro view) and save them, 

@@ -96,7 +96,7 @@ void DialogSliders::initSlider(int i, float min, float max, float value, PPStrin
 	listBoxes[i]->commitChanges();
 	getMessageBoxContainer()->addControl(listBoxes[i]);	
 
-	if( i+1 == numSliders ) process(); // lets go!
+	//if( i+1 == numSliders ) process(); // lets go!
 }
 
 void DialogSliders::update()
