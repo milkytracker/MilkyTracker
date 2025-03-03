@@ -147,7 +147,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
-	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDVolumeFold);
+	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDFoldSample);
 
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuAdvanced->setSubMenu(true);
@@ -1729,7 +1729,7 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeOut, isEmptySample);
-	subMenuAdvanced->setState(MenuCommandIDVolumeFold, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDFoldSample, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverse, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDXFade, !sampleEditor->isValidxFadeSelection() || isEmptySample || !sampleEditor->getLoopType());
@@ -1900,8 +1900,8 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 		}
 
-		case MenuCommandIDVolumeFold:{
-			sampleEditor->tool_foldSample(NULL);
+		case MenuCommandIDFoldSample:{
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFoldSample);
 			break;
 		}
 

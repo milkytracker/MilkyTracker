@@ -177,6 +177,14 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
     }
 
+    case ToolHandlerResponder::SampleToolTypeFoldSample:{
+      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Loop Fold sample", 1, sampleEditor, &SampleEditor::tool_foldSample );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      sliders->initSlider(0,0,1,1,"crossfade");
+	  sliders->process();
+      break;
+    }
+
     case ToolHandlerResponder::SampleToolTypeSaturate:{
         TXMSample *sample = sampleEditor->getSample();
         dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Saturation", 5, sampleEditor, &SampleEditor::tool_saturate );

@@ -1789,32 +1789,42 @@ void SampleEditor::tool_foldSample(const FilterParameters* par)
 		return;
 
 	pp_int32 sStart = 0;
-	pp_int32 sEnd = sample->samplen/2;
+	pp_int32 sEnd = sample->samplen;
+	pp_int32 sMiddle = sample->samplen/2;
 
 	preFilter(&SampleEditor::tool_foldSample, par);
 	
 	prepareUndo();
 	
 	pp_int32 i;
-	bool is16Bit = (sample->type & 16);
+	bool xfade = false;
 
+	if( par != NULL && par->getNumParameters() > 0 ){
+		xfade = par->getParameter(0).floatPart > 0.0f;
+	}
+	
 	// mix first half with second half
-	for (i = 0;  i < sEnd; i++){
-		mp_sint32 mix = is16Bit ? sample->getSampleValue(i)*0.5 + sample->getSampleValue(i+sEnd)*0.5
-		                        : sample->getSampleValue(i)*0.5 + sample->getSampleValue(i+sEnd)*0.5;
+	for (i = 0;  i < sMiddle; i++){
+		float fadein   = xfade ? (1.0/float(sMiddle)) * i  : 1.0;
+		float fadeout  = xfade ? 1.0- (1.0/float(sMiddle)) : 1.0;
+		mp_sint32 mix = fadein  *sample->getSampleValue(i % sEnd)*0.5 + 
+						fadeout  *sample->getSampleValue( (i+sMiddle) % sEnd )*0.5;
 		sample->setSampleValue( i, mix);
 	}
+
+	// store 1st half in clipboard
+	setSelectionStart(0);
+	setSelectionEnd(sMiddle);
+	cropSample();
+
+	setRepeatStart(0);
+	setRepeatEnd(sMiddle);
+	setLoopType(1);
 
 	finishUndo();	
 	
 	postFilter();
-	// store 1st half in clipboard
-	setSelectionStart(0);
-	setSelectionEnd(sEnd);
-	cropSample();
-	setRepeatStart(0);
-	setRepeatEnd(sEnd);
-	setLoopType(1);
+
 }
 
 void SampleEditor::tool_scaleSample(const FilterParameters* par)

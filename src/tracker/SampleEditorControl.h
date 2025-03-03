@@ -297,7 +297,7 @@ private:
 		MenuCommandIDVolumeFade,
 		MenuCommandIDVolumeFadeIn,
 		MenuCommandIDVolumeFadeOut,
-		MenuCommandIDVolumeFold,
+		MenuCommandIDFoldSample,
 		MenuCommandIDReverse,
 		MenuCommandIDPTBoost,
 		MenuCommandIDSaturate,
@@ -384,6 +384,7 @@ private:
 			SampleToolTypeGenerateAbsoluteSine,
 			SampleToolTypeGenerateQuarterSine,
 			SampleToolTypeReverb,
+			SampleToolTypeFoldSample,
 			SampleToolTypeSynth,
 			SampleToolTypeAddon,
 			SampleToolTypeSoundfont
