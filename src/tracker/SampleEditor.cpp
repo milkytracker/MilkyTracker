@@ -3374,7 +3374,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	
 	postFilter();
 
-	free(impulseResponse);
+	if( convolveWithClipboard ) free(impulseResponse);
 	free(smpin);
 	free(smpout);
 }
