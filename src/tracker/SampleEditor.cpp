@@ -1802,6 +1802,7 @@ void SampleEditor::tool_foldSample(const FilterParameters* par)
 	if( par != NULL && par->getNumParameters() > 0 ){
 		xfade = par->getParameter(0).floatPart > 0.0f;
 	}
+	printf("xfade=%i", xfade ? 1 : 0);
 	
 	// mix first half with second half
 	for (i = 0;  i < sMiddle; i++){
@@ -3281,6 +3282,17 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 	return (pp_uint32)(((double)pos / c4spd) * 1000.0);
 }
 
+// convolution with clipboard
+void SampleEditor::tool_convolution(const FilterParameters* par)
+{
+	FilterParameters par2(3);
+	par2.setParameter(0, par->getParameter(0) );
+	par2.setParameter(1, par->getParameter(1) );
+	par2.setParameter(2, FilterParameters::Parameter( 1.0f) );
+	tool_reverb(&par2);
+}
+
+// convolution reverb (default whitenoise IR, or clipboard)
 void SampleEditor::tool_reverb(const FilterParameters* par)
 { 
 	if (isEmptySample())
@@ -3309,20 +3321,46 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	
 	prepareUndo();
 
+	bool convolveWithClipboard = par->getNumParameters() == 3;
+
 	pp_int32 sLength = sEnd - sStart;
 	float ratio   = par->getParameter(0).floatPart / 100.0f;
-    pp_uint32 verb_size = 700 * (pp_uint32)par->getParameter(1).floatPart;
-    pp_int32 newSampleSize = sLength + verb_size;
+    pp_uint32 size;
+    pp_int32 newSampleSize;
 
 	// create buffers (smpout will be calloc'ed by reverb)
 	float* smpin;
 	float* smpout;
+	float* impulseResponse;
+
+	if( convolveWithClipboard ){
+
+		ClipBoard* clipBoard = ClipBoard::getInstance();
+
+		if (!ClipBoard::getInstance()->isEmpty()){
+
+			pp_int32 cSize = clipBoard->getWidth();
+			size = (pp_uint32)( (float(cSize)/100.0f) * par->getParameter(1).floatPart );
+			mp_sbyte *ir = clipBoard->getBuffer();
+			impulseResponse = (float*)malloc(size * sizeof(float));
+			for (pp_int32 i = 0; i < size; i++) {
+			  impulseResponse[i] = getFloatSampleFromWaveform(i, ir );
+			}
+		}
+	}
+ 
+	if( !convolveWithClipboard ){
+		size = 700 * (pp_uint32)par->getParameter(1).floatPart;
+	}
+	newSampleSize = sLength + size;
+
 	smpin = (float*)calloc(newSampleSize,  sizeof(float));
 	for (pp_int32 i = 0; i < newSampleSize; i++) { // copy source (and pad with zeros)
 		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i+sStart) : 0.0;
 	}
 
-	int outlength = Convolver::reverb( smpin, &smpout, newSampleSize, verb_size);
+	int outlength = convolveWithClipboard ? Convolver::reverb( smpin, &smpout, newSampleSize, size, impulseResponse )
+									      : Convolver::reverb( smpin, &smpout, newSampleSize, size);
 
 	for (pp_int32 i = sStart; i < sStart+outlength; i++) {
 		pp_uint32 pos = i % sEnd;
@@ -3336,6 +3374,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	
 	postFilter();
 
+	free(impulseResponse);
 	free(smpin);
 	free(smpout);
 }

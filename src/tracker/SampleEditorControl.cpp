@@ -127,27 +127,30 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 
 	subMenuFX = new PPContextMenu(6, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuFX->addEntry("Volume" PPSTR_PERIODS, MenuCommandIDVolumeBoost);
-	subMenuFX->addEntry("Fade in" PPSTR_PERIODS, MenuCommandIDVolumeFadeIn);
-	subMenuFX->addEntry("Fade out" PPSTR_PERIODS, MenuCommandIDVolumeFadeOut);
+	subMenuFX->addEntry("Fade in" , MenuCommandIDVolumeFadeIn);
+	subMenuFX->addEntry("Fade out" , MenuCommandIDVolumeFadeOut);
 	subMenuFX->addEntry("Fade custom" PPSTR_PERIODS, MenuCommandIDVolumeFade);
+	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
-	subMenuFX->addEntry("Delay", MenuCommandIDDelay);
-	subMenuFX->addEntry("Reverb", MenuCommandIDReverb);
-	subMenuFX->addEntry("Vocoder", MenuCommandIDVocode);
-	subMenuFX->addEntry("Timestretch", MenuCommandIDTimeStretch);
+	subMenuFX->addEntry("Delay" PPSTR_PERIODS, MenuCommandIDDelay);
+	subMenuFX->addEntry("Reverb" PPSTR_PERIODS, MenuCommandIDReverb);
+	subMenuFX->addEntry("Vocoder" PPSTR_PERIODS, MenuCommandIDVocode);
+	subMenuFX->addEntry("Timestretch" PPSTR_PERIODS, MenuCommandIDTimeStretch);
+	subMenuFX->addEntry("Convolution" PPSTR_PERIODS, MenuCommandIDConvolution);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Filter" PPSTR_PERIODS, MenuCommandIDFilter);
 	subMenuFX->addEntry("EQ  3 Band" PPSTR_PERIODS, MenuCommandIDEQ3Band);
 	subMenuFX->addEntry("EQ 10 Band" PPSTR_PERIODS, MenuCommandIDEQ10Band);
+	subMenuFX->addEntry("Soothen" PPSTR_PERIODS, MenuCommandIDSoothen);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
 	subMenuFX->addEntry("Compress", MenuCommandIDCompress);
-	subMenuFX->addEntry("Saturate", MenuCommandIDSaturate);
-	subMenuFX->addEntry("Excite #Milky", MenuCommandIDMTBoost);
+	subMenuFX->addEntry("Saturate" PPSTR_PERIODS, MenuCommandIDSaturate);
+	subMenuFX->addEntry("Excite #Milky" PPSTR_PERIODS, MenuCommandIDMTBoost);
 	subMenuFX->addEntry("Excite #PTboost", MenuCommandIDPTBoost);
 	subMenuFX->addEntry(seperatorStringLarge, -1);
-	subMenuFX->addEntry("Normalize", MenuCommandIDNormalize);
+	subMenuFX->addEntry("Loop fold", MenuCommandIDFoldSample);
+	subMenuFX->addEntry("Loop fold xfade" PPSTR_PERIODS, MenuCommandIDFoldSampleXfade);
 	subMenuFX->addEntry("Backwards", MenuCommandIDReverse);
-	subMenuFX->addEntry("Loop fold" PPSTR_PERIODS, MenuCommandIDFoldSample);
 
 	subMenuAdvanced = new PPContextMenu(5, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
 	subMenuAdvanced->setSubMenu(true);
@@ -1726,10 +1729,13 @@ void SampleEditorControl::invokeContextMenu(const PPPoint& p, bool translatePoin
 	subMenuAdvanced->setState(MenuCommandIDCompress, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDMTBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverb, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDConvolution, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDSoothen, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeIn, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeFadeOut, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDFoldSample, isEmptySample);
+	subMenuAdvanced->setState(MenuCommandIDFoldSampleXfade, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDVolumeBoost, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDReverse, isEmptySample);
 	subMenuAdvanced->setState(MenuCommandIDXFade, !sampleEditor->isValidxFadeSelection() || isEmptySample || !sampleEditor->getLoopType());
@@ -1900,6 +1906,11 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 			break;
 		}
 
+		case MenuCommandIDFoldSampleXfade:{
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFoldSampleXfade);
+			break;
+		}
+
 		case MenuCommandIDFoldSample:{
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeFoldSample);
 			break;
@@ -1927,6 +1938,14 @@ void SampleEditorControl::executeMenuCommand(pp_int32 commandId)
 
 		case MenuCommandIDVocode:
 			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeVocode);
+			break;
+
+		case MenuCommandIDSoothen:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeSoothen);
+			break;
+
+		case MenuCommandIDConvolution:
+			invokeToolParameterDialog(ToolHandlerResponder::SampleToolTypeConvolution);
 			break;
 
 		case MenuCommandIDReverb:

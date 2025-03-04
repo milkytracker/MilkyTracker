@@ -74,7 +74,8 @@ public:
 	static void fft(complex* v, int n, complex* tmp);
 	static void ifft(complex* v, int n, complex* tmp);
 	static int convolve(float* x, float* h, int lenX, int lenH, float** output);
-	static int reverb( float *smpin, float **smpout, int frames, int verb_size );
+	static int reverb( float *smpin, float **smpout, int frames, int size );
+	static int reverb( float *smpin, float **smpout, int frames, int size, float *ir );
 	static void envelope_follow(float input, struct EnvelopeFollow* e);
 
 };

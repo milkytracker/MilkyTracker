@@ -53,6 +53,7 @@ struct SampleEditorControlLastValues
 
 	float reverbSize; 
 	float reverbDryWet;
+	pp_int32 IRSample; 
 	float filterCutoffL;
 	float filterCutoffH;
 	float filterRes;
@@ -85,6 +86,7 @@ struct SampleEditorControlLastValues
 		adjustSampleOffsetCommand = false;
 		reverbSize = invalidFloatValue();
 		reverbDryWet = invalidFloatValue();
+		IRSample = invalidIntValue();
 		filterCutoffL = invalidFloatValue();
 		filterCutoffH = invalidFloatValue();
 		filterRes = invalidFloatValue();
@@ -120,6 +122,7 @@ struct SampleEditorControlLastValues
 		result.store("adjustSampleOffsetCommand", adjustSampleOffsetCommand);
 		result.store("reverbSize", PPDictionary::convertFloatToIntNonLossy(reverbSize));
 		result.store("reverbDryWet", PPDictionary::convertFloatToIntNonLossy(reverbDryWet));
+		result.store("IRSample", IRSample );
 		result.store("filterCutoffL", PPDictionary::convertFloatToIntNonLossy(filterCutoffL));
 		result.store("filterCutoffH", PPDictionary::convertFloatToIntNonLossy(filterCutoffH));
 		result.store("filterRes", PPDictionary::convertFloatToIntNonLossy(filterRes));
@@ -197,6 +200,10 @@ struct SampleEditorControlLastValues
 			else if (key->getKey().compareToNoCase("reverbDryWet") == 0)
 			{
 				reverbDryWet = PPDictionary::convertIntToFloatNonLossy(key->getIntValue());
+			}
+			else if (key->getKey().compareToNoCase("IRSample") == 0)
+			{
+				IRSample = key->getIntValue();
 			}
 			else if (key->getKey().compareToNoCase("filterCutoffL") == 0)
 			{

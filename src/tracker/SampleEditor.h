@@ -68,6 +68,7 @@ public:
 		void makeCopy(TXMSample& sample, XModule& module, pp_int32 selectionStart, pp_int32 selectionEnd, bool cut = false);
 		void paste(TXMSample& sample, XModule& module, pp_int32 pos);
 		bool isEmpty() const { return buffer == NULL; }
+		mp_sbyte * getBuffer(){ return buffer; }
 		
 		pp_int32 getWidth() const { return selectionWidth; }
 		
@@ -159,7 +160,7 @@ public:
 	bool canMinimize() const;
 	bool isEditableSample() const;
 
-  Synth *getSynth(){ return synth; }
+    Synth *getSynth(){ return synth; }
 
 	void setSelectionStart(pp_int32 selectionStart) { this->selectionStart = selectionStart; }
 	pp_int32& getSelectionStart() { return selectionStart; }
@@ -371,6 +372,7 @@ public:
 	void tool_eqSample(const FilterParameters* par,bool selective);
 	void tool_eqSample(const FilterParameters* par);
 	void tool_reverb(const FilterParameters* par);
+	void tool_convolution(const FilterParameters* par);
 	void tool_filter(const FilterParameters* par);
 	void tool_saturate(const FilterParameters* par);
 	void tool_timestretch(const FilterParameters* par);

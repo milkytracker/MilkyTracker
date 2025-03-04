@@ -236,18 +236,24 @@ void Convolver::envelope_follow(float input, struct EnvelopeFollow* e) {
 	}
 }
 
-int Convolver::reverb( float *smpin, float **smpout, int frames, int verb_size ){
+int Convolver::reverb( float *smpin, float **smpout, int frames, int size ){
 	// create IR float array
 	float* impulseResponse;
-	impulseResponse = (float*)malloc(verb_size * sizeof(float));
+	impulseResponse = (float*)malloc(size * sizeof(float));
 	float f;
 	VRand rand;
 	rand.seed(1);
-	for (pp_int32 i = 0; i < verb_size; i++) {
-      f = rand.white() * (1.0f - ((1.0f / (float)verb_size) * (float)i));
+	for (pp_int32 i = 0; i < size; i++) {
+      f = rand.white() * (1.0f - ((1.0f / (float)size) * (float)i));
       impulseResponse[i] = f;
 	}
-	int length = Convolver::convolve(smpin, impulseResponse, frames, verb_size, smpout);
+	int length = reverb(smpin, smpout, frames, size, impulseResponse);
 	free(impulseResponse);
+	return length;
+}
+
+int Convolver::reverb( float *smpin, float **smpout, int frames, int size, float *ir ){
+
+	int length = Convolver::convolve(smpin, ir, frames, size, smpout);
 	return length;
 }

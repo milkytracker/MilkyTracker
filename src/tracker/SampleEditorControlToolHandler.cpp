@@ -165,6 +165,33 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
     }
 
+    case ToolHandlerResponder::SampleToolTypeSoothen:{
+      // convolute with itself (= soothen = inversed selfresonance)													
+	  sampleEditor->selectAll();														 
+	  sampleEditor->copy();														 
+      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Soothen", 2, sampleEditor, &SampleEditor::tool_convolution );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      sliders->initSlider(0,0,100,100,"Dry..Wet");
+      sliders->initSlider(1,1,100,1,"Soothe");
+	  sliders->process();
+	  break;
+	}
+
+    case ToolHandlerResponder::SampleToolTypeConvolution:{
+      if ( sampleEditor->clipBoardIsEmpty() ){
+        tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "copy a different waveform first", Tracker::MessageBox_OK);
+        return false;
+      }
+      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Convolution", 2, sampleEditor, &SampleEditor::tool_convolution );
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 20.0f;
+      sliders->initSlider(0,0,100,value,"Dry..Wet");
+      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 20.0f;
+      sliders->initSlider(1,1,100,value,"IR length");
+	  sliders->process();
+	  break;
+	}
+
     case ToolHandlerResponder::SampleToolTypeReverb:{
       dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Reverb", 2, sampleEditor, &SampleEditor::tool_reverb );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
@@ -177,11 +204,11 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       break;
     }
 
+    case ToolHandlerResponder::SampleToolTypeFoldSampleXfade:
     case ToolHandlerResponder::SampleToolTypeFoldSample:{
-      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Loop Fold sample", 1, sampleEditor, &SampleEditor::tool_foldSample );
-      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      sliders->initSlider(0,0,1,1,"crossfade");
-	  sliders->process();
+      FilterParameters par(1);
+      par.setParameter(0, FilterParameters::Parameter( type == ToolHandlerResponder::SampleToolTypeFoldSampleXfade ? 1.0f : 0.0f ) );
+      sampleEditor->tool_foldSample(&par);
       break;
     }
 
@@ -381,6 +408,19 @@ bool SampleEditorControl::invokeTool(ToolHandlerResponder::SampleToolTypes type)
       // we don't do anything here since dialogsliders processes inplace already
       break;
     }
+
+    case ToolHandlerResponder::SampleToolTypeSoothen:{
+      // we don't do anything here since dialogsliders processes inplace already
+      break;
+	}
+
+    case ToolHandlerResponder::SampleToolTypeConvolution:{
+      DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
+      lastValues.reverbDryWet  = sliders->getSlider(0);
+      lastValues.reverbSize    = sliders->getSlider(1);
+      // we don't do anything here since dialogsliders processes inplace already
+      break;
+	}
 
     case ToolHandlerResponder::SampleToolTypeReverb:
     {
