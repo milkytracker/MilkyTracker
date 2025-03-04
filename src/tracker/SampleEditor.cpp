@@ -1802,7 +1802,6 @@ void SampleEditor::tool_foldSample(const FilterParameters* par)
 	if( par != NULL && par->getNumParameters() > 0 ){
 		xfade = par->getParameter(0).floatPart > 0.0f;
 	}
-	printf("xfade=%i", xfade ? 1 : 0);
 	
 	// mix first half with second half
 	for (i = 0;  i < sMiddle; i++){
