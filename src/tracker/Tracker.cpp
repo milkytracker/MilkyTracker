@@ -68,6 +68,7 @@
 #include "DialogHandlers.h"
 #include "DialogChannelSelector.h"
 #include "DialogZap.h"
+#include "DialogSliders.h"
 // Helper class to invoke tools which need parameters
 #include "ToolInvokeHelper.h"
 
@@ -272,7 +273,7 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 {
   PPControl* ctrl = screen->getModalControl();
 	if (dialog != NULL && ctrl && screen->hasFocusModal() ) // popupdialogs have no use here (+should allow keyjazz for fxdialogs)
-  {
+    {
 		note--;
 	
 		PPContainer* container = static_cast<PPContainer*>(ctrl);
@@ -284,7 +285,7 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 		PPListBox* listBoxDstSmp = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST2));
 		PPListBox* listBoxDstModule = static_cast<PPListBox*>(container->getControlByID(INSTRUMENT_CHOOSER_LIST_DST3));
 		
-		if (!listBoxSrc || !listBoxDst)
+		if ( screen->getClassic() && (!listBoxSrc || !listBoxDst) )
 			return -1;
 
 		PPListBox* focusedListBox = static_cast<PPListBox*>(container->getFocusedControl());
@@ -301,6 +302,7 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 				return focusedListBox->getSelectedIndex() + 1;
 		}
 		
+		if (!listBoxSrc || !listBoxDst)
 		// focus is on instruments		
 		if (focusedListBox == listBoxSrc ||
 			focusedListBox == listBoxSrcModule)
@@ -346,7 +348,8 @@ pp_int32 Tracker::getInstrumentToPlay(pp_int32 note, PlayerController*& playerCo
 			return -1;
 		}
 		
-		return focusedListBox->getSelectedIndex() + 1;
+		return screen->getClassic() ? focusedListBox->getSelectedIndex() + 1
+						            : getPatternEditorControl()->isInstrumentEnabled() ? listBoxInstruments->getSelectedIndex() + 1 : 0;
 	}
 	else
 	{
