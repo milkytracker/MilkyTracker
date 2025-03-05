@@ -169,10 +169,12 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
       // convolute with itself (= soothen = inversed selfresonance)													
 	  sampleEditor->selectAll();														 
 	  sampleEditor->copy();														 
-      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Soothen", 2, sampleEditor, &SampleEditor::tool_convolution );
+	  sampleEditor->setLoopType(1);														 
+      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Soothen", 3, sampleEditor, &SampleEditor::tool_convolution );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
       sliders->initSlider(0,0,100,100,"Dry..Wet");
-      sliders->initSlider(1,1,100,1,"Soothe");
+      sliders->initSlider(1,1,100,1,"Smear");
+      sliders->initSlider(2,0,5,5,"Soothe");
 	  sliders->process();
 	  break;
 	}
@@ -182,12 +184,15 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
         tracker->showMessageBoxSized(MESSAGEBOX_UNIVERSAL, "copy a different waveform first", Tracker::MessageBox_OK);
         return false;
       }
-      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Convolution", 2, sampleEditor, &SampleEditor::tool_convolution );
+      dialog = new DialogSliders(parentScreen, toolHandlerResponder, PP_DEFAULT_ID, "Convolution with clipboard", 7, sampleEditor, &SampleEditor::tool_convolution );
       DialogSliders *sliders = static_cast<DialogSliders*>(dialog);
-      float value = lastValues.reverbDryWet       != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbDryWet : 20.0f;
-      sliders->initSlider(0,0,100,value,"Dry..Wet");
-      value = lastValues.reverbSize   != SampleEditorControlLastValues::invalidFloatValue() ? lastValues.reverbSize : 20.0f;
-      sliders->initSlider(1,1,100,value,"IR length");
+      sliders->initSlider(0,0,100,100,"Dry..Wet");
+      sliders->initSlider(1,1,100,1,"IR length");
+      sliders->initSlider(2,0,5,5,"Convolve");
+      sliders->initSlider(3,-100,100,0,"Contrast");
+      sliders->initSlider(4,0,630,0,"Rotation");
+      sliders->initSlider(5,0,100,0,"Random phase");
+      sliders->initSlider(6,1,100,100,"Octave");
 	  sliders->process();
 	  break;
 	}

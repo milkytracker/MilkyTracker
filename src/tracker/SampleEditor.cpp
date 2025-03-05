@@ -3284,11 +3284,7 @@ pp_uint32 SampleEditor::convertSmpPosToMillis(pp_uint32 pos, pp_int32 relativeNo
 // convolution with clipboard
 void SampleEditor::tool_convolution(const FilterParameters* par)
 {
-	FilterParameters par2(3);
-	par2.setParameter(0, par->getParameter(0) );
-	par2.setParameter(1, par->getParameter(1) );
-	par2.setParameter(2, FilterParameters::Parameter( 1.0f) );
-	tool_reverb(&par2);
+	tool_reverb(par);
 }
 
 // convolution reverb (default whitenoise IR, or clipboard)
@@ -3320,12 +3316,18 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 	
 	prepareUndo();
 
-	bool convolveWithClipboard = par->getNumParameters() == 3;
+	bool convolveWithClipboard = par->getNumParameters() > 2;
 
 	pp_int32 sLength = sEnd - sStart;
 	float ratio   = par->getParameter(0).floatPart / 100.0f;
     pp_uint32 size;
     pp_int32 newSampleSize;
+
+	// default settings for reverb & soothe
+	Convolver::FX fx;
+	fx.convolve   = 100.0f;
+	fx.contrast   = 0.0f;
+	fx.windowsize = 100.0f;
 
 	// create buffers (smpout will be calloc'ed by reverb)
 	float* smpin;
@@ -3337,7 +3339,13 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 		ClipBoard* clipBoard = ClipBoard::getInstance();
 
 		if (!ClipBoard::getInstance()->isEmpty()){
-
+			fx.convolve       = par->getParameter(2).floatPart;  // soothe
+			if( par->getNumParameters() > 3 ){
+				fx.contrast       = par->getParameter(3).floatPart; 
+				fx.rotation       = par->getParameter(4).floatPart; 
+				fx.randomphase    = par->getParameter(5).floatPart; 
+				fx.windowsize     = par->getParameter(6).floatPart; 
+			}
 			pp_int32 cSize = clipBoard->getWidth();
 			size = (pp_uint32)( (float(cSize)/100.0f) * par->getParameter(1).floatPart );
 			mp_sbyte *ir = clipBoard->getBuffer();
@@ -3358,7 +3366,7 @@ void SampleEditor::tool_reverb(const FilterParameters* par)
 		smpin[i] = i < sLength ? this->getFloatSampleFromWaveform(i+sStart) : 0.0;
 	}
 
-	int outlength = convolveWithClipboard ? Convolver::reverb( smpin, &smpout, newSampleSize, size, impulseResponse )
+	int outlength = convolveWithClipboard ? Convolver::reverb( smpin, &smpout, newSampleSize, size, impulseResponse, &fx )
 									      : Convolver::reverb( smpin, &smpout, newSampleSize, size);
 
 	for (pp_int32 i = sStart; i < sStart+outlength; i++) {
