@@ -99,6 +99,11 @@ void PPScreen::raiseEvent(PPEvent* event)
 		}else{
 			lastMouseOverControl = getFocusedControl();
 		}
+
+		// when modalDialog is open, don't do contextmenus
+		if( modalControl && modalControl->isVisible() && event->getID() == eRMouseDown ){
+			return;
+		}
 	}
 
 	// bubble from modal to parent container [or not]
