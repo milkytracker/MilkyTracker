@@ -103,7 +103,7 @@ void Convolver::ifft(complex* v, int n, complex* tmp)
 
 /* Convolve signal x with impulse response h.  The return value is
  * the length of the output signal */
-int Convolver::convolve(float* x, float* h, int lenX, int lenH, float** output)
+int Convolver::convolve(float* x, float* h, int lenX, int lenH, float** output, Convolver::FX *fx)
 {
 	complex* xComp = NULL;
 	complex* hComp = NULL;
@@ -160,23 +160,71 @@ int Convolver::convolve(float* x, float* h, int lenX, int lenH, float** output)
 		hComp[i].Re = h[i];
 	}
 
+	int windowsize = (int)( float(lenY2/100) * fx->windowsize);
+	// clamp to power of 2
+	int pow2 = 1;
+	while (pow2 < windowsize)  pow2 *= 2;
+	if (pow2 > windowsize * 2) pow2 /= 2;
+	windowsize = pow2;
+
 	/* FFT of x */
 	//  Convolver::print_vector("Orig", xComp, 40);
-Convolver::fft(xComp, lenY2, scratch);
-	//  Convolver::print_vector(" FFT", xComp, lenY2);
+	Convolver::fft(xComp, lenY2, scratch);
+	//  Convolver::print_vector(" FFT", xComp, windowsize);
 
 	/* FFT of h */
 	//  Convolver::print_vector("Orig", hComp, 50);
-Convolver::fft(hComp, lenY2, scratch);
-	//  Convolver::print_vector(" FFT", hComp, lenY2);
-
-	/* Muliply ffts of x and h */
-	for (i = 0; i < lenY2; i++) {
-		c = Convolver::complex_mult(xComp[i], hComp[i]);
-		yComp[i].Re = c.Re;
-		yComp[i].Im = c.Im;
+	Convolver::fft(hComp, windowsize, scratch);
+	//  Convolver::print_vector(" FFT", hComp, windowsize);
+	//
+	/* convolve! Multiply ffts of x and h */
+	if (fx->convolve > 0.0f) {
+		float intensity = fx->convolve / 100.0f; // scale intensity to 0.0-1.0 range
+		if( intensity > 0.4 ) intensity = 1.0;
+		for (i = 0; i < windowsize; i++) {
+			c = Convolver::complex_mult(xComp[i], hComp[i]);
+			yComp[i].Re = (1.0f - intensity) * xComp[i].Re + intensity * c.Re;
+			yComp[i].Im = (1.0f - intensity) * xComp[i].Im + intensity * c.Im;
+		}
+	} else {
+		// if convolve is 0.0, just copy xComp to yComp
+		for (i = 0; i < windowsize; i++) {
+			yComp[i].Re = xComp[i].Re;
+			yComp[i].Im = xComp[i].Im;
+		}
+	}		
+	//  Convolver::print_vector("Y", yComp, windowsize);
+	//
+	if( fx->rotation != 0.0f ){
+		for (i = 0; i < windowsize; i++) {
+			float angle = atan2(xComp[i].Im, xComp[i].Re);
+			angle += fx->rotation / 100.0f;
+			yComp[i].Re = sqrt(yComp[i].Re * yComp[i].Re + yComp[i].Im * yComp[i].Im) * cos(angle);
+			yComp[i].Im = sqrt(yComp[i].Re * yComp[i].Re + yComp[i].Im * yComp[i].Im) * sin(angle);
+		}
 	}
-	//  Convolver::print_vector("Y", yComp, lenY2);
+
+
+	/* Apply contrast-like effect */
+	if( fx->contrast != 0.0f  ){
+		for (i = 0; i < windowsize; i++) {
+			float magnitude = sqrt(yComp[i].Re * yComp[i].Re + yComp[i].Im * yComp[i].Im);
+			float newMagnitude = pow(magnitude, (fx->contrast/100.0f) + 1.0f);
+			float angle = atan2(yComp[i].Im, yComp[i].Re);
+			yComp[i].Re = newMagnitude * cos(angle);
+			yComp[i].Im = newMagnitude * sin(angle);
+		}
+	}
+
+	if( fx->randomphase != 0.0f ){
+		for (i = 0; i < windowsize; i++) {
+			float randomAngle = (float)rand() / RAND_MAX * 2 * PI * (fx->randomphase/100.0f);
+			float magnitude = sqrt(yComp[i].Re * yComp[i].Re + yComp[i].Im * yComp[i].Im);
+			float angle = atan2(yComp[i].Im, yComp[i].Re) + randomAngle;
+			yComp[i].Re = magnitude * cos(angle);
+			yComp[i].Im = magnitude * sin(angle);
+		}
+	}
 
 	/* Take the inverse FFT of Y */
 	Convolver::ifft(yComp, lenY2, scratch);
@@ -247,13 +295,15 @@ int Convolver::reverb( float *smpin, float **smpout, int frames, int size ){
       f = rand.white() * (1.0f - ((1.0f / (float)size) * (float)i));
       impulseResponse[i] = f;
 	}
-	int length = reverb(smpin, smpout, frames, size, impulseResponse);
+	Convolver::FX fx;
+	int length = reverb(smpin, smpout, frames, size, impulseResponse, &fx );
 	free(impulseResponse);
 	return length;
 }
 
-int Convolver::reverb( float *smpin, float **smpout, int frames, int size, float *ir ){
+int Convolver::reverb( float *smpin, float **smpout, int frames, int size, float *ir, Convolver::FX *fx)
+{
 
-	int length = Convolver::convolve(smpin, ir, frames, size, smpout);
+	int length = Convolver::convolve(smpin, ir, frames, size, smpout, fx );
 	return length;
 }

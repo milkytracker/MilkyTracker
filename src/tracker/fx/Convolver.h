@@ -69,13 +69,22 @@ struct EnvelopeFollow {
 class Convolver {
 
 public:
+
+	struct FX{
+		float convolve       = 100.0f; //  0.0f...100.0f
+		float contrast       = 0.0f;   // -1.0f...1.0f
+		float rotation       = 0.0f;   //  0.0f...630.0f
+		float randomphase    = 0.0f;   //  0.0f...100.0f
+		float windowsize     = 100.0f; //  0.0f...100.0f
+	};
+
 	static void print_vector(const char* title, complex* x, int n);
 	static complex complex_mult(complex a, complex b);
 	static void fft(complex* v, int n, complex* tmp);
 	static void ifft(complex* v, int n, complex* tmp);
-	static int convolve(float* x, float* h, int lenX, int lenH, float** output);
+	static int convolve(float* x, float* h, int lenX, int lenH, float** output, Convolver::FX *fx);
 	static int reverb( float *smpin, float **smpout, int frames, int size );
-	static int reverb( float *smpin, float **smpout, int frames, int size, float *ir );
+	static int reverb( float *smpin, float **smpout, int frames, int size, float *ir, Convolver::FX *fx);
 	static void envelope_follow(float input, struct EnvelopeFollow* e);
 
 };
