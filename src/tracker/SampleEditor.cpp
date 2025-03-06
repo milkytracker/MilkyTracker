@@ -1805,8 +1805,8 @@ void SampleEditor::tool_foldSample(const FilterParameters* par)
 	
 	// mix first half with second half
 	for (i = 0;  i < sMiddle; i++){
-		float fadein   = xfade ? (1.0/float(sMiddle)) * i  : 1.0;
-		float fadeout  = xfade ? 1.0- (1.0/float(sMiddle)) : 1.0;
+		float fadein   = xfade ? (1.0/float(sMiddle)) * i       : 1.0;
+		float fadeout  = xfade ? 1.0- ((1.0/float(sMiddle)) * i) : 1.0;
 		mp_sint32 mix = fadein  *sample->getSampleValue(i % sEnd)*0.5 + 
 						fadeout  *sample->getSampleValue( (i+sMiddle) % sEnd )*0.5;
 		sample->setSampleValue( i, mix);

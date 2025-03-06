@@ -288,7 +288,7 @@ void Synth::FM( bool init ){
 		synths[ID].param[21].max   = (float)SYN_PARAM_MAX_VALUE;
 
 		synths[ID].param[22].name  = "loop type";
-		synths[ID].param[22].value = 3.0f;
+		synths[ID].param[22].value = 1.0f;
 		synths[ID].param[22].min   = 0.0f;
 		synths[ID].param[22].max   = 10.0f;
 		return;
