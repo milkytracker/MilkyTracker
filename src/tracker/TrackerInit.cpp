@@ -1203,8 +1203,14 @@ void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)
 	button = new PPButton(BUTTON_INSTRUMENTS_MINUS, screen, this, PPPoint(button->getLocation().x + 16, y+dy+tinyButtonOffset), PPSize(15, tinyButtonHeight));
 	button->setText(TrackerConfig::stringButtonMinus);
 	container->addControl(button);
-
+	
 #ifndef __LOWRES__
+
+	button = new PPButton(BUTTON_INSTRUMENTS_ROUNDROBIN, screen, this, PPPoint(button->getLocation().x + 16, y+dy+tinyButtonOffset), PPSize(15, tinyButtonHeight));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("%");
+	container->addControl(button);
+
 	button = new PPButton(BUTTON_INSTRUMENTEDITOR_CLEAR, screen, sectionInstruments, PPPoint(x+2 + size - 2 - 92, y+dy+tinyButtonOffset), PPSize(30, tinyButtonHeight));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Zap");

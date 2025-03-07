@@ -683,7 +683,11 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 		if (number == -1 && ::getKeyModifier() == 0)
 			number = ScanCodeToNote(scanCode);
 
+		int ins = patternEditor->getCurrentActiveInstrument();
+		// apply RR on instrument if any
+		patternEditor->setCurrentInstrument( rr.ins_size == 0 ? ins : rr.ins_start + rr.ins_index );
 		patternEditor->writeNote(number, true, this);
+		patternEditor->setCurrentInstrument( ins ); // undo RR 
 	}
 	else
 		handleDeleteKey(keyCode, number);
@@ -1843,6 +1847,13 @@ void PatternEditorControl::updateStatus()
 					}
 					break;
 				}
+	}
+}
+
+void PatternEditorControl::roundRobin()
+{
+	if( rr.ins_size > 0 ){
+		rr.ins_index = (rr.ins_index + 1) % (rr.ins_size+1);
 	}
 }
 

@@ -49,7 +49,7 @@ void RecorderLogic::reset()
 
 RecorderLogic::RecorderLogic(Tracker& tracker) :
 	tracker(tracker),
-	recordMode(false), recordKeyOff(true), recordNoteDelay(false)	
+	recordMode(false), recordKeyOff(true), recordNoteDelay(false)
 {
 	keys = new TKeyInfo[TrackerConfig::MAXNOTES];
 	
@@ -69,9 +69,12 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 	PatternEditor* patternEditor = patternEditorControl->getPatternEditor();
 
 	pp_int32 i;
+		
+	patternEditorControl->roundRobin();
 	
 	if (note >= 1 && note != PatternTools::getNoteOffNote() /* Key Off */)
 	{
+		
 		// get current channel from pattern editor (= channel to play)
 		pp_int32 chn = patternEditorControl->getCurrentChannel();	
 		
@@ -153,8 +156,7 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 					ins = newIns;
 			}
 		}
-		
-		
+
 		RecPosProvider recPosProvider(*playerController, roundToClosestRow && !recordNoteDelay);
 		// key is not pressed, play note and remember key + channel + position within module
 		pp_int32 pos = -1, row = 0, ticker = 0;
@@ -170,6 +172,12 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		
 		if (chn != -1)
 		{
+
+			// apply roundrobin if any
+			PatternEditorControl::RoundRobin *rr = patternEditorControl->getRoundRobin();
+			int currentIns = ins;
+			ins = rr->ins_size > 0 ? (rr->ins_start + rr->ins_index) : ins;
+
 			for (i = 0; i < TrackerConfig::MAXNOTES; i++)
 			{
 				// key not pressed or note already playing on this channel
@@ -190,10 +198,12 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				//	keys[i].note = keys[i].channel = 0;
 				//}
 			}
+
 			
 			// play it
 			tracker.playerLogic->playNote(*playerController, (mp_ubyte)chn, note, 
-										  (mp_ubyte)ins, keyVolume);
+										  ins, keyVolume);
+
 			
 			// if we're recording send the note to the pattern editor
 			if (isLiveRecording)
@@ -204,6 +214,7 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				pp_int32 posInner = patternEditorControl->getCursorPosInner();
 				patternEditorControl->setChannel(chn, posInner);
 				patternEditorControl->setRow(row);
+				patternEditor->setCurrentInstrument(ins);
 				// add delay note if requested
 				if (ticker && recordNoteDelay)
 					patternEditor->writeDirectEffect(1, 0x3D, ticker > 0xf ? 0xf : ticker,
@@ -226,6 +237,7 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 				if (event)
 					event->cancel();
 			}
+			patternEditor->setCurrentInstrument(currentIns); // undo rr if any
 		}
 		else if (event)
 		{
@@ -245,7 +257,7 @@ void RecorderLogic::sendNoteUpToPatternEditor(PPEvent* event, pp_int32 note, Pat
 		pp_int32 pos = -1, row = 0, ticker = 0;
 		
 		bool record = (tracker.editMode == EditModeMilkyTracker ? tracker.screen->hasFocus(patternEditorControl) : recordMode);	
-		
+
 		for (mp_sint32 i = 0; i < TrackerConfig::MAXNOTES; i++)
 		{
 			// found a playing channel

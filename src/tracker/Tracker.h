@@ -44,7 +44,6 @@ class EnvelopeEditor;
 class PlayerController;
 class PlayerMaster;
 class TabManager;
-class PatternEditorControl;
 class PPListBox;
 class PPStaticText;
 class EnvelopeEditorControl;
@@ -57,6 +56,7 @@ class PPMessageBoxContainer;
 class TrackerSettingsDatabase;
 class PPDictionaryKey;
 class PPFont;
+class PatternEditorControl;
 
 // OS Interfaces
 class PPSavePanel;
@@ -280,6 +280,10 @@ private:
 	
 	void updateAfterLoad(bool loadResult, bool wasPlaying, bool wasPlayingPattern);
 	void updateAfterTabSwitch();
+
+#ifndef __LOWRES__
+	void updateRoundRobin(bool buttonPress);
+#endif
 
 	// - show hide GUI sections ------------------------------------------------
 	// Show/hide main section (song settings + main menu)

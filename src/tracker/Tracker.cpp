@@ -574,7 +574,6 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 #endif
 	else if (event->getID() == eCommand)
 	{
-
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			// test
@@ -1218,10 +1217,19 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 					getPatternEditorControl()->setCurrentInstrument(listBoxInstruments->getSelectedIndex() + 1);
 					updateSampleEditorAndInstrumentSection(false);
 				}
-				
 				screen->update();
 				break;
 			}
+
+			case BUTTON_INSTRUMENTS_ROUNDROBIN:{
+				PPButton* button = reinterpret_cast<PPButton*>(sender);
+			    PatternEditorControl::RoundRobin *rr = getPatternEditorControl()->getRoundRobin();
+				rr->button = button;
+				updateRoundRobin(true);
+				screen->paintControl(button);
+				screen->update();
+				break;
+		    }
 
 			case BUTTON_TAB_OPEN:
 			{
@@ -1309,8 +1317,10 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			// new instrument has been selected
 			case LISTBOX_INSTRUMENTS:
 			{
+			    PatternEditorControl::RoundRobin *rr = getPatternEditorControl()->getRoundRobin();
 				pp_int32 index = *((pp_int32*)event->getDataPtr()) + 1;
 				selectInstrument(index);		
+				updateRoundRobin(false);
 				screen->update();
 				break;
 			}
@@ -2192,9 +2202,10 @@ void Tracker::selectInstrument(pp_int32 instrument)
 	updateSampleEditor(false);
 	// update instrument/sample editor
 	sectionInstruments->update(false);
-
 	for (pp_int32 i = 0; i < sections->size(); i++)
 		sections->get(i)->notifyInstrumentSelect(instrument);
+
+	screen->update();
 }
 
 void Tracker::fillInstrumentListBox(PPListBox* listBox, ModuleEditor* moduleEditor/* = NULL*/)

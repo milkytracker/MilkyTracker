@@ -293,7 +293,7 @@ processBindings:
 				PatternEditorControl* patternEditorControl = getPatternEditorControl();
 				
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);				
-				
+			
 				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
 			}
 		}

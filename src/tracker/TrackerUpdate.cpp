@@ -1158,3 +1158,58 @@ void Tracker::updateAfterTabSwitch()
 	screen->paint(true);
 }
 
+void Tracker::updateRoundRobin( bool buttonPress )
+{
+	PatternEditorControl::RoundRobin *rr = getPatternEditorControl()->getRoundRobin();
+	bool reset   = false;
+	bool enabled = rr->ins_size > 0;
+	switch( rr->userOnboarded ){
+		case 0: {
+					if( buttonPress ){
+						showMessageBox(MESSAGEBOX_UNIVERSAL, "select another instrument", MessageBox_OK);
+						rr->userOnboarded++;
+					}
+				}
+				break;
+
+		case 1: PPString msg = PPString("roundrobin enabled");
+				showMessageBox(MESSAGEBOX_UNIVERSAL, msg, MessageBox_OK);
+				rr->userOnboarded++;
+				break;
+	}
+	if( rr->userSelecting ){
+		if( !buttonPress ){
+			// update RR values
+			rr->ins_end  = listBoxInstruments->getSelectedIndex() + 1;
+			if( rr->ins_end < rr->ins_start ){
+				int tmp = rr->ins_start;
+				rr->ins_start = rr->ins_end;
+				rr->ins_end  = tmp;
+			}
+			rr->ins_size  = rr->ins_end - rr->ins_start;
+			if( rr->button ){
+				rr->button->setTextColor( TrackerConfig::colorSampleEditorWaveform );
+				rr->button->setPressed(true);
+			}
+			rr->userSelecting = false;
+		}else reset = true;
+	}else{
+		if( rr->ins_start == 0 && buttonPress ){
+			rr->ins_start = listBoxInstruments->getSelectedIndex() + 1;
+			if( rr->button ){
+				rr->button->setTextColor( PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) );
+				rr->button->setPressed(true);
+			}
+			rr->userSelecting = true;
+		}else reset = true;
+	}
+	if( reset ){
+		rr->ins_size = rr->ins_start = rr->ins_end = 0;
+		rr->userSelecting = false;
+		if( rr->button ){
+			rr->button->setTextColor( PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) );
+			rr->button->setPressed(false);
+		}
+	}
+	if( rr->button ) screen->paint(rr->button);
+}

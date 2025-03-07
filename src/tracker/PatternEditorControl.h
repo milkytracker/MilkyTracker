@@ -55,6 +55,20 @@ class PatternEditorControl :
 	public EditorBase::EditorNotificationListener, 
 	public PatternEditor::PatternAdvanceInterface
 {
+
+public:
+
+	// roundrobin
+	struct RoundRobin{ 
+		int  userOnboarded   = 0;
+		bool userSelecting   = false;
+		pp_int32 ins_size   = 0;
+		pp_int32 ins_index  = 0;
+		pp_int32 ins_start  = 0;
+		pp_int32 ins_end    = 0;
+		PPButton *button     = NULL;
+	};
+
 private:
 	struct SongPos
 	{
@@ -203,8 +217,11 @@ private:
 	// Edit mode
 	EditModes editMode;
 	pp_int32 selectionKeyModifier;
+
+	RoundRobin rr;
 	
 public:
+
 	PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
 						 const PPPoint& location, const PPSize& size, 
 						 bool border = true);
@@ -317,6 +334,9 @@ public:
 	void advanceRow(bool assureCursor = true, bool repaint = true);
 
 	PatternEditor* getPatternEditor() const { return patternEditor; }
+
+	void roundRobin();
+	RoundRobin * getRoundRobin(){ return &rr; }
 
 	// --- these are defined in PatternEditorControlTransposeHandler.cpp -----
 	void showNoteTransposeWarningMessageBox(pp_int32 fuckups);
