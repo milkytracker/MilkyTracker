@@ -79,6 +79,9 @@ PPListBox::PPListBox(pp_int32 id, PPScreen* parentScreen, EventListenerInterface
 	hexIndex(true),
 	indexBaseCount(1),
 
+	highLightRangeStart(-1),
+	highLightRangeStop(-1),
+
 	showSelectionAlways(showSelectionAlways),
 	selectionVisible(true),
 	onlyShowIndexSelection(false),
@@ -239,17 +242,21 @@ void PPListBox::paint(PPGraphicsAbstract* g)
 
 			g->setRect(currentRect);
 		}
-
 		if (showIndex)
 		{
 			char strIndex[10];
-		
-      if( hexIndex ){
-        PPTools::convertToHex(strIndex, i + indexBaseCount, maxDigits);
-      }else{
-        PPTools::convertToDec(strIndex, i + indexBaseCount, maxDigits);
-      }
-		  g->setColor(*indexColor);	
+
+			if( hexIndex ){
+				PPTools::convertToHex(strIndex, i + indexBaseCount, maxDigits);
+			}else{
+				PPTools::convertToDec(strIndex, i + indexBaseCount, maxDigits);
+			}
+			g->setColor(*indexColor);	
+
+			if( i >= highLightRangeStart && i <= highLightRangeStop ){ 
+				g->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText));
+			}
+
 			g->drawString(strIndex, location.x + 2, pos);
 		}
 		
@@ -280,6 +287,10 @@ void PPListBox::paint(PPGraphicsAbstract* g)
 		}
 
 		g->setColor(colorQueryListener ? colorQueryListener->getColor(i, *this) : *textColor);
+
+		if( i >= highLightRangeStart && i <= highLightRangeStop ){ 
+			g->setColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText));
+		}
 
 		g->drawString(*items->get(i), location.x + xOffset - (startPos*font->getCharWidth()), pos);
 

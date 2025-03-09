@@ -1172,7 +1172,7 @@ void Tracker::updateRoundRobin( bool buttonPress )
 				}
 				break;
 
-		case 1: PPString msg = PPString("roundrobin enabled");
+		case 1: PPString msg = PPString("roundrobin instrument enabled");
 				showMessageBox(MESSAGEBOX_UNIVERSAL, msg, MessageBox_OK);
 				rr->userOnboarded++;
 				break;
@@ -1192,6 +1192,7 @@ void Tracker::updateRoundRobin( bool buttonPress )
 				rr->button->setPressed(true);
 			}
 			rr->userSelecting = false;
+			listBoxInstruments->highlightRange( rr->ins_start-1, rr->ins_end-1 );
 		}else reset = true;
 	}else{
 		if( rr->ins_start == 0 && buttonPress ){
@@ -1210,6 +1211,7 @@ void Tracker::updateRoundRobin( bool buttonPress )
 			rr->button->setTextColor( PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) );
 			rr->button->setPressed(false);
 		}
+		listBoxInstruments->highlightRange( -1, -1 );
 	}
 	if( rr->button ) screen->paint(rr->button);
 }

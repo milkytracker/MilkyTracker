@@ -128,7 +128,7 @@ void Tracker::buildDefaultSettings()
 #endif
 
 	// flat controls
-	settingsDatabase->store("FLATCONTROLS", 1);
+	settingsDatabase->store("FLATCONTROLS", 0);
 	
 	// classic UX
 	settingsDatabase->store("CLASSIC", 0);

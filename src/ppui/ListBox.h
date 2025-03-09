@@ -101,6 +101,9 @@ private:
 	pp_int32 lastSelectionIndex;
 	bool hadVScrollbar;
 	bool hadHScrollbar;
+
+	pp_int32 highLightRangeStart;
+	pp_int32 highLightRangeStop;
 	
 public:
 	class ColorQueryListener
@@ -131,6 +134,11 @@ public:
 
 	void setAutoHideVScroll(bool b) { autoHideVScroll = b; }
 	void setAutoHideHScroll(bool b) { autoHideHScroll = b; }
+
+  void highlightRange( pp_int32 start, pp_int32 end ){ 
+    highLightRangeStart = start < end   ? start : end;
+    highLightRangeStop  = end   > start ? end   : start;
+  }
 
 	void setShowIndex(bool showIndex);
 	void setHexIndex(bool hexIndex){ this->hexIndex = hexIndex; }
