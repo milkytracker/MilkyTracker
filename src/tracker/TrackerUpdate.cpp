@@ -1166,13 +1166,13 @@ void Tracker::updateRoundRobin( bool buttonPress )
 	switch( rr->userOnboarded ){
 		case 0: {
 					if( buttonPress ){
-						showMessageBox(MESSAGEBOX_UNIVERSAL, "select another instrument", MessageBox_OK);
+						showMessageBox(MESSAGEBOX_UNIVERSAL, "roundrobin: select other instrument", MessageBox_OK);
 						rr->userOnboarded++;
 					}
 				}
 				break;
 
-		case 1: PPString msg = PPString("roundrobin instrument enabled");
+		case 1: PPString msg = PPString("roundrobin: now enabled");
 				showMessageBox(MESSAGEBOX_UNIVERSAL, msg, MessageBox_OK);
 				rr->userOnboarded++;
 				break;
