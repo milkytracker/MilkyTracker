@@ -678,8 +678,6 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 	radioGroup->setColor(TrackerConfig::colorThemeMain);
 
 	radioGroup->addItem(".xi");
-	radioGroup->addItem(" pat",false);
-	radioGroup->addItem(" sf2",false);
 	container->addControl(radioGroup);
 
 	// ---- Sample ----------
@@ -705,8 +703,6 @@ void SectionDiskMenu::init(pp_int32 px, pp_int32 py)
 
 	radioGroup->addItem(".wav");
 	radioGroup->addItem(".iff");
-	radioGroup->addItem(" aiff", false);
-	radioGroup->addItem(" sf2", false);
 	container->addControl(radioGroup);
 	
 	// Now get all controls built for the "normal" view (not the FT2 retro view) and save them, 
