@@ -311,7 +311,7 @@ bool SampleEditorControl::invokeToolParameterDialog(SampleEditorControl::ToolHan
         PPString str = "Flange";
         str.append("\x1d");
         str.append("Delay");
-        sliders->initSlider(0,1,10000,3900,str);
+        sliders->initSlider(0,1,100000,15000,str);
         str = "Flange";
         str.append("\x1d");
         str.append("Echos");
