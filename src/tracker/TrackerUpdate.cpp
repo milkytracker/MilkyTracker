@@ -490,6 +490,8 @@ void Tracker::updateInstrumentsListBox(bool repaint)
 	listBoxInstruments->saveState();
 				
 	listBoxInstruments->clear();
+
+	listBoxInstruments->setHexIndex( true ); // always enfore, cauz patterneditor only supports hex instruments
 	
 	fillInstrumentListBox(listBoxInstruments);
 				
