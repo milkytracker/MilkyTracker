@@ -745,10 +745,11 @@ void Tracker::initSectionPattern(pp_int32 x, pp_int32 y)
 void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 {
 	pp_int32 i,j;
+    bool isClassic = screen->getClassic();
 
 #ifndef __LOWRES__
 	pp_int32 bHeight = 12;
-	PPSize size(320, 54);
+	PPSize size(320, isClassic ? 54 : 52/2);
 #else
 	pp_int32 bHeight = 14;
 	PPSize size(320, 64);
