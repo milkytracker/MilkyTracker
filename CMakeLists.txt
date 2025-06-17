@@ -188,8 +188,16 @@ if(UNIX)
     endif()
 
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+		find_package(PkgConfig)
         find_package(ALSA)
         find_package(JACK)
+
+		if(PkgConfig_FOUND)
+			pkg_check_modules(PIPEWIRE libpipewire-0.3)
+			if (PIPEWIRE_FOUND)
+				message(STATUS "Enabled Pipewire support")
+			endif()
+		endif()
 
         # Linux MIDI support requires ALSA and RtMidi
         if(ALSA_FOUND)
