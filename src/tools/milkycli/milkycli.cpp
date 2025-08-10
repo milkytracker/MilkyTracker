@@ -6,7 +6,7 @@ int main(int argc, const char* argv[])
 	static CLIParser parser(argc, argv);
 	auto exporter = WAVExporter::createFromParser(parser);
 
-	if (exporter->hasParseError()) {
+	if (exporter->hasParseError() || exporter->hasArgumentError()) {
 		parser.printUsage();
 		fprintf(stderr, "Error: %s\n", exporter->getErrorMessage());
 		return 1;
