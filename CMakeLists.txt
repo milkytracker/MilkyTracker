@@ -206,7 +206,7 @@ if(UNIX)
         endif()
 
         # Metainfo version and timestamp configuration, mandatory for flathub
-        string( TIMESTAMP METAINFO_DATE "%Y-%m-%d" )
+        string( TIMESTAMP METAINFO_DATE "%Y-%m-%d" UTC )
         configure_file(
             ${PROJECT_SOURCE_DIR}/resources/org.milkytracker.MilkyTracker.metainfo.xml.in
             ${PROJECT_BINARY_DIR}/resources/org.milkytracker.MilkyTracker.metainfo.xml
