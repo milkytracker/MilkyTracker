@@ -164,7 +164,9 @@ elseif(HAIKU)
 else()
     # Workaround for SDL bug #3295, which occurs in SDL2 <2.0.5
     # https://bugzilla.libsdl.org/show_bug.cgi?id=3295
-    cmake_policy(SET CMP0004 OLD)
+    if(${CMAKE_VERSION} VERSION_LESS "4.0.0")
+        cmake_policy(SET CMP0004 OLD)
+    endif()
 
     find_package(SDL2 REQUIRED)
 endif()
