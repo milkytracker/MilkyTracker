@@ -693,13 +693,13 @@ void Synth::PL( bool init ){
 		(uint32_t)(20000.0f*SYN_PARAM_NORMALIZE(synth->param[2].value)),// uint32_t env_attack;
 		(uint32_t)(20000.0f*SYN_PARAM_NORMALIZE(synth->param[3].value)),// uint32_t env_sustain;
 		(uint32_t)(20000.0f*SYN_PARAM_NORMALIZE(synth->param[3].value)),// uint32_t env_release;
-		((uint8_t)synths[ID].param[20].value) == 1 ? 512: 400,// uint32_t env_master;
+		(uint8_t)(synths[ID].param[20].value == 1 ? 512: 400),// uint32_t env_master;
 
 		(uint8_t)synth->param[12].value, // uint8_t fx_filter;
 		(uint32_t)((48000.0f/4.0f)*SYN_PARAM_NORMALIZE(synth->param[13].value)), // uint32_t fx_freq;
 		(uint8_t)(255.0f*SYN_PARAM_NORMALIZE(synth->param[14].value)), // uint32_t fx_res;
 		(uint8_t)(255.0f*SYN_PARAM_NORMALIZE(synth->param[19].value)),// uint8_t fx_delay_time;
-		synth->param[19].value > 0.05f ? 128 : 0,// uint8_t fx_delay_amt;
+		(uint8_t)(synth->param[19].value > 0.05f ? 128 : 0),// uint8_t fx_delay_amt;
 		0,// uint8_t fx_pan_freq;
 		0,// uint8_t fx_pan_amt;
 
@@ -719,7 +719,7 @@ void Synth::PL( bool init ){
 
 	// the chords are unnamed & the comments might not be theoretically correct (please add new ones to not break user presets)
 	pl_synth_song_t song = {
-		(uint8_t)synths[ID].param[20].value < 9? 256 : 768, // row_len
+		(uint8_t)(synths[ID].param[20].value < 9? 256 : 768), // row_len
 		1,                                                   // num_tracks
 		new pl_synth_track_t[1]{                             // tracks
 			{
