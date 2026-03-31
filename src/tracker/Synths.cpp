@@ -540,7 +540,7 @@ void Synth::PL( bool init ){
 		synths[ID].param[5].name  = "osc waveforms";
 		synths[ID].param[5].value = 10.0f;
 		synths[ID].param[5].min   = 0.0f;
-		synths[ID].param[5].max   = 16.0f; // 4x4 osc1_waveform && osc2_waveform 
+		synths[ID].param[5].max   = 15.0f; // 4x4 osc1_waveform && osc2_waveform 
 		
 		synths[ID].param[6].name  = "  OCTAVES         ";
 		synths[ID].param[6].value = 5.0f;
@@ -550,7 +550,7 @@ void Synth::PL( bool init ){
 		synths[ID].param[7].name  = "  ENVELOPE MODE   ";
 		synths[ID].param[7].value = 0.0f;
 		synths[ID].param[7].min   = 0.0f;
-		synths[ID].param[7].max   = 4.0f;
+		synths[ID].param[7].max   = 3.0f;
 		
 		synths[ID].param[8].name  = "osc0";
 		synths[ID].param[8].value = 0.0f;
