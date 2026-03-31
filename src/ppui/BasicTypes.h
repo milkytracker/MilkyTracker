@@ -43,7 +43,7 @@ typedef signed int		pp_int32;
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	#include <string.h>
+	#include <strings.h>
 	#include "VirtualKeys.h"
 	#include "PPSystemString_POSIX.h"
 #endif
