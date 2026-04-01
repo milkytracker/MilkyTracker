@@ -40,12 +40,12 @@
 #include "MilkyPlayTypes.h"
 #include "MilkyPlayResults.h"
 
-#if defined WIN32 && !defined _WIN32_WCE
+#if defined _WIN32 && !defined _WIN32_WCE
 #include <assert.h>
 #define ASSERT assert
 #endif
 
-#if defined WIN32 || defined _WIN32_WCE
+#if defined _WIN32 || defined _WIN32_WCE
 	#include <windows.h>
 #elif defined __PSP__
 	#include <assert.h>
@@ -67,7 +67,7 @@
 	#include <math.h>
 #endif
 
-#if defined WIN32 || defined _WIN32_WCE
+#if defined _WIN32 || defined _WIN32_WCE
 	typedef TCHAR SYSCHAR;
 	typedef HANDLE FHANDLE;
 #ifdef __GNUWIN32__
@@ -89,7 +89,7 @@
 
 #define MP_NUMEFFECTS 4
 
-#if (defined(WIN32) || defined(_WIN32_WCE)) && !defined(__FORCE_SDL_AUDIO__)
+#if (defined(_WIN32) || defined(_WIN32_WCE)) && !defined(__FORCE_SDL_AUDIO__)
 	#define DRIVER_WIN32
 #elif defined(__APPLE__) && !defined(__FORCE_SDL_AUDIO__)
 	#define DRIVER_OSX
