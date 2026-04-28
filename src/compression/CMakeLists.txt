@@ -157,6 +157,9 @@ if(APPLE)
         ExternalProject_Add(zziplib
             PREFIX ${ZZIPLIB_DESTDIR}
             SOURCE_DIR ${ZZIPLIB_SUBMODULE_DIR}
+            PATCH_COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_SOURCE_DIR}/patches/ax_check_aligned_access_required.m4
+                <SOURCE_DIR>/m4/ax_check_aligned_access_required.m4
             CONFIGURE_COMMAND autoreconf -f -i
             COMMAND ./configure --prefix=${ZZIPLIB_DESTDIR}
             --without-debug --disable-dependency-tracking
