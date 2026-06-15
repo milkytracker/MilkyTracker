@@ -623,7 +623,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	// octave plus button, hidden by default
 	button = new PPButton(BUTTON_OCTAVE_PLUS, screen, this, PPPoint(x + 2 + 54, y+2+(isClassic?0:36)), PPSize(bSize, 11));
 	button->setText(TrackerConfig::stringButtonPlus);
-	staticText->hide( isClassic ? true : false );
+	button->hide( isClassic ? true : false );
 	containerSpeed->addControl(button);
 
 	button = new PPButton(BUTTON_BPM_MINUS, screen, this, PPPoint(x + 2 + 54 + bSize+1, y+2), PPSize(bSize-1, 11));
@@ -633,7 +633,7 @@ void Tracker::initSectionSpeed(pp_int32 x, pp_int32 y)
 	// octave minus button, hidden by default
 	button = new PPButton(BUTTON_OCTAVE_MINUS, screen, this, PPPoint(x + 2 + 54 + bSize+1, y+2+(isClassic?0:36)), PPSize(bSize-1, 11));
 	button->setText(TrackerConfig::stringButtonMinus);
-	staticText->hide( isClassic ? true : false );
+	button->hide( isClassic ? true : false );
 	containerSpeed->addControl(button);
 
 	button = new PPButton(BUTTON_SPEED_PLUS, screen, this, PPPoint(x + 2 + 54, y+2 + 12), PPSize(bSize, 11));
