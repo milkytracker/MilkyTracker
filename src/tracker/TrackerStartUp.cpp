@@ -61,6 +61,15 @@ PPSize Tracker::getWindowSizeFromDatabase()
 		delete settingsDatabaseCopy;
 	}
 
+	if (std::getenv("SCREEN") != NULL) {
+		int width, height;
+		sscanf(std::getenv("SCREEN"), "%dx%d", &width, &height);
+		size.height = height;
+		size.width = width;
+	}else{
+		printf("DISPLAY: set env-var SCREEN=640x480 to specify windowsize\n");
+	}
+
 	return size;
 }
 
@@ -76,6 +85,8 @@ bool Tracker::getFullScreenFlagFromDatabase()
 		fullScreen = settingsDatabaseCopy->restore("FULLSCREEN")->getBoolValue();
 		delete settingsDatabaseCopy;
 	}
+	fullScreen = std::getenv("FULLSCREEN") != NULL ? true : fullScreen;
+	printf("DISPLAY: set env-var FULLSCREEN=1 to specify fullscreen\n");
 
 	return fullScreen;
 }
@@ -91,14 +102,12 @@ pp_int32 Tracker::getScreenScaleFactorFromDatabase()
 		settingsDatabaseCopy->serialize(f);			
 		scaleFactor = settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue();
 		delete settingsDatabaseCopy;
-	}else{
-		if( std::getenv("NO_SCALE") != NULL ) scaleFactor = 1;
-		else{
-			printf("DISPLAY: assuming screenscalefactor 2\n");
-			printf("DISPLAY: set environmentvar NO_SCALE=1 to disable scaling\n");
-		}
 	}
-
+	if( std::getenv("NO_SCALE") != NULL ) scaleFactor = 1;
+	else{
+		printf("DISPLAY: assuming screenscalefactor 2\n");
+		printf("DISPLAY: set env-var NO_SCALE=1 to disable scaling\n");
+	}
 	return scaleFactor;
 }
 

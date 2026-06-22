@@ -1,3 +1,28 @@
+## Install
+
+Typically you'd get the (appimage) binary and double-click the `milkytracker` application, or via the commandline:
+
+```bash
+$ ./milkytracker
+```
+
+> NOTE: in case you've messed up your window resolution (too big to click stuff) try `SCREEN=640x480 NO_SCALE=1 ./milkytracker` to override the config-settings
+
+
+## Environment flags
+
+| env var       | info                                         |
+|---------------|----------------------------------------------|
+| NO_SCALE=1    | disabling resizing/scaling UI                |
+| FULLSCREEN=1  | force fullscreen (ctrl+enter)                |
+| SCREEN=640x480| force window resolution                      |
+| SCALE_NEAREST | sharper pixels (default linear filtering is more blurry) for resizing window|
+| MIDI_IN=2     | select MIDI port 2 (default=0) for midi input (requires portmidi compiled)|
+| HOME          | directory for home-button in filebrowser     |
+| NO_OPENGL     | disable hardware acceleration (embedded devices e.g. |
+| XDG_CONFIG_HOME | for linux: specifies where to store config |
+
+
 # Notes on building MilkyTracker
 
 MilkyTracker now uses CMake to produce the build files. This replaces the
@@ -115,14 +140,3 @@ The following scripts (rarely) need to be run when one of these file changes:
 * `src/tools/addons.txt` needs `src/tool/generateAddons.sh` (to generate `src/tracker/Addons.h`)
 
 > NOTE: don't update `doc/Milkytracker.html`, instead update/mirror https://github.com/milkytracker/manual
-
-## Environment flags
-
-| env var       | info                                         |
-|---------------|----------------------------------------------|
-| NO_SCALE=1    | disabling resizing/scaling UI                |
-| SCALE_NEAREST | sharper pixels (default linear filtering is more blurry) for resizing window|
-| MIDI_IN=2     | select MIDI port 2 (default=0) for midi input (requires portmidi compiled)|
-| HOME          | directory for home-button in filebrowser     |
-| NO_OPENGL     | disable hardware acceleration (embedded devices e.g. |
-| XDG_CONFIG_HOME | for linux: specifies where to store config |

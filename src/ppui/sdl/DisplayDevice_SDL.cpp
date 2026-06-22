@@ -31,7 +31,7 @@ SDL_Window* PPDisplayDevice::CreateWindow(pp_int32& w, pp_int32& h, pp_int32& bp
 	bool opengl_disable = false;
 	if( getenv("NO_OPENGL") != NULL ){
 		opengl_disable = true;
-	}else printf("DISPLAY: set environmentvar NO_OPENGL=1 to disable hardware acceleration\n");
+	}else printf("DISPLAY: set env-var NO_OPENGL=1 to disable hardware acceleration\n");
 
 	for (int it = 0; it < SDL_GetNumRenderDrivers(); it++)
 	{

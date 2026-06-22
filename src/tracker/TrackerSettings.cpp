@@ -105,12 +105,12 @@ void Tracker::buildDefaultSettings()
 	}
 
 	// ---------- Layout ----------
-	settingsDatabase->store("FULLSCREEN", 0);
+	settingsDatabase->store("FULLSCREEN", std::getenv("FULLSCREEN") != NULL ? 1 : 0);
 
 	settingsDatabase->store("XRESOLUTION", PPScreen::getDefaultWidth());
 	settingsDatabase->store("YRESOLUTION", PPScreen::getDefaultHeight());
 
-	settingsDatabase->store("SCREENSCALEFACTOR", 2);
+	settingsDatabase->store("SCREENSCALEFACTOR", std::getenv("NO_SCALE") != NULL ? 1 : 2);
 
 	settingsDatabase->store("ENVELOPEEDITORSCALE", 256);
 
