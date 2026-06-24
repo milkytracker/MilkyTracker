@@ -32,7 +32,7 @@ typedef signed int		pp_int32;
 
 #include "ScanCodes.h"
 
-#if defined(WIN32) || defined(_WIN32_WCE) 
+#if defined(_WIN32) || defined(_WIN32_WCE) 
 	#include <windows.h>
 	#include <stdio.h>
 	#define VK_ALT        VK_MENU
