@@ -344,6 +344,11 @@ static BOOL drawFocusRing;
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 
+		// Metal-backed OpenGL on macOS resets texture filter params after
+		// glGenerateMipmap, so re-enforce nearest-neighbor to avoid blur.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 		// ..not ideal! I tried some other methods including buffer objects,
 		// but nothing seems to work.  OpenGL support will be dropped on MacOS
 		// in the near future, so I don't want to spend any more time on this.
