@@ -153,6 +153,9 @@ AudioDriverManager::AudioDriverManager() :
 #ifdef HAVE_JACK_JACK_H
 #include "AudioDriver_JACK.h"
 #endif
+#ifdef HAVE_PIPEWIRE
+#include "AudioDriver_Pipewire.h"
+#endif
 
 AudioDriverManager::AudioDriverManager() :
 	defaultDriverIndex(0)
@@ -164,6 +167,9 @@ AudioDriverManager::AudioDriverManager() :
 #ifdef HAVE_JACK_JACK_H
 	count++;
 #endif
+#ifdef HAVE_PIPEWIRE
+	count++;
+#endif
 	ALLOC_DRIVERLIST(count);
 	count = 0;
 	driverList[count++] = new AudioDriver_SDL();
@@ -172,6 +178,9 @@ AudioDriverManager::AudioDriverManager() :
 #endif
 #if HAVE_JACK_JACK_H
 	driverList[count++] = new AudioDriver_JACK();
+#endif
+#if HAVE_PIPEWIRE
+	driverList[count++] = new AudioDriver_Pipewire();
 #endif
 }
 
