@@ -32,8 +32,7 @@
 #define __MIDIRECEIVER_H__
 
 #include <vector>
-
-class RtMidiIn;
+#include "RtMidi.h"
 
 class MidiReceiver
 {

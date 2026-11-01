@@ -31,7 +31,6 @@
 #include "MidiReceiver_pthread.h"
 #include "Tracker.h"
 #include "PPMutex.h"
-#include "RtMidi.h"
 #include "PPSystem.h"
 #include <iostream>
 #include "MidiTools.h"
