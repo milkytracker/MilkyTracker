@@ -111,6 +111,7 @@ else()
     target_include_directories(midi
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/../ppui/osinterface/posix
+        PUBLIC
             ${RTMIDI_INCLUDE_DIRS}
     )
 
