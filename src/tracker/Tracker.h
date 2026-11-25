@@ -200,8 +200,10 @@ private:
 	void initSectionSpeed(pp_int32 x, pp_int32 y);
 	void initSectionPattern(pp_int32 x, pp_int32 y);
 	void initSectionMainOptions(pp_int32 x, pp_int32 y);
+	void initMainMenu();
 	void initListboxesSection(pp_int32 x, pp_int32 y);
-	
+	void layOut(const PPSize& size, bool classic);
+
 	// - instrument selector dialog --------------------------------------------
 	void initAdvEdit();
 
@@ -469,6 +471,12 @@ public:
 
 	void showSplash();
 	void hideSplash();
+
+	// The screen is another size now, a window the user resized: the UI is laid out for it again, keeping the song, the tabs and what each part shows (TrackerResize.cpp). No smaller than getMinScreenSize(); the display device is asked for the new size through the screen
+	void setScreenSize(const PPSize& size);
+	static PPSize getMinScreenSize();
+	// Classic UX switched while the tracker runs: the parts it shapes are built again the same way
+	void setClassic(bool classic);
 
 	// Tracker startup
 	void startUp(bool forceNoSplash = false);

@@ -226,7 +226,10 @@ public:
 	virtual bool isFullScreen() { return bFullScreen; }
 	
 	virtual PPSize getDisplayResolution() const { return PPSize(-1, -1); }
-	
+
+	// The window made the size of a screen of size at scaleFactor (the Config page's resolution and scale), and the tracker laid out for it as for any resize; false where the port takes them at its next start
+	virtual bool resizeWindow(const PPSize& size, pp_int32 scaleFactor) { return false; }
+
 	virtual void shutDown()	= 0;
 
 	virtual void signalWaitState(bool b, const PPColor& color) { }

@@ -76,6 +76,7 @@ SampleEditorControl::SampleEditorControl(pp_int32 id,
 	borderColor(&ourOwnBorderColor),
 	caughtControl(NULL),
 	controlCaughtByLMouseButton(false), controlCaughtByRMouseButton(false),
+	subMenuAddon(NULL),
 	sampleEditor(NULL),
 	xScale(1.0f),
 	minScale(1.0f),
@@ -1642,6 +1643,34 @@ void SampleEditorControl::showAll()
 		xScale = minScale;
 
 	adjustScrollbars();
+}
+
+void SampleEditorControl::getView(pp_int32& start, float& scale)
+{
+	start = 0;
+	scale = 0.0f;
+	if (sampleEditor->isEmptySample() || (startPos == 0 && xScale >= calcScale()))
+		return;
+
+	start = (pp_int32)(startPos*xScale);
+	scale = xScale;
+}
+
+void SampleEditorControl::setView(pp_int32 start, float scale)
+{
+	if (sampleEditor->isEmptySample() || scale <= 0.0f)
+	{
+		showAll();
+		return;
+	}
+
+	xScale = scale < minScale ? minScale : scale;
+	startPos = (pp_int32)(start/xScale);
+	adjustScrollbars();
+	validate();
+
+	float v = (float)(getMaxWidth() - visibleWidth);
+	hScrollbar->setBarPosition(v > 0.0f ? (pp_int32)(startPos*(65536.0f/v)) : 0);
 }
 
 pp_int32 SampleEditorControl::getCurrentPosition()

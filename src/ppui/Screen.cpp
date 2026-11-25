@@ -603,16 +603,36 @@ bool PPScreen::removeControl(PPControl* control)
 	return rootContainer->removeControl(control);
 }
 
+pp_int32 PPScreen::detachControl(PPControl* control)
+{
+	if (lastMouseOverControl == control)
+		lastMouseOverControl = NULL;
+
+	return rootContainer->detachControl(control);
+}
+
+void PPScreen::insertControl(PPControl* control, pp_int32 index)
+{
+	rootContainer->insertControl(control, index);
+}
+
 void PPScreen::addTimerEventControl(PPControl* control)
 {
-	if (control->receiveTimerEvent() && !control->isContainer()) 
-		timerEventControls->add(control); 
+	if (!control->receiveTimerEvent() || control->isContainer())
+		return;
+
+	// once only: a container hidden twice in a row hands its controls over twice
+	for (pp_int32 i = 0; i < timerEventControls->size(); i++)
+		if (timerEventControls->get(i) == control)
+			return;
+
+	timerEventControls->add(control);
 }
 
 bool PPScreen::removeTimerEventControl(PPControl* control)
 {
 	bool res = false;
-	for (pp_int32 i = 0; i < timerEventControls->size(); i++)
+	for (pp_int32 i = timerEventControls->size() - 1; i >= 0; i--)
 	{
 		if (timerEventControls->get(i) == control)
 		{
@@ -861,6 +881,11 @@ PPSize PPScreen::getDisplayResolution() const
 		size = displayDevice->getDisplayResolution();
 		
 	return size;
+}
+
+bool PPScreen::resizeWindow(const PPSize& size, pp_int32 scaleFactor)
+{
+	return displayDevice && displayDevice->resizeWindow(size, scaleFactor);
 }
 
 void PPScreen::signalWaitState(bool b, const PPColor& color)

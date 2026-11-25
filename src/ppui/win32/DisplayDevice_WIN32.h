@@ -51,6 +51,7 @@ private:
 	HANDLE				m_hThread;
 	DWORD				m_threadID;
 
+	void createBitmap();
 	void blit(HWND hWnd, HDC pDC, pp_int32 x, pp_int32 y, pp_int32 width, pp_int32 height);
 
 public:
@@ -63,8 +64,6 @@ public:
 	void update();
 	void update(const PPRect& r);
 
-	void adjustWindowSize();
-
 	virtual void setSize(const PPSize& size);
 
 	virtual bool supportsScaling() const { return true; }
@@ -73,6 +72,7 @@ public:
 public:
 	virtual void setTitle(const PPSystemString& title);	
 	virtual bool goFullScreen(bool b);
+	virtual bool resizeWindow(const PPSize& size, pp_int32 scaleFactor);
 	virtual void shutDown();
 	virtual void signalWaitState(bool b, const PPColor& color);
 	virtual void setMouseCursor(MouseCursorTypes type);

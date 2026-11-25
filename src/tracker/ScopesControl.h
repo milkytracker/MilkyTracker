@@ -124,6 +124,8 @@ public:
 
 	virtual pp_int32 dispatchEvent(PPEvent* event);
 
+	virtual void setSize(const PPSize& size);
+
 	void attachSource(PlayerController* playerController);
 
 	void setNumChannels(pp_int32 numChannels) { this->numChannels = numChannels; }

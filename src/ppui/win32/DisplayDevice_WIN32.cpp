@@ -25,6 +25,12 @@
 #include "WaitWindow_WIN32.h"
 #include "PPSystem.h"
 
+// A 24 bit DIB's rows are padded to 4 bytes
+static pp_int32 bitmapPitch(pp_int32 width)
+{
+	return ((width * 3) + 3) & ~3;
+}
+
 PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height, pp_int32 scaleFactor/* = 1*/) :
 	PPDisplayDeviceBase(width, height, scaleFactor),
 	m_waitWindowVisible(false),
@@ -32,8 +38,6 @@ PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height, pp_
 	m_threadID(0)
 {
 	m_BitmapInfo.biSize = sizeof(BITMAPINFOHEADER);
-	m_BitmapInfo.biWidth = getSize().width;
-	m_BitmapInfo.biHeight = -getSize().height;
 	m_BitmapInfo.biPlanes = 1;
 	m_BitmapInfo.biBitCount = 24;
 	m_BitmapInfo.biCompression = BI_RGB;
@@ -42,25 +46,33 @@ PPDisplayDevice::PPDisplayDevice(HWND hWnd, pp_int32 width, pp_int32 height, pp_
 	m_BitmapInfo.biYPelsPerMeter = 0;
 	m_BitmapInfo.biClrUsed = 0;
 	m_BitmapInfo.biClrImportant = 0;
-	
-	HDC hScreenDC = ::GetWindowDC(NULL);
-	
-	m_hBitmap = ::CreateDIBSection(hScreenDC, 
-								   (LPBITMAPINFO)&m_BitmapInfo, 
-								   DIB_RGB_COLORS,
-								   (LPVOID *)&m_pBits, 
-								   NULL, 
-								   0); 
-	
-	::ReleaseDC(NULL,hScreenDC);				    
+
+	createBitmap();
 
 	m_hWnd = hWnd;
 
 	m_hDC = NULL;
 
 	// initialise graphics instance
-	currentGraphics = new PPGraphics_BGR24(getSize().width, getSize().height, (getSize().width * 24) / 8, m_pBits);
+	currentGraphics = new PPGraphics_BGR24(getSize().width, getSize().height, bitmapPitch(getSize().width), m_pBits);
 	currentGraphics->lock = true;
+}
+
+void PPDisplayDevice::createBitmap()
+{
+	m_BitmapInfo.biWidth = getSize().width;
+	m_BitmapInfo.biHeight = -getSize().height;
+
+	HDC hScreenDC = ::GetWindowDC(NULL);
+
+	m_hBitmap = ::CreateDIBSection(hScreenDC,
+								   (LPBITMAPINFO)&m_BitmapInfo,
+								   DIB_RGB_COLORS,
+								   (LPVOID *)&m_pBits,
+								   NULL,
+								   0);
+
+	::ReleaseDC(NULL,hScreenDC);
 }
 
 PPDisplayDevice::~PPDisplayDevice()
@@ -113,6 +125,14 @@ void PPDisplayDevice::update()
 
 	blit(m_hWnd, m_hDC, 0, 0, getSize().width, getSize().height);
 
+	// the pixel or so a scaled screen leaves of the window to its right and below
+	RECT client, strip;
+	::GetClientRect(m_hWnd, &client);
+	::SetRect(&strip, getSize().width * scaleFactor, 0, client.right, client.bottom);
+	::FillRect(m_hDC, &strip, (HBRUSH)::GetStockObject(BLACK_BRUSH));
+	::SetRect(&strip, 0, getSize().height * scaleFactor, client.right, client.bottom);
+	::FillRect(m_hDC, &strip, (HBRUSH)::GetStockObject(BLACK_BRUSH));
+
 	::ReleaseDC(m_hWnd, m_hDC);
 
 	m_hDC = NULL;
@@ -144,102 +164,49 @@ void PPDisplayDevice::setTitle(const PPSystemString& title)
 	::SetWindowText(m_hWnd, title);
 }
 
+// The window is this size already (WM_SIZE, Tracker::setScreenSize): the bitmap the screen is drawn into follows it
 void PPDisplayDevice::setSize(const PPSize& size)
 {
-	// Important note: Save this size before the window 
-	// is actually resized using SetWindowPos (below)
+	if (size == this->size)
+		return;
+
 	this->size = size;
 
-	RECT rc;
+	::DeleteObject(m_hBitmap);
+	createBitmap();
 
-	::GetWindowRect(m_hWnd, &rc);
-
-	rc.right = rc.left + size.width * scaleFactor;
-	rc.bottom = rc.top + size.height * scaleFactor;
-	::AdjustWindowRect(&rc, GetWindowLong(m_hWnd, GWL_STYLE), false);
-
-	::SetWindowPos(m_hWnd, 
-				   NULL, 
-				   rc.left, 
-				   rc.top, 
-				   rc.right - rc.left,
-				   rc.bottom - rc.top,
-				   SWP_SHOWWINDOW | SWP_NOZORDER);
-
+	static_cast<PPGraphicsFrameBuffer*>(currentGraphics)->setBufferProperties(size.width, size.height, bitmapPitch(size.width), m_pBits);
 }
 
-void PPDisplayDevice::adjustWindowSize()
-{
-	PPSize size = this->size;
-	setSize(size);
-}
-
-static BOOL SetFullScreen (HWND hWnd, int w, int h)
-{
-	if (!::IsWindow(hWnd))
-		return FALSE;
-
-	DEVMODE dmScreen;
-
-	int frequency = -1;
-	if (::EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dmScreen))
-	{
-		frequency = dmScreen.dmDisplayFrequency;
-	}
-
-	dmScreen.dmSize			= sizeof ( DEVMODE );
-	dmScreen.dmPelsWidth	= w;
-	dmScreen.dmPelsHeight	= h;
-	if (frequency != -1)
-		dmScreen.dmDisplayFrequency	= frequency;
-
-	dmScreen.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT | (frequency == -1 ? 0 : DM_DISPLAYFREQUENCY);
-
-	// Try with current frequency first
-    if ( ::ChangeDisplaySettings( &dmScreen, CDS_FULLSCREEN | CDS_RESET) == DISP_CHANGE_SUCCESSFUL )
-		return TRUE;
-
-	// Try without setting frequency
-	dmScreen.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
-    if ( ::ChangeDisplaySettings( &dmScreen, CDS_FULLSCREEN | CDS_RESET) == DISP_CHANGE_SUCCESSFUL )
-		return TRUE;
-
-	return FALSE;
-}
-
+// Borderless over the whole monitor, without changing its display mode: the tracker is laid out again for the monitor's size (WM_SIZE)
 bool PPDisplayDevice::goFullScreen(bool b)
 {
 	if (b)
 	{
-		::GetWindowRect(m_hWnd, &m_lastRect);
-
-		if (::SetFullScreen(m_hWnd, size.width * scaleFactor, size.height * scaleFactor))
-		{
-			m_lastWindowStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
-			m_lastWindowExStyle = ::GetWindowLong(m_hWnd, GWL_EXSTYLE);
-
-			::SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS);
-			::SetWindowLong(m_hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-
-			::ShowWindow(m_hWnd, SW_SHOWMAXIMIZED);
-		    
-            ::SetWindowPos(m_hWnd, HWND_TOPMOST, 
-                           0, 
-					       0, 
-					       0, 0, SWP_NOSIZE);
-			
-			bFullScreen = true;
-		}
-		else 
+		MONITORINFO monitorInfo;
+		monitorInfo.cbSize = sizeof(monitorInfo);
+		if (!::GetMonitorInfo(::MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST), &monitorInfo))
 		{
 			bFullScreen = false;
 			return false;
 		}
+
+		::GetWindowRect(m_hWnd, &m_lastRect);
+		m_lastWindowStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
+		m_lastWindowExStyle = ::GetWindowLong(m_hWnd, GWL_EXSTYLE);
+
+		bFullScreen = true;
+
+		::SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS);
+		::SetWindowLong(m_hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
+
+		const RECT& r = monitorInfo.rcMonitor;
+		::SetWindowPos(m_hWnd, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW | SWP_FRAMECHANGED);
 	}
 	else
 	{
-		::ChangeDisplaySettings(NULL, 0);
-		
+		bFullScreen = false;
+
 		::SetWindowLong(m_hWnd, GWL_STYLE, m_lastWindowStyle);
 		::SetWindowLong(m_hWnd, GWL_EXSTYLE, m_lastWindowExStyle);
 
@@ -249,10 +216,34 @@ bool PPDisplayDevice::goFullScreen(bool b)
 					   m_lastRect.top, 
 					   m_lastRect.right - m_lastRect.left, 
 					   m_lastRect.bottom - m_lastRect.top, SWP_SHOWWINDOW | SWP_FRAMECHANGED);
-
-		bFullScreen = false;
 	}
 
+	return true;
+}
+
+// The window made the size of a screen of size at scaleFactor; WM_SIZE lays the tracker out for it. Fullscreen keeps the monitor's size, and the window it goes back to takes the new one
+bool PPDisplayDevice::resizeWindow(const PPSize& size, pp_int32 scaleFactor)
+{
+	this->scaleFactor = scaleFactor;
+
+	RECT rect = { 0, 0, size.width * scaleFactor, size.height * scaleFactor };
+	if (bFullScreen)
+	{
+		::AdjustWindowRect(&rect, m_lastWindowStyle, FALSE);
+		m_lastRect.right = m_lastRect.left + rect.right - rect.left;
+		m_lastRect.bottom = m_lastRect.top + rect.bottom - rect.top;
+	}
+	else
+	{
+		if (::IsZoomed(m_hWnd))
+			::ShowWindow(m_hWnd, SW_RESTORE);
+		::AdjustWindowRect(&rect, ::GetWindowLong(m_hWnd, GWL_STYLE), FALSE);
+		::SetWindowPos(m_hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+
+	// laid out at the new scale even when the window kept its size, and drawn again all over
+	::SendMessage(m_hWnd, WM_SIZE, SIZE_RESTORED, 0);
+	::InvalidateRect(m_hWnd, NULL, FALSE);
 	return true;
 }
 

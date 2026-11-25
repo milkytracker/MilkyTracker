@@ -61,7 +61,8 @@ void PPButton::paint(PPGraphicsAbstract* g)
 	if (!isVisible())
 		return;
 
-	if( parentScreen != NULL && parentScreen->getFlat()  ) setFlat( true );
+	// the Config page's flat controls are read as the button is drawn, so they come and go at once
+	const bool flat = this->flat || (parentScreen != NULL && parentScreen->getFlat());
 
 	PPPoint location = this->location;
 

@@ -71,6 +71,8 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	menuPosY(0),
 	menuInvokeChannel(-1), lastMenuInvokeChannel(-1),
 	editMenuControl(NULL),
+	moduleMenuControl(NULL), patternMenuControl(NULL), keyboardMenuControl(NULL),
+	helpMenuControl(NULL), channelMenuControl(NULL), editMenuPasteControl(NULL),
 	eventKeyDownBindings(NULL),
 	scanCodeBindings(NULL),
 	eventKeyDownBindingsMilkyTracker(NULL), scanCodeBindingsMilkyTracker(NULL), eventKeyDownBindingsFastTracker(NULL), scanCodeBindingsFastTracker(NULL),
@@ -94,6 +96,38 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	hBottomScrollbar = new PPScrollbar(3, parentScreen, this, PPPoint(location.x + SCROLLBARWIDTH, location.y + size.height - SCROLLBARWIDTH), size.width - SCROLLBARWIDTH*2, true);
 	
 	songPos.orderListIndex = songPos.row = -1;
+
+	buildMenus();
+
+	initKeyBindings();
+
+#ifdef __LOWRES__
+	setFont(PPFont::getFont(PPFont::FONT_TINY));
+#else
+	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
+#endif
+
+	setRecordMode(false);
+
+	transposeHandlerResponder = new TransposeHandlerResponder(*this);
+}
+
+void PatternEditorControl::deleteMenus()
+{
+	delete editMenuControl;
+	delete moduleMenuControl;
+	delete patternMenuControl;
+	delete keyboardMenuControl;
+	delete helpMenuControl;
+	delete channelMenuControl;
+	delete editMenuPasteControl;
+	editMenuControl = moduleMenuControl = patternMenuControl = keyboardMenuControl = NULL;
+	helpMenuControl = channelMenuControl = editMenuPasteControl = NULL;
+}
+
+void PatternEditorControl::buildMenus()
+{
+	deleteMenus();
 
 	// context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
@@ -189,17 +223,9 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 
 	//editMenuControl->setNotifyParentOnHide(true);
 
-	initKeyBindings();
-	
-#ifdef __LOWRES__
-	setFont(PPFont::getFont(PPFont::FONT_TINY));
-#else
-	setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
-#endif
-
-	setRecordMode(false);
-	
-	transposeHandlerResponder = new TransposeHandlerResponder(*this);
+	// classic contextmenu font scales along with patternfont
+	if (parentScreen->getClassic() && font)
+		editMenuControl->setFont(font);
 }
 
 PatternEditorControl::~PatternEditorControl()
@@ -212,9 +238,8 @@ PatternEditorControl::~PatternEditorControl()
 	delete hTopScrollbar;
 	delete hBottomScrollbar;
 
-	delete editMenuControl;
-	delete editMenuPasteControl;
-	
+	deleteMenus();
+
 	delete eventKeyDownBindingsMilkyTracker;
 	delete scanCodeBindingsMilkyTracker;
 	delete eventKeyDownBindingsFastTracker;

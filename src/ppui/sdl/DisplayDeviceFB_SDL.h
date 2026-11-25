@@ -43,6 +43,9 @@ private:
 	// used for rotating coordinates etc.
 	void swap(const PPRect& r);
 
+	void createSurface(pp_int32 bpp);
+	void resizeBuffers();
+
 public:
 	PPDisplayDeviceFB(pp_int32 width,
 					  pp_int32 height, 
@@ -56,6 +59,7 @@ public:
 
 	virtual bool supportsScaling() const { return true; }
 	virtual void setSize(const PPSize& size);
+	virtual bool resizeWindow(const PPSize& size, pp_int32 scaleFactor);
 
 	virtual PPGraphicsAbstract* open();
 	virtual void close();

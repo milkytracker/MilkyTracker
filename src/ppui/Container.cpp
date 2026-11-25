@@ -333,6 +333,40 @@ void PPContainer::addControl(PPControl* control)
 	}
 }
 
+pp_int32 PPContainer::detachControl(PPControl* control)
+{
+	for (pp_int32 i = 0; i < controls.size(); i++)
+	{
+		if (controls.get(i) != control)
+			continue;
+
+		if (control->receiveTimerEvent())
+			parentScreen->removeTimerEventControl(control);
+
+		if (focusedControl == control)
+			focusedControl = NULL;
+		if (lastMouseOverControl == control)
+			lastMouseOverControl = NULL;
+		if (caughtControl == control)
+		{
+			caughtControl = NULL;
+			currentlyPressedMouseButtons = 0;
+		}
+
+		controls.removeNoDestroy(i);
+		return i;
+	}
+
+	return -1;
+}
+
+void PPContainer::insertControl(PPControl* control, pp_int32 index)
+{
+	addControl(control);
+	controls.removeNoDestroy(controls.size()-1);
+	controls.insert(index, control);
+}
+
 bool PPContainer::removeControl(PPControl* control)
 {
 	pp_int32 i;

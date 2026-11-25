@@ -1870,13 +1870,26 @@ pp_int32 SectionSettings::getColorIndex()
 	return listBoxColors ? colorMapping[listBoxColors->getSelectedIndex()] : colorMapping[0];
 }
 
-void SectionSettings::showRestartMessageBox()
+// A new resolution or scale resizes the window, where the port can, and the tracker is laid out for it; what cannot change while the tracker runs waits for a restart. Flat controls and Classic UX take effect as the settings are applied (Tracker::applySettingByKey)
+void SectionSettings::applyScreenSettings()
 {
-	if (tracker.settingsDatabase->restore("XRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("XRESOLUTION")->getIntValue() ||
-		tracker.settingsDatabase->restore("YRESOLUTION")->getIntValue() != tracker.settingsDatabaseCopy->restore("YRESOLUTION")->getIntValue() ||
-		tracker.settingsDatabase->restore("CLASSIC")->getIntValue() != tracker.settingsDatabaseCopy->restore("CLASSIC")->getIntValue() ||
-		tracker.settingsDatabase->restore("FLATCONTROLS")->getIntValue() != tracker.settingsDatabaseCopy->restore("FLATCONTROLS")->getIntValue() ||
-		tracker.settingsDatabase->restore("SCREENSCALEFACTOR")->getIntValue() != tracker.settingsDatabaseCopy->restore("SCREENSCALEFACTOR")->getIntValue())
+	TrackerSettingsDatabase* now = tracker.settingsDatabase;
+	TrackerSettingsDatabase* was = tracker.settingsDatabaseCopy;
+	const PPSize size(now->restore("XRESOLUTION")->getIntValue(), now->restore("YRESOLUTION")->getIntValue());
+	const pp_int32 scaleFactor = now->restore("SCREENSCALEFACTOR")->getIntValue();
+
+#ifdef __LOWRES__
+	bool restart = now->restore("CLASSIC")->getIntValue() != was->restore("CLASSIC")->getIntValue();
+#else
+	bool restart = false;
+#endif
+
+	if (size.width != was->restore("XRESOLUTION")->getIntValue() ||
+		size.height != was->restore("YRESOLUTION")->getIntValue() ||
+		scaleFactor != was->restore("SCREENSCALEFACTOR")->getIntValue())
+		restart |= !tracker.screen->resizeWindow(size, scaleFactor);
+
+	if (restart)
 	{
 		SystemMessage message(*tracker.screen, SystemMessage::MessageChangeRestart);
 		message.show();
@@ -1937,7 +1950,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				showRestartMessageBox();
+				applyScreenSettings();
 
 				// Store new palette settings
 				saveCurrentGlobalPalette();
@@ -1959,7 +1972,7 @@ pp_int32 SectionSettings::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				showRestartMessageBox();
+				applyScreenSettings();
 
 				// Store new palette settings
 				saveCurrentGlobalPalette();
@@ -2869,6 +2882,10 @@ void SectionSettings::init(pp_int32 x, pp_int32 y)
 	PPScreen* screen = tracker.screen;
 
 	pp_int32 y2 = y;
+
+	// built again for a screen of another size (Tracker::setScreenSize): the pages are made again too
+	for (i = 0; i < tabPages.size(); i++)
+		tabPages.get(i)->clear();
 
 	sectionContainer = new PPContainer(CONTAINER_SETTINGS, screen, this, PPPoint(x, y2), PPSize(screen->getWidth(),SECTIONHEIGHT), false);
 	static_cast<PPContainer*>(sectionContainer)->setColor(TrackerConfig::colorThemeMain);

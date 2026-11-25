@@ -567,13 +567,6 @@ void SectionHDRecorder::init(pp_int32 px, pp_int32 py)
 
 	button = new PPButton(HDRECORD_BUTTON_RECORDINGMODE, screen, this, PPPoint(x2-3, y2-2), PPSize(5*9+2,buttonHeight-1), false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	if( screen->getClassic() ){
-		button->setColor( TrackerConfig::colorThemeMain );
-		button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	}else{
-		button->setColor(TrackerConfig::colorSampleEditorWaveform);
-		button->setTextColor(TrackerConfig::colorThemeMain);
-	}
 	button->setText("File:");
 	container->addControl(button);
 	//container->addControl(new PPStaticText(0, NULL, NULL, PPPoint(x2, y2), "File:", true));
@@ -661,6 +654,19 @@ void SectionHDRecorder::update(bool repaint/* = true*/)
 	text->setText(buffer);
 
 	slider->setCurrentValue(mixerVolume);
+
+	// coloured as Classic UX has it, which can be switched while the tracker runs
+	PPButton* modeButton = static_cast<PPButton*>(container->getControlByID(HDRECORD_BUTTON_RECORDINGMODE));
+	if (tracker.screen->getClassic())
+	{
+		modeButton->setColor(TrackerConfig::colorThemeMain);
+		modeButton->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	}
+	else
+	{
+		modeButton->setColor(TrackerConfig::colorSampleEditorWaveform);
+		modeButton->setTextColor(TrackerConfig::colorThemeMain);
+	}
 
 	if (recorderMode == RecorderModeToFile || recorderMode == RecorderModeToFileMulti)
 	{

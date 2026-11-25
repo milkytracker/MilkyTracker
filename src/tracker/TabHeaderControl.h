@@ -93,6 +93,7 @@ private:
 
 	void handleTabClick(const PPPoint& p);
 	void setNumTabs(pp_uint32 numTabs);
+	void layoutTabs();
 	void adjustLabels();
 	void shiftTabs(pp_int32 offset = 1, bool repaint = true);
 	void assureTabVisible(pp_uint32 index);
