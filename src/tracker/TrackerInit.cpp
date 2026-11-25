@@ -64,7 +64,6 @@ void Tracker::initUI()
 {
 	pp_int32 c;
 	PPButton* button = NULL;
-  bool isClassic = screen->getClassic();
 	
 	// ---------- initialise sections --------
 	for (pp_int32 i = 0; i < sections->size(); i++)
@@ -256,107 +255,7 @@ void Tracker::initUI()
 	initInputContainerDefault(0, screen->getHeight()-UPPERSECTIONDEFAULTHEIGHT()-INPUTCONTAINERHEIGHT_DEFAULT);
 	initInputContainerExtended(0, screen->getHeight()-UPPERSECTIONDEFAULTHEIGHT()-INPUTCONTAINERHEIGHT_EXTENDED);
 #else
-	PPContainer* containerAbout = new PPContainer(CONTAINER_ABOUT, screen, this, PPPoint(isClassic ? 116-2 : 0, 0), PPSize((306-116+2)+14+(isClassic?0:114),24), false);
-	containerAbout->setColor(TrackerConfig::colorThemeMain);
-
-	// Song title edit field
-	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
-	listBox->showSelection(false);
-	listBox->setSingleButtonClickEdit(true);
-	listBox->setBorderColor(TrackerConfig::colorThemeMain);
-
-	char str[MP_MAXTEXT+1];
-	moduleEditor->getTitle(str, ModuleEditor::MAX_TITLETEXT);
-
-	listBox->addItem(str);
-	listBox->setMaxEditSize(ModuleEditor::MAX_TITLETEXT);
-
-	containerAbout->addControl(listBox);
-	
-	PPStaticText* staticText = playTimeText = new PPStaticText(STATICTEXT_ABOUT_TIME, screen, this, PPPoint(116+2, 2+8+3), "", false);
-	containerAbout->addControl(staticText);
-
-	button = new PPButton(BUTTON_ABOUT_ESTIMATESONGLENGTH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - 6*8-4, 2+8+2), PPSize(6*8, 9));
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("estimate");
-	containerAbout->addControl(button);
-
-	peakLevelControl = new PeakLevelControl(PEAKLEVEL_CONTROL, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12));
-	peakLevelControl->setBorderColor(TrackerConfig::colorThemeMain);
-	containerAbout->addControl(peakLevelControl);
-
-    if( !screen->getClassic() ){
-      staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 14), "patterns", true);
-      staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
-      containerAbout->addControl(staticText);
-    }
-
-	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3), "Song title:", true);
-	staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	containerAbout->addControl(staticText);
-
-	// switch to Peak level
-	pp_int32 aboutButtonOffset = 51;
-
-	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(12, 9), false, true, false);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("F");
-	containerAbout->addControl(button);
-
-	button = new PPButton(BUTTON_ABOUT_PROSPECTIVE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12, 1), PPSize(12, 9), false, true, false);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("P");
-	button->setPressed(true);
-	containerAbout->addControl(button);
-
-	button = new PPButton(BUTTON_ABOUT_WRAPCURSOR, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*2, 1), PPSize(12, 9), false, true, false);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("W");
-	containerAbout->addControl(button);
-
-	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*3, 1), PPSize(12, 9), false, true, false);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("L");
-	containerAbout->addControl(button);
-
-	aboutButtonOffset+=34;
-
-	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
-	button->setColor(TrackerConfig::colorThemeMain);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Peak");
-	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	containerAbout->addControl(button);
-
-	aboutButtonOffset+=30;
-
-	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
-	button->setColor(TrackerConfig::colorThemeMain);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Time");
-	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	containerAbout->addControl(button);
-
-	aboutButtonOffset+=30;
-
-	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
-	button->setColor(TrackerConfig::colorThemeMain);
-	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
-	button->setText("Title");
-	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
-	containerAbout->addControl(button);
-
-	screen->addControl(containerAbout);
-
-	// small sections
-	initSectionOrderlist(0, isClassic ? 0 : 24);
-
-	initSectionSpeed(116-2, 24);
-
-	initSectionPattern(116-4+99, 24 );
-
-	// Main options
-	initSectionMainOptions(0, isClassic ? 64 : 88);
+	initMainMenu();
 
 	// ---------- Instrument & Sample listboxes ---------- 
 	initListboxesSection(320, 0);
@@ -458,6 +357,117 @@ void Tracker::initUI()
 	
 	tabManager->openNewTab(this->playerController, this->moduleEditor);
 }
+
+#ifndef __LOWRES__
+// The song settings (title, order list, speed, pattern) and the main menu over the top left of the screen, which Classic UX lays out: built at startup and again when it is switched (TrackerResize.cpp)
+void Tracker::initMainMenu()
+{
+	PPButton* button = NULL;
+	const bool isClassic = screen->getClassic();
+
+	PPContainer* containerAbout = new PPContainer(CONTAINER_ABOUT, screen, this, PPPoint(isClassic ? 116-2 : 0, 0), PPSize((306-116+2)+14+(isClassic?0:114),24), false);
+	containerAbout->setColor(TrackerConfig::colorThemeMain);
+
+	// Song title edit field
+	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
+	listBox->showSelection(false);
+	listBox->setSingleButtonClickEdit(true);
+	listBox->setBorderColor(TrackerConfig::colorThemeMain);
+
+	char str[MP_MAXTEXT+1];
+	moduleEditor->getTitle(str, ModuleEditor::MAX_TITLETEXT);
+
+	listBox->addItem(str);
+	listBox->setMaxEditSize(ModuleEditor::MAX_TITLETEXT);
+
+	containerAbout->addControl(listBox);
+	
+	PPStaticText* staticText = playTimeText = new PPStaticText(STATICTEXT_ABOUT_TIME, screen, this, PPPoint(116+2, 2+8+3), "", false);
+	containerAbout->addControl(staticText);
+
+	button = new PPButton(BUTTON_ABOUT_ESTIMATESONGLENGTH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - 6*8-4, 2+8+2), PPSize(6*8, 9));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("estimate");
+	containerAbout->addControl(button);
+
+	peakLevelControl = new PeakLevelControl(PEAKLEVEL_CONTROL, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12));
+	peakLevelControl->setBorderColor(TrackerConfig::colorThemeMain);
+	containerAbout->addControl(peakLevelControl);
+
+    if( !screen->getClassic() ){
+      staticText = new PPStaticText(0, NULL, NULL, PPPoint(4, 14), "patterns", true);
+      staticText->setFont( PPFont::getFont( PPFont::FONT_TINY ) );
+      containerAbout->addControl(staticText);
+    }
+
+	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3), "Song title:", true);
+	staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	containerAbout->addControl(staticText);
+
+	// switch to Peak level
+	pp_int32 aboutButtonOffset = 51;
+
+	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("F");
+	containerAbout->addControl(button);
+
+	button = new PPButton(BUTTON_ABOUT_PROSPECTIVE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12, 1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("P");
+	button->setPressed(true);
+	containerAbout->addControl(button);
+
+	button = new PPButton(BUTTON_ABOUT_WRAPCURSOR, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*2, 1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("W");
+	containerAbout->addControl(button);
+
+	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*3, 1), PPSize(12, 9), false, true, false);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("L");
+	containerAbout->addControl(button);
+
+	aboutButtonOffset+=34;
+
+	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Peak");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerAbout->addControl(button);
+
+	aboutButtonOffset+=30;
+
+	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Time");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerAbout->addControl(button);
+
+	aboutButtonOffset+=30;
+
+	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Title");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerAbout->addControl(button);
+
+	screen->addControl(containerAbout);
+
+	// small sections
+	initSectionOrderlist(0, isClassic ? 0 : 24);
+
+	initSectionSpeed(116-2, 24);
+
+	initSectionPattern(116-4+99, 24 );
+
+	// Main options
+	initSectionMainOptions(0, isClassic ? 64 : 88);
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////
 // Build orderlist section

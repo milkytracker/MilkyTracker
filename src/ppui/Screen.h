@@ -112,6 +112,9 @@ public:
 
 	void addControl(PPControl* control);
 	bool removeControl(PPControl* control);
+	// PPContainer's, for the screen's own controls
+	pp_int32 detachControl(PPControl* control);
+	void insertControl(PPControl* control, pp_int32 index);
 
 	void addTimerEventControl(PPControl* control);
 	bool removeTimerEventControl(PPControl* control);
@@ -158,7 +161,9 @@ public:
 	bool isFullScreen() const;
 	
 	PPSize getDisplayResolution() const;
-	
+
+	bool resizeWindow(const PPSize& size, pp_int32 scaleFactor);
+
 	void setTitle(const PPSystemString& title);
 	
 	void signalWaitState(bool b, const PPColor& color);	

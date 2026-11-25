@@ -117,6 +117,16 @@ ScopesControl::~ScopesControl()
 	delete backgroundButton;
 }
 
+void ScopesControl::setSize(const PPSize& size)
+{
+	PPControl::setSize(size);
+
+	visibleWidth = size.width - 2;
+	visibleHeight = size.height - 4;
+
+	backgroundButton->setSize(size);
+}
+
 class ScopePainter : public PlayerController::SampleDataFetcher
 {
 private:

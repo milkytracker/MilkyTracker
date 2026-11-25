@@ -159,6 +159,40 @@ static void RaiseEventSerialized(PPEvent* event)
 	}
 }
 
+#ifndef __LOWRES__
+// The tracker laid out again for the window's size (Tracker::setScreenSize). The main loop calls this on its timer, where no event handler is running: a modal loop, such as a file dialog's, runs inside one, and the layout builds again controls that may be on its stack
+static void resizeTracker()
+{
+	if (myDisplayDevice->getOrientation() != PPDisplayDevice::ORIENTATION_NORMAL)
+		return;
+
+	static int lastWidth = 0, lastHeight = 0, lastScaleFactor = 0;
+	SDL_Renderer* renderer = SDL_GetRenderer(myDisplayDevice->getWindow());
+	int width, height;
+	SDL_GetRendererOutputSize(renderer, &width, &height);
+	const pp_int32 scaleFactor = myDisplayDevice->getScaleFactor();
+	if (width == lastWidth && height == lastHeight && scaleFactor == lastScaleFactor)
+		return;
+
+	const bool rescaled = lastScaleFactor && scaleFactor != lastScaleFactor;
+	lastWidth = width;
+	lastHeight = height;
+	lastScaleFactor = scaleFactor;
+
+	globalMutex->lock();
+	myTracker->setScreenSize(PPSize(width / scaleFactor, height / scaleFactor));
+	// a new scale (the Config page's) for a screen that kept its size is drawn again into the new buffers
+	if (rescaled)
+		myTrackerScreen->paint();
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+	// shown 1:1 rather than stretched over the pixel or so the window has over, and scaled down to fit a window smaller than the least screen
+	SDL_RenderSetIntegerScale(renderer, width >= myTrackerScreen->getWidth() * scaleFactor &&
+							  height >= myTrackerScreen->getHeight() * scaleFactor ? SDL_TRUE : SDL_FALSE);
+#endif
+	globalMutex->unlock();
+}
+#endif
+
 enum SDLUserEvents
 {
 	SDLUserEventTimer,
@@ -830,6 +864,15 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 	SDL_SetWindowTitle(myDisplayDevice->getWindow(), "Loading MilkyTracker...");
 	myDisplayDevice->init();
 
+#ifndef __LOWRES__
+	// The window resizes down to the least screen the tracker lays itself out for
+	if (orientation == PPDisplayDevice::ORIENTATION_NORMAL)
+	{
+		const PPSize minSize = Tracker::getMinScreenSize();
+		SDL_SetWindowMinimumSize(myDisplayDevice->getWindow(), minSize.width * scaleFactor, minSize.height * scaleFactor);
+	}
+#endif
+
 	myTrackerScreen = new PPScreen(myDisplayDevice, myTracker);
 	myTracker->setScreen(myTrackerScreen);
 
@@ -1064,6 +1107,10 @@ int main(int argc, char *argv[])
 
 			case SDL_USEREVENT:
 				processSDLUserEvents((const SDL_UserEvent&)event);
+#ifndef __LOWRES__
+				if (event.user.code == SDLUserEventTimer)
+					resizeTracker();
+#endif
 				break;
 
 			default:

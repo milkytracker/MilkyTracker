@@ -141,6 +141,7 @@ add_executable(tracker
     TrackerConfig.cpp
     TrackerInit.cpp
     TrackerKeyboard.cpp
+    TrackerResize.cpp
     TrackerSettings.cpp
     TrackerSettingsDatabase.cpp
     TrackerShortCuts.cpp

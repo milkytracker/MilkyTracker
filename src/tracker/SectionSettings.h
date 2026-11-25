@@ -88,7 +88,7 @@ private:
 	
 	void showPage(pp_int32 page, pp_int32 subPage = 0);
 	
-	void showRestartMessageBox();
+	void applyScreenSettings();
 	
 	void initColorDescriptors();
 	void updateColors();

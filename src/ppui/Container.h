@@ -73,6 +73,10 @@ public:
 
 	bool removeControl(PPControl* control);
 
+	// For a part of the UI that is built again in place: takes the control out without deleting it and returns where it was (-1 when it is not here), then puts its replacement at that place in the order controls are hit and painted in
+	pp_int32 detachControl(PPControl* control);
+	void insertControl(PPControl* control, pp_int32 index);
+
 	virtual void paint(PPGraphicsAbstract* graphics);
 	
 	virtual pp_int32 dispatchEvent(PPEvent* event);

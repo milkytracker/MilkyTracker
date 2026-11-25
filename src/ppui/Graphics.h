@@ -48,6 +48,14 @@ public:
 		pitch = p;
 		buffer = (pp_uint8*)buff;
 	}
+
+	// For a display device whose screen is resized: the buffer at its new size
+	void setBufferProperties(pp_int32 w, pp_int32 h, pp_int32 p, void* buff)
+	{
+		width = w;
+		height = h;
+		setBufferProperties(p, buff);
+	}
 };
 
 #define __EMPTY__

@@ -64,12 +64,6 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 		exit(EXIT_FAILURE);
 	}
 
-#ifdef HIDPI_SUPPORT
-	// Feed SDL_RenderSetLogicalSize() with output size, not GUI surface size, otherwise mouse coordinates will be wrong for Hi-DPI
-	int rendererW, rendererH;
-	SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
-#endif
-
 	// Log renderer capabilities
 	SDL_RendererInfo theRendererInfo;
 	if (!SDL_GetRendererInfo(theRenderer, &theRendererInfo))
@@ -80,33 +74,12 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 		if (theRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) printf("SDL: Renderer supports rendering to texture.\n");
 	}
 
-	// Lock aspect ratio and scale the UI up to fit the window
-#ifdef HIDPI_SUPPORT
-	SDL_RenderSetLogicalSize(theRenderer, rendererW, rendererH);
-#else
-	SDL_RenderSetLogicalSize(theRenderer, realWidth, realHeight);
-#endif
-
 	// Use linear filtering for the scaling 
 	// or..some users prefer sharper pixel-art/fonts over blurryness when enlarging/resizing window
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, getenv("SCALE_NEAREST") != NULL ? "nearest" : "linear" );
 
-	// Create surface for rendering graphics
-	theSurface = SDL_CreateRGBSurface(0, realWidth, realHeight, bpp == -1 ? 32 : bpp, 0, 0, 0, 0);
-	if (theSurface == NULL)
-	{
-		fprintf(stderr, "SDL: SDL_CreateSurface failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-	
-	// Streaming texture for rendering the UI
-	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format, SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
-	if (theTexture == NULL)
-	{
-		fprintf(stderr, "SDL: SDL_CreateTexture failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-	
+	createSurface(bpp == -1 ? 32 : bpp);
+
 	// We got a surface: update bpp value
 	bpp = theSurface->format->BitsPerPixel;
 
@@ -168,6 +141,35 @@ PPDisplayDeviceFB::PPDisplayDeviceFB(pp_int32 width,
 	}
 	
 	currentGraphics->lock = true;
+}
+
+// The surface the screen is drawn into at its real size, the texture showing it in the window, and the renderer's logical size, which maps the window's mouse coordinates onto the surface
+void PPDisplayDeviceFB::createSurface(pp_int32 bpp)
+{
+#ifdef HIDPI_SUPPORT
+	// Feed SDL_RenderSetLogicalSize() with output size, not GUI surface size, otherwise mouse coordinates will be wrong for Hi-DPI
+	int rendererW, rendererH;
+	SDL_GetRendererOutputSize(theRenderer, &rendererW, &rendererH);
+	SDL_RenderSetLogicalSize(theRenderer, rendererW, rendererH);
+#else
+	SDL_RenderSetLogicalSize(theRenderer, realWidth, realHeight);
+#endif
+
+	// Create surface for rendering graphics
+	theSurface = SDL_CreateRGBSurface(0, realWidth, realHeight, bpp, 0, 0, 0, 0);
+	if (theSurface == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateSurface failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	// Streaming texture for rendering the UI
+	theTexture = SDL_CreateTexture(theRenderer, theSurface->format->format, SDL_TEXTUREACCESS_STREAMING, realWidth, realHeight);
+	if (theTexture == NULL)
+	{
+		fprintf(stderr, "SDL: SDL_CreateTexture failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 }
 
 PPDisplayDeviceFB::~PPDisplayDeviceFB()
@@ -721,11 +723,61 @@ void PPDisplayDeviceFB::swap(const PPRect& r2)
 	
 }
 
-// This is unused at the moment, could be useful if we manage to get the GUI resizable in the future.
+// The screen at another size, for a window that is resized (Tracker::setScreenSize)
 void PPDisplayDeviceFB::setSize(const PPSize& size)
 {
+	if (size == this->size)
+		return;
+
 	this->size = size;
-	theSurface = SDL_CreateRGBSurface(0, size.width, size.height, theSurface->format->BitsPerPixel, 0, 0, 0, 0);
-	theTexture = SDL_CreateTextureFromSurface(theRenderer, theSurface);
-	theRenderer = SDL_GetRenderer(theWindow);
+	resizeBuffers();
+}
+
+// The window made the size of a screen of size at scaleFactor; the main loop lays the tracker out for it on its timer. Fullscreen keeps the display's size, and the window it goes back to takes the new one
+bool PPDisplayDeviceFB::resizeWindow(const PPSize& size, pp_int32 scaleFactor)
+{
+	if (orientation != ORIENTATION_NORMAL)
+		return false;
+
+	if (scaleFactor != this->scaleFactor)
+	{
+		// the least window keeps to the least screen
+		int minWidth, minHeight;
+		SDL_GetWindowMinimumSize(theWindow, &minWidth, &minHeight);
+		SDL_SetWindowMinimumSize(theWindow, minWidth / this->scaleFactor * scaleFactor, minHeight / this->scaleFactor * scaleFactor);
+
+		this->scaleFactor = scaleFactor;
+		needsTemporaryBuffer = scaleFactor != 1;
+		resizeBuffers();
+	}
+
+	if (SDL_GetWindowFlags(theWindow) & SDL_WINDOW_MAXIMIZED)
+		SDL_RestoreWindow(theWindow);
+	SDL_SetWindowSize(theWindow, size.width * scaleFactor, size.height * scaleFactor);
+	return true;
+}
+
+// The surface, the texture and the buffer the screen is drawn into, made again for its size at its scale
+void PPDisplayDeviceFB::resizeBuffers()
+{
+	realWidth = size.width;
+	realHeight = size.height;
+	adjust(realWidth, realHeight);
+
+	const pp_int32 bpp = theSurface->format->BitsPerPixel;
+	SDL_DestroyTexture(theTexture);
+	SDL_FreeSurface(theSurface);
+	createSurface(bpp);
+
+	if (needsTemporaryBuffer)
+	{
+		delete[] temporaryBuffer;
+		temporaryBufferBPP = bpp;
+		temporaryBufferPitch = (size.width*temporaryBufferBPP)/8;
+		// cleared, since a pixel no control paints would show what the heap held
+		temporaryBuffer = new pp_uint8[size.width*size.height*(temporaryBufferBPP/8)]();
+	}
+
+	// open() points the graphics at the buffer
+	static_cast<PPGraphicsFrameBuffer*>(currentGraphics)->setBufferProperties(size.width, size.height, 0, NULL);
 }

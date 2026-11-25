@@ -219,7 +219,9 @@ private:
 	pp_int32 selectionKeyModifier;
 
 	RoundRobin rr;
-	
+
+	void deleteMenus();
+
 public:
 
 	PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
@@ -230,6 +232,9 @@ public:
 	
 	void setColor(PPColor color) { bgColor = color; }
 	void setFont(PPFont* font);
+
+	// The right-click menus, which Classic UX shapes: made again when it is switched
+	void buildMenus();
 
 	void setShowFocus(bool showFocus) { properties.showFocus = showFocus; }
 	void setScrollMode(ScrollModes mode) { properties.scrollMode = mode; adjustScrollBarPositionsAndSizes(); assureCursorVisible(); }

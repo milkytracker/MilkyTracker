@@ -181,12 +181,27 @@ void TabHeaderControl::setSize(const PPSize& size)
 {
 	this->size = size;
 	backgroundButton->setSize(size);
+	layoutTabs();
 }
 
 void TabHeaderControl::setLocation(const PPPoint& location)
 {
 	this->location = location;
-	backgroundButton->setLocation(location);	
+	backgroundButton->setLocation(location);
+	layoutTabs();
+}
+
+// The tab buttons again for where the bar is and how wide, the selected tab kept in sight
+void TabHeaderControl::layoutTabs()
+{
+	if (!tabHeaders.size())
+		return;
+
+	pp_int32 selected = hitIndex;
+	startIndex = 0;
+	setNumTabs(tabHeaders.size());
+	setSelectedTab(selected);
+	adjustLabels();
 }
 
 void TabHeaderControl::addTab(const TabHeader& tabHeader)

@@ -161,6 +161,19 @@ public:
 		values[numValues++] = value;
 	}
 
+	void insert(pp_int32 index, Type* value)
+	{
+		if (index < 0 || index > numValues)
+			index = numValues;
+
+		add(value);
+
+		for (pp_int32 i = numValues-1; i > index; i--)
+			values[i] = values[i-1];
+
+		values[index] = value;
+	}
+
 	// handle with care
 	void replace(pp_int32 index, Type* value)
 	{

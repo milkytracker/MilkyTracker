@@ -409,7 +409,7 @@ void Tracker::applySettingByKey(PPDictionaryKey* theKey, TMixerSettings& setting
 	}
 	else if (theKey->getKey().compareTo("CLASSIC") == 0)
 	{
-		screen->setClassic(v2 != 0);
+		setClassic(v2 != 0);
 	}
 	else if (theKey->getKey().compareTo("SCOPES") == 0)
 	{

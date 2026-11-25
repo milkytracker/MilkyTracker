@@ -204,6 +204,10 @@ public:
 	
 	void showAll();
 
+	// The part of the sample in view, for a control built again at another width to show: its first sample and the samples a pixel, a scale of 0 when all of it is in view
+	void getView(pp_int32& start, float& scale);
+	void setView(pp_int32 start, float scale);
+
 	pp_int32 getCurrentPosition();
 	pp_int32 getCurrentRangeLength() { return sampleEditor->getSelectionLength(); }
 	pp_int32 getCurrentDisplayRange(); 

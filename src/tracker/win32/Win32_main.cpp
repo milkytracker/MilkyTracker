@@ -423,17 +423,40 @@ static void HandlePreferencesDialog()
 	}
 }
 
+// The tracker laid out again for the window's client area (Tracker::setScreenSize). A window resized while the tracker handles an event, by the fullscreen switch or in a modal loop, is laid out once the event is done, since the layout builds again controls that may be on its stack
+static int g_eventDepth = 0;
+static bool g_resizePending = false;
+
+static void ResizeTracker()
+{
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+
+	const pp_int32 scaleFactor = myDisplayDevice->getScaleFactor();
+	g_globalMutex->lock();
+	myTracker->setScreenSize(PPSize(rc.right / scaleFactor, rc.bottom / scaleFactor));
+	g_globalMutex->unlock();
+}
+
 static void RaiseEventSynchronized(PPEvent* event)
 {
 	//if (globalMutex->tryLock())
 	//{
 		g_globalMutex->lock();
+		g_eventDepth++;
 
 		if (myTrackerScreen)
 			myTrackerScreen->raiseEvent(event);
 			
+		g_eventDepth--;
 		g_globalMutex->unlock();
 	//}
+
+	if (!g_eventDepth && g_resizePending)
+	{
+		g_resizePending = false;
+		ResizeTracker();
+	}
 }
 
 static LONG WINAPI CrashHandler(EXCEPTION_POINTERS*)
@@ -556,24 +579,13 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			if (g_mouseWheelLines == 0)
 				break;
-			RECT rc;
-			GetWindowRect(hwnd, &rc);
+			// Absolute screen coordinates into client coordinates, whatever the window's frame
+			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			ScreenToClient(hwnd, &pt);
 
 			TMouseWheelEventParams mouseWheelParams;
-			// Absolute screen coordinates into client coordinates?
-			//mouseWheelParams.pos.x = LOWORD(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
-			//mouseWheelParams.pos.y = HIWORD(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
-
-			if (myDisplayDevice->isFullScreen())
-			{
-				mouseWheelParams.pos.x = GET_X_LPARAM(lParam)-(rc.left);
-				mouseWheelParams.pos.y = GET_Y_LPARAM(lParam)-(rc.top);
-			}
-			else
-			{
-				mouseWheelParams.pos.x = GET_X_LPARAM(lParam)-(rc.left+GetSystemMetrics(SM_CXEDGE)+1);
-				mouseWheelParams.pos.y = GET_Y_LPARAM(lParam)-(rc.top+(GetSystemMetrics(SM_CXEDGE)+GetSystemMetrics(SM_CYCAPTION)+1));
-			}
+			mouseWheelParams.pos.x = pt.x;
+			mouseWheelParams.pos.y = pt.y;
 
 			INT delta = GET_WHEEL_DELTA_WPARAM(wParam);
 			if (msg == WM_MOUSEWHEEL) {
@@ -1092,8 +1104,29 @@ LRESULT CALLBACK Ex_WndProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		}
 
 		case WM_SIZE:
-			// Ignore WM_SIZE events sent during window creation, minimize and restore
+			// Nothing to lay out during window creation and minimize
+			if (myTrackerScreen && wParam != SIZE_MINIMIZED)
+			{
+				if (g_eventDepth)
+					g_resizePending = true;
+				else
+					ResizeTracker();
+			}
 			return 0;
+
+#ifndef __LOWRES__
+		case WM_GETMINMAXINFO:
+		{
+			// No smaller than the least screen the tracker lays itself out for
+			const PPSize minSize = Tracker::getMinScreenSize();
+			const pp_int32 scaleFactor = myDisplayDevice ? myDisplayDevice->getScaleFactor() : 1;
+			RECT rc = { 0, 0, minSize.width * scaleFactor, minSize.height * scaleFactor };
+			AdjustWindowRect(&rc, GetWindowLong(hwnd, GWL_STYLE), FALSE);
+			((MINMAXINFO*)lParam)->ptMinTrackSize.x = rc.right - rc.left;
+			((MINMAXINFO*)lParam)->ptMinTrackSize.y = rc.bottom - rc.top;
+			return 0;
+		}
+#endif
 
 		case WM_DESTROY:	
 			PostQuitMessage(0);
@@ -1197,10 +1230,16 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 							 g_hinst,
 							 0);
 #else
-	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
+#ifdef __LOWRES__
+	const DWORD windowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+#else
+	// resizable, as the tracker is laid out again for the window's size (WM_SIZE)
+	const DWORD windowStyle = WS_OVERLAPPEDWINDOW;
+#endif
+	AdjustWindowRect(&rect, windowStyle, false);
 	hWnd = CreateWindow(c_szClassName,
 							 WINDOWTITLE,
-							 WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+							 windowStyle,
 							 CW_USEDEFAULT,CW_USEDEFAULT,
 							 rect.right - rect.left, rect.bottom - rect.top,
 							 NULL,
@@ -1235,6 +1274,9 @@ static BOOL AppInit(HINSTANCE hinst,int nCmdShow)
 	// Startup procedure
 	myTracker->startUp();
 	HandleMidiRecording();
+
+	// a fullscreen window is the monitor's size already
+	ResizeTracker();
 
 	return TRUE;
 }
